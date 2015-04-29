@@ -1,14 +1,11 @@
 cmake_minimum_required( VERSION 2.8 )
 
 #---------------------------------------------------------------------
-# Prerequisites
+project( elastixSuperBuild )
 
 find_package( Git REQUIRED )
 
 include( ExternalProject )
-
-enable_language(C)
-enable_language(CXX)
 
 set( CMAKE_MODULE_PATH
   ${CMAKE_CURRENT_SOURCE_DIR}
@@ -28,7 +25,9 @@ endif()
 # Examples will be build as an external project to verify the installation of elastix
 option( ELASTIX_BUILD_EXAMPLES "Enable building examples." ON )
 
-# Do not build testing by default since this requires GoogleTest submodule to be initialized
+# Do not build tests by default since this requires GoogleTest submodule
+# to be initialized. This saves users that just clone and build from 
+# seeing FATAL_ERRORs out of the box.
 option( ELASTIX_BUILD_TESTING "Enable building tests." OFF )
 
 if( ELASTIX_BUILD_TESTING )

@@ -13,20 +13,20 @@ include( "${CMAKE_CURRENT_SOURCE_DIR}/CMake/elxRequiredITKModules.cmake" )
 #---------------------------------------------------------------------
 # Testing
 
-if( BUILD_TESTING )
-  if( NOT EXISTS "${CMAKE_SOURCE_DIR}/Testing/GoogleTest/.git" )
-    message( FATAL_ERROR "Could not find GoogleTest submodule. Please run git submodule init to compile tests." )
-  endif()
+# Do not build tests by default since this requires GoogleTest submodule
+# to be initialized. This saves users that just clone and build from 
+# seeing FATAL_ERRORs out of the box. 
+option( ELASTIX_BUILD_TESTING "Enable building tests." OFF )
 
+if( ELASTIX_BUILD_TESTING )
   enable_testing()
-  
-  mark_as_advanced( BUILD_CTESTS )
-  option( BUILD_CTESTS "Enable CTests." ON )
-  if( BUILD_CTESTS )
+  add_subdirectory( Testing )
+
+  mark_as_advanced( ELASTIX_BUILD_CTESTS )
+  option( ELASTIX_BUILD_CTESTS "Enable CTests." ON )
+  if( ELASTIX_BUILD_CTESTS )
     include( CTest )
   endif()
-
-  add_subdirectory( Testing )
 endif()
 
 #---------------------------------------------------------------------
@@ -35,9 +35,9 @@ endif()
 #---------------------------------------------------------------------
 # Build Documentation
 
-mark_as_advanced( BUILD_DOXYGEN )
+mark_as_advanced( ELASTIX_BUILD_DOXYGEN )
 option( BUILD_DOXYGEN "Enable building Doxygen documentation." OFF )
 
-mark_as_advanced( BUILD_READTHEDOCS OFF )
+mark_as_advanced( ELASTIX_BUILD_READTHEDOCS )
 option( BUILD_READTHEDOCS "Enable building readthedocs.org documentation." OFF )
 
