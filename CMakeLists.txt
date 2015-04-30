@@ -11,33 +11,28 @@ include( ${ITK_USE_FILE} )
 include( "${CMAKE_CURRENT_SOURCE_DIR}/CMake/elxRequiredITKModules.cmake" )
 
 #---------------------------------------------------------------------
+# Build Elastix
+
+#---------------------------------------------------------------------
 # Testing
 
 # Do not build tests by default since this requires GoogleTest submodule
-# to be initialized. This saves users that just clone and build from 
-# seeing FATAL_ERRORs out of the box. 
+# to be initialized. Otherwise users may see FATAL_ERRORs out of the box.
+# The SuperBuild will correctly initialize the GoogleTest submodule and 
+# build tests by default.
 option( ELASTIX_BUILD_TESTING "Enable building tests." OFF )
 
 if( ELASTIX_BUILD_TESTING )
   enable_testing()
   add_subdirectory( Testing )
-
-  mark_as_advanced( ELASTIX_BUILD_CTESTS )
-  option( ELASTIX_BUILD_CTESTS "Enable CTests." ON )
-  if( ELASTIX_BUILD_CTESTS )
-    include( CTest )
-  endif()
 endif()
-
-#---------------------------------------------------------------------
-# Build Elastix
 
 #---------------------------------------------------------------------
 # Build Documentation
 
 mark_as_advanced( ELASTIX_BUILD_DOXYGEN )
-option( BUILD_DOXYGEN "Enable building Doxygen documentation." OFF )
+option( ELASTIX_BUILD_DOXYGEN "Enable building Doxygen documentation." OFF )
 
 mark_as_advanced( ELASTIX_BUILD_READTHEDOCS )
-option( BUILD_READTHEDOCS "Enable building readthedocs.org documentation." OFF )
+option( ELASTX_BUILD_READTHEDOCS "Enable building readthedocs.org documentation." OFF )
 
