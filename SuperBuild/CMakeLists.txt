@@ -29,8 +29,7 @@ option( ELASTIX_BUILD_EXAMPLES "Enable building examples." ON )
 option( ELASTIX_BUILD_TESTING "Enable building tests." ON )
 
 if( ELASTIX_BUILD_TESTING )
-  mark_as_advanced( ELASTIX_BUILD_CTESTS )
-  option( ELASTIX_BUILD_CTESTS "Enable CTests." OFF )
+  option( ELASTIX_BUILD_BENCHMARKING "Enable building benchmarks." ON )
 endif()
 
 #---------------------------------------------------------------------

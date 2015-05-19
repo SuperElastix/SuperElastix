@@ -23,6 +23,7 @@ include( "${CMAKE_CURRENT_SOURCE_DIR}/CMake/elxRequiredITKModules.cmake" )
 option( ELASTIX_BUILD_TESTING "Enable building tests." OFF )
 
 if( ELASTIX_BUILD_TESTING )
+  option( ELASTIX_BUILD_BENCHMARKING "Enable building benchmarks." OFF )
   enable_testing()
   add_subdirectory( Testing )
 endif()
