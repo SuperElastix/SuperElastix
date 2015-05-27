@@ -1,0 +1,24 @@
+language: cpp
+
+compiler:
+  - clang
+  - gcc
+
+before_install:
+  - pwd
+  - date -u
+  - uname -a
+
+  # Out-of-source build
+  - cd ..
+  - mkdir SuperElastix-build
+  - cd SuperElastix-build
+
+before_script:
+  - export OMP_NUM_THREADS=2
+  - echo $OMP_NUM_THREADS
+
+script:
+  - cmake ../SuperElastix/SuperBuild
+  - make --jobs=2 | grep -v '^--' | grep -v '^Installing'
+  - make test
