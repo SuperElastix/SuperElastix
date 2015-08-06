@@ -1,12 +1,17 @@
 cmake_minimum_required( VERSION 2.8 )
 
+if( CMAKE_HOST_WIN32 )
+  include( elxWinConfig.cmake )
+endif()
+
 #---------------------------------------------------------------------
-project( elastix )
+project( Elastix )
 
 #---------------------------------------------------------------------
 # ITK
 
 find_package( ITK REQUIRED )
+set( ITK_NO_IO_FACTORY_REGISTER_MANAGER 1 )
 include( ${ITK_USE_FILE} )
 include( "${CMAKE_CURRENT_SOURCE_DIR}/CMake/elxRequiredITKModules.cmake" )
 

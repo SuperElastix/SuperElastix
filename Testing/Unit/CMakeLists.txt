@@ -2,30 +2,31 @@
 # To add a test to the build system, append it to the list below. 
 # Any GoogleTests in these files are automatically added to CTest.
 
-set( ElastixUnitTestSource
+set( ElastixUnitTestFilenames
   elxExampleUnitTest.cxx
 )
 
 #---------------------------------------------------------------------
-# To add data to a tests, create a list "${filename}Data" (without
-# the filename extension) and add data to this list.
 
-set( elxExampleTestData
-  DATA{${CMAKE_BINARY_DIR}/Testing/Data/Input/BrainProtonDensitySliceR10X13Y17.png}
+# Set test harness data directories
+set( ELASTIX_TEST_DATA_INPUT_DIR ${CMAKE_CURRENT_DIR}/Data/Input )
+set( ELASTIX_TEST_DATA_BASELINE_DIR ${CMAKE_CURRENT_DIR}/Data/Baseline )
+
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/elxTestHarnessPaths.h.in
+  ${CMAKE_CURRENT_BINARY_DIR}/elxTestHarnessPaths.h
+  ESCAPE_QUOTES
 )
 
-#---------------------------------------------------------------------
-# Build test executables
-
-foreach( ElastixUnitTestFilename ${ElastixUnitTestSource} )
+# Build tests executables
+foreach( ElastixUnitTestFilename ${ElastixUnitTestFilenames} )
   string( REPLACE ".cxx" "" ElastixUnitTest ${ElastixUnitTestFilename} )
-  add_executable( ${ElastixUnitTest} ${ElastixUnitTestFilename} )
-  target_link_libraries( ${ElastixUnitTest} ${ELASTIX_LIBRARIES} ${ITK_LIBRARIES} ${TEST_LIBRARIES} )
+  add_executable( "${ElastixUnitTest}" ${ElastixUnitTestFilename} )
+  target_link_libraries( "${ElastixUnitTest}" ${ELASTIX_LIBRARIES} ${ITK_LIBRARIES} ${TEST_LIBRARIES} )
 
-  ExternalData_Add_Test( "${ElastixUnitTest}ExternalDataTarget"
+  ExternalData_Add_Test( ElastixUnitTestData
     NAME ${ElastixUnitTest}
-    COMMAND ${ElastixUnitTest} ${${ElastixUnitTest}Data}
+    COMMAND "${ElastixUnitTest}" -gtest_output
   )
+endforeach()
 
-  ExternalData_Add_Target( "${ElastixUnitTest}ExternalDataTarget"} )
-endforeach() 

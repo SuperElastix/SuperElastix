@@ -1,19 +1,40 @@
-#include "itkImage.h"
-#include "itkImageFileReader.h"
-#include "itkImageFileWriter.h"
+#include <stdlib.h>
+#include <time.h>
 
 #include "gtest/gtest.h"
 
-TEST( GoogleTest, GoogleTest ) {
-  /**
-   * This example demonstrates the GoogleTest framework.
-   *
-   * When the test is built, the ExternalData CMake module 
-   * scans the Testing/Data directory for content links on  
-   * the form "[filename].[ext].md5" (text files with hashes).
-   * The content links are replaced with files from the file
-   * repository and checked for hash consistensy.
-   */
+/**
+ * This example demonstrates the elastix framework.
+ * We run a couple of tests that outputs numbers for
+ * use on the dashboard.
+ */
 
+TEST( GoogleTest, Example0 )
+{
+  srand( time( NULL ) );
   ASSERT_TRUE( true );
+}
+
+TEST( GoogleTest, Example1 )
+{
+    // Record random number between 0 and 9
+    int MetricValue = rand() % 10;
+    RecordProperty("MetricValue", MetricValue);
+    ASSERT_TRUE( true );
+}
+
+TEST( GoogleTest, Example2 )
+{
+    // Record random number between 10 and 19
+    int MetricValue = rand() % 20 + 10;
+    RecordProperty("MetricValue", MetricValue);
+    ASSERT_TRUE( true );
+}
+
+TEST( GoogleTest, Example3 )
+{
+    // Record random number between 20 and 29
+    int MetricValue = rand() % 30 + 20;
+    RecordProperty("MetricValue", MetricValue);
+    ASSERT_TRUE( true );
 }
