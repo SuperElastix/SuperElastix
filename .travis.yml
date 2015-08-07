@@ -1,4 +1,10 @@
+sudo: false
+
 language: cpp
+
+os:
+  - linux
+  - osx
 
 compiler:
   - clang
@@ -21,4 +27,7 @@ before_script:
 script:
   - cmake ../SuperElastix/SuperBuild
   - make --jobs=2 | grep -v '^--' | grep -v '^Installing'
-  - make test
+
+after_sucess:
+  - cd Elastix-build
+  - ctest
