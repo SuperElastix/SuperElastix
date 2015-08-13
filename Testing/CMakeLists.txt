@@ -1,4 +1,35 @@
-#---------------------------------------------------------------------
+# ---------------------------------------------------------------------
+# Download test data
+
+# ExternalData module requires CMake version 2.8.11
+if( CMAKE_VERSION VERSION_LESS 2.8.11 )
+  message( FATAL_ERROR "Building tests require CMake 2.8.11 or newer." )
+endif()
+
+include( ExternalData )
+
+list( APPEND ExternalData_URL_TEMPLATES
+  "http://midas3.kitware.com/midas/api/rest?method=midas.bitstream.download&checksum=%(hash)&algorithm=%(algo)"
+  "https://midas3.kitware.com/midas/api/rest?method=midas.bitstream.download&checksum=%(hash)&algorithm=%(algo)"
+)
+
+# Scan the Data directory for content links on the form "[filename].[ext].md5". 
+# The content links contains md5 hashes that are checked for consistensy  
+# against files downloaded from servers in ExternalData_URL_TEMPLATES. These 
+# files are placed in a corresponding location in the build directory.
+file( GLOB_RECURSE ElastixDataContentLinks "*.md5" )
+foreach(ElastixDataContentLink ${ElastixDataContentLinks})
+  string( REGEX REPLACE "\\.md5$" "" ElastixDataContentLink ${ElastixDataContentLink} )
+  ExternalData_Expand_Arguments( ElastixData
+    ElastixDataFilenames
+    DATA{${ElastixDataContentLink}}
+  )
+endforeach()
+
+# Test data is downloaded when this target is built
+ExternalData_Add_Target( ElastixData )
+
+# ---------------------------------------------------------------------
 # Setup GoogleTest
 
 find_package( Git )
@@ -18,7 +49,7 @@ if( NOT EXISTS ${CMAKE_SOURCE_DIR}/Testing/GoogleTest/.git )
 endif()
 
 if( ${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC" )
-  include( ${CMAKE_SOURCE_DIR}/CMake/elxGoogleTestWinConfig.cmake )
+  include( elxWinConfigGoogleTest.cmake )
 endif()
 
 add_subdirectory( GoogleTest )
@@ -31,41 +62,24 @@ set( TEST_LIBRARIES
   gtest_main
 )
 
-#---------------------------------------------------------------------
-# Download unit test and benchmark data
+# ---------------------------------------------------------------------
+# Build test suite
 
-# ExternalData module was introduced in CMake version 2.8.11
-cmake_minimum_required( VERSION 2.8.11 )
-
-include( ExternalData )
-
-list( APPEND ExternalData_URL_TEMPLATES
-  "http://midas3.kitware.com/midas/api/rest?method=midas.bitstream.download&checksum=%(hash)&algorithm=%(algo)"
-  "https://midas3.kitware.com/midas/api/rest?method=midas.bitstream.download&checksum=%(hash)&algorithm=%(algo)"
-)
-
-# Scan the Data directory for content links on the form "[filename].[ext].md5". 
-# The content links contains md5 hashes that are checked for consistensy  
-# against corresponding files downloaded from servers in 
-# ExternalData_URL_TEMPLATES. These files are placed in a corresponding  
-# location in the build directory.
-file( GLOB_RECURSE ElastixDataContentLinks "*.md5" )
-foreach(ElastixDataContentLink ${ElastixDataContentLinks})
-  string( REGEX REPLACE "\\.md5$" "" ElastixDataContentLink ${ElastixDataContentLink} )
-  ExternalData_Expand_Arguments( ElastixData
-    ElastixDataFilenames
-    DATA{${ElastixDataContentLink}}
-  )
-endforeach()
-
-# Test data is downloaded when this target is built
-ExternalData_Add_Target( ElastixData )
-
-#---------------------------------------------------------------------
-# Build tests
+# Unit tests
 add_subdirectory( Unit )
 
-# Build benchmarks
+# Benchmarks
+option( ELASTIX_BUILD_BENCHMARKING "Enable building benchmarks." OFF )
+
 if( ${ELASTIX_BUILD_BENCHMARKING} )
 	add_subdirectory( Benchmark )
+endif()
+
+# ---------------------------------------------------------------------
+# Configure dashboard
+mark_as_advanced( ELASTIX_BUILD_DASHBOARD )
+option( ELASTIX_BUILD_DASHBOARD "Enable elastix dashboard." OFF )
+
+if( ${ELASTIX_BUILD_DASHBOARD} )
+  add_subdirectory( Dashboard )
 endif()

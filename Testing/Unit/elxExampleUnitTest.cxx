@@ -26,7 +26,7 @@ TEST( GoogleTest, Example1 )
 TEST( GoogleTest, Example2 )
 {
     // Record random number between 10 and 19
-    int MetricValue = rand() % 20 + 10;
+    int MetricValue = rand() % 10 + 10;
     RecordProperty("MetricValue", MetricValue);
     ASSERT_TRUE( true );
 }
@@ -34,7 +34,7 @@ TEST( GoogleTest, Example2 )
 TEST( GoogleTest, Example3 )
 {
     // Record random number between 20 and 29
-    int MetricValue = rand() % 30 + 20;
+    int MetricValue = rand() % 10 + 20;
     RecordProperty("MetricValue", MetricValue);
     ASSERT_TRUE( true );
 }
