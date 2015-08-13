@@ -1,7 +1,7 @@
 cmake_minimum_required( VERSION 2.8 )
 
 #---------------------------------------------------------------------
-project( elastixSuperBuild )
+project( ElastixSuperBuild )
 
 find_package( Git REQUIRED )
 
@@ -12,6 +12,8 @@ set( CMAKE_MODULE_PATH
   ${CMAKE_CURRENT_SOURCE_DIR}/../CMake
   ${CMAKE_MODULE_PATH}
 )
+
+set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR} CACHE PATH "SuperBuild install directory" FORCE)
 
 #---------------------------------------------------------------------
 # Elastix SuperBuild configuration
@@ -30,10 +32,11 @@ option( ELASTIX_BUILD_TESTING "Enable building tests." ON )
 
 if( ELASTIX_BUILD_TESTING )
   option( ELASTIX_BUILD_BENCHMARKING "Enable building benchmarks." ON )
+  option( ELASTIX_BUILD_DASHBOARD "Enable building benchmarks." ON )
 endif()
 
 #---------------------------------------------------------------------
-# Build ITK as external project
+# Build ITK
 
 set( ITK_VERSION_MAJOR "4" )
 set( ITK_VERSION_MINOR "7" )
@@ -52,7 +55,7 @@ else()
 endif()
 
 #---------------------------------------------------------------------
-# Build Elastix as an external project
+# Build Elastix
 
 include( Elastix )
 

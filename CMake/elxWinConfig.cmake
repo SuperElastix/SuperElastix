@@ -1,3 +1,5 @@
+# Visual Studio complains if paths are too long
+
 string( LENGTH "${CMAKE_CURRENT_SOURCE_DIR}" n )
 if( n GREATER 50 )
 message(
