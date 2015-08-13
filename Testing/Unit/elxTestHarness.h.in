@@ -1,0 +1,7 @@
+#ifndef __ElastixTestHarness_h
+#define __ElastixTestHarness_h
+
+#define ELASTIX_UNITTEST_INPUT_DATA_DIR "@ELASTIX_UNITTEST_INPUT_DATA_DIR@"
+#define ELASTIX_INITTEST_BASELINE_DATA_DIR "@ELASTIX_UNITTEST_BASELINE_DATA_DIR@"
+
+#endif // __ElastixTestHarness_h

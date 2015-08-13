@@ -1,0 +1,17 @@
+elastix:
+    image: willdurand/elk
+    ports:
+        - "80:80"
+        - "@ELASTIX_DASHBOARD_LOGSTASH_PORT@:@ELASTIX_DASHBOARD_LOGSTASH_PORT@"
+    volumes_from:
+        - data
+
+data:
+    image: busybox
+    volumes:
+        - @ELASTIX_DASHBOARD_SOURCE_DIR@:/etc/ssl
+        - @ELASTIX_DASHBOARD_VOLUME@:/data                   
+        - @ELASTIX_DASHBOARD_BINARY_DIR@/elxLogstash:/etc/logstash 
+
+              
+                     
