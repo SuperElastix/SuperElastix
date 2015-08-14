@@ -17,24 +17,25 @@ TEST( GoogleTest, Example0 )
 
 TEST( GoogleTest, Example1 )
 {
-    // Record random number between 0 and 9
-    int MetricValue = rand() % 10;
-    RecordProperty("MetricValue", MetricValue);
-    ASSERT_TRUE( true );
+  // Record random number between 0 and 9
+  int MetricValue = rand() % 10;
+  RecordProperty("MetricValue", MetricValue);
+  ASSERT_TRUE( true );
 }
 
 TEST( GoogleTest, Example2 )
 {
-    // Record random number between 10 and 19
-    int MetricValue = rand() % 10 + 10;
-    RecordProperty("MetricValue", MetricValue);
-    ASSERT_TRUE( true );
+  // Record random number between 10 and 19
+  int MetricValue = rand() % 10 + 10;
+  RecordProperty("MetricValue", MetricValue);
+  RecordProperty("OverlapCoefficient", 1);
+  ASSERT_TRUE( true );
 }
 
 TEST( GoogleTest, Example3 )
 {
-    // Record random number between 20 and 29
-    int MetricValue = rand() % 10 + 20;
-    RecordProperty("MetricValue", MetricValue);
-    ASSERT_TRUE( true );
+  // Record random number between 20 and 29
+  int MetricValue = rand() % 10 + 20;
+  RecordProperty("MetricValue", MetricValue);
+  ASSERT_TRUE( true );
 }

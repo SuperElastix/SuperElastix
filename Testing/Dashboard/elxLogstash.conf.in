@@ -1,6 +1,6 @@
 input {
   lumberjack {
-    port => @ELASTIX_DASHBOARD_LOGSTASH_PORT@
+    port => 5043
     ssl_certificate => "/etc/ssl/@ELASTIX_DASHBOARD_LOGSTASH_CERTIFICATE@"
     ssl_key => "/etc/ssl/@ELASTIX_DASHBOARD_LOGSTASH_RSA_PRIVATE_KEY@"
   }

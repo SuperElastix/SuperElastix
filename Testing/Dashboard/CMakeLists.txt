@@ -1,16 +1,5 @@
 # ---------------------------------------------------------------------
-# Settings
-mark_as_advanced( ELASTIX_DASHBOARD_HOST )
-set( ELASTIX_DASHBOARD_HOST "elastix" )
-
-mark_as_advanced( ELASTIX_DASHBOARD_ELASTICSEARCH_PORT )
-set( ELASTIX_DASHBOARD_ELASTICSEARCH_PORT 9200 )
-
-mark_as_advanced( ELASTIX_DASHBOARD_LOGSTASH_PORT )
-set( ELASTIX_DASHBOARD_LOGSTASH_PORT 5043 )
-
-mark_as_advanced( ELASTIX_DASHBOARD_KIBANA_PORT )
-set( ELASTIX_DASHBOARD_KIBANA_PORT 5601 )
+# Dashboard configuration
 
 mark_as_advanced( ELASTIX_DASHBOARD_SOURCE_DIR )
 set( ELASTIX_DASHBOARD_SOURCE_DIR "${CMAKE_SOURCE_DIR}/Testing/Dashboard" )
@@ -29,25 +18,33 @@ set( ELASTIX_DASHBOARD_VOLUME "${ELASTIX_DASHBOARD_BINARY_DIR}/Data" )
 
 if( NOT EXISTS "${ELASTIX_DASHBOARD_VOLUME}" )
   message( STATUS
-    "ELASTIX_DASHBOARD_VOLUME points to the default ${CMAKE_BINARY_DIR}/Testing/Dashboard/Data path in your build directory. Point to another directory on your local machine to ensure dashboard state is saved between builds."
+    "ELASTIX_DASHBOARD_VOLUME points to the default ${CMAKE_BINARY_DIR}/Testing/Dashboard/Data path in your build directory. In production you should point this variable to a safe directory outside the build tree."
   )
 
   file( MAKE_DIRECTORY "${ELASTIX_DASHBOARD_VOLUME}" )
 endif()
 
-# ---------------------------------------------------------------------
-# Configure 
+# Test/Benchmark results will be forwarded to this IP. You will probably
+# have change this in order to  match docker settings on your own machine. 
+mark_as_advanced( ELASTIX_DASHBOARD_IP )
+set( ELASTIX_DASHBOARD_IP "192.168.59.103" )
+
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/docker-compose.yml.in
-  ${ELASTIX_DASHBOARD_BINARY_DIR}/docker-compose.yml
+  ${ELASTIX_DASHBOARD_SOURCE_DIR}/elxDashboard.yml.in
+  ${ELASTIX_DASHBOARD_BINARY_DIR}/elxDashboard.yml
 )
 
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/elxLogstash.conf.in
-  ${ELASTIX_DASHBOARD_BINARY_DIR}/elxLogstash/elxLogstash.conf
+  ${ELASTIX_DASHBOARD_SOURCE_DIR}/elxLogstashForwarder.yml.in
+  ${ELASTIX_DASHBOARD_BINARY_DIR}/elxLogstashForwarder.yml
 )
 
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/elxLogstashForwarder.conf.in
-  ${ELASTIX_DASHBOARD_BINARY_DIR}/elxLogstashForwarder.conf
+  ${ELASTIX_DASHBOARD_SOURCE_DIR}/elxLogstash.conf.in
+  ${ELASTIX_DASHBOARD_BINARY_DIR}/Logstash/elxLogstash.conf
+)
+
+configure_file(
+  ${ELASTIX_DASHBOARD_SOURCE_DIR}/elxLogstashForwarder.json.in
+  ${ELASTIX_DASHBOARD_BINARY_DIR}/elxLogstashForwarder.json
 )
