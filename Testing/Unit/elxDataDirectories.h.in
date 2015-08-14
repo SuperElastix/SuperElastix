@@ -1,0 +1,8 @@
+#ifndef __elxTestDataDirectories_h
+#define __elxTestDataDirectories_h
+
+#define ELASTIX_UNITTEST_INPUT_DATA_DIR "@ELASTIX_UNITTEST_INPUT_DATA_DIR@"
+#define ELASTIX_UNITTEST_OUTPUT_DATA_DIR "@ELASTIX_UNITTEST_OUTPUT_DATA_DIR@"
+#define ELASTIX_UNITTEST_BASELINE_DATA_DIR "@ELASTIX_UNITTEST_BASELINE_DATA_DIR@"
+
+#endif // __elxTestDataDirectories_h
