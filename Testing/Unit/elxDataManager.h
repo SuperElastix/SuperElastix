@@ -2,15 +2,18 @@
 #define __DataManager_h
 
 #include <string>
+#include <itkSimpleDataObjectDecorator.h>
 
-#include "itkMacro.h"
-#include "itkProcessObject.h"
-
+#include "elxMacro.h"
+#include "itkObjectFactory.h"
+#include "itkLightObject.h"
 #include "elxDataDirectories.h"
 
-class DataManager
+class DataManager : public itk::LightObject
 {
 public:
+
+  elxNewMacro( DataManager, itk::LightObject );
 
   DataManager()
   {
@@ -20,16 +23,25 @@ public:
   }
 
   std::string GetInputDirectory( void ) const { return this->m_InputDirectory; };
-  std::string GetOutputDirectory( void ) const { return this->m_InputDirectory; };
-  std::string GetBaselineDirectory( void ) const { return this->m_InputDirectory; };
+  std::string GetOutputDirectory( void ) const { return this->m_OutputDirectory; };
+  std::string GetBaselineDirectory( void ) const { return this->m_BaselineDirectory; };
 
-  std::string GetInput( const std::string filename ) const;
-  std::string GetOutput( const std::string filename ) const;
-  std::string GetBaseline( const std::string filename ) const;
+  const std::string GetInputFullPath( const std::string filename ) const;
+  const std::string GetOutputFullPath( const std::string filename ) const;
+  const std::string GetBaselineFullPath( const std::string filename ) const;
+
+  std::string GetFolderSeparator() const
+  {
+#ifdef _WIN32
+    return "\\";
+#else
+    return "/";
+#endif
+  } 
 
   std::string GetPathSeparator () const
   {
-#ifdef WIN32
+#ifdef _WIN32
     return ";";
 #else
     return ":";

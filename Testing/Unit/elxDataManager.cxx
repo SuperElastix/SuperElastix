@@ -1,29 +1,30 @@
 #ifndef __DataManager_cxx
 #define __DataManager_cxx
 
+#include <itkSimpleDataObjectDecorator.h>
 #include "elxDataManager.h"
 
-std::string
+const std::string
 DataManager
-::GetInput( const std::string filename ) const 
+::GetInputFullPath( const std::string filename ) const 
 {
-  const std::string path = this->GetInputDirectory() + this->GetPathSeparator() + filename;
+  const std::string path = this->GetInputDirectory() + this->GetFolderSeparator() + filename;
   return path;
 }
 
-std::string
+const std::string
 DataManager
-::GetOutput( const std::string filename ) const
+::GetOutputFullPath( const std::string filename ) const
 {
-  const std::string path = this->GetOutputDirectory() + this->GetPathSeparator() + filename;
+  const std::string path = this->GetOutputDirectory() + this->GetFolderSeparator() + filename;
   return path;
 }
 
-std::string
+const std::string
 DataManager
-::GetBaseline( const std::string filename ) const
+::GetBaselineFullPath( const std::string filename ) const
 {
-  const std::string path = this->GetBaselineDirectory() + this->GetPathSeparator() + filename;
+  const std::string path = this->GetBaselineDirectory() + this->GetFolderSeparator() + filename;
   return path;
 }
 
