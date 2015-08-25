@@ -1,9 +1,10 @@
 #ifndef __DataManager_cxx
 #define __DataManager_cxx
 
+#include <itkSimpleDataObjectDecorator.h>
 #include "elxDataManager.h"
 
-std::string
+const std::string
 DataManager
 ::GetInputFullPath( const std::string filename ) const 
 {
@@ -11,7 +12,7 @@ DataManager
   return path;
 }
 
-std::string
+const std::string
 DataManager
 ::GetOutputFullPath( const std::string filename ) const
 {
@@ -19,7 +20,7 @@ DataManager
   return path;
 }
 
-std::string
+const std::string
 DataManager
 ::GetBaselineFullPath( const std::string filename ) const
 {

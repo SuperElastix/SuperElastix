@@ -30,7 +30,7 @@ endforeach()
 ExternalData_Add_Target( ElastixData )
 
 # ---------------------------------------------------------------------
-# Setup GoogleTest
+# Add GoogleTest
 
 find_package( Git )
 if( NOT EXISTS "${CMAKE_SOURCE_DIR}/Testing/GoogleTest/.git" AND GIT_EXECUTABLE )
@@ -70,7 +70,6 @@ add_subdirectory( Unit )
 
 # Benchmarks
 option( ELASTIX_BUILD_BENCHMARKING "Enable building benchmarks." OFF )
-
 if( ${ELASTIX_BUILD_BENCHMARKING} )
 	add_subdirectory( Benchmark )
 endif()

@@ -2,6 +2,7 @@
 #define __DataManager_h
 
 #include <string>
+#include <itkSimpleDataObjectDecorator.h>
 
 #include "elxMacro.h"
 #include "itkObjectFactory.h"
@@ -25,13 +26,13 @@ public:
   std::string GetOutputDirectory( void ) const { return this->m_OutputDirectory; };
   std::string GetBaselineDirectory( void ) const { return this->m_BaselineDirectory; };
 
-  std::string GetInputFullPath( const std::string filename ) const;
-  std::string GetOutputFullPath( const std::string filename ) const;
-  std::string GetBaselineFullPath( const std::string filename ) const;
+  const std::string GetInputFullPath( const std::string filename ) const;
+  const std::string GetOutputFullPath( const std::string filename ) const;
+  const std::string GetBaselineFullPath( const std::string filename ) const;
 
   std::string GetFolderSeparator() const
   {
-#ifdef WIN32
+#ifdef _WIN32
     return "\\";
 #else
     return "/";
@@ -40,7 +41,7 @@ public:
 
   std::string GetPathSeparator () const
   {
-#ifdef WIN32
+#ifdef _WIN32
     return ";";
 #else
     return ":";
