@@ -1,4 +1,2 @@
-add_subdirectory(
-  Common
-  Blueprints
-)
+add_subdirectory( Common )
+add_subdirectory( Blueprints )

@@ -48,14 +48,13 @@ add_subdirectory( Modules )
 # Testing requires CMake version 2.8.11 to download test data
 if( CMAKE_VERSION VERSION_LESS 2.8.11 )
   set( ELASTIX_BUILD_TESTING_DEFAULT OFF )
-  message( STATUS "ELASTIX_BUILD_TESTING is set to OFF by default because CMake version is less than 2.8.11" )
+  message( STATUS "ELASTIX_BUILD_TESTING is set to OFF because CMake version is less than 2.8.11" )
 else()
   set( ELASTIX BUILD_TESTING_DEFAULT ON )
 endif()
 
 option( ELASTIX_BUILD_TESTING "Enable building tests." ${ELASTIX_BUILD_TESTING_DEFAULT} )
-
-if( ELASTIX_BUILD_TESTING )
+if( ${ELASTIX_BUILD_TESTING} )
   enable_testing()
   add_subdirectory( Testing )
 endif()

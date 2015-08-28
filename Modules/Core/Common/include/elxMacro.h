@@ -2,8 +2,8 @@
 #define __elxMacro_h
 
 /**
- * Register class with the object factory and provide 
- * associated RTTI (Run-Time Type Information)
+ * Register class with the object factory and set RTTI (Run-Time Type 
+ * Information)
  */
 #define elxNewMacro( className, superClassName )        \
   typedef className                       Self;         \
