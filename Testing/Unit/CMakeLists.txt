@@ -5,6 +5,7 @@
 
 set( ElastixUnitTestFilenames
   elxExampleUnitTest.cxx
+  elxBluePrintTest.cxx
   itkRegistration.cxx
 )
 

@@ -61,11 +61,12 @@ endif()
 # Boost Graph Library
 
 mark_as_advanced( USE_SYSTEM_BOOST )
-option( USE_SYSTEM_BOOST "Use an installed version of BOOST" ON )
+option( USE_SYSTEM_BOOST "Use an installed version of BOOST" OFF )
 if( USE_SYSTEM_BOOST )
   find_package( BOOST REQUIRED graph )
 else()
-  message( FATAL_ERROR "BOOST is not yet integrated with the SuperBuild. Install BOOST on your system, set USE_SYSTEM_BOOST to ON and re-run CMake." )
+  include( ExternalBoost )
+  list( APPEND ELASTIX_DEPENDENCIES BOOST )
 endif()
 
 # ---------------------------------------------------------------------
