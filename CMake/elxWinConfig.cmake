@@ -5,7 +5,8 @@ if( MSVC )
   if( n GREATER 50 )
   message(
     FATAL_ERROR
-    "ITK source code directory path length is too long for MSVC (${n} > 50)."
+      "Source code directory path length is too long for MSVC (${n} > 50)."
+      "Please move the source code directory to a directory with a shorter path."
     )
   endif()
 
@@ -13,7 +14,8 @@ if( MSVC )
   if( n GREATER 50 )
   message(
     FATAL_ERROR
-    "ITK build directory path length is too long for MSVC (${n} > 50)."
+      "Build directory path length is too long for MSVC (${n} > 50)."
+      "Please move the build directory to a directory with a shorter path."
     )
   endif()
 
