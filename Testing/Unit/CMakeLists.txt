@@ -24,19 +24,24 @@ if( NOT EXISTS ${ELASTIX_UNITTEST_OUTPUT_DATA_DIR} )
   )
 endif()
 
+# ---------------------------------------------------------------------
+# Build test data manager
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/elxDataDirectories.h.in
-  ${CMAKE_CURRENT_SOURCE_DIR}/elxDataDirectories.h
+  ${CMAKE_CURRENT_BINARY_DIR}/elxDataDirectories.h
   ESCAPE_QUOTES
 )
 
-# Build tests
+include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
+
 add_library( DataManager elxDataManager.cxx )
 
 list( APPEND TEST_LIBRARIES 
   DataManager
 )
 
+# ---------------------------------------------------------------------
+# Build tests
 foreach( ElastixUnitTestFilename ${ElastixUnitTestFilenames} )
   # Build tests executables
   string( REPLACE ".cxx" "" ElastixUnitTest ${ElastixUnitTestFilename} )
