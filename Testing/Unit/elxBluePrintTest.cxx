@@ -6,21 +6,18 @@ namespace elx {
 
 TEST( Blueprint, Instantiation )
 {
-  typedef Blueprint< ComponentDescriptor >  BlueprintType;
-  BlueprintType::Pointer blueprint = BlueprintType::New();
+  typedef Blueprint< ComponentDescriptor > BlueprintType;
+  BlueprintType::Pointer blueprint;
+  EXPECT_NO_THROW( blueprint = BlueprintType::New() );
 
   typedef BlueprintType::ComponentDescriptorType ComponentDescriptorType;
-  ComponentDescriptorType::Pointer componentDescriptor = ComponentDescriptorType::New();
+  ComponentDescriptorType::Pointer componentDescriptor;
+  EXPECT_NO_THROW( componentDescriptor = ComponentDescriptorType::New() );
 
   typedef ComponentDescriptorType::ComponentNameType ComponentNameType;
-  ComponentNameType componentName = ComponentNameType("Metric");
-  componentDescriptor->SetComponentName( componentName );
-
-  // We would like to save all data in the graph itself, but the following is 
-  // not possible because the component (of type itk::LightObject has private copy 
-  // constructor. How do we save data in graph and make this as itk-like as possible?
-  // Ideally when a component descriptor is changed the blueprint calls Modified() on itself
-  // blueprint->AddComponent( (*componentDescriptor) );
+  ComponentNameType componentName;
+  EXPECT_NO_THROW( componentName = ComponentNameType("Metric") );
+  EXPECT_NO_THROW( componentDescriptor->SetComponentName( componentName ) );
 
   ASSERT_TRUE( true );
 }

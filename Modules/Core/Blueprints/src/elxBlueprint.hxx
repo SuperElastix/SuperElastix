@@ -11,13 +11,14 @@ void
 Blueprint< ComponentDescriptor >
 ::Blueprint( void )
 {
-  this->m_Graph = GraphType;
+  this->SetGraph( GraphType );
 }
 
 ComponentDescriptorType
 Blueprint< ComponentDescriptor >
 ::AddComponent( ComponentDescriptorType component )
 {
+  // TODO: Check that the component is in the component::ComponentName is in the ComponentDatabase
   this->Modified();
   return this->m_Graph->add_vertex( component );
 }

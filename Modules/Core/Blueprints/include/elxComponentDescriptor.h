@@ -2,26 +2,26 @@
 #define __ComponentDescriptor_h
 
 #include "elxMacro.h"
-#include "itkLightObject.h"
+#include "itkDataObject.h"
 
 namespace elx {
 
-class ComponentDescriptor : public itk::LightObject
+class ComponentDescriptor : public itk::DataObject
 {
 public:
 
-  elxNewMacro( ComponentDescriptor, itk::LightObject );
+  elxNewMacro( ComponentDescriptor, itk::DataObject );
 
-  typedef std::string                                         ComponentNameType;
-  typedef std::map< std::string, std::vector< std::string > > ParameterMapType;
+  // Identifier to find component in the component database
+  typedef std::string ComponentNameType;
 
-  void SetComponentName( ComponentNameType componentName ) { this->m_ComponentName = componentName; };
-  ComponentNameType GetComponentName( void ) { return this->m_ComponentName; };
+  // TODO: Setter should validate ComponentName exists in ComponentDatabase
+  itkSetMacro( ComponentName, ComponentNameType ); 
+  itkGetMacro( ComponentName, ComponentNameType );
 
 private:
 
-  ComponentNameType  m_ComponentName;
-  ParameterMapType   m_ParameterMap;
+  ComponentNameType m_ComponentName;
 
 };
 

@@ -19,30 +19,37 @@ public:
 
   elxNewMacro( Blueprint, itk::DataObject );
 
-  typedef TComponentDescriptor                                           ComponentDescriptorType;
+  typedef TComponentDescriptor                                                ComponentDescriptorType;
+  typedef typename TComponentDescriptor::ComponentNameType                    ComponentNameType;
   
   typedef boost::adjacency_list< boost::listS,      
                                  boost::listS,      
                                  boost::directedS,
-                                 ComponentDescriptorType >               GraphType;
+                                 ComponentDescriptorType >                    GraphType;
 
-  typedef typename boost::graph_traits< GraphType >::vertex_descriptor   ComponentType;
-  typedef typename boost::graph_traits< GraphType >::vertex_iterator     ComponentIterator, ComponentIteratorEnd;
+  typedef typename boost::graph_traits< GraphType >::vertex_descriptor        ComponentType;
+  typedef typename boost::graph_traits< GraphType >::vertex_iterator          ComponentIterator, ComponentIteratorEnd;
 
-  typedef typename boost::graph_traits< GraphType >::edge_descriptor     ConnectionDescriptorType;
-  typedef typename boost::graph_traits< GraphType >::edge_iterator       ConnectionIterator, ConnectionIteratorEnd;
+  
 
-  typedef typename boost::graph_traits< GraphType >::in_edge_iterator    InputIterator, InputIteratorEnd;
-  typedef typename boost::graph_traits< GraphType >::out_edge_iterator   OutputIterator, OutputIteratorEnd;
+  // TODO: Why can't we get the vertex index map type like they show in 
+  // http://www.boost.org/doc/libs/1_38_0/libs/graph/doc/quick_tour.html
+  // under "Access Vertex Set"?
+  typedef boost::vertex_index_t                                               ComponentIndexType;
+  typedef typename boost::property_map< GraphType, ComponentIndexType >::type ComponentIndexMapType;
 
-  void SetGraph( GraphType graph ) { this->m_Graph = graph; };
-  GraphType GetGraph( void ) const { return m_Graph; };
+  typedef typename boost::graph_traits< GraphType >::edge_descriptor          ConnectionDescriptorType;
+  typedef typename boost::graph_traits< GraphType >::edge_iterator            ConnectionIterator, ConnectionIteratorEnd;
 
-  void AddComponent( ComponentDescriptorType component );
-  void RemoveComponent( ComponentDescriptorType component );
+  typedef typename boost::graph_traits< GraphType >::in_edge_iterator         InputIterator, InputIteratorEnd;
+  typedef typename boost::graph_traits< GraphType >::out_edge_iterator        OutputIterator, OutputIteratorEnd;
 
-  void AddConnection( ComponentDescriptorType upstream, ComponentDescriptorType downstream );
-  void RemoveConnection( ConnectionDescriptorType connection );
+  bool AddComponent( ComponentDescriptorType component );
+  // bool SetComponent( ComponentIndexType componentIndex, ComponentDescriptorType component );
+  // ComponentDescriptorType GetComponent( ComponentIndexType componentIndex );
+
+  // bool SetConnection( ComponentIndexType upstream, ComponentIndexType downstream );
+  ConnectionDescriptorType GetConnection( ConnectionDescriptorType Connection );
 
 private:
 
