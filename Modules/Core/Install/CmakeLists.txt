@@ -9,5 +9,5 @@ ELSE(ITK_FOUND)
   MESSAGE(FATAL_ERROR "ITK not found. Please set ITK_DIR.")
 ENDIF(ITK_FOUND)
 
-ADD_EXECUTABLE(itkfactory itkfactory.cxx itkTransformModule1.h itkTransformModule1Factory.h itkTransformModule1.hxx itkTransformModule1Factory.hxx itkMetricModule1.h itkMetricModule1.hxx itkMetricModule1Factory.h itkMetricModule1Factory.hxx itkModuleIOBase.h itkModuleIOFactoryRegisterManager.h)
+ADD_EXECUTABLE(itkfactory itkfactory.cxx itkTransformModule1.h itkTransformModule1Factory.h itkTransformModule1.hxx itkTransformModule1Factory.hxx itkMetricModule1.h itkMetricModule1.hxx itkMetricModule1Factory.h itkMetricModule1Factory.hxx itkModuleBase.h itkModuleFactory.h itkModuleFactory.hxx)
 TARGET_LINK_LIBRARIES(itkfactory ${ITK_LIBRARIES} ITKCommon )

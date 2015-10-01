@@ -15,34 +15,44 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef itkModuleFactoryBase_hxx
-#define itkModuleFactoryBase_hxx
+#ifndef itkModuleFactory_hxx
+#define itkModuleFactory_hxx
 
-#include "itkModuleFactoryBase.h"
+#include "itkModuleFactory.h"
 
 namespace itk
 {
 
-ModuleIOBase::Pointer ModuleFactoryBase::CreateModuleIO(const CriteriaType &criteria)
+ModuleFactory::ModuleFactory()
+  {
+    this->m_PossibleModules.clear();
+  }
+ModuleFactory::~ModuleFactory()
+  {
+  }
+
+
+
+ModuleBase::Pointer ModuleFactory::CreateModule(const CriteriaType &criteria)
 {
-  std::list< typename ModuleIOBase::Pointer > possibleModuleIO;
+  std::list< typename ModuleBase::Pointer > possibleModules;
 //  std::list< LightObject::Pointer >     allobjects =
 //    ObjectFactoryBase::CreateAllInstance("itkModuleIOBaseTemplate");
   std::list< LightObject::Pointer >     allobjects =
-    ObjectFactoryBase::CreateAllInstance("itkModuleIOBase");
+    ObjectFactoryBase::CreateAllInstance("itkModuleBase");
 
   for ( std::list< LightObject::Pointer >::iterator i = allobjects.begin();
         i != allobjects.end(); ++i )
     {
-    ModuleIOBase *io =
-                        dynamic_cast< ModuleIOBase * >( i->GetPointer() );
+    ModuleBase *io =
+                        dynamic_cast< ModuleBase * >( i->GetPointer() );
     if ( io )
       {
-      possibleModuleIO.push_back(io);
+        possibleModules.push_back(io);
       }
     }
-  for ( std::list< typename ModuleIOBase::Pointer >::iterator k = possibleModuleIO.begin();
-        k != possibleModuleIO.end(); ++k )
+  for (std::list< typename ModuleBase::Pointer >::iterator k = possibleModules.begin();
+    k != possibleModules.end(); ++k)
     {
       if ( ( *k )->MeetsCriteria(criteria) )
         {

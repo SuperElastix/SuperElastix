@@ -1,16 +1,16 @@
 #ifndef itkMetricModule1_h
 #define itkMetricModule1_h
 
-#include "itkModuleIOBase.h"
+#include "itkModuleBase.h"
 
 namespace itk
 {
-class MetricModule1 : public ModuleIOBase
+class MetricModule1 : public ModuleBase
 {
 public:
   /** Standard class typedefs. */
   typedef MetricModule1                        Self;
-  typedef ModuleIOBase Superclass;
+  typedef ModuleBase Superclass;
   typedef SmartPointer< Self >             Pointer;
   typedef SmartPointer< const Self >       ConstPointer;
 
@@ -18,7 +18,7 @@ public:
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(MetricModule1, ModuleIOBase);
+  itkTypeMacro(MetricModule1, ModuleBase);
 
   /** define the Clone method */
   // itkCloneMacro(Self);

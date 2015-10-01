@@ -24,7 +24,7 @@ namespace itk
 
 MetricModule1Factory::MetricModule1Factory()
 {
-  this->RegisterOverride( "itkModuleIOBase",
+  this->RegisterOverride( "itkModuleBase",
                           "itkMetricModule1",
                           "Metric Module 1",
                           1,

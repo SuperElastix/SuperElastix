@@ -24,7 +24,7 @@ namespace itk
 
 TransformModule1Factory::TransformModule1Factory()
 {
-  this->RegisterOverride( "itkModuleIOBase",
+  this->RegisterOverride( "itkModuleBase",
                           "itkTransformModule1",
                           "Transform Module 1",
                           1,

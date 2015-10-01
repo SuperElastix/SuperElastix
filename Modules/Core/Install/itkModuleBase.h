@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef itkModuleIOBase_h
-#define itkModuleIOBase_h
+#ifndef itkModuleBase_h
+#define itkModuleBase_h
 
 #include "itkLightProcessObject.h"
 //#include "itkModuleBase.h"
@@ -29,30 +29,30 @@
 namespace itk
 {
 
-/** \class ModuleIOBaseTemplate
+/** \class ModuleBaseTemplate
  *
  * \brief Abstract superclass defining the Module IO interface.
  *
- * ModuleIOBaseTemplate is a pure virtual base class for derived classes that
+ * ModuleBaseTemplate is a pure virtual base class for derived classes that
  * read/write Module data considering the type of input Module.
- * First, ModuleIOBase is derived from this class for legacy read/write Module.
+ * First, ModuleBase is derived from this class for legacy read/write Module.
  * This class also is used by the ModuleFileReader and ModuleFileWriter
- * classes. End users don't directly manipulate classes derived from ModuleIOBaseTemplate;
- * the ModuleIOFactory is used by the Reader/Writer to pick a concrete derived class to do
+ * classes. End users don't directly manipulate classes derived from ModuleBaseTemplate;
+ * the ModuleFactory is used by the Reader/Writer to pick a concrete derived class to do
  * the actual reading/writing of Modules.
  *
  * \ingroup ITKIOModuleBase
  */
-class ModuleIOBase:public LightProcessObject
+class ModuleBase:public LightProcessObject
 {
 public:
   /** Standard class typedefs */
-  typedef ModuleIOBase   Self;
+  typedef ModuleBase   Self;
   typedef LightProcessObject        Superclass;
   typedef SmartPointer< Self >      Pointer;
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(ModuleIOBase, Superclass);
+  itkTypeMacro(ModuleBase, Superclass);
 
   /** Module types */
   //typedef TScalar                           ScalarType;
@@ -78,13 +78,13 @@ public:
   /** Writes the Module list to disk. */
   virtual void Write() = 0;
 
-  /** Determine the file type. Returns true if this ModuleIO can read the
+  /** Determine the file type. Returns true if this Module can read the
    * file specified. */
   virtual bool MeetsCriteria(const CriteriaType &criteria) = 0;
 
 protected:
-  ModuleIOBase() {};
-  virtual ~ModuleIOBase() {};
+  ModuleBase() {};
+  virtual ~ModuleBase() {};
   //virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   std::string            m_FileName;
@@ -94,4 +94,4 @@ protected:
 } // end namespace itk
 
 
-#endif // itkModuleIOBase_h
+#endif // itkModuleBase_h

@@ -15,7 +15,7 @@
 *  limitations under the License.
 *
 *=========================================================================*/
-//#include "itkModuleIOFactoryRegisterManager.h"
+//#include "itkModuleFactoryRegisterManager.h"
 
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
@@ -30,14 +30,15 @@
 #include "itkTransformFactory.h"
 #include "itkMatrixOffsetTransformBase.h"
 
-//Floris: The module factory is based on the transformIO factory. 
-// By default it creates 2 dummy modules: itkTransformModule1 and itkMetricModule1
-//CMake\UseITK.cmake sets up the IOFactory_Register_Manager for transforms and images
+//Floris: The module factory is based on the ImageIO factory. 
+// We manually register 2 dummy modules: itkTransformModule1 and itkMetricModule1. 
+// in ITK CMake\UseITK.cmake sets up the IOFactory_Register_Manager for transforms and images
+// Elastix (by Denis) uses (simpleITK's) Typelists to register all GPU filters 
 //#include "itkModuleFactoryBase.h"
 //#include "itkModuleFactory.h"
 
-#include "itkModuleIOBase.h"
-//#include "itkModuleIOFactory.h"
+#include "itkModuleBase.h"
+//#include "itkModuleFactory.h"
 
 #include <map>
 #include <string>
@@ -54,7 +55,7 @@ int main(int argc, char *argv[])
 
   typedef std::list< itk::LightObject::Pointer > RegisteredObjectsContainerType;
   RegisteredObjectsContainerType registeredIOs =
-    itk::ObjectFactoryBase::CreateAllInstance("itkModuleIOBase");
+    itk::ObjectFactoryBase::CreateAllInstance("itkModuleBase");
   std::cout << "When CMake is not used to register the IO classes, there are\n"
     << registeredIOs.size()
     << " IO objects available to the Overlord.\n" << std::endl;
@@ -63,21 +64,11 @@ int main(int argc, char *argv[])
   itk::TransformModule1Factory::RegisterOneFactory();
   itk::MetricModule1Factory::RegisterOneFactory();
   std::cout << "there are\n";
-  registeredIOs = itk::ObjectFactoryBase::CreateAllInstance("itkModuleIOBase");
+  registeredIOs = itk::ObjectFactoryBase::CreateAllInstance("itkModuleBase");
   std::cout << registeredIOs.size()
     << " IO objects available to the Overlord.\n" << std::endl;
 
-  std::cout << "Now, when we try to read a MetaImage, we will ";
-  //typedef itk::ModuleBaseTemplate< ScalarType >       ModuleType;
-  //typedef itk::ModuleFactoryBase                      ModuleFactoryType;
-
-  typedef itk::ModuleIOBase       ModuleIOType;
-  //typedef itk::ModuleIOFactoryTemplate< ScalarType > ModuleFactoryIOType;
-  std::string moduleName("Metric");
-
-  //register a 3rd module
-  //typedef itk::TransformModule1< double, 3, 3 > TransformModule1Type;
-  //itk::ModuleFactory<TransformModule1Type>::RegisterModule();
+  typedef itk::ModuleBase       ModuleType;
 
   typedef std::map<std::string, std::string> CriteriaType;
   typedef std::pair<std::string, std::string> CriteriumType;
@@ -90,12 +81,12 @@ int main(int argc, char *argv[])
   //criteria1.insert(CriteriumType("ModuleInput", "Metric"));
 
 
-  ModuleIOType::Pointer Node1 = itk::ModuleFactoryBase::CreateModuleIO(criteria1);
-
-  ModuleIOType::Pointer Node2 = itk::ModuleFactoryBase::CreateModuleIO(criteria2);
+  ModuleType::Pointer Node1 = itk::ModuleFactory::CreateModule(criteria1);
+  
+  ModuleType::Pointer Node2 = itk::ModuleFactory::CreateModule(criteria2);
 
   
-  
+
 
   return EXIT_SUCCESS;
 }

@@ -1,16 +1,16 @@
 #ifndef itkTransformModule1_h
 #define itkTransformModule1_h
 
-#include "itkModuleIOBase.h"
+#include "itkModuleBase.h"
 
 namespace itk
 {
-class TransformModule1 : public ModuleIOBase
+class TransformModule1 : public ModuleBase
 {
 public:
   /** Standard class typedefs. */
   typedef TransformModule1                        Self;
-  typedef ModuleIOBase Superclass;
+  typedef ModuleBase Superclass;
   typedef SmartPointer< Self >             Pointer;
   typedef SmartPointer< const Self >       ConstPointer;
 
@@ -18,7 +18,7 @@ public:
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(TransformModule1, ModuleIOBase);
+  itkTypeMacro(TransformModule1, ModuleBase);
 
   /** define the Clone method */
   // itkCloneMacro(Self);

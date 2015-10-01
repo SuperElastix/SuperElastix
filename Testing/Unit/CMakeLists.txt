@@ -6,6 +6,7 @@
 set( ElastixUnitTestFilenames
   elxExampleUnitTest.cxx
   itkRegistration.cxx
+  itkFactory.cxx
 )
 
 # ---------------------------------------------------------------------

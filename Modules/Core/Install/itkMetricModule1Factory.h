@@ -18,8 +18,8 @@
 #ifndef itkMetricModule1Factory_h
 #define itkMetricModule1Factory_h
 
-#include "itkModuleFactoryBase.h"
-#include "itkModuleIOBase.h"
+#include "itkModuleFactory.h"
+#include "itkModuleBase.h"
 
 namespace itk
 {
@@ -27,12 +27,12 @@ namespace itk
  * \brief Create instances of MetaImageIO objects using an object factory.
  * \ingroup ITKIOMeta
  */
-class MetricModule1Factory:public ModuleFactoryBase
+  class MetricModule1Factory :public ObjectFactoryBase
 {
 public:
   /** Standard class typedefs. */
   typedef MetricModule1Factory         Self;
-  typedef ModuleFactoryBase          Superclass;
+  typedef ObjectFactoryBase          Superclass;
   typedef SmartPointer< Self >       Pointer;
   typedef SmartPointer< const Self > ConstPointer;
 
@@ -45,14 +45,14 @@ public:
   itkFactorylessNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(MetricModule1Factory, ModuleFactoryBase);
+  itkTypeMacro(MetricModule1Factory, ObjectFactoryBase);
 
   /** Register one factory of this type  */
   static void RegisterOneFactory()
   {
     MetricModule1Factory::Pointer MetricModule1Factory = MetricModule1Factory::New();
 
-    ModuleFactoryBase::RegisterFactory(MetricModule1Factory);
+    ObjectFactoryBase::RegisterFactory(MetricModule1Factory);
   }
 
 protected:
