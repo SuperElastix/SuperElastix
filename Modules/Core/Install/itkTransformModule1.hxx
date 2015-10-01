@@ -22,45 +22,29 @@
 
 namespace itk
 {
+  TransformModule1::TransformModule1()
+  {
+  }
 
-template <typename TScalar,
-          unsigned int NInputDimensions,
-          unsigned int NOutputDimensions>
-TransformModule1<TScalar, NInputDimensions, NOutputDimensions>
-::TransformModule1()
-{
-}
-
-
-
-template <typename TScalar,
-          unsigned int NInputDimensions,
-          unsigned int NOutputDimensions>
-    std::string TransformModule1<TScalar, NInputDimensions, NOutputDimensions>
-::GetModuleTypeAsString() const
+std::string TransformModule1::GetModuleTypeAsString() const
 {
   std::ostringstream n;
 
   n << GetNameOfClass();
   n << "_";
-  n << this->GetModuleTypeAsString(static_cast<TScalar *>(ITK_NULLPTR) );
-  n << "_" << this->GetInputSpaceDimension() << "_" << this->GetOutputSpaceDimension();
+  n << this->GetModuleTypeAsString(static_cast<float *>(ITK_NULLPTR));
+  //n << "_" << this->GetInputSpaceDimension() << "_" << this->GetOutputSpaceDimension();
   return n.str();
 }
 
-
-template <typename TScalar,
-          unsigned int NInputDimensions,
-          unsigned int NOutputDimensions>
-typename LightObject::Pointer
-TransformModule1<TScalar, NInputDimensions, NOutputDimensions>
-::InternalClone() const
+LightObject::Pointer
+TransformModule1::InternalClone() const
 {
   // Default implementation just copies the parameters from
-  // this to new transform.
-  typename LightObject::Pointer loPtr = Superclass::InternalClone();
+  // this to new Transform.
+  LightObject::Pointer loPtr = Superclass::InternalClone();
 
-  typename Self::Pointer rval =
+  Self::Pointer rval =
     dynamic_cast<Self *>(loPtr.GetPointer());
   if(rval.IsNull())
     {
@@ -74,6 +58,62 @@ TransformModule1<TScalar, NInputDimensions, NOutputDimensions>
 }
 
 
+  void
+  TransformModule1
+  ::Read()
+{
+  return;
+}
+
+
+  void
+  TransformModule1
+  ::Write()
+{
+  return;
+}
+
+  bool
+  TransformModule1
+  ::MeetsCriteria(const CriteriaType &criteria)
+  {
+    bool hasUndefinedCriteria(false);
+    bool meetsCriteria(true);
+
+    for (CriteriaType::const_iterator it = criteria.begin(); it != criteria.end(); ++it)
+    {
+      if (strcmp(it->first.c_str(), "Name") == 0)
+      {
+        if (strcmp(it->second.c_str(), typeid(Self).name()) != 0)
+        {
+          meetsCriteria = false;
+          return false;
+        }
+      }
+      else if (strcmp(it->first.c_str(), "ModuleOutput") == 0)
+      {
+        if (strcmp(it->second.c_str(), "Transform") != 0)
+        {
+          meetsCriteria = false;
+          return false;
+        }
+      }
+      else if (strcmp(it->first.c_str(), "ModuleInput") == 0)
+      {
+        if (strcmp(it->second.c_str(), "Sampler") != 0)
+        {
+          meetsCriteria = false;
+          return false;
+        }
+      }
+      else
+      {
+        hasUndefinedCriteria = true;
+      }
+
+    } 
+    return meetsCriteria;
+}
 
 } // end namespace itk
 

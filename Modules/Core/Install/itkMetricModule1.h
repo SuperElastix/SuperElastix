@@ -1,19 +1,16 @@
 #ifndef itkMetricModule1_h
 #define itkMetricModule1_h
 
-#include "itkModuleBase.h"
+#include "itkModuleIOBase.h"
 
 namespace itk
 {
-template <typename TScalar,
-          unsigned int NInputDimensions = 3,
-          unsigned int NOutputDimensions = 3>
-class MetricModule1 : public ModuleBaseTemplate< TScalar >
+class MetricModule1 : public ModuleIOBase
 {
 public:
   /** Standard class typedefs. */
   typedef MetricModule1                        Self;
-  typedef ModuleBaseTemplate< TScalar > Superclass;
+  typedef ModuleIOBase Superclass;
   typedef SmartPointer< Self >             Pointer;
   typedef SmartPointer< const Self >       ConstPointer;
 
@@ -21,13 +18,17 @@ public:
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(MetricModule1, ModuleBaseTemplate);
+  itkTypeMacro(MetricModule1, ModuleIOBase);
 
   /** define the Clone method */
   // itkCloneMacro(Self);
 
   /** Type of the scalar representing coordinate and vector elements. */
-  typedef  TScalar ScalarType;
+  //typedef  TScalar ScalarType;
+  
+  typedef Superclass::CriteriaType CriteriaType;
+  typedef Superclass::CriteriumType CriteriumType;
+
   std::string GetModuleTypeAsString() const;
 protected:
   /**
@@ -35,7 +36,7 @@ protected:
    * This does a complete copy of the Metric
    * state to the new Metric
    */
-  virtual typename LightObject::Pointer InternalClone() const ITK_OVERRIDE;
+  virtual LightObject::Pointer InternalClone() const ITK_OVERRIDE;
 
   MetricModule1();
   virtual ~MetricModule1()
@@ -46,13 +47,6 @@ private:
   MetricModule1(const Self &);      // purposely not implemented
   void operator=(const Self &); // purposely not implemented
 
-  template <typename TType>
-  std::string GetModuleTypeAsString(TType *) const
-  {
-    std::string rval("other");
-
-    return rval;
-  }
 
   std::string GetModuleTypeAsString(float *) const
   {
@@ -67,7 +61,9 @@ private:
 
     return rval;
   }
-
+  virtual void Read();
+  virtual void Write();
+  virtual bool MeetsCriteria(const CriteriaType&);
 };
 } // end namespace itk
 

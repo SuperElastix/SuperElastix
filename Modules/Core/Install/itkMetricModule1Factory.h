@@ -15,57 +15,58 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef itkModuleFactoryBase_h
-#define itkModuleFactoryBase_h
+#ifndef itkMetricModule1Factory_h
+#define itkMetricModule1Factory_h
 
-#include "itkObjectFactoryBase.h"
+#include "itkModuleFactoryBase.h"
 #include "itkModuleIOBase.h"
 
 namespace itk
 {
-/** \class ModuleFactoryBase
+/** \class MetricModule1Factory
  * \brief Create instances of MetaImageIO objects using an object factory.
  * \ingroup ITKIOMeta
  */
-class ModuleFactoryBase:public ObjectFactoryBase
+class MetricModule1Factory:public ModuleFactoryBase
 {
 public:
   /** Standard class typedefs. */
-  typedef ModuleFactoryBase         Self;
-  typedef ObjectFactoryBase          Superclass;
+  typedef MetricModule1Factory         Self;
+  typedef ModuleFactoryBase          Superclass;
   typedef SmartPointer< Self >       Pointer;
   typedef SmartPointer< const Self > ConstPointer;
 
-
-
   /** Class methods used to interface with the registered factories. */
-  //virtual const char * GetITKSourceVersion() const { return ITK_SOURCE_VERSION; }
+  virtual const char * GetITKSourceVersion() const ITK_OVERRIDE;
+
+  virtual const char * GetDescription() const ITK_OVERRIDE;
+
+  /** Method for class instantiation. */
+  itkFactorylessNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(ModuleFactoryBase, ObjectFactoryBase);
-  
-  /** Convenient typedefs. */
-  typedef ModuleIOBase::Pointer ModuleIOBasePointer;
-  typedef ModuleIOBase::CriteriaType CriteriaType;
+  itkTypeMacro(MetricModule1Factory, ModuleFactoryBase);
 
-  /** Create the appropriate ModuleIO depending on
-  *  the particulars of the file.
-  */
-  static ModuleIOBasePointer
-    CreateModuleIO(const CriteriaType &criteria);
+  /** Register one factory of this type  */
+  static void RegisterOneFactory()
+  {
+    MetricModule1Factory::Pointer MetricModule1Factory = MetricModule1Factory::New();
+
+    ModuleFactoryBase::RegisterFactory(MetricModule1Factory);
+  }
 
 protected:
-  ModuleFactoryBase() {};
-  ~ModuleFactoryBase() {};
+  MetricModule1Factory();
+  ~MetricModule1Factory() {};
 
 private:
-  ModuleFactoryBase(const Self &); //purposely not implemented
+  MetricModule1Factory(const Self &); //purposely not implemented
   void operator=(const Self &);     //purposely not implemented
 };
 } // end namespace itk
 
-#ifndef ITK_MANUAL_INSTANTIATION
-#include "itkModuleFactoryBase.hxx"
-#endif
 
+#ifndef ITK_MANUAL_INSTANTIATION
+#include "itkMetricModule1Factory.hxx"
+#endif
 #endif

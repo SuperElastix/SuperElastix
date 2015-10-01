@@ -1,19 +1,16 @@
 #ifndef itkTransformModule1_h
 #define itkTransformModule1_h
 
-#include "itkModuleBase.h"
+#include "itkModuleIOBase.h"
 
 namespace itk
 {
-template <typename TScalar,
-          unsigned int NInputDimensions = 3,
-          unsigned int NOutputDimensions = 3>
-class TransformModule1 : public ModuleBaseTemplate< TScalar >
+class TransformModule1 : public ModuleIOBase
 {
 public:
   /** Standard class typedefs. */
   typedef TransformModule1                        Self;
-  typedef ModuleBaseTemplate< TScalar > Superclass;
+  typedef ModuleIOBase Superclass;
   typedef SmartPointer< Self >             Pointer;
   typedef SmartPointer< const Self >       ConstPointer;
 
@@ -21,43 +18,25 @@ public:
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(TransformModule1, ModuleBaseTemplate);
+  itkTypeMacro(TransformModule1, ModuleIOBase);
 
   /** define the Clone method */
-  //itkCloneMacro(Self);
+  // itkCloneMacro(Self);
 
   /** Type of the scalar representing coordinate and vector elements. */
-  typedef  TScalar ScalarType;
+  //typedef  TScalar ScalarType;
 
-  /** Dimension of the domain space. */
-  itkStaticConstMacro(InputSpaceDimension, unsigned int, NInputDimensions);
-  itkStaticConstMacro(OutputSpaceDimension, unsigned int, NOutputDimensions);
+  typedef Superclass::CriteriaType CriteriaType;
+  typedef Superclass::CriteriumType CriteriumType;
 
-  /** Get the size of the input space */
-  unsigned int GetInputSpaceDimension(void) const ITK_OVERRIDE
-  {
-    return NInputDimensions;
-  }
-
-    /** Get the size of the output space */
-    unsigned int GetOutputSpaceDimension(void) const ITK_OVERRIDE
-  {
-    return NOutputDimensions;
-  }
-
-  /** Standard coordinate point type for this class */
-  //typedef Point<TScalar, NInputDimensions>  InputPointType;
-  //typedef Point<TScalar, NOutputDimensions> OutputPointType;
-
-  //virtual OutputPointType TransformPoint(const InputPointType  &) const = 0;
-  virtual std::string GetModuleTypeAsString() const;
+  std::string GetModuleTypeAsString() const;
 protected:
   /**
-   * Clone the current transform.
-   * This does a complete copy of the transform
-   * state to the new transform
+   * Clone the current Transform.
+   * This does a complete copy of the Transform
+   * state to the new Transform
    */
-  virtual typename LightObject::Pointer InternalClone() const ITK_OVERRIDE;
+  virtual LightObject::Pointer InternalClone() const ITK_OVERRIDE;
 
   TransformModule1();
   virtual ~TransformModule1()
@@ -68,13 +47,6 @@ private:
   TransformModule1(const Self &);      // purposely not implemented
   void operator=(const Self &); // purposely not implemented
 
-  template <typename TType>
-  std::string GetModuleTypeAsString(TType *) const
-  {
-    std::string rval("other");
-
-    return rval;
-  }
 
   std::string GetModuleTypeAsString(float *) const
   {
@@ -89,7 +61,9 @@ private:
 
     return rval;
   }
-
+  virtual void Read();
+  virtual void Write();
+  virtual bool MeetsCriteria(const CriteriaType&);
 };
 } // end namespace itk
 
