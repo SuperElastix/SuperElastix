@@ -19,6 +19,8 @@ TEST( Blueprint, Instantiation )
   EXPECT_NO_THROW( componentName = ComponentNameType("Metric") );
   EXPECT_NO_THROW( componentDescriptor->SetComponentName( componentName ) );
 
+  EXPECT_NO_THROW( blueprint->TestFunction() );
+
   ASSERT_TRUE( true );
 }
 

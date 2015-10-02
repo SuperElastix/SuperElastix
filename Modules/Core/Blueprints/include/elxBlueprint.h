@@ -22,19 +22,14 @@ public:
   typedef TComponentDescriptor                                                ComponentDescriptorType;
   typedef typename TComponentDescriptor::ComponentNameType                    ComponentNameType;
   
-  typedef boost::adjacency_list< boost::listS,      
-                                 boost::listS,      
+  typedef boost::adjacency_list< boost::vecS,      
+                                 boost::vecS,      
                                  boost::directedS,
                                  ComponentDescriptorType >                    GraphType;
 
   typedef typename boost::graph_traits< GraphType >::vertex_descriptor        ComponentType;
   typedef typename boost::graph_traits< GraphType >::vertex_iterator          ComponentIterator, ComponentIteratorEnd;
 
-  
-
-  // TODO: Why can't we get the vertex index map type like they show in 
-  // http://www.boost.org/doc/libs/1_38_0/libs/graph/doc/quick_tour.html
-  // under "Access Vertex Set"?
   typedef boost::vertex_index_t                                               ComponentIndexType;
   typedef typename boost::property_map< GraphType, ComponentIndexType >::type ComponentIndexMapType;
 
@@ -44,12 +39,17 @@ public:
   typedef typename boost::graph_traits< GraphType >::in_edge_iterator         InputIterator, InputIteratorEnd;
   typedef typename boost::graph_traits< GraphType >::out_edge_iterator        OutputIterator, OutputIteratorEnd;
 
+  int TestFunction( void );
   bool AddComponent( ComponentDescriptorType component );
-  // bool SetComponent( ComponentIndexType componentIndex, ComponentDescriptorType component );
-  // ComponentDescriptorType GetComponent( ComponentIndexType componentIndex );
+  bool SetComponent( ComponentIndexType componentIndex, ComponentDescriptorType component );
+  ComponentDescriptorType GetComponent( ComponentIndexType componentIndex );
+  bool RemoveComponent( ComponentDescriptorType component );
 
-  // bool SetConnection( ComponentIndexType upstream, ComponentIndexType downstream );
+  bool SetConnection( ComponentIndexType upstream, ComponentIndexType downstream );
   ConnectionDescriptorType GetConnection( ConnectionDescriptorType Connection );
+  bool RemoveConnection( ConnectionDescriptorType connection );
+
+  void PrintGraph( void );
 
 private:
 

@@ -18,25 +18,40 @@ ComponentDescriptorType
 Blueprint< ComponentDescriptor >
 ::AddComponent( ComponentDescriptorType component )
 {
-  // TODO: Check that the component is in the component::ComponentName is in the ComponentDatabase
+  // TODO: Check that the component is in the ComponentDatabase
   this->Modified();
   return this->m_Graph->add_vertex( component );
 }
 
-void 
+bool
+Blueprint< ComponentDescriptor >
+::SetComponent( ComponentDescriptorType component )
+{
+  this->Modified();
+  return this->m_Graph->remove_vertex( connection );
+}
+
+bool
 Blueprint< ComponentDescriptor >
 ::RemoveComponent( ComponentDescriptorType component )
 {
   this->Modified();
-  this->m_Graph->remove_vertex( connection );
+  return this->m_Graph->remove_vertex( connection );
 }
 
-void
+bool
 Blueprint< ComponentDescriptor >
 ::AddConnection( ComponentDescriptorType upsteam, ComponentDescriptorType downstream )
 {
   this->Modified();
-  this->m_Graph->add_edge( upstream, downstream );
+  return this->m_Graph->add_edge( upstream, downstream );
+}
+
+ConnectionDescriptorType
+Blueprint< ComponentDescriptor >
+::GetConnection( ConnectionDescriptorType Connection )
+{
+  this->Modified();
 }
 
 void 
@@ -47,11 +62,18 @@ Blueprint< ComponentDescriptor >
   this->m_Graph->remove_edge( connection );
 }
 
-void Blueprint< ComponentDescriptor >
-::PrintSelf( void )
+void 
+Blueprint< ComponentDescriptor >
+::PrintGraph( void )
 {
-  boost::write_graphviz(std::cout, this->m_Graph);
+  // TODO: Link to graphviz library
+  // boost::write_graphviz(std::cout, this->m_Graph);
+  std::cout << "Printed graph" << std::endl;
 }
+void
+Blueprint< ComponentDescriptor >
+::TestFunction( void )
+{ return 0; }
 
 }
 
