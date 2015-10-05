@@ -25,6 +25,11 @@ include( ${ITK_USE_FILE} )
 include( "${CMAKE_CURRENT_SOURCE_DIR}/CMake/elxITKRequiredModules.cmake" )
 
 # ---------------------------------------------------------------------
+# Boost Graph Library
+find_package( Boost REQUIRED graph )
+include_directories(${Boost_INCLUDE_DIRS})
+
+# ---------------------------------------------------------------------
 # Build Elastix
 
 set( ELASTIX_COMMON_INCLUDE_DIRECTORIES
