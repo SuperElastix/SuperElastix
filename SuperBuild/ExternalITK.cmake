@@ -1,13 +1,13 @@
-set( PROJECT ITK )
+set( proj ITK )
 set( ITK_REPOSITORY https://github.com/InsightSoftwareConsortium/ITK.git )
 set( ITK_TAG "v${ITK_VERSION_STRING}")
 
-ExternalProject_Add( ${PROJECT}
+ExternalProject_Add( ${proj}
   GIT_REPOSITORY ${ITK_REPOSITORY}
   GIT_TAG ${ITK_TAG}
   UPDATE_COMMAND ""
-  SOURCE_DIR ${PROJECT}
-  BINARY_DIR ${PROJECT}-build
+  SOURCE_DIR ${proj}
+  BINARY_DIR ${proj}-build
   CMAKE_ARGS
     --no-warn-unused-cli
     -DBUILD_EXAMPLES:BOOL=OFF

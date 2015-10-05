@@ -8,9 +8,8 @@ set( MSVC_INCREMENTAL_DEFAULT ON )
 project( Elastix )
 
 # Include SuperElastix CMake scripts
-set( CMAKE_MODULE_PATH
+list( APPEND CMAKE_MODULE_PATH
   "${CMAKE_CURRENT_SOURCE_DIR}/CMake" 
-  ${CMAKE_MODULE_PATH}
 )
 
 if( ${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC" )
@@ -23,11 +22,6 @@ endif()
 find_package( ITK REQUIRED )
 include( ${ITK_USE_FILE} )
 include( "${CMAKE_CURRENT_SOURCE_DIR}/CMake/elxITKRequiredModules.cmake" )
-
-# ---------------------------------------------------------------------
-# Boost Graph Library
-find_package( Boost REQUIRED graph )
-include_directories(${Boost_INCLUDE_DIRS})
 
 # ---------------------------------------------------------------------
 # Build Elastix
