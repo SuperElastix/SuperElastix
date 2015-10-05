@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
   std::cout << "there are\n";
   registeredComponents = itk::ObjectFactoryBase::CreateAllInstance("itkComponentBase");
   std::cout << registeredComponents.size()
-    << " IO objects available to the Overlord.\n" << std::endl;
+    << " Component objects available to the Overlord.\n" << std::endl;
 
   typedef itk::ComponentBase       ComponentType;
 
