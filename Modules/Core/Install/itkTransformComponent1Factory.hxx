@@ -15,31 +15,31 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#include "itkTransformModule1Factory.h"
-#include "itkTransformModule1.h"
+#include "itkTransformComponent1Factory.h"
+#include "itkTransformComponent1.h"
 #include "itkVersion.h"
 
 namespace itk
 {
 
-TransformModule1Factory::TransformModule1Factory()
+TransformComponent1Factory::TransformComponent1Factory()
 {
-  this->RegisterOverride( "itkModuleBase",
-                          "itkTransformModule1",
-                          "Transform Module 1",
+  this->RegisterOverride( "itkComponentBase",
+                          "itkTransformComponent1",
+                          "Transform Component 1",
                           1,
-                          CreateObjectFunction< TransformModule1 >::New() ); //float 
+                          CreateObjectFunction< TransformComponent1 >::New() ); //float 
 }
 
 
 const char *
-TransformModule1Factory::GetITKSourceVersion() const
+TransformComponent1Factory::GetITKSourceVersion() const
 {
   return ITK_SOURCE_VERSION;
 }
 
 const char *
-TransformModule1Factory::GetDescription() const
+TransformComponent1Factory::GetDescription() const
 {
   return "Test module 1 for transforms";
 }
@@ -47,14 +47,14 @@ TransformModule1Factory::GetDescription() const
 // Undocumented API used to register during static initialization.
 // DO NOT CALL DIRECTLY.
 
-/*static bool TransformModule1FactoryHasBeenRegistered;
+/*static bool TransformComponent1FactoryHasBeenRegistered;
 
-void TransformModule1FactoryRegister__Private(void)
+void TransformComponent1FactoryRegister__Private(void)
 {
-  if( ! TransformModule1FactoryHasBeenRegistered )
+  if( ! TransformComponent1FactoryHasBeenRegistered )
     {
-    TransformModule1FactoryHasBeenRegistered = true;
-    TransformModule1Factory::RegisterOneFactory();
+    TransformComponent1FactoryHasBeenRegistered = true;
+    TransformComponent1Factory::RegisterOneFactory();
     }
 }
 */

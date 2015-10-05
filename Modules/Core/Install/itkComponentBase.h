@@ -15,11 +15,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef itkModuleBase_h
-#define itkModuleBase_h
+#ifndef itkComponentBase_h
+#define itkComponentBase_h
 
 #include "itkLightProcessObject.h"
-//#include "itkModuleBase.h"
+//#include "itkComponentBase.h"
 #include <list>
 #include <iostream>
 #include <fstream>
@@ -29,41 +29,41 @@
 namespace itk
 {
 
-/** \class ModuleBaseTemplate
+/** \class ComponentBaseTemplate
  *
- * \brief Abstract superclass defining the Module IO interface.
+ * \brief Abstract superclass defining the Component IO interface.
  *
- * ModuleBaseTemplate is a pure virtual base class for derived classes that
- * read/write Module data considering the type of input Module.
- * First, ModuleBase is derived from this class for legacy read/write Module.
- * This class also is used by the ModuleFileReader and ModuleFileWriter
- * classes. End users don't directly manipulate classes derived from ModuleBaseTemplate;
- * the ModuleFactory is used by the Reader/Writer to pick a concrete derived class to do
- * the actual reading/writing of Modules.
+ * ComponentBaseTemplate is a pure virtual base class for derived classes that
+ * read/write Component data considering the type of input Component.
+ * First, ComponentBase is derived from this class for legacy read/write Component.
+ * This class also is used by the ComponentFileReader and ComponentFileWriter
+ * classes. End users don't directly manipulate classes derived from ComponentBaseTemplate;
+ * the ComponentFactory is used by the Reader/Writer to pick a concrete derived class to do
+ * the actual reading/writing of Components.
  *
- * \ingroup ITKIOModuleBase
+ * \ingroup ITKIOComponentBase
  */
-class ModuleBase:public LightProcessObject
+class ComponentBase:public LightProcessObject
 {
 public:
   /** Standard class typedefs */
-  typedef ModuleBase   Self;
+  typedef ComponentBase   Self;
   typedef LightProcessObject        Superclass;
   typedef SmartPointer< Self >      Pointer;
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(ModuleBase, Superclass);
+  itkTypeMacro(ComponentBase, Superclass);
 
-  /** Module types */
+  /** Component types */
   //typedef TScalar                           ScalarType;
-  //typedef ModuleBaseTemplate<ScalarType> ModuleType;
-  /** For writing, a const Module list gets passed in, for
-   * reading, a non-const Module list is created from the file.
+  //typedef ComponentBaseTemplate<ScalarType> ComponentType;
+  /** For writing, a const Component list gets passed in, for
+   * reading, a non-const Component list is created from the file.
    */
-  //typedef typename ModuleType::Pointer             ModulePointer;
-  //typedef std::list< ModulePointer >               ModuleListType;
-  //typedef typename ModuleType::ConstPointer        ConstModulePointer;
-  //typedef std::list< ConstModulePointer >          ConstModuleListType;
+  //typedef typename ComponentType::Pointer             ComponentPointer;
+  //typedef std::list< ComponentPointer >               ComponentListType;
+  //typedef typename ComponentType::ConstPointer        ConstComponentPointer;
+  //typedef std::list< ConstComponentPointer >          ConstComponentListType;
 
   typedef std::map<std::string, std::string> CriteriaType;
   typedef std::pair<std::string, std::string> CriteriumType;
@@ -75,16 +75,16 @@ public:
   /** Reads the data from disk into the memory buffer provided. */
   virtual void Read() = 0;
 
-  /** Writes the Module list to disk. */
+  /** Writes the Component list to disk. */
   virtual void Write() = 0;
 
-  /** Determine the file type. Returns true if this Module can read the
+  /** Determine the file type. Returns true if this Component can read the
    * file specified. */
   virtual bool MeetsCriteria(const CriteriaType &criteria) = 0;
 
 protected:
-  ModuleBase() {};
-  virtual ~ModuleBase() {};
+  ComponentBase() {};
+  virtual ~ComponentBase() {};
   //virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
   std::string            m_FileName;
@@ -94,4 +94,4 @@ protected:
 } // end namespace itk
 
 
-#endif // itkModuleBase_h
+#endif // itkComponentBase_h

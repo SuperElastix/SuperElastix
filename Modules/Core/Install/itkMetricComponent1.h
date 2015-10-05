@@ -1,16 +1,16 @@
-#ifndef itkMetricModule1_h
-#define itkMetricModule1_h
+#ifndef itkMetricComponent1_h
+#define itkMetricComponent1_h
 
-#include "itkModuleBase.h"
+#include "itkComponentBase.h"
 
 namespace itk
 {
-class MetricModule1 : public ModuleBase
+class MetricComponent1 : public ComponentBase
 {
 public:
   /** Standard class typedefs. */
-  typedef MetricModule1                        Self;
-  typedef ModuleBase Superclass;
+  typedef MetricComponent1                        Self;
+  typedef ComponentBase Superclass;
   typedef SmartPointer< Self >             Pointer;
   typedef SmartPointer< const Self >       ConstPointer;
 
@@ -18,7 +18,7 @@ public:
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(MetricModule1, ModuleBase);
+  itkTypeMacro(MetricComponent1, ComponentBase);
 
   /** define the Clone method */
   // itkCloneMacro(Self);
@@ -29,7 +29,7 @@ public:
   typedef Superclass::CriteriaType CriteriaType;
   typedef Superclass::CriteriumType CriteriumType;
 
-  std::string GetModuleTypeAsString() const;
+  std::string GetComponentTypeAsString() const;
 protected:
   /**
    * Clone the current Metric.
@@ -38,24 +38,24 @@ protected:
    */
   virtual LightObject::Pointer InternalClone() const ITK_OVERRIDE;
 
-  MetricModule1();
-  virtual ~MetricModule1()
+  MetricComponent1();
+  virtual ~MetricComponent1()
   {
   }
 
 private:
-  MetricModule1(const Self &);      // purposely not implemented
+  MetricComponent1(const Self &);      // purposely not implemented
   void operator=(const Self &); // purposely not implemented
 
 
-  std::string GetModuleTypeAsString(float *) const
+  std::string GetComponentTypeAsString(float *) const
   {
     std::string rval("float");
 
     return rval;
   }
 
-  std::string GetModuleTypeAsString(double *) const
+  std::string GetComponentTypeAsString(double *) const
   {
     std::string rval("double");
 
@@ -68,7 +68,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkMetricModule1.hxx"
+#include "itkMetricComponent1.hxx"
 #endif
 
 #endif

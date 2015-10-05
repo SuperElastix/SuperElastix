@@ -15,7 +15,7 @@
 *  limitations under the License.
 *
 *=========================================================================*/
-//#include "itkModuleFactoryRegisterManager.h"
+//#include "itkComponentFactoryRegisterManager.h"
 
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
@@ -31,59 +31,59 @@
 #include "itkMatrixOffsetTransformBase.h"
 
 //Floris: The module factory is based on the ImageIO factory. 
-// We manually register 2 dummy modules: itkTransformModule1 and itkMetricModule1. 
+// We manually register 2 dummy modules: itkTransformComponent1 and itkMetricComponent1. 
 // in ITK CMake\UseITK.cmake sets up the IOFactory_Register_Manager for transforms and images
 // Elastix (by Denis) uses (simpleITK's) Typelists to register all GPU filters 
-//#include "itkModuleFactoryBase.h"
-//#include "itkModuleFactory.h"
+//#include "itkComponentFactoryBase.h"
+//#include "itkComponentFactory.h"
 
-#include "itkModuleBase.h"
-//#include "itkModuleFactory.h"
+#include "itkComponentBase.h"
+//#include "itkComponentFactory.h"
 
 #include <map>
 #include <string>
 
-#include "itkTransformModule1.h"
-#include "itkTransformModule1Factory.h"
+#include "itkTransformComponent1.h"
+#include "itkTransformComponent1Factory.h"
 
-#include "itkMetricModule1.h"
-#include "itkMetricModule1Factory.h"
+#include "itkMetricComponent1.h"
+#include "itkMetricComponent1Factory.h"
 
 int main(int argc, char *argv[])
 {
   typedef float ScalarType;
 
   typedef std::list< itk::LightObject::Pointer > RegisteredObjectsContainerType;
-  RegisteredObjectsContainerType registeredIOs =
-    itk::ObjectFactoryBase::CreateAllInstance("itkModuleBase");
-  std::cout << "When CMake is not used to register the IO classes, there are\n"
-    << registeredIOs.size()
-    << " IO objects available to the Overlord.\n" << std::endl;
+  RegisteredObjectsContainerType registeredComponents =
+    itk::ObjectFactoryBase::CreateAllInstance("itkComponentBase");
+  std::cout << "When CMake is not used to register the Component classes, there are\n"
+    << registeredComponents.size()
+    << " Component objects available to the Overlord.\n" << std::endl;
 
-  std::cout << "After registering the TransformModule1 object, ";
-  itk::TransformModule1Factory::RegisterOneFactory();
-  itk::MetricModule1Factory::RegisterOneFactory();
+  std::cout << "After registering the TransformComponent1 object, ";
+  itk::TransformComponent1Factory::RegisterOneFactory();
+  itk::MetricComponent1Factory::RegisterOneFactory();
   std::cout << "there are\n";
-  registeredIOs = itk::ObjectFactoryBase::CreateAllInstance("itkModuleBase");
-  std::cout << registeredIOs.size()
+  registeredComponents = itk::ObjectFactoryBase::CreateAllInstance("itkComponentBase");
+  std::cout << registeredComponents.size()
     << " IO objects available to the Overlord.\n" << std::endl;
 
-  typedef itk::ModuleBase       ModuleType;
+  typedef itk::ComponentBase       ComponentType;
 
   typedef std::map<std::string, std::string> CriteriaType;
   typedef std::pair<std::string, std::string> CriteriumType;
 
   CriteriaType criteria1;
-  //criteria1.insert(CriteriumType("ModuleOutput","Metric")); 
-  criteria1["ModuleOutput"] = "Transform";
+  //criteria1.insert(CriteriumType("ComponentOutput","Metric")); 
+  criteria1["ComponentOutput"] = "Transform";
   CriteriaType criteria2;
-  criteria2["ModuleInput"] = "Transform";
-  //criteria1.insert(CriteriumType("ModuleInput", "Metric"));
+  criteria2["ComponentInput"] = "Transform";
+  //criteria1.insert(CriteriumType("ComponentInput", "Metric"));
 
 
-  ModuleType::Pointer Node1 = itk::ModuleFactory::CreateModule(criteria1);
+  ComponentType::Pointer Node1 = itk::ComponentFactory::CreateComponent(criteria1);
   
-  ModuleType::Pointer Node2 = itk::ModuleFactory::CreateModule(criteria2);
+  ComponentType::Pointer Node2 = itk::ComponentFactory::CreateComponent(criteria2);
 
   
 

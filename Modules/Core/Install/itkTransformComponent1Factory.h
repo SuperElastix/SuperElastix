@@ -15,23 +15,23 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef itkMetricModule1Factory_h
-#define itkMetricModule1Factory_h
+#ifndef itkTransformComponent1Factory_h
+#define itkTransformComponent1Factory_h
 
-#include "itkModuleFactory.h"
-#include "itkModuleBase.h"
+#include "itkComponentFactory.h"
+#include "itkComponentBase.h"
 
 namespace itk
 {
-/** \class MetricModule1Factory
+/** \class TransformComponent1Factory
  * \brief Create instances of MetaImageIO objects using an object factory.
  * \ingroup ITKIOMeta
  */
-  class MetricModule1Factory :public ObjectFactoryBase
+  class TransformComponent1Factory :public ObjectFactoryBase
 {
 public:
   /** Standard class typedefs. */
-  typedef MetricModule1Factory         Self;
+  typedef TransformComponent1Factory         Self;
   typedef ObjectFactoryBase          Superclass;
   typedef SmartPointer< Self >       Pointer;
   typedef SmartPointer< const Self > ConstPointer;
@@ -45,28 +45,28 @@ public:
   itkFactorylessNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(MetricModule1Factory, ObjectFactoryBase);
+  itkTypeMacro(TransformComponent1Factory, ObjectFactoryBase);
 
   /** Register one factory of this type  */
   static void RegisterOneFactory()
   {
-    MetricModule1Factory::Pointer MetricModule1Factory = MetricModule1Factory::New();
+    TransformComponent1Factory::Pointer transformComponent1Factory = TransformComponent1Factory::New();
 
-    ObjectFactoryBase::RegisterFactory(MetricModule1Factory);
+    ObjectFactoryBase::RegisterFactory(transformComponent1Factory);
   }
 
 protected:
-  MetricModule1Factory();
-  ~MetricModule1Factory() {};
+  TransformComponent1Factory();
+  ~TransformComponent1Factory(){};
 
 private:
-  MetricModule1Factory(const Self &); //purposely not implemented
+  TransformComponent1Factory(const Self &); //purposely not implemented
   void operator=(const Self &);     //purposely not implemented
 };
 } // end namespace itk
 
-
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkMetricModule1Factory.hxx"
+#include "itkTransformComponent1Factory.hxx"
 #endif
+
 #endif

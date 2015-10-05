@@ -15,44 +15,44 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef itkModuleFactory_hxx
-#define itkModuleFactory_hxx
+#ifndef itkComponentFactory_hxx
+#define itkComponentFactory_hxx
 
-#include "itkModuleFactory.h"
+#include "itkComponentFactory.h"
 
 namespace itk
 {
 
-ModuleFactory::ModuleFactory()
+ComponentFactory::ComponentFactory()
   {
-    this->m_PossibleModules.clear();
+    this->m_PossibleComponents.clear();
   }
-ModuleFactory::~ModuleFactory()
+ComponentFactory::~ComponentFactory()
   {
   }
 
 
 
-ModuleBase::Pointer ModuleFactory::CreateModule(const CriteriaType &criteria)
+ComponentBase::Pointer ComponentFactory::CreateComponent(const CriteriaType &criteria)
 {
-  std::list< typename ModuleBase::Pointer > possibleModules;
+  std::list< typename ComponentBase::Pointer > possibleComponents;
 //  std::list< LightObject::Pointer >     allobjects =
-//    ObjectFactoryBase::CreateAllInstance("itkModuleIOBaseTemplate");
+//    ObjectFactoryBase::CreateAllInstance("itkComponentIOBaseTemplate");
   std::list< LightObject::Pointer >     allobjects =
-    ObjectFactoryBase::CreateAllInstance("itkModuleBase");
+    ObjectFactoryBase::CreateAllInstance("itkComponentBase");
 
   for ( std::list< LightObject::Pointer >::iterator i = allobjects.begin();
         i != allobjects.end(); ++i )
     {
-    ModuleBase *io =
-                        dynamic_cast< ModuleBase * >( i->GetPointer() );
+    ComponentBase *io =
+                        dynamic_cast< ComponentBase * >( i->GetPointer() );
     if ( io )
       {
-        possibleModules.push_back(io);
+        possibleComponents.push_back(io);
       }
     }
-  for (std::list< typename ModuleBase::Pointer >::iterator k = possibleModules.begin();
-    k != possibleModules.end(); ++k)
+  for (std::list< typename ComponentBase::Pointer >::iterator k = possibleComponents.begin();
+    k != possibleComponents.end(); ++k)
     {
       if ( ( *k )->MeetsCriteria(criteria) )
         {

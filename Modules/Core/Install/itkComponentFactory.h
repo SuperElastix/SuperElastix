@@ -15,23 +15,23 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef itkModuleFactory_h
-#define itkModuleFactory_h
+#ifndef itkComponentFactory_h
+#define itkComponentFactory_h
 
 #include "itkObjectFactory.h"
-#include "itkModuleBase.h"
+#include "itkComponentBase.h"
 
 namespace itk
 {
-/** \class ModuleFactor
+/** \class ComponentFactor
  * \brief Create instances of MetaImageIO objects using an object factory.
  * \ingroup ITKIOMeta
  */
-class ModuleFactory:public Object
+class ComponentFactory:public Object
 {
 public:
   /** Standard class typedefs. */
-  typedef ModuleFactory         Self;
+  typedef ComponentFactory         Self;
   typedef Object          Superclass;
   typedef SmartPointer< Self >       Pointer;
   typedef SmartPointer< const Self > ConstPointer;
@@ -41,41 +41,41 @@ public:
   //virtual const char * GetITKSourceVersion() const { return ITK_SOURCE_VERSION; }
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(ModuleFactory, Object);
+  itkTypeMacro(ComponentFactory, Object);
   
   /** Convenient typedefs. */
-  typedef ModuleBase::Pointer ModuleBasePointer;
-  typedef ModuleBase::CriteriaType CriteriaType;
+  typedef ComponentBase::Pointer ComponentBasePointer;
+  typedef ComponentBase::CriteriaType CriteriaType;
 
-  typedef std::list< typename ModuleBasePointer > ModuleListType;
-  /** set selection criteria for possibleModules*/
+  typedef std::list< typename ComponentBasePointer > ComponentListType;
+  /** set selection criteria for possibleComponents*/
   void SetCriteria(const CriteriaType &criteria);
   
   /** Narrow selection criteria*/
   void AddCriteria(const CriteriaType &criteria);
 
   
-  /** Create the appropriate ModuleIO depending on
+  /** Create the appropriate ComponentIO depending on
   *  the particulars of the file.
   */
-  static ModuleBasePointer
-    CreateModule(const CriteriaType &criteria);
+  static ComponentBasePointer
+    CreateComponent(const CriteriaType &criteria);
 
   
 protected:
   CriteriaType m_Criteria;
-  mutable ModuleListType m_PossibleModules;
-  ModuleFactory();
-  ~ModuleFactory();
+  mutable ComponentListType m_PossibleComponents;
+  ComponentFactory();
+  ~ComponentFactory();
 
 private:
-  ModuleFactory(const Self &); //purposely not implemented
+  ComponentFactory(const Self &); //purposely not implemented
   void operator=(const Self &);     //purposely not implemented
 };
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkModuleFactory.hxx"
+#include "itkComponentFactory.hxx"
 #endif
 
 #endif

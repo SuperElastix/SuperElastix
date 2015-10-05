@@ -15,30 +15,30 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef itkTransformModule1_hxx
-#define itkTransformModule1_hxx
+#ifndef itkTransformComponent1_hxx
+#define itkTransformComponent1_hxx
 
-#include "itkTransformModule1.h"
+#include "itkTransformComponent1.h"
 
 namespace itk
 {
-  TransformModule1::TransformModule1()
+  TransformComponent1::TransformComponent1()
   {
   }
 
-std::string TransformModule1::GetModuleTypeAsString() const
+std::string TransformComponent1::GetComponentTypeAsString() const
 {
   std::ostringstream n;
 
   n << GetNameOfClass();
   n << "_";
-  n << this->GetModuleTypeAsString(static_cast<float *>(ITK_NULLPTR));
+  n << this->GetComponentTypeAsString(static_cast<float *>(ITK_NULLPTR));
   //n << "_" << this->GetInputSpaceDimension() << "_" << this->GetOutputSpaceDimension();
   return n.str();
 }
 
 LightObject::Pointer
-TransformModule1::InternalClone() const
+TransformComponent1::InternalClone() const
 {
   // Default implementation just copies the parameters from
   // this to new Transform.
@@ -59,7 +59,7 @@ TransformModule1::InternalClone() const
 
 
   void
-  TransformModule1
+  TransformComponent1
   ::Read()
 {
   return;
@@ -67,14 +67,14 @@ TransformModule1::InternalClone() const
 
 
   void
-  TransformModule1
+  TransformComponent1
   ::Write()
 {
   return;
 }
 
   bool
-  TransformModule1
+  TransformComponent1
   ::MeetsCriteria(const CriteriaType &criteria)
   {
     bool hasUndefinedCriteria(false);
@@ -90,7 +90,7 @@ TransformModule1::InternalClone() const
           return false;
         }
       }
-      else if (strcmp(it->first.c_str(), "ModuleOutput") == 0)
+      else if (strcmp(it->first.c_str(), "ComponentOutput") == 0)
       {
         if (strcmp(it->second.c_str(), "Transform") != 0)
         {
@@ -98,7 +98,7 @@ TransformModule1::InternalClone() const
           return false;
         }
       }
-      else if (strcmp(it->first.c_str(), "ModuleInput") == 0)
+      else if (strcmp(it->first.c_str(), "ComponentInput") == 0)
       {
         if (strcmp(it->second.c_str(), "Sampler") != 0)
         {

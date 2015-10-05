@@ -15,30 +15,30 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#include "itkMetricModule1Factory.h"
-#include "itkMetricModule1.h"
+#include "itkMetricComponent1Factory.h"
+#include "itkMetricComponent1.h"
 #include "itkVersion.h"
 
 namespace itk
 {
 
-MetricModule1Factory::MetricModule1Factory()
+MetricComponent1Factory::MetricComponent1Factory()
 {
-  this->RegisterOverride( "itkModuleBase",
-                          "itkMetricModule1",
-                          "Metric Module 1",
+  this->RegisterOverride( "itkComponentBase",
+                          "itkMetricComponent1",
+                          "Metric Component 1",
                           1,
-                          CreateObjectFunction< MetricModule1 >::New() ); //float 
+                          CreateObjectFunction< MetricComponent1 >::New() ); //float 
 }
 
 const char *
-MetricModule1Factory::GetITKSourceVersion() const
+MetricComponent1Factory::GetITKSourceVersion() const
 {
   return ITK_SOURCE_VERSION;
 }
 
 const char *
-MetricModule1Factory::GetDescription() const
+MetricComponent1Factory::GetDescription() const
 {
   return "Test module 1 for Metrics";
 }
@@ -46,14 +46,14 @@ MetricModule1Factory::GetDescription() const
 // Undocumented API used to register during static initialization.
 // DO NOT CALL DIRECTLY.
 /*
-static bool MetricModule1FactoryHasBeenRegistered;
+static bool MetricComponent1FactoryHasBeenRegistered;
 
-void MetricModule1FactoryRegister__Private(void)
+void MetricComponent1FactoryRegister__Private(void)
 {
-  if( ! MetricModule1FactoryHasBeenRegistered )
+  if( ! MetricComponent1FactoryHasBeenRegistered )
     {
-    MetricModule1FactoryHasBeenRegistered = true;
-    MetricModule1Factory::RegisterOneFactory();
+    MetricComponent1FactoryHasBeenRegistered = true;
+    MetricComponent1Factory::RegisterOneFactory();
     }
 }
 */

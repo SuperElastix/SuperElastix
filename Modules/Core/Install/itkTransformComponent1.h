@@ -1,16 +1,16 @@
-#ifndef itkTransformModule1_h
-#define itkTransformModule1_h
+#ifndef itkTransformComponent1_h
+#define itkTransformComponent1_h
 
-#include "itkModuleBase.h"
+#include "itkComponentBase.h"
 
 namespace itk
 {
-class TransformModule1 : public ModuleBase
+class TransformComponent1 : public ComponentBase
 {
 public:
   /** Standard class typedefs. */
-  typedef TransformModule1                        Self;
-  typedef ModuleBase Superclass;
+  typedef TransformComponent1                        Self;
+  typedef ComponentBase Superclass;
   typedef SmartPointer< Self >             Pointer;
   typedef SmartPointer< const Self >       ConstPointer;
 
@@ -18,7 +18,7 @@ public:
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(TransformModule1, ModuleBase);
+  itkTypeMacro(TransformComponent1, ComponentBase);
 
   /** define the Clone method */
   // itkCloneMacro(Self);
@@ -29,7 +29,7 @@ public:
   typedef Superclass::CriteriaType CriteriaType;
   typedef Superclass::CriteriumType CriteriumType;
 
-  std::string GetModuleTypeAsString() const;
+  std::string GetComponentTypeAsString() const;
 protected:
   /**
    * Clone the current Transform.
@@ -38,24 +38,24 @@ protected:
    */
   virtual LightObject::Pointer InternalClone() const ITK_OVERRIDE;
 
-  TransformModule1();
-  virtual ~TransformModule1()
+  TransformComponent1();
+  virtual ~TransformComponent1()
   {
   }
 
 private:
-  TransformModule1(const Self &);      // purposely not implemented
+  TransformComponent1(const Self &);      // purposely not implemented
   void operator=(const Self &); // purposely not implemented
 
 
-  std::string GetModuleTypeAsString(float *) const
+  std::string GetComponentTypeAsString(float *) const
   {
     std::string rval("float");
 
     return rval;
   }
 
-  std::string GetModuleTypeAsString(double *) const
+  std::string GetComponentTypeAsString(double *) const
   {
     std::string rval("double");
 
@@ -68,7 +68,7 @@ private:
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkTransformModule1.hxx"
+#include "itkTransformComponent1.hxx"
 #endif
 
 #endif

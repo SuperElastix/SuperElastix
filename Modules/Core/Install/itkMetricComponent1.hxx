@@ -15,30 +15,30 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef itkMetricModule1_hxx
-#define itkMetricModule1_hxx
+#ifndef itkMetricComponent1_hxx
+#define itkMetricComponent1_hxx
 
-#include "itkMetricModule1.h"
+#include "itkMetricComponent1.h"
 
 namespace itk
 {
-  MetricModule1::MetricModule1()
+  MetricComponent1::MetricComponent1()
 {
 }
 
-std::string MetricModule1::GetModuleTypeAsString() const
+std::string MetricComponent1::GetComponentTypeAsString() const
 {
   std::ostringstream n;
 
   n << GetNameOfClass();
   n << "_";
-  n << this->GetModuleTypeAsString(static_cast<float *>(ITK_NULLPTR));
+  n << this->GetComponentTypeAsString(static_cast<float *>(ITK_NULLPTR));
   //n << "_" << this->GetInputSpaceDimension() << "_" << this->GetOutputSpaceDimension();
   return n.str();
 }
 
 LightObject::Pointer
-MetricModule1::InternalClone() const
+MetricComponent1::InternalClone() const
 {
   // Default implementation just copies the parameters from
   // this to new Metric.
@@ -59,7 +59,7 @@ MetricModule1::InternalClone() const
 
 
   void
-  MetricModule1
+  MetricComponent1
   ::Read()
 {
   return;
@@ -67,14 +67,14 @@ MetricModule1::InternalClone() const
 
 
   void
-  MetricModule1
+  MetricComponent1
   ::Write()
 {
   return;
 }
 
   bool
-  MetricModule1
+  MetricComponent1
   ::MeetsCriteria(const CriteriaType& criteria)
 {
   bool hasUndefinedCriteria(false);
@@ -90,7 +90,7 @@ MetricModule1::InternalClone() const
         return false;
       }
     }
-    else if (strcmp(it->first.c_str(), "ModuleOutput") == 0)
+    else if (strcmp(it->first.c_str(), "ComponentOutput") == 0)
     {
       if (strcmp(it->second.c_str(), "Metric") != 0)
       {
@@ -98,7 +98,7 @@ MetricModule1::InternalClone() const
         return false;
       }
     }
-    else if (strcmp(it->first.c_str(), "ModuleInput") == 0)
+    else if (strcmp(it->first.c_str(), "ComponentInput") == 0)
     {
       if (strcmp(it->second.c_str(), "Transform") != 0)
       {
