@@ -5,16 +5,10 @@
 
 #include "elxBlueprint.h"
 
-namespace elastix {
+namespace elx {
 
-void
-Blueprint< ComponentDescriptor >
-::Blueprint( void )
-{
-  this->SetGraph( GraphType );
-}
-
-ComponentDescriptorType
+/*
+Blueprint< ComponentDescriptor >::ComponentDescriptorType
 Blueprint< ComponentDescriptor >
 ::AddComponent( ComponentDescriptorType component )
 {
@@ -70,11 +64,14 @@ Blueprint< ComponentDescriptor >
   // boost::write_graphviz(std::cout, this->m_Graph);
   std::cout << "Printed graph" << std::endl;
 }
-void
+*/
+
+template<>
+int
 Blueprint< ComponentDescriptor >
 ::TestFunction( void )
 { return 0; }
 
-}
+} // namespace elx 
 
 #endif // __Blueprint_hxx

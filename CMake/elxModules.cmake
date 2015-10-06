@@ -16,28 +16,25 @@ macro( _elxmodule_enable MODULE )
   _elxmodule_check_name( ${MODULE} )
 
   if( NOT ${MODULE}_ENABLED )
-    set( "${MODULE}_ENABLED" ON )
+    set( USE_${MODULE} ON )
 
-    add_subdirectory( "${${MODULE}_SOURCE_DIR}" )
+    include( ${${MODULE}_FILE} )
 
     if( ${MODULE}_INCLUDE_DIRS )
       include_directories( ${${MODULE}_INCLUDE_DIRS} )
     endif()
 
-    if( ${MODULE}_LIBRARIES )
-      link_directories( ${${MODULE}_LIBRARY_DIR} )
-    endif()
+    add_subdirectory( ${${MODULE}_SOURCE_DIR} )
 
-    if( ${${MODULE}_LIBRARIES} )
+    if( ${MODULE}_LIBRARIES )
+      link_directories( ${${MODULE}_LIBRARY_DIRS} )
+
       list( APPEND ELASTIX_LIBRARIES
         ${${MODULE}_LIBRARIES}
       )
     endif()
 
     # TODO: Add recursive dependency walk
-    # foreach( DEPENDENCY IN LISTS ${MODULE}_DEPENDS )
-    #   _elxmodule_enable( ${DEPENDENCY} )
-    # endforeach()
   endif()
 endmacro()
 
@@ -49,7 +46,7 @@ macro( _elxmodules_initialize )
   set( ELXMODULE_ALL )
 
   file( GLOB MODULE_FILES RELATIVE "${CMAKE_SOURCE_DIR}"
-     "${CMAKE_SOURCE_DIR}/Modules/*/ELXMODULE_*.cmake"
+     "${CMAKE_SOURCE_DIR}/Modules/*/elxModule*.cmake"
   )
 
   message( STATUS "Found the following elastix modules:")
@@ -59,10 +56,14 @@ macro( _elxmodules_initialize )
     message( STATUS "  ${MODULE}" )
 
     option( "USE_${MODULE}" OFF )
+    set( "${MODULE}_FILE" ${CMAKE_SOURCE_DIR}/${MODULE_FILE} )
     set( "${MODULE}_ENABLED" OFF )
 
     set( ${MODULE}_SOURCE_DIR ${CMAKE_SOURCE_DIR}/${MODULE_PATH} )
     set( ${MODULE}_BINARY_DIR ${CMAKE_BINARY_DIR}/${MODULE_PATH} )
+
+    set( ${MODULE}_INCLUDE_DIRS )
+    set( ${MODULE}_LIBRARY_DIRS )
     set( ${MODULE}_LIBRARIES )
 
     list(APPEND ELXMODULE_ALL ${MODULE} )
@@ -75,8 +76,12 @@ _elxmodules_initialize()
 # Public interface
 
 macro( elxmodule_enable MODULE )
-  option( USE_${MODULE} ON )
   _elxmodule_enable( ${MODULE} )
 endmacro()
 
-
+macro( elxmodule_compile MODULE )
+  project( "${MODULE}" )
+  add_library( ${MODULE} STATIC "${${MODULE}_SOURCE_FILES}" )
+  target_link_libraries( ${MODULE} ${ELASTIX_LIBRARIES} )
+  list( APPEND ${MODULE}_LIBRARIES ${MODULE} )
+endmacro()
