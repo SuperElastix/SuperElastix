@@ -2,6 +2,7 @@
 #define __ComponentDescriptor_h
 
 #include "elxMacro.h"
+#include "itkObjectFactory.h"
 #include "itkDataObject.h"
 
 namespace elx {
@@ -14,6 +15,9 @@ public:
 
   // Identifier to find component in the component database
   typedef std::string ComponentNameType;
+
+  ComponentDescriptor( void ) { this->SetComponentName( ComponentNameType() ); }
+  ComponentDescriptor( const ComponentNameType componentName );
 
   // TODO: Setter should validate ComponentName exists in ComponentDatabase
   itkSetMacro( ComponentName, ComponentNameType ); 
