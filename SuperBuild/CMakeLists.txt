@@ -1,6 +1,6 @@
 cmake_minimum_required( VERSION 2.8 )
 
-#---------------------------------------------------------------------
+# ---------------------------------------------------------------------
 project( ElastixSuperBuild )
 
 find_package( Git REQUIRED )
@@ -15,7 +15,7 @@ set( CMAKE_MODULE_PATH
 
 set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR} CACHE PATH "SuperBuild install directory" FORCE)
 
-#---------------------------------------------------------------------
+# ---------------------------------------------------------------------
 # Elastix SuperBuild configuration
 
 # Build release by default
@@ -29,13 +29,16 @@ option( ELASTIX_BUILD_EXAMPLES "Enable building examples." ON )
 
 # Build tests by default
 option( ELASTIX_BUILD_TESTING "Enable building tests." ON )
-
 if( ELASTIX_BUILD_TESTING )
   option( ELASTIX_BUILD_BENCHMARKING "Enable building benchmarks." ON )
   option( ELASTIX_BUILD_DASHBOARD "Enable building benchmarks." ON )
 endif()
 
-#---------------------------------------------------------------------
+# Do not build dashboard by default
+option( ELASTIX_BUILD_DASHBOARD "Enable building dashboard." OFF )
+
+
+# ---------------------------------------------------------------------
 # Build ITK
 
 set( ITK_VERSION_MAJOR "4" )
@@ -54,7 +57,19 @@ else()
   list( APPEND ELASTIX_DEPENDENCIES ITK )
 endif()
 
-#---------------------------------------------------------------------
+# ---------------------------------------------------------------------
+# Boost Graph Library
+
+mark_as_advanced( USE_SYSTEM_BOOST )
+option( USE_SYSTEM_BOOST "Use an installed version of BOOST" OFF )
+if( USE_SYSTEM_BOOST )
+  find_package( BOOST REQUIRED graph )
+else()
+  include( ExternalBoost )
+  list( APPEND ELASTIX_DEPENDENCIES BOOST )
+endif()
+
+# ---------------------------------------------------------------------
 # Build Elastix
 
 include( Elastix )

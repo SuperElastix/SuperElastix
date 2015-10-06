@@ -1,2 +1,1 @@
-add_subdirectory( Common )
-add_subdirectory( Blueprints )
+elxmodule_compile( ${MODULE} )
