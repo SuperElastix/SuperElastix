@@ -7,10 +7,15 @@ set( MSVC_INCREMENTAL_DEFAULT ON )
 # ---------------------------------------------------------------------
 project( Elastix )
 
+# Place libraries and executables in the bin directory
+set( CMAKE_RUNTIME_OUTPUT_DIRECTORY
+  "${CMAKE_BINARY_DIR}/bin"
+)
+
 # Include SuperElastix CMake scripts
 set( CMAKE_MODULE_PATH
-  "${CMAKE_CURRENT_SOURCE_DIR}/CMake" 
   ${CMAKE_MODULE_PATH}
+  "${CMAKE_SOURCE_DIR}/CMake" 
 )
 
 if( ${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC" )
@@ -27,26 +32,14 @@ include( "${CMAKE_CURRENT_SOURCE_DIR}/CMake/elxITKRequiredModules.cmake" )
 # ---------------------------------------------------------------------
 # Boost Graph Library
 find_package( Boost REQUIRED graph )
-include_directories(${Boost_INCLUDE_DIRS})
+include_directories( ${Boost_INCLUDE_DIRS} )
 
 # ---------------------------------------------------------------------
 # Build Elastix
 
-set( ELASTIX_COMMON_INCLUDE_DIRECTORIES
-  ${CMAKE_SOURCE_DIR}/Modules/Core/Common/include
-)
-
-set( ELASTIX_CORE_INCLUDE_DIRECTORIES
-  ${CMAKE_SOURCE_DIR}/Modules/Core/Blueprints/include
-)
-
-set( ELASTIX_INCLUDE_DIRECTORIES
-  ${ELASTIX_COMMON_INCLUDE_DIRECTORIES}
-  ${ELASTIX_CORE_INCLUDE_DIRECTORIES}
-)
-
-include_directories( ${ELASTIX_INCLUDE_DIRECTORIES} )
-add_subdirectory( Modules )
+# For now we just enable all modules
+include( "${CMAKE_CURRENT_SOURCE_DIR}/CMake/elxModules.cmake" )
+elxmodule_enable( elxModuleCore )
 
 # ---------------------------------------------------------------------
 # Testing
