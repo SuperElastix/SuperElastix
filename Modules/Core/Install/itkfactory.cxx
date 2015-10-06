@@ -60,9 +60,9 @@ int main(int argc, char *argv[])
     << registeredComponents.size()
     << " Component objects available to the Overlord.\n" << std::endl;
 
-  std::cout << "After registering the TransformComponent1 object, ";
   itk::TransformComponent1Factory::RegisterOneFactory();
   itk::MetricComponent1Factory::RegisterOneFactory();
+  std::cout << "After registering the TransformComponent1 and MetricComponent1object, ";
   std::cout << "there are\n";
   registeredComponents = itk::ObjectFactoryBase::CreateAllInstance("itkComponentBase");
   std::cout << registeredComponents.size()
@@ -80,10 +80,47 @@ int main(int argc, char *argv[])
   criteria2["ComponentInput"] = "Transform";
   //criteria1.insert(CriteriumType("ComponentInput", "Metric"));
 
+  CriteriaType emptyCriteria;
 
-  ComponentType::Pointer Node1 = itk::ComponentFactory::CreateComponent(criteria1);
-  
-  ComponentType::Pointer Node2 = itk::ComponentFactory::CreateComponent(criteria2);
+  typedef itk::ComponentFactory::Pointer NodePointer;
+
+  NodePointer Node1 = itk::ComponentFactory::New();
+  Node1->SetCriteria(emptyCriteria);
+  ComponentType::Pointer Node1Component = Node1->GetComponent();
+  if (Node1Component.IsNull())
+  {
+    std::cout << "Too few criteria means no Component could be selected." << std::endl;
+  }
+  else
+  {
+    std::cout << "FAILED" << std::endl;
+  }
+
+  // Narrow down the selection criteria
+  Node1->AddCriteria(criteria1);
+  Node1Component = Node1->GetComponent();
+  if (Node1Component.IsNull())
+  {
+    std::cout << "FAILED" << std::endl;
+  }
+  else
+  {
+    std::cout << "Based on criteria, Node1 selected: " << Node1Component->GetNameOfClass() << std::endl;  
+  }
+ 
+  NodePointer Node2 = itk::ComponentFactory::New(); 
+  Node2->SetCriteria(criteria2);
+  ComponentType::Pointer Node2Component = Node2->GetComponent();
+  if (Node2Component.IsNull())
+  {
+    std::cout << "FAILED" << std::endl;
+  }
+  else
+  {
+    std::cout << "Based on criteria, Node2 selected: " << Node2Component->GetNameOfClass() << std::endl;
+  }
+
+
 
   
 

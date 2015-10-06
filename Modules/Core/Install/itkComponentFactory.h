@@ -42,6 +42,9 @@ public:
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(ComponentFactory, Object);
+
+  /** New macro for creation of through the object factory. */
+  itkNewMacro(Self);
   
   /** Convenient typedefs. */
   typedef ComponentBase::Pointer ComponentBasePointer;
@@ -49,21 +52,22 @@ public:
 
   typedef std::list< typename ComponentBasePointer > ComponentListType;
   /** set selection criteria for possibleComponents*/
+  void Initialize();
   void SetCriteria(const CriteriaType &criteria);
   
   /** Narrow selection criteria*/
   void AddCriteria(const CriteriaType &criteria);
-
+  
+  void UpdatePossibleComponents(void);
   
   /** Create the appropriate ComponentIO depending on
   *  the particulars of the file.
   */
-  static ComponentBasePointer
-    CreateComponent(const CriteriaType &criteria);
-
+  ComponentBasePointer GetComponent(void);
+  
   
 protected:
-  CriteriaType m_Criteria;
+  mutable CriteriaType m_Criteria;
   mutable ComponentListType m_PossibleComponents;
   ComponentFactory();
   ~ComponentFactory();

@@ -31,35 +31,60 @@ ComponentFactory::~ComponentFactory()
   {
   }
 
-
-
-ComponentBase::Pointer ComponentFactory::CreateComponent(const CriteriaType &criteria)
+void ComponentFactory::Initialize()
 {
-  std::list< typename ComponentBase::Pointer > possibleComponents;
-//  std::list< LightObject::Pointer >     allobjects =
-//    ObjectFactoryBase::CreateAllInstance("itkComponentIOBaseTemplate");
   std::list< LightObject::Pointer >     allobjects =
     ObjectFactoryBase::CreateAllInstance("itkComponentBase");
 
-  for ( std::list< LightObject::Pointer >::iterator i = allobjects.begin();
-        i != allobjects.end(); ++i )
-    {
+  for (std::list< LightObject::Pointer >::iterator i = allobjects.begin();
+    i != allobjects.end(); ++i)
+  {
     ComponentBase *io =
-                        dynamic_cast< ComponentBase * >( i->GetPointer() );
-    if ( io )
-      {
-        possibleComponents.push_back(io);
-      }
-    }
-  for (std::list< typename ComponentBase::Pointer >::iterator k = possibleComponents.begin();
-    k != possibleComponents.end(); ++k)
+      dynamic_cast<ComponentBase *>(i->GetPointer());
+    if (io)
     {
-      if ( ( *k )->MeetsCriteria(criteria) )
-        {
-        return *k;
-        }
+      this->m_PossibleComponents.push_back(io);
     }
-  return ITK_NULLPTR;
+  }
+}
+void ComponentFactory::SetCriteria(const CriteriaType &criteria)
+{
+  this->Initialize();
+  this->m_Criteria = criteria;
+  this->Modified();
+
+}
+
+void ComponentFactory::AddCriteria(const CriteriaType &criteria)
+{
+  this->m_Criteria.insert(criteria.begin(), criteria.end());
+  this->Modified();
+}
+
+// a predicate implemented as a class:
+//struct FailsCriteria {
+//  bool operator() (const ComponentBasePointer& component) { return !component->MeetsCriteria(this->m_Criteria) }
+//};
+
+void ComponentFactory::UpdatePossibleComponents()
+{
+  // Check each possible component if it meets the criteria
+  // Using a Lambda function.
+  this->m_PossibleComponents.remove_if([&](ComponentBasePointer component){ return !component->MeetsCriteria(this->m_Criteria); });
+}
+ComponentFactory::ComponentBasePointer ComponentFactory::GetComponent()
+{
+  //TODO check if Modified
+  this->UpdatePossibleComponents();
+
+  if (this->m_PossibleComponents.size() == 1)
+  {
+    return *(this->m_PossibleComponents.begin());
+  }
+  else
+  {
+    return ITK_NULLPTR;
+  }
 }
 } // end namespace itk
 
