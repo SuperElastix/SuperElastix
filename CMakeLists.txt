@@ -19,7 +19,7 @@ set( CMAKE_MODULE_PATH
 )
 
 if( ${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC" )
-  include( elxWinConfig.cmake )
+  include( CMake/elxWinConfig.cmake )
 endif()
 
 # ---------------------------------------------------------------------

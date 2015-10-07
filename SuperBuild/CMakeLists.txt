@@ -51,7 +51,7 @@ option( USE_SYSTEM_ITK "Use an installed version of ITK" OFF )
 
 if( USE_SYSTEM_ITK )
   find_package( ITK ${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR} REQUIRED )
-  include( "${CMAKE_CURRENT_SOURCE_DIR}/../CMake/elxRequiredITKModules.cmake" )
+  include( "${CMAKE_CURRENT_SOURCE_DIR}/../CMake/elxITKRequiredModules.cmake" )
 else()
   include( ExternalITK )
   list( APPEND ELASTIX_DEPENDENCIES ITK )
