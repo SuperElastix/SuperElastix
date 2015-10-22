@@ -1,55 +1,57 @@
 #ifndef __Blueprint_h
 #define __Blueprint_h
 
+#include "boost/graph/graph_traits.hpp"
+#include "boost/graph/directed_graph.hpp"
+
 #include "itkObjectFactory.h"
 #include "itkDataObject.h"
 
 #include "elxMacro.h"
-#include "elxComponentDescriptor.h"
-
-#include "boost/graph/graph_traits.hpp"
-#include "boost/graph/directed_graph.hpp"
 
 namespace elx {
 
-template< class TComponentDescriptor >
 class Blueprint : public itk::DataObject
 {
 public:
 
   elxNewMacro( Blueprint, itk::DataObject );
 
-  typedef TComponentDescriptor                                                ComponentDescriptorType;
-  typedef typename TComponentDescriptor::ComponentNameType                    ComponentNameType;
+  typedef std::string                                                ParameterKeyType;
+  typedef std::vector< std::string >                                 ParameterValueType;
+  typedef std::map< ParameterKeyType, ParameterValueType >           ParameterMapType;
+
+  struct ComponentPropertyType { 
+    ParameterMapType parameterMap;
+  };
+
+  struct ConnectionPropertyType { 
+    ParameterMapType parameterMap;
+  };
   
   typedef boost::adjacency_list< boost::vecS,      
                                  boost::vecS,      
                                  boost::directedS,
-                                 ComponentDescriptorType >                    GraphType;
+                                 ComponentPropertyType,
+                                 ConnectionPropertyType >            GraphType;
 
-  typedef typename boost::graph_traits< GraphType >::vertex_descriptor        ComponentType;
-  typedef typename boost::graph_traits< GraphType >::vertex_iterator          ComponentIterator, ComponentIteratorEnd;
+  typedef boost::graph_traits< GraphType >::vertex_descriptor        ComponentIndexType;
+  typedef boost::graph_traits< GraphType >::vertex_iterator          ComponentIterator, ComponentIteratorEnd;
 
-  typedef boost::vertex_index_t                                               ComponentIndexType;
-  typedef typename boost::property_map< GraphType, ComponentIndexType >::type ComponentIndexMapType;
+  typedef boost::graph_traits< GraphType >::edge_descriptor          ConnectionIndexType;
+  typedef boost::graph_traits< GraphType >::edge_iterator            ConnectionIterator, ConnectionIteratorEnd;
 
-  typedef typename boost::graph_traits< GraphType >::edge_descriptor          ConnectionDescriptorType;
-  typedef typename boost::graph_traits< GraphType >::edge_iterator            ConnectionIterator, ConnectionIteratorEnd;
+  typedef boost::graph_traits< GraphType >::in_edge_iterator         InputIterator, InputIteratorEnd;
+  typedef boost::graph_traits< GraphType >::out_edge_iterator        OutputIterator, OutputIteratorEnd;
 
-  typedef typename boost::graph_traits< GraphType >::in_edge_iterator         InputIterator, InputIteratorEnd;
-  typedef typename boost::graph_traits< GraphType >::out_edge_iterator        OutputIterator, OutputIteratorEnd;
+  ComponentIndexType AddComponent( void );
+  ComponentIndexType AddComponent( ParameterMapType parameterMap );
+  ParameterMapType GetComponent( ComponentIndexType componentDescriptor );
+  void SetComponent( ComponentIndexType, ParameterMapType parameterMap );
 
-  int TestFunction( void );
-  bool AddComponent( ComponentDescriptorType component );
-  bool SetComponent( ComponentIndexType componentIndex, ComponentDescriptorType component );
-  ComponentDescriptorType GetComponent( ComponentIndexType componentIndex );
-  bool RemoveComponent( ComponentDescriptorType component );
-
-  bool SetConnection( ComponentIndexType upstream, ComponentIndexType downstream );
-  ConnectionDescriptorType GetConnection( ConnectionDescriptorType Connection );
-  bool RemoveConnection( ConnectionDescriptorType connection );
-
-  void PrintGraph( void );
+  const ParameterMapType& operator[]( ComponentIndexType index ) {
+    return this->GetComponent( index );
+  }
 
 private:
 

@@ -7,70 +7,98 @@
 
 namespace elx {
 
+Blueprint::ComponentIndexType
+Blueprint
+::AddComponent( void )
+{
+  this->Modified();
+
+  // Create vertex
+  ComponentIndexType index = boost::add_vertex( this->m_Graph );
+
+  // Return component index so component can retrieved at a later time
+  return index;
+}
+
+Blueprint::ComponentIndexType
+Blueprint
+::AddComponent( ParameterMapType parameterMap )
+{
+  this->Modified();
+
+  // Create vertex
+  ComponentIndexType index = boost::add_vertex( this->m_Graph );
+  
+  // Add parameter map to vertex
+  this->m_Graph[index].parameterMap = parameterMap;
+
+  // Return component index so component can retrieved at a later time
+  return index;
+}
+
+Blueprint::ParameterMapType
+Blueprint
+::GetComponent( ComponentIndexType index )
+{
+  this->Modified();
+  return this->m_Graph[index].parameterMap;
+}
+
+void
+Blueprint
+::SetComponent( ComponentIndexType index, ParameterMapType parameterMap )
+{
+  this->Modified();
+  this->m_Graph[index].parameterMap = parameterMap;
+}
+
 /*
-Blueprint< ComponentDescriptor >::ComponentDescriptorType
-Blueprint< ComponentDescriptor >
-::AddComponent( ComponentDescriptorType component )
-{
-  // TODO: Check that the component is in the ComponentDatabase
-  this->Modified();
-  return this->m_Graph->add_vertex( component );
-}
-
-bool
-Blueprint< ComponentDescriptor >
-::SetComponent( ComponentDescriptorType component )
+void
+Blueprint
+::RemoveComponent( ComponentIndexType component )
 {
   this->Modified();
-  return this->m_Graph->remove_vertex( connection );
+  clear_vertex(u, this->m_Graph);
+  remove_vertex(u, this->m_Graph);
 }
 
-bool
-Blueprint< ComponentDescriptor >
-::RemoveComponent( ComponentDescriptorType component )
+/*
+void
+Blueprint
+::SetConnection( ComponentDescriptor upstream, ComponentDescriptor downstream )
 {
   this->Modified();
-  return this->m_Graph->remove_vertex( connection );
 }
 
-bool
-Blueprint< ComponentDescriptor >
-::AddConnection( ComponentDescriptorType upsteam, ComponentDescriptorType downstream )
-{
-  this->Modified();
-  return this->m_Graph->add_edge( upstream, downstream );
-}
-
-ConnectionDescriptorType
-Blueprint< ComponentDescriptor >
+void
+Blueprint
 ::GetConnection( ConnectionDescriptorType Connection )
 {
   this->Modified();
 }
 
 void 
-Blueprint< ComponentDescriptor >
-::RemoveConnection( ConnectionType connection )
+Blueprint
+::RemoveConnection( ConnectionDescriptorType connection )
 {
   this->Modified();
-  this->m_Graph->remove_edge( connection );
-}
-
-void 
-Blueprint< ComponentDescriptor >
-::PrintGraph( void )
-{
-  // TODO: Link to graphviz library
-  // boost::write_graphviz(std::cout, this->m_Graph);
-  std::cout << "Printed graph" << std::endl;
 }
 */
 
-template<>
-int
-Blueprint< ComponentDescriptor >
-::TestFunction( void )
-{ return 0; }
+// Blueprint::ComponentDescriptorType
+// Blueprint
+// ::GetComponentDescriptor( ComponentIndexType componentIndex )
+// {
+
+// }
+
+// void 
+// Blueprint
+// ::PrintGraph( void )
+// {
+//   // TODO: Link to graphviz library
+//   boost::write_graphviz(std::cout, this->m_Graph);
+// }
 
 } // namespace elx 
 
