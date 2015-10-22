@@ -15,10 +15,6 @@ set( ELASTIX_DASHBOARD_LOGSTASH_RSA_PRIVATE_KEY "elxLogstash.key" )
 
 mark_as_advanced( ELASTIX_DASHBOARD_VOLUME )
 if( NOT EXISTS "${ELASTIX_DASHBOARD_VOLUME}" )
-  message( STATUS
-    "ELASTIX_DASHBOARD_VOLUME points to the folder ${CMAKE_BINARY_DIR}/Testing/Dashboard/Data in your build directory. In production you should point this variable to a safe directory outside the build tree."
-  )
-  
   set( ELASTIX_DASHBOARD_VOLUME "${ELASTIX_DASHBOARD_BINARY_DIR}/Data" )
   file( MAKE_DIRECTORY "${ELASTIX_DASHBOARD_VOLUME}" )
 endif()
@@ -47,3 +43,8 @@ configure_file(
   ${ELASTIX_DASHBOARD_SOURCE_DIR}/elxLogstashForwarder.json.in
   ${ELASTIX_DASHBOARD_BINARY_DIR}/elxLogstashForwarder.json
 )
+
+# ---------------------------------------------------------------------
+# SSL certificates
+# Use the following OpenSSL command to generate a test certificate and key if needed
+# openssl req -subj '/CN=*/' -x509 -batch -nodes -days 9999 -newkey rsa:2048 -keyout elxLogstash.key -out elxLogstash.crt
