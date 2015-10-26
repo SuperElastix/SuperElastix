@@ -2,29 +2,62 @@
 
 #include "gtest/gtest.h"
 
+#include "itkImage.h"
+
 namespace elx {
 
-TEST( Blueprint, Instantiation )
+class BlueprintTest : public ::testing::Test {
+public:
+
+  typedef Blueprint::Pointer                BlueprintPointerType;
+  typedef Blueprint::ComponentIndexType     ComponentIndexType;
+  typedef Blueprint::ParameterMapType       ParameterMapType;
+  typedef Blueprint::ParameterValueType     ParameterValueType;
+
+  virtual void SetUp() {
+    parameterMap["ComponentName"] = ParameterValueType(1, "TestName");
+  }
+
+  ParameterMapType parameterMap;
+};
+
+TEST_F( BlueprintTest, Add )
 {
-  typedef Blueprint BlueprintType;
-  BlueprintType::Pointer blueprint;
-  EXPECT_NO_THROW( blueprint = BlueprintType::New() );
-  
-  BlueprintType::ParameterMapType parameterMap;
-  EXPECT_NO_THROW( parameterMap["ComponentName"] = BlueprintType::ParameterValueType(1, "AdvancedMeanSquares") );
+  BlueprintPointerType blueprint;
+  EXPECT_NO_THROW( blueprint = Blueprint::New() );
 
-  BlueprintType::ComponentIndexType index;
-  EXPECT_NO_THROW( index = blueprint->AddComponent() );
-  EXPECT_EQ( BlueprintType::ComponentIndexType(0), index );
+  ComponentIndexType index0;
+  EXPECT_NO_THROW( index0 = blueprint->AddComponent() );
+  EXPECT_EQ( Blueprint::ComponentIndexType(0), index0 );
 
-  EXPECT_NO_THROW( index = blueprint->AddComponent( parameterMap ) );
-  EXPECT_EQ( BlueprintType::ComponentIndexType(1), index );
+  ComponentIndexType index1;
+  EXPECT_NO_THROW( index1 = blueprint->AddComponent( parameterMap ) );
+  EXPECT_EQ( Blueprint::ComponentIndexType(1), index1 );
 
-  BlueprintType::ParameterMapType parameterMapTest;
+  Blueprint::ComponentIteratorPairType componentIterator = blueprint->GetComponentIterator();
+}
+
+TEST_F( BlueprintTest, Get ) 
+{
+  BlueprintPointerType blueprint = Blueprint::New();
+  ComponentIndexType index = blueprint->AddComponent( parameterMap );
+
+  ParameterMapType parameterMapTest;
+  EXPECT_NO_THROW( parameterMapTest = blueprint->GetComponent( index ) );
+  EXPECT_EQ( parameterMap["ComponentName"], parameterMapTest["ComponentName"] );
+}
+
+TEST_F( BlueprintTest, Delete ) 
+{
+  BlueprintPointerType blueprint = Blueprint::New();
+  ComponentIndexType index = blueprint->AddComponent( parameterMap );
+
+  ParameterMapType parameterMapTest;
   EXPECT_NO_THROW( parameterMapTest = blueprint->GetComponent( index ) );
   EXPECT_EQ( parameterMap["ComponentName"], parameterMapTest["ComponentName"] );
 
-  blueprint[index];
+  EXPECT_NO_THROW( blueprint->DeleteComponent( index ) );
+  parameterMapTest = blueprint->GetComponent( index );
 }
 
 } // namespace elx

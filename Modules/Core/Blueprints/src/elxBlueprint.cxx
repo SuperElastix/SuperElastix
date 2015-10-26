@@ -13,7 +13,6 @@ Blueprint
 {
   this->Modified();
 
-  // Create vertex
   ComponentIndexType index = boost::add_vertex( this->m_Graph );
 
   // Return component index so component can retrieved at a later time
@@ -26,10 +25,7 @@ Blueprint
 {
   this->Modified();
 
-  // Create vertex
   ComponentIndexType index = boost::add_vertex( this->m_Graph );
-  
-  // Add parameter map to vertex
   this->m_Graph[index].parameterMap = parameterMap;
 
   // Return component index so component can retrieved at a later time
@@ -41,56 +37,47 @@ Blueprint
 ::GetComponent( ComponentIndexType index )
 {
   this->Modified();
-  return this->m_Graph[index].parameterMap;
+
+  if( this->ComponentExist( index ) ) {
+    return this->m_Graph[index].parameterMap;
+  } else {
+    itkExceptionMacro( "Blueprint does not contain component with index " << index );
+  }
 }
 
-void
+bool
 Blueprint
 ::SetComponent( ComponentIndexType index, ParameterMapType parameterMap )
 {
   this->Modified();
-  this->m_Graph[index].parameterMap = parameterMap;
-}
 
-/*
-void
-Blueprint
-::RemoveComponent( ComponentIndexType component )
-{
-  this->Modified();
-  clear_vertex(u, this->m_Graph);
-  remove_vertex(u, this->m_Graph);
-}
-
-/*
-void
-Blueprint
-::SetConnection( ComponentDescriptor upstream, ComponentDescriptor downstream )
-{
-  this->Modified();
+  if( this->ComponentExist( index ) )
+  {
+    this->m_Graph[index].parameterMap = parameterMap;
+  } else {
+    itkExceptionMacro( "Blueprint does not contain component with index " << index )
+  }
 }
 
 void
 Blueprint
-::GetConnection( ConnectionDescriptorType Connection )
+::DeleteComponent( const ComponentIndexType index )
 {
   this->Modified();
+
+  if( this->ComponentExist( index ) ) {
+    clear_vertex( index, this->m_Graph );
+    remove_vertex( index, this->m_Graph );
+  }
 }
 
-void 
+bool
 Blueprint
-::RemoveConnection( ConnectionDescriptorType connection )
+::ComponentExist( ComponentIndexType index )
 {
-  this->Modified();
+  return boost::vertex( index, this->m_Graph ) == boost::graph_traits< GraphType >::null_vertex();
 }
-*/
 
-// Blueprint::ComponentDescriptorType
-// Blueprint
-// ::GetComponentDescriptor( ComponentIndexType componentIndex )
-// {
-
-// }
 
 // void 
 // Blueprint
