@@ -75,7 +75,7 @@ bool
 Blueprint
 ::ComponentExist( ComponentIndexType index )
 {
-  return boost::vertex( index, this->m_Graph ) == boost::graph_traits< GraphType >::null_vertex();
+  return boost::vertex( index, this->m_Graph ) != boost::graph_traits< GraphType >::null_vertex();
 }
 
 

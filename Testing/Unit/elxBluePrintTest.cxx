@@ -2,8 +2,6 @@
 
 #include "gtest/gtest.h"
 
-#include "itkImage.h"
-
 namespace elx {
 
 class BlueprintTest : public ::testing::Test {
@@ -41,6 +39,7 @@ TEST_F( BlueprintTest, Get )
 {
   BlueprintPointerType blueprint = Blueprint::New();
   ComponentIndexType index = blueprint->AddComponent( parameterMap );
+  EXPECT_EQ( Blueprint::ComponentIndexType(0), index );
 
   ParameterMapType parameterMapTest;
   EXPECT_NO_THROW( parameterMapTest = blueprint->GetComponent( index ) );
@@ -57,7 +56,7 @@ TEST_F( BlueprintTest, Delete )
   EXPECT_EQ( parameterMap["ComponentName"], parameterMapTest["ComponentName"] );
 
   EXPECT_NO_THROW( blueprint->DeleteComponent( index ) );
-  parameterMapTest = blueprint->GetComponent( index );
+  EXPECT_ANY_THROW( parameterMapTest = blueprint->GetComponent( index ) );
 }
 
 } // namespace elx
