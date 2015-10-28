@@ -1,0 +1,5 @@
+PROJECT(componenthandshake)
+cmake_minimum_required(VERSION 2.6)
+cmake_policy(VERSION 2.6)
+
+ADD_EXECUTABLE(componenthandshake componenthandshake.cxx)
