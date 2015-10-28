@@ -33,8 +33,8 @@ public:
     ParameterMapType parameterMap;
   };
   
-  typedef boost::adjacency_list< boost::vecS,      
-                                 boost::vecS,      
+  typedef boost::adjacency_list< boost::listS,      
+                                 boost::listS,      
                                  boost::directedS,
                                  ComponentPropertyType,
                                  ConnectionPropertyType >             GraphType;
@@ -57,22 +57,44 @@ public:
   ComponentIndexType AddComponent( void );
   ComponentIndexType AddComponent( ParameterMapType parameterMap );
   ParameterMapType GetComponent( ComponentIndexType index );
-  bool SetComponent( ComponentIndexType, ParameterMapType parameterMap );
-  void DeleteComponent( ComponentIndexType );
-  bool ComponentExist( ComponentIndexType index );
+  void SetComponent( ComponentIndexType, ParameterMapType parameterMap );
+
+  // TODO: Let user delete component. To do this, we need a proper way of 
+  // checking that a vertex exist. Otherwise a call to  GetComponent() on 
+  // a deleted vertex will result in segfault. It is not really a problem 
+  // that there is no delete vertex feature at this point since typically 
+  // the blueprint interface is used procedurally to generate a specific
+  // blueprint.
+  // void DeleteComponent( ComponentIndexType );
 
   ComponentIteratorPairType GetComponentIterator( void ) {
-    return boost::vertices(this->m_Graph);
+    return boost::vertices( this->m_Graph );
   }
 
+  // Interface for managing connections between components in which we 
+  // deliberately avoid using connection indexes, but instead force
+  // the user to think in terms of components (which is conceptually simpler)
+  bool AddConnection( ComponentIndexType upstream, ComponentIndexType downstream );
+  bool AddConnection( ComponentIndexType upstream, ComponentIndexType downstream, ParameterMapType parameterMap );
+  ParameterMapType GetConnection( ComponentIndexType upstream, ComponentIndexType downstream );
+  bool SetConnection(  ComponentIndexType upstream, ComponentIndexType downstream, ParameterMapType parameterMap );
+  bool DeleteConnection( ComponentIndexType upstream, ComponentIndexType downstream );
+  bool ConnectionExists( ComponentIndexType upstream, ComponentIndexType downstream );
+
+  // Returns iterator for all connections in the graph
+  ConnectionIteratorPairType GetConnectionIterator( void ) {
+    return boost::edges(this->m_Graph);
+  }
 
   // Returns the outgoing connections from a component in the graph,
   // i.e. all components that reads data from given component
-  OutputIteratorPairType GetOuptutIterator( const ComponentIndexType index ) {
+  OutputIteratorPairType GetOutputIterator( const ComponentIndexType index ) {
     return boost::out_edges(index, this->m_Graph);
   }
 
 private:
+
+  ConnectionIndexType GetConnectionIndex( ComponentIndexType upsteam, ComponentIndexType downstream );
 
   GraphType m_Graph;
 
