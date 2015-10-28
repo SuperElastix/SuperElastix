@@ -80,15 +80,16 @@ Blueprint
 {
   this->Modified();
 
-  // If the connection does not exist, add the parameter map, otherwise don't do anything
-  // because previous settings will be overwritten. If the user do want to overwrite 
-  // current settings, she should use SetConnection() instead where the intent is explicit.  
-  if( this->ConnectionExists( upstream, downstream) ) {
-    return false;
+  if( !this->ConnectionExists( upstream, downstream ) ) {
+    ConnectionIndexType index = boost::add_edge( upstream, downstream, this->m_Graph ).first;
+    this->m_Graph[ index ].parameterMap = parameterMap;
+    return true;
   }
 
-  this->m_Graph[ this->GetConnectionIndex( upstream, downstream ) ].parameterMap = parameterMap;
-  return true;
+  // If the connection does not exist don't do anything because previous settings 
+  // will be overwritten.  If the user do want to overwrite current settings, 
+  // she should use SetConnection() instead where the intent is explicit.  
+  return false;
 }
 
 Blueprint::ParameterMapType

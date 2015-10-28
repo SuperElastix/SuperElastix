@@ -59,12 +59,11 @@ public:
   ParameterMapType GetComponent( ComponentIndexType index );
   void SetComponent( ComponentIndexType, ParameterMapType parameterMap );
 
-  // TODO: Let user delete component. To do this, we need a proper way of 
+  // TODO: Let user delete component. Before we do this, we need a proper way of 
   // checking that a vertex exist. Otherwise a call to  GetComponent() on 
-  // a deleted vertex will result in segfault. It is not really a problem 
-  // that there is no delete vertex feature at this point since typically 
-  // the blueprint interface is used procedurally to generate a specific
-  // blueprint.
+  // a deleted vertex will result in segfault. It is not really a in issue
+  // _before_ realease since typically we use (the developers) use blueprint 
+  // interface procedurally.
   // void DeleteComponent( ComponentIndexType );
 
   ComponentIteratorPairType GetComponentIterator( void ) {
@@ -93,7 +92,7 @@ public:
   }
 
 private:
-
+  
   ConnectionIndexType GetConnectionIndex( ComponentIndexType upsteam, ComponentIndexType downstream );
 
   GraphType m_Graph;
