@@ -1,7 +1,7 @@
-#ifndef __Blueprint_hxx
-#define __Blueprint_hxx
+#ifndef __Blueprint_cxx
+#define __Blueprint_cxx
 
-#include <boost/graph/graphviz.hpp>
+#include "boost/graph/graphviz.hpp"
 
 #include "elxBlueprint.h"
 
@@ -147,14 +147,14 @@ Blueprint
   return boost::edge( upstream, downstream, this->m_Graph).first;
 }
 
-// void 
-// Blueprint
-// ::PrintGraph( void )
-// {
-//   // TODO: Link to graphviz library
-//   boost::write_graphviz(std::cout, this->m_Graph);
-// }
+void 
+Blueprint
+::WriteBlueprint( const std::string filename ) 
+{
+  std::ofstream dotfile( filename.c_str() );
+  boost::write_graphviz( dotfile, this->m_Graph );
+}
 
 } // namespace elx 
 
-#endif // __Blueprint_hxx
+#endif // __Blueprint_cxx

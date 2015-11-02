@@ -33,8 +33,8 @@ public:
     ParameterMapType parameterMap;
   };
   
-  typedef boost::adjacency_list< boost::listS,      
-                                 boost::listS,      
+  typedef boost::adjacency_list< boost::vecS,      
+                                 boost::vecS,      
                                  boost::directedS,
                                  ComponentPropertyType,
                                  ConnectionPropertyType >             GraphType;
@@ -60,9 +60,9 @@ public:
   void SetComponent( ComponentIndexType, ParameterMapType parameterMap );
 
   // TODO: Let user delete component. Before we do this, we need a proper way of 
-  // checking that a vertex exist. Otherwise a call to  GetComponent() on 
+  // checking that a vertex exist. Otherwise a call to GetComponent() on 
   // a deleted vertex will result in segfault. It is not really a in issue
-  // _before_ realease since typically we use (the developers) use blueprint 
+  // _before_ release since typically we (the developers) will use blueprint 
   // interface procedurally.
   // void DeleteComponent( ComponentIndexType );
 
@@ -88,8 +88,10 @@ public:
   // Returns the outgoing connections from a component in the graph,
   // i.e. all components that reads data from given component
   OutputIteratorPairType GetOutputIterator( const ComponentIndexType index ) {
-    return boost::out_edges(index, this->m_Graph);
+    return boost::out_edges( index, this->m_Graph );
   }
+
+  void WriteBlueprint( const std::string filename );
 
 private:
   

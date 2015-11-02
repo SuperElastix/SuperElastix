@@ -52,8 +52,8 @@ TEST_F( BlueprintTest, SetComponent )
   EXPECT_EQ( parameterMap["ComponentName"], parameterMapTest["ComponentName"] );
 }
 
-// TODO: The final line segfaults since at this point GetComponent has no way
-// of checking that the index actually exist. See explanation in elxBlueprint.h
+// TODO: The final line segfaults because GetComponent does not check that the index actually
+// actually exist. How can we do that? See also explanation in elxBlueprint.h
 // TEST_F( BlueprintTest, DeleteComponent ) 
 // {
 //   BlueprintPointerType blueprint = Blueprint::New();
@@ -153,6 +153,22 @@ TEST_F( BlueprintTest, DeleteConnection )
 
   // Connection should not exist 
   EXPECT_FALSE( blueprint->ConnectionExists( index0, index1 ) );
+}
+
+TEST_F( BlueprintTest, WriteBlueprint ) 
+{
+  BlueprintPointerType blueprint = Blueprint::New();
+
+  ComponentIndexType index0 = blueprint->AddComponent();
+  ComponentIndexType index1 = blueprint->AddComponent();
+  ComponentIndexType index2 = blueprint->AddComponent();
+  ComponentIndexType index3 = blueprint->AddComponent();
+
+  blueprint->AddConnection( index0, index1 );
+  blueprint->AddConnection( index0, index2 );
+  blueprint->AddConnection( index2, index3 );
+
+  EXPECT_NO_THROW( blueprint->WriteBlueprint( "blueprint.dot" ) );
 }
 
 } // namespace elx
