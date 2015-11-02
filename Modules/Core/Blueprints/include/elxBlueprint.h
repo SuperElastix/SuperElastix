@@ -1,57 +1,101 @@
 #ifndef __Blueprint_h
 #define __Blueprint_h
 
+#include "boost/graph/graph_traits.hpp"
+#include "boost/graph/directed_graph.hpp"
+
 #include "itkObjectFactory.h"
 #include "itkDataObject.h"
 
 #include "elxMacro.h"
-#include "elxComponentDescriptor.h"
-
-#include "boost/graph/graph_traits.hpp"
-#include "boost/graph/directed_graph.hpp"
 
 namespace elx {
 
-template< class TComponentDescriptor >
 class Blueprint : public itk::DataObject
 {
 public:
 
   elxNewMacro( Blueprint, itk::DataObject );
 
-  typedef TComponentDescriptor                                                ComponentDescriptorType;
-  typedef typename TComponentDescriptor::ComponentNameType                    ComponentNameType;
+  typedef std::string                                                ParameterKeyType;
+  typedef std::vector< std::string >                                 ParameterValueType;
+  typedef std::map< ParameterKeyType, ParameterValueType >           ParameterMapType;
+
+  // Component parameter map that sits on a node in the graph 
+  // and holds component configuration settings
+  struct ComponentPropertyType { 
+    ParameterMapType parameterMap;
+  };
+
+  // Component parameter map that sits on an edge in the graph 
+  // and holds component configuration settings
+  struct ConnectionPropertyType { 
+    ParameterMapType parameterMap;
+  };
   
   typedef boost::adjacency_list< boost::vecS,      
                                  boost::vecS,      
                                  boost::directedS,
-                                 ComponentDescriptorType >                    GraphType;
+                                 ComponentPropertyType,
+                                 ConnectionPropertyType >             GraphType;
 
-  typedef typename boost::graph_traits< GraphType >::vertex_descriptor        ComponentType;
-  typedef typename boost::graph_traits< GraphType >::vertex_iterator          ComponentIterator, ComponentIteratorEnd;
+  typedef boost::graph_traits< GraphType >::vertex_descriptor         ComponentIndexType;
+  typedef boost::graph_traits< GraphType >::vertex_iterator           ComponentIteratorType;
+  typedef std::pair< ComponentIteratorType, ComponentIteratorType >   ComponentIteratorPairType;
 
-  typedef boost::vertex_index_t                                               ComponentIndexType;
-  typedef typename boost::property_map< GraphType, ComponentIndexType >::type ComponentIndexMapType;
+  typedef boost::graph_traits< GraphType >::edge_descriptor           ConnectionIndexType;
+  typedef boost::graph_traits< GraphType >::edge_iterator             ConnectionIteratorType;
+  typedef std::pair< ConnectionIteratorType, ConnectionIteratorType > ConnectionIteratorPairType;
 
-  typedef typename boost::graph_traits< GraphType >::edge_descriptor          ConnectionDescriptorType;
-  typedef typename boost::graph_traits< GraphType >::edge_iterator            ConnectionIterator, ConnectionIteratorEnd;
+  typedef boost::graph_traits< GraphType >::in_edge_iterator          InputIteratorType;
+  typedef std::pair< InputIteratorType, InputIteratorType >           InputIteratorPairType;
 
-  typedef typename boost::graph_traits< GraphType >::in_edge_iterator         InputIterator, InputIteratorEnd;
-  typedef typename boost::graph_traits< GraphType >::out_edge_iterator        OutputIterator, OutputIteratorEnd;
+  typedef boost::graph_traits< GraphType >::out_edge_iterator         OutputIteratorType;
+  typedef std::pair< OutputIteratorType, OutputIteratorType >         OutputIteratorPairType;
 
-  int TestFunction( void );
-  bool AddComponent( ComponentDescriptorType component );
-  bool SetComponent( ComponentIndexType componentIndex, ComponentDescriptorType component );
-  ComponentDescriptorType GetComponent( ComponentIndexType componentIndex );
-  bool RemoveComponent( ComponentDescriptorType component );
+  // Interface for managing components
+  ComponentIndexType AddComponent( void );
+  ComponentIndexType AddComponent( ParameterMapType parameterMap );
+  ParameterMapType GetComponent( ComponentIndexType index );
+  void SetComponent( ComponentIndexType, ParameterMapType parameterMap );
 
-  bool SetConnection( ComponentIndexType upstream, ComponentIndexType downstream );
-  ConnectionDescriptorType GetConnection( ConnectionDescriptorType Connection );
-  bool RemoveConnection( ConnectionDescriptorType connection );
+  // TODO: Let user delete component. Before we do this, we need a proper way of 
+  // checking that a vertex exist. Otherwise a call to GetComponent() on 
+  // a deleted vertex will result in segfault. It is not really a in issue
+  // _before_ release since typically we (the developers) will use blueprint 
+  // interface procedurally.
+  // void DeleteComponent( ComponentIndexType );
 
-  void PrintGraph( void );
+  ComponentIteratorPairType GetComponentIterator( void ) {
+    return boost::vertices( this->m_Graph );
+  }
+
+  // Interface for managing connections between components in which we 
+  // deliberately avoid using connection indexes, but instead force
+  // the user to think in terms of components (which is conceptually simpler)
+  bool AddConnection( ComponentIndexType upstream, ComponentIndexType downstream );
+  bool AddConnection( ComponentIndexType upstream, ComponentIndexType downstream, ParameterMapType parameterMap );
+  ParameterMapType GetConnection( ComponentIndexType upstream, ComponentIndexType downstream );
+  bool SetConnection(  ComponentIndexType upstream, ComponentIndexType downstream, ParameterMapType parameterMap );
+  bool DeleteConnection( ComponentIndexType upstream, ComponentIndexType downstream );
+  bool ConnectionExists( ComponentIndexType upstream, ComponentIndexType downstream );
+
+  // Returns iterator for all connections in the graph
+  ConnectionIteratorPairType GetConnectionIterator( void ) {
+    return boost::edges(this->m_Graph);
+  }
+
+  // Returns the outgoing connections from a component in the graph,
+  // i.e. all components that reads data from given component
+  OutputIteratorPairType GetOutputIterator( const ComponentIndexType index ) {
+    return boost::out_edges( index, this->m_Graph );
+  }
+
+  void WriteBlueprint( const std::string filename );
 
 private:
+  
+  ConnectionIndexType GetConnectionIndex( ComponentIndexType upsteam, ComponentIndexType downstream );
 
   GraphType m_Graph;
 

@@ -68,12 +68,6 @@ set( TEST_LIBRARIES
 # Unit tests
 add_subdirectory( Unit )
 
-# Benchmarks
-option( ELASTIX_BUILD_BENCHMARKING "Enable building benchmarks." OFF )
-if( ${ELASTIX_BUILD_BENCHMARKING} )
-	add_subdirectory( Benchmark )
-endif()
-
 # ---------------------------------------------------------------------
 # Configure dashboard
 mark_as_advanced( ELASTIX_BUILD_DASHBOARD )

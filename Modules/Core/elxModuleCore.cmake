@@ -4,10 +4,9 @@ set( ${MODULE}_INCLUDE_DIRS
 )
 
 set( ${MODULE}_SOURCE_FILES
-  ${CMAKE_SOURCE_DIR}/${MODULE_PATH}/Blueprints/src/elxComponentDescriptor.cxx
   ${CMAKE_SOURCE_DIR}/${MODULE_PATH}/Blueprints/src/elxBlueprint.cxx
 )
 
 set( ${MODULE}_LIBRARIES 
-  elxModuleCore
+  ${MODULE}
 )
