@@ -28,6 +28,6 @@ script:
   - cmake ../SuperElastix/SuperBuild
   - make --jobs=2 | grep -v '^--' | grep -v '^Installing' | grep -v '^common'
 
-after_sucess:
+after_success:
   - cd Elastix-build
   - ctest
