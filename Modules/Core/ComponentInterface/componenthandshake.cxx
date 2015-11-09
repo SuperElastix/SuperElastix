@@ -1,6 +1,10 @@
 // multiple inheritance
 #include <iostream>
 
+// test case: there are two (slightly) incompatible codebases (i.e. 3rd party and 4th party!), each with an optimizer object and a metric object. 
+// goal: make elastix components of all objects and define a handshake that checks if connections can be made.
+
+/*************** below: example implementations of 3rd and 4th party code base (assume we cannot change that) *********************/
 class Metric3rdPartyBase{
 public:
   virtual int GetValue() = 0;
@@ -101,7 +105,8 @@ int GDOptimizer4rdParty::DoOptimization()
   }
   return 0;
 }
-
+/*************** above: example implementations of 3rd and 4th party code base (assume we cannot change that) *********************/
+/*************** below: our elastix wrappers to connect varoius components (we can redesign that) *********************/
 class ComponentBase {
 public:
   virtual ~ComponentBase(){};
@@ -116,22 +121,36 @@ class MetricValueInterface {
   public:
     virtual int GetValue() = 0;
 };
-
-class OptimizerValueInterface {
+template<class InterfaceT>
+class InterfaceAcceptor {
 public:
-  virtual int SetMetricValueComponentInterface(MetricValueInterface*) = 0;
+  virtual int Set(InterfaceT*) = 0;
+  int Connect(ComponentBase*); 
 };
 
-class OptimizerDerivativeInterface {
-public:
-  virtual int SetMetricDerivativeComponentInterface(MetricDerivativeInterface*) = 0;
-};
+template<class InterfaceT>
+int InterfaceAcceptor<InterfaceT>::Connect(ComponentBase* providerComponent){
+
+    InterfaceT* providerInterface = dynamic_cast<InterfaceT*> (providerComponent);
+    if (!providerInterface)
+    {
+      std::cout << "providerComponent does not have required interface" << std::endl;
+      return 0;
+    }
+    // connect value interfaces
+    this->Set(providerInterface);
+    return 1;
+  }
+
 
 class OptimizerUpdateInterface {
 public:
   virtual int Update() = 0;
 };
 
+
+// wrapping into components: 
+// SSDMetric3rdPartyComponent provides a value and a derivative
 class SSDMetric3rdPartyComponent: public ComponentBase, public MetricDerivativeInterface, public MetricValueInterface {
 public:
   SSDMetric3rdPartyComponent();
@@ -160,6 +179,7 @@ int SSDMetric3rdPartyComponent::GetValue()
   return this->theImplementation->GetValue();
 };
 
+// the GDOptimizer3rdParty expects that Metric3rdParty is will be set as input. All required interfaces will be delegated to a Metric3rdParty object.
 class Metric3rdPartyWrapper : public Metric3rdPartyBase  {
 public:
   void SetMetricValueComponent(MetricValueInterface*);
@@ -191,15 +211,15 @@ int Metric3rdPartyWrapper::GetDerivative()
   return this->metricderiv->GetDerivative();
 }
 
-class GDOptimizer3rdPartyComponent : public ComponentBase, public OptimizerValueInterface, public OptimizerDerivativeInterface, public OptimizerUpdateInterface
+class GDOptimizer3rdPartyComponent : public ComponentBase, public InterfaceAcceptor<MetricValueInterface>, public InterfaceAcceptor<MetricDerivativeInterface>, public OptimizerUpdateInterface
 {
 public:
   GDOptimizer3rdPartyComponent();
   ~GDOptimizer3rdPartyComponent();
   GDOptimizer3rdParty* theImplementation;
   Metric3rdPartyWrapper* MetricObject;
-  int SetMetricValueComponentInterface(MetricValueInterface*);
-  int SetMetricDerivativeComponentInterface(MetricDerivativeInterface*);
+  int Set(MetricValueInterface*);
+  int Set(MetricDerivativeInterface*);
   int Update();
 };
 
@@ -214,12 +234,12 @@ GDOptimizer3rdPartyComponent::~GDOptimizer3rdPartyComponent()
   delete this->MetricObject;
 }
 
-int GDOptimizer3rdPartyComponent::SetMetricValueComponentInterface(MetricValueInterface* component)
+int GDOptimizer3rdPartyComponent::Set(MetricValueInterface* component)
 {
   this->MetricObject->SetMetricValueComponent(component);
   return 0;
 }
-int GDOptimizer3rdPartyComponent::SetMetricDerivativeComponentInterface(MetricDerivativeInterface* component)
+int GDOptimizer3rdPartyComponent::Set(MetricDerivativeInterface* component)
 {
   this->MetricObject->SetMetricDerivativeComponent(component);
   return 0;
@@ -271,14 +291,14 @@ int Metric4rdPartyWrapper::GetCost()
   return this->metricval->GetValue();
 }
 
-class GDOptimizer4rdPartyComponent : public ComponentBase, public OptimizerValueInterface, public OptimizerUpdateInterface
+class GDOptimizer4rdPartyComponent : public ComponentBase, public InterfaceAcceptor<MetricValueInterface>, public OptimizerUpdateInterface
 {
 public:
   GDOptimizer4rdPartyComponent();
   ~GDOptimizer4rdPartyComponent();
   GDOptimizer4rdParty* theImplementation;
   Metric4rdPartyWrapper* MetricObject;
-  int SetMetricValueComponentInterface(MetricValueInterface*);
+  int Set(MetricValueInterface*);
   int Update();
 };
 
@@ -293,7 +313,7 @@ GDOptimizer4rdPartyComponent::~GDOptimizer4rdPartyComponent()
   delete this->MetricObject;
 }
 
-int GDOptimizer4rdPartyComponent::SetMetricValueComponentInterface(MetricValueInterface* component)
+int GDOptimizer4rdPartyComponent::Set(MetricValueInterface* component)
 {
   this->MetricObject->SetMetricValueComponent(component);
   return 0;
@@ -306,6 +326,9 @@ int GDOptimizer4rdPartyComponent::Update()
 
 int main () {
   {
+    /************ testing interface casts ***********
+    * expected: ok
+    */
     SSDMetric3rdPartyComponent* tempmetric3p = new SSDMetric3rdPartyComponent();
     ComponentBase* metric3p = tempmetric3p;
 
@@ -325,20 +348,15 @@ int main () {
     GDOptimizer4rdPartyComponent* tempOptimizer4p = new GDOptimizer4rdPartyComponent();
     ComponentBase* optimizer4p = tempOptimizer4p; // type returned by our component factory
 
-    MetricValueInterface* metvalIF = dynamic_cast<MetricValueInterface*> (metric4p);
-    if (!metvalIF)
-    {
-      std::cout << "metric4p has no MetricValueInterface" << std::endl;
-    }
-
-    OptimizerValueInterface* opValIF = dynamic_cast<OptimizerValueInterface*> (optimizer4p);
+    InterfaceAcceptor<MetricValueInterface>* opValIF = dynamic_cast<InterfaceAcceptor<MetricValueInterface>*> (optimizer4p);
     if (!opValIF)
     {
       std::cout << "optimizer4p has no OptimizerValueInterface" << std::endl;
     }
 
     // connect value interfaces
-    opValIF->SetMetricValueComponentInterface(metvalIF); 
+    opValIF->Connect(metric4p);
+
     OptimizerUpdateInterface* opUpdIF = dynamic_cast<OptimizerUpdateInterface*> (optimizer4p);
     if (!opValIF)
     {
@@ -359,20 +377,18 @@ int main () {
     GDOptimizer4rdPartyComponent* tempOptimizer4p = new GDOptimizer4rdPartyComponent();
     ComponentBase* optimizer4p = tempOptimizer4p; // type returned by our component factory
 
-    MetricValueInterface* metvalIF = dynamic_cast<MetricValueInterface*> (metric3p);
-    if (!metvalIF)
-    {
-      std::cout << "metric3p has no MetricValueInterface" << std::endl;
-    }
-
-    OptimizerValueInterface* opValIF = dynamic_cast<OptimizerValueInterface*> (optimizer4p);
+    InterfaceAcceptor<MetricValueInterface>* opValIF = dynamic_cast<InterfaceAcceptor<MetricValueInterface>*> (optimizer4p);
     if (!opValIF)
     {
       std::cout << "optimizer4p has no OptimizerValueInterface" << std::endl;
     }
 
     // connect value interfaces
-    opValIF->SetMetricValueComponentInterface(metvalIF);
+    if (!opValIF->Connect(metric3p))
+    {
+      std::cout << "metric3p cannot connect to optimizer4p by ValueInterface" << std::endl;
+    }
+    
     OptimizerUpdateInterface* opUpdIF = dynamic_cast<OptimizerUpdateInterface*> (optimizer4p);
     if (!opValIF)
     {
@@ -393,34 +409,31 @@ int main () {
     GDOptimizer3rdPartyComponent* tempOptimizer3p = new GDOptimizer3rdPartyComponent();
     ComponentBase* optimizer3p = tempOptimizer3p; // type returned by our component factory
 
-    MetricValueInterface* metvalIF = dynamic_cast<MetricValueInterface*> (metric4p);
-    if (!metvalIF)
-    {
-      std::cout << "metric4p has no MetricValueInterface" << std::endl;
-    }
-    OptimizerValueInterface* opValIF = dynamic_cast<OptimizerValueInterface*> (optimizer3p);
+    InterfaceAcceptor<MetricValueInterface>* opValIF = dynamic_cast<InterfaceAcceptor<MetricValueInterface>*> (optimizer3p);
     if (!opValIF)
     {
-      std::cout << "optimizer4p has no OptimizerValueInterface" << std::endl;
+      std::cout << "optimizer3p has no OptimizerValueInterface" << std::endl;
     }
 
     // connect value interfaces
-    opValIF->SetMetricValueComponentInterface(metvalIF);
-
-
-    MetricDerivativeInterface* metderivIF = dynamic_cast<MetricDerivativeInterface*> (metric4p);
-    if (!metderivIF)
+    if (!opValIF->Connect(metric4p))
     {
-      std::cout << "metric4p has no MetricDerivativeInterface" << std::endl;
+      std::cout << "metric4p cannot connect to optimizer3p by ValueInterface" << std::endl;
     }
-    OptimizerDerivativeInterface* opDerivIF = dynamic_cast<OptimizerDerivativeInterface*> (optimizer3p);
+
+    //opValIF->Set(tempmetric4p);
+
+    InterfaceAcceptor<MetricDerivativeInterface>* opDerivIF = dynamic_cast<InterfaceAcceptor<MetricDerivativeInterface>*> (optimizer3p);
     if (!opDerivIF)
     {
-      std::cout << "optimizer4p has no OptimizerDerivativeInterface" << std::endl;
+      std::cout << "optimizer3p has no OptimizerDerivativeInterface" << std::endl;
     }
     // connect derivative interfaces
-    opDerivIF->SetMetricDerivativeComponentInterface(metderivIF);
-
+    if (!opDerivIF->Connect(metric4p))
+    {
+      std::cout << "metric4p cannot connect to optimizer3p by DerivativeInterface" << std::endl;
+    }
+    
 
     OptimizerUpdateInterface* opUpdIF = dynamic_cast<OptimizerUpdateInterface*> (optimizer3p);
     if (!opValIF)
