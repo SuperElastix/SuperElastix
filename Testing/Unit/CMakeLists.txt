@@ -3,11 +3,26 @@
 # Any GoogleTests in these files are automatically added to CTest and
 # the elastix dashboard. 
 
-set( ElastixUnitTestFilenames
-  elxExampleUnitTest.cxx
-  elxBluePrintTest.cxx
-  itkRegistration.cxx
-)
+# Not compiling elastix tests while we debug windows build. See minimum viable examples below
+# set( ElastixUnitTestFilenames
+#   elxExampleUnitTest.cxx
+#   elxBlueprintTest.cxx
+# )         
+
+# Pass
+add_executable( HelloWorld HelloWorld.cxx)
+
+# Pass
+add_executable( HelloWorldBlueprint HelloWorldBlueprint.cxx )
+target_link_libraries( HelloWorldBlueprint ${ELASTIX_LIBRARIES} ${ITK_LIBRARIES} )
+
+# Fail. It seems GoogleTest is compiled statically (like it should), while the executable is compiled dynamically (it should also be static) Why? BUILD_SHARED_LIBS is set to OFF!
+
+# And why is the static linker option not recongnized (VS2013)?
+set(CMAKE_EXE_LINKER_FLAGS /MTd ) 
+
+add_executable( HelloWorldGoogleTest HelloWorldGoogleTest.cxx )
+target_link_libraries( HelloWorldGoogleTest ${TEST_LIBRARIES} )
 
 # ---------------------------------------------------------------------
 # Set data directories

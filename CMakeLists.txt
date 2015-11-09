@@ -2,7 +2,7 @@ cmake_minimum_required( VERSION 2.8 )
 
 # Explicitly add INCREMENTAL linking option to command lines.
 # http://www.cmake.org/pipermail/cmake/2010-February/035174.html
-set( MSVC_INCREMENTAL_DEFAULT ON )
+#set( MSVC_INCREMENTAL_DEFAULT ON )
 
 # ---------------------------------------------------------------------
 project( Elastix )
@@ -13,13 +13,10 @@ set( CMAKE_RUNTIME_OUTPUT_DIRECTORY
 )
 
 # Include SuperElastix CMake scripts
-set( CMAKE_MODULE_PATH
-  "${CMAKE_CURRENT_SOURCE_DIR}/CMake" 
-  ${CMAKE_MODULE_PATH}
-)
+list( APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake" )
 
-if( ${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC" )
-  include( elxWinConfig.cmake )
+if( ${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC )
+  include( elxWinConfig )
 endif()
 
 # ---------------------------------------------------------------------
@@ -31,13 +28,13 @@ include( "${CMAKE_CURRENT_SOURCE_DIR}/CMake/elxITKRequiredModules.cmake" )
 
 # ---------------------------------------------------------------------
 # Boost Graph Library
-find_package( Boost REQUIRED graph )
+find_package( Boost )
 include_directories( ${Boost_INCLUDE_DIRS} )
 
 # ---------------------------------------------------------------------
 # Build Elastix
 # For now we just enable all modules
-include( "${CMAKE_CURRENT_SOURCE_DIR}/CMake/elxModules.cmake" )
+include( elxModules )
 elxmodule_enable( elxModuleCore )
 
 # ---------------------------------------------------------------------
