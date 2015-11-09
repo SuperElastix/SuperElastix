@@ -28,11 +28,7 @@ ExternalProject_Add( BOOST
   UPDATE_COMMAND ""
   CONFIGURE_COMMAND ${BOOST_CONFIGURE_COMMAND} 
     --prefix=${BOOST_BUILD_DIR}/lib
-  BUILD_COMMAND ${BOOST_BUILD_COMMAND} install 
-    --prefix=${BOOST_BUILD_DIR}
-    --with-graph
-    --variant=release
-    --jobs=4
+  BUILD_COMMAND ""
   INSTALL_COMMAND ""
 )
 
