@@ -54,7 +54,6 @@ if( USE_SYSTEM_ITK )
   include( "${CMAKE_CURRENT_SOURCE_DIR}/../CMake/elxRequiredITKModules.cmake" )
 else()
   include( ExternalITK )
-  list( APPEND ELASTIX_DEPENDENCIES ITK )
 endif()
 
 # ---------------------------------------------------------------------
@@ -66,7 +65,6 @@ if( USE_SYSTEM_BOOST )
   find_package( BOOST REQUIRED graph )
 else()
   include( ExternalBoost )
-  list( APPEND ELASTIX_DEPENDENCIES BOOST )
 endif()
 
 # ---------------------------------------------------------------------

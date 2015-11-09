@@ -36,7 +36,6 @@ include_directories( ${Boost_INCLUDE_DIRS} )
 
 # ---------------------------------------------------------------------
 # Build Elastix
-
 # For now we just enable all modules
 include( "${CMAKE_CURRENT_SOURCE_DIR}/CMake/elxModules.cmake" )
 elxmodule_enable( elxModuleCore )
