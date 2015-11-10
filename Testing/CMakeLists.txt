@@ -30,36 +30,19 @@ endforeach()
 ExternalData_Add_Target( ElastixData )
 
 # ---------------------------------------------------------------------
-# Add GoogleTest
+# Find GoogleTest library
 
-find_package( Git )
-if( NOT EXISTS "${CMAKE_SOURCE_DIR}/Testing/GoogleTest/.git" AND GIT_EXECUTABLE )
-  execute_process( 
-  	COMMAND ${GIT_EXECUTABLE} submodule update --init
-    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
-    OUTPUT_QUIET
-  )
-endif()
-
-if( NOT EXISTS ${CMAKE_SOURCE_DIR}/Testing/GoogleTest/.git )
-  message( 
-  	FATAL_ERROR "Could not find GoogleTest submodule. Please run 
-  	git submodule update --init in the source directory to compile tests."
-  )
-endif()
-
-add_subdirectory( GoogleTest )
-
-include_directories(
-  ${gtest_SOURCE_DIR}/include
-)
+find_package( GTest REQUIRED )
+include_directories( ${GTEST_INCLUDE_DIRS} )
 
 set( TEST_LIBRARIES
-  gtest_main
+  ${GTEST_BOTH_LIBRARIES}
 )
 
 # ---------------------------------------------------------------------
 # Build test suite
+
+set( CTEST_CONFIGURATION_TYPE Debug )
 
 # Unit tests
 add_subdirectory( Unit )

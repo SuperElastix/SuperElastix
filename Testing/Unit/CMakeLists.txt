@@ -3,26 +3,10 @@
 # Any GoogleTests in these files are automatically added to CTest and
 # the elastix dashboard. 
 
-# Not compiling elastix tests while we debug windows build. See minimum viable examples below
-# set( ElastixUnitTestFilenames
-#   elxExampleUnitTest.cxx
-#   elxBlueprintTest.cxx
-# )         
-
-# Pass
-add_executable( HelloWorld HelloWorld.cxx)
-
-# Pass
-add_executable( HelloWorldBlueprint HelloWorldBlueprint.cxx )
-target_link_libraries( HelloWorldBlueprint ${ELASTIX_LIBRARIES} ${ITK_LIBRARIES} )
-
-# Fail. It seems GoogleTest is compiled statically (like it should), while the executable is compiled dynamically (it should also be static) Why? BUILD_SHARED_LIBS is set to OFF!
-
-# And why is the static linker option not recongnized (VS2013)?
-set(CMAKE_EXE_LINKER_FLAGS /MTd ) 
-
-add_executable( HelloWorldGoogleTest HelloWorldGoogleTest.cxx )
-target_link_libraries( HelloWorldGoogleTest ${TEST_LIBRARIES} )
+set( ElastixUnitTestFilenames
+  elxExampleUnitTest.cxx
+  elxBlueprintTest.cxx
+)         
 
 # ---------------------------------------------------------------------
 # Set data directories
@@ -60,11 +44,9 @@ list( APPEND TEST_LIBRARIES
 foreach( ElastixUnitTestFilename ${ElastixUnitTestFilenames} )
   # Build tests executables
   string( REPLACE ".cxx" "" ElastixUnitTest ${ElastixUnitTestFilename} )
-  add_executable( "${ElastixUnitTest}" ${ElastixUnitTestFilename} )
+  add_executable( ${ElastixUnitTest} ${ElastixUnitTestFilename} )
   target_link_libraries( "${ElastixUnitTest}" ${ELASTIX_LIBRARIES} ${ITK_LIBRARIES} ${TEST_LIBRARIES} )
 
-  ExternalData_Add_Test( ElastixData
-    NAME ${ElastixUnitTest}
-    COMMAND ${ElastixUnitTest} "--gtest_output=xml:${CMAKE_BINARY_DIR}/Testing/Unit/${ElastixUnitTest}.xml"
-  )
+  # Add GoogleTest to CTest
+  GTEST_ADD_TESTS( ${ElastixUnitTest} "--gtest_output=xml:${CMAKE_BINARY_DIR}/Testing/Unit/${ElastixUnitTest}.xml" ${ElastixUnitTestFilename} )
 endforeach()

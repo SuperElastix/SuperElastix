@@ -23,8 +23,6 @@ if( NOT DEFINED CMAKE_BUILD_TYPE )
   set( CMAKE_BUILD_TYPE "Release" )
 endif()
 
-option( BUILD_SHARED_LIBS OFF )
-
 # Build examples by default
 # Examples will be build as an external project to verify the installation of elastix
 option( ELASTIX_BUILD_EXAMPLES "Enable building examples." ON )
@@ -68,6 +66,19 @@ if( USE_SYSTEM_BOOST )
 else()
   include( ExternalBoost )
 endif()
+
+# ---------------------------------------------------------------------
+# Build GoogleTest
+
+option( USE_SYSTEM_GOOGLETEST "Use a pre-compiled version of GoogleTest. " OFF ) 
+mark_as_advanced(USE_SYSTEM_GOOGLETEST) 
+if ( ELASTIX_BUILD_TESTING ) 
+  if ( USE_SYSTEM_GOOGLETEST ) 
+    find_package( GTest REQUIRED ) 
+  else() 
+    include(ExternalGoogleTest) 
+  endif() 
+endif() 
 
 # ---------------------------------------------------------------------
 # Build Elastix
