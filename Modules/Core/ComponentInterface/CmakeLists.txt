@@ -1,5 +1,9 @@
 PROJECT(componenthandshake)
-cmake_minimum_required(VERSION 2.6)
-cmake_policy(VERSION 2.6)
-
-ADD_EXECUTABLE(componenthandshake componenthandshake.cxx)
+cmake_minimum_required(VERSION 2.8)
+cmake_policy(VERSION 2.8)
+file(GLOB componenthandshake_SRC
+    "*.h"
+    "*.cxx"
+	"*.hxx"
+)
+ADD_EXECUTABLE(componenthandshake ${componenthandshake_SRC})
