@@ -1,4 +1,4 @@
-set( proj Elastix )
+set( proj SuperElastix )
 
 ExternalProject_Add( ${proj}
   DOWNLOAD_COMMAND ""
@@ -12,6 +12,7 @@ ExternalProject_Add( ${proj}
     -DELASTIX_BUILD_DASHBOARD:BOOL=${ELASTIX_BUILD_DASHBOARD}
     -DITK_DIR:PATH=${ITK_DIR}
     -DBOOST_ROOT:PATH=${BOOST_ROOT}
+    -DELASTIX_USE_FILE:PATH=${ELASTIX_USE_FILE}
   DEPENDS ${ELASTIX_DEPENDENCIES}
   INSTALL_COMMAND ""
 )
