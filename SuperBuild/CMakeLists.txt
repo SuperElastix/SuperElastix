@@ -1,7 +1,7 @@
 cmake_minimum_required( VERSION 2.8 )
 
 # ---------------------------------------------------------------------
-project( ElastixSuperBuild )
+project( SuperElastixSuperBuild )
 
 find_package( Git REQUIRED )
 
@@ -25,24 +25,24 @@ endif()
 
 # Build examples by default
 # Examples will be build as an external project to verify the installation of elastix
-option( ELASTIX_BUILD_EXAMPLES "Enable building examples." ON )
+option( SUPERELASTIX_BUILD_EXAMPLES "Enable building examples." ON )
 
 # Build tests by default
-option( ELASTIX_BUILD_TESTING "Enable building tests." ON )
-if( ELASTIX_BUILD_TESTING )
-  option( ELASTIX_BUILD_BENCHMARKING "Enable building benchmarks." ON )
-  option( ELASTIX_BUILD_DASHBOARD "Enable building benchmarks." ON )
+option( SUPERELASTIX_BUILD_TESTING "Enable building tests." ON )
+if( SUPERELASTIX_BUILD_TESTING )
+  option( SUPERELASTIX_BUILD_BENCHMARKING "Enable building benchmarks." ON )
+  option( SUPERELASTIX_BUILD_DASHBOARD "Enable building benchmarks." ON )
 endif()
 
 # Do not build dashboard by default
-option( ELASTIX_BUILD_DASHBOARD "Enable building dashboard." OFF )
+option( SUPERELASTIX_BUILD_DASHBOARD "Enable building dashboard." OFF )
 
 
 # ---------------------------------------------------------------------
 # Build ITK
 
 set( ITK_VERSION_MAJOR "4" )
-set( ITK_VERSION_MINOR "7" )
+set( ITK_VERSION_MINOR "8" )
 set( ITK_VERSION_PATCH "1" )
 set( ITK_VERSION_STRING "${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR}.${ITK_VERSION_PATCH}" )
 
@@ -51,7 +51,7 @@ option( USE_SYSTEM_ITK "Use an installed version of ITK" OFF )
 
 if( USE_SYSTEM_ITK )
   find_package( ITK ${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR} REQUIRED )
-  include( "${CMAKE_CURRENT_SOURCE_DIR}/../CMake/elxRequiredITKModules.cmake" )
+  include( elxRequiredITKModules )
 else()
   include( ExternalITK )
 endif()
@@ -83,7 +83,17 @@ endif()
 # ---------------------------------------------------------------------
 # Build Elastix
 
-include( Elastix )
+# TODO: Add USE_SYSTEM_ELASTICLEGACY option
+mark_as_advanced( SUPERELASTIX_BUILD_ELASTIX )
+option( SUPERELASTIX_BUILD_ELASTIX ON )
+if( SUPERELASTIX_BUILD_ELASTIX )
+  include( ExternalElastix )
+endif()
+
+# ---------------------------------------------------------------------
+# Build SuperElastix
+
+include( SuperElastix )
 
 
 
