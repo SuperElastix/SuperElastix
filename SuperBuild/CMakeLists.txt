@@ -72,11 +72,11 @@ endif()
 
 option( USE_SYSTEM_GOOGLETEST "Use a pre-compiled version of GoogleTest. " OFF ) 
 mark_as_advanced(USE_SYSTEM_GOOGLETEST) 
-if ( ELASTIX_BUILD_TESTING ) 
+if ( SUPERELASTIX_BUILD_TESTING ) 
   if ( USE_SYSTEM_GOOGLETEST ) 
     find_package( GTest REQUIRED ) 
   else() 
-    include(ExternalGoogleTest) 
+    include( ExternalGoogleTest ) 
   endif() 
 endif() 
 
