@@ -8,8 +8,20 @@
 #include "SSDMetric4thPartyComponent.h"
 #include "GDOptimizer4thPartyComponent.h"
 
+
+
 using namespace elx;
   int main() {
+    {
+      std::cout << InterfaceName<MetricValueInterface>::Get() << std::endl;
+
+      std::cout << AcceptorInterfaceName<InterfaceAcceptor<MetricValueInterface>>::Get() << std::endl;
+
+      std::cout << InterfaceName<InterfaceAcceptor<MetricValueInterface>>::Get() << std::endl;
+      std::cout << InterfaceName<InterfaceProvider<MetricValueInterface>>::Get() << std::endl;
+
+      
+    }
     {
       /************ testing interface casts ***********
       * expected: ok
@@ -32,6 +44,8 @@ using namespace elx;
 
     GDOptimizer4thPartyComponent* tempOptimizer4p = new GDOptimizer4thPartyComponent();
     ComponentBase* optimizer4p = tempOptimizer4p; // type returned by our component factory
+
+    int success = optimizer4p->ConnectFrom("MetricValueInterface", metric4p);
 
     InterfaceAcceptor<MetricValueInterface>* opValIF = dynamic_cast<InterfaceAcceptor<MetricValueInterface>*> (optimizer4p);
     if (!opValIF)

@@ -5,6 +5,7 @@
 #include "Interfaces.hxx"
 #include "Example3rdPartyCode.h"
 #include "Metric3rdPartyWrapper.h"
+#include <string.h>
 
 namespace elx
 {
@@ -15,6 +16,7 @@ namespace elx
     ~GDOptimizer3rdPartyComponent();
     Example3rdParty::GDOptimizer3rdParty* theImplementation;
     Metric3rdPartyWrapper* MetricObject;
+    virtual int ConnectFrom(const char *, ComponentBase*);
     int Set(MetricValueInterface*);
     int Set(MetricDerivativeInterface*);
     int Update();

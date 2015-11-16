@@ -16,6 +16,7 @@ namespace elx
     ~GDOptimizer4thPartyComponent();
     Example4thParty::GDOptimizer4thParty* theImplementation;
     Metric4thPartyWrapper* MetricObject;
+    virtual int ConnectFrom(const char *, ComponentBase*);
     int Set(MetricValueInterface*);
     int Update();
   };
