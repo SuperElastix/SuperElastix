@@ -20,26 +20,28 @@ int GDOptimizer3rdPartyComponent::ConnectFrom(const char * interfacename, Compon
   if (std::strcmp(InterfaceName<InterfaceAcceptor<MetricValueInterface>>::Get(), interfacename) == 0)
   {
     InterfaceAcceptor<MetricValueInterface>* acceptIF = static_cast<InterfaceAcceptor<MetricValueInterface>*> (this);
-    if (!acceptIF)
-    {
-      std::cout << InterfaceName<InterfaceAcceptor<MetricValueInterface>>::Get() << " optimizer has no OptimizerValueInterface" << std::endl;
-    }
+    // static_cast always succeeds since we know via the template arguments of the component what InterfaceAcceptors are base classes.
     // connect value interfaces
-    acceptIF->Connect(other);
-    return 1; //success, assume only one interface listens interfacename
-  }
-  if (std::strcmp(InterfaceName<InterfaceAcceptor<MetricDerivativeInterface>>::Get(), interfacename) == 0)
-  {
-    InterfaceAcceptor<MetricDerivativeInterface>* acceptIF = static_cast<InterfaceAcceptor<MetricDerivativeInterface>*> (this);
-    if (!acceptIF)
+    if (1 == acceptIF->Connect(other))
     {
-      std::cout << InterfaceName<InterfaceAcceptor<MetricDerivativeInterface>>::Get() << " optimizer has no OptimizerValueInterface" << std::endl;
+      return 1; //success, assume only one interface listens interfacename
     }
-    // connect value interfaces
-    acceptIF->Connect(other);
-    return 1; //success, assume only one interface listens interfacename
+    else
+    {
+      if (std::strcmp(InterfaceName<InterfaceAcceptor<MetricDerivativeInterface>>::Get(), interfacename) == 0)
+      {
+        InterfaceAcceptor<MetricDerivativeInterface>* acceptIF = static_cast<InterfaceAcceptor<MetricDerivativeInterface>*> (this);
+        if (!acceptIF)
+        {
+          std::cout << InterfaceName<InterfaceAcceptor<MetricDerivativeInterface>>::Get() << " optimizer has no OptimizerValueInterface" << std::endl;
+        }
+        // connect value interfaces
+        acceptIF->Connect(other);
+        return 1; //success, assume only one interface listens interfacename
+      }
+      return 0;
+    }
   }
-  return 0;
 }
 
 int GDOptimizer3rdPartyComponent::Set(MetricValueInterface* component)

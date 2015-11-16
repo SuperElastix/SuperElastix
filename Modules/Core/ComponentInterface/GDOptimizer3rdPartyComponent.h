@@ -9,7 +9,13 @@
 
 namespace elx
 {
-  class GDOptimizer3rdPartyComponent : public ComponentBase, public InterfaceAcceptor<MetricValueInterface>, public InterfaceAcceptor<MetricDerivativeInterface>, public OptimizerUpdateInterface
+
+  class GDOptimizer3rdPartyComponent : 
+    public Implements<
+      Accepting< MetricValueInterface, MetricDerivativeInterface >,
+      //Accepting< InterfaceAcceptor<MetricValueInterface>, InterfaceAcceptor<MetricDerivativeInterface> >,
+      Providing< OptimizerUpdateInterface>
+    >
   {
   public:
     GDOptimizer3rdPartyComponent();

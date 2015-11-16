@@ -9,6 +9,5 @@ namespace elx
   protected:
     virtual ~ComponentBase(){};
   };
-
 } // end namespace elx
 #endif // #define ComponentBase_h

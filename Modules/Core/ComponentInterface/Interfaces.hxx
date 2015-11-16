@@ -38,7 +38,7 @@ int InterfaceAcceptor<InterfaceT>::Connect(ComponentBase* providerComponent){
     InterfaceT* providerInterface = dynamic_cast<InterfaceT*> (providerComponent);
     if (!providerInterface)
     {
-      std::cout << "providerComponent does not have required interface" << std::endl;
+      std::cout << "providerComponent does not have required " << InterfaceName < InterfaceT >::Get() << std::endl;
       return 0;
     }
     // connect value interfaces
@@ -47,6 +47,71 @@ int InterfaceAcceptor<InterfaceT>::Connect(ComponentBase* providerComponent){
   }
 
 
+//template<typename... Interfaces>
+//class Accepting : public Interfaces...
+//{
+//};
+
+//template<>
+//class Accepting<>
+//{
+//};
+
+
+//template<typename FirstInterface>
+//class Accepting : public InterfaceAcceptor < FirstInterface >
+//{
+//};
+
+template<typename ... RestInterfaces>
+class Accepting
+{
+};
+
+
+//template<typename FirstInterface, typename ... RestInterfaces>
+//class Accepting<FirstInterface, RestInterfaces... > : public InterfaceAcceptor<FirstInterface>, public Accepting< RestInterfaces ... >
+//{
+//};
+
+template<typename FirstInterface, typename ... RestInterfaces>
+class Accepting<FirstInterface, RestInterfaces... > : public Accepting< RestInterfaces ... >, public InterfaceAcceptor<FirstInterface>
+{
+  //FirstInterface firstIF;
+};
+
+
+
+template<typename... Interfaces>
+class Providing : public Interfaces...
+{
+};
+
+template<typename AcceptingInterfaces, typename ProvidingInterfaces>
+class Implements : public ComponentBase, public AcceptingInterfaces, public ProvidingInterfaces
+{
+  typedef typename AcceptingInterfaces AcceptingInterfacesType;
+  typedef typename ProvidingInterfaces ProvidingInterfacesType;
+};
+
+/*
+// 
+
+template <typename First, typename ... Rest>
+int ConnectFromBaseQueryInterface(GUID const & id) noexcept
+{
+  if (id == __uuidof(First) || id == __uuidof(::IUnknown))
+  {
+    return static_cast<First *>(this);
+  }
+  if (IsInspectable<Interfaces ...>() &&
+    id == __uuidof(::IInspectable))
+  {
+    return FindInspectable<Interfaces ...>();
+  }
+  return FindInterface<Rest ...>(id);
+}
+*/
 // TEST
 template<class InterfaceT>
 class InterfaceProvider {
