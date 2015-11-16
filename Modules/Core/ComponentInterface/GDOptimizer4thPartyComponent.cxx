@@ -18,12 +18,12 @@ GDOptimizer4thPartyComponent::~GDOptimizer4thPartyComponent()
 int GDOptimizer4thPartyComponent::ConnectFrom(const char * interfacename, ComponentBase* other)
 {
   //TODO write out as templated functionality:
-  if (std::strcmp(InterfaceName<InterfaceAcceptor<MetricValueInterface>>::Get(), interfacename) == 0)
+  if (std::strcmp(InterfaceName<InterfaceAcceptor<MetricValueInterface> >::Get(), interfacename) == 0)
   {
     InterfaceAcceptor<MetricValueInterface>* acceptIF = static_cast<InterfaceAcceptor<MetricValueInterface>*> (this);
     if (!acceptIF)
     {
-      std::cout << InterfaceName<InterfaceAcceptor<MetricValueInterface>>::Get() << " optimizer has no OptimizerValueInterface" << std::endl;
+      std::cout << InterfaceName<InterfaceAcceptor<MetricValueInterface> >::Get() << " optimizer has no OptimizerValueInterface" << std::endl;
     }
     // connect value interfaces
     acceptIF->Connect(other);

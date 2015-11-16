@@ -2,6 +2,7 @@
 #define Interfaces_hxx
 
 #include "ComponentBase.h"
+#include <typeinfo>
 
 namespace elx
 {
@@ -31,20 +32,6 @@ public:
 private:
   bool isSet;
 };
-
-template<class InterfaceT>
-int InterfaceAcceptor<InterfaceT>::Connect(ComponentBase* providerComponent){
-
-    InterfaceT* providerInterface = dynamic_cast<InterfaceT*> (providerComponent);
-    if (!providerInterface)
-    {
-      std::cout << "providerComponent does not have required " << InterfaceName < InterfaceT >::Get() << std::endl;
-      return 0;
-    }
-    // connect value interfaces
-    this->Set(providerInterface); // due to the input argument being uniquely defined in the multiple inheritance tree, all versions of Set() are accessible
-    return 1;
-  }
 
 
 //template<typename... Interfaces>
@@ -90,8 +77,8 @@ class Providing : public Interfaces...
 template<typename AcceptingInterfaces, typename ProvidingInterfaces>
 class Implements : public ComponentBase, public AcceptingInterfaces, public ProvidingInterfaces
 {
-  typedef typename AcceptingInterfaces AcceptingInterfacesType;
-  typedef typename ProvidingInterfaces ProvidingInterfacesType;
+  typedef AcceptingInterfaces AcceptingInterfacesType;
+  typedef ProvidingInterfaces ProvidingInterfacesType;
 };
 
 /*
@@ -179,6 +166,21 @@ struct AcceptorInterfaceName
   }
 };
 
+
+
+template<class InterfaceT>
+int InterfaceAcceptor<InterfaceT>::Connect(ComponentBase* providerComponent){
+
+    InterfaceT* providerInterface = dynamic_cast<InterfaceT*> (providerComponent);
+    if (!providerInterface)
+    {
+      std::cout << "providerComponent does not have required " << InterfaceName < InterfaceT >::Get() << std::endl;
+      return 0;
+    }
+    // connect value interfaces
+    this->Set(providerInterface); // due to the input argument being uniquely defined in the multiple inheritance tree, all versions of Set() are accessible
+    return 1;
+  }
 
 } // end namespace elx
 #endif // #define Interfaces_hxx
