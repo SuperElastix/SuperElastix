@@ -26,59 +26,35 @@ public:
 template<class InterfaceT>
 class InterfaceAcceptor {
 public:
-  virtual int Set(InterfaceT*) = 0;
+
+  // Set() is called by a succesfull Connect()
+  // The implementation of Set() must be provided by component developers. 
+  virtual int Set(InterfaceT*) = 0; 
+
+  // Connect tries to connect this accepting interface with all interfaces of the provider component.
   int Connect(ComponentBase*); 
+
 private:
   bool isSet;
 };
 
-template<class InterfaceT>
-int InterfaceAcceptor<InterfaceT>::Connect(ComponentBase* providerComponent){
-
-    InterfaceT* providerInterface = dynamic_cast<InterfaceT*> (providerComponent);
-    if (!providerInterface)
-    {
-      std::cout << "providerComponent does not have required " << InterfaceName < InterfaceT >::Get() << std::endl;
-      return 0;
-    }
-    // connect value interfaces
-    this->Set(providerInterface); // due to the input argument being uniquely defined in the multiple inheritance tree, all versions of Set() are accessible
-    return 1;
-  }
 
 
-//template<typename... Interfaces>
-//class Accepting : public Interfaces...
-//{
-//};
-
-//template<>
-//class Accepting<>
-//{
-//};
-
-
-//template<typename FirstInterface>
-//class Accepting : public InterfaceAcceptor < FirstInterface >
-//{
-//};
 
 template<typename ... RestInterfaces>
 class Accepting
 {
+  public:
+    interfaceStatus ConnectFromImpl(const char *, ComponentBase*) { return interfaceStatus::noaccepter; }; //no interface called interfacename ;
 };
-
-
-//template<typename FirstInterface, typename ... RestInterfaces>
-//class Accepting<FirstInterface, RestInterfaces... > : public InterfaceAcceptor<FirstInterface>, public Accepting< RestInterfaces ... >
-//{
-//};
 
 template<typename FirstInterface, typename ... RestInterfaces>
-class Accepting<FirstInterface, RestInterfaces... > : public Accepting< RestInterfaces ... >, public InterfaceAcceptor<FirstInterface>
+class Accepting<FirstInterface, RestInterfaces... > : public InterfaceAcceptor<FirstInterface>, public Accepting< RestInterfaces ... >
 {
-  //FirstInterface firstIF;
+public:
+  interfaceStatus ConnectFromImpl(const char *, ComponentBase*);
 };
+
 
 
 
@@ -88,30 +64,15 @@ class Providing : public Interfaces...
 };
 
 template<typename AcceptingInterfaces, typename ProvidingInterfaces>
-class Implements : public ComponentBase, public AcceptingInterfaces, public ProvidingInterfaces
+class Implements : public AcceptingInterfaces, public ProvidingInterfaces, public ComponentBase
 {
-  typedef typename AcceptingInterfaces AcceptingInterfacesType;
-  typedef typename ProvidingInterfaces ProvidingInterfacesType;
+  public:
+  virtual interfaceStatus ConnectFrom(const char *, ComponentBase*);
+  //typedef typename AcceptingInterfaces AcceptingInterfacesType;
+  //typedef typename ProvidingInterfaces ProvidingInterfacesType;
 };
 
-/*
-// 
 
-template <typename First, typename ... Rest>
-int ConnectFromBaseQueryInterface(GUID const & id) noexcept
-{
-  if (id == __uuidof(First) || id == __uuidof(::IUnknown))
-  {
-    return static_cast<First *>(this);
-  }
-  if (IsInspectable<Interfaces ...>() &&
-    id == __uuidof(::IInspectable))
-  {
-    return FindInspectable<Interfaces ...>();
-  }
-  return FindInterface<Rest ...>(id);
-}
-*/
 // TEST
 template<class InterfaceT>
 class InterfaceProvider {
@@ -179,6 +140,56 @@ struct AcceptorInterfaceName
   }
 };
 
+template<class InterfaceT>
+int InterfaceAcceptor<InterfaceT>::Connect(ComponentBase* providerComponent){
+
+  InterfaceT* providerInterface = dynamic_cast<InterfaceT*> (providerComponent);
+  if (!providerInterface)
+  {
+    std::cout << "providerComponent does not have required " << InterfaceName < InterfaceT >::Get() << std::endl;
+    return 0;
+  }
+  // connect value interfaces
+  this->Set(providerInterface); // due to the input argument being uniquely defined in the multiple inheritance tree, all versions of Set() are accessible at component level
+  return 1;
+}
+
+//template<template<typename... RestInterfacesT> class AcceptingT, typename ProvidingT>
+//interfaceStatus Implements<AcceptingT<RestInterfacesT... >, ProvidingT>::ConnectFrom(const char * interfacename, ComponentBase* other)
+//{
+//  :ConnectFrom(const char * interfacename, ComponentBase* other)
+//}
+
+template<typename AcceptingInterfaces, typename ProvidingInterfaces>
+interfaceStatus Implements<AcceptingInterfaces, ProvidingInterfaces>::ConnectFrom(const char * interfacename, ComponentBase* other)
+{
+  return AcceptingInterfaces::ConnectFromImpl(interfacename, other);
+}
+
+
+template<typename FirstInterface, typename ... RestInterfaces>
+interfaceStatus Accepting<FirstInterface, RestInterfaces... >::ConnectFromImpl(const char * interfacename, ComponentBase* other)
+{
+  // does our component have an accepting interface called interfacename? 
+  if (0 ==std::strcmp(InterfaceName<InterfaceAcceptor<FirstInterface>>::Get(), interfacename))
+  {
+    // static_cast always succeeds since we know via the template arguments of the component which InterfaceAcceptors its base classes are.
+    InterfaceAcceptor<FirstInterface>* acceptIF = static_cast<InterfaceAcceptor<FirstInterface>*> (this);
+
+    // See if the other component has the right interface and try to connect them
+    if (1 == acceptIF->Connect(other))
+    {
+      //success. By terminating this function, we assume only one interface listens to interfacename and that one connection with the other component can be made by this name
+      return interfaceStatus::success;
+    }
+    else
+    {
+      // interfacename was found, but other component doesn't match
+      return interfaceStatus::noprovider;
+    }
+  }
+  return Accepting< RestInterfaces ... >::ConnectFromImpl(interfacename, other);
+}
 
 } // end namespace elx
 #endif // #define Interfaces_hxx

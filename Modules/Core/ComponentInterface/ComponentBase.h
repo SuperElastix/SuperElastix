@@ -3,9 +3,11 @@
 
 namespace elx
 {
+  enum interfaceStatus { success, noaccepter, noprovider };
+
   class ComponentBase {
   public:
-    virtual int ConnectFrom(const char *, ComponentBase*) { return 0; }; //= 0;
+    virtual interfaceStatus ConnectFrom(const char *, ComponentBase*) = 0;
   protected:
     virtual ~ComponentBase(){};
   };

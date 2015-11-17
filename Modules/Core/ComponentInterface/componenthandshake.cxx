@@ -13,8 +13,6 @@
 using namespace elx;
   int main() {
     {
-      tuple<double, long long, const char*> t1(12.2, 42, "big");
-
       std::cout << InterfaceName<MetricValueInterface>::Get() << std::endl;
 
       std::cout << AcceptorInterfaceName<InterfaceAcceptor<MetricValueInterface>>::Get() << std::endl;
@@ -47,7 +45,7 @@ using namespace elx;
     GDOptimizer4thPartyComponent* tempOptimizer4p = new GDOptimizer4thPartyComponent();
     ComponentBase* optimizer4p = tempOptimizer4p; // type returned by our component factory
 
-    int success = optimizer4p->ConnectFrom("MetricValueInterface", metric4p);
+    interfaceStatus IFstatus = optimizer4p->ConnectFrom("MetricValueInterface", metric4p);
 
     InterfaceAcceptor<MetricValueInterface>* opValIF = dynamic_cast<InterfaceAcceptor<MetricValueInterface>*> (optimizer4p);
     if (!opValIF)

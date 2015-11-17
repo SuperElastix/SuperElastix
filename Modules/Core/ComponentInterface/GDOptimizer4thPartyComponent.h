@@ -9,14 +9,19 @@
 namespace elx
 {
   // wrapping into components: 
-  class GDOptimizer4thPartyComponent : public ComponentBase, public InterfaceAcceptor<MetricValueInterface>, public OptimizerUpdateInterface
+  class GDOptimizer4thPartyComponent : 
+    public Implements <
+    Accepting< MetricValueInterface >,
+    Providing < OptimizerUpdateInterface >
+    >
+
   {
   public:
     GDOptimizer4thPartyComponent();
     ~GDOptimizer4thPartyComponent();
     Example4thParty::GDOptimizer4thParty* theImplementation;
     Metric4thPartyWrapper* MetricObject;
-    virtual int ConnectFrom(const char *, ComponentBase*);
+    //virtual int ConnectFrom(const char *, ComponentBase*);
     int Set(MetricValueInterface*);
     int Update();
   };

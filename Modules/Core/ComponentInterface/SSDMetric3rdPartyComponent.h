@@ -8,7 +8,12 @@
 namespace elx
 {
   // SSDMetric3rdPartyComponent provides a value and a derivative
-  class SSDMetric3rdPartyComponent : public ComponentBase, public MetricDerivativeInterface, public MetricValueInterface {
+  class SSDMetric3rdPartyComponent : 
+    public Implements<
+    Accepting<>,
+    Providing< MetricDerivativeInterface, MetricValueInterface>
+    >
+  {
   public:
     SSDMetric3rdPartyComponent();
     ~SSDMetric3rdPartyComponent();

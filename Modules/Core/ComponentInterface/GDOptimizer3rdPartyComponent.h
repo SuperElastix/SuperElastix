@@ -13,7 +13,6 @@ namespace elx
   class GDOptimizer3rdPartyComponent : 
     public Implements<
       Accepting< MetricValueInterface, MetricDerivativeInterface >,
-      //Accepting< InterfaceAcceptor<MetricValueInterface>, InterfaceAcceptor<MetricDerivativeInterface> >,
       Providing< OptimizerUpdateInterface>
     >
   {
@@ -22,7 +21,7 @@ namespace elx
     ~GDOptimizer3rdPartyComponent();
     Example3rdParty::GDOptimizer3rdParty* theImplementation;
     Metric3rdPartyWrapper* MetricObject;
-    virtual int ConnectFrom(const char *, ComponentBase*);
+    //virtual int ConnectFrom(const char *, ComponentBase*);
     int Set(MetricValueInterface*);
     int Set(MetricDerivativeInterface*);
     int Update();
