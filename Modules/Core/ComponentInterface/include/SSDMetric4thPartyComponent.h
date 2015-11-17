@@ -16,7 +16,7 @@ namespace elx
   {
   public:
     SSDMetric4thPartyComponent();
-    ~SSDMetric4thPartyComponent();
+    virtual ~SSDMetric4thPartyComponent();
     Example4thParty::SSDMetric4thParty* theImplementation;
     int GetValue();
   };

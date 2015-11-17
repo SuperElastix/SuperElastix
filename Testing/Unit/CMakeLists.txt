@@ -6,6 +6,7 @@
 set( ElastixUnitTestFilenames
   elxExampleUnitTest.cxx
   elxBlueprintTest.cxx
+  elxComponentInterfaceTest.cxx
 )         
 
 # ---------------------------------------------------------------------

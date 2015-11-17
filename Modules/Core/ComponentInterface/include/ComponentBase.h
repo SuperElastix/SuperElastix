@@ -10,8 +10,8 @@ namespace elx
   class ComponentBase {
   public:
     virtual interfaceStatus ConnectFrom(const char *, ComponentBase*) = 0;
-  protected:
-    virtual ~ComponentBase(){};
+  //protected:
+    virtual ~ComponentBase() {};
   };
 } // end namespace elx
 #endif // #define ComponentBase_h

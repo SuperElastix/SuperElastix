@@ -16,7 +16,7 @@ namespace elx
   {
   public:
     SSDMetric3rdPartyComponent();
-    ~SSDMetric3rdPartyComponent();
+    virtual ~SSDMetric3rdPartyComponent();
     Example3rdParty::SSDMetric3rdParty* theImplementation;
     int GetValue();
     int GetDerivative();
