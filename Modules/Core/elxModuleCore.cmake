@@ -1,13 +1,22 @@
+set( MODULE elxModuleCore )
+
+# Export include files
 set( ${MODULE}_INCLUDE_DIRS
-  ${CMAKE_SOURCE_DIR}/${MODULE_PATH}/Common/include
-  ${CMAKE_SOURCE_DIR}/${MODULE_PATH}/Blueprints/include
+  ${${MODULE}_SOURCE_DIR}/Common/include
+  ${${MODULE}_SOURCE_DIR}/Blueprints/include
 )
 
-set( ${MODULE}_SOURCE_FILES
-  ${CMAKE_SOURCE_DIR}/${MODULE_PATH}/Blueprints/src/elxComponentDescriptor.cxx
-  ${CMAKE_SOURCE_DIR}/${MODULE_PATH}/Blueprints/src/elxBlueprint.cxx
-)
-
+# Export libraries
 set( ${MODULE}_LIBRARIES 
-  elxModuleCore
+  ${MODULE}
 )
+
+# Module source files
+set( ${MODULE}_SOURCE_FILES
+  ${${MODULE}_SOURCE_DIR}/Blueprints/src/elxBlueprint.cxx
+)
+
+# Compile library
+
+add_library( ${MODULE} STATIC "${${MODULE}_SOURCE_FILES}" )
+target_link_libraries( ${MODULE} ${ELASTIX_LIBRARIES} )

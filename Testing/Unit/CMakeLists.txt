@@ -5,9 +5,8 @@
 
 set( ElastixUnitTestFilenames
   elxExampleUnitTest.cxx
-  elxBluePrintTest.cxx
-  itkRegistration.cxx
-)
+  elxBlueprintTest.cxx
+)         
 
 # ---------------------------------------------------------------------
 # Set data directories
@@ -45,11 +44,9 @@ list( APPEND TEST_LIBRARIES
 foreach( ElastixUnitTestFilename ${ElastixUnitTestFilenames} )
   # Build tests executables
   string( REPLACE ".cxx" "" ElastixUnitTest ${ElastixUnitTestFilename} )
-  add_executable( "${ElastixUnitTest}" ${ElastixUnitTestFilename} )
+  add_executable( ${ElastixUnitTest} ${ElastixUnitTestFilename} )
   target_link_libraries( "${ElastixUnitTest}" ${ELASTIX_LIBRARIES} ${ITK_LIBRARIES} ${TEST_LIBRARIES} )
 
-  ExternalData_Add_Test( ElastixData
-    NAME ${ElastixUnitTest}
-    COMMAND ${ElastixUnitTest} "--gtest_output=xml:${CMAKE_BINARY_DIR}/Testing/Unit/${ElastixUnitTest}.xml"
-  )
+  # Add GoogleTest to CTest
+  GTEST_ADD_TESTS( ${ElastixUnitTest} "--gtest_output=xml:${CMAKE_BINARY_DIR}/Testing/Unit/${ElastixUnitTest}.xml" ${ElastixUnitTestFilename} )
 endforeach()
