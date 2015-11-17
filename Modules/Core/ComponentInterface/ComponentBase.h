@@ -1,6 +1,8 @@
 #ifndef ComponentBase_h
 #define ComponentBase_h
 
+#include <iostream>
+#include <cstring>
 namespace elx
 {
   enum interfaceStatus { success, noaccepter, noprovider };

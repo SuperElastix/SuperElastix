@@ -15,10 +15,10 @@ using namespace elx;
     {
       std::cout << InterfaceName<MetricValueInterface>::Get() << std::endl;
 
-      std::cout << AcceptorInterfaceName<InterfaceAcceptor<MetricValueInterface>>::Get() << std::endl;
+      std::cout << AcceptorInterfaceName<InterfaceAcceptor<MetricValueInterface> >::Get() << std::endl;
 
-      std::cout << InterfaceName<InterfaceAcceptor<MetricValueInterface>>::Get() << std::endl;
-      std::cout << InterfaceName<InterfaceProvider<MetricValueInterface>>::Get() << std::endl;
+      std::cout << InterfaceName<InterfaceAcceptor<MetricValueInterface> >::Get() << std::endl;
+      std::cout << InterfaceName<InterfaceProvider<MetricValueInterface> >::Get() << std::endl;
 
       
     }

@@ -2,6 +2,7 @@
 #define Interfaces_hxx
 
 #include "ComponentBase.h"
+#include <typeinfo>
 
 namespace elx
 {
@@ -38,9 +39,6 @@ private:
   bool isSet;
 };
 
-
-
-
 template<typename ... RestInterfaces>
 class Accepting
 {
@@ -55,9 +53,6 @@ public:
   interfaceStatus ConnectFromImpl(const char *, ComponentBase*);
 };
 
-
-
-
 template<typename... Interfaces>
 class Providing : public Interfaces...
 {
@@ -67,9 +62,7 @@ template<typename AcceptingInterfaces, typename ProvidingInterfaces>
 class Implements : public AcceptingInterfaces, public ProvidingInterfaces, public ComponentBase
 {
   public:
-  virtual interfaceStatus ConnectFrom(const char *, ComponentBase*);
-  //typedef typename AcceptingInterfaces AcceptingInterfacesType;
-  //typedef typename ProvidingInterfaces ProvidingInterfacesType;
+    virtual interfaceStatus ConnectFrom(const char *, ComponentBase*);
 };
 
 

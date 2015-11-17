@@ -15,7 +15,6 @@ GDOptimizer4thPartyComponent::~GDOptimizer4thPartyComponent()
   delete this->MetricObject;
 }
 
-
 int GDOptimizer4thPartyComponent::Set(MetricValueInterface* component)
 {
   this->MetricObject->SetMetricValueComponent(component);
