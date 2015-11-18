@@ -44,6 +44,7 @@ class Accepting
 {
   public:
     interfaceStatus ConnectFromImpl(const char *, ComponentBase*) { return interfaceStatus::noaccepter; }; //no interface called interfacename ;
+    int ConnectFromImpl(ComponentBase*) { return 0; }; //Empty RestInterfaces does 0 successful connects ;
 };
 
 template<typename FirstInterface, typename ... RestInterfaces>
@@ -51,6 +52,7 @@ class Accepting<FirstInterface, RestInterfaces... > : public InterfaceAcceptor<F
 {
 public:
   interfaceStatus ConnectFromImpl(const char *, ComponentBase*);
+  int ConnectFromImpl(ComponentBase*);
 };
 
 template<typename... Interfaces>
@@ -63,6 +65,7 @@ class Implements : public AcceptingInterfaces, public ProvidingInterfaces, publi
 {
   public:
     virtual interfaceStatus ConnectFrom(const char *, ComponentBase*);
+    virtual int ConnectFrom(ComponentBase*);
 };
 
 
@@ -159,6 +162,11 @@ interfaceStatus Implements<AcceptingInterfaces, ProvidingInterfaces>::ConnectFro
   return AcceptingInterfaces::ConnectFromImpl(interfacename, other);
 }
 
+template<typename AcceptingInterfaces, typename ProvidingInterfaces>
+int Implements<AcceptingInterfaces, ProvidingInterfaces>::ConnectFrom(ComponentBase* other)
+{
+  return AcceptingInterfaces::ConnectFromImpl(other);
+}
 
 template<typename FirstInterface, typename ... RestInterfaces>
 interfaceStatus Accepting<FirstInterface, RestInterfaces... >::ConnectFromImpl(const char * interfacename, ComponentBase* other)
@@ -182,6 +190,17 @@ interfaceStatus Accepting<FirstInterface, RestInterfaces... >::ConnectFromImpl(c
     }
   }
   return Accepting< RestInterfaces ... >::ConnectFromImpl(interfacename, other);
+}
+
+template<typename FirstInterface, typename ... RestInterfaces>
+int Accepting<FirstInterface, RestInterfaces... >::ConnectFromImpl(ComponentBase* other)
+{
+  // static_cast always succeeds since we know via the template arguments of the component which InterfaceAcceptors its base classes are.
+  InterfaceAcceptor<FirstInterface>* acceptIF = static_cast<InterfaceAcceptor<FirstInterface>*> (this);
+
+  // See if the other component has the right interface and try to connect them
+  // count the number of successes
+  return acceptIF->Connect(other) + Accepting< RestInterfaces ... >::ConnectFromImpl(other);
 }
 
 } // end namespace elx
