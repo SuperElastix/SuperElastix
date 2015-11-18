@@ -4,8 +4,8 @@
 # the elastix dashboard. 
 
 set( ElastixUnitTestFilenames
-  elxExampleUnitTest.cxx
   elxBlueprintTest.cxx
+  elxElastixComponentTest.cxx
 )         
 
 # ---------------------------------------------------------------------

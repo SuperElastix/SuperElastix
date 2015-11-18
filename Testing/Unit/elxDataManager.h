@@ -56,4 +56,4 @@ private:
 
 };
 
-#endif // #define __DataManager_h
+#endif // __DataManager_h
