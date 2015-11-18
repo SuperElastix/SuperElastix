@@ -54,7 +54,7 @@ TEST_F( InterfaceTest, DynamicCast )
   //optimizer3p should have a OptimizerUpdateInterface
   OptimizerUpdateInterface* updateIF = dynamic_cast<OptimizerUpdateInterface*> (optimizer3p);
   ASSERT_NE(updateIF, nullptr);
-  EXPECT_NO_THROW(returnval = updateIF->Update());
+  //EXPECT_NO_THROW(returnval = updateIF->Update()); // Update can only be called if metric and optimizer are connected
 
   //optimizer3p should have a InterfaceAcceptor<MetricValueInterface> 
   InterfaceAcceptor<MetricValueInterface>* valueAcceptorIF = dynamic_cast<InterfaceAcceptor<MetricValueInterface>*> (optimizer3p);
@@ -66,7 +66,7 @@ TEST_F( InterfaceTest, DynamicCast )
   
 }
 
-TEST_F( InterfaceTest, ComponentConnecting )
+TEST_F( InterfaceTest, ConnectByName )
 {
   interfaceStatus IFstatus;
   EXPECT_NO_THROW(IFstatus = optimizer3p->ConnectFrom("MetricValueInterface", metric3p));
@@ -92,4 +92,25 @@ TEST_F( InterfaceTest, ComponentConnecting )
   EXPECT_EQ(IFstatus, interfaceStatus::noaccepter);
 
 }
+
+TEST_F(InterfaceTest, ConnectAll)
+{
+  int connectionCount = 0;
+  EXPECT_NO_THROW(connectionCount = optimizer3p->ConnectFrom(metric3p));
+  EXPECT_EQ(connectionCount, 2); // both MetricValueInterface and MetricDerivativeInterface are connected
+
+  EXPECT_NO_THROW(connectionCount = optimizer3p->ConnectFrom(metric4p));
+  EXPECT_EQ(connectionCount, 1); // only MetricValueInterface is connected
+
+  EXPECT_NO_THROW(connectionCount = optimizer4p->ConnectFrom(metric3p));
+  EXPECT_EQ(connectionCount, 1); // only MetricValueInterface is connected
+
+  EXPECT_NO_THROW(connectionCount = optimizer4p->ConnectFrom(metric4p));
+  EXPECT_EQ(connectionCount, 1); // only MetricValueInterface is connected
+
+
+  EXPECT_NO_THROW(connectionCount = metric4p->ConnectFrom(optimizer4p));
+  EXPECT_EQ(connectionCount, 0); // cannot connect in this direction
+}
+
 } // namespace elx
