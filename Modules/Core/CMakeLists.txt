@@ -1,1 +1,0 @@
-elxmodule_compile( ${MODULE} )

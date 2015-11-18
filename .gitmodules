@@ -1,4 +1,0 @@
-[submodule "Testing/GoogleTest"]
-	path = Testing/GoogleTest
-	url = https://github.com/kaspermarstal/GoogleTest
-	tag = release-1.7.0

@@ -1,4 +1,4 @@
-set( PROJECT BOOST )
+set( proj BOOST )
 
 # Note: It IS important to download different files on different OS's:
 # on Unix-like systems, we need the file persmissions (only available in the .tar.gz),
@@ -19,7 +19,7 @@ else()
   endif()
 endif()
 
-set( BOOST_BUILD_DIR "${CMAKE_INSTALL_PREFIX}/${PROJECT}-build/" )
+set( BOOST_BUILD_DIR "${CMAKE_INSTALL_PREFIX}/${proj}-build/" )
 
 ExternalProject_Add( BOOST
   BUILD_IN_SOURCE 1
@@ -27,13 +27,10 @@ ExternalProject_Add( BOOST
   URL_MD5 ${BOOST_MD5}
   UPDATE_COMMAND ""
   CONFIGURE_COMMAND ${BOOST_CONFIGURE_COMMAND} 
-    --prefix=${BOOST_BUILD_DIR}/lib
-  BUILD_COMMAND ${BOOST_BUILD_COMMAND} install 
-    --prefix=${BOOST_BUILD_DIR}
-    --with-graph
-    --variant=release
-    --jobs=4
+  BUILD_COMMAND ""
   INSTALL_COMMAND ""
 )
 
-set( BOOST_ROOT ${BOOST_BUILD_DIR} )
+set( BOOST_ROOT "${CMAKE_INSTALL_PREFIX}/${proj}-prefix/src/BOOST" )
+
+list( APPEND ELASTIX_DEPENDENCIES ${proj} )
