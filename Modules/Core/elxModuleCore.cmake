@@ -7,6 +7,8 @@ set( ${MODULE}_INCLUDE_DIRS
   ${${MODULE}_SOURCE_DIR}/ComponentInterface/include
 )
 
+source_group("MyHeaders" FILES ${${MODULE}_SOURCE_DIR}/ComponentInterface/include/ComponentBase.h)
+
 # Export libraries
 set( ${MODULE}_LIBRARIES 
   ${MODULE}
@@ -23,7 +25,6 @@ set( ${MODULE}_SOURCE_FILES
   ${${MODULE}_SOURCE_DIR}/ComponentInterface/src/Metric4thPartyWrapper.cxx
   ${${MODULE}_SOURCE_DIR}/ComponentInterface/src/SSDMetric3rdPartyComponent.cxx
   ${${MODULE}_SOURCE_DIR}/ComponentInterface/src/SSDMetric4thPartyComponent.cxx
-  ${${MODULE}_SOURCE_DIR}/ComponentInterface/src/componenthandshake.cxx
 )
 
 
