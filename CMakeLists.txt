@@ -35,7 +35,8 @@ include_directories( ${Boost_INCLUDE_DIRS} )
 # Build SuperElastix
 # For now we just enable all modules
 include( elxModules )
-elxmodule_enable( elxModuleCore )
+elxmodule_enable( ModuleCore )
+elxmodule_enable( ModuleElastix )
 
 # ---------------------------------------------------------------------
 # Testing

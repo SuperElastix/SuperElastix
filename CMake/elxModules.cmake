@@ -42,7 +42,7 @@ macro( _elxmodules_initialize )
   set( ELASTIX_MODULES )
 
   file( GLOB_RECURSE MODULE_FILES RELATIVE "${CMAKE_SOURCE_DIR}"
-     "${CMAKE_SOURCE_DIR}/Modules/*/elxModule*.cmake"
+     "${CMAKE_SOURCE_DIR}/Modules/*/Module*.cmake"
   )
 
   message( STATUS "Found the following elastix modules:")
