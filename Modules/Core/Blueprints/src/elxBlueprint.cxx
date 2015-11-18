@@ -1,5 +1,5 @@
-#ifndef __Blueprint_cxx
-#define __Blueprint_cxx
+#ifndef Blueprint_cxx
+#define Blueprint_cxx
 
 #include "boost/graph/graphviz.hpp"
 
@@ -157,4 +157,4 @@ Blueprint
 
 } // namespace elx 
 
-#endif // __Blueprint_cxx
+#endif // Blueprint_cxx

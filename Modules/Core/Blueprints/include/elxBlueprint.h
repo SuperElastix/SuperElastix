@@ -1,5 +1,5 @@
-#ifndef __Blueprint_h
-#define __Blueprint_h
+#ifndef Blueprint_h
+#define Blueprint_h
 
 #include "boost/graph/graph_traits.hpp"
 #include "boost/graph/directed_graph.hpp"
@@ -103,4 +103,4 @@ private:
 
 }
 
-#endif // #define __Blueprint_h
+#endif // #define Blueprint_h

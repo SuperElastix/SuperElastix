@@ -28,4 +28,4 @@ DataManager
   return path;
 }
 
-#endif // __elxTestData_cxx
+#endif // __DataManager_cxx
