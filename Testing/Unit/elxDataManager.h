@@ -26,9 +26,9 @@ public:
   std::string GetOutputDirectory( void ) const { return this->m_OutputDirectory; };
   std::string GetBaselineDirectory( void ) const { return this->m_BaselineDirectory; };
 
-  const std::string GetInputFullPath( const std::string filename ) const;
-  const std::string GetOutputFullPath( const std::string filename ) const;
-  const std::string GetBaselineFullPath( const std::string filename ) const;
+  const std::string GetInputFile( const std::string filename ) const;
+  const std::string GetOutputFile( const std::string filename ) const;
+  const std::string GetBaselineFile( const std::string filename ) const;
 
   std::string GetFolderSeparator() const
   {
