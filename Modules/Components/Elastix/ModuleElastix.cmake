@@ -11,3 +11,9 @@ include( ${ELASTIX_USE_FILE} )
 set( ${MODULE}_INCLUDE_DIRS
   ${${MODULE}_SOURCE_DIR}/include
 )
+
+# Export libraries
+set( ${MODULE}_LIBRARIES 
+  elastix
+  transformix
+)

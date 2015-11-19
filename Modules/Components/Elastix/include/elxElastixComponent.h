@@ -10,6 +10,8 @@
 
 #include "boost/any.hpp"
 
+#include "elastixlib.h"
+
 namespace selx {
 
 template< typename TOutputImage >
@@ -19,14 +21,34 @@ public:
 
   elxNewMacro( ElastixComponent, itk::ImageSource );
 
-  void SetFixedImage( void );
+  ElastixComponent( void );
 
-  typedef unsigned int                                    InputIdType;
-  typedef itk::VectorContainer< InputIdType, boost::any > InputContainerType;
+  typedef itk::ProcessObject::DataObjectIdentifierType    InputNameType;
+
+  typedef elastix::ELASTIX ElastixType;
+
+  // TODO: Parameter map should be a dataobject
+  typedef itk::ParameterFileParser::ParameterMapType      ParameterMapType;
+  typedef std::vector< ParameterMapType >                 ParameterMapListType;
+  typedef itk::ParameterFileParser::ParameterValuesType   ParameterValuesType;
+
+  void SetParameterMapList( ParameterMapListType parameterMapList ) { m_ParameterMapList = parameterMapList; };
+  ParameterMapListType GetParameterMapList( void ) { return m_ParameterMapList; };
+
+  // Make SetInput public
+  using itk::ProcessObject::SetInput;
+
+protected:
+
+  void GenerateData( void );
 
 private:
 
-  InputContainerType m_InputContainer;
+  ElastixType           m_Elastix;
+
+  std::string           m_OutputFolder;
+  bool                  m_LogToConsole;
+  ParameterMapListType  m_ParameterMapList;
 
 };
 
