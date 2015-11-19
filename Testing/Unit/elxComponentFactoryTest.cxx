@@ -28,8 +28,8 @@ public:
 
 TEST_F(ComponentFactoryTest, EmptyObjectFactoryBase)
 {
-  // The Component factory is inspired on the ImageIO factory. 
-  // In ITK Components (transformsIO and imageIO) can be preregistered: CMake\UseITK.cmake sets up the IOFactory_Register_Manager
+  // The Component factory is inspired/based on the ImageIO factory. 
+  // In ITK Components (transformIO and imageIO) can be preregistered: CMake\UseITK.cmake sets up the IOFactory_Register_Manager
   // In Elastix (by Denis) GPU filters are preregistered using (simpleITK's) Typelists and Cmake
   // In this test we manually register 2 dummy modules: itkTransformComponent1 and itkMetricComponent1. 
 
