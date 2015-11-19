@@ -29,7 +29,8 @@ macro( _elxmodule_enable MODULE )
       list( APPEND ELASTIX_LIBRARIES ${${MODULE}_LIBRARIES} )
     endif()
 
-    # TODO: Add recursive dependency walk
+    # TODO: Add support for indicating dependencies between modules and recursive enabling of these dependencies
+
   endif()
 endmacro()
 

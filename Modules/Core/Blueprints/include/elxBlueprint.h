@@ -9,7 +9,7 @@
 
 #include "elxMacro.h"
 
-namespace elx {
+namespace selx {
 
 class Blueprint : public itk::DataObject
 {

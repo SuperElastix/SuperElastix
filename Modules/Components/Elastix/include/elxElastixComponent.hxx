@@ -1,7 +1,7 @@
 #ifndef ElastixComponent_hxx
 #define ElastixComponent_hxx
 
-namespace elx {
+namespace selx {
 
 template< typename TOutputImage >
 void
@@ -11,6 +11,6 @@ ElastixComponent< TOutputImage >
   std::cout << "Hello World!" << std::endl;
 }
 
-} // namespace elx
+} // namespace selx
 
 #endif // ElastixComponent_hxx

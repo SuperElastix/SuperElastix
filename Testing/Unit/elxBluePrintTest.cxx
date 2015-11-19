@@ -2,7 +2,7 @@
 
 #include "gtest/gtest.h"
 
-namespace elx {
+using namespace selx;
 
 class BlueprintTest : public ::testing::Test {
 public:
@@ -170,5 +170,3 @@ TEST_F( BlueprintTest, WriteBlueprint )
 
   EXPECT_NO_THROW( blueprint->WriteBlueprint( "blueprint.dot" ) );
 }
-
-} // namespace elx

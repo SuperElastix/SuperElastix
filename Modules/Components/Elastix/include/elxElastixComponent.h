@@ -10,7 +10,7 @@
 
 #include "boost/any.hpp"
 
-namespace elx {
+namespace selx {
 
 template< typename TOutputImage >
 class ElastixComponent : public itk::ImageSource< TOutputImage >
@@ -30,7 +30,7 @@ private:
 
 };
 
-} // namespace elx
+} // namespace selx
 
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "elxElastixComponent.hxx"

@@ -5,7 +5,7 @@
 
 #include "elxBlueprint.h"
 
-namespace elx {
+namespace selx {
 
 Blueprint::ComponentIndexType
 Blueprint
@@ -155,6 +155,6 @@ Blueprint
   boost::write_graphviz( dotfile, this->m_Graph );
 }
 
-} // namespace elx 
+} // namespace selx 
 
 #endif // Blueprint_cxx
