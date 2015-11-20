@@ -19,11 +19,11 @@ protected:
   ImageType::Pointer fixedImage;
   ImageType::Pointer movingImage;
 
-  typedef ElastixComponent< ImageType >               ElastixComponentType;
-  typedef ElastixComponentType::ParameterMapType      ParameterMapType;
+  typedef ElastixComponent< ImageType >                   ElastixComponentType;
+  typedef ElastixComponentType::ParameterMapType          ParameterMapType;
   typedef ElastixComponentType::ParameterMapListType      ParameterMapListType;
-  typedef ElastixComponentType::ParameterValuesType   ParameterValuesType;
-  typedef ElastixComponentType::InputNameType         InputNameType;
+  typedef ElastixComponentType::ParameterValuesType       ParameterValuesType;
+  typedef ElastixComponentType::DataObjectIdentifierType  DataObjectIdentifierType;
 
   ParameterMapListType parameterMapList;
 
@@ -95,9 +95,8 @@ TEST_F( ElastixComponentTest, Registration )
 
   ElastixComponentType::Pointer elastixComponent = ElastixComponentType::New();
 
-  elastixComponent->SetInput( InputNameType( "FixedImage" ), fixedImage );
-  elastixComponent->SetInput( InputNameType( "MovingImage" ), fixedImage );
-  
+  elastixComponent->SetInput( DataObjectIdentifierType( "FixedImage" ), fixedImage );
+  elastixComponent->SetInput( DataObjectIdentifierType( "MovingImage" ), fixedImage );
   elastixComponent->SetParameterMapList( parameterMapList );
   elastixComponent->Update();
 }

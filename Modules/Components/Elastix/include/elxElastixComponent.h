@@ -23,7 +23,7 @@ public:
 
   ElastixComponent( void );
 
-  typedef itk::ProcessObject::DataObjectIdentifierType    InputNameType;
+  typedef itk::ProcessObject::DataObjectIdentifierType    DataObjectIdentifierType;
 
   typedef elastix::ELASTIX ElastixType;
 
