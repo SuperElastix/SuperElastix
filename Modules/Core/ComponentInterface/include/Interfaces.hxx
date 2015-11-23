@@ -36,8 +36,8 @@ interfaceStatus Accepting<FirstInterface, RestInterfaces... >::ConnectFromImpl(c
   // does our component have an accepting interface called interfacename? 
   if (0 ==std::strcmp(InterfaceName<InterfaceAcceptor<FirstInterface>>::Get(), interfacename))
   {
-    // static_cast always succeeds since we know via the template arguments of the component which InterfaceAcceptors its base classes are.
-    InterfaceAcceptor<FirstInterface>* acceptIF = static_cast<InterfaceAcceptor<FirstInterface>*> (this);
+    // cast always succeeds since we know via the template arguments of the component which InterfaceAcceptors its base classes are.
+    InterfaceAcceptor<FirstInterface>* acceptIF = this;
 
     // See if the other component has the right interface and try to connect them
     if (1 == acceptIF->Connect(other))
@@ -57,8 +57,8 @@ interfaceStatus Accepting<FirstInterface, RestInterfaces... >::ConnectFromImpl(c
 template<typename FirstInterface, typename ... RestInterfaces>
 int Accepting<FirstInterface, RestInterfaces... >::ConnectFromImpl(ComponentBase* other)
 {
-  // static_cast always succeeds since we know via the template arguments of the component which InterfaceAcceptors its base classes are.
-  InterfaceAcceptor<FirstInterface>* acceptIF = static_cast<InterfaceAcceptor<FirstInterface>*> (this);
+  // cast always succeeds since we know via the template arguments of the component which InterfaceAcceptors its base classes are.
+  InterfaceAcceptor<FirstInterface>* acceptIF = (this);
 
   // See if the other component has the right interface and try to connect them
   // count the number of successes
