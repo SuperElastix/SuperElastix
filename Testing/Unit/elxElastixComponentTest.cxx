@@ -95,8 +95,8 @@ TEST_F( ElastixComponentTest, Registration )
 
   ElastixComponentType::Pointer elastixComponent = ElastixComponentType::New();
 
-  elastixComponent->SetInput( DataObjectIdentifierType( "FixedImage" ), fixedImage );
-  elastixComponent->SetInput( DataObjectIdentifierType( "MovingImage" ), fixedImage );
-  elastixComponent->SetParameterMapList( parameterMapList );
+  EXPECT_NO_THROW( elastixComponent->SetInput( DataObjectIdentifierType( "FixedImage" ), fixedImage ) );
+  EXPECT_NO_THROW( elastixComponent->SetInput( DataObjectIdentifierType( "MovingImage" ), fixedImage ) );
+  EXPECT_NO_THROW( elastixComponent->SetParameterMapList( parameterMapList ) );
   elastixComponent->Update();
 }

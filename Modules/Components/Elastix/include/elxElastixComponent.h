@@ -27,7 +27,7 @@ public:
 
   typedef elastix::ELASTIX ElastixType;
 
-  // TODO: Parameter map should be a dataobject
+  // TODO: Parameter map should be a DataObject
   typedef itk::ParameterFileParser::ParameterMapType      ParameterMapType;
   typedef std::vector< ParameterMapType >                 ParameterMapListType;
   typedef itk::ParameterFileParser::ParameterValuesType   ParameterValuesType;
@@ -43,8 +43,6 @@ protected:
   void GenerateData( void );
 
 private:
-
-  ElastixType           m_Elastix;
 
   std::string           m_OutputFolder;
   bool                  m_LogToConsole;
