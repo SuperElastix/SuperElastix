@@ -17,17 +17,17 @@ list( APPEND ExternalData_URL_TEMPLATES
 # The content links contains md5 hashes that are checked for consistensy  
 # against files downloaded from servers in ExternalData_URL_TEMPLATES. These 
 # files are placed in a corresponding location in the build directory.
-file( GLOB_RECURSE ElastixDataContentLinks "*.md5" )
-foreach(ElastixDataContentLink ${ElastixDataContentLinks})
-  string( REGEX REPLACE "\\.md5$" "" ElastixDataContentLink ${ElastixDataContentLink} )
-  ExternalData_Expand_Arguments( ElastixData
-    ElastixDataFilenames
-    DATA{${ElastixDataContentLink}}
+file( GLOB_RECURSE SuperElastixDataContentLinks "*.md5" )
+foreach( SuperElastixDataContentLink ${SuperElastixDataContentLinks})
+  string( REGEX REPLACE "\\.md5$" "" SuperElastixDataContentLink ${SuperElastixDataContentLink} )
+  ExternalData_Expand_Arguments( SuperElastixData
+    SuperElastixDataFilenames
+    DATA{${SuperElastixDataContentLink}}
   )
 endforeach()
 
 # Test data is downloaded when this target is built
-ExternalData_Add_Target( ElastixData )
+ExternalData_Add_Target( SuperElastixData )
 
 # ---------------------------------------------------------------------
 # Find GoogleTest library
@@ -49,9 +49,9 @@ add_subdirectory( Unit )
 
 # ---------------------------------------------------------------------
 # Configure dashboard
-mark_as_advanced( ELASTIX_BUILD_DASHBOARD )
-option( ELASTIX_BUILD_DASHBOARD "Enable elastix dashboard." OFF )
+mark_as_advanced( SUPERELASTIX_BUILD_DASHBOARD )
+option( SUPERELASTIX_BUILD_DASHBOARD "Enable SuperElastix dashboard." OFF )
 
-if( ${ELASTIX_BUILD_DASHBOARD} )
+if( ${SUPERELASTIX_BUILD_DASHBOARD} )
   add_subdirectory( Dashboard )
 endif()

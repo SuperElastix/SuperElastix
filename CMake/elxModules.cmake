@@ -6,7 +6,7 @@ macro( _elxmodule_check_name MODULE )
     message( FATAL_ERROR "Invalid module name: ${MODULE}" )
   endif()
 
-  list( FIND ELASTIX_MODULES "${MODULE}" MODULE_FOUND )
+  list( FIND SUPERELASTIX_MODULES "${MODULE}" MODULE_FOUND )
   if( ${MODULE_FOUND} EQUAL -1 )
     message( FATAL_ERROR "Module not found: ${MODULE}")
   endif()
@@ -26,7 +26,7 @@ macro( _elxmodule_enable MODULE )
 
     if( ${MODULE}_LIBRARIES )
       link_directories( ${${MODULE}_LIBRARY_DIRS} )
-      list( APPEND ELASTIX_LIBRARIES ${${MODULE}_LIBRARIES} )
+      list( APPEND SUPERELASTIX_LIBRARIES ${${MODULE}_LIBRARIES} )
     endif()
 
     # TODO: Add support for indicating dependencies between modules and recursive enabling of these dependencies
@@ -39,8 +39,8 @@ macro( _elxmodule_disable MODULE )
 endmacro()
 
 macro( _elxmodules_initialize )
-  set( ELASTIX_LIBRARIES )
-  set( ELASTIX_MODULES )
+  set( SUPERELASTIX_LIBRARIES )
+  set( SUPERELASTIX_MODULES )
 
   file( GLOB_RECURSE MODULE_FILES RELATIVE "${CMAKE_SOURCE_DIR}"
      "${CMAKE_SOURCE_DIR}/Modules/*/Module*.cmake"
@@ -53,7 +53,7 @@ macro( _elxmodules_initialize )
     
     message( STATUS "  ${MODULE_NAME}" )
 
-    option( "ELASTIX_USE_${MODULE_NAME}" OFF )
+    option( "USE_${MODULE_NAME}" OFF )
     set( "${MODULE_NAME}_FILE" ${CMAKE_SOURCE_DIR}/${MODULE_FILE} )
     set( "${MODULE_NAME}_ENABLED" OFF )
 
@@ -64,7 +64,7 @@ macro( _elxmodules_initialize )
     set( ${MODULE_NAME}_LIBRARY_DIRS )
     set( ${MODULE_NAME}_LIBRARIES )
 
-    list(APPEND ELASTIX_MODULES ${MODULE_NAME} )
+    list(APPEND SUPERELASTIX_MODULES ${MODULE_NAME} )
   endforeach()
 endmacro()
 

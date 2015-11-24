@@ -17,9 +17,9 @@ public:
 
   DataManager()
   {
-    this->m_InputDirectory = ELASTIX_UNITTEST_INPUT_DATA_DIR;
-    this->m_OutputDirectory = ELASTIX_UNITTEST_OUTPUT_DATA_DIR;
-    this->m_BaselineDirectory = ELASTIX_UNITTEST_BASELINE_DATA_DIR;
+    this->m_InputDirectory = SUPERELASTIX_UNITTEST_INPUT_DATA_DIR;
+    this->m_OutputDirectory = SUPERELASTIX_UNITTEST_OUTPUT_DATA_DIR;
+    this->m_BaselineDirectory = SUPERELASTIX_UNITTEST_BASELINE_DATA_DIR;
   }
 
   std::string GetInputDirectory( void ) const { return this->m_InputDirectory; };

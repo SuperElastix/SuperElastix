@@ -10,15 +10,15 @@ set( ElastixUnitTestFilenames
 
 # ---------------------------------------------------------------------
 # Set data directories
-set( ELASTIX_UNITTEST_INPUT_DATA_DIR ${CMAKE_CURRENT_BINARY_DIR}/Data/Input )
-set( ELASTIX_UNITTEST_OUTPUT_DATA_DIR ${CMAKE_CURRENT_BINARY_DIR}/Data/Output )
-set( ELASTIX_UNITTEST_BASELINE_DATA_DIR ${CMAKE_CURRENT_BINARY_DIR}/Data/Baseline )
+set( SUPERELASTIX_UNITTEST_INPUT_DATA_DIR ${CMAKE_CURRENT_BINARY_DIR}/Data/Input )
+set( SUPERELASTIX_UNITTEST_OUTPUT_DATA_DIR ${CMAKE_CURRENT_BINARY_DIR}/Data/Output )
+set( SUPERELASTIX_UNITTEST_BASELINE_DATA_DIR ${CMAKE_CURRENT_BINARY_DIR}/Data/Baseline )
 
-if( NOT EXISTS ${ELASTIX_UNITTEST_OUTPUT_DATA_DIR} )
-  file( MAKE_DIRECTORY ${ELASTIX_UNITTEST_OUTPUT_DATA_DIR} )
+if( NOT EXISTS ${SUPERELASTIX_UNITTEST_OUTPUT_DATA_DIR} )
+  file( MAKE_DIRECTORY ${SUPERELASTIX_UNITTEST_OUTPUT_DATA_DIR} )
 endif()
 
-if( NOT EXISTS ${ELASTIX_UNITTEST_OUTPUT_DATA_DIR} )
+if( NOT EXISTS ${SUPERELASTIX_UNITTEST_OUTPUT_DATA_DIR} )
   message( FATAL_ERROR 
     "Could not create directory for output data. Make sure elastix has permission to write to disk."
   )
@@ -45,7 +45,7 @@ foreach( ElastixUnitTestFilename ${ElastixUnitTestFilenames} )
   # Build tests executables
   string( REPLACE ".cxx" "" ElastixUnitTest ${ElastixUnitTestFilename} )
   add_executable( ${ElastixUnitTest} ${ElastixUnitTestFilename} )
-  target_link_libraries( "${ElastixUnitTest}" ${ELASTIX_LIBRARIES} ${ITK_LIBRARIES} ${TEST_LIBRARIES} )
+  target_link_libraries( "${ElastixUnitTest}" ${SUPERELASTIX_LIBRARIES} ${ITK_LIBRARIES} ${TEST_LIBRARIES} )
 
   # Add GoogleTest to CTest
   GTEST_ADD_TESTS( ${ElastixUnitTest} "--gtest_output=xml:${CMAKE_BINARY_DIR}/Testing/Unit/${ElastixUnitTest}.xml" ${ElastixUnitTestFilename} )
