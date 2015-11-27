@@ -5,8 +5,7 @@ namespace selx {
 
 template< typename TOutputImage >
 ElastixComponent< TOutputImage >
-::ElastixComponent()
-{
+::ElastixComponent() {
   this->AddRequiredInputName( "FixedImage" );
   this->AddRequiredInputName( "MovingImage" );
 
@@ -24,6 +23,12 @@ void
 ElastixComponent< TOutputImage >
 ::GenerateData( void )
 {
+  // Assert at least one parameter map is set
+  if( this->m_ParameterMapList.size() == 0u )
+  {
+    itkExceptionMacro( << "No parameter map. Use SetParameterMap() to supply parameter map." );
+  }
+
   // Get masks (optional)
   itk::DataObject::Pointer fixedMask = 0;
   if( !( this->GetInput( "FixedMask" ) == ITK_NULLPTR ) )
@@ -39,23 +44,18 @@ ElastixComponent< TOutputImage >
 
   // Do the (possibly multiple) registrations
   ElastixType elastix = ElastixType();
-
-  itk::DataObject::Pointer fixedImage = this->ProcessObject::GetInput( "FixedImage" );
-  itk::DataObject::Pointer movingImage = this->ProcessObject::GetInput( "MovingImage" );
-  ParameterMapListType parameterMapList = this->m_ParameterMapList;
-  std::string folder = this->m_OutputFolder;
-  bool writeToOutputFolder = this->m_OutputFolder != std::string();
-  bool writeToConsole = this->m_LogToConsole;
-
+  int isError = 0;
   try
   {
-    isError = elastix.RegisterImages( // <-- Why do we get segmentation error even before we enter the function?
-      fixedImage,
-      movingImage,
-      parameterMapList,
-      folder,
-      writeToOutputFolder,
-      writeToConsole
+    isError = elastix.RegisterImages(
+      this->ProcessObject::GetInput( "FixedImage" ),
+      this->ProcessObject::GetInput( "MovingImage" ),
+      this->m_ParameterMapList,
+      this->m_OutputFolder,
+      this->m_OutputFolder != std::string(),
+      this->m_LogToConsole,
+      fixedMask,
+      movingMask
     );
   }
   catch( itk::ExceptionObject &e )
@@ -76,10 +76,6 @@ ElastixComponent< TOutputImage >
   if( elastix.GetResultImage().IsNotNull() )
   {
     this->ProcessObject::SetNthOutput( 0, elastix.GetResultImage().GetPointer() );
-  }
-  else
-  {
-    itkExceptionMacro( << "Could not read result image." );
   }
 }
 

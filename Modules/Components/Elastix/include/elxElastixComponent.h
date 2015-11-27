@@ -28,12 +28,19 @@ public:
   typedef elastix::ELASTIX ElastixType;
 
   // TODO: Parameter map should be a DataObject
-  typedef itk::ParameterFileParser::ParameterMapType      ParameterMapType;
-  typedef std::vector< ParameterMapType >                 ParameterMapListType;
-  typedef itk::ParameterFileParser::ParameterValuesType   ParameterValuesType;
 
-  void SetParameterMapList( ParameterMapListType parameterMapList ) { m_ParameterMapList = parameterMapList; };
-  ParameterMapListType GetParameterMapList( void ) { return m_ParameterMapList; };
+  typedef std::vector< std::string >                    ParameterValuesType;
+  typedef std::map< std::string, ParameterValuesType >  ParameterMapType;
+  typedef std::vector< ParameterMapType >               ParameterMapListType;
+
+
+  void SetParameterMapList( ParameterMapListType parameterMapList ) {
+    this->m_ParameterMapList = parameterMapList;
+  };
+
+  ParameterMapListType GetParameterMapList( void ) {
+    return this->m_ParameterMapList;
+  };
 
   // Make SetInput public
   using itk::ProcessObject::SetInput;
