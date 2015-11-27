@@ -5,10 +5,6 @@ set( ${MODULE}_SOURCE_FILES
   ${${MODULE}_SOURCE_DIR}/Blueprints/src/elxBlueprint.cxx
 )
 
-# Compile library
-add_library( ${MODULE} STATIC "${${MODULE}_SOURCE_FILES}" )
-target_link_libraries( ${MODULE} ${SUPERELASTIX_LIBRARIES} )
-
 # Export include files
 set( ${MODULE}_INCLUDE_DIRS
   ${${MODULE}_SOURCE_DIR}/Common/include
@@ -34,7 +30,6 @@ set( ${MODULE}_SOURCE_FILES
   ${${MODULE}_SOURCE_DIR}/ComponentInterface/src/SSDMetric3rdPartyComponent.cxx
   ${${MODULE}_SOURCE_DIR}/ComponentInterface/src/SSDMetric4thPartyComponent.cxx
 )
-
 
 # Compile library
 add_library( ${MODULE} STATIC "${${MODULE}_SOURCE_FILES}" )
