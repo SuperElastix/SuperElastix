@@ -12,21 +12,21 @@ macro( _elxmodule_check_name MODULE )
   endif()
 endmacro()
 
-macro( _elxmodule_enable MODULE )
-  _elxmodule_check_name( ${MODULE} )
+macro( _elxmodule_enable MODULE_NAME )
+  _elxmodule_check_name( ${MODULE_NAME} )
 
-  if( NOT ${MODULE}_ENABLED )
-    set( ELASTIX_USE_${MODULE} ON )
+  if( NOT ${MODULE_NAME}_ENABLED )
+    set( USE_${MODULE_NAME} ON )
 
-    include( ${${MODULE}_FILE} )
+    include( ${${MODULE_NAME}_FILE} )
 
-    if( ${MODULE}_INCLUDE_DIRS )
-      include_directories( ${${MODULE}_INCLUDE_DIRS} )
+    if( ${MODULE_NAME}_INCLUDE_DIRS )
+      include_directories( ${${MODULE_NAME}_INCLUDE_DIRS} )
     endif()
 
-    if( ${MODULE}_LIBRARIES )
-      link_directories( ${${MODULE}_LIBRARY_DIRS} )
-      list( APPEND SUPERELASTIX_LIBRARIES ${${MODULE}_LIBRARIES} )
+    if( ${MODULE_NAME}_LIBRARIES )
+      link_directories( ${${MODULE_NAME}_LIBRARY_DIRS} )
+      list( APPEND SUPERELASTIX_LIBRARIES ${${MODULE_NAME}_LIBRARIES} )
     endif()
 
     # TODO: Add support for indicating dependencies between modules and recursive enabling of these dependencies
@@ -34,7 +34,7 @@ macro( _elxmodule_enable MODULE )
   endif()
 endmacro()
 
-macro( _elxmodule_disable MODULE )
+macro( _elxmodule_disable MODULE_NAME )
   # TODO
 endmacro()
 

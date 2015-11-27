@@ -28,7 +28,7 @@ public:
   };
 
   // Component parameter map that sits on an edge in the graph 
-  // and holds component configuration settings
+  // and holds component connection configuration settings
   struct ConnectionPropertyType { 
     ParameterMapType parameterMap;
   };

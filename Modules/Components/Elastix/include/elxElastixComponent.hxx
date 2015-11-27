@@ -10,11 +10,11 @@ ElastixComponent< TOutputImage >
   this->AddRequiredInputName( "FixedImage" );
   this->AddRequiredInputName( "MovingImage" );
 
-  this->SetPrimaryInput( this->GetInput( "FixedImage" ) );
+  this->SetPrimaryInput(this->GetInput("FixedImage"));
 
   // TODO: Handle these special elastix parameters in a more ITK-esque way
   // For now, don't expose them but just log to console and avoid writing to disk
-  this->m_OutputFolder = std::string( "" );
+  this->m_OutputFolder = std::string();
   this->m_LogToConsole = true;
   this->m_ParameterMapList = ParameterMapListType();
 }
