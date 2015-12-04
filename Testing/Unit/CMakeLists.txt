@@ -6,7 +6,10 @@
 set( ElastixUnitTestFilenames
   elxBlueprintTest.cxx
   elxElastixFilterTest.cxx
+  elxComponentFactoryTest.cxx
+  elxComponentInterfaceTest.cxx
 )         
+
 
 # ---------------------------------------------------------------------
 # Set data directories
