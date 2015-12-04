@@ -50,7 +50,7 @@ public:
   typedef ComponentBase::Pointer ComponentBasePointer;
   typedef ComponentBase::CriteriaType CriteriaType;
 
-  typedef std::list< typename ComponentBasePointer > ComponentListType;
+  typedef std::list< ComponentBasePointer > ComponentListType;
   /** set selection criteria for possibleComponents*/
   void Initialize();
   void SetCriteria(const CriteriaType &criteria);
