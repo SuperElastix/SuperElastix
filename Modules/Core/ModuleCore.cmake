@@ -13,6 +13,7 @@ target_link_libraries( ${MODULE} ${SUPERELASTIX_LIBRARIES} )
 set( ${MODULE}_INCLUDE_DIRS
   ${${MODULE}_SOURCE_DIR}/Common/include
   ${${MODULE}_SOURCE_DIR}/Blueprints/include
+  ${${MODULE}_SOURCE_DIR}/ParameterObject/include
 )
 
 # Export libraries
