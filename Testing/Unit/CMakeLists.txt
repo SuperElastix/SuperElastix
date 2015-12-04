@@ -5,7 +5,7 @@
 
 set( ElastixUnitTestFilenames
   elxBlueprintTest.cxx
-  elxElastixComponentTest.cxx
+  elxElastixFilterTest.cxx
 )         
 
 # ---------------------------------------------------------------------
