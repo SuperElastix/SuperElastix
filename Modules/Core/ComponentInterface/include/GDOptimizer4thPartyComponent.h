@@ -12,7 +12,7 @@ namespace elx
   class GDOptimizer4thPartyComponent : 
     public Implements <
     Accepting< MetricValueInterface >,
-    Providing < OptimizerUpdateInterface >
+    Providing < OptimizerUpdateInterface, ConflictinUpdateInterface >
     >
 
   {
@@ -24,6 +24,10 @@ namespace elx
     //virtual int ConnectFrom(const char *, ComponentBase*);
     int Set(MetricValueInterface*);
     int Update();
+
+    //template <class ConflictinUpdateInterface> virtual int Update() { return 5; };
+    // "error" : member function templates cannot be virtual
+    int Update(ConflictinUpdateInterface*) { return 5; };
   };
 
 } //end namespace elx

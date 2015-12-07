@@ -23,6 +23,17 @@ public:
   virtual int Update() = 0;
 };
 
+class ConflictinUpdateInterface {
+public:
+ // "error" : member function templates cannot be virtual
+ // template <class ConflictinUpdateInterface> virtual int Update() = 0;
+  //TODO http://en.cppreference.com/w/cpp/language/member_template
+
+  //TODO solution: http://stackoverflow.com/questions/2004820/inherit-interfaces-which-share-a-method-name
+  //TODO better?: http://stackoverflow.com/questions/18398409/c-inherit-from-multiple-base-classes-with-the-same-virtual-function-name
+  virtual int Update(ConflictinUpdateInterface*) = 0;
+};
+
 // Define the accepting interfaces as templated by the providing interface
 
 template<class InterfaceT>
