@@ -55,14 +55,14 @@ ElastixFilter< TFixedImage, TMovingImage, TOutputImage >
   ParameterObjectPointer parameterObject = static_cast< ParameterObject* >( this->GetInput( "ParameterObject" ) );
   ParameterMapListType parameterMapList =  parameterObject->GetParameterMapList();
 
-  // Put command line parameters into parameterFileList. There must be an "-out", this is checked later in code
+  // Emulate command line parameters. There must be an "-out", this is checked later in code
   ArgumentMapType argumentMap;
   argumentMap.insert( ArgumentMapEntryType( std::string( "-out" ), std::string( "output_path_not_set" ) ) );
 
   // Direction Cosines
   FlatDirectionCosinesType fixedImageOriginalDirection;
 
-  // Setup xout (folder, do file, do cout)
+  // Setup xout
   if( elx::xoutSetup( this->GetLogToFile().c_str(), this->GetLogToFile() != std::string(), this->GetLogToConsole() ) )
   {
     itkExceptionMacro( "ERROR while setting up xout." );
@@ -87,6 +87,9 @@ ElastixFilter< TFixedImage, TMovingImage, TOutputImage >
     // Set the current elastix-level
     elastix->SetElastixLevel( i );
     elastix->SetTotalNumberOfElastixLevels( 1 );
+
+    // ITK pipe-line mechanism need a result image
+    parameterMapList[ i ][ "WriteResultImage"] = ParameterValuesType( 1, std::string( "true" ) );
 
     // Start registration
     isError = elastix->Run( argumentMap, parameterMapList[ i ] );
@@ -116,17 +119,18 @@ ElastixFilter< TFixedImage, TMovingImage, TOutputImage >
       index << ( i - 1 );
       TransformParameterMapList[ i ][ "InitialTransformParametersFileName" ][ 0 ] = index.str();
     }
-
   } // End loop over registrations
 
-  // TODO: Attach result image and transform parameter map to output
-  std::cout << "resultImageContainer.IsNotNull(): " << resultImageContainer.IsNotNull() << std::endl;
-  // std::cout << "resultImageContainer->Size(): " << resultImageContainer->Size() << std::endl;
+  // Save result image
   if( resultImageContainer.IsNotNull() && resultImageContainer->Size() > 0 )
   {
-    // this->SetOutput( "ResultImage", resultImageContainer->ElementAt( 0 ) );
-    //std::cout << this->GetOutput() << std::endl;
+    this->SetOutput( "ResultImage", resultImageContainer->ElementAt( 0 ) );
   }
+
+  // Save parameter map
+  ParameterObject::Pointer TransformParameters = ParameterObject::New();
+  TransformParameters->SetParameterMapList( TransformParameterMapList );
+  this->SetOutput( "TransformParametersObject", TransformParameters );
 
   // Clean up
   transform            = 0;
@@ -164,7 +168,7 @@ void
 ElastixFilter< TFixedImage, TMovingImage, TOutputImage >
 ::SetParameterObject( ParameterObjectPointer parameterObject )
 {
-  this->SetInput( itk::ProcessObject::DataObjectIdentifierType( "ParameterObject" ), 
+  this->SetInput( itk::ProcessObject::DataObjectIdentifierType( "ParameterObject" ),
                   static_cast< itk::DataObject* >( parameterObject ) );
 }
 

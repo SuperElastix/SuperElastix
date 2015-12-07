@@ -37,6 +37,7 @@ public:
   typedef ElastixMainType::ArgumentMapType              ArgumentMapType;
 
   typedef ParameterObject::ParameterMapListType         ParameterMapListType;
+  typedef ParameterObject::ParameterValuesType          ParameterValuesType;
 
   typedef ElastixMainType::FlatDirectionCosinesType     FlatDirectionCosinesType;
 

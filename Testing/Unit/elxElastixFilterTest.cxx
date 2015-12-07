@@ -64,7 +64,7 @@ protected:
     parameterMap[ "Interpolator"]                       = ParameterValuesType( 1, "LinearInterpolator");
     parameterMap[ "Optimizer" ]                         = ParameterValuesType( 1, "AdaptiveStochasticGradientDescent" );
     parameterMap[ "Resampler"]                          = ParameterValuesType( 1, "DefaultResampler" );
-    parameterMap[ "ResampleInterpolator"]               = ParameterValuesType( 1, "FinalBSplineInterpolator" );
+    parameterMap[ "ResampleInterpolator"]               = ParameterValuesType( 1, "FinalLinearInterpolator" );
     parameterMap[ "FinalBSplineInterpolationOrder" ]    = ParameterValuesType( 1, "2" );
     parameterMap[ "NumberOfResolutions" ]               = ParameterValuesType( 1, "2" );
 
@@ -90,9 +90,6 @@ protected:
     parameterMap[ "Metric" ]                            = ParameterValuesType( 1, "AdvancedMattesMutualInformation" );
     parameterMap[ "MaximumNumberOfIterations" ]         = ParameterValuesType( 1, "128" );
 
-    // TODO: Why do we get segfault when trying to write result image?
-    // parameterMap[ "WriteResultImage" ]                  = ParameterValuesType( 1, "true" );
-
     parameterObject = ParameterObject::New();
     parameterObject->SetParameterMap( parameterMap );
   }
@@ -112,11 +109,14 @@ TEST_F( ElastixFilterTest, Registration )
   elastixFilter->SetFixedImage( fixedImage );
   elastixFilter->SetMovingImage( movingImage );
   elastixFilter->SetParameterObject( parameterObject );
+
+  // TODO: This update should not be needed
   elastixFilter->Update();
 
-  // TODO
-  // ImageWriterType::Pointer writer = ImageWriterType::New();
-  // writer->SetFileName( "ElastixResultImage.nii" );
-  // writer->SetInput( elastixFilter->GetOutput() );
-  // writer->Update();
+  ImageWriterType::Pointer writer = ImageWriterType::New();
+  writer->SetFileName( "ElastixResultImage.nii" );
+  writer->SetInput( elastixFilter->GetOutput() );
+  EXPECT_NO_THROW( writer->Update() );
+
+  // TODO: Return transform parameters
 }
