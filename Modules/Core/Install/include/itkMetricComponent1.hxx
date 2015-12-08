@@ -20,57 +20,14 @@
 
 #include "itkMetricComponent1.h"
 
-namespace itk
+namespace selx
 {
-  MetricComponent1::MetricComponent1()
+MetricComponent1::MetricComponent1()
 {
 }
-
-std::string MetricComponent1::GetComponentTypeAsString() const
+int MetricComponent1::Set(TransformedImageInterface* providingInterface)
 {
-  std::ostringstream n;
-
-  n << GetNameOfClass();
-  n << "_";
-  n << this->GetComponentTypeAsString(static_cast<float *>(ITK_NULLPTR));
-  //n << "_" << this->GetInputSpaceDimension() << "_" << this->GetOutputSpaceDimension();
-  return n.str();
-}
-
-LightObject::Pointer
-MetricComponent1::InternalClone() const
-{
-  // Default implementation just copies the parameters from
-  // this to new Metric.
-  LightObject::Pointer loPtr = Superclass::InternalClone();
-
-  Self::Pointer rval =
-    dynamic_cast<Self *>(loPtr.GetPointer());
-  if(rval.IsNull())
-    {
-    itkExceptionMacro(<< "downcast to type "
-                      << this->GetNameOfClass()
-                      << " failed.");
-    }
-  //rval->SetFixedParameters(this->GetFixedParameters());
-  //rval->SetParameters(this->GetParameters());
-  return loPtr;
-}
-
-
-  void
-  MetricComponent1
-  ::Read()
-{
-  return;
-}
-
-
-  void
-  MetricComponent1
-  ::Write()
-{
-  return;
+  return 0;
 }
 
   bool
@@ -115,6 +72,6 @@ MetricComponent1::InternalClone() const
   return meetsCriteria;
 }
 
-} // end namespace itk
+} // end namespace selx
 
 #endif

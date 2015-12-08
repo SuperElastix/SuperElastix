@@ -2,7 +2,7 @@
 #define Interfaces_hxx
 
 #include "InterfaceTraits.h"
-namespace elx
+namespace selx
 {
 template<class InterfaceT>
 int InterfaceAcceptor<InterfaceT>::Connect(ComponentBase* providerComponent){
@@ -19,7 +19,7 @@ int InterfaceAcceptor<InterfaceT>::Connect(ComponentBase* providerComponent){
 }
 
 template<typename AcceptingInterfaces, typename ProvidingInterfaces>
-interfaceStatus Implements<AcceptingInterfaces, ProvidingInterfaces>::ConnectFrom(const char * interfacename, ComponentBase* other)
+ComponentBase::interfaceStatus Implements<AcceptingInterfaces, ProvidingInterfaces>::ConnectFrom(const char * interfacename, ComponentBase* other)
 {
   return AcceptingInterfaces::ConnectFromImpl(interfacename, other);
 }
@@ -31,7 +31,7 @@ int Implements<AcceptingInterfaces, ProvidingInterfaces>::ConnectFrom(ComponentB
 }
 
 template<typename FirstInterface, typename ... RestInterfaces>
-interfaceStatus Accepting<FirstInterface, RestInterfaces... >::ConnectFromImpl(const char * interfacename, ComponentBase* other)
+ComponentBase::interfaceStatus Accepting<FirstInterface, RestInterfaces... >::ConnectFromImpl(const char * interfacename, ComponentBase* other)
 {
   // does our component have an accepting interface called interfacename? 
   if (0 ==std::strcmp(InterfaceName<InterfaceAcceptor<FirstInterface>>::Get(), interfacename))
@@ -43,12 +43,12 @@ interfaceStatus Accepting<FirstInterface, RestInterfaces... >::ConnectFromImpl(c
     if (1 == acceptIF->Connect(other))
     {
       //success. By terminating this function, we assume only one interface listens to interfacename and that one connection with the other component can be made by this name
-      return interfaceStatus::success;
+      return ComponentBase::interfaceStatus::success;
     }
     else
     {
       // interfacename was found, but other component doesn't match
-      return interfaceStatus::noprovider;
+      return ComponentBase::interfaceStatus::noprovider;
     }
   }
   return Accepting< RestInterfaces ... >::ConnectFromImpl(interfacename, other);
@@ -65,7 +65,7 @@ int Accepting<FirstInterface, RestInterfaces... >::ConnectFromImpl(ComponentBase
   return acceptIF->Connect(other) + Accepting< RestInterfaces ... >::ConnectFromImpl(other);
 }
 
-} // end namespace elx
+} // end namespace selx
 
 
 #endif // #define Interfaces_hxx

@@ -5,7 +5,7 @@
 #include "Interfaces.hxx"
 #include "Example4thPartyCode.h"
 
-namespace elx
+namespace selx
 {
   // SSDMetric4thPartyComponent provides only a value and not a derivative
   class SSDMetric4thPartyComponent : 
@@ -19,6 +19,10 @@ namespace elx
     virtual ~SSDMetric4thPartyComponent();
     Example4thParty::SSDMetric4thParty* theImplementation;
     int GetValue();
+    virtual bool MeetsCriteria(const CriteriaType &criteria) { return false; };
+    static const char * GetName(){ return "SSDMetric4thPartyComponent"; };
+    static const char * GetDescription(){ return "SSD Metric 4th Party Component"; };
+    
   };
-} //end namespace elx
+} //end namespace selx
 #endif // #define SSDMetric4thPartyComponent_h

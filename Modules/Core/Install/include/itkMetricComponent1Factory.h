@@ -18,23 +18,23 @@
 #ifndef itkMetricComponent1Factory_h
 #define itkMetricComponent1Factory_h
 
-#include "itkComponentFactory.h"
-#include "itkComponentBase.h"
+#include "ComponentSelector.h"
+#include "ComponentBase.h"
 
-namespace itk
+namespace selx
 {
 /** \class MetricComponent1Factory
  * \brief Create instances of MetaImageIO objects using an object factory.
  * \ingroup ITKIOMeta
  */
-  class MetricComponent1Factory :public ObjectFactoryBase
+  class MetricComponent1Factory :public itk::ObjectFactoryBase
 {
 public:
   /** Standard class typedefs. */
   typedef MetricComponent1Factory         Self;
-  typedef ObjectFactoryBase          Superclass;
-  typedef SmartPointer< Self >       Pointer;
-  typedef SmartPointer< const Self > ConstPointer;
+  typedef itk::ObjectFactoryBase          Superclass;
+  typedef itk::SmartPointer< Self >       Pointer;
+  typedef itk::SmartPointer< const Self > ConstPointer;
 
   /** Class methods used to interface with the registered factories. */
   virtual const char * GetITKSourceVersion() const ITK_OVERRIDE;
@@ -63,7 +63,7 @@ private:
   MetricComponent1Factory(const Self &); //purposely not implemented
   void operator=(const Self &);     //purposely not implemented
 };
-} // end namespace itk
+} // end namespace selx
 
 
 #ifndef ITK_MANUAL_INSTANTIATION

@@ -7,7 +7,7 @@
 #include "Metric3rdPartyWrapper.h"
 #include <string.h>
 
-namespace elx
+namespace selx
 {
 
   class GDOptimizer3rdPartyComponent : 
@@ -25,6 +25,9 @@ namespace elx
     int Set(MetricValueInterface*);
     int Set(MetricDerivativeInterface*);
     int Update();
+    virtual bool MeetsCriteria(const CriteriaType &criteria) { return false; };
+    static const char * GetName() { return "GDOptimizer3rdPartyComponent"; } ;
+    static const char * GetDescription() { return "GD Optimizer 3rd Party Component"; };
   };
-} //end namespace elx
+} //end namespace selx
 #endif // #define GDOptimizer3rdPartyComponent_h

@@ -3,7 +3,7 @@
 
 #include "Interfaces.h"
 
-namespace elx
+namespace selx
 {
 // Traits to get printable interface name
 // default implementation
@@ -12,6 +12,7 @@ struct InterfaceName
 {
   static const char* Get()
   {
+    static_assert(false, "Please implement a template specialization for the appropriate InterfaceName")
     return typeid(T).name();
   }
 };
@@ -43,6 +44,16 @@ struct InterfaceName < OptimizerUpdateInterface >
   }
 };
 
+template <>
+struct InterfaceName < TransformedImageInterface >
+{
+  static const char* Get()
+  {
+    return "TransformedImageInterface";
+  }
+};
+
+
 
 // partial specialization of InterfaceName
 template<template<typename> class TT, typename T1>
@@ -63,7 +74,7 @@ struct AcceptorInterfaceName
   }
 };
 
-} // end namespace elx
+} // end namespace selx
 
 
 #endif // #define InterfaceTraits_h

@@ -6,17 +6,19 @@
 #include "itkMetricComponent1.h"
 #include "itkMetricComponent1Factory.h"
 
+#include "ComponentFactory.h"
+#include "GDOptimizer3rdPartyComponent.h"
 
-namespace {
+namespace selx{
 
 class ComponentFactoryTest : public ::testing::Test {
 public:
   typedef std::list< itk::LightObject::Pointer > RegisteredObjectsContainerType;
-  typedef itk::ComponentBase       ComponentType;
+  typedef ComponentBase       ComponentType;
   typedef std::map<std::string, std::string> CriteriaType;
   typedef std::pair<std::string, std::string> CriteriumType;
 
-  typedef itk::ComponentFactory::Pointer NodePointer;
+  typedef ComponentSelector::Pointer NodePointer;
 
   virtual void SetUp() 
   {
@@ -47,8 +49,8 @@ TEST_F(ComponentFactoryTest, FilledObjectFactoryBase)
   // In this test we manually register 2 dummy modules: itkTransformComponent1 and itkMetricComponent1. 
   RegisteredObjectsContainerType registeredComponents;
 
-  EXPECT_NO_THROW(itk::TransformComponent1Factory::RegisterOneFactory());
-  EXPECT_NO_THROW(itk::MetricComponent1Factory::RegisterOneFactory());
+  EXPECT_NO_THROW(TransformComponent1Factory::RegisterOneFactory());
+  EXPECT_NO_THROW(MetricComponent1Factory::RegisterOneFactory());
 
   // After registering the TransformComponent1 and MetricComponent1object, there are
   EXPECT_NO_THROW(registeredComponents = itk::ObjectFactoryBase::CreateAllInstance("itkComponentBase"));
@@ -61,7 +63,7 @@ TEST_F(ComponentFactoryTest, SetEmptyCriteria)
 
   CriteriaType emptyCriteria;
 
-  ASSERT_NO_THROW(Node1 = itk::ComponentFactory::New());
+  ASSERT_NO_THROW(Node1 = ComponentSelector::New());
 
   EXPECT_NO_THROW(Node1->SetCriteria(emptyCriteria));
   ComponentType::Pointer Node1Component;
@@ -77,7 +79,7 @@ TEST_F(ComponentFactoryTest, SetSufficientCriteria)
   CriteriaType criteria2;
   criteria2["ComponentInput"] = "Transform";
   //criteria1.insert(CriteriumType("ComponentInput", "Metric"));
-  ASSERT_NO_THROW(Node2 = itk::ComponentFactory::New());
+  ASSERT_NO_THROW(Node2 = ComponentSelector::New());
 
   Node2->SetCriteria(criteria2);
   ComponentType::Pointer Node2Component;
@@ -96,7 +98,7 @@ TEST_F(ComponentFactoryTest, AddCriteria)
   //criteria1.insert(CriteriumType("ComponentOutput","Metric")); 
   criteria1["ComponentOutput"] = "Transform";
   //criteria1.insert(CriteriumType("ComponentInput", "Metric"));
-  Node1 = itk::ComponentFactory::New();
+  Node1 = ComponentSelector::New();
 
   Node1->SetCriteria(emptyCriteria);
   EXPECT_NO_THROW(Node1->AddCriteria(criteria1));
@@ -108,5 +110,20 @@ TEST_F(ComponentFactoryTest, AddCriteria)
   //Based on the criteria TransformComponent1 should be selected
   EXPECT_STREQ(Node1Component->GetNameOfClass(), "TransformComponent1");
 }
+
+TEST_F(ComponentFactoryTest, InterfacedObjects)
+{
+  // In this test we manually register 2 dummy modules: itkTransformComponent1 and itkMetricComponent1. 
+  RegisteredObjectsContainerType registeredComponents;
+
+  EXPECT_NO_THROW(ComponentFactory<GDOptimizer3rdPartyComponent>::RegisterOneFactory());
+  // After registering the TransformComponent1 and MetricComponent1object, there are
+  EXPECT_NO_THROW(registeredComponents = itk::ObjectFactoryBase::CreateAllInstance("itkComponentBase"));
+  // " 2 Component objects available to the Overlord."
+  EXPECT_EQ(registeredComponents.size(), 3);
+}
+
+
+
 
 } // namespace elx

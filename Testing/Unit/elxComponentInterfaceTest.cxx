@@ -5,7 +5,7 @@
 
 #include "gtest/gtest.h"
 
-namespace elx {
+namespace selx {
 
 class InterfaceTest : public ::testing::Test {
 public:
@@ -19,10 +19,10 @@ public:
   }
 
   virtual void TearDown() {
-    delete metric3p;
-    delete optimizer3p;
-    delete metric4p;
-    delete optimizer4p;
+    //delete metric3p;
+    //delete optimizer3p;
+    //delete metric4p;
+    //delete optimizer4p;
   }
   // types as if returned by our component factory
   ComponentBase* metric3p;
@@ -68,28 +68,28 @@ TEST_F( InterfaceTest, DynamicCast )
 
 TEST_F( InterfaceTest, ConnectByName )
 {
-  interfaceStatus IFstatus;
+  ComponentBase::interfaceStatus IFstatus;
   EXPECT_NO_THROW(IFstatus = optimizer3p->ConnectFrom("MetricValueInterface", metric3p));
-  EXPECT_EQ(IFstatus, interfaceStatus::success);
+  EXPECT_EQ(IFstatus, ComponentBase::interfaceStatus::success);
 
   EXPECT_NO_THROW(IFstatus = optimizer3p->ConnectFrom("MetricValueInterface", metric4p));
-  EXPECT_EQ(IFstatus, interfaceStatus::success);
+  EXPECT_EQ(IFstatus, ComponentBase::interfaceStatus::success);
 
   EXPECT_NO_THROW(IFstatus = optimizer4p->ConnectFrom("MetricValueInterface", metric3p));
-  EXPECT_EQ(IFstatus, interfaceStatus::success);
+  EXPECT_EQ(IFstatus, ComponentBase::interfaceStatus::success);
 
   EXPECT_NO_THROW(IFstatus = optimizer4p->ConnectFrom("MetricValueInterface", metric4p));
-  EXPECT_EQ(IFstatus, interfaceStatus::success);
+  EXPECT_EQ(IFstatus, ComponentBase::interfaceStatus::success);
 
 
   EXPECT_NO_THROW(IFstatus = optimizer3p->ConnectFrom("MetricDerivativeInterface", metric3p));
-  EXPECT_EQ(IFstatus, interfaceStatus::success);
+  EXPECT_EQ(IFstatus, ComponentBase::interfaceStatus::success);
 
   EXPECT_NO_THROW(IFstatus = optimizer3p->ConnectFrom("MetricDerivativeInterface", metric4p));
-  EXPECT_EQ(IFstatus, interfaceStatus::noprovider);
+  EXPECT_EQ(IFstatus, ComponentBase::interfaceStatus::noprovider);
  
   EXPECT_NO_THROW(IFstatus = optimizer4p->ConnectFrom("MetricDerivativeInterface", metric3p));
-  EXPECT_EQ(IFstatus, interfaceStatus::noaccepter);
+  EXPECT_EQ(IFstatus, ComponentBase::interfaceStatus::noaccepter);
 
 }
 

@@ -15,28 +15,28 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef itkComponentFactory_hxx
-#define itkComponentFactory_hxx
+#ifndef itkComponentSelector_hxx
+#define itkComponentSelector_hxx
 
-#include "itkComponentFactory.h"
+#include "ComponentSelector.h"
 
-namespace itk
+namespace selx
 {
 
-ComponentFactory::ComponentFactory()
+ComponentSelector::ComponentSelector()
   {
     this->m_PossibleComponents.clear();
   }
-ComponentFactory::~ComponentFactory()
+ComponentSelector::~ComponentSelector()
   {
   }
 
-void ComponentFactory::Initialize()
+void ComponentSelector::Initialize()
 {
-  std::list< LightObject::Pointer >     allobjects =
-    ObjectFactoryBase::CreateAllInstance("itkComponentBase");
+  std::list< itk::LightObject::Pointer >     allobjects =
+    itk::ObjectFactoryBase::CreateAllInstance("itkComponentBase");
 
-  for (std::list< LightObject::Pointer >::iterator i = allobjects.begin();
+  for (std::list< itk::LightObject::Pointer >::iterator i = allobjects.begin();
     i != allobjects.end(); ++i)
   {
     ComponentBase *io =
@@ -47,7 +47,7 @@ void ComponentFactory::Initialize()
     }
   }
 }
-void ComponentFactory::SetCriteria(const CriteriaType &criteria)
+void ComponentSelector::SetCriteria(const CriteriaType &criteria)
 {
   this->Initialize();
   this->m_Criteria = criteria;
@@ -55,7 +55,7 @@ void ComponentFactory::SetCriteria(const CriteriaType &criteria)
 
 }
 
-void ComponentFactory::AddCriteria(const CriteriaType &criteria)
+void ComponentSelector::AddCriteria(const CriteriaType &criteria)
 {
   this->m_Criteria.insert(criteria.begin(), criteria.end());
   this->Modified();
@@ -66,13 +66,13 @@ void ComponentFactory::AddCriteria(const CriteriaType &criteria)
 //  bool operator() (const ComponentBasePointer& component) { return !component->MeetsCriteria(this->m_Criteria) }
 //};
 
-void ComponentFactory::UpdatePossibleComponents()
+void ComponentSelector::UpdatePossibleComponents()
 {
   // Check each possible component if it meets the criteria
   // Using a Lambda function.
   this->m_PossibleComponents.remove_if([&](ComponentBasePointer component){ return !component->MeetsCriteria(this->m_Criteria); });
 }
-ComponentFactory::ComponentBasePointer ComponentFactory::GetComponent()
+ComponentSelector::ComponentBasePointer ComponentSelector::GetComponent()
 {
   //TODO check if Modified
   this->UpdatePossibleComponents();
@@ -86,6 +86,6 @@ ComponentFactory::ComponentBasePointer ComponentFactory::GetComponent()
     return ITK_NULLPTR;
   }
 }
-} // end namespace itk
+} // end namespace selx
 
 #endif

@@ -1,5 +1,5 @@
 #include "SSDMetric3rdPartyComponent.h"
-namespace elx
+namespace selx
 {
 SSDMetric3rdPartyComponent::SSDMetric3rdPartyComponent()
 {
@@ -19,4 +19,4 @@ int SSDMetric3rdPartyComponent::GetValue()
 {
   return this->theImplementation->GetValue();
 };
-} //end namespace elx
+} //end namespace selx

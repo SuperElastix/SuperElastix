@@ -19,7 +19,7 @@
 #include "itkMetricComponent1.h"
 #include "itkVersion.h"
 
-namespace itk
+namespace selx
 {
 
 MetricComponent1Factory::MetricComponent1Factory()
@@ -28,7 +28,7 @@ MetricComponent1Factory::MetricComponent1Factory()
                           "itkMetricComponent1",
                           "Metric Component 1",
                           1,
-                          CreateObjectFunction< MetricComponent1 >::New() ); //float 
+                          itk::CreateObjectFunction< MetricComponent1 >::New()); //float 
 }
 
 const char *
@@ -57,4 +57,4 @@ void MetricComponent1FactoryRegister__Private(void)
     }
 }
 */
-} // end namespace itk
+} // end namespace selx

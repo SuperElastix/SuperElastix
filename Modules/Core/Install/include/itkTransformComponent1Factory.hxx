@@ -19,7 +19,7 @@
 #include "itkTransformComponent1.h"
 #include "itkVersion.h"
 
-namespace itk
+namespace selx
 {
 
 TransformComponent1Factory::TransformComponent1Factory()
@@ -28,7 +28,7 @@ TransformComponent1Factory::TransformComponent1Factory()
                           "itkTransformComponent1",
                           "Transform Component 1",
                           1,
-                          CreateObjectFunction< TransformComponent1 >::New() ); //float 
+                          itk::CreateObjectFunction< TransformComponent1 >::New()); //float 
 }
 
 
@@ -58,4 +58,4 @@ void TransformComponent1FactoryRegister__Private(void)
     }
 }
 */
-} // end namespace itk
+} // end namespace selx

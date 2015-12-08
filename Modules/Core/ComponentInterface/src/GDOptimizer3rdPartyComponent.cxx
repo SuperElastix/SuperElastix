@@ -1,6 +1,6 @@
 #include "GDOptimizer3rdPartyComponent.h"
 
-namespace elx
+namespace selx
 {
 GDOptimizer3rdPartyComponent::GDOptimizer3rdPartyComponent()
 {
@@ -29,4 +29,4 @@ int GDOptimizer3rdPartyComponent::Update()
   this->theImplementation->SetMetric(this->MetricObject);
   return this->theImplementation->Optimize(); // 3rd party specific call
 }
-} //end namespace elx
+} //end namespace selx

@@ -20,58 +20,11 @@
 
 #include "itkTransformComponent1.h"
 
-namespace itk
+namespace selx
 {
   TransformComponent1::TransformComponent1()
   {
   }
-
-std::string TransformComponent1::GetComponentTypeAsString() const
-{
-  std::ostringstream n;
-
-  n << GetNameOfClass();
-  n << "_";
-  n << this->GetComponentTypeAsString(static_cast<float *>(ITK_NULLPTR));
-  //n << "_" << this->GetInputSpaceDimension() << "_" << this->GetOutputSpaceDimension();
-  return n.str();
-}
-
-LightObject::Pointer
-TransformComponent1::InternalClone() const
-{
-  // Default implementation just copies the parameters from
-  // this to new Transform.
-  LightObject::Pointer loPtr = Superclass::InternalClone();
-
-  Self::Pointer rval =
-    dynamic_cast<Self *>(loPtr.GetPointer());
-  if(rval.IsNull())
-    {
-    itkExceptionMacro(<< "downcast to type "
-                      << this->GetNameOfClass()
-                      << " failed.");
-    }
-  //rval->SetFixedParameters(this->GetFixedParameters());
-  //rval->SetParameters(this->GetParameters());
-  return loPtr;
-}
-
-
-  void
-  TransformComponent1
-  ::Read()
-{
-  return;
-}
-
-
-  void
-  TransformComponent1
-  ::Write()
-{
-  return;
-}
 
   bool
   TransformComponent1
@@ -115,6 +68,6 @@ TransformComponent1::InternalClone() const
     return meetsCriteria;
 }
 
-} // end namespace itk
+} // end namespace selx
 
 #endif

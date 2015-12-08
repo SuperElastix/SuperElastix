@@ -6,7 +6,7 @@
 #include "Example4thPartyCode.h"
 #include "Metric4thPartyWrapper.h"
 
-namespace elx
+namespace selx
 {
   // wrapping into components: 
   class GDOptimizer4thPartyComponent : 
@@ -28,7 +28,10 @@ namespace elx
     //template <class ConflictinUpdateInterface> virtual int Update() { return 5; };
     // "error" : member function templates cannot be virtual
     int Update(ConflictinUpdateInterface*) { return 5; };
+    virtual bool MeetsCriteria(const CriteriaType &criteria) { return false; };
+    static const char * GetName(){ return "GDOptimizer4thPartyComponent"; };
+    static const char * GetDescription(){ return "GD Optimizer 4th Party Component"; };
   };
 
-} //end namespace elx
+} //end namespace selx
 #endif // #define GDOptimizer4thPartyComponent_h
