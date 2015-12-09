@@ -15,22 +15,22 @@ protected:
 
   typedef DataManager DataManagerType;
 
-  typedef itk::Image< float, 2u >                       ImageType;
+  typedef itk::Image< float, 2u >                         ImageType;
   ImageType::Pointer fixedImage;
   ImageType::Pointer movingImage;
   ImageType::Pointer resultImage;
 
-  typedef itk::ImageFileReader< ImageType >             ImageReaderType;
-  typedef itk::ImageFileWriter< ImageType >             ImageWriterType;
+  typedef itk::ImageFileReader< ImageType >               ImageReaderType;
+  typedef itk::ImageFileWriter< ImageType >               ImageWriterType;
 
-  typedef ParameterObject::ParameterValuesType          ParameterValuesType;
-  typedef ParameterObject::ParameterMapType             ParameterMapType;
+  typedef ParameterObject::ParameterValuesType            ParameterValuesType;
+  typedef ParameterObject::ParameterMapType               ParameterMapType;
   ParameterObject::Pointer parameterObject;
   ParameterObject::Pointer TransformParameterObject;
 
-  typedef ElastixFilter< ImageType, ImageType, ImageType >  ElastixFilterType;
-  typedef ElastixFilterType::DataObjectContainerType        DataObjectContainerType;
-  typedef ElastixFilterType::DataObjectContainerPointer     DataObjectContainerPointer;
+  typedef ElastixFilter< ImageType, ImageType >           ElastixFilterType;
+  typedef ElastixFilterType::DataObjectContainerType      DataObjectContainerType;
+  typedef ElastixFilterType::DataObjectContainerPointer   DataObjectContainerPointer;
 
 
   virtual void SetUp()
@@ -127,6 +127,7 @@ TEST_F( ElastixFilterTest, PairwiseRegistration )
 
 TEST_F( ElastixFilterTest, MultiPairwiseRegistration )
 {
+  // TODO: Fix "error while setting up xout" when running standalone binary
   ElastixFilterType::Pointer elastixFilter = ElastixFilterType::New();
 
   DataObjectContainerPointer fixedImages = DataObjectContainerType::New();

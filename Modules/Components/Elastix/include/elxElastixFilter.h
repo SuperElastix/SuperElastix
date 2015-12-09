@@ -15,9 +15,8 @@
 namespace selx {
 
 template< typename TFixedImage,
-          typename TMovingImage,
-          typename TOutputImage >
-class ElastixFilter : public itk::ImageSource< TOutputImage >
+          typename TMovingImage >
+class ElastixFilter : public itk::ImageSource< TFixedImage >
 {
 public:
 

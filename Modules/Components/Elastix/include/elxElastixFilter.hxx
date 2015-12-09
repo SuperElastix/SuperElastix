@@ -3,8 +3,8 @@
 
 namespace selx {
 
-template< typename TFixedImage, typename TMovingImage, typename TOutputImage >
-ElastixFilter< TFixedImage, TMovingImage, TOutputImage >
+template< typename TFixedImage, typename TMovingImage >
+ElastixFilter< TFixedImage, TMovingImage >
 ::ElastixFilter( void )
 {
   this->AddRequiredInputName( "FixedImage" );
@@ -18,9 +18,9 @@ ElastixFilter< TFixedImage, TMovingImage, TOutputImage >
   this->m_MovingImageContainer = DataObjectContainerType::New();
 }
 
-template< typename TFixedImage, typename TMovingImage, typename TOutputImage >
+template< typename TFixedImage, typename TMovingImage >
 void
-ElastixFilter< TFixedImage, TMovingImage, TOutputImage >
+ElastixFilter< TFixedImage, TMovingImage >
 ::GenerateData( void )
 {
   ElastixMainObjectPointer    transform            = 0;
@@ -140,9 +140,9 @@ ElastixFilter< TFixedImage, TMovingImage, TOutputImage >
 
 }
 
-template< typename TFixedImage, typename TMovingImage, typename TOutputImage >
+template< typename TFixedImage, typename TMovingImage >
 void
-ElastixFilter< TFixedImage, TMovingImage, TOutputImage >
+ElastixFilter< TFixedImage, TMovingImage >
 ::SetFixedImage( FixedImagePointer fixedImage )
 {
   if( this->m_FixedImageContainer->Size() > 0 )
@@ -158,9 +158,9 @@ ElastixFilter< TFixedImage, TMovingImage, TOutputImage >
   this->SetInput( DataObjectIdentifierType( "FixedImage" ), this->m_FixedImageContainer->ElementAt( 0 ) );
 }
 
-template< typename TFixedImage, typename TMovingImage, typename TOutputImage >
+template< typename TFixedImage, typename TMovingImage >
 void
-ElastixFilter< TFixedImage, TMovingImage, TOutputImage >
+ElastixFilter< TFixedImage, TMovingImage >
 ::SetFixedImage( DataObjectContainerPointer fixedImages )
 {
   // Input for elastix
@@ -170,9 +170,9 @@ ElastixFilter< TFixedImage, TMovingImage, TOutputImage >
   this->SetInput( DataObjectIdentifierType( "FixedImage" ), this->m_FixedImageContainer->ElementAt( 0 ) );
 }
 
-template< typename TFixedImage, typename TMovingImage, typename TOutputImage >
+template< typename TFixedImage, typename TMovingImage >
 void
-ElastixFilter< TFixedImage, TMovingImage, TOutputImage >
+ElastixFilter< TFixedImage, TMovingImage >
 ::SetMovingImage( MovingImagePointer movingImage )
 {
   if( this->m_MovingImageContainer->Size() > 0 )
@@ -188,9 +188,9 @@ ElastixFilter< TFixedImage, TMovingImage, TOutputImage >
   this->SetInput( DataObjectIdentifierType( "MovingImage" ), this->m_MovingImageContainer->ElementAt( 0 ) );
 }
 
-template< typename TFixedImage, typename TMovingImage, typename TOutputImage >
+template< typename TFixedImage, typename TMovingImage >
 void
-ElastixFilter< TFixedImage, TMovingImage, TOutputImage >
+ElastixFilter< TFixedImage, TMovingImage >
 ::SetMovingImage( DataObjectContainerPointer movingImages )
 {
   // Input for elastix
@@ -200,33 +200,33 @@ ElastixFilter< TFixedImage, TMovingImage, TOutputImage >
   this->SetInput( DataObjectIdentifierType( "MovingImage" ), this->m_MovingImageContainer->ElementAt( 0 ) );
 }
 
-template< typename TFixedImage, typename TMovingImage, typename TOutputImage >
+template< typename TFixedImage, typename TMovingImage >
 void
-ElastixFilter< TFixedImage, TMovingImage, TOutputImage >
+ElastixFilter< TFixedImage, TMovingImage >
 ::SetParameterObject( ParameterObjectPointer parameterObject )
 {
   this->SetInput( DataObjectIdentifierType( "ParameterObject" ), static_cast< itk::DataObject* >( parameterObject ) );
 }
 
-template< typename TFixedImage, typename TMovingImage, typename TOutputImage >
+template< typename TFixedImage, typename TMovingImage >
 void
-ElastixFilter< TFixedImage, TMovingImage, TOutputImage >
+ElastixFilter< TFixedImage, TMovingImage >
 ::SetFixedMask( FixedImagePointer fixedMask )
 {
   this->SetInput( DataObjectIdentifierType( "FixedMask" ), static_cast< itk::DataObject* >( fixedMask ) );
 }
 
-template< typename TFixedImage, typename TMovingImage, typename TOutputImage >
+template< typename TFixedImage, typename TMovingImage >
 void
-ElastixFilter< TFixedImage, TMovingImage, TOutputImage >
+ElastixFilter< TFixedImage, TMovingImage >
 ::SetMovingMask( MovingImagePointer movingMask )
 {
   this->SetInput( DataObjectIdentifierType( "MovingMask" ), static_cast< itk::DataObject* >( movingMask ) );
 }
 
-template< typename TFixedImage, typename TMovingImage, typename TOutputImage >
-typename selx::ElastixFilter< TFixedImage, TMovingImage, TOutputImage >::ParameterObjectPointer
-ElastixFilter< TFixedImage, TMovingImage, TOutputImage >
+template< typename TFixedImage, typename TMovingImage >
+typename selx::ElastixFilter< TFixedImage, TMovingImage >::ParameterObjectPointer
+ElastixFilter< TFixedImage, TMovingImage >
 ::GetTransformParameters( void )
 {
   return static_cast< ParameterObject* >( itk::ProcessObject::GetOutput( DataObjectIdentifierType( "TransformParametersObject" ) ) );
