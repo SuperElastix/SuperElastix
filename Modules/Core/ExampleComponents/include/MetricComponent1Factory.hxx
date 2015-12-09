@@ -24,7 +24,7 @@ namespace selx
 
 MetricComponent1Factory::MetricComponent1Factory()
 {
-  this->RegisterOverride( "itkComponentBase",
+  this->RegisterOverride( "ComponentBase",
                           "itkMetricComponent1",
                           "Metric Component 1",
                           1,

@@ -24,7 +24,7 @@ namespace selx
 
 TransformComponent1Factory::TransformComponent1Factory()
 {
-  this->RegisterOverride( "itkComponentBase",
+  this->RegisterOverride( "ComponentBase",
                           "itkTransformComponent1",
                           "Transform Component 1",
                           1,

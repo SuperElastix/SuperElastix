@@ -2,6 +2,7 @@
 #define itkMetricComponent1_h
 
 #include "ComponentBase.h"
+#include "Interfaces.h"
 
 namespace selx
 {
@@ -30,6 +31,8 @@ public:
   virtual int Set(TransformedImageInterface *);
   virtual int GetValue(){ return 0; }
   //std::string GetComponentTypeAsString() const;
+  //static const char * GetName(){ return "MetricComponent1"; };
+  static const char * GetDescription(){ return "Example Metric Component 1"; };
 protected:
 
   MetricComponent1();
@@ -46,8 +49,8 @@ private:
 };
 } // end namespace selx
 
-#ifndef ITK_MANUAL_INSTANTIATION
-#include "itkMetricComponent1.hxx"
-#endif
+//#ifndef ITK_MANUAL_INSTANTIATION
+//#include "itkMetricComponent1.hxx"
+//#endif
 
 #endif

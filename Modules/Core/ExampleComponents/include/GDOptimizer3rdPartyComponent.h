@@ -2,7 +2,7 @@
 #define GDOptimizer3rdPartyComponent_h
 
 #include "ComponentBase.h"
-#include "Interfaces.hxx"
+#include "Interfaces.h"
 #include "Example3rdPartyCode.h"
 #include "Metric3rdPartyWrapper.h"
 #include <string.h>
@@ -17,6 +17,19 @@ namespace selx
     >
   {
   public:
+    /** Standard class typedefs. */
+    typedef GDOptimizer3rdPartyComponent                        Self;
+    typedef ComponentBase Superclass;
+    typedef itk::SmartPointer< Self >             Pointer;
+    typedef itk::SmartPointer< const Self >       ConstPointer;
+
+    /** New macro for creation of through the object factory. */
+    itkNewMacro(Self);
+
+    /** Run-time type information (and related methods). */
+    itkTypeMacro(GDOptimizer3rdPartyComponent, Superclass);
+
+
     GDOptimizer3rdPartyComponent();
     virtual ~GDOptimizer3rdPartyComponent();
     Example3rdParty::GDOptimizer3rdParty* theImplementation;
@@ -25,8 +38,8 @@ namespace selx
     int Set(MetricValueInterface*);
     int Set(MetricDerivativeInterface*);
     int Update();
-    virtual bool MeetsCriteria(const CriteriaType &criteria) { return false; };
-    static const char * GetName() { return "GDOptimizer3rdPartyComponent"; } ;
+    virtual bool MeetsCriteria(const CriteriaType &criteria);
+    //static const char * GetName() { return "GDOptimizer3rdPartyComponent"; } ;
     static const char * GetDescription() { return "GD Optimizer 3rd Party Component"; };
   };
 } //end namespace selx

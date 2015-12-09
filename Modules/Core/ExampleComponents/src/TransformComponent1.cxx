@@ -15,10 +15,10 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef itkTransformComponent1_hxx
-#define itkTransformComponent1_hxx
+#ifndef TransformComponent1_hxx
+#define TransformComponent1_hxx
 
-#include "itkTransformComponent1.h"
+#include "TransformComponent1.h"
 
 namespace selx
 {
@@ -35,12 +35,12 @@ namespace selx
 
     for (CriteriaType::const_iterator it = criteria.begin(); it != criteria.end(); ++it)
     {
-      if (strcmp(it->first.c_str(), "Name") == 0)
+      if (strcmp(it->first.c_str(), "NameOfClass") == 0)
       {
-        if (strcmp(it->second.c_str(), typeid(Self).name()) != 0)
+        if (strcmp(it->second.c_str(), this->GetNameOfClass()) != 0)
         {
           meetsCriteria = false;
-          return false;
+          break;
         }
       }
       else if (strcmp(it->first.c_str(), "ComponentOutput") == 0)
@@ -48,7 +48,7 @@ namespace selx
         if (strcmp(it->second.c_str(), "Transform") != 0)
         {
           meetsCriteria = false;
-          return false;
+          break;
         }
       }
       else if (strcmp(it->first.c_str(), "ComponentInput") == 0)
@@ -56,12 +56,14 @@ namespace selx
         if (strcmp(it->second.c_str(), "Sampler") != 0)
         {
           meetsCriteria = false;
-          return false;
+          break;
         }
       }
       else
       {
+        meetsCriteria = false;
         hasUndefinedCriteria = true;
+        break;
       }
 
     } 

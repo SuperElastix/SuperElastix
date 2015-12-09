@@ -15,12 +15,24 @@ namespace selx
     >
   {
   public:
+    /** Standard class typedefs. */
+    typedef SSDMetric3rdPartyComponent                        Self;
+    typedef ComponentBase Superclass;
+    typedef itk::SmartPointer< Self >             Pointer;
+    typedef itk::SmartPointer< const Self >       ConstPointer;
+
+    /** New macro for creation of through the object factory. */
+    itkNewMacro(Self);
+
+    /** Run-time type information (and related methods). */
+    itkTypeMacro(SSDMetric3rdPartyComponent, Superclass);
+
     SSDMetric3rdPartyComponent();
     virtual ~SSDMetric3rdPartyComponent();
     Example3rdParty::SSDMetric3rdParty* theImplementation;
     int GetValue();
     int GetDerivative();
-    virtual bool MeetsCriteria(const CriteriaType &criteria) { return false; };
+    virtual bool MeetsCriteria(const CriteriaType &criteria);
     static const char * GetName(){ return "SSDMetric3rdPartyComponent"; }
     static const char * GetDescription(){ return "SSD Metric 3rd Party Component"; };
   };

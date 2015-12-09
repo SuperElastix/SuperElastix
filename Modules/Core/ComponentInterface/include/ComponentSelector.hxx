@@ -34,7 +34,7 @@ ComponentSelector::~ComponentSelector()
 void ComponentSelector::Initialize()
 {
   std::list< itk::LightObject::Pointer >     allobjects =
-    itk::ObjectFactoryBase::CreateAllInstance("itkComponentBase");
+    itk::ObjectFactoryBase::CreateAllInstance("ComponentBase");
 
   for (std::list< itk::LightObject::Pointer >::iterator i = allobjects.begin();
     i != allobjects.end(); ++i)

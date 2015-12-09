@@ -29,7 +29,7 @@ public:
   typedef Superclass::CriteriumType CriteriumType;
 
   int GetTransformedImage(){ return 0; };
-
+  static const char * GetDescription(){ return "Example Transform Component 1"; };
 protected:
   TransformComponent1();
   virtual ~TransformComponent1()
@@ -44,8 +44,8 @@ private:
 };
 } // end namespace selx
 
-#ifndef ITK_MANUAL_INSTANTIATION
-#include "itkTransformComponent1.hxx"
-#endif
+//#ifndef ITK_MANUAL_INSTANTIATION
+//#include "itkTransformComponent1.hxx"
+//#endif
 
 #endif

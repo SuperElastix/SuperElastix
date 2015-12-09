@@ -15,10 +15,10 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef itkMetricComponent1_hxx
-#define itkMetricComponent1_hxx
+#ifndef MetricComponent1_hxx
+#define MetricComponent1_hxx
 
-#include "itkMetricComponent1.h"
+#include "MetricComponent1.h"
 
 namespace selx
 {
@@ -39,12 +39,12 @@ int MetricComponent1::Set(TransformedImageInterface* providingInterface)
 
   for (CriteriaType::const_iterator it = criteria.begin(); it != criteria.end(); ++it)
   {
-    if (strcmp(it->first.c_str(), "Name") == 0)
+    if (strcmp(it->first.c_str(), "NameOfClass") == 0)
     {
-      if (strcmp(it->second.c_str(), typeid(Self).name()) != 0)
+      if (strcmp(it->second.c_str(), this->GetNameOfClass()) != 0)
       {
         meetsCriteria = false;
-        return false;
+        break;
       }
     }
     else if (strcmp(it->first.c_str(), "ComponentOutput") == 0)
@@ -52,7 +52,7 @@ int MetricComponent1::Set(TransformedImageInterface* providingInterface)
       if (strcmp(it->second.c_str(), "Metric") != 0)
       {
         meetsCriteria = false;
-        return false;
+        break;
       }
     }
     else if (strcmp(it->first.c_str(), "ComponentInput") == 0)
@@ -60,12 +60,14 @@ int MetricComponent1::Set(TransformedImageInterface* providingInterface)
       if (strcmp(it->second.c_str(), "Transform") != 0)
       {
         meetsCriteria = false;
-        return false;
+        break;
       }
     }
     else
     {
+      meetsCriteria = false;
       hasUndefinedCriteria = true;
+      break;
     }
 
   }
