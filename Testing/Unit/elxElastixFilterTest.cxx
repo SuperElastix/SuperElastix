@@ -26,8 +26,11 @@ protected:
   typedef ParameterObject::ParameterValuesType          ParameterValuesType;
   typedef ParameterObject::ParameterMapType             ParameterMapType;
   ParameterObject::Pointer parameterObject;
+  ParameterObject::Pointer TransformParameterObject;
 
-  typedef ElastixFilter< ImageType, ImageType, ImageType > ElastixFilterType;
+  typedef ElastixFilter< ImageType, ImageType, ImageType >  ElastixFilterType;
+  typedef ElastixFilterType::DataObjectContainerType        DataObjectContainerType;
+  typedef ElastixFilterType::DataObjectContainerPointer     DataObjectContainerPointer;
 
 
   virtual void SetUp()
@@ -100,12 +103,11 @@ TEST_F( ElastixFilterTest, Instantiation )
   EXPECT_NO_THROW( ElastixFilterType::Pointer elastixFilter = ElastixFilterType::New() );
 }
 
-TEST_F( ElastixFilterTest, Registration )
+TEST_F( ElastixFilterTest, PairwiseRegistration )
 {
   ElastixFilterType::Pointer elastixFilter = ElastixFilterType::New();
 
   elastixFilter->LogToConsoleOn();
-
   elastixFilter->SetFixedImage( fixedImage );
   elastixFilter->SetMovingImage( movingImage );
   elastixFilter->SetParameterObject( parameterObject );
@@ -113,10 +115,41 @@ TEST_F( ElastixFilterTest, Registration )
   // TODO: This update should not be needed
   elastixFilter->Update();
 
+  EXPECT_NO_THROW( resultImage = elastixFilter->GetOutput() );
+  EXPECT_NO_THROW( TransformParameterObject = elastixFilter->GetTransformParameters() );
+
   ImageWriterType::Pointer writer = ImageWriterType::New();
   writer->SetFileName( "ElastixResultImage.nii" );
   writer->SetInput( elastixFilter->GetOutput() );
   EXPECT_NO_THROW( writer->Update() );
 
-  // TODO: Return transform parameters
+}
+
+TEST_F( ElastixFilterTest, MultiPairwiseRegistration )
+{
+  ElastixFilterType::Pointer elastixFilter = ElastixFilterType::New();
+
+  DataObjectContainerPointer fixedImages = DataObjectContainerType::New();
+  fixedImages->CreateElementAt( 0 ) = static_cast< itk::DataObject* >( fixedImage );
+  fixedImages->CreateElementAt( 1 ) = static_cast< itk::DataObject* >( fixedImage );
+
+  DataObjectContainerPointer movingImages = DataObjectContainerType::New();
+  movingImages->CreateElementAt( 0 ) = static_cast< itk::DataObject* >( movingImage );
+  movingImages->CreateElementAt( 1 ) = static_cast< itk::DataObject* >( movingImage );
+
+  elastixFilter->LogToConsoleOn();
+  elastixFilter->SetFixedImage( fixedImages );
+  elastixFilter->SetMovingImage( movingImages );
+  elastixFilter->SetParameterObject( parameterObject );
+
+  // TODO: This update should not be needed
+  elastixFilter->Update();
+
+  EXPECT_NO_THROW( resultImage = elastixFilter->GetOutput() );
+  EXPECT_NO_THROW( TransformParameterObject = elastixFilter->GetTransformParameters() );
+
+  ImageWriterType::Pointer writer = ImageWriterType::New();
+  writer->SetFileName( "ElastixResultImage.nii" );
+  writer->SetInput( elastixFilter->GetOutput() );
+  EXPECT_NO_THROW( writer->Update() );
 }

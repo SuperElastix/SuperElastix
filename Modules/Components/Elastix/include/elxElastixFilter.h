@@ -23,31 +23,35 @@ public:
 
   elxNewMacro( ElastixFilter, itk::ImageSource );
 
-  typedef ParameterObject::ParameterMapType ParameterMapType;
-
   typedef elastix::ElastixMain                          ElastixMainType;
   typedef ElastixMainType::Pointer                      ElastixMainPointer;
   typedef std::vector< ElastixMainPointer >             ElastixMainVectorType;
   typedef ElastixMainType::ObjectPointer                ElastixMainObjectPointer;
+  typedef ElastixMainType::FlatDirectionCosinesType     FlatDirectionCosinesType;
+  typedef ElastixMainType::ArgumentMapType              ArgumentMapType;
+  typedef ArgumentMapType::value_type                   ArgumentMapEntryType;
 
+  typedef itk::ProcessObject::DataObjectIdentifierType  DataObjectIdentifierType;
   typedef ElastixMainType::DataObjectContainerType      DataObjectContainerType;
   typedef ElastixMainType::DataObjectContainerPointer   DataObjectContainerPointer;
 
-  typedef ElastixMainType::ArgumentMapType::value_type  ArgumentMapEntryType;
-  typedef ElastixMainType::ArgumentMapType              ArgumentMapType;
-
   typedef ParameterObject::ParameterMapListType         ParameterMapListType;
+  typedef ParameterObject::ParameterMapType             ParameterMapType;
   typedef ParameterObject::ParameterValuesType          ParameterValuesType;
+  typedef typename ParameterObject::Pointer             ParameterObjectPointer;
 
-  typedef ElastixMainType::FlatDirectionCosinesType     FlatDirectionCosinesType;
-
-  typedef typename TFixedImage::Pointer FixedImagePointer;
-  typedef typename TMovingImage::Pointer MovingImagePointer;
-  typedef typename ParameterObject::Pointer ParameterObjectPointer;
+  typedef typename TFixedImage::Pointer                 FixedImagePointer;
+  typedef typename TMovingImage::Pointer                MovingImagePointer;
 
   void SetFixedImage( FixedImagePointer fixedImage );
+  void SetFixedImage( DataObjectContainerPointer fixedImage );
   void SetMovingImage( MovingImagePointer movingImage );
+  void SetMovingImage( DataObjectContainerPointer movingImage );
   void SetParameterObject( ParameterObjectPointer parameterObject );
+  void SetFixedMask( FixedImagePointer fixedMask );
+  void SetMovingMask( MovingImagePointer movingMask );
+
+  ParameterObjectPointer GetTransformParameters( void );
 
   itkSetMacro( LogToConsole, bool );
   itkGetMacro( LogToConsole, bool );
@@ -63,6 +67,11 @@ protected:
 private:
 
   ElastixFilter();
+
+  DataObjectContainerPointer m_FixedImageContainer;
+  DataObjectContainerPointer m_MovingImageContainer;
+  DataObjectContainerPointer m_FixedMaskContainer;
+  DataObjectContainerPointer m_MovingMaskContainer;
 
   bool m_LogToConsole;
   std::string m_LogToFile;
