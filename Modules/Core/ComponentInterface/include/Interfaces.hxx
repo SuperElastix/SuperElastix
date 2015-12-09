@@ -10,14 +10,15 @@ int InterfaceAcceptor<InterfaceT>::Connect(ComponentBase* providerComponent){
   InterfaceT* providerInterface = dynamic_cast<InterfaceT*> (providerComponent);
   if (!providerInterface)
   {
-    std::cout << "providerComponent does not have required " << InterfaceName < InterfaceT >::Get() << std::endl;
+    //TODO log message?
+    //std::cout << "providerComponent does not have required " << InterfaceName < InterfaceT >::Get() << std::endl;
     return 0;
   }
   // connect value interfaces
   this->Set(providerInterface); // due to the input argument being uniquely defined in the multiple inheritance tree, all versions of Set() are accessible at component level
   return 1;
 }
-
+//////////////////////////////////////////////////////////////////////////
 template<typename AcceptingInterfaces, typename ProvidingInterfaces>
 ComponentBase::interfaceStatus Implements<AcceptingInterfaces, ProvidingInterfaces>::ConnectFrom(const char * interfacename, ComponentBase* other)
 {
@@ -30,6 +31,19 @@ int Implements<AcceptingInterfaces, ProvidingInterfaces>::ConnectFrom(ComponentB
   return AcceptingInterfaces::ConnectFromImpl(other);
 }
 
+template<typename AcceptingInterfaces, typename ProvidingInterfaces>
+bool Implements<AcceptingInterfaces, ProvidingInterfaces>::HasAcceptingInterface(const char * interfacename)
+{
+  return AcceptingInterfaces::HasInterface(interfacename);
+}
+
+template<typename AcceptingInterfaces, typename ProvidingInterfaces>
+bool Implements<AcceptingInterfaces, ProvidingInterfaces>::HasProvidingInterface(const char * interfacename)
+{
+  return ProvidingInterfaces::HasInterface(interfacename);
+}
+
+//////////////////////////////////////////////////////////////////////////
 template<typename FirstInterface, typename ... RestInterfaces>
 ComponentBase::interfaceStatus Accepting<FirstInterface, RestInterfaces... >::ConnectFromImpl(const char * interfacename, ComponentBase* other)
 {
@@ -63,6 +77,26 @@ int Accepting<FirstInterface, RestInterfaces... >::ConnectFromImpl(ComponentBase
   // See if the other component has the right interface and try to connect them
   // count the number of successes
   return acceptIF->Connect(other) + Accepting< RestInterfaces ... >::ConnectFromImpl(other);
+}
+
+template<typename FirstInterface, typename ... RestInterfaces>
+bool Accepting<FirstInterface, RestInterfaces... >::HasInterface(const char* interfacename)
+{
+  if (0 == std::strcmp(InterfaceName<InterfaceAcceptor<FirstInterface>>::Get(), interfacename))
+  {
+    return true;
+  }
+  return Accepting< RestInterfaces ... >::HasInterface(interfacename);
+}
+
+template<typename FirstInterface, typename ... RestInterfaces>
+bool Providing<FirstInterface, RestInterfaces... >::HasInterface(const char* interfacename)
+{
+  if (0 == std::strcmp(InterfaceName<FirstInterface>::Get(), interfacename))
+  {
+    return true;
+  }
+  return Providing< RestInterfaces ... >::HasInterface(interfacename);
 }
 
 } // end namespace selx

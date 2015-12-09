@@ -63,6 +63,8 @@ class Accepting
   public:
     ComponentBase::interfaceStatus ConnectFromImpl(const char *, ComponentBase*) { return ComponentBase::interfaceStatus::noaccepter; }; //no interface called interfacename ;
     int ConnectFromImpl(ComponentBase*) { return 0; }; //Empty RestInterfaces does 0 successful connects ;
+protected:
+  bool HasInterface(const char *) { return false; };
 };
 
 template<typename FirstInterface, typename ... RestInterfaces>
@@ -71,12 +73,30 @@ class Accepting<FirstInterface, RestInterfaces... > : public InterfaceAcceptor<F
 public:
   ComponentBase::interfaceStatus ConnectFromImpl(const char *, ComponentBase*);
   int ConnectFromImpl(ComponentBase*);
+protected:
+  bool HasInterface(const char *);
+
 };
 
-template<typename... Interfaces>
-class Providing : public Interfaces...
+template<typename ... RestInterfaces>
+class Providing
 {
+protected:
+  bool HasInterface(const char *) { return false; };
 };
+
+template<typename FirstInterface, typename ... RestInterfaces>
+class Providing<FirstInterface, RestInterfaces... > : public FirstInterface, public Providing < RestInterfaces ... >
+{
+protected:
+  bool HasInterface(const char *);
+
+};
+
+//template<typename... Interfaces>
+//class Providing : public Interfaces...
+//{
+//};
 
 template<typename AcceptingInterfaces, typename ProvidingInterfaces>
 class Implements : public AcceptingInterfaces, public ProvidingInterfaces, public ComponentBase
@@ -84,7 +104,13 @@ class Implements : public AcceptingInterfaces, public ProvidingInterfaces, publi
   public:
     virtual interfaceStatus ConnectFrom(const char *, ComponentBase*);
     virtual int ConnectFrom(ComponentBase*);
+protected: 
+  virtual bool HasAcceptingInterface(const char *);
+  virtual bool HasProvidingInterface(const char *);
 };
+
+
+
 
 } // end namespace selx
 

@@ -31,48 +31,20 @@ int MetricComponent1::Set(TransformedImageInterface* providingInterface)
 }
 
   bool
-  MetricComponent1
-  ::MeetsCriteria(const CriteriaType& criteria)
-{
-  bool hasUndefinedCriteria(false);
-  bool meetsCriteria(true);
-
-  for (CriteriaType::const_iterator it = criteria.begin(); it != criteria.end(); ++it)
+    MetricComponent1
+    ::MeetsCriterium(const CriteriumType &criterium)
   {
-    if (strcmp(it->first.c_str(), "NameOfClass") == 0)
+    bool hasUndefinedCriteria(false);
+    bool meetsCriteria(false);
+    if (strcmp(criterium.first.c_str(), "ComponentProperty") == 0)
     {
-      if (strcmp(it->second.c_str(), this->GetNameOfClass()) != 0)
+      if (strcmp(criterium.second.c_str(), "SomeProperty") == 0) // e.g. "GradientDescent", "SupportsSparseSamples
       {
-        meetsCriteria = false;
-        break;
+        meetsCriteria = true;
       }
     }
-    else if (strcmp(it->first.c_str(), "ComponentOutput") == 0)
-    {
-      if (strcmp(it->second.c_str(), "Metric") != 0)
-      {
-        meetsCriteria = false;
-        break;
-      }
-    }
-    else if (strcmp(it->first.c_str(), "ComponentInput") == 0)
-    {
-      if (strcmp(it->second.c_str(), "Transform") != 0)
-      {
-        meetsCriteria = false;
-        break;
-      }
-    }
-    else
-    {
-      meetsCriteria = false;
-      hasUndefinedCriteria = true;
-      break;
-    }
-
+    return meetsCriteria;
   }
-  return meetsCriteria;
-}
 
 } // end namespace selx
 
