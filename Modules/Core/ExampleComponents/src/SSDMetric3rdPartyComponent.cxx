@@ -29,9 +29,17 @@ SSDMetric3rdPartyComponent
 
   for (CriteriaType::const_iterator it = criteria.begin(); it != criteria.end(); ++it)
   {
-    if (strcmp(it->first.c_str(), "NameOfClass") == 0)
+    if (strcmp(criterium->first.c_str(), "NameOfClass") == 0)
     {
       if (strcmp(it->second.c_str(), this->GetNameOfClass()) != 0)
+      {
+        meetsCriteria = false;
+        break;
+      }
+    }
+    else if (strcmp(it->first.c_str(), "HasProvidingInterface") == 0)
+    {
+      if (this->HasProvidingInterface(it->second.c_str()) != true)
       {
         meetsCriteria = false;
         break;

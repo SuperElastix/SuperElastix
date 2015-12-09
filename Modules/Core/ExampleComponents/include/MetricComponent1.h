@@ -30,6 +30,7 @@ public:
 
   virtual int Set(TransformedImageInterface *);
   virtual int GetValue(){ return 0; }
+
   //std::string GetComponentTypeAsString() const;
   //static const char * GetName(){ return "MetricComponent1"; };
   static const char * GetDescription(){ return "Example Metric Component 1"; };
@@ -44,8 +45,9 @@ private:
   MetricComponent1(const Self &);      // purposely not implemented
   void operator=(const Self &); // purposely not implemented
 
+  virtual bool MeetsCriterium(const CriteriumType &criterium);
+  //virtual bool MeetsCriteria(const CriteriaType&);
 
-  virtual bool MeetsCriteria(const CriteriaType&);
 };
 } // end namespace selx
 

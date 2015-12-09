@@ -31,7 +31,8 @@ namespace selx
     virtual ~SSDMetric4thPartyComponent();
     Example4thParty::SSDMetric4thParty* theImplementation;
     int GetValue();
-    virtual bool MeetsCriteria(const CriteriaType &criteria);
+    virtual bool MeetsCriterium(const CriteriumType &criterium);
+    //virtual bool MeetsCriteria(const CriteriaType &criteria);
     //static const char * GetName(){ return "SSDMetric4thPartyComponent"; };
     static const char * GetDescription(){ return "SSD Metric 4th Party Component"; };
     

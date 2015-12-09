@@ -45,6 +45,15 @@ struct InterfaceName < OptimizerUpdateInterface >
 };
 
 template <>
+struct InterfaceName < ConflictinUpdateInterface >
+{
+  static const char* Get()
+  {
+    return "ConflictinUpdateInterface";
+  }
+};
+
+template <>
 struct InterfaceName < TransformedImageInterface >
 {
   static const char* Get()

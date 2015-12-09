@@ -32,52 +32,16 @@ int GDOptimizer3rdPartyComponent::Update()
 
 bool
 GDOptimizer3rdPartyComponent
-::MeetsCriteria(const CriteriaType &criteria)
+::MeetsCriterium(const CriteriumType &criterium)
 {
   bool hasUndefinedCriteria(false);
-  bool meetsCriteria(true);
-
-  for (CriteriaType::const_iterator it = criteria.begin(); it != criteria.end(); ++it)
+  bool meetsCriteria(false);
+  if (strcmp(criterium->first.c_str(), "ComponentProperty") == 0)
   {
-    if (strcmp(it->first.c_str(), "NameOfClass") == 0)
+    if (strcmp(criterium->second.c_str(), "SomeProperty") == 0) // e.g. "GradientDescent", "SupportsSparseSamples
     {
-      if (strcmp(it->second.c_str(), this->GetNameOfClass()) != 0)
-      {
-        meetsCriteria = false;
-        break;
-      }
+      meetsCriteria = true;
     }
-    else if (strcmp(it->first.c_str(), "HasDerivative") == 0)
-    {
-      if (strcmp(it->second.c_str(), "True") != 0)
-      {
-        meetsCriteria = false;
-        break;
-      }
-    }
-    else if (strcmp(it->first.c_str(), "ComponentOutput") == 0)
-    {
-      if (strcmp(it->second.c_str(), "TransformUpdate") != 0)
-      {
-        meetsCriteria = false;
-        break;
-      }
-    }
-    else if (strcmp(it->first.c_str(), "ComponentInput") == 0)
-    {
-      if (strcmp(it->second.c_str(), "MetricValue") != 0)
-      {
-        meetsCriteria = false;
-        break;
-      }
-    }
-    else
-    {
-      meetsCriteria = false;
-      hasUndefinedCriteria = true;
-      break;
-    }
-
   }
   return meetsCriteria;
 }

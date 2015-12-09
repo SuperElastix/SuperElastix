@@ -130,8 +130,8 @@ TEST_F(ComponentFactoryTest, InterfacedObjects)
   EXPECT_EQ(registeredComponents.size(), 6);
 
   CriteriaType criteria3;
-  criteria3["NameOfClass"] = "GDOptimizer3rdPartyComponent";
-  //criteria3["HasDerivative"] = "True";  
+  //criteria3["NameOfClass"] = "GDOptimizer3rdPartyComponent";
+  criteria3["HasAcceptingInterface"] = "MetricDerivativeInterface";
   NodePointer Node3 = ComponentSelector::New();
   Node3->SetCriteria(criteria3);
   ComponentType::Pointer Node3Component;
@@ -148,7 +148,8 @@ TEST_F(ComponentFactoryTest, InterfacedObjects)
   EXPECT_STREQ(Node4Component->GetNameOfClass(), "GDOptimizer4thPartyComponent");
 
   CriteriaType criteria5;
-  criteria5["NameOfClass"] = "SSDMetric3rdPartyComponent";
+  //criteria5["NameOfClass"] = "SSDMetric3rdPartyComponent";
+  criteria5["HasProvidingInterface"] = "MetricDerivativeInterface";
   //criteria3["HasDerivative"] = "True";  
   NodePointer Node5 = ComponentSelector::New();
   Node5->SetCriteria(criteria5);
@@ -164,6 +165,7 @@ TEST_F(ComponentFactoryTest, InterfacedObjects)
   ComponentType::Pointer Node6Component;
   EXPECT_NO_THROW(Node6Component = Node6->GetComponent());
   EXPECT_STREQ(Node6Component->GetNameOfClass(), "SSDMetric4thPartyComponent");
+  
 }
 
 
