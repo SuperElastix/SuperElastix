@@ -1,11 +1,11 @@
-#ifndef __Blueprint_cxx
-#define __Blueprint_cxx
+#ifndef Blueprint_cxx
+#define Blueprint_cxx
 
 #include "boost/graph/graphviz.hpp"
 
 #include "elxBlueprint.h"
 
-namespace elx {
+namespace selx {
 
 Blueprint::ComponentIndexType
 Blueprint
@@ -155,6 +155,6 @@ Blueprint
   boost::write_graphviz( dotfile, this->m_Graph );
 }
 
-} // namespace elx 
+} // namespace selx 
 
-#endif // __Blueprint_cxx
+#endif // Blueprint_cxx

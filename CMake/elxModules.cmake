@@ -6,43 +6,44 @@ macro( _elxmodule_check_name MODULE )
     message( FATAL_ERROR "Invalid module name: ${MODULE}" )
   endif()
 
-  list( FIND ELASTIX_MODULES "${MODULE}" MODULE_FOUND )
+  list( FIND SUPERELASTIX_MODULES "${MODULE}" MODULE_FOUND )
   if( ${MODULE_FOUND} EQUAL -1 )
     message( FATAL_ERROR "Module not found: ${MODULE}")
   endif()
 endmacro()
 
-macro( _elxmodule_enable MODULE )
-  _elxmodule_check_name( ${MODULE} )
+macro( _elxmodule_enable MODULE_NAME )
+  _elxmodule_check_name( ${MODULE_NAME} )
 
-  if( NOT ${MODULE}_ENABLED )
-    set( ELASTIX_USE_${MODULE} ON )
+  if( NOT ${MODULE_NAME}_ENABLED )
+    set( USE_${MODULE_NAME} ON )
 
-    include( ${${MODULE}_FILE} )
+    include( ${${MODULE_NAME}_FILE} )
 
-    if( ${MODULE}_INCLUDE_DIRS )
-      include_directories( ${${MODULE}_INCLUDE_DIRS} )
+    if( ${MODULE_NAME}_INCLUDE_DIRS )
+      include_directories( ${${MODULE_NAME}_INCLUDE_DIRS} )
     endif()
 
-    if( ${MODULE}_LIBRARIES )
-      link_directories( ${${MODULE}_LIBRARY_DIRS} )
-      list( APPEND ELASTIX_LIBRARIES ${${MODULE}_LIBRARIES} )
+    if( ${MODULE_NAME}_LIBRARIES )
+      link_directories( ${${MODULE_NAME}_LIBRARY_DIRS} )
+      list( APPEND SUPERELASTIX_LIBRARIES ${${MODULE_NAME}_LIBRARIES} )
     endif()
 
-    # TODO: Add recursive dependency walk
+    # TODO: Add support for indicating dependencies between modules and recursive enabling of these dependencies
+
   endif()
 endmacro()
 
-macro( _elxmodule_disable MODULE )
+macro( _elxmodule_disable MODULE_NAME )
   # TODO
 endmacro()
 
 macro( _elxmodules_initialize )
-  set( ELASTIX_LIBRARIES )
-  set( ELASTIX_MODULES )
+  set( SUPERELASTIX_LIBRARIES )
+  set( SUPERELASTIX_MODULES )
 
   file( GLOB_RECURSE MODULE_FILES RELATIVE "${CMAKE_SOURCE_DIR}"
-     "${CMAKE_SOURCE_DIR}/Modules/*/elxModule*.cmake"
+     "${CMAKE_SOURCE_DIR}/Modules/*/Module*.cmake"
   )
 
   message( STATUS "Found the following elastix modules:")
@@ -52,7 +53,7 @@ macro( _elxmodules_initialize )
     
     message( STATUS "  ${MODULE_NAME}" )
 
-    option( "ELASTIX_USE_${MODULE_NAME}" OFF )
+    option( "USE_${MODULE_NAME}" OFF )
     set( "${MODULE_NAME}_FILE" ${CMAKE_SOURCE_DIR}/${MODULE_FILE} )
     set( "${MODULE_NAME}_ENABLED" OFF )
 
@@ -63,7 +64,7 @@ macro( _elxmodules_initialize )
     set( ${MODULE_NAME}_LIBRARY_DIRS )
     set( ${MODULE_NAME}_LIBRARIES )
 
-    list(APPEND ELASTIX_MODULES ${MODULE_NAME} )
+    list(APPEND SUPERELASTIX_MODULES ${MODULE_NAME} )
   endforeach()
 endmacro()
 

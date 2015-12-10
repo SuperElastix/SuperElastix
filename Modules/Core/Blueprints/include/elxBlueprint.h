@@ -1,5 +1,5 @@
-#ifndef __Blueprint_h
-#define __Blueprint_h
+#ifndef Blueprint_h
+#define Blueprint_h
 
 #include "boost/graph/graph_traits.hpp"
 #include "boost/graph/directed_graph.hpp"
@@ -9,7 +9,7 @@
 
 #include "elxMacro.h"
 
-namespace elx {
+namespace selx {
 
 class Blueprint : public itk::DataObject
 {
@@ -28,7 +28,7 @@ public:
   };
 
   // Component parameter map that sits on an edge in the graph 
-  // and holds component configuration settings
+  // and holds component connection configuration settings
   struct ConnectionPropertyType { 
     ParameterMapType parameterMap;
   };
@@ -103,4 +103,4 @@ private:
 
 }
 
-#endif // #define __Blueprint_h
+#endif // #define Blueprint_h

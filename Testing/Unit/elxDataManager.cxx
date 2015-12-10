@@ -6,7 +6,7 @@
 
 const std::string
 DataManager
-::GetInputFullPath( const std::string filename ) const 
+::GetInputFile( const std::string filename ) const 
 {
   const std::string path = this->GetInputDirectory() + this->GetFolderSeparator() + filename;
   return path;
@@ -14,7 +14,7 @@ DataManager
 
 const std::string
 DataManager
-::GetOutputFullPath( const std::string filename ) const
+::GetOutputFile( const std::string filename ) const
 {
   const std::string path = this->GetOutputDirectory() + this->GetFolderSeparator() + filename;
   return path;
@@ -22,10 +22,10 @@ DataManager
 
 const std::string
 DataManager
-::GetBaselineFullPath( const std::string filename ) const
+::GetBaselineFile( const std::string filename ) const
 {
   const std::string path = this->GetBaselineDirectory() + this->GetFolderSeparator() + filename;
   return path;
 }
 
-#endif // __elxTestData_cxx
+#endif // __DataManager_cxx
