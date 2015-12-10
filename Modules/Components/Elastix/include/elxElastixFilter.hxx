@@ -1,5 +1,5 @@
-#ifndef ElastixComponent_hxx
-#define ElastixComponent_hxx
+#ifndef ElastixFilter_hxx
+#define ElastixFilter_hxx
 
 namespace selx {
 
@@ -27,12 +27,12 @@ ElastixFilter< TFixedImage, TMovingImage >
 ::GenerateData( void )
 {
   // Initialize variables here so they don't go out of scope between iterations of the main loop
-  ElastixMainObjectPointer    transform            = 0;
+  ElastixMainObjectPointer    transform            = ITK_NULLPTR;
   DataObjectContainerPointer  fixedImageContainer  = this->m_FixedImageContainer;
   DataObjectContainerPointer  movingImageContainer = this->m_MovingImageContainer;
-  DataObjectContainerPointer  fixedMaskContainer   = 0;
-  DataObjectContainerPointer  movingMaskContainer  = 0;
-  DataObjectContainerPointer  resultImageContainer = 0;
+  DataObjectContainerPointer  fixedMaskContainer   = ITK_NULLPTR;
+  DataObjectContainerPointer  movingMaskContainer  = ITK_NULLPTR;
+  DataObjectContainerPointer  resultImageContainer = ITK_NULLPTR;
   ParameterMapListType        TransformParameterMapList;
   FlatDirectionCosinesType    fixedImageOriginalDirection;
 
@@ -138,12 +138,12 @@ ElastixFilter< TFixedImage, TMovingImage >
   this->SetOutput( "TransformParameterObject", static_cast< itk::DataObject* >( TransformParameters ) );
 
   // Clean up
-  transform            = 0;
-  fixedImageContainer  = 0;
-  movingImageContainer = 0;
-  fixedMaskContainer   = 0;
-  movingMaskContainer  = 0;
-  resultImageContainer = 0;
+  transform            = ITK_NULLPTR;
+  fixedImageContainer  = ITK_NULLPTR;
+  movingImageContainer = ITK_NULLPTR;
+  fixedMaskContainer   = ITK_NULLPTR;
+  movingMaskContainer  = ITK_NULLPTR;
+  resultImageContainer = ITK_NULLPTR;
 
   // Close the modules
   ElastixMainType::UnloadComponents();
@@ -157,8 +157,8 @@ ElastixFilter< TFixedImage, TMovingImage >
 {
   if( this->m_FixedImageContainer->Size() > 0 )
   {
-    // Free images that has already been given
-    this->m_FixedImageContainer = 0;
+    // Free references to images that has already been given
+    this->m_FixedImageContainer = ITK_NULLPTR;
   }
 
   // Input for elastix
@@ -187,8 +187,8 @@ ElastixFilter< TFixedImage, TMovingImage >
 {
   if( this->m_MovingImageContainer->Size() > 0 )
   {
-    // Free images that has already been given
-    this->m_MovingImageContainer = 0;
+    // Free references to images that has already been given
+    this->m_MovingImageContainer = ITK_NULLPTR;
   }
 
   // Input for elastix
@@ -244,4 +244,4 @@ ElastixFilter< TFixedImage, TMovingImage >
 
 } // namespace selx
 
-#endif // ElastixComponent_hxx
+#endif // ElastixFilter_hxx

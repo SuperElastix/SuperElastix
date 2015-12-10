@@ -1,5 +1,5 @@
-#ifndef ElastixComponent_h
-#define ElastixComponent_h
+#ifndef ElastixFilter_h
+#define ElastixFilter_h
 
 // ITK
 #include "itkImageSource.h"
