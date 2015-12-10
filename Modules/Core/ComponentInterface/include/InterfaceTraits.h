@@ -12,7 +12,7 @@ struct InterfaceName
 {
   static const char* Get()
   {
-    static_assert(false, "Please implement a template specialization for the appropriate InterfaceName")
+    //static_assert(false, "Please implement a template specialization for the appropriate InterfaceName");
     return typeid(T).name();
   }
 };

@@ -1,10 +1,5 @@
 set( MODULE ModuleCore )
 
-# Module source files
-set( ${MODULE}_SOURCE_FILES
-  ${${MODULE}_SOURCE_DIR}/Blueprints/src/elxBlueprint.cxx
-)
-
 # Export include files
 set( ${MODULE}_INCLUDE_DIRS
   ${${MODULE}_SOURCE_DIR}/Common/include

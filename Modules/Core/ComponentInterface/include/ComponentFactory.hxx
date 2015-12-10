@@ -19,7 +19,7 @@
 //#include "itkMetricComponent1.h"
 #include "itkVersion.h"
 //#include "ComponentTraits.h"
-#include <typeinfo.h>
+#include <typeinfo>
 namespace selx
 {
 

@@ -3,6 +3,7 @@
 
 #include "ComponentBase.h"
 #include <typeinfo>
+#include <string>
 
 namespace selx
 {
