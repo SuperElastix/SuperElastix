@@ -16,6 +16,9 @@ ElastixFilter< TFixedImage, TMovingImage >
 
   this->m_FixedImageContainer = DataObjectContainerType::New();
   this->m_MovingImageContainer = DataObjectContainerType::New();
+
+  this->m_FixedPointSetFileName = std::string();
+  this->m_MovingPointSetFileName = std::string();
 }
 
 template< typename TFixedImage, typename TMovingImage >
@@ -23,52 +26,66 @@ void
 ElastixFilter< TFixedImage, TMovingImage >
 ::GenerateData( void )
 {
+  // Initialize variables here so they don't go out of scope between iterations of the main loop
   ElastixMainObjectPointer    transform            = 0;
   DataObjectContainerPointer  fixedImageContainer  = this->m_FixedImageContainer;
   DataObjectContainerPointer  movingImageContainer = this->m_MovingImageContainer;
   DataObjectContainerPointer  fixedMaskContainer   = 0;
   DataObjectContainerPointer  movingMaskContainer  = 0;
   DataObjectContainerPointer  resultImageContainer = 0;
-
   ParameterMapListType        TransformParameterMapList;
+  FlatDirectionCosinesType    fixedImageOriginalDirection;
 
   // Fixed mask (optional)
   if( this->HasInput( "FixedMask" ) )
   {
-    fixedMaskContainer                        = DataObjectContainerType::New();                   
+    fixedMaskContainer = DataObjectContainerType::New();                   
     fixedMaskContainer->CreateElementAt( 0 )  = this->GetInput( "FixedMask" );
   }
 
   // Moving mask (optional)
   if( this->HasInput( "MovingMask" )  )
   {
-    movingMaskContainer                       = DataObjectContainerType::New();
+    movingMaskContainer = DataObjectContainerType::New();
     movingMaskContainer->CreateElementAt( 0 ) = this->GetInput( "MovingMask" );
   }
 
   // Get ParameterMap
-  ParameterObjectPointer parameterObject = static_cast< ParameterObject* >( this->GetInput( "ParameterObject" ) );
+  ParameterObjectConstPointer parameterObject = static_cast< const ParameterObject* >( this->GetInput( "ParameterObject" ) );
   ParameterMapListType parameterMapList = parameterObject->GetParameterMapList();
 
-  // Emulate command line parameters. There must be an "-out", this is checked later in code
+  // There must be an "-out", this is checked later in code
   ArgumentMapType argumentMap;
-  argumentMap.insert( ArgumentMapEntryType( std::string( "-out" ), std::string( "output_path_not_set" ) ) );
+  argumentMap.insert( ArgumentMapEntryType( "-out", std::string( "output_path_not_set" ) ) );
 
-  // Direction Cosines
-  FlatDirectionCosinesType fixedImageOriginalDirection;
+  // Set point sets
+  if( !this->m_FixedPointSetFileName.empty() )
+  {
+    argumentMap.insert( ArgumentMapEntryType( "-fp", std::string( this->m_FixedPointSetFileName ) ) );
+  }
+
+  if( !this->m_MovingPointSetFileName.empty() )
+  {
+    argumentMap.insert( ArgumentMapEntryType( "-mp", std::string( this->m_MovingPointSetFileName ) ) );
+  }
 
   // Setup xout
   if( elx::xoutSetup( this->GetLogToFile().c_str(), this->GetLogToFile() != std::string(), this->GetLogToConsole() ) )
   {
-    itkExceptionMacro( "ERROR while setting up xout." );
+    // TODO: The following exception thrown if two different filters are 
+    // initialized by the same process or if a filter is executed twice
+    itkExceptionMacro( "ERROR while setting up xout" );
   }
 
   // Run the (possibly multiple) registration(s)
-  unsigned int isError;
   for( unsigned int i = 0; i < parameterMapList.size(); ++i )
   {
     // Create another instance of ElastixMain 
     ElastixMainPointer elastix = ElastixMainType::New();
+
+    // Set the current elastix-level
+    elastix->SetElastixLevel( i );
+    elastix->SetTotalNumberOfElastixLevels( parameterMapList.size() );
 
     // Set stuff we get from a previous registration 
     elastix->SetInitialTransform( transform );
@@ -79,20 +96,13 @@ ElastixFilter< TFixedImage, TMovingImage >
     elastix->SetResultImageContainer( resultImageContainer );
     elastix->SetOriginalFixedImageDirectionFlat( fixedImageOriginalDirection );
 
-    // Set the current elastix-level
-    elastix->SetElastixLevel( i );
-    elastix->SetTotalNumberOfElastixLevels( 1 );
-
-    // ITK pipe-line mechanism need a result image
-    parameterMapList[ i ][ "WriteResultImage"] = ParameterValuesType( 1, std::string( "true" ) );
-
     // Start registration
-    isError = elastix->Run( argumentMap, parameterMapList[ i ] );
+    unsigned int isError = elastix->Run( argumentMap, parameterMapList[ i ] );
 
     // Assert success 
     if( isError != 0 )
     {
-      itkExceptionMacro( "Errors occured" );
+      itkExceptionMacro( "Uncought error occured" );
     }
 
     // Get the transform, the fixedImage and the movingImage
@@ -125,7 +135,7 @@ ElastixFilter< TFixedImage, TMovingImage >
   // Save parameter map
   ParameterObject::Pointer TransformParameters = ParameterObject::New();
   TransformParameters->SetParameterMapList( TransformParameterMapList );
-  this->SetOutput( "TransformParametersObject", static_cast< itk::DataObject* >( TransformParameters ) );
+  this->SetOutput( "TransformParameterObject", static_cast< itk::DataObject* >( TransformParameters ) );
 
   // Clean up
   transform            = 0;
@@ -184,7 +194,7 @@ ElastixFilter< TFixedImage, TMovingImage >
   // Input for elastix
   this->m_MovingImageContainer->CreateElementAt( 0 ) = static_cast< itk::DataObject* >( movingImage ) ;
 
-  // Primary input for ITK pipeline
+  // Input for ITK pipeline
   this->SetInput( DataObjectIdentifierType( "MovingImage" ), this->m_MovingImageContainer->ElementAt( 0 ) );
 }
 
@@ -196,7 +206,7 @@ ElastixFilter< TFixedImage, TMovingImage >
   // Input for elastix
   this->m_MovingImageContainer = movingImages;
 
-  // Primary input for ITK pipeline
+  // Input for ITK pipeline
   this->SetInput( DataObjectIdentifierType( "MovingImage" ), this->m_MovingImageContainer->ElementAt( 0 ) );
 }
 
@@ -225,11 +235,11 @@ ElastixFilter< TFixedImage, TMovingImage >
 }
 
 template< typename TFixedImage, typename TMovingImage >
-typename selx::ElastixFilter< TFixedImage, TMovingImage >::ParameterObjectPointer
+typename selx::ElastixFilter< TFixedImage, TMovingImage >::ParameterObjectConstPointer
 ElastixFilter< TFixedImage, TMovingImage >
-::GetTransformParameters( void )
+::GetTransformParameters( void ) const
 {
-  return static_cast< ParameterObject* >( itk::ProcessObject::GetOutput( DataObjectIdentifierType( "TransformParametersObject" ) ) );
+  return static_cast< const ParameterObject* >( itk::ProcessObject::GetOutput( DataObjectIdentifierType( "TransformParameterObject" ) ) );
 }
 
 } // namespace selx

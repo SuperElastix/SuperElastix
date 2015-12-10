@@ -26,7 +26,7 @@ protected:
   typedef ParameterObject::ParameterValuesType            ParameterValuesType;
   typedef ParameterObject::ParameterMapType               ParameterMapType;
   ParameterObject::Pointer parameterObject;
-  ParameterObject::Pointer TransformParameterObject;
+  ParameterObject::ConstPointer TransformParameterObject;
 
   typedef ElastixFilter< ImageType, ImageType >           ElastixFilterType;
   typedef ElastixFilterType::DataObjectContainerType      DataObjectContainerType;
@@ -84,7 +84,7 @@ protected:
     parameterMap[ "AutomaticParameterEstimation" ]      = ParameterValuesType( 1, "true" );
 
     // Output
-    parameterMap[ "WriteResultImage" ]                  = ParameterValuesType( 1, "false" );
+    parameterMap[ "WriteResultImage" ]                  = ParameterValuesType( 1, "true" );
     parameterMap[ "ResultImageFormat" ]                 = ParameterValuesType( 1, "nii" );
 
     // Registration
@@ -154,3 +154,5 @@ TEST_F( ElastixFilterTest, MultiPairwiseRegistration )
   writer->SetInput( elastixFilter->GetOutput() );
   EXPECT_NO_THROW( writer->Update() );
 }
+
+// TODO: Write test with point sets

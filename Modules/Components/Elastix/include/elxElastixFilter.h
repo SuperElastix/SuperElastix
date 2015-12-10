@@ -2,7 +2,6 @@
 #define ElastixComponent_h
 
 // ITK
-#include "itkProcessObject.h"
 #include "itkImageSource.h"
 
 // Elastix
@@ -38,6 +37,7 @@ public:
   typedef ParameterObject::ParameterMapType             ParameterMapType;
   typedef ParameterObject::ParameterValuesType          ParameterValuesType;
   typedef typename ParameterObject::Pointer             ParameterObjectPointer;
+  typedef typename ParameterObject::ConstPointer        ParameterObjectConstPointer;
 
   typedef typename TFixedImage::Pointer                 FixedImagePointer;
   typedef typename TMovingImage::Pointer                MovingImagePointer;
@@ -46,18 +46,27 @@ public:
   void SetFixedImage( DataObjectContainerPointer fixedImage );
   void SetMovingImage( MovingImagePointer movingImage );
   void SetMovingImage( DataObjectContainerPointer movingImage );
-  void SetParameterObject( ParameterObjectPointer parameterObject );
   void SetFixedMask( FixedImagePointer fixedMask );
   void SetMovingMask( MovingImagePointer movingMask );
 
-  ParameterObjectPointer GetTransformParameters( void );
+  void SetParameterObject( ParameterObjectPointer parameterObject );
+  ParameterObjectConstPointer GetTransformParameters( void ) const;
+
+  itkSetMacro( FixedPointSetFileName, std::string );
+  itkGetConstMacro( FixedPointSetFileName, std::string );
+  void DeleteFixedPointSet( void ) { this->SetFixedPointSetFileName( std::string() ); };
+
+  itkSetMacro( MovingPointSetFileName, std::string );
+  itkGetConstMacro( MovingPointSetFileName, std::string );
+  void DeleteMovingPointSet( void ) { this->SetMovingPointSetFileName( std::string() ); };
 
   itkSetMacro( LogToConsole, bool );
-  itkGetMacro( LogToConsole, bool );
+  itkGetConstMacro( LogToConsole, bool );
   itkBooleanMacro( LogToConsole );
 
   itkSetMacro( LogToFile, std::string );
-  itkGetMacro( LogToFile, std::string );
+  itkGetConstMacro( LogToFile, std::string );
+  void LogToFileOff( void ) { this->SetLogToFile( std::string() ); };
 
 protected:
 
@@ -67,10 +76,14 @@ private:
 
   ElastixFilter();
 
+  // TODO: When set to true, ReleaseDataFlag should also touch these input containers
   DataObjectContainerPointer m_FixedImageContainer;
   DataObjectContainerPointer m_MovingImageContainer;
   DataObjectContainerPointer m_FixedMaskContainer;
   DataObjectContainerPointer m_MovingMaskContainer;
+
+  std::string m_FixedPointSetFileName;
+  std::string m_MovingPointSetFileName;
 
   bool m_LogToConsole;
   std::string m_LogToFile;

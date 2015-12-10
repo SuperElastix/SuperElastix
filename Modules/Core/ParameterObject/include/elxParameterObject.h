@@ -35,6 +35,11 @@ public:
     return this->m_ParameterMapList; 
   };
 
+  const ParameterMapListType GetParameterMapList( void ) const
+  {
+    return this->m_ParameterMapList; 
+  };
+
   // TODO:
   // itkSetMacro( ParameterMap, ParameterMapType )
   // itkGetMacro( ParameterMap, ParameterMapType )
