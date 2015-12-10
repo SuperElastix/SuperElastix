@@ -2,7 +2,7 @@
 
 #include "gtest/gtest.h"
 
-namespace elx {
+using namespace selx;
 
 class BlueprintTest : public ::testing::Test {
 public:
@@ -53,7 +53,7 @@ TEST_F( BlueprintTest, SetComponent )
 }
 
 // TODO: The final line segfaults because GetComponent does not check that the index actually
-// actually exist. How can we do that? See also explanation in elxBlueprint.h
+// actually exist. See explanation in elxBlueprint.h
 // TEST_F( BlueprintTest, DeleteComponent ) 
 // {
 //   BlueprintPointerType blueprint = Blueprint::New();
@@ -98,9 +98,6 @@ TEST_F( BlueprintTest, AddConnection )
   // of the next test.
   ParameterMapType parameterMapTest1;
   EXPECT_TRUE( blueprint->AddConnection( index1, index2, parameterMap ) );
-
-  // It is  not be possible to add connection between components that do not exist
-  // because you do not have necessary indexes
 }
 
 TEST_F( BlueprintTest, GetConnection )
@@ -170,5 +167,3 @@ TEST_F( BlueprintTest, WriteBlueprint )
 
   EXPECT_NO_THROW( blueprint->WriteBlueprint( "blueprint.dot" ) );
 }
-
-} // namespace elx

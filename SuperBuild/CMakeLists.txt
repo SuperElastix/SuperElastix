@@ -70,8 +70,9 @@ endif()
 # ---------------------------------------------------------------------
 # Build GoogleTest
 
+mark_as_advanced( USE_SYSTEM_GOOGLETEST )
 option( USE_SYSTEM_GOOGLETEST "Use a pre-compiled version of GoogleTest. " OFF ) 
-mark_as_advanced(USE_SYSTEM_GOOGLETEST) 
+mark_as_advanced( USE_SYSTEM_GOOGLETEST ) 
 if ( SUPERELASTIX_BUILD_TESTING ) 
   if ( USE_SYSTEM_GOOGLETEST ) 
     find_package( GTest REQUIRED ) 
@@ -83,11 +84,19 @@ endif()
 # ---------------------------------------------------------------------
 # Build Elastix
 
-# TODO: Add USE_SYSTEM_ELASTICLEGACY option
 mark_as_advanced( SUPERELASTIX_BUILD_ELASTIX )
 option( SUPERELASTIX_BUILD_ELASTIX ON )
 if( SUPERELASTIX_BUILD_ELASTIX )
-  include( ExternalElastix )
+  if( USE_SYSTEM_ELASTIX )
+    if( NOT EXISTS ${ELASTIX_USE_FILE} )
+      # Expose CMake variable to user
+      set( ELASTIX_USE_FILE )
+      # Stop the build
+      message( FATAL_ERROR "Please point ELASTIX_USE_FILE to your systems UseElastix.cmake file." )
+    endif()
+  else()
+    include( ExternalElastix )
+  endif()
 endif()
 
 # ---------------------------------------------------------------------
