@@ -41,6 +41,8 @@ include( elxModules )
 elxmodule_enable( ModuleCore )
 elxmodule_enable( ModuleElastix )
 
+# TODO: Build tests depending on enabled modules
+
 # ---------------------------------------------------------------------
 # Testing
 
