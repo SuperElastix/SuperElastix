@@ -8,6 +8,14 @@ endif()
 
 include( ${ELASTIX_USE_FILE} )
 
+# If OpenMP is supported by this machine, elastix will be compiled with
+# OpenMP flags, and we need to add them here as well
+find_package( OpenMP )
+if (OPENMP_FOUND)
+  set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}" )
+  set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}" )
+endif()
+
 # Export include files
 set( ${MODULE}_INCLUDE_DIRS
   ${${MODULE}_SOURCE_DIR}/include
