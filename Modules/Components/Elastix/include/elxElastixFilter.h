@@ -52,13 +52,13 @@ public:
   void SetParameterObject( ParameterObjectPointer parameterObject );
   ParameterObjectConstPointer GetTransformParameters( void ) const;
 
-  itkSetMacro( FixedPointSetFileName, std::string );
-  itkGetConstMacro( FixedPointSetFileName, std::string );
-  void DeleteFixedPointSet( void ) { this->SetFixedPointSetFileName( std::string() ); };
+  itkSetMacro( FixedMeshFileName, std::string );
+  itkGetConstMacro( FixedMeshFileName, std::string );
+  void DeleteFixedMesh( void ) { this->SetFixedMeshFileName( std::string() ); };
 
-  itkSetMacro( MovingPointSetFileName, std::string );
-  itkGetConstMacro( MovingPointSetFileName, std::string );
-  void DeleteMovingPointSet( void ) { this->SetMovingPointSetFileName( std::string() ); };
+  itkSetMacro( MovingMeshFileName, std::string );
+  itkGetConstMacro( MovingMeshFileName, std::string );
+  void DeleteMovingMesh( void ) { this->SetMovingMeshFileName( std::string() ); };
 
   itkSetMacro( LogToConsole, bool );
   itkGetConstMacro( LogToConsole, bool );
@@ -82,8 +82,8 @@ private:
   DataObjectContainerPointer m_FixedMaskContainer;
   DataObjectContainerPointer m_MovingMaskContainer;
 
-  std::string m_FixedPointSetFileName;
-  std::string m_MovingPointSetFileName;
+  std::string m_FixedMeshFileName;
+  std::string m_MovingMeshFileName;
 
   bool m_LogToConsole;
   std::string m_LogToFile;

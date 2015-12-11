@@ -1,6 +1,8 @@
 #include "elxElastixFilter.h"
 #include "elxParameterObject.h"
 
+#include "itkMesh.h"
+#include "itkMeshFileReader.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 
@@ -15,43 +17,54 @@ protected:
 
   typedef DataManager DataManagerType;
 
-  typedef itk::Image< float, 2u >                         ImageType;
+  // Mesh typedef 
+  typedef itk::Mesh< float, 2u >                            MeshType;
+  typedef itk::MeshFileReader< MeshType >                   MeshReaderType;
+
+  // Image typedefs
+  typedef itk::Image< float, 2u >                           ImageType;
+  typedef itk::ImageFileReader< ImageType >                 ImageReaderType;
+  typedef itk::ImageFileWriter< ImageType >                 ImageWriterType;
+
+  // Parameter typedefs
+  typedef ParameterObject::ParameterValuesType              ParameterValuesType;
+  typedef ParameterObject::ParameterMapType                 ParameterMapType;
+
+  // Elastix typedefs
+  typedef ElastixFilter< ImageType, ImageType >             ElastixFilterType;
+  typedef ElastixFilterType::DataObjectContainerType        DataObjectContainerType;
+  typedef ElastixFilterType::DataObjectContainerPointer     DataObjectContainerPointer;
+
+  // Variables used by multiple tests
   ImageType::Pointer fixedImage;
   ImageType::Pointer movingImage;
   ImageType::Pointer resultImage;
 
-  typedef itk::ImageFileReader< ImageType >               ImageReaderType;
-  typedef itk::ImageFileWriter< ImageType >               ImageWriterType;
+  std::string fixedMeshFileName;
+  std::string movingMeshFileName;
 
-  typedef ParameterObject::ParameterValuesType            ParameterValuesType;
-  typedef ParameterObject::ParameterMapType               ParameterMapType;
   ParameterObject::Pointer parameterObject;
-  ParameterObject::ConstPointer TransformParameterObject;
-
-  typedef ElastixFilter< ImageType, ImageType >           ElastixFilterType;
-  typedef ElastixFilterType::DataObjectContainerType      DataObjectContainerType;
-  typedef ElastixFilterType::DataObjectContainerPointer   DataObjectContainerPointer;
-
+  ParameterObject::Pointer correspondingPointsParameterObject;
+  ParameterObject::ConstPointer transformParameterObject;
 
   virtual void SetUp()
   {
     DataManagerType::Pointer dataManager = DataManagerType::New();
 
-    ImageReaderType::Pointer reader = ImageReaderType::New();
+    // TODO: All calls to update here should not be needed but should be propagated to reader by ElastixFilter
 
-    reader->SetFileName( dataManager->GetInputFile( "cthead1-Float.mha" ) );
-    fixedImage = reader->GetOutput();
+    // Input images
+    ImageReaderType::Pointer fixedImageReader = ImageReaderType::New();
+    fixedImageReader->SetFileName( dataManager->GetInputFile( "cthead1-Float.mha" ) );
+    fixedImage = fixedImageReader->GetOutput();
+    fixedImageReader->Update();
 
-    // TODO: Only call update on writer
-    reader->Update();
+    ImageReaderType::Pointer movingImageReader = ImageReaderType::New();
+    movingImageReader->SetFileName( dataManager->GetInputFile( "cthead1-Float.mha" ) );
+    movingImage = movingImageReader->GetOutput();
+    movingImageReader->Update();
 
-    reader->SetFileName( dataManager->GetInputFile( "cthead1-Float.mha" ) );
-    movingImage = reader->GetOutput();
-
-    // TODO: Only call update on writer
-    reader->Update();
-
-    // ParameterMap
+    // Nonrigid ParameterMap
     ParameterMapType parameterMap                       = ParameterMapType();
 
     // Images
@@ -93,8 +106,18 @@ protected:
     parameterMap[ "Metric" ]                            = ParameterValuesType( 1, "AdvancedMattesMutualInformation" );
     parameterMap[ "MaximumNumberOfIterations" ]         = ParameterValuesType( 1, "128" );
 
+    ParameterMapType nonRigidParameterMap = parameterMap;
     parameterObject = ParameterObject::New();
-    parameterObject->SetParameterMap( parameterMap );
+    parameterObject->SetParameterMap( nonRigidParameterMap );
+
+    ParameterMapType correspondingPointsParameterMap = parameterMap;
+
+    // TODO: WHY DOES THIS SEGFAULT?
+    //correspondingPointsParameterMap[ "Metric" ][ 1 ] = "CorrespondingPointsEuclideanDistanceMetric";
+    //correspondingPointsParameterObject->SetParameterMap( correspondingPointsParameterMap );
+
+    fixedMeshFileName = dataManager->GetInputFile( "bioid_0000.vtk" );
+    movingMeshFileName = dataManager->GetInputFile( "bioid_0001.vtk" );
   }
 };
 
@@ -107,16 +130,16 @@ TEST_F( ElastixFilterTest, PairwiseRegistration )
 {
   ElastixFilterType::Pointer elastixFilter = ElastixFilterType::New();
 
-  elastixFilter->LogToConsoleOn();
-  elastixFilter->SetFixedImage( fixedImage );
-  elastixFilter->SetMovingImage( movingImage );
-  elastixFilter->SetParameterObject( parameterObject );
+  EXPECT_NO_THROW( elastixFilter->LogToConsoleOn() );
+  EXPECT_NO_THROW( elastixFilter->SetFixedImage( fixedImage ) );
+  EXPECT_NO_THROW( elastixFilter->SetMovingImage( movingImage ) );
+  EXPECT_NO_THROW( elastixFilter->SetParameterObject( parameterObject ) );
 
   // TODO: This update should not be needed
-  elastixFilter->Update();
+  EXPECT_NO_THROW( elastixFilter->Update() );
 
   EXPECT_NO_THROW( resultImage = elastixFilter->GetOutput() );
-  EXPECT_NO_THROW( TransformParameterObject = elastixFilter->GetTransformParameters() );
+  EXPECT_NO_THROW( transformParameterObject = elastixFilter->GetTransformParameters() );
 
   ImageWriterType::Pointer writer = ImageWriterType::New();
   writer->SetFileName( "ElastixResultImage.nii" );
@@ -138,21 +161,45 @@ TEST_F( ElastixFilterTest, MultiPairwiseRegistration )
   movingImages->CreateElementAt( 0 ) = static_cast< itk::DataObject* >( movingImage );
   movingImages->CreateElementAt( 1 ) = static_cast< itk::DataObject* >( movingImage );
 
-  elastixFilter->LogToConsoleOn();
-  elastixFilter->SetFixedImage( fixedImages );
-  elastixFilter->SetMovingImage( movingImages );
-  elastixFilter->SetParameterObject( parameterObject );
+  EXPECT_NO_THROW( elastixFilter->LogToConsoleOn() );
+  EXPECT_NO_THROW( elastixFilter->SetFixedImage( fixedImages ) );
+  EXPECT_NO_THROW( elastixFilter->SetMovingImage( movingImages ) );
+  EXPECT_NO_THROW( elastixFilter->SetParameterObject( parameterObject ) );
 
   // TODO: This update should not be needed
-  elastixFilter->Update();
+  EXPECT_NO_THROW( elastixFilter->Update() );
 
   EXPECT_NO_THROW( resultImage = elastixFilter->GetOutput() );
-  EXPECT_NO_THROW( TransformParameterObject = elastixFilter->GetTransformParameters() );
+  EXPECT_NO_THROW( transformParameterObject = elastixFilter->GetTransformParameters() );
 
   ImageWriterType::Pointer writer = ImageWriterType::New();
   writer->SetFileName( "ElastixResultImage.nii" );
   writer->SetInput( elastixFilter->GetOutput() );
   EXPECT_NO_THROW( writer->Update() );
+}
+
+TEST_F( ElastixFilterTest, PointSetRegistration )
+{
+  ElastixFilterType::Pointer elastixFilter = ElastixFilterType::New();
+
+  EXPECT_NO_THROW( elastixFilter->LogToConsoleOn() );
+  EXPECT_NO_THROW( elastixFilter->SetFixedImage( fixedImage ) );
+  EXPECT_NO_THROW( elastixFilter->SetFixedMeshFileName( fixedMeshFileName  ) );
+  EXPECT_NO_THROW( elastixFilter->SetMovingImage( movingImage ) );
+  EXPECT_NO_THROW( elastixFilter->SetMovingMeshFileName( movingMeshFileName ) );
+  EXPECT_NO_THROW( elastixFilter->SetParameterObject( parameterObject ) );
+
+  // TODO: This update should not be needed
+  EXPECT_NO_THROW( elastixFilter->Update() );
+
+  EXPECT_NO_THROW( resultImage = elastixFilter->GetOutput() );
+  EXPECT_NO_THROW( transformParameterObject = elastixFilter->GetTransformParameters() );
+
+  ImageWriterType::Pointer writer = ImageWriterType::New();
+  writer->SetFileName( "ElastixResultImage.nii" );
+  writer->SetInput( elastixFilter->GetOutput() );
+  EXPECT_NO_THROW( writer->Update() );
+
 }
 
 // TODO: Write test with point sets

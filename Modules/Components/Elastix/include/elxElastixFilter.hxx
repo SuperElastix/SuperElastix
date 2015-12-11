@@ -17,8 +17,8 @@ ElastixFilter< TFixedImage, TMovingImage >
   this->m_FixedImageContainer = DataObjectContainerType::New();
   this->m_MovingImageContainer = DataObjectContainerType::New();
 
-  this->m_FixedPointSetFileName = std::string();
-  this->m_MovingPointSetFileName = std::string();
+  this->m_FixedMeshFileName = std::string();
+  this->m_MovingMeshFileName = std::string();
 }
 
 template< typename TFixedImage, typename TMovingImage >
@@ -58,15 +58,16 @@ ElastixFilter< TFixedImage, TMovingImage >
   ArgumentMapType argumentMap;
   argumentMap.insert( ArgumentMapEntryType( "-out", std::string( "output_path_not_set" ) ) );
 
-  // Set point sets
-  if( !this->m_FixedPointSetFileName.empty() )
+  // Fixed mesh (optional)
+  if( !this->m_FixedMeshFileName.empty() )
   {
-    argumentMap.insert( ArgumentMapEntryType( "-fp", std::string( this->m_FixedPointSetFileName ) ) );
+    argumentMap.insert( ArgumentMapEntryType( "-fp", std::string( this->m_FixedMeshFileName ) ) );
   }
 
-  if( !this->m_MovingPointSetFileName.empty() )
+  // Moving mesh (optional)
+  if( !this->m_MovingMeshFileName.empty() )
   {
-    argumentMap.insert( ArgumentMapEntryType( "-mp", std::string( this->m_MovingPointSetFileName ) ) );
+    argumentMap.insert( ArgumentMapEntryType( "-mp", std::string( this->m_MovingMeshFileName ) ) );
   }
 
   // Setup xout
