@@ -35,7 +35,7 @@ public:
 
   typedef ParameterObject::ParameterMapListType         ParameterMapListType;
   typedef ParameterObject::ParameterMapType             ParameterMapType;
-  typedef ParameterObject::ParameterValuesType          ParameterValuesType;
+  typedef ParameterObject::ParameterVectorType          ParameterVectorType;
   typedef typename ParameterObject::Pointer             ParameterObjectPointer;
   typedef typename ParameterObject::ConstPointer        ParameterObjectConstPointer;
 

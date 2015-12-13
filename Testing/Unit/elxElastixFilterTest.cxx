@@ -27,7 +27,7 @@ protected:
   typedef itk::ImageFileWriter< ImageType >                 ImageWriterType;
 
   // Parameter typedefs
-  typedef ParameterObject::ParameterValuesType              ParameterValuesType;
+  typedef ParameterObject::ParameterVectorType              ParameterVectorType;
   typedef ParameterObject::ParameterMapType                 ParameterMapType;
 
   // Elastix typedefs
@@ -35,7 +35,6 @@ protected:
   typedef ElastixFilterType::DataObjectContainerType        DataObjectContainerType;
   typedef ElastixFilterType::DataObjectContainerPointer     DataObjectContainerPointer;
 
-  // Variables used by multiple tests
   ImageType::Pointer fixedImage;
   ImageType::Pointer movingImage;
   ImageType::Pointer resultImage;
@@ -43,6 +42,7 @@ protected:
   std::string fixedMeshFileName;
   std::string movingMeshFileName;
 
+  ParameterMapType parameterMap;
   ParameterObject::Pointer parameterObject;
   ParameterObject::Pointer correspondingPointsParameterObject;
   ParameterObject::ConstPointer transformParameterObject;
@@ -51,7 +51,7 @@ protected:
   {
     DataManagerType::Pointer dataManager = DataManagerType::New();
 
-    // TODO: All calls to update here should not be needed but should be propagated to reader by ElastixFilter
+    // TODO: All calls to update here should not be needed but propagated to reader by ElastixFilter
 
     // Input images
     ImageReaderType::Pointer fixedImageReader = ImageReaderType::New();
@@ -68,56 +68,55 @@ protected:
     ParameterMapType parameterMap                       = ParameterMapType();
 
     // Images
-    parameterMap[ "FixedInternalImagePixelType" ]       = ParameterValuesType( 1, "float" );
-    parameterMap[ "FixedImageDimension" ]               = ParameterValuesType( 1, "2" );
-    parameterMap[ "MovingInternalImagePixelType" ]      = ParameterValuesType( 1, "float" );    
-    parameterMap[ "MovingImageDimension" ]              = ParameterValuesType( 1, "2" );
-    parameterMap[ "ResultImagePixelType" ]              = ParameterValuesType( 1, "float" );
+    parameterMap[ "FixedInternalImagePixelType" ]       = ParameterVectorType( 1, "float" );
+    parameterMap[ "FixedImageDimension" ]               = ParameterVectorType( 1, "2" );
+    parameterMap[ "MovingInternalImagePixelType" ]      = ParameterVectorType( 1, "float" );    
+    parameterMap[ "MovingImageDimension" ]              = ParameterVectorType( 1, "2" );
+    parameterMap[ "ResultImagePixelType" ]              = ParameterVectorType( 1, "float" );
 
     // Common components
-    parameterMap[ "FixedImagePyramid" ]                 = ParameterValuesType( 1, "FixedSmoothingImagePyramid" );
-    parameterMap[ "MovingImagePyramid" ]                = ParameterValuesType( 1, "MovingSmoothingImagePyramid" );
-    parameterMap[ "Interpolator"]                       = ParameterValuesType( 1, "LinearInterpolator");
-    parameterMap[ "Optimizer" ]                         = ParameterValuesType( 1, "AdaptiveStochasticGradientDescent" );
-    parameterMap[ "Resampler"]                          = ParameterValuesType( 1, "DefaultResampler" );
-    parameterMap[ "ResampleInterpolator"]               = ParameterValuesType( 1, "FinalLinearInterpolator" );
-    parameterMap[ "FinalBSplineInterpolationOrder" ]    = ParameterValuesType( 1, "2" );
-    parameterMap[ "NumberOfResolutions" ]               = ParameterValuesType( 1, "2" );
+    parameterMap[ "FixedImagePyramid" ]                 = ParameterVectorType( 1, "FixedSmoothingImagePyramid" );
+    parameterMap[ "MovingImagePyramid" ]                = ParameterVectorType( 1, "MovingSmoothingImagePyramid" );
+    parameterMap[ "Interpolator"]                       = ParameterVectorType( 1, "LinearInterpolator");
+    parameterMap[ "Optimizer" ]                         = ParameterVectorType( 1, "AdaptiveStochasticGradientDescent" );
+    parameterMap[ "Resampler"]                          = ParameterVectorType( 1, "DefaultResampler" );
+    parameterMap[ "ResampleInterpolator"]               = ParameterVectorType( 1, "FinalLinearInterpolator" );
+    parameterMap[ "FinalBSplineInterpolationOrder" ]    = ParameterVectorType( 1, "2" );
+    parameterMap[ "NumberOfResolutions" ]               = ParameterVectorType( 1, "2" );
 
     // Image Sampler
-    parameterMap[ "ImageSampler" ]                      = ParameterValuesType( 1, "RandomCoordinate" ); 
-    parameterMap[ "NumberOfSpatialSamples"]             = ParameterValuesType( 1, "2048" );
-    parameterMap[ "CheckNumberOfSamples" ]              = ParameterValuesType( 1, "true" );
-    parameterMap[ "MaximumNumberOfSamplingAttempts" ]   = ParameterValuesType( 1, "8" );
-    parameterMap[ "NewSamplesEveryIteration" ]          = ParameterValuesType( 1, "true");
+    parameterMap[ "ImageSampler" ]                      = ParameterVectorType( 1, "RandomCoordinate" ); 
+    parameterMap[ "NumberOfSpatialSamples"]             = ParameterVectorType( 1, "2048" );
+    parameterMap[ "CheckNumberOfSamples" ]              = ParameterVectorType( 1, "true" );
+    parameterMap[ "MaximumNumberOfSamplingAttempts" ]   = ParameterVectorType( 1, "8" );
+    parameterMap[ "NewSamplesEveryIteration" ]          = ParameterVectorType( 1, "true");
 
     // Optimizer
-    parameterMap[ "NumberOfSamplesForExactGradient" ]   = ParameterValuesType( 1, "4096" );
-    parameterMap[ "DefaultPixelValue" ]                 = ParameterValuesType( 1, "0" );
-    parameterMap[ "AutomaticParameterEstimation" ]      = ParameterValuesType( 1, "true" );
+    parameterMap[ "NumberOfSamplesForExactGradient" ]   = ParameterVectorType( 1, "4096" );
+    parameterMap[ "DefaultPixelValue" ]                 = ParameterVectorType( 1, "0" );
+    parameterMap[ "AutomaticParameterEstimation" ]      = ParameterVectorType( 1, "true" );
 
     // Output
-    parameterMap[ "WriteResultImage" ]                  = ParameterValuesType( 1, "true" );
-    parameterMap[ "ResultImageFormat" ]                 = ParameterValuesType( 1, "nii" );
+    parameterMap[ "WriteResultImage" ]                  = ParameterVectorType( 1, "true" );
+    parameterMap[ "ResultImageFormat" ]                 = ParameterVectorType( 1, "nii" );
 
     // Registration
-    parameterMap[ "Registration" ]                      = ParameterValuesType( 1, "MultiResolutionRegistration" );
-    parameterMap[ "Transform" ]                         = ParameterValuesType( 1, "EulerTransform" );
-    parameterMap[ "Metric" ]                            = ParameterValuesType( 1, "AdvancedMattesMutualInformation" );
-    parameterMap[ "MaximumNumberOfIterations" ]         = ParameterValuesType( 1, "128" );
+    parameterMap[ "Registration" ]                      = ParameterVectorType( 1, "MultiResolutionRegistration" );
+    parameterMap[ "Transform" ]                         = ParameterVectorType( 1, "EulerTransform" );
+    parameterMap[ "Metric" ]                            = ParameterVectorType( 1, "AdvancedMattesMutualInformation" );
+    parameterMap[ "MaximumNumberOfIterations" ]         = ParameterVectorType( 1, "128" );
 
-    ParameterMapType nonRigidParameterMap = parameterMap;
     parameterObject = ParameterObject::New();
-    parameterObject->SetParameterMap( nonRigidParameterMap );
+    parameterObject->SetParameterMap( parameterMap );
 
     ParameterMapType correspondingPointsParameterMap = parameterMap;
+    correspondingPointsParameterMap[ "Registration" ] = ParameterVectorType( 1, "MultiMetricMultiResolutionRegistration" ); 
+    correspondingPointsParameterMap[ "Metric" ].push_back( "CorrespondingPointsEuclideanDistanceMetric" );
+    correspondingPointsParameterObject = ParameterObject::New();
+    correspondingPointsParameterObject->SetParameterMap( correspondingPointsParameterMap );
 
-    // TODO: WHY DOES THIS SEGFAULT?
-    //correspondingPointsParameterMap[ "Metric" ][ 1 ] = "CorrespondingPointsEuclideanDistanceMetric";
-    //correspondingPointsParameterObject->SetParameterMap( correspondingPointsParameterMap );
-
-    fixedMeshFileName = dataManager->GetInputFile( "bioid_0000.vtk" );
-    movingMeshFileName = dataManager->GetInputFile( "bioid_0001.vtk" );
+    fixedMeshFileName = dataManager->GetInputFile( "bioid_0000.pts" );
+    movingMeshFileName = dataManager->GetInputFile( "bioid_0001.pts" );
   }
 };
 
@@ -168,7 +167,6 @@ TEST_F( ElastixFilterTest, MultiPairwiseRegistration )
 
   // TODO: This update should not be needed
   EXPECT_NO_THROW( elastixFilter->Update() );
-
   EXPECT_NO_THROW( resultImage = elastixFilter->GetOutput() );
   EXPECT_NO_THROW( transformParameterObject = elastixFilter->GetTransformParameters() );
 
@@ -187,7 +185,7 @@ TEST_F( ElastixFilterTest, PointSetRegistration )
   EXPECT_NO_THROW( elastixFilter->SetFixedMeshFileName( fixedMeshFileName  ) );
   EXPECT_NO_THROW( elastixFilter->SetMovingImage( movingImage ) );
   EXPECT_NO_THROW( elastixFilter->SetMovingMeshFileName( movingMeshFileName ) );
-  EXPECT_NO_THROW( elastixFilter->SetParameterObject( parameterObject ) );
+  EXPECT_NO_THROW( elastixFilter->SetParameterObject( correspondingPointsParameterObject ) );
 
   // TODO: This update should not be needed
   EXPECT_NO_THROW( elastixFilter->Update() );

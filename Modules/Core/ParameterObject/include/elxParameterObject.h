@@ -14,9 +14,11 @@ public:
 
   elxNewMacro( ParameterObject, itk::DataObject );
 
-  typedef std::vector< std::string >                    ParameterValuesType;
-  typedef std::map< std::string, ParameterValuesType >  ParameterMapType;
-  typedef std::vector< ParameterMapType >               ParameterMapListType;
+  typedef std::string                                       ParameterKeyType;
+  typedef std::string                                       ParameterValueType;
+  typedef std::vector< ParameterKeyType >                   ParameterVectorType;
+  typedef std::map< ParameterKeyType, ParameterVectorType > ParameterMapType;
+  typedef std::vector< ParameterMapType >                   ParameterMapListType;
 
   void SetParameterMap( ParameterMapType parameterMap ) 
   {
@@ -30,25 +32,16 @@ public:
     this->m_ParameterMapList = parameterMapList; 
   };
   
-  ParameterMapListType GetParameterMapList( void ) 
+  ParameterMapListType& GetParameterMapList( void ) 
   {
+    this->Modified();
     return this->m_ParameterMapList; 
   };
 
-  const ParameterMapListType GetParameterMapList( void ) const
+  const ParameterMapListType& GetParameterMapList( void ) const
   {
     return this->m_ParameterMapList; 
   };
-
-  // TODO:
-  // itkSetMacro( ParameterMap, ParameterMapType )
-  // itkGetMacro( ParameterMap, ParameterMapType )
-
-  // friend ITKCommon_EXPORT std::ostream& operator<<( std::ostream& os, const ParameterObject& parameterObject )
-  // {
-  //   os << parameterObject.m_ParameterMapList;
-  //   return os;
-  // }
 
 private:
 
