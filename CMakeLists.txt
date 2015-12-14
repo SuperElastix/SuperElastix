@@ -22,6 +22,8 @@ if( ${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC )
   include( elxWinConfig )
 endif()
 
+set( ELASTIX_USE_FILE "/Users/kasper/Development/build/SuperElastix/Elastix-build/src/UseElastix.cmake" )
+
 # ---------------------------------------------------------------------
 # ITK
 
@@ -46,16 +48,9 @@ elxmodule_enable( ModuleElastix )
 # ---------------------------------------------------------------------
 # Testing
 
-# Testing requires CMake version 2.8.11 to download test data
-if( CMAKE_VERSION VERSION_LESS 2.8.11 )
-  set( SUPERELASTIX_BUILD_TESTING_DEFAULT OFF )
-  message( STATUS "ELASTIX_BUILD_TESTING is set to OFF because CMake version is less than 2.8.11" )
-else()
-  set( SUPERELASTIX_BUILD_TESTING_DEFAULT ON )
-endif()
-
-option( SUPERELASTIX_BUILD_TESTING "Enable building tests." ${SUPERELASTIX_BUILD_TESTING_DEFAULT} )
+option( SUPERELASTIX_BUILD_TESTING "Enable building tests." ON )
 if( ${SUPERELASTIX_BUILD_TESTING} )
+  option( SUPERELASTIX_RUN_LONG_TESTS OFF )
   enable_testing()
   add_subdirectory( Testing )
 endif()

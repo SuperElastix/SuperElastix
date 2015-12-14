@@ -10,6 +10,11 @@ set( ElastixUnitTestFilenames
   elxComponentInterfaceTest.cxx
 )         
 
+# ---------------------------------------------------------------------
+# Options
+if( SUPERELASTIX_RUN_LONG_TESTS )
+  add_definitions( -DSUPERELASTIX_RUN_LONG_TESTS )
+endif()
 
 # ---------------------------------------------------------------------
 # Set data directories
