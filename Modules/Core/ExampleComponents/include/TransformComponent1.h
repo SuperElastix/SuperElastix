@@ -30,6 +30,7 @@ public:
 
   int GetTransformedImage(){ return 0; };
   static const char * GetDescription(){ return "Example Transform Component 1"; };
+  virtual bool MeetsCriterium(const CriteriumType &criterium);
 protected:
   TransformComponent1();
   virtual ~TransformComponent1()
@@ -40,7 +41,8 @@ private:
   TransformComponent1(const Self &);      // purposely not implemented
   void operator=(const Self &); // purposely not implemented
 
-  virtual bool MeetsCriteria(const CriteriaType&);
+  //virtual bool MeetsCriteria(const CriteriaType&);
+  
 };
 } // end namespace selx
 

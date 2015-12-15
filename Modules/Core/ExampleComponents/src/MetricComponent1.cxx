@@ -43,6 +43,13 @@ int MetricComponent1::Set(TransformedImageInterface* providingInterface)
         meetsCriteria = true;
       }
     }
+    else if (strcmp(criterium.first.c_str(), "ComponentInput") == 0)
+    {
+      if (strcmp(criterium.second.c_str(), "Transform") == 0) // e.g. "GradientDescent", "SupportsSparseSamples
+      {
+        meetsCriteria = true;
+      }
+    }
     return meetsCriteria;
   }
 
