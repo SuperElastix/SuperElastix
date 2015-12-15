@@ -7,6 +7,15 @@
 #include "elxDataManager.h"
 #include "gtest/gtest.h"
 
+// TODO:
+// - In the following examples, why do we need to call update on both reader and elastixFilter
+//   before using the writer? Should the call to update on the writer not be propagated upstream?
+//   (See http://itk.org/Wiki/ITK/Examples/Segmentation/OtsuThresholdImageFilter which defeats the whole
+//   purpose of having a pipeline, no?)
+// - Compare result images against baseline
+// - SetUp() runs before every test. Does GoogleTest have a function that is called once before tests are run?
+
+
 using namespace selx;
 
 class ElastixFilterTest : public ::testing::Test
@@ -51,7 +60,7 @@ protected:
     parameterMap[ "NumberOfResolutions" ]               = ParameterVectorType( 1, "2" );
 
     // Image Sampler
-    parameterMap[ "ImageSampler" ]                      = ParameterVectorType( 1, "RandomCoordinate" ); 
+    parameterMap[ "ImageSampler" ]                      = ParameterVectorType( 1, "RandomCoordinate" );
     parameterMap[ "NumberOfSpatialSamples"]             = ParameterVectorType( 1, "2048" );
     parameterMap[ "CheckNumberOfSamples" ]              = ParameterVectorType( 1, "true" );
     parameterMap[ "MaximumNumberOfSamplingAttempts" ]   = ParameterVectorType( 1, "8" );
@@ -127,13 +136,6 @@ TEST_F( ElastixFilterTest, Instantiation )
   typedef ElastixFilter< ImageType, ImageType > ElastixFilterType;
   EXPECT_NO_THROW( ElastixFilterType::Pointer elastixFilter = ElastixFilterType::New() );
 }
-
-// TODO:
-// - In the following examples, why do we need to call update on both reader and elastixFilter
-//   before using the writer? Should the call to update on the writer not be propagated upstream?
-//   (See http://itk.org/Wiki/ITK/Examples/Segmentation/OtsuThresholdImageFilter which defeats the whole
-//   purpose of having a pipeline, no?)
-// - Compare result images against baseline
 
 TEST_F( ElastixFilterTest, Euler2D )
 {

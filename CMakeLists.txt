@@ -22,22 +22,21 @@ if( ${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC )
   include( elxWinConfig )
 endif()
 
-set( ELASTIX_USE_FILE "/Users/kasper/Development/build/SuperElastix/Elastix-build/src/UseElastix.cmake" )
-
 # ---------------------------------------------------------------------
 # ITK
 
 find_package( ITK REQUIRED )
 include( ${ITK_USE_FILE} )
-include( "${CMAKE_CURRENT_SOURCE_DIR}/CMake/elxITKRequiredModules.cmake" )
+include("${CMAKE_CURRENT_SOURCE_DIR}/CMake/elxRequiredITKModules.cmake")
 
 # ---------------------------------------------------------------------
 # Boost Graph Library
-find_package( Boost )
+find_package( Boost REQUIRED )
 include_directories( ${Boost_INCLUDE_DIRS} )
 
 # ---------------------------------------------------------------------
 # Build SuperElastix
+
 # For now we just enable all modules
 include( elxModules )
 elxmodule_enable( ModuleCore )
@@ -50,7 +49,7 @@ elxmodule_enable( ModuleElastix )
 
 option( SUPERELASTIX_BUILD_TESTING "Enable building tests." ON )
 if( ${SUPERELASTIX_BUILD_TESTING} )
-  option( SUPERELASTIX_RUN_LONG_TESTS OFF )
+  option( SUPERELASTIX_BUILD_LONG_TESTS OFF )
   enable_testing()
   add_subdirectory( Testing )
 endif()

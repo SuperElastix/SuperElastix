@@ -50,23 +50,27 @@ public:
   void SetMovingMask( MovingImagePointer movingMask );
 
   void SetParameterObject( ParameterObjectPointer parameterObject );
-  ParameterObjectConstPointer GetTransformParameters( void ) const;
+  ParameterObjectPointer GetTransformParameters( void );
 
   itkSetMacro( FixedMeshFileName, std::string );
   itkGetConstMacro( FixedMeshFileName, std::string );
-  void DeleteFixedMesh( void ) { this->SetFixedMeshFileName( std::string() ); };
+  void DeleteFixedMeshFileName( void ) { this->SetFixedMeshFileName( std::string() ); };
 
   itkSetMacro( MovingMeshFileName, std::string );
   itkGetConstMacro( MovingMeshFileName, std::string );
-  void DeleteMovingMesh( void ) { this->SetMovingMeshFileName( std::string() ); };
+  void DeleteMovingMeshFileName( void ) { this->SetMovingMeshFileName( std::string() ); };
 
+  itkSetMacro( OutputDirectory, std::string );
+  itkGetConstMacro( OutputDirectory, std::string );
+  void DeleteOutputDirectory() { this->m_OutputDirectory = std::string(); };
+  
   itkSetMacro( LogToConsole, bool );
   itkGetConstMacro( LogToConsole, bool );
   itkBooleanMacro( LogToConsole );
 
-  itkSetMacro( LogToFile, std::string );
-  itkGetConstMacro( LogToFile, std::string );
-  void LogToFileOff( void ) { this->SetLogToFile( std::string() ); };
+  itkSetMacro( LogToFile, bool );
+  itkGetConstMacro( LogToFile, bool );
+  itkBooleanMacro( LogToFile );
 
 protected:
 
@@ -85,8 +89,9 @@ private:
   std::string m_FixedMeshFileName;
   std::string m_MovingMeshFileName;
 
+  std::string m_OutputDirectory;
   bool m_LogToConsole;
-  std::string m_LogToFile;
+  bool m_LogToFile;
 
 };
 

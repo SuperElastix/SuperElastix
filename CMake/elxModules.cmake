@@ -35,7 +35,7 @@ macro( _elxmodule_enable MODULE_NAME )
 endmacro()
 
 macro( _elxmodule_disable MODULE_NAME )
-  # TODO
+  # TODO: elxmodule_disable
 endmacro()
 
 macro( _elxmodules_initialize )
