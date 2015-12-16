@@ -57,6 +57,28 @@ else()
 endif()
 
 # ---------------------------------------------------------------------
+# Build Old Elastix
+
+set( ELASTIX_VERSION_MAJOR "4" )
+set( ELASTIX_VERSION_MINOR "8" )
+set( ELASTIX_VERSION_STRING "${ELASTIX_VERSION_MAJOR}.${ELASTIX_VERSION_MINOR}" )
+
+mark_as_advanced( SUPERELASTIX_BUILD_ELASTIX )
+option( SUPERELASTIX_BUILD_ELASTIX "Build SuperElastix support Elastix ${ELASTIX_VERSION_STRING}." ON )
+if( SUPERELASTIX_BUILD_ELASTIX )
+  if( USE_SYSTEM_ELASTIX )
+    if( NOT EXISTS ${ELASTIX_USE_FILE} )
+      # Expose CMake variable to user
+      set( ELASTIX_USE_FILE )
+      # Stop the build
+      message( FATAL_ERROR "Please point ELASTIX_USE_FILE to your systems UseElastix.cmake file." )
+    endif()
+  else()
+    include( ExternalElastix )
+  endif()
+endif()
+
+# ---------------------------------------------------------------------
 # Boost Graph Library
 
 mark_as_advanced( USE_SYSTEM_BOOST )
@@ -80,24 +102,6 @@ if ( SUPERELASTIX_BUILD_TESTING )
     include( ExternalGoogleTest ) 
   endif() 
 endif() 
-
-# ---------------------------------------------------------------------
-# Build Elastix
-
-mark_as_advanced( SUPERELASTIX_BUILD_ELASTIX )
-option( SUPERELASTIX_BUILD_ELASTIX ON )
-if( SUPERELASTIX_BUILD_ELASTIX )
-  if( USE_SYSTEM_ELASTIX )
-    if( NOT EXISTS ${ELASTIX_USE_FILE} )
-      # Expose CMake variable to user
-      set( ELASTIX_USE_FILE )
-      # Stop the build
-      message( FATAL_ERROR "Please point ELASTIX_USE_FILE to your systems UseElastix.cmake file." )
-    endif()
-  else()
-    include( ExternalElastix )
-  endif()
-endif()
 
 # ---------------------------------------------------------------------
 # Build SuperElastix

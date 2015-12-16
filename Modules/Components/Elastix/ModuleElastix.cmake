@@ -1,4 +1,4 @@
-# Module that exposes the old elastix as a component
+# Module that exposes old elastix as an ITK filter
 set( MODULE ModuleElastix )
 
 if( NOT EXISTS ${ELASTIX_USE_FILE} )

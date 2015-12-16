@@ -1,5 +1,5 @@
-#ifndef __elxMacro_h
-#define __elxMacro_h
+#ifndef elxMacro_h
+#define elxMacro_h
 
 /**
  * Register class with the object factory and set RTTI (Run-Time Type 
@@ -12,4 +12,4 @@
   itkNewMacro( Self );                                  \
   itkTypeMacro( Self, superClassName );                 \
 
-#endif // __elxMacro_h
+#endif // elxMacro_h

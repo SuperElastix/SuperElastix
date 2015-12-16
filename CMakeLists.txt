@@ -54,33 +54,29 @@ endif()
 
 find_package( ITK REQUIRED )
 include( ${ITK_USE_FILE} )
-include( "${CMAKE_CURRENT_SOURCE_DIR}/CMake/elxITKRequiredModules.cmake" )
+include("${CMAKE_CURRENT_SOURCE_DIR}/CMake/elxRequiredITKModules.cmake")
 
 # ---------------------------------------------------------------------
 # Boost Graph Library
-find_package( Boost )
+find_package( Boost REQUIRED )
 include_directories( ${Boost_INCLUDE_DIRS} )
 
 # ---------------------------------------------------------------------
 # Build SuperElastix
+
 # For now we just enable all modules
 include( elxModules )
 elxmodule_enable( ModuleCore )
 elxmodule_enable( ModuleElastix )
 
+# TODO: Build tests depending on enabled modules
+
 # ---------------------------------------------------------------------
 # Testing
 
-# Testing requires CMake version 2.8.11 to download test data
-if( CMAKE_VERSION VERSION_LESS 2.8.11 )
-  set( SUPERELASTIX_BUILD_TESTING_DEFAULT OFF )
-  message( STATUS "ELASTIX_BUILD_TESTING is set to OFF because CMake version is less than 2.8.11" )
-else()
-  set( SUPERELASTIX_BUILD_TESTING_DEFAULT ON )
-endif()
-
-option( SUPERELASTIX_BUILD_TESTING "Enable building tests." ${SUPERELASTIX_BUILD_TESTING_DEFAULT} )
+option( SUPERELASTIX_BUILD_TESTING "Enable building tests." ON )
 if( ${SUPERELASTIX_BUILD_TESTING} )
+  option( SUPERELASTIX_BUILD_LONG_TESTS OFF )
   enable_testing()
   add_subdirectory( Testing )
 endif()
