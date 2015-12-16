@@ -110,8 +110,11 @@ TEST_F( TransformixFilterTest, Euler2D )
   EXPECT_NO_THROW( elastixFilter->SetFixedImage( fixedImageReader->GetOutput() ) );
   EXPECT_NO_THROW( elastixFilter->SetMovingImage( movingImageReader->GetOutput() ) );
   EXPECT_NO_THROW( elastixFilter->SetParameterObject( eulerTransformParameterObject ) );
+  EXPECT_NO_THROW( elastixFilter->SetOutputDirectory( dataManager->GetOutputDirectory() ) );
 
   // TODO: This update should not be needed (see description in elxElastixFilterTest.cxx)
+  elastixFilter->LogToConsoleOn();
+  elastixFilter->LogToFileOn();
   elastixFilter->Update();
 
   TransformixFilterType::Pointer transformixFilter;
@@ -124,11 +127,13 @@ TEST_F( TransformixFilterTest, Euler2D )
   // EXPECT_NO_THROW( transformixFilter->SetPointSetFileName( dataManager->GetInputFile( "InputMesh.pts" ) ) );
   EXPECT_NO_THROW( transformixFilter->SetOutputDirectory( dataManager->GetOutputDirectory() ) );
 
+  // TODO: This update should not be needed (see description in elxElastixFilterTest.cxx)
+  transformixFilter->LogToConsoleOn();
+  transformixFilter->LogToFileOn();
   transformixFilter->Update();
-  
+
   ImageFileWriterType::Pointer writer = ImageFileWriterType::New();
   writer->SetFileName( dataManager->GetOutputFile( "Euler2DTransformixResultImage.nii" ) );
   writer->SetInput( transformixFilter->GetOutput() );
   writer->Update();
-  EXPECT_NO_THROW( writer->Update() );
 }
