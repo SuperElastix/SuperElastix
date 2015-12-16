@@ -51,9 +51,6 @@ endif()
 
 # ---------------------------------------------------------------------
 # ITK
-if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-  add_definitions(-DVCL_CAN_STATIC_CONST_INIT_FLOAT=0 -DVCL_CAN_STATIC_CONST_INIT_INT=0)
-endif()
 
 find_package( ITK REQUIRED )
 include( ${ITK_USE_FILE} )
