@@ -1,6 +1,6 @@
 set( proj Elastix )
 
-set( ELASTIX_REPOSITORY git://github.com/mstaring/elastix.git )
+set( ELASTIX_REPOSITORY https://github.com/mstaring/elastix.git )
 set( ELASTIX_TAG c35842cd0152d8fd2894e7c6706d2dd8396f0fed )
 
 ExternalProject_Add( ${proj} 

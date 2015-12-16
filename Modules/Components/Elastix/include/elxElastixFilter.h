@@ -1,8 +1,7 @@
-#ifndef ElastixComponent_h
-#define ElastixComponent_h
+#ifndef ElastixFilter_h
+#define ElastixFilter_h
 
 // ITK
-#include "itkProcessObject.h"
 #include "itkImageSource.h"
 
 // Elastix
@@ -15,9 +14,8 @@
 namespace selx {
 
 template< typename TFixedImage,
-          typename TMovingImage,
-          typename TOutputImage >
-class ElastixFilter : public itk::ImageSource< TOutputImage >
+          typename TMovingImage >
+class ElastixFilter : public itk::ImageSource< TFixedImage >
 {
 public:
 
@@ -37,8 +35,9 @@ public:
 
   typedef ParameterObject::ParameterMapListType         ParameterMapListType;
   typedef ParameterObject::ParameterMapType             ParameterMapType;
-  typedef ParameterObject::ParameterValuesType          ParameterValuesType;
+  typedef ParameterObject::ParameterVectorType          ParameterVectorType;
   typedef typename ParameterObject::Pointer             ParameterObjectPointer;
+  typedef typename ParameterObject::ConstPointer        ParameterObjectConstPointer;
 
   typedef typename TFixedImage::Pointer                 FixedImagePointer;
   typedef typename TMovingImage::Pointer                MovingImagePointer;
@@ -47,18 +46,31 @@ public:
   void SetFixedImage( DataObjectContainerPointer fixedImage );
   void SetMovingImage( MovingImagePointer movingImage );
   void SetMovingImage( DataObjectContainerPointer movingImage );
-  void SetParameterObject( ParameterObjectPointer parameterObject );
   void SetFixedMask( FixedImagePointer fixedMask );
   void SetMovingMask( MovingImagePointer movingMask );
 
+  void SetParameterObject( ParameterObjectPointer parameterObject );
   ParameterObjectPointer GetTransformParameters( void );
 
+  itkSetMacro( FixedMeshFileName, std::string );
+  itkGetConstMacro( FixedMeshFileName, std::string );
+  void DeleteFixedMeshFileName( void ) { this->SetFixedMeshFileName( std::string() ); };
+
+  itkSetMacro( MovingMeshFileName, std::string );
+  itkGetConstMacro( MovingMeshFileName, std::string );
+  void DeleteMovingMeshFileName( void ) { this->SetMovingMeshFileName( std::string() ); };
+
+  itkSetMacro( OutputDirectory, std::string );
+  itkGetConstMacro( OutputDirectory, std::string );
+  void DeleteOutputDirectory() { this->m_OutputDirectory = std::string(); };
+  
   itkSetMacro( LogToConsole, bool );
-  itkGetMacro( LogToConsole, bool );
+  itkGetConstMacro( LogToConsole, bool );
   itkBooleanMacro( LogToConsole );
 
-  itkSetMacro( LogToFile, std::string );
-  itkGetMacro( LogToFile, std::string );
+  itkSetMacro( LogToFile, bool );
+  itkGetConstMacro( LogToFile, bool );
+  itkBooleanMacro( LogToFile );
 
 protected:
 
@@ -68,13 +80,18 @@ private:
 
   ElastixFilter();
 
+  // TODO: When set to true, ReleaseDataFlag should also touch these input containers
   DataObjectContainerPointer m_FixedImageContainer;
   DataObjectContainerPointer m_MovingImageContainer;
   DataObjectContainerPointer m_FixedMaskContainer;
   DataObjectContainerPointer m_MovingMaskContainer;
 
+  std::string m_FixedMeshFileName;
+  std::string m_MovingMeshFileName;
+
+  std::string m_OutputDirectory;
   bool m_LogToConsole;
-  std::string m_LogToFile;
+  bool m_LogToFile;
 
 };
 

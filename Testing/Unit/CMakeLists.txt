@@ -6,10 +6,16 @@
 set( ElastixUnitTestFilenames
   elxBlueprintTest.cxx
   elxElastixFilterTest.cxx
+  elxTransformixFilterTest.cxx
   elxComponentFactoryTest.cxx
   elxComponentInterfaceTest.cxx
 )         
 
+# ---------------------------------------------------------------------
+# Options
+if( SUPERELASTIX_BUILD_LONG_TESTS )
+  add_definitions( -DSUPERELASTIX_RUN_LONG_TESTS )
+endif()
 
 # ---------------------------------------------------------------------
 # Set data directories
@@ -44,6 +50,7 @@ list( APPEND TEST_LIBRARIES
 
 # ---------------------------------------------------------------------
 # Build tests
+message( STATUS "ITK_LIBRARIES: ${ITK_LIBRARIES}" )
 foreach( ElastixUnitTestFilename ${ElastixUnitTestFilenames} )
   # Build tests executables
   string( REPLACE ".cxx" "" ElastixUnitTest ${ElastixUnitTestFilename} )
