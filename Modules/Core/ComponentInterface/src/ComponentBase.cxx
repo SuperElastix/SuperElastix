@@ -7,7 +7,7 @@ namespace selx
  bool ComponentBase::MeetsCriteria(const CriteriaType &criteria)
   {
     bool hasUndefinedCriteria(false);
-    bool meetsCriteria(false);
+    bool meetsCriteria(true);
     for (CriteriaType::const_iterator it = criteria.begin(); it != criteria.end(); ++it)
     {
       if (strcmp(it->first.c_str(), "NameOfClass") == 0)
@@ -34,10 +34,9 @@ namespace selx
           break;
         }
       }
-      else if (this->MeetsCriterium(CriteriumType(it->first, it->second)) != true)
+      else if (this->MeetsCriterium(CriteriumType(it->first, it->second)) == true)
       {
-        meetsCriteria = false;
-        break;
+        meetsCriteria = true;
         
       }
       else

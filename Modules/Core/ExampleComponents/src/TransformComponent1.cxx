@@ -40,16 +40,16 @@ namespace selx
     }
     else if (strcmp(criterium.first.c_str(), "ComponentOutput") == 0)
       {
-        if (strcmp(criterium.second.c_str(), "Transform") != 0)
+        if (strcmp(criterium.second.c_str(), "Transform") == 0)
         {
-          meetsCriteria = false;
+          meetsCriteria = true;
         }
       }
       else if (strcmp(criterium.first.c_str(), "ComponentInput") == 0)
       {
-        if (strcmp(criterium.second.c_str(), "Sampler") != 0)
+        if (strcmp(criterium.second.c_str(), "Sampler") == 0)
         {
-          meetsCriteria = false;
+          meetsCriteria = true;
         }
       }
     return meetsCriteria;

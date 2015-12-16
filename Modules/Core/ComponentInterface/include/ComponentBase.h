@@ -35,8 +35,8 @@ namespace selx
     virtual int ConnectFrom(ComponentBase*) = 0;
     bool MeetsCriteria(const CriteriaType &criteria);
 
+    virtual bool MeetsCriterium(const CriteriumType &criterium) = 0;
   protected:
-    virtual bool MeetsCriterium(const CriteriumType criterium) { return false; };
     virtual bool HasAcceptingInterface(const char *) = 0;
     virtual bool HasProvidingInterface(const char *) = 0;
     ComponentBase() {};
