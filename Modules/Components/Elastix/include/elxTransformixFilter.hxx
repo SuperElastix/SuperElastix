@@ -110,7 +110,6 @@ TransformixFilter< TInputImage >
   // Setup image containers
   DataObjectContainerPointer inputImageContainer = 0;
   if( this->HasInput( "InputImage" ) ) {
-    std::cout << "Input image is set" << std::endl;
     DataObjectContainerPointer inputImageContainer = DataObjectContainerType::New();
     inputImageContainer->CreateElementAt(0) = this->GetInput("InputImage");
   }

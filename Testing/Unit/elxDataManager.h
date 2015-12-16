@@ -39,7 +39,7 @@ public:
 #endif
   } 
 
-  std::string GetPathSeparator () const
+  std::string GetPathSeparator() const
   {
 #ifdef _WIN32
     return ";";
