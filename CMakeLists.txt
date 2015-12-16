@@ -5,7 +5,7 @@ cmake_minimum_required( VERSION 3.0.2 )
 #set( MSVC_INCREMENTAL_DEFAULT ON )
 
 # ---------------------------------------------------------------------
-project( Elastix )
+project( SuperElastix )
 
 enable_language(C)
 enable_language(CXX)
