@@ -53,11 +53,11 @@ TransformixFilter< TInputImage >
   // TODO: Change behaviour upstream: Split into seperate arguments
   if( this->GetComputeDeformationField() && !this->GetPointSetFileName().empty() )
   {
-    itkExceptionMacro( << "Only one of ComputeDeformationFieldOn() or SetPointSetFileName() can be "
-                       << "active at any one time for backwards compatibility." )
+    itkExceptionMacro( << "For backwards compatibility, only one of ComputeDeformationFieldOn() or SetPointSetFileName() can be "
+                       << "active at any one time." )
   }
 
-  // Setup arguments that transformix uses to figure out what needs to be done
+  // Setup argument map which transformix uses internally ito figure out what needs to be done
   ArgumentMapType argumentMap;
   if( this->GetOutputDirectory().empty() ) {
     // There must be an "-out", this is checked later in the code
@@ -101,22 +101,22 @@ TransformixFilter< TInputImage >
 
   if( elx::xoutSetup( logFileName.c_str(), this->GetLogToFile(), this->GetLogToConsole() ) )
   {
-    // TODO: The following exception is thrown if two different filters are initialized by the same process
     itkExceptionMacro( "ERROR while setting up xout" );
   }
 
+  // Instantiate transformix
   TransformixMainPointer transformix = TransformixMainType::New();
 
   // Setup image containers
   DataObjectContainerPointer inputImageContainer = 0;
+  DataObjectContainerPointer resultImageContainer = 0;
+
   if( this->HasInput( "InputImage" ) ) {
     DataObjectContainerPointer inputImageContainer = DataObjectContainerType::New();
-    inputImageContainer->CreateElementAt(0) = this->GetInput("InputImage");
+    inputImageContainer->CreateElementAt( 0 ) = this->GetInput("InputImage");
+    transformix->SetInputImageContainer( inputImageContainer );
+    transformix->SetResultImageContainer( resultImageContainer );
   }
-  transformix->SetMovingImageContainer( inputImageContainer );
-
-  DataObjectContainerPointer resultImageContainer = 0;
-  transformix->SetResultImageContainer( resultImageContainer );
 
   // Get ParameterMap
   ParameterObjectConstPointer transformParameterObject = static_cast< const ParameterObject* >( this->GetInput( "TransformParameterObject" ) );
@@ -143,8 +143,11 @@ TransformixFilter< TInputImage >
   resultImageContainer = transformix->GetResultImageContainer();
   if( resultImageContainer.IsNotNull() && resultImageContainer->Size() > 0 )
   {
-    this->SetOutput( "ResultImage", resultImageContainer->ElementAt( 0 ) );
+    this->GraftOutput( "ResultImage", resultImageContainer->ElementAt( 0 ) );
   }
+
+  // Clean up
+  TransformixMainType::UnloadComponents();
 }
 
 template< typename TInputImage >
@@ -158,7 +161,7 @@ TransformixFilter< TInputImage >
 template< typename TInputImage >
 void
 TransformixFilter< TInputImage >
-::SetTransformParameters( ParameterObjectPointer parameterObject )
+::SetTransformParameterObject( ParameterObjectPointer parameterObject )
 {
   this->SetInput( DataObjectIdentifierType( "TransformParameterObject" ), static_cast< itk::DataObject* >( parameterObject ) );
 }

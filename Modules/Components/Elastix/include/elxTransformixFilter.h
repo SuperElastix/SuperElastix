@@ -39,7 +39,7 @@ public:
 
   void SetInputImage( InputImagePointer inputImage );
 
-  void SetTransformParameters( ParameterObjectPointer parameterObject );
+  void SetTransformParameterObject( ParameterObjectPointer parameterObject );
   ParameterObjectPointer GetTransformParameters( void );
 
   itkSetMacro( ComputeSpatialJacobian, bool );
