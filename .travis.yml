@@ -12,23 +12,25 @@ compiler:
   - gcc
 
 before_install:
-  - pwd
-  - date -u
-  - uname -a
+  - if [ "${TRAVIS_OS_NAME}" == "linux" ]; then sudo add-apt-repository ppa:george-edison55/cmake-3.x -y; fi
+  - if [ "${TRAVIS_OS_NAME}" == "osx" ]; then brew update; fi
 
-  # Out-of-source build
-  - cd ..
-  - mkdir SuperElastix-build
-  - cd SuperElastix-build
+install:
+  - if [ "${TRAVIS_OS_NAME}" == "linux" ]; then sudo apt-get upgrade; fi
+  - if [ "${TRAVIS_OS_NAME}" == "osx" ]; then brew upgrade cmake; fi
 
 before_script:
   - export OMP_NUM_THREADS=2
   - echo $OMP_NUM_THREADS
+  # Out-of-source build
+  - cd ..
+  - mkdir SuperElastix-build
+  - cd SuperElastix-build
 
 script:
   - cmake ../SuperElastix/SuperBuild
   - make --jobs=2 | grep -v '^--' | grep -v '^Installing' | grep -v '^common'
 
 after_success:
-  - cd Elastix-build
+  - cd SuperElastix-build
   - ctest
