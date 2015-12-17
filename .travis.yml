@@ -29,7 +29,7 @@ before_script:
 
 script:
   - cmake ../SuperElastix/SuperBuild
-  - make --jobs=2 | grep -v '^--' | grep -v '^Installing' | grep -v '^common'
+  - make | grep -v '^--' | grep -v '^Installing' | grep -v '^common'
 
 after_success:
   - cd SuperElastix-build
