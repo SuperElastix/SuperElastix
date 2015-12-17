@@ -14,6 +14,8 @@
 
 #include "elxMacro.h"
 #include "elxBlueprint.h"
+//#include "ComponentBase.h"
+#include "ComponentFactory.h"
 
 namespace selx
 {
@@ -27,14 +29,18 @@ namespace selx
     typedef std::map<std::string, std::string> CriteriaType;
     typedef std::pair<std::string, std::string> CriteriumType;
 
+    typedef ComponentBase       ComponentType;
+    //typedef ComponentSelector::Pointer ComponentSelectorPointer;
+    //typedef std::list<ComponentSelectorPointer> ComponentSelectorList;
+
     void SetBlueprint(const Blueprint::Pointer);
-    void Update();
+    int Update();
   protected:
 
     Overlord() {};
     virtual ~Overlord() {};
   private:
-    Blueprint::ConstPointer m_Blueprint;
+    Blueprint::Pointer m_Blueprint;
   };
 
 } // end namespace selx

@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef itkComponentSelector_hxx
-#define itkComponentSelector_hxx
+//#ifndef ComponentSelector_hxx
+//#define ComponentSelector_hxx
 
 #include "ComponentSelector.h"
 
@@ -88,4 +88,4 @@ ComponentSelector::ComponentBasePointer ComponentSelector::GetComponent()
 }
 } // end namespace selx
 
-#endif
+//#endif

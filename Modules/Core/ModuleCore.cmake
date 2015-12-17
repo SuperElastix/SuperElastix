@@ -25,6 +25,7 @@ set( ${MODULE}_SOURCE_FILES
   ${${MODULE}_SOURCE_DIR}/Blueprints/src/elxBlueprint.cxx
   ${${MODULE}_SOURCE_DIR}/ComponentInterface/src/ComponentBase.cxx
   ${${MODULE}_SOURCE_DIR}/ComponentInterface/src/Overlord.cxx
+  ${${MODULE}_SOURCE_DIR}/ComponentInterface/src/ComponentSelector.cxx
   ${${MODULE}_SOURCE_DIR}/ExampleComponents/src/Example3rdPartyCode.cxx
   ${${MODULE}_SOURCE_DIR}/ExampleComponents/src/Example4thPartyCode.cxx
   ${${MODULE}_SOURCE_DIR}/ExampleComponents/src/GDOptimizer3rdPartyComponent.cxx

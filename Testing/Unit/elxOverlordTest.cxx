@@ -41,13 +41,17 @@ public:
 
 TEST_F( OverlordTest, Create )
 {
-  overlord = Overlord::New();
-  overlord->SetBlueprint(blueprint);
+  EXPECT_NO_THROW( overlord = Overlord::New() );
+  EXPECT_NO_THROW( overlord->SetBlueprint(blueprint) );
 }
 
 TEST_F(OverlordTest, Configure)
 {
-  overlord->Update();
+  overlord = Overlord::New();
+  overlord->SetBlueprint(blueprint);
+  int count;
+  EXPECT_NO_THROW(count = overlord->Update());
+  std::cout << count;
 }
 
 } // namespace elx

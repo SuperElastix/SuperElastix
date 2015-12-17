@@ -15,11 +15,13 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef itkComponentSelector_h
-#define itkComponentSelector_h
+#ifndef ComponentSelector_h
+#define ComponentSelector_h
 
 #include "itkObjectFactory.h"
 #include "ComponentBase.h"
+
+//#pragma once
 
 namespace selx
 {
@@ -75,8 +77,8 @@ private:
 };
 } // end namespace selx
 
-#ifndef ITK_MANUAL_INSTANTIATION
-#include "ComponentSelector.hxx"
-#endif
+//#ifndef ITK_MANUAL_INSTANTIATION
+//#include "ComponentSelector.hxx"
+//#endif
 
 #endif
