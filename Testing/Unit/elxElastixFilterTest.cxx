@@ -87,7 +87,7 @@ TEST_F( ElastixFilterTest, Instantiation )
   EXPECT_NO_THROW( ElastixFilterType::Pointer elastixFilter = ElastixFilterType::New() );
 }
 
-TEST_F( ElastixFilterTest, Euler2D )
+TEST_F( ElastixFilterTest, UpdateOnGetOutputEuler2D )
 {
   typedef itk::Image< float, 2 > ImageType;
   typedef itk::ImageFileReader< ImageType > ImageFileReaderType;
@@ -114,16 +114,46 @@ TEST_F( ElastixFilterTest, Euler2D )
   EXPECT_NO_THROW( elastixFilter->SetFixedImage( fixedImageReader->GetOutput() ) );
   EXPECT_NO_THROW( elastixFilter->SetMovingImage( movingImageReader->GetOutput() ) );
   EXPECT_NO_THROW( elastixFilter->SetParameterObject( eulerTransformParameterObject ) );
-  EXPECT_NO_THROW( elastixFilter->Update() );
 
+  // We try to write the image because simply calling GetOutput() will not result in an
+  // error when elastix has not run (a pointer is still passed, although its pointee is empty)
   ImageFileWriterType::Pointer writer = ImageFileWriterType::New();
-  writer->SetFileName( dataManager->GetOutputFile( "Euler2DResultImage.nii" ) );
-  writer->SetInput( elastixFilter->GetOutput() );
-
-  // TODO: This update should not be needed (see description above)
+  EXPECT_NO_THROW( writer->SetFileName( dataManager->GetOutputFile( "UpdateOnGetOutputEuler2DResultImage.nii" ) ) );
+  EXPECT_NO_THROW( writer->SetInput( elastixFilter->GetOutput() ) );
   EXPECT_NO_THROW( writer->Update() );
+}
 
-  EXPECT_NO_THROW( transformParameterObject = elastixFilter->GetTransformParameters() );
+TEST_F( ElastixFilterTest, UpdateOnGetTransformParametersEuler2D )
+{
+  typedef itk::Image< float, 2 > ImageType;
+  typedef itk::ImageFileReader< ImageType > ImageFileReaderType;
+  typedef itk::ImageFileWriter< ImageType > ImageFileWriterType;
+  typedef ElastixFilter< ImageType, ImageType > ElastixFilterType;
+
+  DataManagerType::Pointer dataManager = DataManagerType::New();
+
+  ImageFileReaderType::Pointer fixedImageReader = ImageFileReaderType::New();
+  fixedImageReader->SetFileName( dataManager->GetInputFile( "BrainProtonDensitySliceBorder20.png" ) );
+  fixedImageReader->Update();
+
+  ImageFileReaderType::Pointer movingImageReader = ImageFileReaderType::New();
+  movingImageReader->SetFileName( dataManager->GetInputFile( "BrainProtonDensitySliceR10X13Y17.png" ) );
+  movingImageReader->Update();
+
+  ParameterObject::Pointer eulerTransformParameterObject;
+  EXPECT_NO_THROW( eulerTransformParameterObject  = ParameterObject::New() );
+  EXPECT_NO_THROW( eulerTransformParameterObject->SetParameterMap( parameterMap ) );
+
+  ElastixFilterType::Pointer elastixFilter;
+  ParameterObject::Pointer transformParameters;
+
+  EXPECT_NO_THROW( elastixFilter = ElastixFilterType::New() );
+  EXPECT_NO_THROW( elastixFilter->LogToConsoleOn() );
+  EXPECT_NO_THROW( elastixFilter->SetFixedImage( fixedImageReader->GetOutput() ) );
+  EXPECT_NO_THROW( elastixFilter->SetMovingImage( movingImageReader->GetOutput() ) );
+  EXPECT_NO_THROW( elastixFilter->SetParameterObject( eulerTransformParameterObject ) );
+  EXPECT_NO_THROW( transformParameters = elastixFilter->GetTransformParameters() );
+  EXPECT_TRUE( transformParameters->GetParameterMapList()[ 0 ].size() > 0 );
 }
 
 TEST_F( ElastixFilterTest, AffineWithMultipleFixedAndMovingImages2D )

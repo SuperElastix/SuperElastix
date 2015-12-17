@@ -11,6 +11,16 @@
 #include "elxMacro.h"
 #include "elxParameterObject.h"
 
+/**
+ * Elastix registration library exposed as an ITK filter.
+ * 
+ * We have to do some additional bookeeping on input images so that they can
+ * be split into separate containers fixed and moving images at a later stage.
+ * This is because ITK filters uses a single input container to drive the
+ * pipeline while elastix use seperate containers for fixed and moving images.
+ * 
+ */
+
 namespace selx {
 
 template< typename TFixedImage,
@@ -21,31 +31,39 @@ public:
 
   elxNewMacro( ElastixFilter, itk::ImageSource );
 
-  typedef elastix::ElastixMain                          ElastixMainType;
-  typedef ElastixMainType::Pointer                      ElastixMainPointer;
-  typedef std::vector< ElastixMainPointer >             ElastixMainVectorType;
-  typedef ElastixMainType::ObjectPointer                ElastixMainObjectPointer;
-  typedef ElastixMainType::FlatDirectionCosinesType     FlatDirectionCosinesType;
-  typedef ElastixMainType::ArgumentMapType              ArgumentMapType;
-  typedef ArgumentMapType::value_type                   ArgumentMapEntryType;
+  typedef elastix::ElastixMain                                ElastixMainType;
+  typedef ElastixMainType::Pointer                            ElastixMainPointer;
+  typedef std::vector< ElastixMainPointer >                   ElastixMainVectorType;
+  typedef ElastixMainType::ObjectPointer                      ElastixMainObjectPointer;
+  typedef ElastixMainType::FlatDirectionCosinesType           FlatDirectionCosinesType;
+  typedef ElastixMainType::ArgumentMapType                    ArgumentMapType;
+  typedef ArgumentMapType::value_type                         ArgumentMapEntryType;
 
-  typedef itk::ProcessObject::DataObjectIdentifierType  DataObjectIdentifierType;
-  typedef ElastixMainType::DataObjectContainerType      DataObjectContainerType;
-  typedef ElastixMainType::DataObjectContainerPointer   DataObjectContainerPointer;
+  typedef itk::ProcessObject::DataObjectIdentifierType        DataObjectIdentifierType;
+  typedef itk::ProcessObject::DataObjectPointerArraySizeType  DataObjectPointerArraySizeType;
+  typedef itk::ProcessObject::NameArray                       InputNameArrayType;
 
-  typedef ParameterObject::ParameterMapListType         ParameterMapListType;
-  typedef ParameterObject::ParameterMapType             ParameterMapType;
-  typedef ParameterObject::ParameterVectorType          ParameterVectorType;
-  typedef typename ParameterObject::Pointer             ParameterObjectPointer;
-  typedef typename ParameterObject::ConstPointer        ParameterObjectConstPointer;
+  typedef ElastixMainType::DataObjectContainerType            DataObjectContainerType;
+  typedef ElastixMainType::DataObjectContainerPointer         DataObjectContainerPointer;
+  typedef DataObjectContainerType::Iterator                   DataObjectContainerIterator;
 
-  typedef typename TFixedImage::Pointer                 FixedImagePointer;
-  typedef typename TMovingImage::Pointer                MovingImagePointer;
+  typedef ParameterObject::ParameterMapListType               ParameterMapListType;
+  typedef ParameterObject::ParameterMapType                   ParameterMapType;
+  typedef ParameterObject::ParameterVectorType                ParameterVectorType;
+  typedef ParameterObject::Pointer                            ParameterObjectPointer;
+  typedef ParameterObject::ConstPointer                       ParameterObjectConstPointer;
+
+  typedef typename TFixedImage::Pointer                       FixedImagePointer;
+  typedef typename TMovingImage::Pointer                      MovingImagePointer;
 
   void SetFixedImage( FixedImagePointer fixedImage );
-  void SetFixedImage( DataObjectContainerPointer fixedImage );
-  void SetMovingImage( MovingImagePointer movingImage );
+  void SetFixedImage( DataObjectContainerPointer fixedImages );
+  void AddFixedImage( FixedImagePointer fixedImage );
+
+  void SetMovingImage( MovingImagePointer movingImages );
   void SetMovingImage( DataObjectContainerPointer movingImage );
+  void AddMovingImage( MovingImagePointer movingImage );
+
   void SetFixedMask( FixedImagePointer fixedMask );
   void SetMovingMask( MovingImagePointer movingMask );
 
@@ -63,6 +81,15 @@ public:
   itkSetMacro( OutputDirectory, std::string );
   itkGetConstMacro( OutputDirectory, std::string );
   void DeleteOutputDirectory() { this->m_OutputDirectory = std::string(); };
+
+  void SetLogFileName( std::string logFileName )
+  {
+    this->m_LogFileName = logFileName;
+    this->LogToFileOn();
+    this->Modified();
+  }
+  itkGetConstMacro( LogFileName, std::string );
+  void DeleteLogFileName() { this->m_LogFileName = std::string(); };
   
   itkSetMacro( LogToConsole, bool );
   itkGetConstMacro( LogToConsole, bool );
@@ -80,7 +107,15 @@ private:
 
   ElastixFilter();
 
-  // TODO: When set to true, ReleaseDataFlag should also touch these input containers
+  void AddInputAutoIncrementName( DataObjectIdentifierType key, itk::DataObject* input );
+
+  bool IsFixedImage( DataObjectIdentifierType key );
+  bool IsMovingImage( DataObjectIdentifierType key );
+
+  void RemoveFixedImages( void );
+  void RemoveMovingImages( void );
+
+  // TODO: When set to true, ReleaseDataFlag should also touch these containers
   DataObjectContainerPointer m_FixedImageContainer;
   DataObjectContainerPointer m_MovingImageContainer;
   DataObjectContainerPointer m_FixedMaskContainer;
@@ -90,8 +125,11 @@ private:
   std::string m_MovingMeshFileName;
 
   std::string m_OutputDirectory;
+  std::string m_LogFileName;
+
   bool m_LogToConsole;
   bool m_LogToFile;
+
 
 };
 
