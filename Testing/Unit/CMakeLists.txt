@@ -14,7 +14,7 @@ set( ElastixUnitTestFilenames
 # ---------------------------------------------------------------------
 # Options
 if( SUPERELASTIX_BUILD_LONG_TESTS )
-  add_definitions( -DSUPERELASTIX_RUN_LONG_TESTS )
+  add_definitions( -DSUPERELASTIX_BUILD_LONG_TESTS )
 endif()
 
 # ---------------------------------------------------------------------

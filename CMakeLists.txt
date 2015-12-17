@@ -5,8 +5,10 @@ cmake_minimum_required( VERSION 3.0.2 )
 #set( MSVC_INCREMENTAL_DEFAULT ON )
 
 # ---------------------------------------------------------------------
-project( Elastix )
+project( SuperElastix )
 
+enable_language(C)
+enable_language(CXX)
 set( CMAKE_CXX_STANDARD 11 )
 
 # Place libraries and executables in the bin directory
@@ -86,7 +88,8 @@ elxmodule_enable( ModuleElastix )
 
 option( SUPERELASTIX_BUILD_TESTING "Enable building tests." ON )
 if( ${SUPERELASTIX_BUILD_TESTING} )
-  option( SUPERELASTIX_BUILD_LONG_TESTS OFF )
+  mark_as_advanced( SUPERELASTIX_BUILD_LONG_TESTS )
+  option( SUPERELASTIX_BUILD_LONG_TESTS "Also build tests that take a long time to run." OFF )
   enable_testing()
   add_subdirectory( Testing )
 endif()
