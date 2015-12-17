@@ -1,4 +1,4 @@
-cmake_minimum_required( VERSION 3.0.2 )
+cmake_minimum_required( VERSION 3.2.2 )
 
 # Explicitly add INCREMENTAL linking option to command lines.
 # http://www.cmake.org/pipermail/cmake/2010-February/035174.html
@@ -27,7 +27,6 @@ if( ${CMAKE_CXX_COMPILER_ID} STREQUAL GNU )
   add_definitions(
     -DVCL_CAN_STATIC_CONST_INIT_FLOAT=0
     -DVCL_CAN_STATIC_CONST_INIT_INT=0
-	-std=c++11 # for cmake < 3.1
   )
 endif()
 
