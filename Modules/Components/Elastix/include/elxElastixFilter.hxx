@@ -195,7 +195,7 @@ ElastixFilter< TFixedImage, TMovingImage >
   // Save result image
   if( resultImageContainer.IsNotNull() && resultImageContainer->Size() > 0 )
   {
-    this->SetPrimaryOutput( resultImageContainer->ElementAt( 0 ) );
+    this->SetOutput( "ResultImage", resultImageContainer->ElementAt( 0 ) );
   }
 
   // Save parameter map
