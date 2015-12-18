@@ -65,6 +65,8 @@ TEST_F(ComponentFactoryTest, FilledObjectFactoryBase)
 
 TEST_F(ComponentFactoryTest, SetEmptyCriteria)
 {
+  EXPECT_NO_THROW(ComponentFactory<TransformComponent1>::RegisterOneFactory());
+  EXPECT_NO_THROW(ComponentFactory<MetricComponent1>::RegisterOneFactory());
 
   CriteriaType emptyCriteria;
 
@@ -80,6 +82,8 @@ TEST_F(ComponentFactoryTest, SetEmptyCriteria)
 
 TEST_F(ComponentFactoryTest, SetSufficientCriteria)
 {
+  EXPECT_NO_THROW(ComponentFactory<TransformComponent1>::RegisterOneFactory());
+  EXPECT_NO_THROW(ComponentFactory<MetricComponent1>::RegisterOneFactory());
 
   CriteriaType criteria2;
   criteria2["ComponentInput"] = "Transform";
@@ -98,6 +102,9 @@ TEST_F(ComponentFactoryTest, SetSufficientCriteria)
 }
 TEST_F(ComponentFactoryTest, AddCriteria)
 {
+  EXPECT_NO_THROW(ComponentFactory<TransformComponent1>::RegisterOneFactory());
+  EXPECT_NO_THROW(ComponentFactory<MetricComponent1>::RegisterOneFactory());
+
   CriteriaType emptyCriteria;
   CriteriaType criteria1;
   //criteria1.insert(CriteriumType("ComponentOutput","Metric")); 
@@ -119,7 +126,8 @@ TEST_F(ComponentFactoryTest, AddCriteria)
 TEST_F(ComponentFactoryTest, InterfacedObjects)
 {
   RegisteredObjectsContainerType registeredComponents;
-
+  EXPECT_NO_THROW(ComponentFactory<TransformComponent1>::RegisterOneFactory());
+  EXPECT_NO_THROW(ComponentFactory<MetricComponent1>::RegisterOneFactory());
   EXPECT_NO_THROW(ComponentFactory<GDOptimizer3rdPartyComponent>::RegisterOneFactory());
   EXPECT_NO_THROW(ComponentFactory<GDOptimizer4thPartyComponent>::RegisterOneFactory());
   EXPECT_NO_THROW(ComponentFactory<SSDMetric3rdPartyComponent>::RegisterOneFactory());
@@ -130,6 +138,7 @@ TEST_F(ComponentFactoryTest, InterfacedObjects)
   EXPECT_EQ(registeredComponents.size(), 6);
 
   CriteriaType criteria3;
+  // Criteria could be name or other properties
   //criteria3["NameOfClass"] = "GDOptimizer3rdPartyComponent";
   criteria3["HasAcceptingInterface"] = "MetricDerivativeInterface";
   NodePointer Node3 = ComponentSelector::New();
@@ -139,8 +148,10 @@ TEST_F(ComponentFactoryTest, InterfacedObjects)
   EXPECT_STREQ(Node3Component->GetNameOfClass(), "GDOptimizer3rdPartyComponent");
 
   CriteriaType criteria4;
+  // Criteria could be name or other properties
   criteria4["NameOfClass"] = "GDOptimizer4thPartyComponent";
   //criteria3["HasDerivative"] = "True";  
+  
   NodePointer Node4 = ComponentSelector::New();
   Node4->SetCriteria(criteria4);
   ComponentType::Pointer Node4Component;
@@ -148,6 +159,7 @@ TEST_F(ComponentFactoryTest, InterfacedObjects)
   EXPECT_STREQ(Node4Component->GetNameOfClass(), "GDOptimizer4thPartyComponent");
 
   CriteriaType criteria5;
+  // Criteria could be name or other properties
   //criteria5["NameOfClass"] = "SSDMetric3rdPartyComponent";
   criteria5["HasProvidingInterface"] = "MetricDerivativeInterface";
   //criteria3["HasDerivative"] = "True";  
@@ -158,6 +170,7 @@ TEST_F(ComponentFactoryTest, InterfacedObjects)
   EXPECT_STREQ(Node5Component->GetNameOfClass(), "SSDMetric3rdPartyComponent");
 
   CriteriaType criteria6;
+  // Criteria could be name or other properties
   criteria6["NameOfClass"] = "SSDMetric4thPartyComponent";
   //criteria3["HasDerivative"] = "True";  
   NodePointer Node6 = ComponentSelector::New();
