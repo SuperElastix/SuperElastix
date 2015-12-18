@@ -250,15 +250,14 @@ ElastixFilter< TFixedImage, TMovingImage >
   // Free references to fixed images that has already been set
   this->RemoveFixedImages();
 
-  // "FixedImage" is a required input that needs to be set
-  this->SetInput( "FixedImage" , fixedImages->ElementAt( 0 ) );
-
+  // The first image will be used as the "FixedImage" required input.
   // The rest of the images will be appended to the input container
   // suffixed with _1, _2, etc. This allows us to read out only the
-  //  fixed images for elastix fixed image container at a later stage  
+  //  fixed images for elastix fixed image container at a later stage
   DataObjectContainerIterator fixedImageIterator = fixedImages->Begin();
+  this->SetInput( "FixedImage", fixedImageIterator->Value() );
   ++fixedImageIterator;
-  
+
   while( fixedImageIterator != fixedImages->End() )
   {
     this->AddInputAutoIncrementName( "FixedImage", fixedImageIterator->Value() );
@@ -305,15 +304,14 @@ ElastixFilter< TFixedImage, TMovingImage >
   // Free references to fixed images that has already been set
   this->RemoveMovingImages();
 
-  // "MovingImage" is a required input that needs to be set
-  this->SetInput( "MovingImage" , movingImages->ElementAt( 0 ) );
-
+  // The first image will be used as the "MovingImage" required input.
   // The rest of the images will be appended to the input container
   // suffixed with _1, _2, etc. This allows us to read out only the
-  // moving images for elastix moving image container at a later stage  
+  // moving images for elastix moving image container at a later stage
   DataObjectContainerIterator movingImageIterator = movingImages->Begin();
+  this->SetInput( "MovingImage", movingImageIterator->Value() );
   ++movingImageIterator;
-  
+
   while( movingImageIterator != movingImages->End() )
   {
     this->AddInputAutoIncrementName( "MovingImage", static_cast< itk::DataObject* >( movingImageIterator->Value() ) );
