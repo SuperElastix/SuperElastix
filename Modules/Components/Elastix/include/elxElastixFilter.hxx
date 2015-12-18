@@ -272,7 +272,7 @@ ElastixFilter< TFixedImage, TMovingImage >
 {
   if( !this->HasInput( "FixedImage") )
   {
-    this->SetInput( "FixedImage", static_cast< itk::DataObject* >( fixedImage ) );
+    this->SetFixedImage( fixedImage );
   }
   else
   {
@@ -326,7 +326,7 @@ ElastixFilter< TFixedImage, TMovingImage >
 {
   if( !this->HasInput( "MovingImage") )
   {
-    this->SetInput( "MovingImage", static_cast< itk::DataObject* >( movingImage ) );
+    this->SetMovingImage( movingImage );
   }
   else
   {
