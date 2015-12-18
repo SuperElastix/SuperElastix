@@ -92,7 +92,6 @@ public:
   }
 
   itkGetConstMacro( LogFileName, std::string );
-  void DeleteLogFileName() { this->m_LogFileName = std::string(); };
 
   void RemoveLogFileName( void ) { 
     this->m_LogFileName = std::string();
