@@ -37,7 +37,7 @@ protected:
   virtual void SetUp()
   {
     // Nonrigid ParameterMap
-    parameterMap                       = ParameterMapType();
+    parameterMap                                        = ParameterMapType();
 
     // Images
     parameterMap[ "FixedInternalImagePixelType" ]       = ParameterVectorType( 1, "float" );
@@ -105,7 +105,7 @@ TEST_F( ElastixFilterTest, UpdateOnGetOutputEuler2D )
   movingImageReader->Update();
 
   ParameterObject::Pointer eulerTransformParameterObject;
-  EXPECT_NO_THROW( eulerTransformParameterObject  = ParameterObject::New() );
+  EXPECT_NO_THROW( eulerTransformParameterObject = ParameterObject::New() );
   EXPECT_NO_THROW( eulerTransformParameterObject->SetParameterMap( parameterMap ) );
 
   ElastixFilterType::Pointer elastixFilter;
@@ -116,7 +116,7 @@ TEST_F( ElastixFilterTest, UpdateOnGetOutputEuler2D )
   EXPECT_NO_THROW( elastixFilter->SetParameterObject( eulerTransformParameterObject ) );
 
   // We try to write the image because simply calling GetOutput() will not result in an
-  // error when elastix has not run (a pointer is still passed, although its pointee is empty)
+  // error (a pointer is still passed even if elastix has not run, although the pointee is empty)
   ImageFileWriterType::Pointer writer = ImageFileWriterType::New();
   EXPECT_NO_THROW( writer->SetFileName( dataManager->GetOutputFile( "UpdateOnGetOutputEuler2DResultImage.nii" ) ) );
   EXPECT_NO_THROW( writer->SetInput( elastixFilter->GetOutput() ) );
