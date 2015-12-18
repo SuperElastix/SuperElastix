@@ -15,26 +15,27 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef itkMetricComponent1Factory_h
-#define itkMetricComponent1Factory_h
+#ifndef ComponentFactory_h
+#define ComponentFactory_h
 
-#include "itkComponentFactory.h"
-#include "itkComponentBase.h"
+#include "ComponentSelector.h"
+#include "ComponentBase.h"
 
-namespace itk
+namespace selx
 {
 /** \class MetricComponent1Factory
  * \brief Create instances of MetaImageIO objects using an object factory.
  * \ingroup ITKIOMeta
  */
-  class MetricComponent1Factory :public ObjectFactoryBase
+  template <class ComponentT>
+  class ComponentFactory : public itk::ObjectFactoryBase
 {
 public:
   /** Standard class typedefs. */
-  typedef MetricComponent1Factory         Self;
-  typedef ObjectFactoryBase          Superclass;
-  typedef SmartPointer< Self >       Pointer;
-  typedef SmartPointer< const Self > ConstPointer;
+  typedef ComponentFactory         Self;
+  typedef itk::ObjectFactoryBase          Superclass;
+  typedef itk::SmartPointer< Self >       Pointer;
+  typedef itk::SmartPointer< const Self > ConstPointer;
 
   /** Class methods used to interface with the registered factories. */
   virtual const char * GetITKSourceVersion() const ITK_OVERRIDE;
@@ -45,28 +46,28 @@ public:
   itkFactorylessNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(MetricComponent1Factory, ObjectFactoryBase);
+  itkTypeMacro(ComponentFactory, ObjectFactoryBase);
 
   /** Register one factory of this type  */
   static void RegisterOneFactory()
   {
-    MetricComponent1Factory::Pointer MetricComponent1Factory = MetricComponent1Factory::New();
+    Pointer thisFactory = Self::New();
 
-    ObjectFactoryBase::RegisterFactory(MetricComponent1Factory);
+    ObjectFactoryBase::RegisterFactory(thisFactory);
   }
 
 protected:
-  MetricComponent1Factory();
-  ~MetricComponent1Factory() {};
+  ComponentFactory();
+  ~ComponentFactory() {};
 
 private:
-  MetricComponent1Factory(const Self &); //purposely not implemented
+  ComponentFactory(const Self &); //purposely not implemented
   void operator=(const Self &);     //purposely not implemented
 };
-} // end namespace itk
+} // end namespace selx
 
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkMetricComponent1Factory.hxx"
+#include "ComponentFactory.hxx"
 #endif
 #endif

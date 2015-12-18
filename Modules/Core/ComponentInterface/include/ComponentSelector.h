@@ -15,33 +15,33 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef itkComponentFactory_h
-#define itkComponentFactory_h
+#ifndef itkComponentSelector_h
+#define itkComponentSelector_h
 
 #include "itkObjectFactory.h"
-#include "itkComponentBase.h"
+#include "ComponentBase.h"
 
-namespace itk
+namespace selx
 {
 /** \class ComponentFactor
  * \brief Create instances of MetaImageIO objects using an object factory.
  * \ingroup ITKIOMeta
  */
-class ComponentFactory:public Object
+class ComponentSelector:public itk::Object
 {
 public:
   /** Standard class typedefs. */
-  typedef ComponentFactory         Self;
+  typedef ComponentSelector         Self;
   typedef Object          Superclass;
-  typedef SmartPointer< Self >       Pointer;
-  typedef SmartPointer< const Self > ConstPointer;
+  typedef itk::SmartPointer< Self >       Pointer;
+  typedef itk::SmartPointer< const Self > ConstPointer;
 
 
   /** Class methods used to interface with the registered factories. */
   //virtual const char * GetITKSourceVersion() const { return ITK_SOURCE_VERSION; }
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(ComponentFactory, Object);
+  itkTypeMacro(ComponentSelector, Object);
 
   /** New macro for creation of through the object factory. */
   itkNewMacro(Self);
@@ -60,26 +60,23 @@ public:
   
   void UpdatePossibleComponents(void);
   
-  /** Create the appropriate ComponentIO depending on
-  *  the particulars of the file.
-  */
   ComponentBasePointer GetComponent(void);
   
   
 protected:
   mutable CriteriaType m_Criteria;
   mutable ComponentListType m_PossibleComponents;
-  ComponentFactory();
-  ~ComponentFactory();
+  ComponentSelector();
+  ~ComponentSelector();
 
 private:
-  ComponentFactory(const Self &); //purposely not implemented
+  ComponentSelector(const Self &); //purposely not implemented
   void operator=(const Self &);     //purposely not implemented
 };
-} // end namespace itk
+} // end namespace selx
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkComponentFactory.hxx"
+#include "ComponentSelector.hxx"
 #endif
 
 #endif

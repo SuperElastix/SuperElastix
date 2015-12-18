@@ -1,6 +1,6 @@
 #include "GDOptimizer3rdPartyComponent.h"
 
-namespace elx
+namespace selx
 {
 GDOptimizer3rdPartyComponent::GDOptimizer3rdPartyComponent()
 {
@@ -29,4 +29,21 @@ int GDOptimizer3rdPartyComponent::Update()
   this->theImplementation->SetMetric(this->MetricObject);
   return this->theImplementation->Optimize(); // 3rd party specific call
 }
-} //end namespace elx
+
+bool
+GDOptimizer3rdPartyComponent
+::MeetsCriterium(const CriteriumType &criterium)
+{
+  bool hasUndefinedCriteria(false);
+  bool meetsCriteria(false);
+  if (strcmp(criterium.first.c_str(), "ComponentProperty") == 0)
+  {
+    if (strcmp(criterium.second.c_str(), "SomeProperty") == 0) // e.g. "GradientDescent", "SupportsSparseSamples
+    {
+      meetsCriteria = true;
+    }
+  }
+  return meetsCriteria;
+}
+
+} //end namespace selx

@@ -1,5 +1,5 @@
 #include "SSDMetric3rdPartyComponent.h"
-namespace elx
+namespace selx
 {
 SSDMetric3rdPartyComponent::SSDMetric3rdPartyComponent()
 {
@@ -19,4 +19,21 @@ int SSDMetric3rdPartyComponent::GetValue()
 {
   return this->theImplementation->GetValue();
 };
-} //end namespace elx
+
+bool
+SSDMetric3rdPartyComponent
+::MeetsCriterium(const CriteriumType &criterium)
+{
+  bool hasUndefinedCriteria(false);
+  bool meetsCriteria(false);
+  if (strcmp(criterium.first.c_str(), "ComponentProperty") == 0)
+  {
+    if (strcmp(criterium.second.c_str(), "SomeProperty") == 0) // e.g. "GradientDescent", "SupportsSparseSamples
+    {
+      meetsCriteria = true;
+    }
+  }
+  return meetsCriteria;
+}
+
+} //end namespace selx

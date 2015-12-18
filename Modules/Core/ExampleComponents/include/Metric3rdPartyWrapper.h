@@ -3,7 +3,7 @@
 
 #include "Example3rdPartyCode.h"
 #include "Interfaces.hxx"
-namespace elx
+namespace selx
 {
 // An Optimizer3rdParty expects that Metric3rdParty will be set as input. All accepted interfaces by the Optimizer3rdPartyCompoment will be delegated to the Metric3rdPartyWrapper object.
   class Metric3rdPartyWrapper : public Example3rdParty::Metric3rdPartyBase  {
@@ -16,5 +16,5 @@ private:
   MetricValueInterface* metricval;
   MetricDerivativeInterface* metricderiv;
 };
-} // end namespace elx
+} // end namespace selx
 #endif // #define Metric3rdPartyWrapper_h

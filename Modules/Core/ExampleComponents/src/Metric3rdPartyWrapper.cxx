@@ -1,6 +1,6 @@
 #include "Metric3rdPartyWrapper.h"
 
-namespace elx
+namespace selx
 {
 void Metric3rdPartyWrapper::SetMetricValueComponent(MetricValueInterface* metricValueComponent)
 {
@@ -21,4 +21,4 @@ int Metric3rdPartyWrapper::GetDerivative()
 {
   return this->metricderiv->GetDerivative();
 }
-} // end namespace elx
+} // end namespace selx

@@ -1,11 +1,11 @@
-cmake_minimum_required( VERSION 2.8 )
+cmake_minimum_required( VERSION 3.0.2 )
 
 # Explicitly add INCREMENTAL linking option to command lines.
 # http://www.cmake.org/pipermail/cmake/2010-February/035174.html
 #set( MSVC_INCREMENTAL_DEFAULT ON )
 
 # ---------------------------------------------------------------------
-project( Elastix )
+project( SuperElastix )
 
 enable_language(C)
 enable_language(CXX)
@@ -19,9 +19,36 @@ set( CMAKE_RUNTIME_OUTPUT_DIRECTORY
 # Include SuperElastix CMake scripts
 list( APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake" )
 
+# -----------------------------------------------------------------
+# Compiler-dependent settings
 
+# GCC
+if( ${CMAKE_CXX_COMPILER_ID} STREQUAL GNU )
+  add_definitions(
+    -DVCL_CAN_STATIC_CONST_INIT_FLOAT=0
+    -DVCL_CAN_STATIC_CONST_INIT_INT=0
+  )
+endif()
+
+# MSVC
 if( ${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC )
-  include( elxWinConfig )
+  string( LENGTH "${CMAKE_CURRENT_SOURCE_DIR}" n )
+  if( n GREATER 50 )
+    message(
+      FATAL_ERROR
+      "Source code directory path length is too long for MSVC (${n} > 50)."
+      "Please move the source code directory to a directory with a shorter path."
+    )
+  endif()
+
+  string( LENGTH "${CMAKE_CURRENT_BINARY_DIR}" n )
+  if( n GREATER 50 )
+    message(
+      FATAL_ERROR
+      "Build directory path length is too long for MSVC (${n} > 50)."
+      "Please move the build directory to a directory with a shorter path."
+    )
+  endif()
 endif()
 
 # ---------------------------------------------------------------------
@@ -35,6 +62,16 @@ include("${CMAKE_CURRENT_SOURCE_DIR}/CMake/elxRequiredITKModules.cmake")
 # Boost Graph Library
 find_package( Boost REQUIRED )
 include_directories( ${Boost_INCLUDE_DIRS} )
+
+# ---------------------------------------------------------------------
+# OpenMP Library 
+# Required for ElastixComponent
+# gcc needs the appropriate flags to support OpenMP 
+find_package(OpenMP)
+if (OPENMP_FOUND)
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+endif()
 
 # ---------------------------------------------------------------------
 # Build SuperElastix
