@@ -25,8 +25,6 @@ ElastixFilter< TFixedImage, TMovingImage >
 
   this->LogToConsoleOff();
   this->LogToFileOff();
-
-  this->DebugOn();
 }
 
 template< typename TFixedImage, typename TMovingImage >
