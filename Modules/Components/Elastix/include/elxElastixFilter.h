@@ -106,6 +106,13 @@ public:
   itkGetConstMacro( LogToFile, bool );
   itkBooleanMacro( LogToFile );
 
+  // TODO: Superclass GetOutput() does not trigger an Update() by itself as it should
+  TFixedImage* GetOutput()
+  {
+    this->Update();
+    return static_cast< TFixedImage* >( itk::ProcessObject::GetPrimaryOutput() );
+  }
+
 protected:
 
   void GenerateData( void ) ITK_OVERRIDE;
