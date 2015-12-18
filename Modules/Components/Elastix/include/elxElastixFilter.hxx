@@ -46,12 +46,12 @@ ElastixFilter< TFixedImage, TMovingImage >
   InputNameArrayType inputNames = this->GetInputNames();
   for( unsigned int i = 0; i < inputNames.size(); ++i )
   {
-    if ( this->IsFixedImage( inputNames[ i ] ) )
+    if( this->IsFixedImage( inputNames[ i ] ) )
     {
       fixedImageContainer->push_back( this->GetInput( inputNames[ i ] ) );
     }
 
-    if ( this->IsMovingImage( inputNames[ i ] ) )
+    if( this->IsMovingImage( inputNames[ i ] ) )
     {
       movingImageContainer->push_back( this->GetInput( inputNames[ i ] ) );
     }
@@ -71,7 +71,6 @@ ElastixFilter< TFixedImage, TMovingImage >
     movingMaskContainer->CreateElementAt( 0 ) = this->GetInput( "MovingMask" );
   }
 
-  // There must be an "-out", this is checked later in the code
   ArgumentMapType argumentMap;
   if( this->GetOutputDirectory().empty() ) {
     // There must be an "-out", this is checked later in the code
@@ -121,7 +120,6 @@ ElastixFilter< TFixedImage, TMovingImage >
     {
       logFileName = this->GetOutputDirectory() + this->GetLogFileName();
     }
-
   }
 
   if( elx::xoutSetup( logFileName.c_str(), this->GetLogToFile(), this->GetLogToConsole() ) )
@@ -170,7 +168,6 @@ ElastixFilter< TFixedImage, TMovingImage >
 
     if( isError != 0 )
     {
-      std::cout << std::endl << isError << std::endl;
       itkExceptionMacro( << "Uncought errors occurred during registration." );
     }
 
@@ -198,7 +195,7 @@ ElastixFilter< TFixedImage, TMovingImage >
   // Save result image
   if( resultImageContainer.IsNotNull() && resultImageContainer->Size() > 0 )
   {
-    this->GraftOutput( "ResultImage", resultImageContainer->ElementAt( 0 ) );
+    this->SetPrimaryOutput( resultImageContainer->ElementAt( 0 ) );
   }
 
   // Save parameter map

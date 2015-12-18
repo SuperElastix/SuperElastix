@@ -169,7 +169,7 @@ TransformixFilter< TInputImage >
   resultImageContainer = transformix->GetResultImageContainer();
   if( resultImageContainer.IsNotNull() && resultImageContainer->Size() > 0 )
   {
-    this->GraftOutput( "ResultImage", resultImageContainer->ElementAt( 0 ) );
+    this->SetPrimaryOutput( resultImageContainer->ElementAt( 0 ) );
   }
 
   // Clean up
