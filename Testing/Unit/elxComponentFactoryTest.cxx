@@ -18,8 +18,12 @@ class ComponentFactoryTest : public ::testing::Test {
 public:
   typedef std::list< itk::LightObject::Pointer > RegisteredObjectsContainerType;
   typedef ComponentBase       ComponentType;
-  typedef std::map<std::string, std::string> CriteriaType;
-  typedef std::pair<std::string, std::string> CriteriumType;
+
+  typedef ComponentBase::CriteriaType CriteriaType;
+  typedef ComponentBase::CriteriumType CriteriumType;
+  typedef ComponentBase::ParameterValueType ParameterValueType;
+  //typedef std::map<std::string, std::string> CriteriaType;
+  //typedef std::pair<std::string, std::string> CriteriumType;
 
   typedef ComponentSelector::Pointer NodePointer;
 
@@ -68,7 +72,7 @@ TEST_F(ComponentFactoryTest, SetEmptyCriteria)
   EXPECT_NO_THROW(ComponentFactory<TransformComponent1>::RegisterOneFactory());
   EXPECT_NO_THROW(ComponentFactory<MetricComponent1>::RegisterOneFactory());
 
-  CriteriaType emptyCriteria;
+  CriteriaType emptyCriteria; // = CriteriaType();
 
   ASSERT_NO_THROW(Node1 = ComponentSelector::New());
 
@@ -86,8 +90,8 @@ TEST_F(ComponentFactoryTest, SetSufficientCriteria)
   EXPECT_NO_THROW(ComponentFactory<MetricComponent1>::RegisterOneFactory());
 
   CriteriaType criteria2;
-  criteria2["ComponentInput"] = "Transform";
-  //criteria1.insert(CriteriumType("ComponentInput", "Metric"));
+  //criteria2["ComponentInput"] = "Transform";
+  criteria2.insert(CriteriumType("ComponentInput", ParameterValueType(1,"Transform")));
   ASSERT_NO_THROW(Node2 = ComponentSelector::New());
 
   Node2->SetCriteria(criteria2);
@@ -108,7 +112,8 @@ TEST_F(ComponentFactoryTest, AddCriteria)
   CriteriaType emptyCriteria;
   CriteriaType criteria1;
   //criteria1.insert(CriteriumType("ComponentOutput","Metric")); 
-  criteria1["ComponentOutput"] = "Transform";
+  //criteria1["ComponentOutput"] = "Transform";
+  criteria1.insert(CriteriumType("ComponentOutput", ParameterValueType(1, "Transform")));
   //criteria1.insert(CriteriumType("ComponentInput", "Metric"));
   Node1 = ComponentSelector::New();
 
@@ -140,7 +145,8 @@ TEST_F(ComponentFactoryTest, InterfacedObjects)
   CriteriaType criteria3;
   // Criteria could be name or other properties
   //criteria3["NameOfClass"] = "GDOptimizer3rdPartyComponent";
-  criteria3["HasAcceptingInterface"] = "MetricDerivativeInterface";
+  //criteria3["HasAcceptingInterface"] = "MetricDerivativeInterface";
+  criteria3.insert(CriteriumType("HasAcceptingInterface", ParameterValueType(1, "MetricDerivativeInterface")));
   NodePointer Node3 = ComponentSelector::New();
   Node3->SetCriteria(criteria3);
   ComponentType::Pointer Node3Component;
@@ -149,7 +155,8 @@ TEST_F(ComponentFactoryTest, InterfacedObjects)
 
   CriteriaType criteria4;
   // Criteria could be name or other properties
-  criteria4["NameOfClass"] = "GDOptimizer4thPartyComponent";
+  //criteria4["NameOfClass"] = "GDOptimizer4thPartyComponent";
+  criteria4.insert(CriteriumType("NameOfClass", ParameterValueType(1, "GDOptimizer4thPartyComponent")));
   //criteria3["HasDerivative"] = "True";  
   
   NodePointer Node4 = ComponentSelector::New();
@@ -161,7 +168,9 @@ TEST_F(ComponentFactoryTest, InterfacedObjects)
   CriteriaType criteria5;
   // Criteria could be name or other properties
   //criteria5["NameOfClass"] = "SSDMetric3rdPartyComponent";
-  criteria5["HasProvidingInterface"] = "MetricDerivativeInterface";
+  
+  //criteria5["HasProvidingInterface"] = "MetricDerivativeInterface";
+  criteria5.insert(CriteriumType("HasProvidingInterface", ParameterValueType(1, "MetricDerivativeInterface")));
   //criteria3["HasDerivative"] = "True";  
   NodePointer Node5 = ComponentSelector::New();
   Node5->SetCriteria(criteria5);
@@ -171,7 +180,8 @@ TEST_F(ComponentFactoryTest, InterfacedObjects)
 
   CriteriaType criteria6;
   // Criteria could be name or other properties
-  criteria6["NameOfClass"] = "SSDMetric4thPartyComponent";
+  //criteria6["NameOfClass"] = "SSDMetric4thPartyComponent";
+  criteria6.insert(CriteriumType("NameOfClass", ParameterValueType(1, "SSDMetric4thPartyComponent")));
   //criteria3["HasDerivative"] = "True";  
   NodePointer Node6 = ComponentSelector::New();
   Node6->SetCriteria(criteria6);

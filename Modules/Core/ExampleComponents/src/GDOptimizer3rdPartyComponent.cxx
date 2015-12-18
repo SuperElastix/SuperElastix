@@ -36,11 +36,15 @@ GDOptimizer3rdPartyComponent
 {
   bool hasUndefinedCriteria(false);
   bool meetsCriteria(false);
-  if (strcmp(criterium.first.c_str(), "ComponentProperty") == 0)
+  if (criterium.first == "ComponentProperty")
   {
-    if (strcmp(criterium.second.c_str(), "SomeProperty") == 0) // e.g. "GradientDescent", "SupportsSparseSamples
+    meetsCriteria = true;
+    for (auto const & criterionValue : criterium.second) // auto&& preferred?
     {
-      meetsCriteria = true;
+      if (criterionValue != "SomeProperty")  // e.g. "GradientDescent", "SupportsSparseSamples
+      {
+        meetsCriteria = false;
+      }
     }
   }
   return meetsCriteria;

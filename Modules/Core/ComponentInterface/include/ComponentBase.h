@@ -2,8 +2,9 @@
 #define ComponentBase_h
 
 #include "itkLightObject.h"
-
 #include "itkObjectFactory.h"
+#include "itkMacro.h"
+
 //#include "itkComponentBase.h"
 #include <list>
 #include <iostream>
@@ -26,13 +27,19 @@ namespace selx
     /** Run-time type information (and related methods). */
     itkTypeMacro(ComponentBase, Superclass);
 
-    typedef std::map<std::string, std::string> CriteriaType;
-    typedef std::pair<std::string, std::string> CriteriumType;
+    typedef std::string                                                ParameterKeyType;
+    typedef std::vector< std::string >                                 ParameterValueType;
+    //typedef std::map< ParameterKeyType, ParameterValueType >           ParameterMapType;
+    //TODO choose uniform naming for Typedefs
+    typedef std::map<ParameterKeyType, ParameterValueType> CriteriaType;
+    typedef std::pair<ParameterKeyType, ParameterValueType> CriteriumType;
 
     enum interfaceStatus { success, noaccepter, noprovider };
 
     virtual interfaceStatus ConnectFrom(const char *, ComponentBase*) = 0;
     virtual int ConnectFrom(ComponentBase*) = 0;
+
+    /** if there is any failed criterion, return false (like a short - circuit AND) */
     bool MeetsCriteria(const CriteriaType &criteria);
 
     virtual bool MeetsCriterium(const CriteriumType &criterium) = 0;

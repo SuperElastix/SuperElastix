@@ -36,18 +36,28 @@ int MetricComponent1::Set(TransformedImageInterface* providingInterface)
   {
     bool hasUndefinedCriteria(false);
     bool meetsCriteria(false);
-    if (strcmp(criterium.first.c_str(), "ComponentProperty") == 0)
+    if (criterium.first == "ComponentProperty")
     {
-      if (strcmp(criterium.second.c_str(), "SomeProperty") == 0) // e.g. "GradientDescent", "SupportsSparseSamples
+      meetsCriteria = true;
+      for (auto const & criterionValue : criterium.second) // auto&& preferred?
       {
-        meetsCriteria = true;
+        if (criterionValue != "SomeProperty")  // e.g. "GradientDescent", "SupportsSparseSamples
+        {
+          meetsCriteria = false;
+          return false;
+        }
       }
     }
-    else if (strcmp(criterium.first.c_str(), "ComponentInput") == 0)
+    if (criterium.first == "ComponentInput")
     {
-      if (strcmp(criterium.second.c_str(), "Transform") == 0) // e.g. "GradientDescent", "SupportsSparseSamples
+      meetsCriteria = true;
+      for (auto const & criterionValue : criterium.second) // auto&& preferred?
       {
-        meetsCriteria = true;
+        if (criterionValue != "Transform")  // e.g. "GradientDescent", "SupportsSparseSamples
+        {
+          meetsCriteria = false;
+          return false;
+        }
       }
     }
     return meetsCriteria;

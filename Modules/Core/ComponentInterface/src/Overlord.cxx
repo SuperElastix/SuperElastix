@@ -16,6 +16,10 @@ namespace selx
     int count = 0;
     for (componentIt = componentItPair.first; componentIt != componentItEnd; ++componentIt)
     {
+      ComponentSelectorPointer currentComponentSelector = ComponentSelector::New();
+      Blueprint::ParameterMapType currentProperty = this->m_Blueprint->GetComponent(*componentIt);
+      currentComponentSelector->SetCriteria(currentProperty);
+      this->m_ComponentSelectorContainer.push_back(currentComponentSelector);
       ++count;
     }
     return count;

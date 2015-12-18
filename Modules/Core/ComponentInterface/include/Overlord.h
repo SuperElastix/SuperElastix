@@ -6,6 +6,7 @@
 #include "itkObjectFactory.h"
 //#include "itkComponentBase.h"
 #include <list>
+#include <vector>
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -30,8 +31,8 @@ namespace selx
     typedef std::pair<std::string, std::string> CriteriumType;
 
     typedef ComponentBase       ComponentType;
-    //typedef ComponentSelector::Pointer ComponentSelectorPointer;
-    //typedef std::list<ComponentSelectorPointer> ComponentSelectorList;
+    typedef ComponentSelector::Pointer ComponentSelectorPointer;
+    typedef std::vector<ComponentSelectorPointer> ComponentSelectorContainerType;
 
     void SetBlueprint(const Blueprint::Pointer);
     int Update();
@@ -41,6 +42,7 @@ namespace selx
     virtual ~Overlord() {};
   private:
     Blueprint::Pointer m_Blueprint;
+    ComponentSelectorContainerType m_ComponentSelectorContainer;
   };
 
 } // end namespace selx
