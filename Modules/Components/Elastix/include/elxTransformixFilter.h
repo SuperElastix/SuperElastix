@@ -62,6 +62,20 @@ public:
   itkGetConstMacro( OutputDirectory, std::string );
   void RemoveOutputDirectory() { this->m_OutputDirectory = std::string(); };
 
+  void SetLogFileName( std::string logFileName )
+  {
+    this->m_LogFileName = logFileName;
+    this->LogToFileOn();
+    this->Modified();
+  }
+
+  itkGetConstMacro( LogFileName, std::string );
+  
+  void RemoveLogFileName( void ) { 
+    this->m_LogFileName = std::string();
+    this->LogToFileOff();
+  };
+
   itkSetMacro( LogToConsole, bool );
   itkGetConstMacro( LogToConsole, bool );
   itkBooleanMacro( LogToConsole );
@@ -84,6 +98,8 @@ private:
   std::string   m_PointSetFileName;
 
   std::string   m_OutputDirectory;
+  std::string   m_LogFileName;
+
   bool          m_LogToConsole;
   bool          m_LogToFile;
   

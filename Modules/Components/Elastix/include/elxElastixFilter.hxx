@@ -21,6 +21,8 @@ ElastixFilter< TFixedImage, TMovingImage >
   this->m_MovingMeshFileName = std::string();
 
   this->m_OutputDirectory = std::string();
+  this->m_LogFileName = std::string();
+
   this->LogToConsoleOff();
   this->LogToFileOff();
 }
@@ -99,6 +101,16 @@ ElastixFilter< TFixedImage, TMovingImage >
     if( this->GetOutputDirectory().empty() )
     {
       itkExceptionMacro( "LogToFileOn() requires an output directory to be specified. Use SetOutputDirectory().")
+    }
+
+    if( !itksys::SystemTools::FileExists( this->GetOutputDirectory() ) )
+    {
+      itkExceptionMacro( "Output directory \"" << this->GetOutputDirectory() << "\" does not exist." )
+    }
+
+    if( this->GetOutputDirectory().back() != '/' || this->GetOutputDirectory().back() != '\\' )
+    {
+      this->SetOutputDirectory( this->GetOutputDirectory() + "/" );
     }
 
     if( this->GetLogFileName().empty() )

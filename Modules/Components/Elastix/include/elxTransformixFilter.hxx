@@ -16,6 +16,9 @@ TransformixFilter< TInputImage >
   this->ComputeDeterminantOfSpatialJacobianOff();
   this->m_PointSetFileName = std::string();
 
+  this->m_OutputDirectory = std::string();
+  this->m_LogFileName = std::string();
+  
   this->LogToConsoleOff();
   this->LogToFileOff();
 }
@@ -43,10 +46,20 @@ TransformixFilter< TInputImage >
         this->GetComputeDeformationField() ||
         !this->GetPointSetFileName().empty() ||
         this->GetLogToFile() ) &&
-      this->GetOutputDirectory().empty() )
+      ( this->GetOutputDirectory().empty() ) )
   {
     itkExceptionMacro( << "The requested outputs require an output directory to be specified."
                        << "Use SetOutputDirectory()." )
+  }
+
+  if( ( this->GetComputeSpatialJacobian() ||
+        this->GetComputeDeterminantOfSpatialJacobian() ||
+        this->GetComputeDeformationField() ||
+        !this->GetPointSetFileName().empty() ||
+        this->GetLogToFile() ) &&
+      !itksys::SystemTools::FileExists( this->GetOutputDirectory() ) )
+  {
+    itkExceptionMacro( "Output directory \"" << this->GetOutputDirectory() << "\" does not exist." )
   }
 
   // Transformix uses "-def" for path to point sets AND as flag for writing deformatin field
@@ -96,7 +109,20 @@ TransformixFilter< TInputImage >
     {
       itkExceptionMacro( "LogToFileOn() requires an output directory to be specified. Use SetOutputDirectory().")
     }
-    logFileName = this->GetOutputDirectory() + "transformix.log";
+
+    if( this->GetOutputDirectory().back() != '/' || this->GetOutputDirectory().back() != '\\' )
+    {
+      this->SetOutputDirectory( this->GetOutputDirectory() + "/" );
+    }
+    
+    if( this->GetLogFileName().empty() )
+    {
+      logFileName = this->GetOutputDirectory() + "transformix.log";
+    }
+    else
+    {
+      logFileName = this->GetOutputDirectory() + this->GetLogFileName();
+    }
   }
 
   if( elx::xoutSetup( logFileName.c_str(), this->GetLogToFile(), this->GetLogToConsole() ) )
