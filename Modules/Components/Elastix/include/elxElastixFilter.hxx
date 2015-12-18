@@ -25,6 +25,8 @@ ElastixFilter< TFixedImage, TMovingImage >
 
   this->LogToConsoleOff();
   this->LogToFileOff();
+
+  this->DebugOn();
 }
 
 template< typename TFixedImage, typename TMovingImage >
@@ -195,7 +197,8 @@ ElastixFilter< TFixedImage, TMovingImage >
   // Save result image
   if( resultImageContainer.IsNotNull() && resultImageContainer->Size() > 0 )
   {
-    this->SetOutput( "ResultImage", resultImageContainer->ElementAt( 0 ) );
+    std::cout << "Setting result image: " << resultImageContainer->ElementAt( 0 ) << std::endl;
+    this->GraftOutput( "ResultImage", resultImageContainer->ElementAt( 0 ) );
   }
 
   // Save parameter map

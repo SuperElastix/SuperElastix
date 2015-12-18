@@ -162,7 +162,6 @@ TransformixFilter< TInputImage >
 
   if( isError != 0 )
   {
-    std::cout << std::endl << isError << std::endl;
     itkExceptionMacro( << "Uncought errors occured during registration." );
   }
 
@@ -170,7 +169,8 @@ TransformixFilter< TInputImage >
   resultImageContainer = transformix->GetResultImageContainer();
   if( resultImageContainer.IsNotNull() && resultImageContainer->Size() > 0 )
   {
-    this->SetOutput( "ResultImage", resultImageContainer->ElementAt( 0 ) );
+    std::cout << "Setting result image: " << resultImageContainer->ElementAt( 0 ) << std::endl;
+    this->GraftOutput( "ResultImage", resultImageContainer->ElementAt( 0 ) );
   }
 
   // Clean up
@@ -182,7 +182,7 @@ void
 TransformixFilter< TInputImage >
 ::SetInputImage( InputImagePointer inputImage )
 {
-  this->SetInput( DataObjectIdentifierType( "InputImage" ), static_cast< itk::DataObject* >( inputImage ) );
+  this->SetInput( "InputImage", static_cast< itk::DataObject* >( inputImage ) );
 }
 
 template< typename TInputImage >
@@ -190,7 +190,7 @@ void
 TransformixFilter< TInputImage >
 ::SetTransformParameterObject( ParameterObjectPointer parameterObject )
 {
-  this->SetInput( DataObjectIdentifierType( "TransformParameterObject" ), static_cast< itk::DataObject* >( parameterObject ) );
+  this->SetInput( "TransformParameterObject", static_cast< itk::DataObject* >( parameterObject ) );
 }
 
 template< typename TInputImage >
@@ -198,7 +198,7 @@ typename selx::TransformixFilter< TInputImage >::ParameterObjectPointer
 TransformixFilter< TInputImage >
 ::GetTransformParameters( void )
 {
-  return static_cast< ParameterObject* >( itk::ProcessObject::GetInput( DataObjectIdentifierType( "TransformParameterObject" ) ) );
+  return static_cast< ParameterObject* >( this->GetInput( "TransformParameterObject" ) );
 }
 
 } // namespace selx
