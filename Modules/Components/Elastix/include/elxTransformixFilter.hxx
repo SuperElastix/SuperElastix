@@ -14,6 +14,7 @@ TransformixFilter< TInputImage >
 
   this->ComputeSpatialJacobianOff();
   this->ComputeDeterminantOfSpatialJacobianOff();
+  this->ComputeDeformationFieldOff();
   this->m_PointSetFileName = std::string();
 
   this->m_OutputDirectory = std::string();
