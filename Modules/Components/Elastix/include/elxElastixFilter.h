@@ -35,7 +35,9 @@ public:
   typedef ElastixMainType::Pointer                            ElastixMainPointer;
   typedef std::vector< ElastixMainPointer >                   ElastixMainVectorType;
   typedef ElastixMainType::ObjectPointer                      ElastixMainObjectPointer;
+
   typedef ElastixMainType::FlatDirectionCosinesType           FlatDirectionCosinesType;
+
   typedef ElastixMainType::ArgumentMapType                    ArgumentMapType;
   typedef ArgumentMapType::value_type                         ArgumentMapEntryType;
 
@@ -72,15 +74,15 @@ public:
 
   itkSetMacro( FixedMeshFileName, std::string );
   itkGetConstMacro( FixedMeshFileName, std::string );
-  void DeleteFixedMeshFileName( void ) { this->SetFixedMeshFileName( std::string() ); };
+  void RemoveFixedMeshFileName( void ) { this->SetFixedMeshFileName( std::string() ); };
 
   itkSetMacro( MovingMeshFileName, std::string );
   itkGetConstMacro( MovingMeshFileName, std::string );
-  void DeleteMovingMeshFileName( void ) { this->SetMovingMeshFileName( std::string() ); };
+  void RemoveMovingMeshFileName( void ) { this->SetMovingMeshFileName( std::string() ); };
 
   itkSetMacro( OutputDirectory, std::string );
   itkGetConstMacro( OutputDirectory, std::string );
-  void DeleteOutputDirectory() { this->m_OutputDirectory = std::string(); };
+  void RemoveOutputDirectory() { this->m_OutputDirectory = std::string(); };
 
   void SetLogFileName( std::string logFileName )
   {

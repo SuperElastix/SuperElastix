@@ -56,11 +56,11 @@ public:
 
   itkSetMacro( PointSetFileName, std::string );
   itkGetConstMacro( PointSetFileName, std::string );
-  void DeletePointSetFileName() { this->m_PointSetFileName = std::string(); };
+  void RemovePointSetFileName() { this->m_PointSetFileName = std::string(); };
 
   itkSetMacro( OutputDirectory, std::string );
   itkGetConstMacro( OutputDirectory, std::string );
-  void DeleteOutputDirectory() { this->m_OutputDirectory = std::string(); };
+  void RemoveOutputDirectory() { this->m_OutputDirectory = std::string(); };
 
   itkSetMacro( LogToConsole, bool );
   itkGetConstMacro( LogToConsole, bool );
