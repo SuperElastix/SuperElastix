@@ -33,10 +33,13 @@ namespace selx
     typedef ComponentBase       ComponentType;
     typedef ComponentSelector::Pointer ComponentSelectorPointer;
     typedef std::vector<ComponentSelectorPointer> ComponentSelectorContainerType;
+    typedef ComponentSelectorContainerType::iterator ComponentSelectorIteratorType;
 
     void SetBlueprint(const Blueprint::Pointer);
-    int Update();
+    void Configure();
   protected:
+    bool ApplyNodeConfiguration();
+    bool ApplyConnectionConfiguration();
 
     Overlord() {};
     virtual ~Overlord() {};

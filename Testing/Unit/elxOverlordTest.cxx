@@ -1,5 +1,14 @@
 #include "Overlord.h"
 
+//#include "ComponentFactory.h"
+#include "TransformComponent1.h"
+#include "MetricComponent1.h"
+#include "GDOptimizer3rdPartyComponent.h"
+#include "GDOptimizer4thPartyComponent.h"
+#include "SSDMetric3rdPartyComponent.h"
+#include "SSDMetric4thPartyComponent.h"
+
+
 #include "gtest/gtest.h"
 
 namespace selx {
@@ -14,6 +23,15 @@ public:
   typedef Blueprint::ParameterValueType     ParameterValueType;
 
   virtual void SetUp() {
+    /** register all example components */
+    ComponentFactory<TransformComponent1>::RegisterOneFactory();
+    ComponentFactory<MetricComponent1>::RegisterOneFactory();
+    ComponentFactory<GDOptimizer3rdPartyComponent>::RegisterOneFactory();
+    ComponentFactory<GDOptimizer4thPartyComponent>::RegisterOneFactory();
+    ComponentFactory<SSDMetric3rdPartyComponent>::RegisterOneFactory();
+    ComponentFactory<SSDMetric4thPartyComponent>::RegisterOneFactory();
+
+    /** make example blueprint configuration */
     blueprint = Blueprint::New();
     ParameterMapType metricComponentParameters;
     metricComponentParameters["NameOfClass"] = ParameterValueType(1, "MetricComponent1");
@@ -49,9 +67,8 @@ TEST_F(OverlordTest, Configure)
 {
   overlord = Overlord::New();
   overlord->SetBlueprint(blueprint);
-  int count;
-  EXPECT_NO_THROW(count = overlord->Update());
-  std::cout << count;
+  EXPECT_NO_THROW(overlord->Configure());
+  //std::cout << count;
 }
 
 } // namespace elx

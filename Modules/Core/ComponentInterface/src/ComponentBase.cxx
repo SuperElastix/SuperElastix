@@ -34,7 +34,8 @@ namespace selx
         ParameterValueType::const_iterator valueIt;
         const ParameterValueType::const_iterator valueItEnd = it->second.cend();
 
-        for (valueIt = it->second.cbegin(); valueIt != valueItEnd; ++valueIt){
+        for (valueIt = it->second.cbegin(); valueIt != valueItEnd; ++valueIt)
+        {
           if (this->HasAcceptingInterface(valueIt->c_str()) == false)
           {
             meetsCriteria = false;
