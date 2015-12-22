@@ -106,7 +106,7 @@ public:
   itkGetConstMacro( LogToFile, bool );
   itkBooleanMacro( LogToFile );
 
-  // TODO: Superclass GetOutput() does not trigger an Update() by itself as it should
+  // TODO: Superclass GetOutput() does not trigger an Update() as it should
   TFixedImage* GetOutput()
   {
     this->Update();
