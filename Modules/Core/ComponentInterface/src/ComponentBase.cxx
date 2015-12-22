@@ -66,8 +66,7 @@ namespace selx
       }
       else
       {
-        meetsCriteria = false;
-        hasUndefinedCriteria = true;
+        hasUndefinedCriteria = true; //TODO 
         break;
       }
 
