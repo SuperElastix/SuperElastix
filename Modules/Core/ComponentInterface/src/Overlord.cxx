@@ -38,6 +38,7 @@ namespace selx
 
   bool Overlord::Configure()
   {
+    bool isSuccess(false);
     bool allUniqueComponents;
     this->ApplyNodeConfiguration();
     allUniqueComponents = this->UpdateSelectors();
@@ -46,7 +47,13 @@ namespace selx
     this->ApplyConnectionConfiguration();
     allUniqueComponents = this->UpdateSelectors();
     std::cout << "By adding Connection Criteria unique components could " << (allUniqueComponents ? "" : "not ") << "be selected" << std::endl;
-    return allUniqueComponents;
+
+    if (allUniqueComponents)
+    {
+      isSuccess = this->ConnectComponents();
+    }
+
+    return isSuccess;
   }
   void Overlord::ApplyNodeConfiguration()
   {
@@ -113,5 +120,28 @@ namespace selx
 
     return;
   }
+  bool Overlord::ConnectComponents()
+  {
+
+    //TODO: redesign loops, see ApplyConnectionConfiguration()
+    Blueprint::ComponentIndexType index;
+    for (index = 0; index < this->m_ComponentSelectorContainer.size(); ++index)
+    {
+      Blueprint::OutputIteratorPairType ouputItPair = this->m_Blueprint->GetOutputIterator(index);
+      Blueprint::OutputIteratorPairType::first_type ouputIt;
+      Blueprint::OutputIteratorPairType::second_type ouputItEnd = ouputItPair.second;
+      for (ouputIt = ouputItPair.first; ouputIt != ouputItEnd; ++ouputIt)
+      {
+        //TODO check direction upstream/downstream input/output source/target
+        //TODO GetComponent returns NULL if possible components !=1 we can check for that, but Overlord::UpdateSelectors() does something similar.
+        ComponentBase::Pointer sourceComponent = this->m_ComponentSelectorContainer[ouputIt->m_source]->GetComponent();
+        ComponentBase::Pointer targetComponent = this->m_ComponentSelectorContainer[ouputIt->m_target]->GetComponent();
+        targetComponent->ConnectFrom(sourceComponent);
+      }
+    }
+    //TODO should we communicate by exceptions instead of returning booleans?
+    return true;
+  }
+
 } // end namespace selx
 

@@ -45,7 +45,7 @@ namespace selx
     void ApplyNodeConfiguration();
     void ApplyConnectionConfiguration();
     bool UpdateSelectors();
-
+    bool ConnectComponents();
     Blueprint::Pointer m_Blueprint;
     ComponentSelectorContainerType m_ComponentSelectorContainer;
   };
