@@ -8,13 +8,47 @@ namespace selx
     return;
 
   }
-  void Overlord::Configure()
+  bool Overlord::UpdateSelectors()
   {
-    this->ApplyNodeConfiguration();
-    this->ApplyConnectionConfiguration();
-  }
-  bool Overlord::ApplyNodeConfiguration()
+    bool allUniqueComponents = true;
+    Blueprint::ComponentIteratorPairType componentItPair = this->m_Blueprint->GetComponentIterator();
+    Blueprint::ComponentIteratorPairType::first_type componentIt;
+    Blueprint::ComponentIteratorPairType::second_type componentItEnd = componentItPair.second;
+    for (componentIt = componentItPair.first; componentIt != componentItEnd; ++componentIt)
+    {
+      ComponentSelector::NumberOfComponentsType numberOfComponents = this->m_ComponentSelectorContainer[*componentIt]->UpdatePossibleComponents();
 
+      // The current idea of the configuration setup is that the number of 
+      // possible components at a node can only be reduced by adding criteria.
+      // If a node has 0 possible components, the configuration is aborted (with an exception)
+      // If all nodes have exactly 1 possible component, no more criteria are needed.
+      if (numberOfComponents == 0)
+      {
+        itkExceptionMacro("Too many criteria for component");
+      }
+      else if (numberOfComponents > 1)
+      {
+        allUniqueComponents = false;
+      }
+      std::cout << "blueprint node " << *componentIt << " has " << numberOfComponents << " components" << std::endl;
+
+    }
+    return allUniqueComponents;
+  }
+
+  bool Overlord::Configure()
+  {
+    bool allUniqueComponents;
+    this->ApplyNodeConfiguration();
+    allUniqueComponents = this->UpdateSelectors();
+    std::cout << "Based on Component Criteria unique components could " << (allUniqueComponents ? "":"not ") << "be selected" << std::endl;
+
+    this->ApplyConnectionConfiguration();
+    allUniqueComponents = this->UpdateSelectors();
+    std::cout << "By adding Connection Criteria unique components could " << (allUniqueComponents ? "" : "not ") << "be selected" << std::endl;
+    return allUniqueComponents;
+  }
+  void Overlord::ApplyNodeConfiguration()
   {
     Blueprint::ComponentIteratorPairType componentItPair = this->m_Blueprint->GetComponentIterator();
     Blueprint::ComponentIteratorPairType::first_type componentIt;
@@ -24,17 +58,11 @@ namespace selx
       ComponentSelectorPointer currentComponentSelector = ComponentSelector::New();
       Blueprint::ParameterMapType currentProperty = this->m_Blueprint->GetComponent(*componentIt);
       currentComponentSelector->SetCriteria(currentProperty);
-      ComponentSelector::NumberOfComponentsType numberOfComponents = currentComponentSelector->UpdatePossibleComponents();
-      //if (numberOfComponents == 0)
-      //{
-      //  itkExceptionMacro("Too many criteria for component");
-      //}
-      std::cout << "blueprint node " << *componentIt << " has " << numberOfComponents << " components" << std::endl;
       this->m_ComponentSelectorContainer.push_back(currentComponentSelector);
     }
-    return true; // TODO return false if any componentselector returns 0 possible components
+    return;
   }
-  bool Overlord::ApplyConnectionConfiguration()
+  void Overlord::ApplyConnectionConfiguration()
   {
     //typedef Blueprint::OutputIteratorType OutputIteratorType;
     //typedef Blueprint::OutputIteratorPairType OutputIteratorPairType;
@@ -42,7 +70,20 @@ namespace selx
     //TODO: these loops have to be redesigned for a number of reasons:
     // - They rely on the assumption that the index of the vector equals the componentIndex in blueprint
     // - Tedious, integer indexing.
+    //
+    // We might consider copying the blueprint graph to a component selector 
+    // graph, such that all graph operations correspond
+    
+    // Or loop over connections:
+    //Blueprint::ConnectionIteratorPairType connectionItPair = this->m_Blueprint->GetConnectionIterator();
+    //Blueprint::ConnectionIteratorPairType::first_type  connectionIt;
+    //Blueprint::ConnectionIteratorPairType::second_type  connectionItEnd = connectionItPair.second;
+    //int count = 0;
+    //for (connectionIt = connectionItPair.first; connectionIt != connectionItEnd; ++connectionIt)
+    //{
+    //}
 
+    
     Blueprint::ComponentIndexType index;
     for (index = 0; index < this->m_ComponentSelectorContainer.size(); ++index)
     {
@@ -69,22 +110,8 @@ namespace selx
         }
       }
     }
-    //ComponentSelectorIteratorType nodeiterator = this->m_ComponentSelectorContainer->begin();
 
-
-    //OutputIteratorPairType GetOutputIterator(const ComponentIndexType index) {
-    //  return boost::out_edges(index, this->m_Graph);
-    //}
-
-    Blueprint::ConnectionIteratorPairType connectionItPair = this->m_Blueprint->GetConnectionIterator();
-    Blueprint::ConnectionIteratorPairType::first_type  connectionIt;
-    Blueprint::ConnectionIteratorPairType::second_type  connectionItEnd = connectionItPair.second;
-    //int count = 0;
-    for (connectionIt = connectionItPair.first; connectionIt != connectionItEnd; ++connectionIt)
-    {
-
-    }
-    return true; // TODO return false if any componentselector returns 0 possible components
+    return;
   }
 } // end namespace selx
 

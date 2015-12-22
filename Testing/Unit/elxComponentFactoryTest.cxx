@@ -30,6 +30,10 @@ public:
   virtual void SetUp() 
   {
   }
+  virtual void TearDown()
+  {
+    itk::ObjectFactoryBase::UnRegisterAllFactories();
+  }
   // each node can hold multiple components (or none). Its the overlord's task to make it one per node.
   NodePointer Node1;
   NodePointer Node2;

@@ -45,12 +45,13 @@ public:
     ParameterMapType metric2TransformConnectionParameters;
     metric2TransformConnectionParameters["NameOfInterface"] = ParameterValueType(1, "TransformedImageInterface");
 
-    blueprint->AddConnection(index0, index1, metric2TransformConnectionParameters);
+    //TODO: check direction
+    blueprint->AddConnection(index1, index0, metric2TransformConnectionParameters);
 
   }
 
   virtual void TearDown() {
-
+    itk::ObjectFactoryBase::UnRegisterAllFactories();
   }
 
   BlueprintPointerType blueprint;
@@ -67,8 +68,9 @@ TEST_F(OverlordTest, Configure)
 {
   overlord = Overlord::New();
   overlord->SetBlueprint(blueprint);
-  EXPECT_NO_THROW(overlord->Configure());
-  //std::cout << count;
+  bool allUniqueComponents;
+  EXPECT_NO_THROW(allUniqueComponents = overlord->Configure());
+  EXPECT_TRUE(allUniqueComponents);
 }
 
 } // namespace elx

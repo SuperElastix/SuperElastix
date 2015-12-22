@@ -36,14 +36,16 @@ namespace selx
     typedef ComponentSelectorContainerType::iterator ComponentSelectorIteratorType;
 
     void SetBlueprint(const Blueprint::Pointer);
-    void Configure();
+    bool Configure();
   protected:
-    bool ApplyNodeConfiguration();
-    bool ApplyConnectionConfiguration();
-
+    
     Overlord() {};
     virtual ~Overlord() {};
   private:
+    void ApplyNodeConfiguration();
+    void ApplyConnectionConfiguration();
+    bool UpdateSelectors();
+
     Blueprint::Pointer m_Blueprint;
     ComponentSelectorContainerType m_ComponentSelectorContainer;
   };
