@@ -36,8 +36,9 @@ TransformixFilter< TInputImage >
       !this->GetComputeDeformationField() &&
       this->GetPointSetFileName().empty() )
   {
-    itkExceptionMacro( << "Expected at least one of SetInputImage(), ComputeSpatialJacobianOn(), "
-                       << "ComputeDeterminantOfSpatialJacobianOn(), SetPointSetFileName() or " );
+    itkExceptionMacro( "Expected at least one of SetInputImage(), ComputeSpatialJacobianOn(), "
+                    << "ComputeDeterminantOfSpatialJacobianOn() or SetPointSetFileName() or " 
+                    << "to be set.");
   }
 
   // Check if an output directory is needed
@@ -49,8 +50,8 @@ TransformixFilter< TInputImage >
         this->GetLogToFile() ) &&
       ( this->GetOutputDirectory().empty() ) )
   {
-    itkExceptionMacro( << "The requested outputs require an output directory to be specified."
-                       << "Use SetOutputDirectory()." )
+    itkExceptionMacro( "The requested outputs require an output directory to be specified."
+                    << "Use SetOutputDirectory()." )
   }
 
   if( ( this->GetComputeSpatialJacobian() ||
@@ -169,7 +170,6 @@ TransformixFilter< TInputImage >
   resultImageContainer = transformix->GetResultImageContainer();
   if( resultImageContainer.IsNotNull() && resultImageContainer->Size() > 0 )
   {
-    std::cout << "Setting result image: " << resultImageContainer->ElementAt( 0 ) << std::endl;
     this->GraftOutput( "ResultImage", resultImageContainer->ElementAt( 0 ) );
   }
 

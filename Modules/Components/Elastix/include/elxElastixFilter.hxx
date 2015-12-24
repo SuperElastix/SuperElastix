@@ -42,33 +42,46 @@ ElastixFilter< TFixedImage, TMovingImage >
   ParameterMapListType        TransformParameterMapList;
   FlatDirectionCosinesType    fixedImageOriginalDirection;
 
-  // Split input images into two seperate fixed and moving image containers
+  // Split inputs into separate containers
   InputNameArrayType inputNames = this->GetInputNames();
   for( unsigned int i = 0; i < inputNames.size(); ++i )
   {
-    if( this->IsFixedImage( inputNames[ i ] ) )
+    if( this->IsInputType( "FixedImage", inputNames[ i ] ) )
     {
       fixedImageContainer->push_back( this->GetInput( inputNames[ i ] ) );
+      continue;
     }
 
-    if( this->IsMovingImage( inputNames[ i ] ) )
+    if( this->IsInputType( "MovingImage", inputNames[ i ] ) )
     {
       movingImageContainer->push_back( this->GetInput( inputNames[ i ] ) );
+      continue;
     }
-  }
 
-  // Fixed mask (optional)
-  if( this->HasInput( "FixedMask" ) )
-  {
-    fixedMaskContainer = DataObjectContainerType::New();                   
-    fixedMaskContainer->CreateElementAt( 0 )  = this->GetInput( "FixedMask" );
-  }
+    if( this->IsInputType( "FixedMask", inputNames[ i ] ) )
+    {
+      // When the first mask is set, we initialize the container, which is zero by default.
+      // The user can unuse fixed masks with RemoveFixedMask() that resets the pointer to zero
+      if( !fixedMaskContainer )
+      {
+        fixedMaskContainer = DataObjectContainerType::New();                   
+      }
 
-  // Moving mask (optional)
-  if( this->HasInput( "MovingMask" )  )
-  {
-    movingMaskContainer = DataObjectContainerType::New();
-    movingMaskContainer->CreateElementAt( 0 ) = this->GetInput( "MovingMask" );
+      fixedMaskContainer->push_back( this->GetInput( inputNames[ i ] ) );
+      continue;
+    }
+
+    if( this->IsInputType( "Movingmask", inputNames[ i ] ) )
+    {
+      // When the first mask is set, we initialize the container, which is zero by default.
+      // The user can unuse moving masks with RemoveMovingMask() that resets the pointer to zero
+      if( !movingMaskContainer )
+      {
+        movingMaskContainer = DataObjectContainerType::New();
+      }
+
+      movingMaskContainer->push_back( this->GetInput( inputNames[ i ] ) );
+    }
   }
 
   ArgumentMapType argumentMap;
@@ -130,6 +143,14 @@ ElastixFilter< TFixedImage, TMovingImage >
   // Get ParameterMap
   ParameterObjectConstPointer parameterObject = static_cast< const ParameterObject* >( this->GetInput( "ParameterObject" ) );
   ParameterMapListType parameterMapList = parameterObject->GetParameterMapList();
+
+  if( parameterMapList.size() == 0 )
+  {
+    itkExceptionMacro( "Parameter object contains an empty parameter map list." );
+  }
+
+  // Elastix must always write result image to guarantee that ITK pipeline is in a consistent state
+  parameterMapList[ parameterMapList.size()-1 ][ "WriteResultImage" ] = ParameterVectorType( 1, "true" );
 
   // Run the (possibly multiple) registration(s)
   for( unsigned int i = 0; i < parameterMapList.size(); ++i )
@@ -199,12 +220,23 @@ ElastixFilter< TFixedImage, TMovingImage >
   }
 
   // Save parameter map
-  ParameterObject::Pointer TransformParameters = ParameterObject::New();
-  TransformParameters->SetParameterMapList( TransformParameterMapList );
-  this->SetOutput( "TransformParameterObject", static_cast< itk::DataObject* >( TransformParameters ) );
+  ParameterObject::Pointer TransformParameterObject = ParameterObject::New();
+  TransformParameterObject->SetParameterMapList( TransformParameterMapList );
+  this->SetOutput( "TransformParameterObject", static_cast< itk::DataObject* >( TransformParameterObject ) );
 
   // Close the modules
   ElastixMainType::UnloadComponents();
+}
+
+template< typename TFixedImage, typename TMovingImage >
+typename ElastixFilter< TFixedImage, TMovingImage >::FixedImagePointer
+ElastixFilter< TFixedImage, TMovingImage >
+::GetOutput( void )
+{
+  // TODO: This update should not be needed but the ElastixFilterTest.UpdateOnGetOutput fails without it
+  this->Update();
+
+  return static_cast< TFixedImage* >( itk::ProcessObject::GetPrimaryOutput() );
 }
 
 template< typename TFixedImage, typename TMovingImage >
@@ -232,7 +264,7 @@ ElastixFilter< TFixedImage, TMovingImage >
 ::SetFixedImage( FixedImagePointer fixedImage )
 {
   // Free references to fixed images that has already been set
-  this->RemoveFixedImages();
+  this->RemoveInputType( "FixedImage" );
 
   this->SetInput( "FixedImage", static_cast< itk::DataObject* >( fixedImage ) );
 }
@@ -248,12 +280,13 @@ ElastixFilter< TFixedImage, TMovingImage >
   }
 
   // Free references to fixed images that has already been set
-  this->RemoveFixedImages();
+  this->RemoveInputType( "FixedImage" );
 
-  // The first image will be used as the "FixedImage" required input.
-  // The rest of the images will be appended to the input container
-  // suffixed with _1, _2, etc. This allows us to read out only the
-  //  fixed images for elastix fixed image container at a later stage
+  // The ITK filter requires a "FixedImage" named input. The first image 
+  // will thus be named  "FixedImage" while The rest of the images will 
+  // be appended to the input container suffixed with _1, _2, etc. 
+  // The common prefix allows us to read out only the fixed images 
+  // for elastix moving image container at a later stage
   DataObjectContainerIterator fixedImageIterator = fixedImages->Begin();
   this->SetInput( "FixedImage", fixedImageIterator->Value() );
   ++fixedImageIterator;
@@ -286,7 +319,7 @@ ElastixFilter< TFixedImage, TMovingImage >
 ::SetMovingImage( MovingImagePointer movingImage )
 {
   // Free references to moving images that has already been set
-  this->RemoveMovingImages();
+  this->RemoveInputType( "MovingImage" );
 
   this->SetInput( "MovingImage", static_cast< itk::DataObject* >( movingImage ) );
 }
@@ -302,12 +335,13 @@ ElastixFilter< TFixedImage, TMovingImage >
   }
 
   // Free references to fixed images that has already been set
-  this->RemoveMovingImages();
+  this->RemoveInputType( "MovingImage" );
 
-  // The first image will be used as the "MovingImage" required input.
-  // The rest of the images will be appended to the input container
-  // suffixed with _1, _2, etc. This allows us to read out only the
-  // moving images for elastix moving image container at a later stage
+  // The ITK filter requires a "MovingImage" named input. The first image 
+  // will thus be named  "MovingImage" while The rest of the images will 
+  // be appended to the input container suffixed with _1, _2, etc. 
+  // The common prefix allows us to read out only the moving images 
+  // for elastix moving image container at a later stage
   DataObjectContainerIterator movingImageIterator = movingImages->Begin();
   this->SetInput( "MovingImage", movingImageIterator->Value() );
   ++movingImageIterator;
@@ -340,7 +374,48 @@ void
 ElastixFilter< TFixedImage, TMovingImage >
 ::SetFixedMask( FixedImagePointer fixedMask )
 {
-  this->SetInput( "FixedMask", static_cast< itk::DataObject* >( fixedMask ) );
+  // Free references to fixed masks that has already been set
+  this->RemoveInputType( "FixedMask" );
+
+  this->SetInput( "FixedMask", static_cast< itk::DataObject* >( fixedMask) );
+}
+
+template< typename TFixedImage, typename TMovingImage >
+void
+ElastixFilter< TFixedImage, TMovingImage >
+::SetFixedMask( DataObjectContainerPointer fixedMasks )
+{
+  if( fixedMasks->Size() == 0 )
+  {
+    itkExceptionMacro( "Cannot set fixed masks from empty container.")
+  }
+
+  // Free references to fixed images that has already been set
+  this->RemoveInputType( "FixedMask" );
+
+  DataObjectContainerIterator fixedMaskIterator = fixedMasks->Begin();
+  while( fixedMaskIterator != fixedMasks->End() )
+  {
+    this->AddInputAutoIncrementName( "FixedMask", fixedMaskIterator->Value() );
+    ++fixedMaskIterator;
+  }
+}
+
+template< typename TFixedImage, typename TMovingImage >
+void
+ElastixFilter< TFixedImage, TMovingImage >
+::AddFixedMask( FixedImagePointer fixedMask )
+{
+  this->AddInputAutoIncrementName( "FixedMask", static_cast< itk::DataObject* >( fixedMask ) );
+}
+
+template< typename TFixedImage, typename TMovingImage >
+void
+ElastixFilter< TFixedImage, TMovingImage >
+::RemoveFixedMask( void )
+{
+  this->RemoveInputType( "FixedMask" );
+  this->m_FixedMaskContainer = 0;
 }
 
 template< typename TFixedImage, typename TMovingImage >
@@ -348,75 +423,93 @@ void
 ElastixFilter< TFixedImage, TMovingImage >
 ::SetMovingMask( MovingImagePointer movingMask )
 {
+  // Free references to moving masks that has already been set
+  this->RemoveInputType( "MovingMask" );
+
   this->SetInput( "MovingMask", static_cast< itk::DataObject* >( movingMask ) );
+}
+
+template< typename TFixedImage, typename TMovingImage >
+void
+ElastixFilter< TFixedImage, TMovingImage >
+::SetMovingMask( DataObjectContainerPointer movingMasks )
+{
+  if( movingMasks->Size() == 0 )
+  {
+    itkExceptionMacro( "Cannot set moving images from empty container.")
+  }
+
+  // Free references to fixed images that has already been set
+  this->RemoveInputType( "MovingMask" );
+
+  DataObjectContainerIterator movingMaskIterator = movingMasks->Begin();
+  while( movingMaskIterator != movingMasks->End() )
+  {
+    this->AddInputAutoIncrementName( "MovingMask", static_cast< itk::DataObject* >( movingMaskIterator->Value() ) );
+    ++movingMaskIterator;
+  }
+}
+
+template< typename TFixedImage, typename TMovingImage >
+void
+ElastixFilter< TFixedImage, TMovingImage >
+::AddMovingMask( MovingImagePointer movingMask )
+{
+  this->AddInputAutoIncrementName( "MovingMask", static_cast< itk::DataObject* >( movingMask ) );
+}
+
+template< typename TFixedImage, typename TMovingImage >
+void
+ElastixFilter< TFixedImage, TMovingImage >
+::RemoveMovingMask( void )
+{
+  this->RemoveInputType( "MovingMask" );
+  this->m_MovingMaskContainer = 0;
 }
 
 /*
  * Adds a named input to the first null position in the input list
- * Expands the list memory if necessary
+ * and expands the list memory if necessary
  */
 template< typename TFixedImage, typename TMovingImage >
 void
 ElastixFilter< TFixedImage, TMovingImage >
-::AddInputAutoIncrementName( DataObjectIdentifierType key, itk::DataObject* input )
+::AddInputAutoIncrementName( DataObjectIdentifierType inputName, itk::DataObject* input )
 {
   for ( unsigned idx = 0; idx < this->GetNumberOfIndexedInputs(); ++idx )
   {
     if ( !this->GetInput( idx ) )
     {
-      key += this->MakeNameFromInputIndex( idx );
-      this->SetInput( key, input );
+      // append e.g. '_2' to inputName 
+      inputName += this->MakeNameFromInputIndex( idx );
+      this->SetInput( inputName, input );
       return;
     }
   }
 
-  key += this->MakeNameFromInputIndex( this->GetNumberOfIndexedInputs() );
-  this->SetInput( key, input );
+  inputName += this->MakeNameFromInputIndex( this->GetNumberOfIndexedInputs() );
+  this->SetInput( inputName, input );
   return;
 }
 
 template< typename TFixedImage, typename TMovingImage >
 bool
 ElastixFilter< TFixedImage, TMovingImage >
-::IsFixedImage( DataObjectIdentifierType key )
+::IsInputType( DataObjectIdentifierType inputType, DataObjectIdentifierType inputName )
 {
-  return std::strncmp( "FixedImage", key.c_str(), 10 ) == 0;
-}
-
-template< typename TFixedImage, typename TMovingImage >
-bool
-ElastixFilter< TFixedImage, TMovingImage >
-::IsMovingImage( DataObjectIdentifierType key )
-{
-  return std::strncmp( "MovingImage", key.c_str(), 11 ) == 0;
+  return std::strncmp( inputType.c_str(), inputName.c_str(), inputType.size() ) == 0;
 }
 
 template< typename TFixedImage, typename TMovingImage >
 void
 ElastixFilter< TFixedImage, TMovingImage >
-::RemoveFixedImages( void )
+::RemoveInputType( DataObjectIdentifierType inputType )
 {
   // Free references to fixed images that has already been set
   InputNameArrayType inputNames = this->GetInputNames();
   for( unsigned int i = 0; i < inputNames.size(); ++i )
   {
-    if ( this->IsFixedImage( inputNames[ i ] ) )
-    {
-      this->RemoveInput( inputNames[ i ] );
-    }
-  }
-}
-
-template< typename TFixedImage, typename TMovingImage >
-void
-ElastixFilter< TFixedImage, TMovingImage >
-::RemoveMovingImages( void )
-{
-  // Free references to fixed images that has already been set
-  InputNameArrayType inputNames = this->GetInputNames();
-  for( unsigned int i = 0; i < inputNames.size(); ++i )
-  {
-    if ( this->IsMovingImage( inputNames[ i ] ) )
+    if ( this->IsInputType( inputType, inputNames[ i ] ) )
     {
       this->RemoveInput( inputNames[ i ] );
     }

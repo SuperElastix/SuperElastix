@@ -63,11 +63,18 @@ public:
   void AddFixedImage( FixedImagePointer fixedImage );
 
   void SetMovingImage( MovingImagePointer movingImages );
-  void SetMovingImage( DataObjectContainerPointer movingImage );
+  void SetMovingImage( DataObjectContainerPointer movingImages );
   void AddMovingImage( MovingImagePointer movingImage );
 
   void SetFixedMask( FixedImagePointer fixedMask );
+  void SetFixedMask( DataObjectContainerPointer fixedMasks );
+  void AddFixedMask( FixedImagePointer fixedMask );
+  void RemoveFixedMask( void );
+
   void SetMovingMask( MovingImagePointer movingMask );
+  void SetMovingMask( DataObjectContainerPointer movingMasks );
+  void AddMovingMask( MovingImagePointer movingMask );
+  void RemoveMovingMask( void );
 
   void SetParameterObject( ParameterObjectPointer parameterObject );
   ParameterObjectPointer GetTransformParameters( void );
@@ -106,12 +113,7 @@ public:
   itkGetConstMacro( LogToFile, bool );
   itkBooleanMacro( LogToFile );
 
-  // TODO: Superclass GetOutput() does not trigger an Update() as it should
-  TFixedImage* GetOutput()
-  {
-    this->Update();
-    return static_cast< TFixedImage* >( itk::ProcessObject::GetPrimaryOutput() );
-  }
+  FixedImagePointer GetOutput( void );
 
 protected:
 
@@ -123,11 +125,8 @@ private:
 
   void AddInputAutoIncrementName( DataObjectIdentifierType key, itk::DataObject* input );
 
-  bool IsFixedImage( DataObjectIdentifierType key );
-  bool IsMovingImage( DataObjectIdentifierType key );
-
-  void RemoveFixedImages( void );
-  void RemoveMovingImages( void );
+  bool IsInputType( DataObjectIdentifierType inputType, DataObjectIdentifierType inputName );
+  void RemoveInputType( DataObjectIdentifierType inputName );
 
   // TODO: When set to true, ReleaseDataFlag should also touch these containers
   DataObjectContainerPointer m_FixedImageContainer;
