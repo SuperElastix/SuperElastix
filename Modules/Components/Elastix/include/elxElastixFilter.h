@@ -13,15 +13,109 @@
 
 /**
  * Elastix registration library exposed as an ITK filter.
- * 
- * We have to do some additional bookeeping on input images so that they can
- * be split into separate containers fixed and moving images at a later stage.
- * This is because ITK filters uses a single input container to drive the
- * pipeline while elastix use seperate containers for fixed and moving images.
- * 
  */
 
 namespace selx {
+
+// PixelType traits for writing types as strings to parameter files
+template < typename T >
+struct TypeName
+{
+  static const char* ToString()
+  {
+     itkGenericExceptionMacro( "Pixel type \"" << typeid(T).name() << "\" not supported by elastix." )
+  }
+};
+
+template <>
+struct TypeName< char >
+{
+  static const char* ToString()
+  {
+    return "char";
+  }
+};
+
+template <>
+struct TypeName< unsigned char >
+{
+  static const char* ToString()
+  {
+    return "unsigned char";
+  }
+};
+
+template <>
+struct TypeName< short >
+{
+  static const char* ToString()
+  {
+    return "short";
+  }
+};
+
+template <>
+struct TypeName< unsigned short >
+{
+  static const char* ToString()
+  {
+    return "unsigned short";
+  }
+};
+
+template <>
+struct TypeName< int >
+{
+  static const char* ToString()
+  {
+    return "int";
+  }
+};
+
+template <>
+struct TypeName< unsigned int >
+{
+  static const char* ToString()
+  {
+    return "unsigned int";
+  }
+};
+
+template <>
+struct TypeName< long >
+{
+  static const char* ToString()
+  {
+    return "long";
+  }
+};
+
+template <>
+struct TypeName< unsigned long >
+{
+  static const char* ToString()
+  {
+    return "unsigned long";
+  }
+};
+
+template <>
+struct TypeName< float >
+{
+  static const char* ToString()
+  {
+    return "float";
+  }
+};
+
+template <>
+struct TypeName< double >
+{
+  static const char* ToString()
+  {
+    return "double";
+  }
+};
 
 template< typename TFixedImage,
           typename TMovingImage >
@@ -49,14 +143,17 @@ public:
   typedef ElastixMainType::DataObjectContainerPointer         DataObjectContainerPointer;
   typedef DataObjectContainerType::Iterator                   DataObjectContainerIterator;
 
-  typedef ParameterObject::ParameterMapListType               ParameterMapListType;
+  typedef ParameterObject::ParameterMapVectorType             ParameterMapVectorType;
   typedef ParameterObject::ParameterMapType                   ParameterMapType;
-  typedef ParameterObject::ParameterVectorType                ParameterVectorType;
+  typedef ParameterObject::ParameterValueVectorType           ParameterValueVectorType;
   typedef ParameterObject::Pointer                            ParameterObjectPointer;
   typedef ParameterObject::ConstPointer                       ParameterObjectConstPointer;
 
   typedef typename TFixedImage::Pointer                       FixedImagePointer;
   typedef typename TMovingImage::Pointer                      MovingImagePointer;
+
+  itkStaticConstMacro( FixedImageDimension, unsigned int, TFixedImage::ImageDimension );
+  itkStaticConstMacro( MovingImageDimension, unsigned int, TMovingImage::ImageDimension );
 
   void SetFixedImage( FixedImagePointer fixedImage );
   void SetFixedImage( DataObjectContainerPointer fixedImages );
@@ -142,7 +239,6 @@ private:
 
   bool m_LogToConsole;
   bool m_LogToFile;
-
 
 };
 

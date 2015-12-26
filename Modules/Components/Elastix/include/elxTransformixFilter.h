@@ -11,6 +11,14 @@
 #include "elxMacro.h"
 #include "elxParameterObject.h"
 
+/**
+ * Transformix library exposed as an ITK filter.
+ *
+ * Make sure the compiler can also see itkElastixFilter.h
+ * for the TypeName trait structs (usually not a problem if 
+ * the files are placed in the same include directory).
+ */
+
 namespace selx {
 
 template< typename TInputImage >
@@ -29,13 +37,15 @@ public:
   typedef TransformixMainType::DataObjectContainerType      DataObjectContainerType;
   typedef TransformixMainType::DataObjectContainerPointer   DataObjectContainerPointer;
 
-  typedef ParameterObject::ParameterMapListType             ParameterMapListType;
+  typedef ParameterObject::ParameterMapVectorType           ParameterMapVectorType;
   typedef ParameterObject::ParameterMapType                 ParameterMapType;
-  typedef ParameterObject::ParameterVectorType              ParameterVectorType;
+  typedef ParameterObject::ParameterValueVectorType         ParameterValueVectorType;
   typedef typename ParameterObject::Pointer                 ParameterObjectPointer;
   typedef typename ParameterObject::ConstPointer            ParameterObjectConstPointer;
 
   typedef typename TInputImage::Pointer                     InputImagePointer;
+
+  itkStaticConstMacro( InputImageDimension, unsigned int, TInputImage::ImageDimension );
 
   void SetInputImage( InputImagePointer inputImage );
 

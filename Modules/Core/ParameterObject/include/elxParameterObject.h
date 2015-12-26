@@ -1,10 +1,13 @@
 #ifndef ParameterObject_h
 #define ParameterObject_h
 
+// ITK
 #include "itkObjectFactory.h"
 #include "itkDataObject.h"
 
+// elastix
 #include "elxMacro.h"
+#include "itkParameterFileParser.h"
 
 namespace selx {
 
@@ -14,38 +17,44 @@ public:
 
   elxNewMacro( ParameterObject, itk::DataObject );
 
-  typedef std::string                                       ParameterKeyType;
-  typedef std::string                                       ParameterValueType;
-  typedef std::vector< ParameterKeyType >                   ParameterVectorType;
-  typedef std::map< ParameterKeyType, ParameterVectorType > ParameterMapType;
-  typedef std::vector< ParameterMapType >                   ParameterMapListType;
+  typedef std::string                                             ParameterKeyType;
+  typedef std::string                                             ParameterValueType;
+  typedef std::vector< ParameterValueType >                       ParameterValueVectorType;
+  typedef std::map< ParameterKeyType, ParameterValueVectorType >  ParameterMapType;
+  typedef ParameterMapType::iterator                              ParameterMapIterator;
+  typedef ParameterMapType::const_iterator                        ParameterMapConstIterator;
+  typedef std::vector< ParameterMapType >                         ParameterMapVectorType;
+  typedef std::string                                             ParameterFileNameType;
+  typedef std::vector< ParameterFileNameType >                    ParameterFileNameVectorType;
+  typedef ParameterFileNameVectorType::iterator                   ParameterFileNameVectorIterator;
+  typedef ParameterFileNameVectorType::const_iterator             ParameterFileNameVectorConstIterator;
 
-  void SetParameterMap( ParameterMapType parameterMap ) 
-  {
-    ParameterMapListType parameterMapList;
-    parameterMapList.push_back( parameterMap );
-    this->SetParameterMapList( parameterMapList );
-  }
+  typedef itk::ParameterFileParser                                ParameterFileParserType;
+  typedef ParameterFileParserType::Pointer                        ParameterFileParserPointer;                    
 
-  void SetParameterMapList( ParameterMapListType parameterMapList ) 
-  { 
-    this->m_ParameterMapList = parameterMapList; 
-  };
+  void SetParameterMap( const ParameterMapType parameterMap );
+  void SetParameterMap( const ParameterMapVectorType parameterMapVector );
+  void AddParameterMap( const ParameterMapType parameterMap );
   
-  ParameterMapListType& GetParameterMapList( void ) 
-  {
-    this->Modified();
-    return this->m_ParameterMapList; 
-  };
+  ParameterMapType& GetParameterMap( unsigned int index );
+  ParameterMapVectorType& GetParameterMap( void );
+  const ParameterMapVectorType& GetParameterMap( void ) const;  
 
-  const ParameterMapListType& GetParameterMapList( void ) const
-  {
-    return this->m_ParameterMapList; 
-  };
+  void ReadParameterFile( const ParameterFileNameType parameterFileName );
+  void ReadParameterFile( const ParameterFileNameVectorType parameterFileNameVector );
+  void AddParameterFile( const ParameterFileNameType parameterFileName );
+
+  void WriteParameterFile( const ParameterFileNameType parameterFileName );
+  void WriteParameterFile( const ParameterFileNameVectorType parameterFileNameVector );
+
+  // Default parameter maps
+  void SetParameterMap( const std::string transformName, const unsigned int numberOfResolutions = 3u, const double finalGridSpacingInPhysicalUnits = 10.0 );
+  void AddParameterMap( const std::string transformName, const unsigned int numberOfResolutions = 3u, const double finalGridSpacingInPhysicalUnits = 10.0 );
+  ParameterMapType GetParameterMap( const std::string transformName, const unsigned int numberOfResolutions = 3u, const double finalGridSpacingInPhysicalUnits = 10.0 );
 
 private:
 
-  ParameterMapListType m_ParameterMapList;
+  ParameterMapVectorType  m_ParameterMapVector;
 
 };
 

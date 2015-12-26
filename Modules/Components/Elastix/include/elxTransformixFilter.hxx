@@ -42,7 +42,7 @@ TransformixFilter< TInputImage >
   }
 
   // Check if an output directory is needed
-  // TODO: Change behaviour upstream to have transformix save all output to its resultImageContainer
+  // TODO: Change behaviour upstream to have transformix save all outputs as data objects
   if( ( this->GetComputeSpatialJacobian() ||
         this->GetComputeDeterminantOfSpatialJacobian() ||
         this->GetComputeDeformationField() ||
@@ -75,11 +75,26 @@ TransformixFilter< TInputImage >
   // Setup argument map which transformix uses internally ito figure out what needs to be done
   ArgumentMapType argumentMap;
   if( this->GetOutputDirectory().empty() ) {
+    if( this->GetLogToFile() )
+    {
+      itkExceptionMacro( "LogToFileOn() requires an output directory to be specified. Use SetOutputDirectory().")
+    }
+
     // There must be an "-out", this is checked later in the code
     argumentMap.insert( ArgumentMapEntryType( "-out", "output_path_not_set" ) );
   }
   else
   {
+    if( !itksys::SystemTools::FileExists( this->GetOutputDirectory() ) )
+    {
+      itkExceptionMacro( "Output directory \"" << this->GetOutputDirectory() << "\" does not exist." )
+    }
+
+    if( this->GetOutputDirectory().back() != '/' || this->GetOutputDirectory().back() != '\\' )
+    {
+      this->SetOutputDirectory( this->GetOutputDirectory() + "/" );
+    }
+
     argumentMap.insert( ArgumentMapEntryType( "-out", this->GetOutputDirectory() ) );
   }
 
@@ -106,17 +121,7 @@ TransformixFilter< TInputImage >
   // Setup xout
   std::string logFileName;
   if( this->GetLogToFile() )
-  {
-    if( this->GetOutputDirectory().empty() )
-    {
-      itkExceptionMacro( "LogToFileOn() requires an output directory to be specified. Use SetOutputDirectory().")
-    }
-
-    if( this->GetOutputDirectory().back() != '/' || this->GetOutputDirectory().back() != '\\' )
-    {
-      this->SetOutputDirectory( this->GetOutputDirectory() + "/" );
-    }
-    
+  { 
     if( this->GetLogFileName().empty() )
     {
       logFileName = this->GetOutputDirectory() + "transformix.log";
@@ -148,13 +153,22 @@ TransformixFilter< TInputImage >
 
   // Get ParameterMap
   ParameterObjectConstPointer transformParameterObject = static_cast< const ParameterObject* >( this->GetInput( "TransformParameterObject" ) );
-  ParameterMapListType transformParameterMapList = transformParameterObject->GetParameterMapList();
+  ParameterMapVectorType transformParameterMapVector = transformParameterObject->GetParameterMap();
+
+  for( unsigned int i = 0; i < transformParameterMapVector.size(); ++i )
+  {
+    // Transformix reads type information from parameter files. We set this information automatically and overwrite
+    // user settings in case they are incorrect (elastix will segfault or throw exception when casting) 
+    transformParameterMapVector[ i ][ "MovingInternalImagePixelType" ] = ParameterValueVectorType( 1, TypeName< typename TInputImage::PixelType >::ToString() );    
+    transformParameterMapVector[ i ][ "MovingImageDimension" ] = ParameterValueVectorType( 1, std::to_string( InputImageDimension ) );
+    transformParameterMapVector[ i ][ "ResultImagePixelType" ] = ParameterValueVectorType( 1, TypeName< typename TInputImage::PixelType >::ToString() );
+  }
 
   // Run transformix
   unsigned int isError = 0;
   try
   {
-    isError = transformix->Run( argumentMap, transformParameterMapList );
+    isError = transformix->Run( argumentMap, transformParameterMapVector );
   }
   catch( itk::ExceptionObject &e )
   {
