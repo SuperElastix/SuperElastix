@@ -16,7 +16,7 @@ macro( _elxmodule_enable MODULE_NAME )
   _elxmodule_check_name( ${MODULE_NAME} )
 
   if( NOT ${MODULE_NAME}_ENABLED )
-    set( USE_${MODULE_NAME} ON )
+    set( ${MODULE_NAME}_ENABLED ON )
 
     include( ${${MODULE_NAME}_FILE} )
 
