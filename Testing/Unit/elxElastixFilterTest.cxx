@@ -7,16 +7,10 @@
 #include "elxDataManager.h"
 #include "gtest/gtest.h"
 
-// TODO:
-// - In the following examples, why do we need to call update on both reader and elastixFilter
-//   before using the writer? Should the call to update on the writer not be propagated upstream?
-//   (See http://itk.org/Wiki/ITK/Examples/Segmentation/OtsuThresholdImageFilter which defeats the whole
-//   purpose of having a pipeline, no?)
-// - Compare result images against baseline
-// - SetUp() runs before every test. Does GoogleTest have a function that is called once before tests are run?
+// TODO: Check that desired results are actually obtained, e.g. by comparing result
+// images against a baseline. Right now we only check that no errors are thrown.
 
-
-using namespace selx;
+using namespace elastix;
 
 class ElastixFilterTest : public ::testing::Test
 {
@@ -100,9 +94,18 @@ TEST_F( ElastixFilterTest, UpdateOnGetTransformParametersEuler2D )
 
 TEST_F( ElastixFilterTest, AffineWithMultipleFixedAndMovingImages2D )
 {
+  // TODO: Internal logic to automatically broadcast metric, sampler,
+  // interpolator and pyramids to match the number of metrics. Can do
+  // it in such a way that we are guaranteed to not mess up user settings?
   ParameterObject::Pointer parameterObject;
   EXPECT_NO_THROW( parameterObject = ParameterObject::New() );
   EXPECT_NO_THROW( parameterObject->SetParameterMap( "affine" ) );
+  EXPECT_NO_THROW( parameterObject->GetParameterMap( 0 )[ "Registration" ] = ParameterValueVectorType( 1, "MultiMetricMultiResolutionRegistration" ) );
+  EXPECT_NO_THROW( parameterObject->GetParameterMap( 0 )[ "Metric" ] = ParameterValueVectorType( 2, parameterObject->GetParameterMap( 0 )[ "Metric" ][ 0 ] ) );
+  EXPECT_NO_THROW( parameterObject->GetParameterMap( 0 )[ "ImageSampler" ] = ParameterValueVectorType( 2, parameterObject->GetParameterMap( 0 )[ "ImageSampler" ][ 0 ] ) );
+  EXPECT_NO_THROW( parameterObject->GetParameterMap( 0 )[ "Interpolator" ] = ParameterValueVectorType( 2, parameterObject->GetParameterMap( 0 )[ "Interpolator" ][ 0 ] ) );
+  EXPECT_NO_THROW( parameterObject->GetParameterMap( 0 )[ "FixedImagePyramid" ] = ParameterValueVectorType( 2, parameterObject->GetParameterMap( 0 )[ "FixedImagePyramid" ][ 0 ] ) );
+  EXPECT_NO_THROW( parameterObject->GetParameterMap( 0 )[ "MovingImagePyramid" ] = ParameterValueVectorType( 2, parameterObject->GetParameterMap( 0 )[ "MovingImagePyramid" ][ 0 ] ) );
 
   typedef itk::Image< float, 2 > ImageType;
   typedef itk::ImageFileReader< ImageType > ImageFileReaderType;
@@ -125,14 +128,25 @@ TEST_F( ElastixFilterTest, AffineWithMultipleFixedAndMovingImages2D )
   ImageFileReaderType::Pointer movingImageReader1 = ImageFileReaderType::New();
   movingImageReader1->SetFileName( dataManager->GetInputFile( "BrainProtonDensitySliceR10X13Y17S12.png" ) );
 
+  // We fill the first pair of fixed and moving images with zeros to be able 
+  // to inspect if the subsequent pair is able to drive the registration
+  ImageType::Pointer fixedImage0 = fixedImageReader0->GetOutput();
+  fixedImage0->Update();
+  fixedImage0->DisconnectPipeline();
+  fixedImage0->FillBuffer( 0.0 );
+  ImageType::Pointer movingImage0 = movingImageReader0->GetOutput();
+  movingImage0->Update();
+  movingImage0->DisconnectPipeline();
+  movingImage0->FillBuffer( 0.0 );
+
   DataObjectContainerPointer fixedImages;
   EXPECT_NO_THROW( fixedImages = DataObjectContainerType::New() );
-  EXPECT_NO_THROW( fixedImages->CreateElementAt( 0 ) = static_cast< itk::DataObject* >( fixedImageReader0->GetOutput() ) );
+  EXPECT_NO_THROW( fixedImages->CreateElementAt( 0 ) = static_cast< itk::DataObject* >( fixedImage0 ) );
   EXPECT_NO_THROW( fixedImages->CreateElementAt( 1 ) = static_cast< itk::DataObject* >( fixedImageReader1->GetOutput() ) );
 
   DataObjectContainerPointer movingImages;
   EXPECT_NO_THROW( movingImages = DataObjectContainerType::New() );
-  EXPECT_NO_THROW( movingImages->CreateElementAt( 0 ) = static_cast< itk::DataObject* >( movingImageReader0->GetOutput() ) );
+  EXPECT_NO_THROW( movingImages->CreateElementAt( 0 ) = static_cast< itk::DataObject* >( movingImage0 ) );
   EXPECT_NO_THROW( movingImages->CreateElementAt( 1 ) = static_cast< itk::DataObject* >( movingImageReader1->GetOutput() ) );
 
   ElastixFilterType::Pointer elastixFilter;
@@ -141,9 +155,6 @@ TEST_F( ElastixFilterTest, AffineWithMultipleFixedAndMovingImages2D )
   EXPECT_NO_THROW( elastixFilter->SetFixedImage( fixedImages ) );
   EXPECT_NO_THROW( elastixFilter->SetMovingImage( movingImages ) );
   EXPECT_NO_THROW( elastixFilter->SetParameterObject( parameterObject ) );
-
-  // TODO: This update should not be needed (see description above)
-  EXPECT_NO_THROW( elastixFilter->Update() );
 
   ImageFileWriterType::Pointer writer = ImageFileWriterType::New();
   EXPECT_NO_THROW( writer->SetFileName( dataManager->GetOutputFile( "AffineWithMultipleFixedAndMovingImages2DResultImage.nii" ) ) );
@@ -201,9 +212,6 @@ TEST_F( ElastixFilterTest, TranslationWithPointSets2D )
   EXPECT_NO_THROW( elastixFilter->SetMovingMeshFileName( dataManager->GetInputFile( "MovingMesh.pts" ) ) );
   EXPECT_NO_THROW( elastixFilter->SetParameterObject( parameterObject ) );
 
-  // TODO: This update should not be needed (see description above)
-  EXPECT_NO_THROW( elastixFilter->Update() );
-
   ImageFileWriterType::Pointer writer = ImageFileWriterType::New();
   EXPECT_NO_THROW( writer->SetFileName( "TranslationWithPointSets2DResultImage.nii" ) );
   EXPECT_NO_THROW( writer->SetInput( elastixFilter->GetOutput() ) );
@@ -242,9 +250,6 @@ TEST_F( ElastixFilterTest, BSplineWithFixedMask2D )
   EXPECT_NO_THROW( elastixFilter->SetFixedMask( fixedMaskReader->GetOutput() ) );
   EXPECT_NO_THROW( elastixFilter->SetMovingImage( movingImageReader->GetOutput() ) );
   EXPECT_NO_THROW( elastixFilter->SetParameterObject( parameterObject ) );
-
-  // TODO: This update should not be needed (see description above)
-  EXPECT_NO_THROW( elastixFilter->Update() );
 
   ImageFileWriterType::Pointer writer = ImageFileWriterType::New();
   EXPECT_NO_THROW( writer->SetFileName( dataManager->GetOutputFile( "BSplineWithFixedMask2DResultImage.nii" ) ) );
@@ -318,7 +323,6 @@ TEST_F( ElastixFilterTest, BSpline3D )
 }
 
 #include "itkCastImageFilter.h" 
-
 TEST_F( ElastixFilterTest, BSpline4D )
 {
   ParameterObject::Pointer parameterObject = ParameterObject::New();
