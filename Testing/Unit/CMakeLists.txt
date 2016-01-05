@@ -1,15 +1,8 @@
 # ---------------------------------------------------------------------
-# To add a test to the build system, append it to the list below. 
+# To add a test to the build system, append it to the module's list of
+# tests in the module's CMake file (e.g. "Modules/Core/ModuleCore.cmake"). 
 # Any GoogleTests in these files are automatically added to CTest and
 # the elastix dashboard. 
-
-set( ElastixUnitTestFilenames
-  elxBlueprintTest.cxx
-  elxElastixFilterTest.cxx
-  elxTransformixFilterTest.cxx
-  elxComponentFactoryTest.cxx
-  elxComponentInterfaceTest.cxx
-)         
 
 # ---------------------------------------------------------------------
 # Options

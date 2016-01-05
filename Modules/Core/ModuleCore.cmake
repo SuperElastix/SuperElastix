@@ -18,6 +18,13 @@ set( ${MODULE}_LIBRARIES
   ${MODULE}
 )
 
+# Export tests
+set( ${MODULE}_TESTS
+  elxBlueprintTest.cxx
+  elxComponentFactoryTest.cxx
+  elxComponentInterfaceTest.cxx
+)
+
 # Module source files
 set( ${MODULE}_SOURCE_FILES
   ${${MODULE}_SOURCE_DIR}/Blueprints/src/elxBlueprint.cxx

@@ -29,6 +29,10 @@ macro( _elxmodule_enable MODULE_NAME )
       list( APPEND SUPERELASTIX_LIBRARIES ${${MODULE_NAME}_LIBRARIES} )
     endif()
 
+    if( ${MODULE_NAME}_TESTS )
+      list( APPEND SUPERELASTIX_TESTS ${${MODULE_NAME}_TESTS} )
+    endif()
+    
     # TODO: Add support for indicating dependencies between modules and recursive enabling of these dependencies
 
   endif()
@@ -39,8 +43,9 @@ macro( _elxmodule_disable MODULE_NAME )
 endmacro()
 
 macro( _elxmodules_initialize )
-  set( SUPERELASTIX_LIBRARIES )
   set( SUPERELASTIX_MODULES )
+  set( SUPERELASTIX_LIBRARIES )
+  set( SUPERELASTIX_TESTS )
 
   file( GLOB_RECURSE MODULE_FILES RELATIVE "${CMAKE_SOURCE_DIR}"
      "${CMAKE_SOURCE_DIR}/Modules/*/Module*.cmake"
@@ -64,7 +69,7 @@ macro( _elxmodules_initialize )
     set( ${MODULE_NAME}_LIBRARY_DIRS )
     set( ${MODULE_NAME}_LIBRARIES )
 
-    list(APPEND SUPERELASTIX_MODULES ${MODULE_NAME} )
+    list( APPEND SUPERELASTIX_MODULES ${MODULE_NAME} )
   endforeach()
 endmacro()
 
