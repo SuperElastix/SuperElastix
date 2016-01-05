@@ -59,10 +59,6 @@ endif()
 # ---------------------------------------------------------------------
 # Build Old Elastix
 
-set( ELASTIX_VERSION_MAJOR "4" )
-set( ELASTIX_VERSION_MINOR "8" )
-set( ELASTIX_VERSION_STRING "${ELASTIX_VERSION_MAJOR}.${ELASTIX_VERSION_MINOR}" )
-
 mark_as_advanced( SUPERELASTIX_BUILD_ELASTIX )
 option( SUPERELASTIX_BUILD_ELASTIX "Build support for Elastix ${ELASTIX_VERSION_STRING}." ON )
 if( SUPERELASTIX_BUILD_ELASTIX )
@@ -70,10 +66,8 @@ if( SUPERELASTIX_BUILD_ELASTIX )
   option( USE_SYSTEM_ELASTIX "Use an installed version of Elastix." OFF )
   if( USE_SYSTEM_ELASTIX )
     if( NOT EXISTS ${ELASTIX_USE_FILE} )
-      # Expose CMake variable to user
-      set( ELASTIX_USE_FILE )
-      # Stop the build
-      message( FATAL_ERROR "Please point ELASTIX_USE_FILE to your systems UseElastix.cmake file." )
+      set( ELASTIX_USE_FILE "NOT_FOUND" CACHE PATH "Absolute path to UseElastix.cmake in the root of the elastix build tree." )
+      message( FATAL_ERROR "Could not find the ELASTIX_USE_FILE (${ELASTIX_USE_FILE}). Use the SuperBuild or manually point the ELASTIX_USE_FILE CMake variable to the UseElastix.cmake file in the root of your elastix build tree." )
     endif()
   else()
     include( ExternalElastix )
