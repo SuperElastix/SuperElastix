@@ -27,14 +27,14 @@ namespace selx
   }
 
   bool
-  TransformComponent1::MeetsCriterium(const CriteriumType &criterium)
+  TransformComponent1::MeetsCriterion(const CriterionType &criterion)
   {
     bool hasUndefinedCriteria(false);
     bool meetsCriteria(false);
-    if (criterium.first == "ComponentProperty")
+    if (criterion.first == "ComponentProperty")
     {
       meetsCriteria = true;
-      for (auto const & criterionValue : criterium.second) // auto&& preferred?
+      for (auto const & criterionValue : criterion.second) // auto&& preferred?
       {
         if (criterionValue != "SomeProperty")  // e.g. "GradientDescent", "SupportsSparseSamples
         {
@@ -43,10 +43,10 @@ namespace selx
         }
       }
     }
-    if (criterium.first == "ComponentOutput")
+    if (criterion.first == "ComponentOutput")
     {
       meetsCriteria = true;
-      for (auto const & criterionValue : criterium.second) // auto&& preferred?
+      for (auto const & criterionValue : criterion.second) // auto&& preferred?
       {
         if (criterionValue != "Transform")  // e.g. "GradientDescent", "SupportsSparseSamples
         {
@@ -55,10 +55,10 @@ namespace selx
         }
       }
     }
-    if (criterium.first == "ComponentInput")
+    if (criterion.first == "ComponentInput")
     {
       meetsCriteria = true;
-      for (auto const & criterionValue : criterium.second) // auto&& preferred?
+      for (auto const & criterionValue : criterion.second) // auto&& preferred?
       {
         if (criterionValue != "Sampler")  // e.g. "GradientDescent", "SupportsSparseSamples
         {

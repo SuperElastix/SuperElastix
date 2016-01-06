@@ -106,10 +106,10 @@ namespace selx
           if (it->first == "NameOfInterface")
           {
             ComponentBase::CriteriaType additionalSourceCriteria;            
-            additionalSourceCriteria.insert(ComponentBase::CriteriumType("HasProvidingInterface", it->second));
+            additionalSourceCriteria.insert(ComponentBase::CriterionType("HasProvidingInterface", it->second));
 
             ComponentBase::CriteriaType additionalTargetCriteria;
-            additionalTargetCriteria.insert(ComponentBase::CriteriumType("HasAcceptingInterface", it->second));
+            additionalTargetCriteria.insert(ComponentBase::CriterionType("HasAcceptingInterface", it->second));
 
             this->m_ComponentSelectorContainer[ouputIt->m_source]->AddCriteria(additionalSourceCriteria);
             this->m_ComponentSelectorContainer[ouputIt->m_target]->AddCriteria(additionalTargetCriteria);

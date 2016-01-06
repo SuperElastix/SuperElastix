@@ -59,7 +59,7 @@ namespace selx
           }
         }
       }
-      else if (this->MeetsCriterium(CriteriumType(it->first, it->second)) == false)
+      else if (this->MeetsCriterion(CriterionType(it->first, it->second)) == false)
       {
         meetsCriteria = false;
         return false; //if there is any failed criterion, return false (like a short-circuit AND)

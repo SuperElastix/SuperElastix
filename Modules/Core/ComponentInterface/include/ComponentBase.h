@@ -32,7 +32,7 @@ namespace selx
     //typedef std::map< ParameterKeyType, ParameterValueType >           ParameterMapType;
     //TODO choose uniform naming for Typedefs
     typedef std::map<ParameterKeyType, ParameterValueType> CriteriaType;
-    typedef std::pair<ParameterKeyType, ParameterValueType> CriteriumType;
+    typedef std::pair<ParameterKeyType, ParameterValueType> CriterionType;
 
     enum interfaceStatus { success, noaccepter, noprovider };
 
@@ -42,7 +42,7 @@ namespace selx
     /** if there is any failed criterion, return false (like a short - circuit AND) */
     bool MeetsCriteria(const CriteriaType &criteria);
 
-    virtual bool MeetsCriterium(const CriteriumType &criterium) = 0;
+    virtual bool MeetsCriterion(const CriterionType &criterion) = 0;
   protected:
     virtual bool HasAcceptingInterface(const char *) = 0;
     virtual bool HasProvidingInterface(const char *) = 0;

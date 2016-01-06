@@ -29,14 +29,14 @@ int GDOptimizer4thPartyComponent::Update()
 
 bool
 GDOptimizer4thPartyComponent
-::MeetsCriterium(const CriteriumType &criterium)
+::MeetsCriterion(const CriterionType &criterion)
 {
   bool hasUndefinedCriteria(false);
   bool meetsCriteria(false);
-  if (criterium.first == "ComponentProperty")
+  if (criterion.first == "ComponentProperty")
   {
     meetsCriteria = true;
-    for (auto const & criterionValue : criterium.second) // auto&& preferred?
+    for (auto const & criterionValue : criterion.second) // auto&& preferred?
     {
       if (criterionValue != "SomeProperty")  // e.g. "GradientDescent", "SupportsSparseSamples
       {

@@ -28,7 +28,7 @@ namespace selx
     elxNewMacro(Overlord, itk::LightProcessObject);
 
     typedef std::map<std::string, std::string> CriteriaType;
-    typedef std::pair<std::string, std::string> CriteriumType;
+    typedef std::pair<std::string, std::string> CriterionType;
 
     typedef ComponentBase       ComponentType;
     typedef ComponentSelector::Pointer ComponentSelectorPointer;

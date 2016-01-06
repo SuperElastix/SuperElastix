@@ -39,7 +39,7 @@ namespace selx
     int Set(MetricDerivativeInterface*);
     int Update();
     //virtual bool MeetsCriteria(const CriteriaType &criteria);
-    virtual bool MeetsCriterium(const CriteriumType &criterium);
+    virtual bool MeetsCriterion(const CriterionType &criterion);
     
     //static const char * GetName() { return "GDOptimizer3rdPartyComponent"; } ;
     static const char * GetDescription() { return "GD Optimizer 3rd Party Component"; };
