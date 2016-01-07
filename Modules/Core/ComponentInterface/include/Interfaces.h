@@ -5,6 +5,7 @@
 #include <typeinfo>
 #include <string>
 
+#include "itkProcessObject.h"
 namespace selx
 {
   // Define the providing interfaces abstractly
@@ -39,8 +40,10 @@ namespace selx
     virtual int Update(ConflictinUpdateInterface*) = 0;
   };
 
-
-
+  class itkProcessObjectInterface {
+    public:
+      virtual itk::ProcessObject::Pointer GetItkProcessObject() = 0;
+  };
   // Define the accepting interfaces as templated by the providing interface
 
   template<class InterfaceT>
