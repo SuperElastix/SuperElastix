@@ -26,11 +26,11 @@ public:
   itkTypeMacro(TransformComponent1, ComponentBase);
 
   typedef Superclass::CriteriaType CriteriaType;
-  typedef Superclass::CriteriumType CriteriumType;
+  typedef Superclass::CriterionType CriterionType;
 
   int GetTransformedImage(){ return 0; };
   static const char * GetDescription(){ return "Example Transform Component 1"; };
-  virtual bool MeetsCriterium(const CriteriumType &criterium);
+  virtual bool MeetsCriterion(const CriterionType &criterion);
 protected:
   TransformComponent1();
   virtual ~TransformComponent1()

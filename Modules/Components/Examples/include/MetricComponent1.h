@@ -26,7 +26,7 @@ public:
   itkTypeMacro(MetricComponent1, ComponentBase);
   
   typedef Superclass::CriteriaType CriteriaType;
-  typedef Superclass::CriteriumType CriteriumType;
+  typedef Superclass::CriterionType CriterionType;
 
   virtual int Set(TransformedImageInterface *);
   virtual int GetValue(){ return 0; }
@@ -45,7 +45,7 @@ private:
   MetricComponent1(const Self &);      // purposely not implemented
   void operator=(const Self &); // purposely not implemented
 
-  virtual bool MeetsCriterium(const CriteriumType &criterium);
+  virtual bool MeetsCriterion(const CriterionType &criterion);
   //virtual bool MeetsCriteria(const CriteriaType&);
 
 };

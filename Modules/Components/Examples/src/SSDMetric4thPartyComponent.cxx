@@ -18,15 +18,19 @@ int SSDMetric4thPartyComponent::GetValue()
 
 bool
 SSDMetric4thPartyComponent
-::MeetsCriterium(const CriteriumType &criterium)
+::MeetsCriterion(const CriterionType &criterion)
 {
   bool hasUndefinedCriteria(false);
   bool meetsCriteria(false);
-  if (strcmp(criterium.first.c_str(), "ComponentProperty") == 0)
+  if (criterion.first == "ComponentProperty")
   {
-    if (strcmp(criterium.second.c_str(), "SomeProperty") == 0) // e.g. "GradientDescent", "SupportsSparseSamples
+    meetsCriteria = true;
+    for (auto const & criterionValue : criterion.second) // auto&& preferred?
     {
-      meetsCriteria = true;
+      if (criterionValue != "SomeProperty")  // e.g. "GradientDescent", "SupportsSparseSamples
+      {
+        meetsCriteria = false;
+      }
     }
   }
   return meetsCriteria;

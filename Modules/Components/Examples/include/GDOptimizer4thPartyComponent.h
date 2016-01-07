@@ -41,7 +41,7 @@ namespace selx
     // "error" : member function templates cannot be virtual
     int Update(ConflictinUpdateInterface*) { return 5; };
     //virtual bool MeetsCriteria(const CriteriaType &criteria);
-    virtual bool MeetsCriterium(const CriteriumType &criterium);
+    virtual bool MeetsCriterion(const CriterionType &criterion);
     //static const char * GetName(){ return "GDOptimizer4thPartyComponent"; };
     static const char * GetDescription(){ return "GD Optimizer 4th Party Component"; };
   };

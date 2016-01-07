@@ -9,6 +9,7 @@ set( ElastixUnitTestFilenames
   elxTransformixFilterTest.cxx
   elxComponentFactoryTest.cxx
   elxComponentInterfaceTest.cxx
+  elxOverlordTest.cxx
 )         
 
 # ---------------------------------------------------------------------

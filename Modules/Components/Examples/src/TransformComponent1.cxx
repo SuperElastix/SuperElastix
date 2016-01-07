@@ -27,31 +27,46 @@ namespace selx
   }
 
   bool
-  TransformComponent1::MeetsCriterium(const CriteriumType &criterium)
+  TransformComponent1::MeetsCriterion(const CriterionType &criterion)
   {
     bool hasUndefinedCriteria(false);
     bool meetsCriteria(false);
-    if (strcmp(criterium.first.c_str(), "ComponentProperty") == 0)
+    if (criterion.first == "ComponentProperty")
     {
-      if (strcmp(criterium.second.c_str(), "SomeProperty") == 0) // e.g. "GradientDescent", "SupportsSparseSamples
+      meetsCriteria = true;
+      for (auto const & criterionValue : criterion.second) // auto&& preferred?
       {
-        meetsCriteria = true;
+        if (criterionValue != "SomeProperty")  // e.g. "GradientDescent", "SupportsSparseSamples
+        {
+          meetsCriteria = false;
+          return false;
+        }
       }
     }
-    else if (strcmp(criterium.first.c_str(), "ComponentOutput") == 0)
+    if (criterion.first == "ComponentOutput")
+    {
+      meetsCriteria = true;
+      for (auto const & criterionValue : criterion.second) // auto&& preferred?
       {
-        if (strcmp(criterium.second.c_str(), "Transform") == 0)
+        if (criterionValue != "Transform")  // e.g. "GradientDescent", "SupportsSparseSamples
         {
-          meetsCriteria = true;
+          meetsCriteria = false;
+          return false;
         }
       }
-      else if (strcmp(criterium.first.c_str(), "ComponentInput") == 0)
+    }
+    if (criterion.first == "ComponentInput")
+    {
+      meetsCriteria = true;
+      for (auto const & criterionValue : criterion.second) // auto&& preferred?
       {
-        if (strcmp(criterium.second.c_str(), "Sampler") == 0)
+        if (criterionValue != "Sampler")  // e.g. "GradientDescent", "SupportsSparseSamples
         {
-          meetsCriteria = true;
+          meetsCriteria = false;
+          return false;
         }
       }
+    }
     return meetsCriteria;
   }
   

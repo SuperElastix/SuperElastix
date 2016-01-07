@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef itkComponentSelector_hxx
-#define itkComponentSelector_hxx
+//#ifndef ComponentSelector_hxx
+//#define ComponentSelector_hxx
 
 #include "ComponentSelector.h"
 
@@ -66,11 +66,12 @@ void ComponentSelector::AddCriteria(const CriteriaType &criteria)
 //  bool operator() (const ComponentBasePointer& component) { return !component->MeetsCriteria(this->m_Criteria) }
 //};
 
-void ComponentSelector::UpdatePossibleComponents()
+ComponentSelector::NumberOfComponentsType ComponentSelector::UpdatePossibleComponents()
 {
   // Check each possible component if it meets the criteria
   // Using a Lambda function.
   this->m_PossibleComponents.remove_if([&](ComponentBasePointer component){ return !component->MeetsCriteria(this->m_Criteria); });
+  return this->m_PossibleComponents.size();
 }
 ComponentSelector::ComponentBasePointer ComponentSelector::GetComponent()
 {
@@ -88,4 +89,4 @@ ComponentSelector::ComponentBasePointer ComponentSelector::GetComponent()
 }
 } // end namespace selx
 
-#endif
+//#endif
