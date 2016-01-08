@@ -7,77 +7,17 @@
 #include "elxDataManager.h"
 #include "gtest/gtest.h"
 
-// TODO:
-// - In the following examples, why do we need to call update on both reader and elastixFilter
-//   before using the writer? Should the call to update on the writer not be propagated upstream?
-//   (See http://itk.org/Wiki/ITK/Examples/Segmentation/OtsuThresholdImageFilter which defeats the whole
-//   purpose of having a pipeline, no?)
-// - Compare result images against baseline
-// - SetUp() runs before every test. Does GoogleTest have a function that is called once before tests are run?
+// TODO: Check that desired results are actually obtained, e.g. by comparing result
+// images against a baseline. Right now we only check that no errors are thrown.
 
-
-using namespace selx;
+using namespace elastix;
 
 class ElastixFilterTest : public ::testing::Test
 {
 protected:
 
   typedef DataManager DataManagerType;
-
-  // Parameter typedefs
-  typedef ParameterObject::ParameterVectorType              ParameterVectorType;
-  typedef ParameterObject::ParameterMapType                 ParameterMapType;
-
-  ParameterMapType parameterMap;
-  ParameterObject::Pointer nonRigidParameterObject;
-  ParameterObject::Pointer nonRigidParameterObject3D;
-  ParameterObject::Pointer groupwiseParameterObject;
-  ParameterObject::ConstPointer transformParameterObject;
-
-  virtual void SetUp()
-  {
-    // Nonrigid ParameterMap
-    parameterMap                                        = ParameterMapType();
-
-    // Images
-    parameterMap[ "FixedInternalImagePixelType" ]       = ParameterVectorType( 1, "float" );
-    parameterMap[ "FixedImageDimension" ]               = ParameterVectorType( 1, "2" );
-    parameterMap[ "MovingInternalImagePixelType" ]      = ParameterVectorType( 1, "float" );
-    parameterMap[ "MovingImageDimension" ]              = ParameterVectorType( 1, "2" );
-    parameterMap[ "ResultImagePixelType" ]              = ParameterVectorType( 1, "float" );
-
-    // Common components
-    parameterMap[ "FixedImagePyramid" ]                 = ParameterVectorType( 1, "FixedSmoothingImagePyramid" );
-    parameterMap[ "MovingImagePyramid" ]                = ParameterVectorType( 1, "MovingSmoothingImagePyramid" );
-    parameterMap[ "Interpolator"]                       = ParameterVectorType( 1, "LinearInterpolator");
-    parameterMap[ "Optimizer" ]                         = ParameterVectorType( 1, "AdaptiveStochasticGradientDescent" );
-    parameterMap[ "Resampler"]                          = ParameterVectorType( 1, "DefaultResampler" );
-    parameterMap[ "ResampleInterpolator"]               = ParameterVectorType( 1, "FinalLinearInterpolator" );
-    parameterMap[ "FinalBSplineInterpolationOrder" ]    = ParameterVectorType( 1, "2" );
-    parameterMap[ "NumberOfResolutions" ]               = ParameterVectorType( 1, "2" );
-
-    // Image Sampler
-    parameterMap[ "ImageSampler" ]                      = ParameterVectorType( 1, "RandomCoordinate" );
-    parameterMap[ "NumberOfSpatialSamples"]             = ParameterVectorType( 1, "2048" );
-    parameterMap[ "CheckNumberOfSamples" ]              = ParameterVectorType( 1, "true" );
-    parameterMap[ "MaximumNumberOfSamplingAttempts" ]   = ParameterVectorType( 1, "8" );
-    parameterMap[ "NewSamplesEveryIteration" ]          = ParameterVectorType( 1, "true");
-
-    // Optimizer
-    parameterMap[ "NumberOfSamplesForExactGradient" ]   = ParameterVectorType( 1, "4096" );
-    parameterMap[ "DefaultPixelValue" ]                 = ParameterVectorType( 1, "0" );
-    parameterMap[ "AutomaticParameterEstimation" ]      = ParameterVectorType( 1, "true" );
-
-    // Output
-    parameterMap[ "WriteResultImage" ]                  = ParameterVectorType( 1, "true" );
-    parameterMap[ "ResultImageFormat" ]                 = ParameterVectorType( 1, "nii" );
-
-    // Registration
-    parameterMap[ "Registration" ]                      = ParameterVectorType( 1, "MultiResolutionRegistration" );
-    parameterMap[ "Transform" ]                         = ParameterVectorType( 1, "EulerTransform" );
-    parameterMap[ "Metric" ]                            = ParameterVectorType( 1, "AdvancedMattesMutualInformation" );
-    parameterMap[ "MaximumNumberOfIterations" ]         = ParameterVectorType( 1, "128" );
-  }
+  typedef ParameterObject::ParameterValueVectorType ParameterValueVectorType;
 };
 
 TEST_F( ElastixFilterTest, Instantiation )
@@ -89,6 +29,10 @@ TEST_F( ElastixFilterTest, Instantiation )
 
 TEST_F( ElastixFilterTest, UpdateOnGetOutputEuler2D )
 {
+  ParameterObject::Pointer parameterObject;
+  EXPECT_NO_THROW( parameterObject = ParameterObject::New() );
+  EXPECT_NO_THROW( parameterObject->SetParameterMap( "rigid" ) );
+
   typedef itk::Image< float, 2 > ImageType;
   typedef itk::ImageFileReader< ImageType > ImageFileReaderType;
   typedef itk::ImageFileWriter< ImageType > ImageFileWriterType;
@@ -98,22 +42,16 @@ TEST_F( ElastixFilterTest, UpdateOnGetOutputEuler2D )
 
   ImageFileReaderType::Pointer fixedImageReader = ImageFileReaderType::New();
   fixedImageReader->SetFileName( dataManager->GetInputFile( "BrainProtonDensitySliceBorder20.png" ) );
-  fixedImageReader->Update();
 
   ImageFileReaderType::Pointer movingImageReader = ImageFileReaderType::New();
   movingImageReader->SetFileName( dataManager->GetInputFile( "BrainProtonDensitySliceR10X13Y17.png" ) );
-  movingImageReader->Update();
-
-  ParameterObject::Pointer eulerTransformParameterObject;
-  EXPECT_NO_THROW( eulerTransformParameterObject = ParameterObject::New() );
-  EXPECT_NO_THROW( eulerTransformParameterObject->SetParameterMap( parameterMap ) );
 
   ElastixFilterType::Pointer elastixFilter;
   EXPECT_NO_THROW( elastixFilter = ElastixFilterType::New() );
   EXPECT_NO_THROW( elastixFilter->LogToConsoleOn() );
   EXPECT_NO_THROW( elastixFilter->SetFixedImage( fixedImageReader->GetOutput() ) );
   EXPECT_NO_THROW( elastixFilter->SetMovingImage( movingImageReader->GetOutput() ) );
-  EXPECT_NO_THROW( elastixFilter->SetParameterObject( eulerTransformParameterObject ) );
+  EXPECT_NO_THROW( elastixFilter->SetParameterObject( parameterObject ) );
 
   // We try to write the image because simply calling GetOutput() will not result in an
   // error (a pointer is still passed even if elastix has not run, although the pointee is empty)
@@ -125,6 +63,10 @@ TEST_F( ElastixFilterTest, UpdateOnGetOutputEuler2D )
 
 TEST_F( ElastixFilterTest, UpdateOnGetTransformParametersEuler2D )
 {
+  ParameterObject::Pointer parameterObject;
+  EXPECT_NO_THROW( parameterObject = ParameterObject::New() );
+  EXPECT_NO_THROW( parameterObject->SetParameterMap( "rigid" ) );
+
   typedef itk::Image< float, 2 > ImageType;
   typedef itk::ImageFileReader< ImageType > ImageFileReaderType;
   typedef itk::ImageFileWriter< ImageType > ImageFileWriterType;
@@ -134,15 +76,9 @@ TEST_F( ElastixFilterTest, UpdateOnGetTransformParametersEuler2D )
 
   ImageFileReaderType::Pointer fixedImageReader = ImageFileReaderType::New();
   fixedImageReader->SetFileName( dataManager->GetInputFile( "BrainProtonDensitySliceBorder20.png" ) );
-  fixedImageReader->Update();
 
   ImageFileReaderType::Pointer movingImageReader = ImageFileReaderType::New();
   movingImageReader->SetFileName( dataManager->GetInputFile( "BrainProtonDensitySliceR10X13Y17.png" ) );
-  movingImageReader->Update();
-
-  ParameterObject::Pointer eulerTransformParameterObject;
-  EXPECT_NO_THROW( eulerTransformParameterObject  = ParameterObject::New() );
-  EXPECT_NO_THROW( eulerTransformParameterObject->SetParameterMap( parameterMap ) );
 
   ElastixFilterType::Pointer elastixFilter;
   ParameterObject::Pointer transformParameters;
@@ -151,13 +87,26 @@ TEST_F( ElastixFilterTest, UpdateOnGetTransformParametersEuler2D )
   EXPECT_NO_THROW( elastixFilter->LogToConsoleOn() );
   EXPECT_NO_THROW( elastixFilter->SetFixedImage( fixedImageReader->GetOutput() ) );
   EXPECT_NO_THROW( elastixFilter->SetMovingImage( movingImageReader->GetOutput() ) );
-  EXPECT_NO_THROW( elastixFilter->SetParameterObject( eulerTransformParameterObject ) );
+  EXPECT_NO_THROW( elastixFilter->SetParameterObject( parameterObject ) );
   EXPECT_NO_THROW( transformParameters = elastixFilter->GetTransformParameters() );
-  EXPECT_TRUE( transformParameters->GetParameterMapList()[ 0 ].size() > 0 );
+  EXPECT_TRUE( transformParameters->GetParameterMap()[ 0 ].size() > 0 );
 }
 
 TEST_F( ElastixFilterTest, AffineWithMultipleFixedAndMovingImages2D )
 {
+  // TODO: Internal logic to automatically broadcast metric, sampler,
+  // interpolator and pyramids to match the number of metrics. Can do
+  // it in such a way that we are guaranteed to not mess up user settings?
+  ParameterObject::Pointer parameterObject;
+  EXPECT_NO_THROW( parameterObject = ParameterObject::New() );
+  EXPECT_NO_THROW( parameterObject->SetParameterMap( "affine" ) );
+  EXPECT_NO_THROW( parameterObject->GetParameterMap( 0 )[ "Registration" ] = ParameterValueVectorType( 1, "MultiMetricMultiResolutionRegistration" ) );
+  EXPECT_NO_THROW( parameterObject->GetParameterMap( 0 )[ "Metric" ] = ParameterValueVectorType( 2, parameterObject->GetParameterMap( 0 )[ "Metric" ][ 0 ] ) );
+  EXPECT_NO_THROW( parameterObject->GetParameterMap( 0 )[ "ImageSampler" ] = ParameterValueVectorType( 2, parameterObject->GetParameterMap( 0 )[ "ImageSampler" ][ 0 ] ) );
+  EXPECT_NO_THROW( parameterObject->GetParameterMap( 0 )[ "Interpolator" ] = ParameterValueVectorType( 2, parameterObject->GetParameterMap( 0 )[ "Interpolator" ][ 0 ] ) );
+  EXPECT_NO_THROW( parameterObject->GetParameterMap( 0 )[ "FixedImagePyramid" ] = ParameterValueVectorType( 2, parameterObject->GetParameterMap( 0 )[ "FixedImagePyramid" ][ 0 ] ) );
+  EXPECT_NO_THROW( parameterObject->GetParameterMap( 0 )[ "MovingImagePyramid" ] = ParameterValueVectorType( 2, parameterObject->GetParameterMap( 0 )[ "MovingImagePyramid" ][ 0 ] ) );
+
   typedef itk::Image< float, 2 > ImageType;
   typedef itk::ImageFileReader< ImageType > ImageFileReaderType;
   typedef itk::ImageFileWriter< ImageType > ImageFileWriterType;
@@ -169,35 +118,35 @@ TEST_F( ElastixFilterTest, AffineWithMultipleFixedAndMovingImages2D )
 
   ImageFileReaderType::Pointer fixedImageReader0 = ImageFileReaderType::New();
   fixedImageReader0->SetFileName( dataManager->GetInputFile( "BrainProtonDensitySliceBorder20.png" ) );
-  fixedImageReader0->Update();
 
   ImageFileReaderType::Pointer fixedImageReader1 = ImageFileReaderType::New();
   fixedImageReader1->SetFileName( dataManager->GetInputFile( "BrainProtonDensitySliceBorder20.png" ) );
-  fixedImageReader1->Update();
 
   ImageFileReaderType::Pointer movingImageReader0 = ImageFileReaderType::New();
   movingImageReader0->SetFileName( dataManager->GetInputFile( "BrainProtonDensitySliceR10X13Y17S12.png" ) );
-  movingImageReader0->Update();
 
   ImageFileReaderType::Pointer movingImageReader1 = ImageFileReaderType::New();
   movingImageReader1->SetFileName( dataManager->GetInputFile( "BrainProtonDensitySliceR10X13Y17S12.png" ) );
-  movingImageReader1->Update();
 
-  ParameterMapType affineTransformParameterMap = parameterMap;
-  affineTransformParameterMap[ "Transform" ] = ParameterVectorType( 1, "AffineTransform" );
-
-  ParameterObject::Pointer affineTransformParameterObject;
-  EXPECT_NO_THROW( affineTransformParameterObject = ParameterObject::New() );
-  EXPECT_NO_THROW( affineTransformParameterObject->SetParameterMap( affineTransformParameterMap ) );
+  // We fill the first pair of fixed and moving images with zeros to be able 
+  // to inspect if the subsequent pair is able to drive the registration
+  ImageType::Pointer fixedImage0 = fixedImageReader0->GetOutput();
+  fixedImage0->Update();
+  fixedImage0->DisconnectPipeline();
+  fixedImage0->FillBuffer( 0.0 );
+  ImageType::Pointer movingImage0 = movingImageReader0->GetOutput();
+  movingImage0->Update();
+  movingImage0->DisconnectPipeline();
+  movingImage0->FillBuffer( 0.0 );
 
   DataObjectContainerPointer fixedImages;
   EXPECT_NO_THROW( fixedImages = DataObjectContainerType::New() );
-  EXPECT_NO_THROW( fixedImages->CreateElementAt( 0 ) = static_cast< itk::DataObject* >( fixedImageReader0->GetOutput() ) );
+  EXPECT_NO_THROW( fixedImages->CreateElementAt( 0 ) = static_cast< itk::DataObject* >( fixedImage0 ) );
   EXPECT_NO_THROW( fixedImages->CreateElementAt( 1 ) = static_cast< itk::DataObject* >( fixedImageReader1->GetOutput() ) );
 
   DataObjectContainerPointer movingImages;
   EXPECT_NO_THROW( movingImages = DataObjectContainerType::New() );
-  EXPECT_NO_THROW( movingImages->CreateElementAt( 0 ) = static_cast< itk::DataObject* >( movingImageReader0->GetOutput() ) );
+  EXPECT_NO_THROW( movingImages->CreateElementAt( 0 ) = static_cast< itk::DataObject* >( movingImage0 ) );
   EXPECT_NO_THROW( movingImages->CreateElementAt( 1 ) = static_cast< itk::DataObject* >( movingImageReader1->GetOutput() ) );
 
   ElastixFilterType::Pointer elastixFilter;
@@ -205,21 +154,27 @@ TEST_F( ElastixFilterTest, AffineWithMultipleFixedAndMovingImages2D )
   EXPECT_NO_THROW( elastixFilter->LogToConsoleOn() );
   EXPECT_NO_THROW( elastixFilter->SetFixedImage( fixedImages ) );
   EXPECT_NO_THROW( elastixFilter->SetMovingImage( movingImages ) );
-  EXPECT_NO_THROW( elastixFilter->SetParameterObject( affineTransformParameterObject ) );
-
-  // TODO: This update should not be needed (see description above)
-  EXPECT_NO_THROW( elastixFilter->Update() );
+  EXPECT_NO_THROW( elastixFilter->SetParameterObject( parameterObject ) );
 
   ImageFileWriterType::Pointer writer = ImageFileWriterType::New();
   EXPECT_NO_THROW( writer->SetFileName( dataManager->GetOutputFile( "AffineWithMultipleFixedAndMovingImages2DResultImage.nii" ) ) );
   EXPECT_NO_THROW( writer->SetInput( elastixFilter->GetOutput() ) );
   EXPECT_NO_THROW( writer->Update() );
 
+  ParameterObject::Pointer transformParameterObject;
   EXPECT_NO_THROW( transformParameterObject = elastixFilter->GetTransformParameters() );
 }
 
 TEST_F( ElastixFilterTest, TranslationWithPointSets2D )
 {
+  ParameterObject::Pointer parameterObject;
+  EXPECT_NO_THROW( parameterObject = ParameterObject::New() );
+  EXPECT_NO_THROW( parameterObject->SetParameterMap( "translation" ) );
+  EXPECT_NO_THROW( parameterObject->GetParameterMap( 0 )[ "Registration" ] = ParameterValueVectorType( 1, "MultiMetricMultiResolutionRegistration" ) );
+  EXPECT_NO_THROW( parameterObject->GetParameterMap( 0 )[ "Transform" ] = ParameterValueVectorType( 1, "TranslationTransform" ) );
+  EXPECT_NO_THROW( parameterObject->GetParameterMap( 0 )[ "Metric" ].push_back( "CorrespondingPointsEuclideanDistanceMetric" ) );
+  EXPECT_NO_THROW( parameterObject->GetParameterMap( 0 )[ "Metric0Weight"] = ParameterValueVectorType( 1, "0.0" ) );
+
   typedef itk::Image< float, 2 > ImageType;
   typedef itk::ImageFileReader< ImageType > ImageFileReaderType;
   typedef itk::ImageFileWriter< ImageType > ImageFileWriterType;
@@ -244,21 +199,9 @@ TEST_F( ElastixFilterTest, TranslationWithPointSets2D )
 
   ImageFileReaderType::Pointer fixedImageReader = ImageFileReaderType::New();
   fixedImageReader->SetFileName( dataManager->GetInputFile( "BrainProtonDensitySliceBorder20.png" ) );
-  fixedImageReader->Update();
 
   ImageFileReaderType::Pointer movingImageReader = ImageFileReaderType::New();
   movingImageReader->SetFileName( dataManager->GetInputFile( "BrainProtonDensitySliceShifted13x17y.png" ) );
-  movingImageReader->Update();
-
-  ParameterMapType correspondingPointsParameterMap = parameterMap;
-  correspondingPointsParameterMap[ "Registration" ] = ParameterVectorType( 1, "MultiMetricMultiResolutionRegistration" );
-  correspondingPointsParameterMap[ "Transform" ] = ParameterVectorType( 1, "TranslationTransform" );
-  correspondingPointsParameterMap[ "Metric" ].push_back( "CorrespondingPointsEuclideanDistanceMetric" );
-  correspondingPointsParameterMap[ "Metric0Weight"] = ParameterVectorType( 1, "0.0" );
-
-  ParameterObject::Pointer correspondingPointsParameterObject;
-  EXPECT_NO_THROW( correspondingPointsParameterObject = ParameterObject::New() );
-  EXPECT_NO_THROW( correspondingPointsParameterObject->SetParameterMap( correspondingPointsParameterMap ) );
 
   ElastixFilterType::Pointer elastixFilter;
   EXPECT_NO_THROW( elastixFilter = ElastixFilterType::New() );
@@ -267,20 +210,59 @@ TEST_F( ElastixFilterTest, TranslationWithPointSets2D )
   EXPECT_NO_THROW( elastixFilter->SetFixedMeshFileName( dataManager->GetInputFile( "FixedMesh.pts" )  ) );
   EXPECT_NO_THROW( elastixFilter->SetMovingImage( movingImageReader->GetOutput() ) );
   EXPECT_NO_THROW( elastixFilter->SetMovingMeshFileName( dataManager->GetInputFile( "MovingMesh.pts" ) ) );
-  EXPECT_NO_THROW( elastixFilter->SetParameterObject( correspondingPointsParameterObject ) );
-
-  // TODO: This update should not be needed (see description above)
-  EXPECT_NO_THROW( elastixFilter->Update() );
+  EXPECT_NO_THROW( elastixFilter->SetParameterObject( parameterObject ) );
 
   ImageFileWriterType::Pointer writer = ImageFileWriterType::New();
   EXPECT_NO_THROW( writer->SetFileName( "TranslationWithPointSets2DResultImage.nii" ) );
   EXPECT_NO_THROW( writer->SetInput( elastixFilter->GetOutput() ) );
   EXPECT_NO_THROW( writer->Update() );
 
+  ParameterObject::Pointer transformParameterObject;
   EXPECT_NO_THROW( transformParameterObject = elastixFilter->GetTransformParameters() );
  }
 
 TEST_F( ElastixFilterTest, BSplineWithFixedMask2D )
+{
+  ParameterObject::Pointer parameterObject;
+  EXPECT_NO_THROW( parameterObject = ParameterObject::New() );
+  EXPECT_NO_THROW( parameterObject->SetParameterMap( "nonrigid" ) );
+
+  typedef itk::Image< float, 2 > ImageType;
+  typedef itk::ImageFileReader< ImageType > ImageFileReaderType;
+  typedef itk::ImageFileWriter< ImageType > ImageFileWriterType;
+  typedef ElastixFilter< ImageType, ImageType > ElastixFilterType;
+
+  DataManagerType::Pointer dataManager = DataManagerType::New();
+
+  ImageFileReaderType::Pointer fixedImageReader = ImageFileReaderType::New();
+  fixedImageReader->SetFileName( dataManager->GetInputFile( "BrainProtonDensitySliceBorder20.png" ) );
+
+  ImageFileReaderType::Pointer fixedMaskReader = ImageFileReaderType::New();
+  fixedMaskReader->SetFileName( dataManager->GetInputFile( "BrainProtonDensitySliceBorder20Mask.png" ) );
+
+  ImageFileReaderType::Pointer movingImageReader = ImageFileReaderType::New();
+  movingImageReader->SetFileName( dataManager->GetInputFile( "BrainProtonDensitySliceR10X13Y17.png" ) );
+
+  ElastixFilterType::Pointer elastixFilter;
+  EXPECT_NO_THROW( elastixFilter = ElastixFilterType::New() );
+  EXPECT_NO_THROW( elastixFilter->LogToConsoleOn() );
+  EXPECT_NO_THROW( elastixFilter->SetFixedImage( fixedImageReader->GetOutput() ) );
+  EXPECT_NO_THROW( elastixFilter->SetFixedMask( fixedMaskReader->GetOutput() ) );
+  EXPECT_NO_THROW( elastixFilter->SetMovingImage( movingImageReader->GetOutput() ) );
+  EXPECT_NO_THROW( elastixFilter->SetParameterObject( parameterObject ) );
+
+  ImageFileWriterType::Pointer writer = ImageFileWriterType::New();
+  EXPECT_NO_THROW( writer->SetFileName( dataManager->GetOutputFile( "BSplineWithFixedMask2DResultImage.nii" ) ) );
+  EXPECT_NO_THROW( writer->SetInput( elastixFilter->GetOutput() ) );
+  EXPECT_NO_THROW( writer->Update() );
+
+  ParameterObject::Pointer transformParameterObject;
+  EXPECT_NO_THROW( transformParameterObject = elastixFilter->GetTransformParameters() );
+}
+
+#ifdef SUPERELASTIX_BUILD_LONG_TESTS
+
+TEST_F( ElastixFilterTest, DefaultParameterObject )
 {
   typedef itk::Image< float, 2 > ImageType;
   typedef itk::ImageFileReader< ImageType > ImageFileReaderType;
@@ -291,44 +273,26 @@ TEST_F( ElastixFilterTest, BSplineWithFixedMask2D )
 
   ImageFileReaderType::Pointer fixedImageReader = ImageFileReaderType::New();
   fixedImageReader->SetFileName( dataManager->GetInputFile( "BrainProtonDensitySliceBorder20.png" ) );
-  fixedImageReader->Update();
-
-  ImageFileReaderType::Pointer fixedMaskReader = ImageFileReaderType::New();
-  fixedMaskReader->SetFileName( dataManager->GetInputFile( "BrainProtonDensitySliceBorder20Mask.png" ) );
-  fixedMaskReader->Update();
 
   ImageFileReaderType::Pointer movingImageReader = ImageFileReaderType::New();
   movingImageReader->SetFileName( dataManager->GetInputFile( "BrainProtonDensitySliceR10X13Y17.png" ) );
-  movingImageReader->Update();
-
-  ParameterMapType nonRigidParameterMap = parameterMap;
-  nonRigidParameterMap[ "Transform" ] = ParameterVectorType( 1, "BSplineTransform" );
-  ParameterObject::Pointer nonRigidParameterObject = ParameterObject::New();
-  nonRigidParameterObject->SetParameterMap( nonRigidParameterMap );
 
   ElastixFilterType::Pointer elastixFilter;
+
   EXPECT_NO_THROW( elastixFilter = ElastixFilterType::New() );
   EXPECT_NO_THROW( elastixFilter->LogToConsoleOn() );
   EXPECT_NO_THROW( elastixFilter->SetFixedImage( fixedImageReader->GetOutput() ) );
-  EXPECT_NO_THROW( elastixFilter->SetFixedMask( fixedMaskReader->GetOutput() ) );
   EXPECT_NO_THROW( elastixFilter->SetMovingImage( movingImageReader->GetOutput() ) );
-  EXPECT_NO_THROW( elastixFilter->SetParameterObject( nonRigidParameterObject ) );
-
-  // TODO: This update should not be needed (see description above)
-  EXPECT_NO_THROW( elastixFilter->Update() );
-
-  ImageFileWriterType::Pointer writer = ImageFileWriterType::New();
-  EXPECT_NO_THROW( writer->SetFileName( dataManager->GetOutputFile( "BSplineWithFixedMask2DResultImage.nii" ) ) );
-  EXPECT_NO_THROW( writer->SetInput( elastixFilter->GetOutput() ) );
-  EXPECT_NO_THROW( writer->Update() );
-
-  EXPECT_NO_THROW( transformParameterObject = elastixFilter->GetTransformParameters() );
+  elastixFilter->Update();
 }
-
-#ifdef SUPERELASTIX_BUILD_LONG_TESTS
 
 TEST_F( ElastixFilterTest, BSpline3D )
 {
+  ParameterObject::Pointer parameterObject;
+  EXPECT_NO_THROW( parameterObject = ParameterObject::New() );
+  EXPECT_NO_THROW( parameterObject->SetParameterMap( "nonrigid" ) );
+  EXPECT_NO_THROW( parameterObject->GetParameterMap( 0 )[ "MaximumNumberOfIterations" ] = ParameterValueVectorType( 1, "8" ) );
+
   typedef itk::Image< float, 3 > ImageType;
   typedef itk::ImageFileReader< ImageType > ImageFileReaderType;
   typedef itk::ImageFileWriter< ImageType > ImageFileWriterType;
@@ -338,92 +302,64 @@ TEST_F( ElastixFilterTest, BSpline3D )
 
   ImageFileReaderType::Pointer fixedImageReader = ImageFileReaderType::New();
   fixedImageReader->SetFileName( dataManager->GetInputFile( "OAS1_0001_MR1_mpr-1_anon.nrrd" ) );
-  fixedImageReader->Update();
 
   ImageFileReaderType::Pointer movingImageReader = ImageFileReaderType::New();
   movingImageReader->SetFileName( dataManager->GetInputFile( "OAS1_0002_MR1_mpr-1_anon.nrrd" ) );
-  movingImageReader->Update();
-
-  ParameterMapType nonRigidParameterMap3D = parameterMap;
-  nonRigidParameterMap3D[ "FixedInternalImagePixelType" ] = ParameterVectorType( 1, "float" );
-  nonRigidParameterMap3D[ "FixedImageDimension" ] = ParameterVectorType( 1, "3" );
-  nonRigidParameterMap3D[ "MovingInternalImagePixelType" ] = ParameterVectorType( 1, "float" );
-  nonRigidParameterMap3D[ "MovingImageDimension" ] = ParameterVectorType( 1, "3" );
-  nonRigidParameterMap3D[ "ResultImagePixelType" ] = ParameterVectorType( 1, "float" );
-  nonRigidParameterMap3D[ "Transform" ] = ParameterVectorType( 1, "BSplineTransform" );
-  nonRigidParameterMap3D[ "MaximumNumberOfIterations" ] = ParameterVectorType( 1, "8" );
-
-  ParameterObject::Pointer nonRigidParameterObject3D;
-  EXPECT_NO_THROW( nonRigidParameterObject3D = ParameterObject::New() );
-  EXPECT_NO_THROW( nonRigidParameterObject3D->SetParameterMap( nonRigidParameterMap3D ) );
 
   ElastixFilterType::Pointer elastixFilter;
   EXPECT_NO_THROW( elastixFilter = ElastixFilterType::New() );
   EXPECT_NO_THROW( elastixFilter->LogToConsoleOn() );
   EXPECT_NO_THROW( elastixFilter->SetFixedImage( fixedImageReader->GetOutput() ) );
   EXPECT_NO_THROW( elastixFilter->SetMovingImage( movingImageReader->GetOutput() ) );
-  EXPECT_NO_THROW( elastixFilter->SetParameterObject( nonRigidParameterObject3D ) );
-
-  // TODO: This update should not be needed (see description above) 
-  EXPECT_NO_THROW( elastixFilter->Update() );
+  EXPECT_NO_THROW( elastixFilter->SetParameterObject( parameterObject ) );
 
   ImageFileWriterType::Pointer writer = ImageFileWriterType::New();
   EXPECT_NO_THROW( writer->SetFileName( dataManager->GetOutputFile( "BSpline3DResultImage.nii" ) ) );
   EXPECT_NO_THROW( writer->SetInput( elastixFilter->GetOutput() ) );
   EXPECT_NO_THROW( writer->Update() );
 
+  ParameterObject::Pointer transformParameterObject;
   EXPECT_NO_THROW( transformParameterObject = elastixFilter->GetTransformParameters() );
 }
 
-// TODO: Find out why this segfaults
-//TEST_F( ElastixFilterTest, BSpline4D )
-//{
-//  typedef itk::Image< float, 4 > ImageType;
-//  typedef itk::ImageFileReader< ImageType > ImageFileReaderType;
-//  typedef itk::ImageFileWriter< ImageType > ImageFileWriterType;
-//  typedef ElastixFilter< ImageType, ImageType > ElastixFilterType;
-//
-//  DataManagerType::Pointer dataManager = DataManagerType::New();
-//
-//  ImageFileReaderType::Pointer fixedImageReader = ImageFileReaderType::New();
-//  fixedImageReader->SetFileName( dataManager->GetInputFile( "4D.nii.gz" ) );
-//  fixedImageReader->Update();
-//
-//  ImageFileReaderType::Pointer movingImageReader = ImageFileReaderType::New();
-//  movingImageReader->SetFileName( dataManager->GetInputFile( "4D.nii.gz" ) );
-//  movingImageReader->Update();
-//
-//  ParameterMapType groupwiseParameterMap = parameterMap;
-//  groupwiseParameterMap[ "FixedInternalImagePixelType" ] = ParameterVectorType( 1, "float" );
-//  groupwiseParameterMap[ "FixedImageDimension" ] = ParameterVectorType( 1, "4" );
-//  groupwiseParameterMap[ "MovingInternalImagePixelType" ] = ParameterVectorType( 1, "float" );
-//  groupwiseParameterMap[ "MovingImageDimension" ] = ParameterVectorType( 1, "4" );
-//  groupwiseParameterMap[ "ResultImagePixelType" ] = ParameterVectorType( 1, "float" );
-//  groupwiseParameterMap[ "Transform" ] = ParameterVectorType( 1, "BSplineStackTransform" );
-//  groupwiseParameterMap[ "Metric" ] = ParameterVectorType( 1, "VarianceOverLastDimensionMetric" );
-//  groupwiseParameterMap[ "MaximumNumberOfIterations" ] = ParameterVectorType( 1, "512" );
-//  groupwiseParameterMap[ "Interpolator"] = ParameterVectorType( 1, "ReducedDimensionBSplineInterpolator" );
-//  groupwiseParameterMap[ "ResampleInterpolator" ] = ParameterVectorType( 1, "FinalReducedDimensionBSplineInterpolator" );
-//  groupwiseParameterMap[ "MaximumNumberOfIterations" ] = ParameterVectorType( 1, "8" );
-//  ParameterObject::Pointer groupwiseParameterObject = ParameterObject::New();
-//  groupwiseParameterObject->SetParameterMap( nonRigidParameterMap );
-//
-//  ElastixFilterType::Pointer elastixFilter;
-//  EXPECT_NO_THROW( elastixFilter = ElastixFilterType::New() );
-//  EXPECT_NO_THROW( elastixFilter->LogToConsoleOn() );
-//  EXPECT_NO_THROW( elastixFilter->SetFixedImage( fixedImageReader->GetOutput() ) );
-//  EXPECT_NO_THROW( elastixFilter->SetMovingImage( movingImageReader->GetOutput() ) );
-//  EXPECT_NO_THROW( elastixFilter->SetParameterObject( groupwiseParameterObject ) );
-//
-//  // TODO: This update should not be needed (see description above)
-//  EXPECT_NO_THROW( elastixFilter->Update() );
-//
-//  ImageFileWriterType::Pointer writer = ImageFileWriterType::New();
-//  writer->SetFileName( dataManager->GetOutputFile( "BSpline4DResultImage.nii" ) );
-//  writer->SetInput( elastixFilter->GetOutput() );
-//  EXPECT_NO_THROW( writer->Update() );
-//
-//  EXPECT_NO_THROW( transformParameterObject = elastixFilter->GetTransformParameters() );
-//}
+#include "itkCastImageFilter.h" 
+TEST_F( ElastixFilterTest, BSpline4D )
+{
+  ParameterObject::Pointer parameterObject = ParameterObject::New();
+  parameterObject->SetParameterMap( "groupwise" );
+  parameterObject->GetParameterMap( 0 )[ "MaximumNumberOfIterations" ] = ParameterValueVectorType( 1, "4" );
+
+  typedef itk::Image< float, 4 > FloatImageType;
+  typedef itk::ImageFileReader< FloatImageType > ImageFileReaderType;
+
+  DataManagerType::Pointer dataManager = DataManagerType::New();
+
+  ImageFileReaderType::Pointer imageReader = ImageFileReaderType::New();
+  imageReader->SetFileName( dataManager->GetInputFile( "4D.nii.gz" ) );
+
+  // Elastix is not compiled with the combination of float and dim = 4 by default
+  typedef itk::Image< short, 4 > ShortImageType;
+  typedef itk::CastImageFilter< FloatImageType, ShortImageType > CastImageFilterType;
+  typedef itk::ImageFileWriter< ShortImageType > ImageFileWriterType;
+  typedef ElastixFilter< ShortImageType, ShortImageType > ElastixFilterType;
+
+  CastImageFilterType::Pointer castImageFilter = CastImageFilterType::New();
+  castImageFilter->SetInput( imageReader->GetOutput() );
+
+  ElastixFilterType::Pointer elastixFilter;
+  EXPECT_NO_THROW( elastixFilter = ElastixFilterType::New() );
+  EXPECT_NO_THROW( elastixFilter->LogToConsoleOn() );
+  EXPECT_NO_THROW( elastixFilter->SetFixedImage( castImageFilter->GetOutput() ) );
+  EXPECT_NO_THROW( elastixFilter->SetMovingImage( castImageFilter->GetOutput() ) );
+  EXPECT_NO_THROW( elastixFilter->SetParameterObject( parameterObject ) );
+
+  ImageFileWriterType::Pointer writer = ImageFileWriterType::New();
+  EXPECT_NO_THROW( writer->SetFileName( dataManager->GetOutputFile( "BSpline4DResultImage.nii" ) ) );
+  EXPECT_NO_THROW( writer->SetInput( elastixFilter->GetOutput() ) );
+  EXPECT_NO_THROW( writer->Update() );
+
+  ParameterObject::Pointer transformParameterObject;
+  EXPECT_NO_THROW( transformParameterObject = elastixFilter->GetTransformParameters() );
+}
 
 #endif // SUPERELASTIX_BUILD_LONG_TESTS

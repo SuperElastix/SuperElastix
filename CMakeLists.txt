@@ -64,16 +64,6 @@ find_package( Boost REQUIRED )
 include_directories( ${Boost_INCLUDE_DIRS} )
 
 # ---------------------------------------------------------------------
-# OpenMP Library 
-# Required for ElastixComponent
-# gcc needs the appropriate flags to support OpenMP 
-find_package(OpenMP)
-if (OPENMP_FOUND)
-    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-endif()
-
-# ---------------------------------------------------------------------
 # Build SuperElastix
 
 # For now we just enable all modules
