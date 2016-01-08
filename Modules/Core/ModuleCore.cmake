@@ -22,6 +22,7 @@ set( ${MODULE}_TESTS
   elxBlueprintTest.cxx
   elxComponentFactoryTest.cxx
   elxComponentInterfaceTest.cxx
+  elxOverlordTest.cxx
 )
 
 # Module source files
