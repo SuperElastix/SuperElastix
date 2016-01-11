@@ -11,16 +11,13 @@ namespace selx
     for (CriteriaType::const_iterator it = criteria.begin(); it != criteria.cend(); ++it)
     {
       if (it->first == "NameOfClass")
-      //if (strcmp(it->first.c_str(), "NameOfClass") == 0)
       {
         if (it->second.size() != 1)
         {
           itkExceptionMacro("The criterion NameOfClass may have only 1 value");
         }
-
-        //if (strcmp(it->second->c_str(), this->GetNameOfClass()) != 0)
+        auto temp = this->GetNameOfClass();
         if (it->second[0] != this->GetNameOfClass())
-        //if (strcmp((it->second.cbegin)->c_str(), this->GetNameOfClass()) != 0 )
         {
           meetsCriteria = false;
           //break;

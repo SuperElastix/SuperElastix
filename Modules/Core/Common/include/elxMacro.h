@@ -10,6 +10,6 @@
   typedef itk::SmartPointer< Self >       Pointer;      \
   typedef itk::SmartPointer< const Self > ConstPointer; \
   itkNewMacro( Self );                                  \
-  itkTypeMacro( Self, superClassName );                 \
+  itkTypeMacro( className, superClassName );            \
 
 #endif // elxMacro_h

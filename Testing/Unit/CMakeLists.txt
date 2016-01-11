@@ -10,6 +10,7 @@ set( ElastixUnitTestFilenames
   elxComponentFactoryTest.cxx
   elxComponentInterfaceTest.cxx
   elxOverlordTest.cxx
+  elxProcessObjectComponentTest.cxx
 )         
 
 # ---------------------------------------------------------------------
