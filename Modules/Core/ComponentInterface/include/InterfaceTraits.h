@@ -2,7 +2,7 @@
 #define InterfaceTraits_h
 
 #include "Interfaces.h"
-
+#include "itkMacro.h"
 namespace selx
 {
 // Traits to get printable interface name
@@ -12,7 +12,8 @@ struct InterfaceName
 {
   static const char* Get()
   {
-    //static_assert(false, "Please implement a template specialization for the appropriate InterfaceName");
+    static_assert(false, "Please implement a template specialization for the appropriate InterfaceName");
+    itkExceptionMacro("Please implement a template specialization for the appropriate InterfaceName");
     return typeid(T).name();
   }
 };
@@ -62,7 +63,14 @@ struct InterfaceName < TransformedImageInterface >
   }
 };
 
-
+template <>
+struct InterfaceName < itkProcessObjectInterface >
+{
+  static const char* Get()
+  {
+    return "itkProcessObjectInterface";
+  }
+};
 
 // partial specialization of InterfaceName
 template<template<typename> class TT, typename T1>
