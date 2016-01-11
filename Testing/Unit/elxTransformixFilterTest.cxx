@@ -49,12 +49,13 @@ TEST_F( TransformixFilterTest, Euler2D )
   EXPECT_NO_THROW( elastixFilter = ElastixFilterType::New() );
   EXPECT_NO_THROW( elastixFilter->SetFixedImage( fixedImageReader->GetOutput() ) );
   EXPECT_NO_THROW( elastixFilter->SetMovingImage( movingImageReader->GetOutput() ) );
+  elastixFilter->LogToConsoleOn();
 
   TransformixFilterType::Pointer transformixFilter;
   EXPECT_NO_THROW( transformixFilter = TransformixFilterType::New() );
   EXPECT_NO_THROW( transformixFilter->SetInputImage( movingImageReader->GetOutput() ) );
   EXPECT_NO_THROW( transformixFilter->SetOutputDirectory( dataManager->GetOutputDirectory() ) );
-  EXPECT_NO_THROW( transformixFilter->SetTransformParameterObject( elastixFilter->GetTransformParameters() ) );
+  EXPECT_NO_THROW( transformixFilter->SetTransformParameterObject( elastixFilter->GetTransformParameterObject() ) );
   EXPECT_NO_THROW( transformixFilter->LogToConsoleOn() );
   EXPECT_NO_THROW( transformixFilter->LogToFileOn() );
   EXPECT_NO_THROW( transformixFilter->Update() );
@@ -85,7 +86,7 @@ TEST_F( TransformixFilterTest, UpdateOnGetOutput )
   EXPECT_NO_THROW( transformixFilter = TransformixFilterType::New() );
   EXPECT_NO_THROW( transformixFilter->SetInputImage( movingImageReader->GetOutput() ) );
   EXPECT_NO_THROW( transformixFilter->SetOutputDirectory( dataManager->GetOutputDirectory() ) );
-  EXPECT_NO_THROW( transformixFilter->SetTransformParameterObject( elastixFilter->GetTransformParameters() ) );
+  EXPECT_NO_THROW( transformixFilter->SetTransformParameterObject( elastixFilter->GetTransformParameterObject() ) );
   EXPECT_NO_THROW( transformixFilter->LogToConsoleOn() );
   EXPECT_NO_THROW( transformixFilter->LogToFileOn() );
 
@@ -95,7 +96,7 @@ TEST_F( TransformixFilterTest, UpdateOnGetOutput )
   EXPECT_NO_THROW( writer->Update() );
 }
 
-TEST_F( TransformixFilterTest, UpdateOnGetTransformParameters )
+TEST_F( TransformixFilterTest, UpdateOnGetTransformParameterObject )
 {
   DataManagerType::Pointer dataManager = DataManagerType::New();
 
@@ -114,10 +115,10 @@ TEST_F( TransformixFilterTest, UpdateOnGetTransformParameters )
   EXPECT_NO_THROW( transformixFilter = TransformixFilterType::New() );
   EXPECT_NO_THROW( transformixFilter->SetInputImage( movingImageReader->GetOutput() ) );
   EXPECT_NO_THROW( transformixFilter->SetOutputDirectory( dataManager->GetOutputDirectory() ) );
-  EXPECT_NO_THROW( transformixFilter->SetTransformParameterObject( elastixFilter->GetTransformParameters() ) );
+  EXPECT_NO_THROW( transformixFilter->SetTransformParameterObject( elastixFilter->GetTransformParameterObject() ) );
   EXPECT_NO_THROW( transformixFilter->LogToConsoleOn() );
   EXPECT_NO_THROW( transformixFilter->LogToFileOn() );
-  EXPECT_NO_THROW( ParameterObject::Pointer transformParameters = transformixFilter->GetTransformParameters() );
+  EXPECT_NO_THROW( ParameterObject::Pointer transformParameters = transformixFilter->GetTransformParameterObject() );
 
   ImageFileWriterType::Pointer writer = ImageFileWriterType::New();
   EXPECT_NO_THROW( writer->SetFileName( dataManager->GetOutputFile( "Euler2DTransformixResultImage.nii" ) ) );
@@ -143,7 +144,7 @@ TEST_F( TransformixFilterTest, ComputeSpatialJacobian )
   TransformixFilterType::Pointer transformixFilter;
   EXPECT_NO_THROW( transformixFilter = TransformixFilterType::New() );
   EXPECT_NO_THROW( transformixFilter->SetOutputDirectory( dataManager->GetOutputDirectory() ) );
-  EXPECT_NO_THROW( transformixFilter->SetTransformParameterObject( elastixFilter->GetTransformParameters() ) );
+  EXPECT_NO_THROW( transformixFilter->SetTransformParameterObject( elastixFilter->GetTransformParameterObject() ) );
   EXPECT_NO_THROW( transformixFilter->LogToConsoleOn() );
   EXPECT_NO_THROW( transformixFilter->LogToFileOn() );
   EXPECT_NO_THROW( transformixFilter->ComputeSpatialJacobianOn() );
@@ -168,7 +169,7 @@ TEST_F( TransformixFilterTest, ComputeDeterminantOfSpatialJacobian )
   TransformixFilterType::Pointer transformixFilter;
   EXPECT_NO_THROW( transformixFilter = TransformixFilterType::New() );
   EXPECT_NO_THROW( transformixFilter->SetOutputDirectory( dataManager->GetOutputDirectory() ) );
-  EXPECT_NO_THROW( transformixFilter->SetTransformParameterObject( elastixFilter->GetTransformParameters() ) );
+  EXPECT_NO_THROW( transformixFilter->SetTransformParameterObject( elastixFilter->GetTransformParameterObject() ) );
   EXPECT_NO_THROW( transformixFilter->LogToConsoleOn() );
   EXPECT_NO_THROW( transformixFilter->LogToFileOn() );
   EXPECT_NO_THROW( transformixFilter->ComputeDeterminantOfSpatialJacobianOn() );
@@ -193,7 +194,7 @@ TEST_F( TransformixFilterTest, ComputeDeformationField )
   TransformixFilterType::Pointer transformixFilter;
   EXPECT_NO_THROW( transformixFilter = TransformixFilterType::New() );
   EXPECT_NO_THROW( transformixFilter->SetOutputDirectory( dataManager->GetOutputDirectory() ) );
-  EXPECT_NO_THROW( transformixFilter->SetTransformParameterObject( elastixFilter->GetTransformParameters() ) );
+  EXPECT_NO_THROW( transformixFilter->SetTransformParameterObject( elastixFilter->GetTransformParameterObject() ) );
   EXPECT_NO_THROW( transformixFilter->LogToConsoleOn() );
   EXPECT_NO_THROW( transformixFilter->LogToFileOn() );
   EXPECT_NO_THROW( transformixFilter->ComputeDeformationFieldOn() );
@@ -226,9 +227,9 @@ TEST_F( TransformixFilterTest, TransformPointSet )
   TransformixFilterType::Pointer transformixFilter;
   EXPECT_NO_THROW( transformixFilter = TransformixFilterType::New() );
   EXPECT_NO_THROW( transformixFilter->SetOutputDirectory( dataManager->GetOutputDirectory() ) );
-  EXPECT_NO_THROW( transformixFilter->SetTransformParameterObject( elastixFilter->GetTransformParameters() ) );
+  EXPECT_NO_THROW( transformixFilter->SetTransformParameterObject( elastixFilter->GetTransformParameterObject() ) );
   EXPECT_NO_THROW( transformixFilter->LogToConsoleOn() );
   EXPECT_NO_THROW( transformixFilter->LogToFileOn() );
-  EXPECT_NO_THROW( transformixFilter->SetPointSetFileName( dataManager->GetInputFile( "InputPoints.pts" ) ) );
+  EXPECT_NO_THROW( transformixFilter->SetInputPointSetFileName( dataManager->GetInputFile( "InputPoints.pts" ) ) );
   EXPECT_NO_THROW( transformixFilter->Update() );
 }
