@@ -2,9 +2,9 @@
 #define Overlord_h
 
 #include "itkLightProcessObject.h"
-
 #include "itkObjectFactory.h"
-//#include "itkComponentBase.h"
+#include "itkVectorContainer.h"
+
 #include <list>
 #include <vector>
 #include <iostream>
@@ -15,9 +15,8 @@
 
 #include "elxMacro.h"
 #include "elxBlueprint.h"
-//#include "ComponentBase.h"
 #include "ComponentFactory.h"
-
+#include "interfaces.h"
 namespace selx
 {
 
@@ -35,6 +34,17 @@ namespace selx
     typedef std::vector<ComponentSelectorPointer> ComponentSelectorContainerType;
     typedef ComponentSelectorContainerType::iterator ComponentSelectorIteratorType;
 
+   // typedef itk::Object::Pointer ObjectPointer;
+   // typedef itk::VectorContainer <
+   //   unsigned int, ObjectPointer > ObjectContainerType;
+
+    typedef itk::VectorContainer <
+      unsigned int, SinkInterface* > SinkComponentsContainerType;
+
+    typedef itk::VectorContainer <
+      unsigned int, SourceInterface* > SourceComponentsContainerType;
+
+
     void SetBlueprint(const Blueprint::Pointer);
     bool Configure();
   protected:
@@ -48,6 +58,10 @@ namespace selx
     bool ConnectComponents();
     Blueprint::Pointer m_Blueprint;
     ComponentSelectorContainerType m_ComponentSelectorContainer;
+    //ObjectContainerType::Pointer m_InputObjects;
+    //ObjectContainerType::Pointer m_OutputObjects;
+    SinkComponentsContainerType::Pointer m_SinkComponents;
+    SourceComponentsContainerType::Pointer m_SourceComponents;
   };
 
 } // end namespace selx

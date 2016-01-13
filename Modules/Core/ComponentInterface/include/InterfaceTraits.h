@@ -72,6 +72,42 @@ struct InterfaceName < itkProcessObjectInterface >
   }
 };
 
+template <>
+struct InterfaceName < itkImageToImageFilterInterface >
+{
+  static const char* Get()
+  {
+    return "itkImageToImageFilterInterface";
+  }
+};
+
+template <>
+struct InterfaceName < itkImageSourceInterface >
+{
+  static const char* Get()
+  {
+    return "itkImageSourceInterface";
+  }
+};
+
+template <>
+struct InterfaceName < SourceInterface >
+{
+  static const char* Get()
+  {
+    return "SourceInterface";
+  }
+};
+
+template <>
+struct InterfaceName < SinkInterface >
+{
+  static const char* Get()
+  {
+    return "SinkInterface";
+  }
+};
+
 // partial specialization of InterfaceName
 template<template<typename> class TT, typename T1>
 struct InterfaceName < TT<T1> > {

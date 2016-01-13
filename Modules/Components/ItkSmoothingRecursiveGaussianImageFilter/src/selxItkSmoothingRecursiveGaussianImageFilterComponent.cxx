@@ -13,14 +13,43 @@ ItkSmoothingRecursiveGaussianImageFilterComponent::~ItkSmoothingRecursiveGaussia
 
 int ItkSmoothingRecursiveGaussianImageFilterComponent::Set(itkProcessObjectInterface* component)
 {
-  //this->MetricObject->SetMetricValueComponent(component);
+  auto other = component->GetItkProcessObject();
+  // connect the itk pipeline
+  //this->m_theItkFilter->SetInput(other->GetOutputs()[0]);
   return 0;
 }
 
 itk::ProcessObject::Pointer ItkSmoothingRecursiveGaussianImageFilterComponent::GetItkProcessObject()
 {
-  //this->theImplementation->SetMetric(this->MetricObject);
-  return m_theItkFilter; // 3rd party specific call
+  return m_theItkFilter;
+}
+
+int ItkSmoothingRecursiveGaussianImageFilterComponent::Set(itkImageToImageFilterInterface* component)
+{
+  auto other = component->GetItkImageToImageFilter();
+  // connect the itk pipeline
+  this->m_theItkFilter->SetInput(other->GetOutput());
+  return 0;
+}
+
+itk::ImageToImageFilter<itk::Image<double, 3>, itk::Image<double, 3>>::Pointer ItkSmoothingRecursiveGaussianImageFilterComponent::GetItkImageToImageFilter()
+{
+  return m_theItkFilter;
+}
+
+
+int ItkSmoothingRecursiveGaussianImageFilterComponent::Set(itkImageSourceInterface* component)
+{
+  auto other = component->GetItkImageSource();
+  // connect the itk pipeline
+  this->m_theItkFilter->SetInput(other->GetOutput());
+  return 0;
+}
+
+//ItkImageSourceType::Pointer 
+itk::ImageSource<itk::Image<double, 3>>::Pointer ItkSmoothingRecursiveGaussianImageFilterComponent::GetItkImageSource()
+{
+  return m_theItkFilter;
 }
 
 bool

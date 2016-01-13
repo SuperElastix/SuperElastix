@@ -6,6 +6,7 @@
 #include <string>
 
 #include "itkProcessObject.h"
+#include "itkImageToImageFilter.h"
 namespace selx
 {
   // Define the providing interfaces abstractly
@@ -44,6 +45,26 @@ namespace selx
     public:
       virtual itk::ProcessObject::Pointer GetItkProcessObject() = 0;
   };
+
+  class itkImageToImageFilterInterface {
+  public:
+    virtual itk::ImageToImageFilter<itk::Image<double, 3>, itk::Image<double, 3>>::Pointer GetItkImageToImageFilter() = 0;
+  };
+
+  class itkImageSourceInterface {
+  public:
+    virtual itk::ImageSource<itk::Image<double, 3>>::Pointer GetItkImageSource() = 0;
+  };
+
+  class SourceInterface {
+  public:
+    virtual bool ConnectToOverlordSource(itk::Object::Pointer) = 0;
+  };
+  class SinkInterface {
+  public:
+    virtual bool ConnectToOverlordSink(itk::Object::Pointer) = 0;
+  };
+
   // Define the accepting interfaces as templated by the providing interface
 
   template<class InterfaceT>

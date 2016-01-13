@@ -4,15 +4,19 @@
 #include "ComponentBase.h"
 #include "Interfaces.h"
 #include "itkSmoothingRecursiveGaussianImageFilter.h"
+#include "itkImageSource.h"
 #include <string.h>
 #include "elxMacro.h"
 namespace selx
 {
   class ItkSmoothingRecursiveGaussianImageFilterComponent : 
     public Implements<
-    Accepting< itkProcessObjectInterface >,
-    Providing< itkProcessObjectInterface >
+    Accepting< itkImageSourceInterface >,
+    Providing< itkImageSourceInterface >
     >
+    //Accepting< itkProcessObjectInterface, itkImageToImageFilterInterface >,
+    //Providing< itkProcessObjectInterface, itkImageToImageFilterInterface >
+    //>
   {
   public:
     elxNewMacro(ItkSmoothingRecursiveGaussianImageFilterComponent, ComponentBase);
@@ -21,9 +25,17 @@ namespace selx
     virtual ~ItkSmoothingRecursiveGaussianImageFilterComponent();
 
     typedef itk::SmoothingRecursiveGaussianImageFilter<itk::Image<double, 3>, itk::Image<double, 3>> TheItkFilterType;
-    
+    typedef itk::ImageSource<itk::Image<double, 3>> ItkImageSourceType;
+
     int Set(itkProcessObjectInterface*);
     itk::ProcessObject::Pointer GetItkProcessObject();
+
+    int Set(itkImageToImageFilterInterface*);
+    itk::ImageToImageFilter<itk::Image<double, 3>, itk::Image<double, 3>>::Pointer GetItkImageToImageFilter();
+    
+    int Set(itkImageSourceInterface*);
+    ItkImageSourceType::Pointer GetItkImageSource();
+
     //int Update();
     //virtual bool MeetsCriteria(const CriteriaType &criteria);
     virtual bool MeetsCriterion(const CriterionType &criterion);    
