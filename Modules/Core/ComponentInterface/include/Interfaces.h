@@ -47,20 +47,28 @@ namespace selx
   };
 
   class itkImageToImageFilterInterface {
+    // An interface that exposes the entire filter
   public:
     virtual itk::ImageToImageFilter<itk::Image<double, 3>, itk::Image<double, 3>>::Pointer GetItkImageToImageFilter() = 0;
   };
 
   class itkImageSourceInterface {
+    // An interface that exposes that its internal filter is derived from itkImageSource
   public:
     virtual itk::ImageSource<itk::Image<double, 3>>::Pointer GetItkImageSource() = 0;
   };
 
   class SourceInterface {
+    // A special interface: the Overlord checks components for this type of interface.
+    // By this interface only Source Components can to talk to the Overlord.
+    // How specific Source Components connect to the graph is up to them, i.e. they might adapt the passed Object to other types.
   public:
     virtual bool ConnectToOverlordSource(itk::Object::Pointer) = 0;
   };
   class SinkInterface {
+    // A special interface: the Overlord checks components for this type of interface.
+    // By this interface only Sink Components can to talk to the Overlord
+    // How specific Sink Components connect to the graph is up to them, i.e. they might adapt the passed Object to other types.
   public:
     virtual bool ConnectToOverlordSink(itk::Object::Pointer) = 0;
   };

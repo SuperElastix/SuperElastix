@@ -4,6 +4,8 @@
 #include "itkLightProcessObject.h"
 #include "itkObjectFactory.h"
 #include "itkVectorContainer.h"
+#include "itkImageFileReader.h"
+#include "itkImageFileWriter.h"
 
 #include <list>
 #include <vector>
@@ -26,8 +28,11 @@ namespace selx
 
     elxNewMacro(Overlord, itk::LightProcessObject);
 
-    typedef std::map<std::string, std::string> CriteriaType;
-    typedef std::pair<std::string, std::string> CriterionType;
+    typedef ComponentBase::CriteriaType CriteriaType;
+    typedef ComponentBase::CriterionType CriterionType;
+    typedef ComponentBase::ParameterValueType ParameterValueType;
+    //typedef std::map<std::string, std::string> CriteriaType;
+    //typedef std::pair<std::string, std::string> CriterionType;
 
     typedef ComponentBase       ComponentType;
     typedef ComponentSelector::Pointer ComponentSelectorPointer;
@@ -38,24 +43,41 @@ namespace selx
    // typedef itk::VectorContainer <
    //   unsigned int, ObjectPointer > ObjectContainerType;
 
-    typedef itk::VectorContainer <
-      unsigned int, SinkInterface* > SinkComponentsContainerType;
+    //typedef itk::VectorContainer <
+    //  unsigned int, SinkInterface* > SinkComponentsContainerType;
+
+    //typedef itk::VectorContainer <
+    //  unsigned int, SourceInterface* > SourceComponentsContainerType;
 
     typedef itk::VectorContainer <
-      unsigned int, SourceInterface* > SourceComponentsContainerType;
+      unsigned int, ComponentType::Pointer > SinkComponentsContainerType;
+
+    typedef itk::VectorContainer <
+      unsigned int, ComponentType::Pointer > SourceComponentsContainerType;
+
+   // typedef std::vector <
+   //   unsigned int, SinkInterface* > SinkComponentsContainerType;
+
+   // typedef std::vector <
+   //   unsigned int, SourceInterface* > SourceComponentsContainerType;
 
 
     void SetBlueprint(const Blueprint::Pointer);
     bool Configure();
   protected:
     
-    Overlord() {};
+    Overlord();
     virtual ~Overlord() {};
   private:
     void ApplyNodeConfiguration();
     void ApplyConnectionConfiguration();
     bool UpdateSelectors();
     bool ConnectComponents();
+    bool FindSources();
+    bool FindSinks();
+    bool ConnectSources();
+    bool ConnectSinks();
+
     Blueprint::Pointer m_Blueprint;
     ComponentSelectorContainerType m_ComponentSelectorContainer;
     //ObjectContainerType::Pointer m_InputObjects;
