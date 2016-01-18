@@ -30,10 +30,10 @@ namespace selx
     SSDMetric3rdPartyComponent();
     virtual ~SSDMetric3rdPartyComponent();
     Example3rdParty::SSDMetric3rdParty* theImplementation;
-    int GetValue();
-    int GetDerivative();
+    virtual int GetValue() override;
+    virtual int GetDerivative() override;
     //virtual bool MeetsCriteria(const CriteriaType &criteria);
-    virtual bool MeetsCriterion(const CriterionType &criterion);
+    virtual bool MeetsCriterion(const CriterionType &criterion) override;
     static const char * GetName(){ return "SSDMetric3rdPartyComponent"; }
     static const char * GetDescription(){ return "SSD Metric 3rd Party Component"; };
   };

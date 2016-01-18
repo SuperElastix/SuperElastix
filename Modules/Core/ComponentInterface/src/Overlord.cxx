@@ -30,7 +30,7 @@ namespace selx
     Blueprint::ComponentIteratorPairType::second_type componentItEnd = componentItPair.second;
     for (componentIt = componentItPair.first; componentIt != componentItEnd; ++componentIt)
     {
-      ComponentSelector::NumberOfComponentsType numberOfComponents = this->m_ComponentSelectorContainer[*componentIt];
+      ComponentSelector::NumberOfComponentsType numberOfComponents = this->m_ComponentSelectorContainer[*componentIt]->UpdatePossibleComponents();
 
       // The current idea of the configuration setup is that the number of 
       // possible components at a node can only be reduced by adding criteria.

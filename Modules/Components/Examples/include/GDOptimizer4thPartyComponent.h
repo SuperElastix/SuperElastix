@@ -34,14 +34,14 @@ namespace selx
     Example4thParty::GDOptimizer4thParty* theImplementation;
     Metric4thPartyWrapper* MetricObject;
     //virtual int ConnectFrom(const char *, ComponentBase*);
-    int Set(MetricValueInterface*);
-    int Update();
+    virtual int Set(MetricValueInterface*) override;
+    virtual int Update() override;
 
     //template <class ConflictinUpdateInterface> virtual int Update() { return 5; };
     // "error" : member function templates cannot be virtual
-    int Update(ConflictinUpdateInterface*) { return 5; };
+    virtual int Update(ConflictinUpdateInterface*) override { return 5; };
     //virtual bool MeetsCriteria(const CriteriaType &criteria);
-    virtual bool MeetsCriterion(const CriterionType &criterion);
+    virtual bool MeetsCriterion(const CriterionType &criterion) override;
     //static const char * GetName(){ return "GDOptimizer4thPartyComponent"; };
     static const char * GetDescription(){ return "GD Optimizer 4th Party Component"; };
   };

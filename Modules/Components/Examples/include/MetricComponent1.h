@@ -28,8 +28,8 @@ public:
   typedef Superclass::CriteriaType CriteriaType;
   typedef Superclass::CriterionType CriterionType;
 
-  virtual int Set(TransformedImageInterface *);
-  virtual int GetValue(){ return 0; }
+  virtual int Set(TransformedImageInterface *) override;
+  virtual int GetValue() override { return 0; }
 
   //std::string GetComponentTypeAsString() const;
   //static const char * GetName(){ return "MetricComponent1"; };

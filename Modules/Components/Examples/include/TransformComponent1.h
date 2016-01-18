@@ -28,9 +28,10 @@ public:
   typedef Superclass::CriteriaType CriteriaType;
   typedef Superclass::CriterionType CriterionType;
 
-  int GetTransformedImage(){ return 0; };
+  virtual int GetTransformedImage() override{ return 0; };
+  virtual bool MeetsCriterion(const CriterionType &criterion) override;
   static const char * GetDescription(){ return "Example Transform Component 1"; };
-  virtual bool MeetsCriterion(const CriterionType &criterion);
+
 protected:
   TransformComponent1();
   virtual ~TransformComponent1()

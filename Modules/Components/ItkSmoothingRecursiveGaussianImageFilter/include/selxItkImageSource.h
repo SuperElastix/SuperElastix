@@ -22,12 +22,12 @@ namespace selx
     typedef itk::ImageSource<itk::Image<double, 3>> ItkImageSourceType;
     
 
-    ItkImageSourceType::Pointer GetItkImageSource();
-    bool ConnectToOverlordSource(itk::Object::Pointer);
+    virtual ItkImageSourceType::Pointer GetItkImageSource() override;
+    virtual bool ConnectToOverlordSource(itk::Object::Pointer) override;
 
     //int Update();
     //virtual bool MeetsCriteria(const CriteriaType &criteria);
-    virtual bool MeetsCriterion(const CriterionType &criterion);    
+    virtual bool MeetsCriterion(const CriterionType &criterion) override;
     //static const char * GetName() { return "GDOptimizer3rdPartyComponent"; } ;
     static const char * GetDescription() { return "ItkImageSource Component"; };
   private:

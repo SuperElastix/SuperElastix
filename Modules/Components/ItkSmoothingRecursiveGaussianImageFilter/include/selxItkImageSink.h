@@ -23,10 +23,10 @@ namespace selx
 
     typedef itk::ImageSource<itk::Image<double, 3>> ItkImageSourceType;
 
-    virtual int Set(itkImageSourceInterface*);
-    bool ConnectToOverlordSink(itk::Object::Pointer);
+    virtual int Set(itkImageSourceInterface*) override;
+    virtual bool ConnectToOverlordSink(itk::Object::Pointer) override;
 
-    virtual bool MeetsCriterion(const CriterionType &criterion);
+    virtual bool MeetsCriterion(const CriterionType &criterion) override;
     static const char * GetDescription() { return "ItkImageSink Component"; };
   private:
     itk::ProcessObject::Pointer m_Sink;

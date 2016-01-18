@@ -35,11 +35,11 @@ namespace selx
     Example3rdParty::GDOptimizer3rdParty* theImplementation;
     Metric3rdPartyWrapper* MetricObject;
     //virtual int ConnectFrom(const char *, ComponentBase*);
-    int Set(MetricValueInterface*);
-    int Set(MetricDerivativeInterface*);
-    int Update();
+    virtual int Set(MetricValueInterface*) override;
+    virtual int Set(MetricDerivativeInterface*) override;
+    virtual int Update() override;
     //virtual bool MeetsCriteria(const CriteriaType &criteria);
-    virtual bool MeetsCriterion(const CriterionType &criterion);
+    virtual bool MeetsCriterion(const CriterionType &criterion) override;
     
     //static const char * GetName() { return "GDOptimizer3rdPartyComponent"; } ;
     static const char * GetDescription() { return "GD Optimizer 3rd Party Component"; };
