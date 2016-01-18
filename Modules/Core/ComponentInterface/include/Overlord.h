@@ -64,6 +64,7 @@ namespace selx
 
     void SetBlueprint(const Blueprint::Pointer);
     bool Configure();
+    bool Execute();
   protected:
     
     Overlord();
@@ -84,6 +85,13 @@ namespace selx
     //ObjectContainerType::Pointer m_OutputObjects;
     SinkComponentsContainerType::Pointer m_SinkComponents;
     SourceComponentsContainerType::Pointer m_SourceComponents;
+
+    // For testing purposes, all Sources are connected to an ImageReader
+    itk::ImageFileReader<itk::Image<double, 3>>::Pointer m_reader; 
+
+    // For testing purposes, all Sources are connected to an ImageWriter
+    itk::ImageFileWriter<itk::Image<double, 3>>::Pointer m_writer;
+
   };
 
 } // end namespace selx

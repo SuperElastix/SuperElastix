@@ -6,6 +6,15 @@ namespace selx
   {
     this->m_SinkComponents = SinkComponentsContainerType::New();
     this->m_SourceComponents = SourceComponentsContainerType::New();
+
+    // For testing purposes, all Sources are connected to an ImageReader
+    this->m_reader = itk::ImageFileReader<itk::Image<double, 3>>::New();
+    this->m_reader->SetFileName("e:/data/smalltest/small3d.mhd");
+
+    // For testing purposes, all Sources are connected to an ImageWriter
+    this->m_writer = itk::ImageFileWriter<itk::Image<double, 3>>::New();
+    this->m_writer->SetFileName("testoutput.mhd");
+
   }
   void Overlord::SetBlueprint(const Blueprint::Pointer blueprint)
   {
@@ -156,26 +165,18 @@ namespace selx
   }
   bool Overlord::FindSources()
   {
-    
+    /** Scans all Components to find those with Sourcing capability and store them in SourceComponents list */
     const CriterionType sourceCriterion = CriterionType("HasProvidingInterface", ParameterValueType(1, "SourceInterface"));
    
     // TODO redesign ComponentBase class to accept a single criterion instead of a criteria mapping.
     CriteriaType sourceCriteria;
     sourceCriteria.insert(sourceCriterion);
    
-
     for (auto && componentSelector : (this->m_ComponentSelectorContainer))
     {
       ComponentBase::Pointer component = componentSelector->GetComponent();
       if (component->MeetsCriteria(sourceCriteria)) // TODO MeetsCriterion
       {
-        //SourceInterface* provingSourceInterface = dynamic_cast<SourceInterface*> (&(*component));
-        //if (provingSourceInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
-        //{
-        //  itkExceptionMacro("dynamic_cast<SourceInterface*> fails, but based on component criterion it shouldn't")
-        //}
-        //this->m_SourceComponents->push_back(provingSourceInterface);
-
         this->m_SourceComponents->push_back(component);
       }
     }
@@ -185,6 +186,7 @@ namespace selx
 
   bool Overlord::FindSinks()
   {
+    /** Scans all Components to find those with Sinking capability and store them in SinkComponents list */
     const CriterionType sinkCriterion = CriterionType("HasProvidingInterface", ParameterValueType(1, "SinkInterface"));
 
     // TODO redesign ComponentBase class to accept a single criterion instead of a criteria mapping.
@@ -196,13 +198,7 @@ namespace selx
       ComponentBase::Pointer component = componentSelector->GetComponent();
       if (component->MeetsCriteria(sinkCriteria))  // TODO MeetsCriterion
       {
-        //SinkInterface* provingSinkInterface = dynamic_cast<SinkInterface*> (&(*component));
-        //if (provingSinkInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
-        //{
-        //  itkExceptionMacro("dynamic_cast<SinkInterface*> fails, but based on component criterion it shouldn't")
-        //}
-        //this->m_SinkComponents->push_back(provingSinkInterface);
-        this->m_SinkComponents->push_back(component);
+       this->m_SinkComponents->push_back(component);
       }
     }
 
@@ -212,28 +208,24 @@ namespace selx
 
   bool Overlord::ConnectSources()
   {
-    // For testing purposes, all Sources are connected to an ImageReader
-    itk::ImageFileReader<itk::Image<double, 3>>::Pointer reader = itk::ImageFileReader<itk::Image<double, 3>>::New();
-    
-    reader->SetFileName("e:/data/smalltest/small3d.mhd");
-
-    for (auto && sourceComponent : *(this->m_SourceComponents)) // auto&& preferred?
+    for (const auto & sourceComponent : *(this->m_SourceComponents)) // auto&& preferred?
     {
       SourceInterface* provingSourceInterface = dynamic_cast<SourceInterface*> (&(*sourceComponent));
       if (provingSourceInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
       {
         itkExceptionMacro("dynamic_cast<SourceInterface*> fails, but based on component criterion it shouldn't")
       }
-      provingSourceInterface->ConnectToOverlordSource(reader->GetOutput());
+
+      // For testing purposes, all Sources are connected to an ImageReader
+      //TODO which way is preferred?
+      // provingSourceInterface->ConnectToOverlordSource((itk::Object*)(this->m_reader.GetPointer()));
+      provingSourceInterface->ConnectToOverlordSource((itk::SmartPointer<itk::Object>) this->m_reader);
     }
 
     return true;
   }
   bool Overlord::ConnectSinks()
   {
-    // For testing purposes, all Sources are connected to an ImageReader
-    itk::ImageFileWriter<itk::Image<double, 3>>::Pointer writer = itk::ImageFileWriter<itk::Image<double, 3>>::New();
-    writer->SetFileName("testoutput.mhd");
 
     for (auto const & sinkComponent : *(this->m_SinkComponents)) // auto&& preferred?
     {
@@ -242,12 +234,17 @@ namespace selx
       {
         itkExceptionMacro("dynamic_cast<SinkInterface*> fails, but based on component criterion it shouldn't")
       }
-      provingSinkInterface->ConnectToOverlordSink((itk::SmartPointer<itk::Object>) writer);
+      // For testing purposes, all Sources are connected to an ImageWriter
+      provingSinkInterface->ConnectToOverlordSink((itk::SmartPointer<itk::Object>) this->m_writer);
     }
     return true;
-
+  }
+  bool Overlord::Execute()
+  {
+    //update all writers...
+    // should have stored the list of writers in overlord instead of sinkComponents
+    this->m_writer->Update();
     return true;
   }
-
 } // end namespace selx
 
