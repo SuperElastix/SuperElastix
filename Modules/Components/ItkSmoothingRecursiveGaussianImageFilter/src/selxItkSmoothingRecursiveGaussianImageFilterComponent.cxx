@@ -10,7 +10,8 @@ ItkSmoothingRecursiveGaussianImageFilterComponent::~ItkSmoothingRecursiveGaussia
 {
 }
 
-
+// TODO: see if itkImageSourceInterface is the right way to connect itk filters..
+/*
 int ItkSmoothingRecursiveGaussianImageFilterComponent::Set(itkProcessObjectInterface* component)
 {
   auto other = component->GetItkProcessObject();
@@ -36,7 +37,7 @@ itk::ImageToImageFilter<itk::Image<double, 3>, itk::Image<double, 3>>::Pointer I
 {
   return m_theItkFilter;
 }
-
+*/
 
 int ItkSmoothingRecursiveGaussianImageFilterComponent::Set(itkImageSourceInterface* component)
 {

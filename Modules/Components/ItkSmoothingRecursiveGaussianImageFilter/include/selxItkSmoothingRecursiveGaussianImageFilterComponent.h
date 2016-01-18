@@ -14,6 +14,7 @@ namespace selx
     Accepting< itkImageSourceInterface >,
     Providing< itkImageSourceInterface >
     >
+    // TODO: see if itkImageSourceInterface is the right way to connect itk filters..
     //Accepting< itkProcessObjectInterface, itkImageToImageFilterInterface >,
     //Providing< itkProcessObjectInterface, itkImageToImageFilterInterface >
     //>
@@ -27,18 +28,20 @@ namespace selx
     typedef itk::SmoothingRecursiveGaussianImageFilter<itk::Image<double, 3>, itk::Image<double, 3>> TheItkFilterType;
     typedef itk::ImageSource<itk::Image<double, 3>> ItkImageSourceType;
 
-    int Set(itkProcessObjectInterface*);
-    itk::ProcessObject::Pointer GetItkProcessObject();
+    // TODO: see if itkImageSourceInterface is the right way to connect itk filters..
+    /*
+    virtual int Set(itkProcessObjectInterface*) override;
+    virtual itk::ProcessObject::Pointer GetItkProcessObject() override;
 
-    int Set(itkImageToImageFilterInterface*);
-    itk::ImageToImageFilter<itk::Image<double, 3>, itk::Image<double, 3>>::Pointer GetItkImageToImageFilter();
-    
-    int Set(itkImageSourceInterface*);
-    ItkImageSourceType::Pointer GetItkImageSource();
+    virtual int Set(itkImageToImageFilterInterface*) override;
+    virtual itk::ImageToImageFilter<itk::Image<double, 3>, itk::Image<double, 3>>::Pointer GetItkImageToImageFilter() override;
+    */
+    virtual int Set(itkImageSourceInterface*) override;
+    virtual ItkImageSourceType::Pointer GetItkImageSource() override;
 
     //int Update();
     //virtual bool MeetsCriteria(const CriteriaType &criteria);
-    virtual bool MeetsCriterion(const CriterionType &criterion);    
+    virtual bool MeetsCriterion(const CriterionType &criterion) override;    
     //static const char * GetName() { return "GDOptimizer3rdPartyComponent"; } ;
     static const char * GetDescription() { return "ItkSmoothingRecursiveGaussianImageFilter Component"; };
   private:
