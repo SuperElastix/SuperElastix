@@ -30,6 +30,8 @@ public:
     ComponentIndexType index0 = blueprint->AddComponent(componentParameters);
     ComponentIndexType index1 = blueprint->AddComponent(componentParameters);
     
+    // TODO: For now, the connections to make are explicitly indicated by the Interface name. 
+    // Design consideration: connections might be indicated by higher concepts ( MetricCostConnection: value and/or derivative? DefaultPipeline? ) 
     ParameterMapType connectionParameters;
     connectionParameters["NameOfInterface"] = ParameterValueType(1, "itkImageSourceInterface");
 
@@ -61,9 +63,14 @@ TEST_F(ProcessObjectTest, Configure)
   overlord = Overlord::New();
   overlord->SetBlueprint(blueprint);
   bool allUniqueComponents;
+  
+  // Read the blueprint and try to realize all components
+  // If for any node no components could be selected an exception is thrown.
   EXPECT_NO_THROW(allUniqueComponents = overlord->Configure());
+  // If for any node multiple components are selected, allUniqueComponents is false.
   EXPECT_TRUE(allUniqueComponents);
 
+  // If Configuration was successful, the graph (pipeline) can be executed.
   EXPECT_NO_THROW(overlord->Execute());
 }
 

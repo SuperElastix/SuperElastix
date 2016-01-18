@@ -30,12 +30,15 @@ namespace selx
     Blueprint::ComponentIteratorPairType::second_type componentItEnd = componentItPair.second;
     for (componentIt = componentItPair.first; componentIt != componentItEnd; ++componentIt)
     {
-      ComponentSelector::NumberOfComponentsType numberOfComponents = this->m_ComponentSelectorContainer[*componentIt]->UpdatePossibleComponents();
+      ComponentSelector::NumberOfComponentsType numberOfComponents = this->m_ComponentSelectorContainer[*componentIt];
 
       // The current idea of the configuration setup is that the number of 
       // possible components at a node can only be reduced by adding criteria.
       // If a node has 0 possible components, the configuration is aborted (with an exception)
       // If all nodes have exactly 1 possible component, no more criteria are needed.
+      //
+      // Design consideration: should the exception be thrown by this->m_ComponentSelectorContainer[*componentIt]?
+      // The (failing) criteria can be printed as well.
       if (numberOfComponents == 0)
       {
         itkExceptionMacro("Too many criteria for component");
@@ -101,7 +104,16 @@ namespace selx
     //
     // We might consider copying the blueprint graph to a component selector 
     // graph, such that all graph operations correspond
-    
+    //
+    // This could be in line with the idea of maintaining 2 graphs: 1 descriptive (= const blueprint) and
+    // 1 internal holding to realized components.
+    // Manipulating the internal graph (combining component nodes into a hybrid node, duplicating sub graphs, etc)
+    // is possible then.
+    //
+    // Additional redesign consideration: the final graph should hold the realized components at each node and not the 
+    // ComponentSelectors that, in turn, hold 1 (or more) component.
+    //
+    //
     // Or loop over connections:
     //Blueprint::ConnectionIteratorPairType connectionItPair = this->m_Blueprint->GetConnectionIterator();
     //Blueprint::ConnectionIteratorPairType::first_type  connectionIt;
