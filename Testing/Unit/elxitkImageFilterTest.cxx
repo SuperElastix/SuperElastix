@@ -5,9 +5,19 @@
 
 #include "gtest/gtest.h"
 
+/** this test uses the following blueprint setup
+
+ [SourceComponent] - [itkImageFilter] - [itkImageFilter] - [SinkComponent]
+
+ - All the nodes are identified by their Class names
+ - All Connections are identified by their Interface names
+
+ The overlord finds the Source and Sink Components and connects these to it's external pipeline (internal reader and writer filters, currently).
+*/
+
 namespace selx {
 
-class ProcessObjectTest : public ::testing::Test {
+  class itkImageFilterTest : public ::testing::Test {
 public:
   typedef Overlord::Pointer                 OverlordPointerType;
   typedef Blueprint::Pointer                BlueprintPointerType;
@@ -17,13 +27,17 @@ public:
   typedef Blueprint::ParameterValueType     ParameterValueType;
 
   virtual void SetUp() {
-    /** register all example components */
+
+
+    /** register all components used for this test */
     ComponentFactory<ItkSmoothingRecursiveGaussianImageFilterComponent>::RegisterOneFactory();
     ComponentFactory<ItkImageSinkComponent>::RegisterOneFactory();
     ComponentFactory<ItkImageSourceComponent>::RegisterOneFactory();
 
     /** make example blueprint configuration */
     blueprint = Blueprint::New();
+
+    /** the 2 itkImageFilter Components are ItkSmoothingRecursiveGaussianImageFilterComponent*/ 
     ParameterMapType componentParameters;
     componentParameters["NameOfClass"] = ParameterValueType(1, "ItkSmoothingRecursiveGaussianImageFilterComponent");
 
@@ -38,14 +52,17 @@ public:
     //TODO: check direction
     blueprint->AddConnection(index0, index1, connectionParameters);
 
+    /** Add a description of the SourceComponent*/
     ParameterMapType sourceComponentParameters;
     sourceComponentParameters["NameOfClass"] = ParameterValueType(1, "ItkImageSourceComponent");
     ComponentIndexType sourceIndex = blueprint->AddComponent(sourceComponentParameters);
 
+    /** Add a description of the SinkComponent*/
     ParameterMapType sinkComponentParameters;
     sinkComponentParameters["NameOfClass"] = ParameterValueType(1, "ItkImageSinkComponent");
     ComponentIndexType sinkIndex = blueprint->AddComponent(sinkComponentParameters);
     
+    /** Connect Sink and Source to the itkImageFilter Components*/
     blueprint->AddConnection(sourceIndex,index0, connectionParameters); // 
     blueprint->AddConnection(index1, sinkIndex, connectionParameters);
   }
@@ -58,7 +75,7 @@ public:
   Overlord::Pointer overlord;
 };
 
-TEST_F(ProcessObjectTest, Configure)
+  TEST_F(itkImageFilterTest, Run)
 {
   overlord = Overlord::New();
   overlord->SetBlueprint(blueprint);
