@@ -15,7 +15,6 @@ set( ${MODULE}_LIBRARIES
 
 # Module source files
 set( ${MODULE}_SOURCE_FILES
-  ${${MODULE}_SOURCE_DIR}/src/selxItkSmoothingRecursiveGaussianImageFilterComponent.cxx
   ${${MODULE}_SOURCE_DIR}/src/selxItkImageSource.cxx
   ${${MODULE}_SOURCE_DIR}/src/selxItkImageSink.cxx)
 

@@ -30,7 +30,7 @@ public:
 
 
     /** register all components used for this test */
-    ComponentFactory<ItkSmoothingRecursiveGaussianImageFilterComponent>::RegisterOneFactory();
+    ComponentFactory<ItkSmoothingRecursiveGaussianImageFilterComponent<3,double>>::RegisterOneFactory();
     ComponentFactory<ItkImageSinkComponent>::RegisterOneFactory();
     ComponentFactory<ItkImageSourceComponent>::RegisterOneFactory();
 

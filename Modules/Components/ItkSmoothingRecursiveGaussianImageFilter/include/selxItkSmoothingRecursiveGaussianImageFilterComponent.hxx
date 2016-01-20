@@ -2,11 +2,13 @@
 
 namespace selx
 {
-ItkSmoothingRecursiveGaussianImageFilterComponent::ItkSmoothingRecursiveGaussianImageFilterComponent()
+  template<int Dimensionality, class TPixel>
+  ItkSmoothingRecursiveGaussianImageFilterComponent< Dimensionality, TPixel>::ItkSmoothingRecursiveGaussianImageFilterComponent()
 {
   m_theItkFilter = TheItkFilterType::New();
 }
-ItkSmoothingRecursiveGaussianImageFilterComponent::~ItkSmoothingRecursiveGaussianImageFilterComponent()
+template<int Dimensionality, class TPixel>
+ItkSmoothingRecursiveGaussianImageFilterComponent< Dimensionality, TPixel>::~ItkSmoothingRecursiveGaussianImageFilterComponent()
 {
 }
 
@@ -38,8 +40,8 @@ itk::ImageToImageFilter<itk::Image<double, 3>, itk::Image<double, 3>>::Pointer I
   return m_theItkFilter;
 }
 */
-
-int ItkSmoothingRecursiveGaussianImageFilterComponent::Set(itkImageSourceInterface* component)
+template<int Dimensionality, class TPixel>
+int ItkSmoothingRecursiveGaussianImageFilterComponent< Dimensionality, TPixel>::Set(itkImageSourceInterface* component)
 {
   auto other = component->GetItkImageSource();
   // connect the itk pipeline
@@ -48,13 +50,14 @@ int ItkSmoothingRecursiveGaussianImageFilterComponent::Set(itkImageSourceInterfa
 }
 
 //ItkImageSourceType::Pointer 
-itk::ImageSource<itk::Image<double, 3>>::Pointer ItkSmoothingRecursiveGaussianImageFilterComponent::GetItkImageSource()
+template<int Dimensionality, class TPixel>
+typename ItkSmoothingRecursiveGaussianImageFilterComponent< Dimensionality, TPixel>::ItkImageSourcePointer ItkSmoothingRecursiveGaussianImageFilterComponent< Dimensionality, TPixel>::GetItkImageSource()
 {
   return m_theItkFilter;
 }
-
+template<int Dimensionality, class TPixel>
 bool
-ItkSmoothingRecursiveGaussianImageFilterComponent
+ItkSmoothingRecursiveGaussianImageFilterComponent< Dimensionality, TPixel>
 ::MeetsCriterion(const CriterionType &criterion)
 {
   bool hasUndefinedCriteria(false);
