@@ -83,34 +83,7 @@ struct InterfaceName < itkImageToImageFilterInterface >
   }
 };
 
-/*
-auto name = InterfaceName < itkImageToImageFilterInterface >::Get()
-auto name = InterfaceName < itkImageSourceInterface<3,float> >::Get()
-
-auto name = InterfaceName < wrap<itkImageToImageFilterInterface> >::Get()
-
-auto name = InterfaceName < wrap<itkImageSourceInterface<3, float>> >::Get()
-*/
-
-//typedef itkImageSourceInterface <D, T>
-//itkImageSourceInterface<Dimensionality, PixelType>
-//template <itkImageSourceInterface IF, int D, class P>
-//template <int D, typename T>
-//template <template <int Dname, class Pname> class IF = InterfaceName<int,class>, int D, class TPixel>
-//template <template <int, class> class itkImageSourceInterface, int D, class TPixel>
-//template <template <typename...> class IF, typename... Rest>
-//struct InterfaceName < IF <Rest...> >
-/*
-template <template <int, class> class IF, int D, class TPixel>
-struct InterfaceName < IF <D, TPixel> >
-{
-  static const char* Get()
-  {
-    return "itkImageSourceInterface";
-  }
-};
-*/
-
+// InterfaceName<T>::Get() should return "itkImageSourceInterface" no matter over which arguments itkImageSourceInterface is templated
 template <int D, class TPixel>
 struct InterfaceName < itkImageSourceInterface <D, TPixel> >
 {
@@ -139,34 +112,13 @@ struct InterfaceName < SinkInterface >
   }
 };
 
-/*
 // partial specialization of InterfaceName
-template<template<typename> class TT, typename T1>
-struct InterfaceName < TT<T1> > {
-  static const char* Get()
-  {
-    return InterfaceName<T1>::Get();
-  }
-};
-*/
-
-// partial specialization of InterfaceName
-
+// InterfaceName<T>::Get() should return the same name no matter whether T is an acceptor or provider interface.
 template<typename T1>
 struct InterfaceName < InterfaceAcceptor<T1> > {
   static const char* Get()
   {
     return InterfaceName<T1>::Get();
-  }
-};
-
-
-template <typename T>
-struct AcceptorInterfaceName
-{
-  static const char* Get()
-  {
-    return InterfaceName<T>::Get();
   }
 };
 
