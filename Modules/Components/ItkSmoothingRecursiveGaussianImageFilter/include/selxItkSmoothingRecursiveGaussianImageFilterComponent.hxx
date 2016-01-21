@@ -97,6 +97,28 @@ ItkSmoothingRecursiveGaussianImageFilterComponent< Dimensionality, TPixel>
     }
 
   }
+  else if (criterion.first == "Sigma") //Supports this?
+  {
+    if (criterion.second.size() != 1)
+    {
+      meetsCriteria = false;
+      //itkExceptionMacro("The criterion Sigma may have only 1 value");
+    }
+    else
+    {
+      auto const & criterionValue = *criterion.second.begin();
+      try
+      {
+        this->m_theItkFilter->SetSigma(std::stod(criterionValue));
+        meetsCriteria = true;
+      }
+      catch (itk::ExceptionObject & err)
+      {
+        //TODO log the error message?
+        meetsCriteria = false;
+      }
+    }
+  }
   return meetsCriteria;
 }
 

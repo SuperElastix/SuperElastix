@@ -9,7 +9,7 @@ namespace selx
 
     // For testing purposes, all Sources are connected to an ImageReader
     this->m_reader = itk::ImageFileReader<itk::Image<double, 3>>::New();
-    this->m_reader->SetFileName("e:/data/smalltest/small3d.mhd");
+    this->m_reader->SetFileName("e:/data/smalltest/3dSmiley.mhd");
 
     // For testing purposes, all Sources are connected to an ImageWriter
     this->m_writer = itk::ImageFileWriter<itk::Image<double, 3>>::New();

@@ -50,6 +50,9 @@ public:
     componentParameters["Dimensionality"] = ParameterValueType(1, "3");
     componentParameters["PixelType"] = ParameterValueType(1, "double");
 
+    // Setting of the component are considered as criteria too. If the components can interpret the parameters, it's all good. 
+    componentParameters["Sigma"] = ParameterValueType(1, "2.5");
+
     ComponentIndexType index0 = blueprint->AddComponent(componentParameters);
     ComponentIndexType index1 = blueprint->AddComponent(componentParameters);
     
@@ -92,7 +95,6 @@ public:
   
   // Read the blueprint and try to realize all components
   // If for any node no components could be selected an exception is thrown.
-  allUniqueComponents = overlord->Configure();
   EXPECT_NO_THROW(allUniqueComponents = overlord->Configure());
   // If for any node multiple components are selected, allUniqueComponents is false.
   EXPECT_TRUE(allUniqueComponents);
