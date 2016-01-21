@@ -1,6 +1,8 @@
 #ifndef InterfaceTraits_h
 #define InterfaceTraits_h
 
+//TODO: note, maybe this functionality shouldn't be called a Trait, since we use a method ::Get(). Is Policy a better name?
+
 #include "Interfaces.h"
 #include "itkMacro.h"
 namespace selx
@@ -81,14 +83,43 @@ struct InterfaceName < itkImageToImageFilterInterface >
   }
 };
 
-template <>
-struct InterfaceName < itkImageSourceInterface >
+/*
+auto name = InterfaceName < itkImageToImageFilterInterface >::Get()
+auto name = InterfaceName < itkImageSourceInterface<3,float> >::Get()
+
+auto name = InterfaceName < wrap<itkImageToImageFilterInterface> >::Get()
+
+auto name = InterfaceName < wrap<itkImageSourceInterface<3, float>> >::Get()
+*/
+
+//typedef itkImageSourceInterface <D, T>
+//itkImageSourceInterface<Dimensionality, PixelType>
+//template <itkImageSourceInterface IF, int D, class P>
+//template <int D, typename T>
+//template <template <int Dname, class Pname> class IF = InterfaceName<int,class>, int D, class TPixel>
+//template <template <int, class> class itkImageSourceInterface, int D, class TPixel>
+//template <template <typename...> class IF, typename... Rest>
+//struct InterfaceName < IF <Rest...> >
+/*
+template <template <int, class> class IF, int D, class TPixel>
+struct InterfaceName < IF <D, TPixel> >
 {
   static const char* Get()
   {
     return "itkImageSourceInterface";
   }
 };
+*/
+
+template <int D, class TPixel>
+struct InterfaceName < itkImageSourceInterface <D, TPixel> >
+{
+  static const char* Get()
+  {
+    return "itkImageSourceInterface";
+  }
+};
+
 
 template <>
 struct InterfaceName < SourceInterface >
@@ -108,9 +139,21 @@ struct InterfaceName < SinkInterface >
   }
 };
 
+/*
 // partial specialization of InterfaceName
 template<template<typename> class TT, typename T1>
 struct InterfaceName < TT<T1> > {
+  static const char* Get()
+  {
+    return InterfaceName<T1>::Get();
+  }
+};
+*/
+
+// partial specialization of InterfaceName
+
+template<typename T1>
+struct InterfaceName < InterfaceAcceptor<T1> > {
   static const char* Get()
   {
     return InterfaceName<T1>::Get();

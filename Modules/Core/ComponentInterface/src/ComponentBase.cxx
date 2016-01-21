@@ -61,12 +61,6 @@ namespace selx
         meetsCriteria = false;
         return false; //if there is any failed criterion, return false (like a short-circuit AND)
       }
-      else
-      {
-        hasUndefinedCriteria = true; //TODO 
-        break;
-      }
-
     }
     return meetsCriteria;
   }

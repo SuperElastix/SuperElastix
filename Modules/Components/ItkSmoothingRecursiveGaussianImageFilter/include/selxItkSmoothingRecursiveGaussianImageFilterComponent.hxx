@@ -41,7 +41,7 @@ itk::ImageToImageFilter<itk::Image<double, 3>, itk::Image<double, 3>>::Pointer I
 }
 */
 template<int Dimensionality, class TPixel>
-int ItkSmoothingRecursiveGaussianImageFilterComponent< Dimensionality, TPixel>::Set(itkImageSourceInterface* component)
+int ItkSmoothingRecursiveGaussianImageFilterComponent< Dimensionality, TPixel>::Set(itkImageSourceInterface<Dimensionality, TPixel>* component)
 {
   auto other = component->GetItkImageSource();
   // connect the itk pipeline
@@ -72,6 +72,30 @@ ItkSmoothingRecursiveGaussianImageFilterComponent< Dimensionality, TPixel>
         meetsCriteria = false;
       }
     }
+  }
+  else if (criterion.first == "Dimensionality") //Supports this?
+  {
+    meetsCriteria = true;
+    for (auto const & criterionValue : criterion.second) // auto&& preferred?
+    {
+      if (std::stoi(criterionValue) != Self::Dimensionality)
+      {
+        meetsCriteria = false;
+      }
+    }
+
+  }
+  else if (criterion.first == "PixelType") //Supports this?
+  {
+    meetsCriteria = true;
+    for (auto const & criterionValue : criterion.second) // auto&& preferred?
+    {
+      if (criterionValue != Self::GetPixelTypeNameString())
+      {
+        meetsCriteria = false;
+      }
+    }
+
   }
   return meetsCriteria;
 }

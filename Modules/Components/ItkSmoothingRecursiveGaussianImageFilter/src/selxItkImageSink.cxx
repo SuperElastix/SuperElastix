@@ -13,7 +13,7 @@ namespace selx
   {
   }
 
-  int ItkImageSinkComponent::Set(itkImageSourceInterface* other)
+  int ItkImageSinkComponent::Set(itkImageSourceInterface<3, double>* other)
   {
     if (this->m_SinkWriter == nullptr)
     {

@@ -30,9 +30,15 @@ public:
 
 
     /** register all components used for this test */
-    ComponentFactory<ItkSmoothingRecursiveGaussianImageFilterComponent<3,double>>::RegisterOneFactory();
+    // For testing the itkfilter pipeline
+    ComponentFactory<ItkSmoothingRecursiveGaussianImageFilterComponent<3,double>>::RegisterOneFactory(); 
     ComponentFactory<ItkImageSinkComponent>::RegisterOneFactory();
     ComponentFactory<ItkImageSourceComponent>::RegisterOneFactory();
+    // For testing templated components
+    ComponentFactory<ItkSmoothingRecursiveGaussianImageFilterComponent<2, double>>::RegisterOneFactory();
+    ComponentFactory<ItkSmoothingRecursiveGaussianImageFilterComponent<3, float>>::RegisterOneFactory();
+    ComponentFactory<ItkSmoothingRecursiveGaussianImageFilterComponent<2, float>>::RegisterOneFactory();
+
 
     /** make example blueprint configuration */
     blueprint = Blueprint::New();
@@ -40,6 +46,9 @@ public:
     /** the 2 itkImageFilter Components are ItkSmoothingRecursiveGaussianImageFilterComponent*/ 
     ParameterMapType componentParameters;
     componentParameters["NameOfClass"] = ParameterValueType(1, "ItkSmoothingRecursiveGaussianImageFilterComponent");
+    // The parameters over which the Component is templated are criteria for the ComponentSelector too.
+    componentParameters["Dimensionality"] = ParameterValueType(1, "3");
+    componentParameters["PixelType"] = ParameterValueType(1, "double");
 
     ComponentIndexType index0 = blueprint->AddComponent(componentParameters);
     ComponentIndexType index1 = blueprint->AddComponent(componentParameters);
@@ -83,6 +92,7 @@ public:
   
   // Read the blueprint and try to realize all components
   // If for any node no components could be selected an exception is thrown.
+  allUniqueComponents = overlord->Configure();
   EXPECT_NO_THROW(allUniqueComponents = overlord->Configure());
   // If for any node multiple components are selected, allUniqueComponents is false.
   EXPECT_TRUE(allUniqueComponents);

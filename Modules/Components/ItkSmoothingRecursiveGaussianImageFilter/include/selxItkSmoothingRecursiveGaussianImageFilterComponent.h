@@ -12,8 +12,8 @@ namespace selx
   template <int Dimensionality, class TPixel>
   class ItkSmoothingRecursiveGaussianImageFilterComponent : 
     public Implements<
-    Accepting< itkImageSourceInterface >,
-    Providing< itkImageSourceInterface >
+    Accepting< itkImageSourceInterface<Dimensionality, TPixel> >,
+    Providing< itkImageSourceInterface<Dimensionality, TPixel> >
     >
     // TODO: see if itkImageSourceInterface is the right way to connect itk filters..
     //Accepting< itkProcessObjectInterface, itkImageToImageFilterInterface >,
@@ -41,7 +41,7 @@ namespace selx
     virtual int Set(itkImageToImageFilterInterface*) override;
     virtual itk::ImageToImageFilter<itk::Image<double, 3>, itk::Image<double, 3>>::Pointer GetItkImageToImageFilter() override;
     */
-    virtual int Set(itkImageSourceInterface*) override;
+    virtual int Set(itkImageSourceInterface<Dimensionality, TPixel>*) override;
     virtual ItkImageSourcePointer GetItkImageSource() override;
 
     //int Update();
@@ -54,15 +54,73 @@ namespace selx
   protected:
     /* The following struct returns the string name of computation type */
     /* default implementation */
+
     static inline const std::string GetTypeNameString()
     {
       itkGenericExceptionMacro(<< "Unknown ScalarType" << typeid(TPixel).name());
-      // TODO: provide the user instructions how to enable the compilation of the required component (if desired)
+      // TODO: provide the user instructions how to enable the compilation of the component with the required template types (if desired)
       // We might define an exception object that can communicate various error messages: for simple user, for developer user, etc
     }
+
+    static inline const std::string GetPixelTypeNameString()
+    {
+      itkGenericExceptionMacro(<< "Unknown PixelType" << typeid(TPixel).name());
+      // TODO: provide the user instructions how to enable the compilation of the component with the required template types (if desired)
+      // We might define an exception object that can communicate various error messages: for simple user, for developer user, etc
+    }
+
   };
 
+  // unfortunately partial specialization of member functions is not allowed, without partially specializing the entire class.
+
   /*
+  template <int Dimensionality>
+  class ItkSmoothingRecursiveGaussianImageFilterComponent < Dimensionality, double >
+  {
+    static inline const std::string GetPixelTypeNameString();
+  };
+
+  template <int Dimensionality>
+  inline const std::string
+    ItkSmoothingRecursiveGaussianImageFilterComponent<Dimensionality, double>
+    ::GetPixelTypeNameString()
+  {
+    return std::string("double");
+  }
+  */
+
+  template <>
+  inline const std::string
+    ItkSmoothingRecursiveGaussianImageFilterComponent<2, float>
+    ::GetPixelTypeNameString()
+  {
+    return std::string("float");
+  }
+
+
+  template <>
+  inline const std::string
+    ItkSmoothingRecursiveGaussianImageFilterComponent<2, double>
+    ::GetPixelTypeNameString()
+  {
+    return std::string("double");
+  }
+
+  template <>
+  inline const std::string
+    ItkSmoothingRecursiveGaussianImageFilterComponent<3, float>
+    ::GetPixelTypeNameString()
+  {
+    return std::string("float");
+  }
+
+  template <>
+  inline const std::string
+    ItkSmoothingRecursiveGaussianImageFilterComponent<3, double>
+    ::GetPixelTypeNameString()
+  {
+    return std::string("double");
+  }
   template <>
   inline const std::string
     ItkSmoothingRecursiveGaussianImageFilterComponent<2, float>
@@ -86,7 +144,7 @@ namespace selx
   {
     return std::string("3_float");
   }
-  */
+  
   template <>
   inline const std::string
     ItkSmoothingRecursiveGaussianImageFilterComponent<3,double>

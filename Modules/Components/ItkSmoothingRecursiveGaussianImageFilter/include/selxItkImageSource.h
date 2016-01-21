@@ -10,7 +10,7 @@ namespace selx
   class ItkImageSourceComponent : 
     public Implements<
     Accepting<>,
-    Providing< SourceInterface, itkImageSourceInterface >
+    Providing< SourceInterface, itkImageSourceInterface<3,double > >
     >
   {
   public:

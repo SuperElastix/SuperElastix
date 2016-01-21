@@ -11,7 +11,7 @@ namespace selx
 {
   class ItkImageSinkComponent :
     public Implements <
-    Accepting< itkImageSourceInterface >,
+    Accepting< itkImageSourceInterface<3,double> >,
     Providing < SinkInterface >
     >
   {
@@ -23,7 +23,7 @@ namespace selx
 
     typedef itk::ImageSource<itk::Image<double, 3>> ItkImageSourceType;
 
-    virtual int Set(itkImageSourceInterface*) override;
+    virtual int Set(itkImageSourceInterface<3, double>*) override;
     virtual bool ConnectToOverlordSink(itk::Object::Pointer) override;
 
     virtual bool MeetsCriterion(const CriterionType &criterion) override;
