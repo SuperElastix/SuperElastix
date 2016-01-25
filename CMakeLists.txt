@@ -82,6 +82,7 @@ elxmodule_enable( ModuleCore )
 elxmodule_enable( ModuleElastix )
 elxmodule_enable( ModuleExamples )
 elxmodule_enable( ModuleItkSmoothingRecursiveGaussianImageFilter )
+elxmodule_enable( ModuleItkImageRegistrationMethodv4 )
 # TODO: Build tests depending on enabled modules
 
 # ---------------------------------------------------------------------
