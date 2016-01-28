@@ -9,9 +9,14 @@ if( OPENMP_FOUND )
   set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}" )
 endif()
 
+# Find UseElastix.cmake 
 if( NOT EXISTS ${ELASTIX_USE_FILE} )
-  option( ELASTIX_USE_FILE "NOT_FOUND" )
-  message( FATAL_ERROR "${MODULE} could not find ELASTIX_USE_FILE. Use the SuperBuild or manually point the ELASTIX_USE_FILE CMake variable to the UseElastix.cmake file in the root of your local elastix build tree." )
+  set( ELASTIX_USE_FILE ${ELASTIX_DIR}/UseElastix.cmake )
+endif()
+
+if( NOT EXISTS ${ELASTIX_USE_FILE} )
+  set( ELASTIX_DIR "" CACHE PATH "Path to elastix build folder" )
+  message(FATAL_ERROR "Could not find UseElastix.cmake. Point ELASTIX_DIR to folder containing UseElastix.cmake or use SuperBuild.")
 endif()
 
 # Export include files
