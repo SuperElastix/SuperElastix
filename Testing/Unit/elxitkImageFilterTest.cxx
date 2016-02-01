@@ -31,7 +31,7 @@ public:
 
     /** register all components used for this test */
     // For testing the itkfilter pipeline
-    ComponentFactory<ItkSmoothingRecursiveGaussianImageFilterComponent<3,double>>::RegisterOneFactory(); 
+    ComponentFactory<ItkSmoothingRecursiveGaussianImageFilterComponent<3, double>>::RegisterOneFactory();
     ComponentFactory<ItkImageSinkComponent>::RegisterOneFactory();
     ComponentFactory<ItkImageSourceComponent>::RegisterOneFactory();
     // For testing templated components
@@ -43,35 +43,35 @@ public:
     /** make example blueprint configuration */
     blueprint = Blueprint::New();
 
-    /** the 2 itkImageFilter Components are ItkSmoothingRecursiveGaussianImageFilterComponent*/ 
+    /** the 2 itkImageFilter Components are ItkSmoothingRecursiveGaussianImageFilterComponent*/
     ParameterMapType componentParameters;
-    componentParameters["NameOfClass"] = ParameterValueType(1, "ItkSmoothingRecursiveGaussianImageFilterComponent");
+    componentParameters["NameOfClass"] = { "ItkSmoothingRecursiveGaussianImageFilterComponent" };
     // The parameters over which the Component is templated are criteria for the ComponentSelector too.
-    componentParameters["Dimensionality"] = ParameterValueType(1, "3");
-    componentParameters["PixelType"] = ParameterValueType(1, "double");
+    componentParameters["Dimensionality"] = { "3" }; // template parameters
+    componentParameters["PixelType"] = { "double" };
 
     // Setting of the component are considered as criteria too. If the components can interpret the parameters, it's all good. 
-    componentParameters["Sigma"] = ParameterValueType(1, "2.5");
+    componentParameters["Sigma"] = { "2.5" };
 
     ComponentIndexType index0 = blueprint->AddComponent(componentParameters);
     ComponentIndexType index1 = blueprint->AddComponent(componentParameters);
-    
+
     // TODO: For now, the connections to make are explicitly indicated by the Interface name. 
     // Design consideration: connections might be indicated by higher concepts ( MetricCostConnection: value and/or derivative? DefaultPipeline? ) 
     ParameterMapType connectionParameters;
-    connectionParameters["NameOfInterface"] = ParameterValueType(1, "itkImageSourceInterface");
+    connectionParameters["NameOfInterface"] = { "itkImageSourceInterface" };
 
     //TODO: check direction
     blueprint->AddConnection(index0, index1, connectionParameters);
 
     /** Add a description of the SourceComponent*/
     ParameterMapType sourceComponentParameters;
-    sourceComponentParameters["NameOfClass"] = ParameterValueType(1, "ItkImageSourceComponent");
+    sourceComponentParameters["NameOfClass"] = { "ItkImageSourceComponent" };
     ComponentIndexType sourceIndex = blueprint->AddComponent(sourceComponentParameters);
 
     /** Add a description of the SinkComponent*/
     ParameterMapType sinkComponentParameters;
-    sinkComponentParameters["NameOfClass"] = ParameterValueType(1, "ItkImageSinkComponent");
+    sinkComponentParameters["NameOfClass"] = { "ItkImageSinkComponent" };
     ComponentIndexType sinkIndex = blueprint->AddComponent(sinkComponentParameters);
     
     /** Connect Sink and Source to the itkImageFilter Components*/
