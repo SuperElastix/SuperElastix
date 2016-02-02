@@ -59,6 +59,20 @@ namespace selx
     virtual typename itk::ImageSource<itk::Image<TPixel, Dimensionality>>::Pointer GetItkImageSource() = 0;
   };
 
+  template<int Dimensionality, class TPixel>
+  class itkImageSourceMovingInterface {
+    // An interface that exposes that its internal filter which is derived from itkImageSource
+  public:
+    virtual typename itk::ImageSource<itk::Image<TPixel, Dimensionality>>::Pointer GetItkImageSourceMoving() = 0;
+  };
+
+  template<int Dimensionality, class TPixel>
+  class itkImageSourceFixedInterface {
+    // An interface that exposes that its internal filter which is derived from itkImageSource
+  public:
+    virtual typename itk::ImageSource<itk::Image<TPixel, Dimensionality>>::Pointer GetItkImageSourceFixed() = 0;
+  };
+
   class SourceInterface {
     // A special interface: the Overlord checks components for this type of interface.
     // By this interface only Source Components can to talk to the Overlord.
@@ -136,8 +150,8 @@ template<typename AcceptingInterfaces, typename ProvidingInterfaces>
 class Implements : public AcceptingInterfaces, public ProvidingInterfaces, public ComponentBase
 {
   public:
-    virtual interfaceStatus ConnectFrom(const char *, ComponentBase*);
-    virtual int ConnectFrom(ComponentBase*);
+    virtual interfaceStatus AcceptConnectionFrom(const char *, ComponentBase*);
+    virtual int AcceptConnectionFrom(ComponentBase*);
 protected: 
   virtual bool HasAcceptingInterface(const char *);
   virtual bool HasProvidingInterface(const char *);

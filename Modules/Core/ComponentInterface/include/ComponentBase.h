@@ -36,8 +36,8 @@ namespace selx
 
     enum interfaceStatus { success, noaccepter, noprovider };
 
-    virtual interfaceStatus ConnectFrom(const char *, ComponentBase*) = 0;
-    virtual int ConnectFrom(ComponentBase*) = 0;
+    virtual interfaceStatus AcceptConnectionFrom(const char *, ComponentBase*) = 0;
+    virtual int AcceptConnectionFrom(ComponentBase*) = 0;
 
     /** if there is any failed criterion, return false (like a short - circuit AND) */
     bool MeetsCriteria(const CriteriaType &criteria);

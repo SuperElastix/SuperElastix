@@ -20,13 +20,13 @@ int InterfaceAcceptor<InterfaceT>::Connect(ComponentBase* providerComponent){
 }
 //////////////////////////////////////////////////////////////////////////
 template<typename AcceptingInterfaces, typename ProvidingInterfaces>
-ComponentBase::interfaceStatus Implements<AcceptingInterfaces, ProvidingInterfaces>::ConnectFrom(const char * interfacename, ComponentBase* other)
+ComponentBase::interfaceStatus Implements<AcceptingInterfaces, ProvidingInterfaces>::AcceptConnectionFrom(const char * interfacename, ComponentBase* other)
 {
   return AcceptingInterfaces::ConnectFromImpl(interfacename, other);
 }
 
 template<typename AcceptingInterfaces, typename ProvidingInterfaces>
-int Implements<AcceptingInterfaces, ProvidingInterfaces>::ConnectFrom(ComponentBase* other)
+int Implements<AcceptingInterfaces, ProvidingInterfaces>::AcceptConnectionFrom(ComponentBase* other)
 {
   return AcceptingInterfaces::ConnectFromImpl(other);
 }
