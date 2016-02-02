@@ -12,7 +12,7 @@ namespace selx
   template <int Dimensionality, class TPixel>
   class ItkImageRegistrationMethodv4Component : 
     public Implements<
-    Accepting< itkImageSourceInterface<Dimensionality, TPixel> >,
+    Accepting< itkImageSourceFixedInterface<Dimensionality, TPixel>, itkImageSourceMovingInterface<Dimensionality, TPixel>>,
     Providing< itkImageSourceInterface<Dimensionality, TPixel> >
     >
   {
@@ -40,7 +40,9 @@ namespace selx
     
     typedef itk::ResampleImageFilter<MovingImageType, ConnectionImageType> ResampleFilterType;
 
-    virtual int Set(itkImageSourceInterface<Dimensionality, TPixel>*) override;
+    virtual int Set(itkImageSourceFixedInterface<Dimensionality, TPixel>*) override;
+    virtual int Set(itkImageSourceMovingInterface<Dimensionality, TPixel>*) override;
+
     virtual ItkImageSourcePointer GetItkImageSource() override;
 
     virtual bool MeetsCriterion(const CriterionType &criterion) override;    

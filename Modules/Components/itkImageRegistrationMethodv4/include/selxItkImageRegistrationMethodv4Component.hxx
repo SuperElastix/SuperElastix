@@ -16,12 +16,21 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::~ItkImageRegistr
 }
 
 template<int Dimensionality, class TPixel>
-int ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::Set(itkImageSourceInterface<Dimensionality, TPixel>* component)
+int ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::Set(itkImageSourceFixedInterface<Dimensionality, TPixel>* component)
 {
-  auto other = component->GetItkImageSource();
+  auto other = component->GetItkImageSourceFixed();
+  // connect the itk pipeline
+  this->m_theItkFilter->SetFixedImage(other->GetOutput());
+  return 1;
+}
+
+template<int Dimensionality, class TPixel>
+int ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::Set(itkImageSourceMovingInterface<Dimensionality, TPixel>* component)
+{
+  auto other = component->GetItkImageSourceMoving();
   // connect the itk pipeline
   this->m_theItkFilter->SetMovingImage(other->GetOutput());
-  return 0;
+  return 1;
 }
 
 //ItkImageSourceType::Pointer 

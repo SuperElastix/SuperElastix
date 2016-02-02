@@ -13,9 +13,17 @@ set( ${MODULE}_LIBRARIES
   ${MODULE}
 )
 
+# Export tests
+set( ${MODULE}_TESTS 
+  elxRegistrationItkv4Test.cxx
+)
+
 # Module source files
 set( ${MODULE}_SOURCE_FILES
-  ${${MODULE}_SOURCE_DIR}/src/selxItkImageRegistrationMethodv4.cxx )
+  ${${MODULE}_SOURCE_DIR}/src/selxItkImageRegistrationMethodv4.cxx 
+  ${${MODULE}_SOURCE_DIR}/src/selxItkImageSourceFixed.cxx 
+  ${${MODULE}_SOURCE_DIR}/src/selxItkImageSourceMoving.cxx 
+  )
 
 # Compile library
 

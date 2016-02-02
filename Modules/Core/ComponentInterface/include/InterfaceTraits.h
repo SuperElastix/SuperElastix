@@ -93,7 +93,22 @@ struct InterfaceName < itkImageSourceInterface <D, TPixel> >
   }
 };
 
-
+template <int D, class TPixel>
+struct InterfaceName < itkImageSourceFixedInterface <D, TPixel> >
+{
+  static const char* Get()
+  {
+    return "itkImageSourceFixedInterface";
+  }
+};
+template <int D, class TPixel>
+struct InterfaceName < itkImageSourceMovingInterface <D, TPixel> >
+{
+  static const char* Get()
+  {
+    return "itkImageSourceMovingInterface";
+  }
+};
 template <>
 struct InterfaceName < SourceInterface >
 {

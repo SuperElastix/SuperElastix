@@ -41,13 +41,21 @@ namespace selx
       // The (failing) criteria can be printed as well.
       if (numberOfComponents == 0)
       {
-        itkExceptionMacro("Too many criteria for component");
+        //TODO report about m_Criteria
+        std::stringstream message;
+        message << "Too many criteria for component " << this->m_ComponentSelectorContainer[*componentIt]->GetNameOfClass();
+        // "There is no component in our database that fulfills your set of criteria 
+        std::cout << message.str();
+
+        //TODO how does this work for strings?
+        itkExceptionMacro("Too many criteria for component ");
+
       }
       else if (numberOfComponents > 1)
       {
         allUniqueComponents = false;
       }
-      std::cout << "blueprint node " << *componentIt << " has selected" << numberOfComponents << " components" << std::endl;
+      std::cout << "blueprint node " << *componentIt << " has selected " << numberOfComponents << " components" << std::endl;
 
     }
     return allUniqueComponents;
@@ -169,7 +177,7 @@ namespace selx
         //TODO GetComponent returns NULL if possible components !=1 we can check for that, but Overlord::UpdateSelectors() does something similar.
         ComponentBase::Pointer sourceComponent = this->m_ComponentSelectorContainer[ouputIt->m_source]->GetComponent();
         ComponentBase::Pointer targetComponent = this->m_ComponentSelectorContainer[ouputIt->m_target]->GetComponent();
-        targetComponent->ConnectFrom(sourceComponent);
+        targetComponent->AcceptConnectionFrom(sourceComponent);
       }
     }
     //TODO should we communicate by exceptions instead of returning booleans?
