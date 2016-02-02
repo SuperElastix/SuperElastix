@@ -15,10 +15,6 @@ namespace selx
     Accepting< itkImageSourceInterface<Dimensionality, TPixel> >,
     Providing< itkImageSourceInterface<Dimensionality, TPixel> >
     >
-    // TODO: see if itkImageSourceInterface is the right way to connect itk filters..
-    //Accepting< itkProcessObjectInterface, itkImageToImageFilterInterface >,
-    //Providing< itkProcessObjectInterface, itkImageToImageFilterInterface >
-    //>
   {
   public:
     elxNewMacro(ItkImageRegistrationMethodv4Component, ComponentBase);
@@ -29,25 +25,26 @@ namespace selx
     virtual ~ItkImageRegistrationMethodv4Component();
 
     typedef TPixel PixelType;
-    typedef itk::ImageRegistrationMethodv4<itk::Image<PixelType, Dimensionality>, itk::Image<PixelType, Dimensionality>> TheItkFilterType;
-    typedef itk::ImageSource<itk::Image<PixelType, Dimensionality>> ItkImageSourceType;
+
+    // the in and output image type of the component are chosen to be the same 
+    typedef itk::Image<PixelType, Dimensionality> ConnectionImageType; 
+
+    // fixed and moving image types are all the same, these aliases can be used to be explicit. 
+    typedef itk::Image<PixelType, Dimensionality> FixedImageType; 
+    typedef itk::Image<PixelType, Dimensionality> MovingImageType;
+    
+    typedef itk::ImageSource<ConnectionImageType> ItkImageSourceType;
     typedef typename ItkImageSourceType::Pointer ItkImageSourcePointer;
 
-    // TODO: see if itkImageSourceInterface is the right way to connect itk filters..
-    /*
-    virtual int Set(itkProcessObjectInterface*) override;
-    virtual itk::ProcessObject::Pointer GetItkProcessObject() override;
+    typedef itk::ImageRegistrationMethodv4<FixedImageType, MovingImageType> TheItkFilterType;
+    
+    typedef itk::ResampleImageFilter<MovingImageType, ConnectionImageType> ResampleFilterType;
 
-    virtual int Set(itkImageToImageFilterInterface*) override;
-    virtual itk::ImageToImageFilter<itk::Image<double, 3>, itk::Image<double, 3>>::Pointer GetItkImageToImageFilter() override;
-    */
     virtual int Set(itkImageSourceInterface<Dimensionality, TPixel>*) override;
     virtual ItkImageSourcePointer GetItkImageSource() override;
 
-    //int Update();
-    //virtual bool MeetsCriteria(const CriteriaType &criteria);
     virtual bool MeetsCriterion(const CriterionType &criterion) override;    
-    //static const char * GetName() { return "GDOptimizer3rdPartyComponent"; } ;
+    //static const char * GetName() { return "ItkImageRegistrationMethodv4"; } ;
     static const char * GetDescription() { return "ItkImageRegistrationMethodv4 Component"; };
   private:
     typename TheItkFilterType::Pointer m_theItkFilter;

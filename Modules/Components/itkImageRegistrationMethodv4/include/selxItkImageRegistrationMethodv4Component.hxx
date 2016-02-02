@@ -6,46 +6,21 @@ namespace selx
   ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::ItkImageRegistrationMethodv4Component()
 {
   m_theItkFilter = TheItkFilterType::New();
+  //TODO: instantiating the filter in the constructor might be heavy for the use in component selector factory, since all components of the database are created during the selection process.
+  // we could choose to keep the component light weighted (for checking criteria such as names and connections) until the settings are passed to the filter, but this requires an additional initialization step.
 }
+
 template<int Dimensionality, class TPixel>
 ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::~ItkImageRegistrationMethodv4Component()
 {
 }
 
-// TODO: see if itkImageSourceInterface is the right way to connect itk filters..
-/*
-int ItkImageRegistrationMethodv4Component::Set(itkProcessObjectInterface* component)
-{
-  auto other = component->GetItkProcessObject();
-  // connect the itk pipeline
-  //this->m_theItkFilter->SetInput(other->GetOutputs()[0]);
-  return 0;
-}
-
-itk::ProcessObject::Pointer ItkImageRegistrationMethodv4Component::GetItkProcessObject()
-{
-  return m_theItkFilter;
-}
-
-int ItkImageRegistrationMethodv4Component::Set(itkImageToImageFilterInterface* component)
-{
-  auto other = component->GetItkImageToImageFilter();
-  // connect the itk pipeline
-  this->m_theItkFilter->SetInput(other->GetOutput());
-  return 0;
-}
-
-itk::ImageToImageFilter<itk::Image<double, 3>, itk::Image<double, 3>>::Pointer ItkImageRegistrationMethodv4Component::GetItkImageToImageFilter()
-{
-  return m_theItkFilter;
-}
-*/
 template<int Dimensionality, class TPixel>
 int ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::Set(itkImageSourceInterface<Dimensionality, TPixel>* component)
 {
   auto other = component->GetItkImageSource();
   // connect the itk pipeline
-  this->m_theItkFilter->SetInput(other->GetOutput());
+  this->m_theItkFilter->SetMovingImage(other->GetOutput());
   return 0;
 }
 
@@ -53,7 +28,21 @@ int ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::Set(itkImage
 template<int Dimensionality, class TPixel>
 typename ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::ItkImageSourcePointer ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::GetItkImageSource()
 {
-  return m_theItkFilter;
+  
+  typename ResampleFilterType::Pointer resampler = ResampleFilterType::New();
+
+  FixedImageType::ConstPointer fixedImage = this->m_theItkFilter->GetFixedImage();
+  MovingImageType::ConstPointer movingImage = this->m_theItkFilter->GetMovingImage();
+
+  resampler->SetTransform(this->m_theItkFilter->GetTransform());
+  resampler->SetInput(movingImage);
+  resampler->SetSize(fixedImage->GetBufferedRegion().GetSize());  //should be virtual image...
+  resampler->SetOutputOrigin(fixedImage->GetOrigin());
+  resampler->SetOutputSpacing(fixedImage->GetSpacing());
+  resampler->SetOutputDirection(fixedImage->GetDirection());
+  resampler->SetDefaultPixelValue(0);
+
+  return resampler;
 }
 template<int Dimensionality, class TPixel>
 bool
@@ -96,28 +85,6 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>
       }
     }
 
-  }
-  else if (criterion.first == "Sigma") //Supports this?
-  {
-    if (criterion.second.size() != 1)
-    {
-      meetsCriteria = false;
-      //itkExceptionMacro("The criterion Sigma may have only 1 value");
-    }
-    else
-    {
-      auto const & criterionValue = *criterion.second.begin();
-      try
-      {
-        this->m_theItkFilter->SetSigma(std::stod(criterionValue));
-        meetsCriteria = true;
-      }
-      catch (itk::ExceptionObject & err)
-      {
-        //TODO log the error message?
-        meetsCriteria = false;
-      }
-    }
   }
   return meetsCriteria;
 }
