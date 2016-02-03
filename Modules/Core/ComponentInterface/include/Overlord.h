@@ -49,6 +49,7 @@ namespace selx
     //typedef itk::VectorContainer <
     //  unsigned int, SourceInterface* > SourceComponentsContainerType;
 
+    //TODO these containers are not interface specific
     typedef itk::VectorContainer <
       unsigned int, ComponentType::Pointer > SinkComponentsContainerType;
 
@@ -61,6 +62,8 @@ namespace selx
    // typedef std::vector <
    //   unsigned int, SourceInterface* > SourceComponentsContainerType;
 
+    typedef itk::VectorContainer <
+      unsigned int, ComponentType::Pointer > ComponentsContainerType;
 
     void SetBlueprint(const Blueprint::Pointer);
     bool Configure();
@@ -76,6 +79,7 @@ namespace selx
     bool ConnectComponents();
     bool FindSources();
     bool FindSinks();
+    bool FindRunRegistration();
     bool ConnectSources();
     bool ConnectSinks();
 
@@ -85,6 +89,7 @@ namespace selx
     //ObjectContainerType::Pointer m_OutputObjects;
     SinkComponentsContainerType::Pointer m_SinkComponents;
     SourceComponentsContainerType::Pointer m_SourceComponents;
+    ComponentsContainerType::Pointer m_RunRegistrationComponents;
 
     // For testing purposes, all Sources are connected to an ImageReader
     itk::ImageFileReader<itk::Image<double, 3>>::Pointer m_reader; 

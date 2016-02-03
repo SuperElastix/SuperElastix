@@ -88,6 +88,16 @@ namespace selx
     virtual bool ConnectToOverlordSink(itk::Object::Pointer) = 0;
   };
 
+  class RunRegistrationInterface {
+  public:
+    virtual void RunRegistration() = 0;
+  };
+  class RunResolutionInterface {
+  public:
+    virtual bool RunResolution() = 0;
+  };
+
+
   // Define the accepting interfaces as templated by the providing interface
 
   template<class InterfaceT>

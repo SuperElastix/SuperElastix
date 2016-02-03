@@ -13,7 +13,7 @@ namespace selx
   class ItkImageRegistrationMethodv4Component : 
     public Implements<
     Accepting< itkImageSourceFixedInterface<Dimensionality, TPixel>, itkImageSourceMovingInterface<Dimensionality, TPixel>>,
-    Providing< itkImageSourceInterface<Dimensionality, TPixel> >
+    Providing< itkImageSourceInterface<Dimensionality, TPixel>, RunRegistrationInterface>
     >
   {
   public:
@@ -44,12 +44,14 @@ namespace selx
     virtual int Set(itkImageSourceMovingInterface<Dimensionality, TPixel>*) override;
 
     virtual ItkImageSourcePointer GetItkImageSource() override;
+    virtual void RunRegistration() override;
 
     virtual bool MeetsCriterion(const CriterionType &criterion) override;    
     //static const char * GetName() { return "ItkImageRegistrationMethodv4"; } ;
     static const char * GetDescription() { return "ItkImageRegistrationMethodv4 Component"; };
   private:
     typename TheItkFilterType::Pointer m_theItkFilter;
+    typename ResampleFilterType::Pointer m_resampler;
   protected:
     /* The following struct returns the string name of computation type */
     /* default implementation */

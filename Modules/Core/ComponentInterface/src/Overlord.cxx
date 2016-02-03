@@ -22,6 +22,33 @@ namespace selx
     return;
 
   }
+  bool Overlord::Configure()
+  {
+    bool isSuccess(false);
+    bool allUniqueComponents;
+    this->ApplyNodeConfiguration();
+    allUniqueComponents = this->UpdateSelectors();
+    std::cout << "Based on Component Criteria unique components could " << (allUniqueComponents ? "" : "not ") << "be selected" << std::endl;
+
+    this->ApplyConnectionConfiguration();
+    allUniqueComponents = this->UpdateSelectors();
+    std::cout << "By adding Connection Criteria unique components could " << (allUniqueComponents ? "" : "not ") << "be selected" << std::endl;
+
+    this->FindSources();
+    std::cout << "Found " << this->m_SourceComponents->size() << " Source Components" << std::endl;
+    this->FindSinks();
+    std::cout << "Found " << this->m_SinkComponents->size() << " Sink Components" << std::endl;
+    this->ConnectSources();
+    this->ConnectSinks();
+
+    if (allUniqueComponents)
+    {
+      isSuccess = this->ConnectComponents();
+    }
+
+    return isSuccess;
+  }
+
   bool Overlord::UpdateSelectors()
   {
     bool allUniqueComponents = true;
@@ -61,32 +88,6 @@ namespace selx
     return allUniqueComponents;
   }
 
-  bool Overlord::Configure()
-  {
-    bool isSuccess(false);
-    bool allUniqueComponents;
-    this->ApplyNodeConfiguration();
-    allUniqueComponents = this->UpdateSelectors();
-    std::cout << "Based on Component Criteria unique components could " << (allUniqueComponents ? "":"not ") << "be selected" << std::endl;
-
-    this->ApplyConnectionConfiguration();
-    allUniqueComponents = this->UpdateSelectors();
-    std::cout << "By adding Connection Criteria unique components could " << (allUniqueComponents ? "" : "not ") << "be selected" << std::endl;
-
-    this->FindSources();
-    std::cout << "Found " << this->m_SourceComponents->size() << " Source Components" << std::endl;
-    this->FindSinks();
-    std::cout << "Found " << this->m_SinkComponents->size() << " Sink Components" << std::endl;
-    this->ConnectSources();
-    this->ConnectSinks();
-
-    if (allUniqueComponents)
-    {
-      isSuccess = this->ConnectComponents();
-    }
-
-    return isSuccess;
-  }
   void Overlord::ApplyNodeConfiguration()
   {
     Blueprint::ComponentIteratorPairType componentItPair = this->m_Blueprint->GetComponentIterator();
@@ -225,6 +226,26 @@ namespace selx
     return true;
   }
 
+  bool Overlord::FindRunRegistration()
+  {
+    /** Scans all Components to find those with Sourcing capability and store them in SourceComponents list */
+    const CriterionType runRegistrationCriterion = CriterionType("HasProvidingInterface", { "RunRegistrationInterface" });
+
+    // TODO redesign ComponentBase class to accept a single criterion instead of a criteria mapping.
+    CriteriaType runRegistrationCriteria;
+    runRegistrationCriteria.insert(runRegistrationCriterion);
+
+    for (auto && componentSelector : (this->m_ComponentSelectorContainer))
+    {
+      ComponentBase::Pointer component = componentSelector->GetComponent();
+      if (component->MeetsCriteria(runRegistrationCriteria)) // TODO MeetsCriterion
+      {
+        this->m_RunRegistrationComponents->push_back(component);
+      }
+    }
+
+    return true;
+  }
 
   bool Overlord::ConnectSources()
   {

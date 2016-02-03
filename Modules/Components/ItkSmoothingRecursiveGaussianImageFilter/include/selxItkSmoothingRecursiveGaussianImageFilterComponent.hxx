@@ -53,7 +53,7 @@ int ItkSmoothingRecursiveGaussianImageFilterComponent< Dimensionality, TPixel>::
 template<int Dimensionality, class TPixel>
 typename ItkSmoothingRecursiveGaussianImageFilterComponent< Dimensionality, TPixel>::ItkImageSourcePointer ItkSmoothingRecursiveGaussianImageFilterComponent< Dimensionality, TPixel>::GetItkImageSource()
 {
-  return m_theItkFilter;
+  return (ItkImageSourcePointer) m_theItkFilter;
 }
 template<int Dimensionality, class TPixel>
 bool

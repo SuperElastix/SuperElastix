@@ -127,6 +127,17 @@ struct InterfaceName < SinkInterface >
   }
 };
 
+template <>
+struct InterfaceName < RunRegistrationInterface >
+{
+  static const char* Get()
+  {
+    return "RunRegistrationInterface";
+  }
+};
+
+
+
 // partial specialization of InterfaceName
 // InterfaceName<T>::Get() should return the same name no matter whether T is an acceptor or provider interface.
 template<typename T1>

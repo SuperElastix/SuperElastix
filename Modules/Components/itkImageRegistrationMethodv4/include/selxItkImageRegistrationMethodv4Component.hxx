@@ -6,6 +6,8 @@ namespace selx
   ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::ItkImageRegistrationMethodv4Component()
 {
   m_theItkFilter = TheItkFilterType::New();
+  m_resampler = ResampleFilterType::New();
+  
   //TODO: instantiating the filter in the constructor might be heavy for the use in component selector factory, since all components of the database are created during the selection process.
   // we could choose to keep the component light weighted (for checking criteria such as names and connections) until the settings are passed to the filter, but this requires an additional initialization step.
 }
@@ -33,25 +35,29 @@ int ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::Set(itkImage
   return 1;
 }
 
-//ItkImageSourceType::Pointer 
+
+
+template<int Dimensionality, class TPixel>
+void ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::RunRegistration(void)
+{
+  this->m_theItkFilter->Update();
+  FixedImageType::ConstPointer fixedImage = this->m_theItkFilter->GetFixedImage();
+  MovingImageType::ConstPointer movingImage = this->m_theItkFilter->GetMovingImage();
+
+  this->m_resampler->SetTransform(this->m_theItkFilter->GetTransform());
+  this->m_resampler->SetInput(movingImage);
+  this->m_resampler->SetSize(fixedImage->GetBufferedRegion().GetSize());  //should be virtual image...
+  this->m_resampler->SetOutputOrigin(fixedImage->GetOrigin());
+  this->m_resampler->SetOutputSpacing(fixedImage->GetSpacing());
+  this->m_resampler->SetOutputDirection(fixedImage->GetDirection());
+  this->m_resampler->SetDefaultPixelValue(0);
+}
+
 template<int Dimensionality, class TPixel>
 typename ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::ItkImageSourcePointer ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::GetItkImageSource()
 {
   
-  typename ResampleFilterType::Pointer resampler = ResampleFilterType::New();
-
-  FixedImageType::ConstPointer fixedImage = this->m_theItkFilter->GetFixedImage();
-  MovingImageType::ConstPointer movingImage = this->m_theItkFilter->GetMovingImage();
-
-  resampler->SetTransform(this->m_theItkFilter->GetTransform());
-  resampler->SetInput(movingImage);
-  resampler->SetSize(fixedImage->GetBufferedRegion().GetSize());  //should be virtual image...
-  resampler->SetOutputOrigin(fixedImage->GetOrigin());
-  resampler->SetOutputSpacing(fixedImage->GetSpacing());
-  resampler->SetOutputDirection(fixedImage->GetDirection());
-  resampler->SetDefaultPixelValue(0);
-
-  return resampler;
+  return (ItkImageSourcePointer) this->m_resampler;
 }
 template<int Dimensionality, class TPixel>
 bool
