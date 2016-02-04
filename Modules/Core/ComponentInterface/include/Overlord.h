@@ -82,7 +82,7 @@ namespace selx
     bool FindRunRegistration();
     bool ConnectSources();
     bool ConnectSinks();
-
+    bool RunRegistrations();
     Blueprint::Pointer m_Blueprint;
     ComponentSelectorContainerType m_ComponentSelectorContainer;
     //ObjectContainerType::Pointer m_InputObjects;

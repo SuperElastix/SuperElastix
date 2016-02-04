@@ -280,8 +280,24 @@ namespace selx
     }
     return true;
   }
+  bool Overlord::RunRegistrations()
+  {
+
+    for (auto const & runRegistrationComponent : *(this->m_RunRegistrationComponents)) // auto&& preferred?
+    {
+      RunRegistrationInterface* provingRunRegistrationInterface = dynamic_cast<RunRegistrationInterface*> (&(*runRegistrationComponent));
+      if (provingRunRegistrationInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
+      {
+        itkExceptionMacro("dynamic_cast<RunRegistrationInterface*> fails, but based on component criterion it shouldn't")
+      }
+      // For testing purposes, all Sources are connected to an ImageWriter
+      provingRunRegistrationInterface->RunRegistration();
+    }
+    return true;
+  }
   bool Overlord::Execute()
   {
+    this->RunRegistrations();
     //update all writers...
     // should have stored the list of writers in overlord instead of sinkComponents
     this->m_writer->Update();
