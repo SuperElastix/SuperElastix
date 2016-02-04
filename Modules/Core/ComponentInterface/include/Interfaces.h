@@ -99,13 +99,13 @@ namespace selx
   };
 
   template<int Dimensionality, class TPixel>
-  class Itkv4MetricInterface {
+  class itkMetricv4Interface {
   public:
     typedef typename itk::Image<TPixel, Dimensionality> FixedImageType;
     typedef typename itk::Image<TPixel, Dimensionality> MovingImageType;
     typedef typename itk::ImageToImageMetricv4<FixedImageType, MovingImageType> ImageToImageMetricv4Type;
 
-    virtual typename ImageToImageMetricv4Type::Pointer GetItkv4Metric() = 0;
+    virtual typename ImageToImageMetricv4Type::Pointer GetItkMetricv4() = 0;
   };
 
   // Define the accepting interfaces as templated by the providing interface

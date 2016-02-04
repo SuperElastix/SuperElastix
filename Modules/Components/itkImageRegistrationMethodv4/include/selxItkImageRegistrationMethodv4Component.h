@@ -4,6 +4,7 @@
 #include "ComponentBase.h"
 #include "Interfaces.h"
 #include "itkImageRegistrationMethodv4.h"
+#include "itkGradientDescentOptimizerv4.h"
 #include "itkImageSource.h"
 #include <string.h>
 #include "elxMacro.h"
@@ -12,8 +13,13 @@ namespace selx
   template <int Dimensionality, class TPixel>
   class ItkImageRegistrationMethodv4Component : 
     public Implements<
-    Accepting< itkImageSourceFixedInterface<Dimensionality, TPixel>, itkImageSourceMovingInterface<Dimensionality, TPixel>>,
-    Providing< itkImageSourceInterface<Dimensionality, TPixel>, RunRegistrationInterface>
+    Accepting< itkImageSourceFixedInterface<Dimensionality, TPixel>, 
+               itkImageSourceMovingInterface<Dimensionality, TPixel>,
+               itkMetricv4Interface<Dimensionality, TPixel>
+             >,
+    Providing< itkImageSourceInterface<Dimensionality, TPixel>,    
+               RunRegistrationInterface
+             >
     >
   {
   public:
@@ -42,6 +48,7 @@ namespace selx
 
     virtual int Set(itkImageSourceFixedInterface<Dimensionality, TPixel>*) override;
     virtual int Set(itkImageSourceMovingInterface<Dimensionality, TPixel>*) override;
+    virtual int Set(itkMetricv4Interface<Dimensionality, TPixel>*) override;
 
     virtual ItkImageSourcePointer GetItkImageSource() override;
     virtual void RunRegistration() override;

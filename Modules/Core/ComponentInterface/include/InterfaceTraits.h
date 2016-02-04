@@ -127,6 +127,15 @@ struct InterfaceName < SinkInterface >
   }
 };
 
+template <int D, class TPixel>
+struct InterfaceName < itkMetricv4Interface <D, TPixel> >
+{
+  static const char* Get()
+  {
+    return "itkMetricv4Interface";
+  }
+};
+
 template <>
 struct InterfaceName < RunRegistrationInterface >
 {

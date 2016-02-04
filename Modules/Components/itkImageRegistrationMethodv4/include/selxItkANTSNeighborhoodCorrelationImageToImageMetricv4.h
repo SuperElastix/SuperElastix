@@ -12,7 +12,7 @@ namespace selx
   class ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component : 
     public Implements<
     Accepting< >,
-    Providing< Itkv4MetricInterface<Dimensionality, TPixel>>
+    Providing< itkMetricv4Interface<Dimensionality, TPixel>>
     >
   {
   public:
@@ -28,21 +28,21 @@ namespace selx
     // fixed and moving image types are all the same, these aliases can be used to be explicit. 
     typedef itk::Image<PixelType, Dimensionality> FixedImageType; 
     typedef itk::Image<PixelType, Dimensionality> MovingImageType;
+
+    typedef typename itk::ImageToImageMetricv4<FixedImageType, MovingImageType> ImageToImageMetricv4Type;
+    //typedef typename ItkMetricv4Interface<Dimensionality, TPixel>::ImageToImageMetricv4Type ImageToImageMetricv4Type;
+      //typedef ItkMetricv4Interface<Dimensionality, TPixel>::ImageToImageMetricv4Type ItkMetricv4Pointer
+    typedef typename ImageToImageMetricv4Type::Pointer ItkMetricv4Pointer;
     
-    typedef Itkv4MetricInterface<Dimensionality, TPixel>::ImageToImageMetricv4Type ImageToImageMetricv4Type;
-      //typedef Itkv4MetricInterface<Dimensionality, TPixel>::ImageToImageMetricv4Type ItkMetricv4Pointer
-    typedef ImageToImageMetricv4Type::Pointer ItkMetricv4Pointer;
+    typedef typename itk::ANTSNeighborhoodCorrelationImageToImageMetricv4<FixedImageType, MovingImageType> TheItkFilterType;
     
-    typedef itk::ANTSNeighborhoodCorrelationImageToImageMetricv4<FixedImageType, MovingImageType> TheItkFilterType;
-    
-    virtual ItkImageSourcePointer GetItkv4Metric() override;
+    virtual typename ItkMetricv4Pointer GetItkMetricv4() override;
 
     virtual bool MeetsCriterion(const CriterionType &criterion) override;    
     //static const char * GetName() { return "ItkANTSNeighborhoodCorrelationImageToImageMetricv4"; } ;
     static const char * GetDescription() { return "ItkANTSNeighborhoodCorrelationImageToImageMetricv4 Component"; };
   private:
     typename TheItkFilterType::Pointer m_theItkFilter;
-    typename ResampleFilterType::Pointer m_resampler;
   protected:
     /* The following struct returns the string name of computation type */
     /* default implementation */
@@ -146,6 +146,6 @@ namespace selx
   }
 } //end namespace selx
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "selxItkANTSNeighborhoodCorrelationImageToImageMetricv4Component.hxx"
+#include "selxItkANTSNeighborhoodCorrelationImageToImageMetricv4.hxx"
 #endif
 #endif // #define GDOptimizer3rdPartyComponent_h

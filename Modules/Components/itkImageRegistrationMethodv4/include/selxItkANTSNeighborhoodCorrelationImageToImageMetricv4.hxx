@@ -17,7 +17,7 @@ ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< Dimensionality, TPi
 }
 
 template<int Dimensionality, class TPixel>
-typename ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< Dimensionality, TPixel>::ItkImageSourcePointer ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< Dimensionality, TPixel>::GetItkv4Metric()
+typename ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< Dimensionality, TPixel>::ItkMetricv4Pointer ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< Dimensionality, TPixel>::GetItkMetricv4()
 {
   
   return (ItkMetricv4Pointer) this->m_theItkFilter;
@@ -63,6 +63,32 @@ ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< Dimensionality, TPi
       }
     }
 
+  }
+  else if (criterion.first == "Radius") //Supports this?
+  {
+    if (criterion.second.size() != 1)
+    {
+      meetsCriteria = false;
+      //itkExceptionMacro("The criterion Sigma may have only 1 value");
+    }
+    else
+    {
+      auto const & criterionValue = *criterion.second.begin();
+      try
+      {
+        //TODO radius should be a vector in criteria
+        TheItkFilterType::RadiusType radius;
+        radius.Fill(std::stod(criterionValue));
+
+        this->m_theItkFilter->SetRadius(radius);
+        meetsCriteria = true;
+      }
+      catch (itk::ExceptionObject & err)
+      {
+        //TODO log the error message?
+        meetsCriteria = false;
+      }
+    }
   }
   return meetsCriteria;
 }

@@ -14,6 +14,7 @@
 
 
 #include "selxItkImageRegistrationMethodv4Component.h"
+#include "selxItkANTSNeighborhoodCorrelationImageToImageMetricv4.h"
 #include "selxItkImageSourceFixed.h"
 #include "selxItkImageSourceMoving.h"
 
@@ -54,6 +55,7 @@ public:
 
     ComponentFactory<ItkImageRegistrationMethodv4Component<3, double>>::RegisterOneFactory();
 
+    ComponentFactory<ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component<3, double>>::RegisterOneFactory();
 
   }
 
@@ -65,49 +67,99 @@ public:
   Overlord::Pointer overlord;
 };
 
-TEST_F( RegistrationItkv4Test, ImagesOnly )
+TEST_F(RegistrationItkv4Test, ImagesOnly)
 {
-      /** make example blueprint configuration */
-    blueprint = Blueprint::New();
+  /** make example blueprint configuration */
+  blueprint = Blueprint::New();
 
-    ParameterMapType component0Parameters;
-    component0Parameters["NameOfClass"] = { "ItkImageRegistrationMethodv4Component" };
-    ComponentIndexType index0 = blueprint->AddComponent(component0Parameters);
+  ParameterMapType component0Parameters;
+  component0Parameters["NameOfClass"] = { "ItkImageRegistrationMethodv4Component" };
+  ComponentIndexType index0 = blueprint->AddComponent(component0Parameters);
 
-    ParameterMapType component1Parameters;
-    component1Parameters["NameOfClass"] = { "ItkImageSourceFixedComponent" };
-    ComponentIndexType index1 = blueprint->AddComponent(component1Parameters);
+  ParameterMapType component1Parameters;
+  component1Parameters["NameOfClass"] = { "ItkImageSourceFixedComponent" };
+  ComponentIndexType index1 = blueprint->AddComponent(component1Parameters);
 
-    ParameterMapType component2Parameters;
-    component2Parameters["NameOfClass"] = { "ItkImageSourceMovingComponent" };
-    ComponentIndexType index2 = blueprint->AddComponent(component2Parameters);
+  ParameterMapType component2Parameters;
+  component2Parameters["NameOfClass"] = { "ItkImageSourceMovingComponent" };
+  ComponentIndexType index2 = blueprint->AddComponent(component2Parameters);
 
-    ParameterMapType component3Parameters;
-    component3Parameters["NameOfClass"] = { "ItkImageSinkComponent" };
-    ComponentIndexType index3 = blueprint->AddComponent(component3Parameters);
+  ParameterMapType component3Parameters;
+  component3Parameters["NameOfClass"] = { "ItkImageSinkComponent" };
+  ComponentIndexType index3 = blueprint->AddComponent(component3Parameters);
 
 
-    ParameterMapType connection1Parameters;
-    connection1Parameters["NameOfInterface"] = { "itkImageSourceFixedInterface" };
-    blueprint->AddConnection(index1, index0, connection1Parameters);
+  ParameterMapType connection1Parameters;
+  connection1Parameters["NameOfInterface"] = { "itkImageSourceFixedInterface" };
+  blueprint->AddConnection(index1, index0, connection1Parameters);
 
-    ParameterMapType connection2Parameters;
-    connection2Parameters["NameOfInterface"] = { "itkImageSourceMovingInterface" };
-    blueprint->AddConnection(index2, index0, connection2Parameters);
+  ParameterMapType connection2Parameters;
+  connection2Parameters["NameOfInterface"] = { "itkImageSourceMovingInterface" };
+  blueprint->AddConnection(index2, index0, connection2Parameters);
 
-    ParameterMapType connection3Parameters;
-    connection3Parameters["NameOfInterface"] = { "itkImageSourceInterface" };
-    blueprint->AddConnection(index0, index3, connection3Parameters);
+  ParameterMapType connection3Parameters;
+  connection3Parameters["NameOfInterface"] = { "itkImageSourceInterface" };
+  blueprint->AddConnection(index0, index3, connection3Parameters);
 
-	
-  EXPECT_NO_THROW( overlord = Overlord::New() );
-  EXPECT_NO_THROW( overlord->SetBlueprint(blueprint) );
+
+  EXPECT_NO_THROW(overlord = Overlord::New());
+  EXPECT_NO_THROW(overlord->SetBlueprint(blueprint));
+  bool allUniqueComponents;
+  EXPECT_NO_THROW(allUniqueComponents = overlord->Configure());
+  EXPECT_TRUE(allUniqueComponents);
+  //EXPECT_NO_THROW(overlord->Execute());
+  
+}
+
+TEST_F(RegistrationItkv4Test, WithANTSCCMetric)
+{
+  /** make example blueprint configuration */
+  blueprint = Blueprint::New();
+
+  ParameterMapType component0Parameters;
+  component0Parameters["NameOfClass"] = { "ItkImageRegistrationMethodv4Component" };
+  ComponentIndexType index0 = blueprint->AddComponent(component0Parameters);
+
+  ParameterMapType component1Parameters;
+  component1Parameters["NameOfClass"] = { "ItkImageSourceFixedComponent" };
+  ComponentIndexType index1 = blueprint->AddComponent(component1Parameters);
+
+  ParameterMapType component2Parameters;
+  component2Parameters["NameOfClass"] = { "ItkImageSourceMovingComponent" };
+  ComponentIndexType index2 = blueprint->AddComponent(component2Parameters);
+
+  ParameterMapType component3Parameters;
+  component3Parameters["NameOfClass"] = { "ItkImageSinkComponent" };
+  ComponentIndexType index3 = blueprint->AddComponent(component3Parameters);
+
+  ParameterMapType component4Parameters;
+  component4Parameters["NameOfClass"] = { "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component" };
+  ComponentIndexType index4 = blueprint->AddComponent(component4Parameters);
+
+
+  ParameterMapType connection1Parameters;
+  connection1Parameters["NameOfInterface"] = { "itkImageSourceFixedInterface" };
+  blueprint->AddConnection(index1, index0, connection1Parameters);
+
+  ParameterMapType connection2Parameters;
+  connection2Parameters["NameOfInterface"] = { "itkImageSourceMovingInterface" };
+  blueprint->AddConnection(index2, index0, connection2Parameters);
+
+  ParameterMapType connection3Parameters;
+  connection3Parameters["NameOfInterface"] = { "itkImageSourceInterface" };
+  blueprint->AddConnection(index0, index3, connection3Parameters);
+
+  ParameterMapType connection4Parameters;
+  connection4Parameters["NameOfInterface"] = { "itkMetricv4Interface" };
+  blueprint->AddConnection(index4, index0, connection4Parameters);
+
+  EXPECT_NO_THROW(overlord = Overlord::New());
+  EXPECT_NO_THROW(overlord->SetBlueprint(blueprint));
   bool allUniqueComponents;
   EXPECT_NO_THROW(allUniqueComponents = overlord->Configure());
   EXPECT_TRUE(allUniqueComponents);
   //EXPECT_NO_THROW(overlord->Execute());
   overlord->Execute();
 }
-
 
 } // namespace elx

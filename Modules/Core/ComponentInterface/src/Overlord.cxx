@@ -72,7 +72,7 @@ namespace selx
         //TODO report about m_Criteria
         std::stringstream message;
         message << "Too many criteria for component " << this->m_ComponentSelectorContainer[*componentIt]->GetNameOfClass();
-        // "There is no component in our database that fulfills your set of criteria 
+        message << "There is no component in our database that fulfills your set of criteria" << std::endl;
         std::cout << message.str();
 
         //TODO how does this work for strings?

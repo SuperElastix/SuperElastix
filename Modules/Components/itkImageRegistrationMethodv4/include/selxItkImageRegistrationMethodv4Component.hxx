@@ -34,8 +34,18 @@ int ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::Set(itkImage
   this->m_theItkFilter->SetMovingImage(other->GetOutput());
   return 1;
 }
+template<int Dimensionality, class TPixel>
+int ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::Set(itkMetricv4Interface<Dimensionality, TPixel>* component)
+{
+  this->m_theItkFilter->SetMetric(component->GetItkMetricv4());
 
+  //TODO: this is a bug in itkv4
+  typedef itk::GradientDescentOptimizerv4       OptimizerType;
+  OptimizerType::Pointer      optimizer = OptimizerType::New();
+  this->m_theItkFilter->SetOptimizer(optimizer);
 
+  return 1;
+}
 
 template<int Dimensionality, class TPixel>
 void ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::RunRegistration(void)
