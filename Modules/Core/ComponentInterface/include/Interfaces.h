@@ -7,6 +7,7 @@
 
 #include "itkProcessObject.h"
 #include "itkImageToImageFilter.h"
+#include "itkImageToImageMetricv4.h"
 namespace selx
 {
   // Define the providing interfaces abstractly
@@ -97,6 +98,15 @@ namespace selx
     virtual bool RunResolution() = 0;
   };
 
+  template<int Dimensionality, class TPixel>
+  class Itkv4MetricInterface {
+  public:
+    typedef typename itk::Image<TPixel, Dimensionality> FixedImageType;
+    typedef typename itk::Image<TPixel, Dimensionality> MovingImageType;
+    typedef typename itk::ImageToImageMetricv4<FixedImageType, MovingImageType> ImageToImageMetricv4Type;
+
+    virtual typename ImageToImageMetricv4Type::Pointer GetItkv4Metric() = 0;
+  };
 
   // Define the accepting interfaces as templated by the providing interface
 

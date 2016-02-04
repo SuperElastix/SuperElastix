@@ -1,4 +1,5 @@
 #include "Overlord.h"
+#include <windows.h>
 
 namespace selx
 {
@@ -10,12 +11,14 @@ namespace selx
     this->m_Readers = ReaderContainerType::New();
     this->m_Writers = WriterContainerType::New();
   }
+
   void Overlord::SetBlueprint(const Blueprint::Pointer blueprint)
   {
     m_Blueprint = blueprint;
     return;
 
   }
+
   bool Overlord::Configure()
   {
     bool isSuccess(false);
@@ -43,6 +46,7 @@ namespace selx
       isSuccess = this->ConnectComponents();
     }
 
+    this->FindRunRegistration();
     return isSuccess;
   }
 
@@ -209,6 +213,7 @@ namespace selx
         ReaderType::Pointer reader;
         reader = ReaderType::New();
         std::stringstream filename;
+        //filename << "C:\\wp\\SuperElastix\\bld2\\SuperElastix-build\\bin\\Debug\\sourceimage" << readercounter << ".mhd";
         filename << "sourceimage" << readercounter << ".mhd";
         reader->SetFileName(filename.str());
         this->m_Readers->push_back(reader);
@@ -305,6 +310,8 @@ namespace selx
 
     for (auto const & reader : *(this->m_Readers)) // auto&& preferred?
     {
+      char result[MAX_PATH];
+      std::cout << std::string(result, GetModuleFileName(NULL, result, MAX_PATH));
       reader->Update();
     }
 

@@ -17,7 +17,7 @@
 #include "selxItkImageSourceFixed.h"
 #include "selxItkImageSourceMoving.h"
 
-
+#include "elxDataManager.h"
 #include "gtest/gtest.h"
 
 namespace selx {
@@ -105,7 +105,8 @@ TEST_F( RegistrationItkv4Test, ImagesOnly )
   bool allUniqueComponents;
   EXPECT_NO_THROW(allUniqueComponents = overlord->Configure());
   EXPECT_TRUE(allUniqueComponents);
-  EXPECT_NO_THROW(overlord->Execute());
+  //EXPECT_NO_THROW(overlord->Execute());
+  overlord->Execute();
 }
 
 
