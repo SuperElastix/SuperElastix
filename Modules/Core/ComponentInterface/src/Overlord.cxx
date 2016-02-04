@@ -4,17 +4,11 @@ namespace selx
 {
   Overlord::Overlord()
   {
-    this->m_SinkComponents = SinkComponentsContainerType::New();
-    this->m_SourceComponents = SourceComponentsContainerType::New();
-
-    // For testing purposes, all Sources are connected to an ImageReader
-    this->m_reader = itk::ImageFileReader<itk::Image<double, 3>>::New();
-    this->m_reader->SetFileName("e:/data/smalltest/3dSmiley.mhd");
-
-    // For testing purposes, all Sources are connected to an ImageWriter
-    this->m_writer = itk::ImageFileWriter<itk::Image<double, 3>>::New();
-    this->m_writer->SetFileName("testoutput.mhd");
-
+    //this->m_SinkComponents = SinkComponentsContainerType::New();
+    //this->m_SourceComponents = SourceComponentsContainerType::New();
+    this->m_RunRegistrationComponents = ComponentsContainerType::New();
+    this->m_Readers = ReaderContainerType::New();
+    this->m_Writers = WriterContainerType::New();
   }
   void Overlord::SetBlueprint(const Blueprint::Pointer blueprint)
   {
@@ -34,12 +28,15 @@ namespace selx
     allUniqueComponents = this->UpdateSelectors();
     std::cout << "By adding Connection Criteria unique components could " << (allUniqueComponents ? "" : "not ") << "be selected" << std::endl;
 
-    this->FindSources();
-    std::cout << "Found " << this->m_SourceComponents->size() << " Source Components" << std::endl;
-    this->FindSinks();
-    std::cout << "Found " << this->m_SinkComponents->size() << " Sink Components" << std::endl;
+    
     this->ConnectSources();
+    int numberSources = this->m_Readers->size(); // temporary solution
+    std::cout << "Found " << numberSources << " Source Components" << std::endl;
     this->ConnectSinks();
+    int numberSinks = this->m_Writers->size(); // temporary solution
+    std::cout << "Found " << numberSinks << " Sink Components" << std::endl;
+
+
 
     if (allUniqueComponents)
     {
@@ -184,31 +181,54 @@ namespace selx
     //TODO should we communicate by exceptions instead of returning booleans?
     return true;
   }
-  bool Overlord::FindSources()
+  bool Overlord::ConnectSources()
   {
     /** Scans all Components to find those with Sourcing capability and store them in SourceComponents list */
-    const CriterionType sourceCriterion = CriterionType("HasProvidingInterface", ParameterValueType(1, "SourceInterface"));
+
+    const CriterionType sourceCriterion = CriterionType("HasProvidingInterface", { "SourceInterface" });
    
+    int readercounter = 0; // temporary solution for reader filenames
+
     // TODO redesign ComponentBase class to accept a single criterion instead of a criteria mapping.
     CriteriaType sourceCriteria;
     sourceCriteria.insert(sourceCriterion);
-   
+
     for (auto && componentSelector : (this->m_ComponentSelectorContainer))
     {
       ComponentBase::Pointer component = componentSelector->GetComponent();
       if (component->MeetsCriteria(sourceCriteria)) // TODO MeetsCriterion
       {
-        this->m_SourceComponents->push_back(component);
+        SourceInterface* provingSourceInterface = dynamic_cast<SourceInterface*> (&(*component));
+        if (provingSourceInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
+        {
+          itkExceptionMacro("dynamic_cast<SourceInterface*> fails, but based on component criterion it shouldn't")
+        }
+
+        //TODO: Make these connections available as inputs of the SuperElastix (filter). 
+        // For now, we just create the readers here.
+        ReaderType::Pointer reader;
+        reader = ReaderType::New();
+        std::stringstream filename;
+        filename << "sourceimage" << readercounter << ".mhd";
+        reader->SetFileName(filename.str());
+        this->m_Readers->push_back(reader);
+
+        //TODO which way is preferred?
+        // provingSourceInterface->ConnectToOverlordSource((itk::Object*)(reader.GetPointer()));
+        provingSourceInterface->ConnectToOverlordSource((itk::SmartPointer<itk::Object>) reader);
+        ++readercounter;
       }
     }
 
     return true;
   }
 
-  bool Overlord::FindSinks()
+  bool Overlord::ConnectSinks()
   {
     /** Scans all Components to find those with Sinking capability and store them in SinkComponents list */
-    const CriterionType sinkCriterion = CriterionType("HasProvidingInterface", ParameterValueType(1, "SinkInterface"));
+    const CriterionType sinkCriterion = CriterionType("HasProvidingInterface", { "SinkInterface" });
+
+    int writercounter = 0; // temporary solution for writer filenames
 
     // TODO redesign ComponentBase class to accept a single criterion instead of a criteria mapping.
     CriteriaType sinkCriteria;
@@ -219,7 +239,25 @@ namespace selx
       ComponentBase::Pointer component = componentSelector->GetComponent();
       if (component->MeetsCriteria(sinkCriteria))  // TODO MeetsCriterion
       {
-       this->m_SinkComponents->push_back(component);
+        SinkInterface* provingSinkInterface = dynamic_cast<SinkInterface*> (&(*component));
+        if (provingSinkInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
+        {
+          itkExceptionMacro("dynamic_cast<SinkInterface*> fails, but based on component criterion it shouldn't")
+        }
+
+        //TODO: Make these connections available as outputs of the SuperElastix (filter). 
+        // For now, we just create the writers here.
+        typedef itk::ImageFileWriter<itk::Image<double, 3>> WriterType;
+        WriterType::Pointer writer;
+        writer = WriterType::New();
+        std::stringstream filename;
+        filename << "sinkimage" << writercounter << ".mhd";
+        writer->SetFileName(filename.str());
+        this->m_Writers->push_back(writer);
+
+        // For testing purposes, all Sources are connected to an ImageWriter
+        provingSinkInterface->ConnectToOverlordSink((itk::SmartPointer<itk::Object>) writer);
+
       }
     }
 
@@ -247,39 +285,6 @@ namespace selx
     return true;
   }
 
-  bool Overlord::ConnectSources()
-  {
-    for (const auto & sourceComponent : *(this->m_SourceComponents)) // auto&& preferred?
-    {
-      SourceInterface* provingSourceInterface = dynamic_cast<SourceInterface*> (&(*sourceComponent));
-      if (provingSourceInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
-      {
-        itkExceptionMacro("dynamic_cast<SourceInterface*> fails, but based on component criterion it shouldn't")
-      }
-
-      // For testing purposes, all Sources are connected to an ImageReader
-      //TODO which way is preferred?
-      // provingSourceInterface->ConnectToOverlordSource((itk::Object*)(this->m_reader.GetPointer()));
-      provingSourceInterface->ConnectToOverlordSource((itk::SmartPointer<itk::Object>) this->m_reader);
-    }
-
-    return true;
-  }
-  bool Overlord::ConnectSinks()
-  {
-
-    for (auto const & sinkComponent : *(this->m_SinkComponents)) // auto&& preferred?
-    {
-      SinkInterface* provingSinkInterface = dynamic_cast<SinkInterface*> (&(*sinkComponent));
-      if (provingSinkInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
-      {
-        itkExceptionMacro("dynamic_cast<SinkInterface*> fails, but based on component criterion it shouldn't")
-      }
-      // For testing purposes, all Sources are connected to an ImageWriter
-      provingSinkInterface->ConnectToOverlordSink((itk::SmartPointer<itk::Object>) this->m_writer);
-    }
-    return true;
-  }
   bool Overlord::RunRegistrations()
   {
 
@@ -297,10 +302,25 @@ namespace selx
   }
   bool Overlord::Execute()
   {
+
+    for (auto const & reader : *(this->m_Readers)) // auto&& preferred?
+    {
+      reader->Update();
+    }
+
+    // RunRegistrations is a simple execution model
+    // E.g.if the components are true itk Process Object, the don't need an 'Update' call. 
+    // The container of RunRegistrationsInterfaces will therefore be empty, since they will not be added if they don't expose this interface.
+    // If components need RunIterations() or RunResolution() we can explicitly 'Update' them here and control the flow.
+    
     this->RunRegistrations();
+    
     //update all writers...
     // should have stored the list of writers in overlord instead of sinkComponents
-    this->m_writer->Update();
+    for (auto const & writer : *(this->m_Writers)) // auto&& preferred?
+    {
+      writer->Update();
+    }
     return true;
   }
 } // end namespace selx

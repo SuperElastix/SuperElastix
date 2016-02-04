@@ -103,9 +103,9 @@ TEST_F( RegistrationItkv4Test, ImagesOnly )
   EXPECT_NO_THROW( overlord = Overlord::New() );
   EXPECT_NO_THROW( overlord->SetBlueprint(blueprint) );
   bool allUniqueComponents;
-  //EXPECT_NO_THROW(allUniqueComponents = overlord->Configure());
-  allUniqueComponents = overlord->Configure();
+  EXPECT_NO_THROW(allUniqueComponents = overlord->Configure());
   EXPECT_TRUE(allUniqueComponents);
+  EXPECT_NO_THROW(overlord->Execute());
 }
 
 

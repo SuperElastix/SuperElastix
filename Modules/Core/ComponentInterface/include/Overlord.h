@@ -39,6 +39,16 @@ namespace selx
     typedef std::vector<ComponentSelectorPointer> ComponentSelectorContainerType;
     typedef ComponentSelectorContainerType::iterator ComponentSelectorIteratorType;
 
+    typedef itk::ImageFileReader<itk::Image<double, 3>> ReaderType;
+    typedef itk::ImageFileWriter<itk::Image<double, 3>> WriterType;
+
+    typedef itk::VectorContainer <
+      unsigned int, ReaderType::Pointer > ReaderContainerType;
+
+    typedef itk::VectorContainer <
+      unsigned int, WriterType::Pointer > WriterContainerType;
+
+
    // typedef itk::Object::Pointer ObjectPointer;
    // typedef itk::VectorContainer <
    //   unsigned int, ObjectPointer > ObjectContainerType;
@@ -77,8 +87,6 @@ namespace selx
     void ApplyConnectionConfiguration();
     bool UpdateSelectors();
     bool ConnectComponents();
-    bool FindSources();
-    bool FindSinks();
     bool FindRunRegistration();
     bool ConnectSources();
     bool ConnectSinks();
@@ -87,16 +95,11 @@ namespace selx
     ComponentSelectorContainerType m_ComponentSelectorContainer;
     //ObjectContainerType::Pointer m_InputObjects;
     //ObjectContainerType::Pointer m_OutputObjects;
-    SinkComponentsContainerType::Pointer m_SinkComponents;
-    SourceComponentsContainerType::Pointer m_SourceComponents;
+    //SinkComponentsContainerType::Pointer m_SinkComponents;
+    //SourceComponentsContainerType::Pointer m_SourceComponents;
+    ReaderContainerType::Pointer m_Readers;
+    WriterContainerType::Pointer m_Writers;
     ComponentsContainerType::Pointer m_RunRegistrationComponents;
-
-    // For testing purposes, all Sources are connected to an ImageReader
-    itk::ImageFileReader<itk::Image<double, 3>>::Pointer m_reader; 
-
-    // For testing purposes, all Sources are connected to an ImageWriter
-    itk::ImageFileWriter<itk::Image<double, 3>>::Pointer m_writer;
-
   };
 
 } // end namespace selx
