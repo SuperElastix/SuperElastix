@@ -67,19 +67,7 @@ namespace selx
       //
       // Design consideration: should the exception be thrown by this->m_ComponentSelectorContainer[*componentIt]?
       // The (failing) criteria can be printed as well.
-      if (numberOfComponents == 0)
-      {
-        //TODO report about m_Criteria
-        std::stringstream message;
-        message << "Too many criteria for component " << this->m_ComponentSelectorContainer[*componentIt]->GetNameOfClass();
-        message << "There is no component in our database that fulfills your set of criteria" << std::endl;
-        std::cout << message.str();
-
-        //TODO how does this work for strings?
-        itkExceptionMacro("Too many criteria for component ");
-
-      }
-      else if (numberOfComponents > 1)
+      if (numberOfComponents > 1)
       {
         allUniqueComponents = false;
       }

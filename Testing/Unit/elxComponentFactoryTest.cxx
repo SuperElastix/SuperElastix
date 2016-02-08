@@ -196,6 +196,27 @@ TEST_F(ComponentFactoryTest, InterfacedObjects)
 }
 
 
+TEST_F(ComponentFactoryTest, UnknownComponent)
+{
+  // Fill our component database with some components
+  RegisteredObjectsContainerType registeredComponents;
+  EXPECT_NO_THROW(ComponentFactory<TransformComponent1>::RegisterOneFactory());
+  EXPECT_NO_THROW(ComponentFactory<MetricComponent1>::RegisterOneFactory());
+  EXPECT_NO_THROW(ComponentFactory<GDOptimizer3rdPartyComponent>::RegisterOneFactory());
+  EXPECT_NO_THROW(ComponentFactory<GDOptimizer4thPartyComponent>::RegisterOneFactory());
+  EXPECT_NO_THROW(ComponentFactory<SSDMetric3rdPartyComponent>::RegisterOneFactory());
+  EXPECT_NO_THROW(ComponentFactory<SSDMetric4thPartyComponent>::RegisterOneFactory());
 
 
+  // Setup the criteria for a component that does not exist in our data base
+  CriteriaType criteria;
+  criteria["NameOfClass"] = { "DoYouHaveThisComponent?" };
+
+  NodePointer Node = ComponentSelector::New();
+  Node->SetCriteria(criteria);
+  ComponentType::Pointer NodeComponent;
+  
+  // we expect and exception here
+  EXPECT_THROW(NodeComponent = Node->GetComponent(), itk::ExceptionObject);
+}
 } // namespace elx

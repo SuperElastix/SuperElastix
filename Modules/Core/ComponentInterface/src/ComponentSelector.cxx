@@ -71,7 +71,30 @@ ComponentSelector::NumberOfComponentsType ComponentSelector::UpdatePossibleCompo
   // Check each possible component if it meets the criteria
   // Using a Lambda function.
   this->m_PossibleComponents.remove_if([&](ComponentBasePointer component){ return !component->MeetsCriteria(this->m_Criteria); });
-  return this->m_PossibleComponents.size();
+
+  const int numberOfComponents  = this->m_PossibleComponents.size();
+  if (numberOfComponents == 0)
+  {
+    //TODO report about m_Criteria
+    std::stringstream message;
+    message << "Too many criteria for component. There is no component in our database that fulfills this set of criteria: " << std::endl;
+    for (CriteriaType::const_iterator criterion = this->m_Criteria.begin(); criterion != this->m_Criteria.cend(); ++criterion)
+    {
+      message << "  " << criterion->first << " : {";
+          for (auto const & criterionValue : criterion->second) // auto&& preferred?
+          {
+            message << criterionValue << " ";
+          }
+          message << " }" << std::endl;
+    }   
+    std::cout << message.str();
+
+    //TODO how does this work for strings?
+    itkExceptionMacro("Too many criteria for component ");
+
+  }
+
+  return numberOfComponents;
 }
 ComponentSelector::ComponentBasePointer ComponentSelector::GetComponent()
 {
