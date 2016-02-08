@@ -80,12 +80,12 @@ ComponentSelector::NumberOfComponentsType ComponentSelector::UpdatePossibleCompo
     message << "Too many criteria for component. There is no component in our database that fulfills this set of criteria: " << std::endl;
     for (CriteriaType::const_iterator criterion = this->m_Criteria.begin(); criterion != this->m_Criteria.cend(); ++criterion)
     {
-      message << "  " << criterion->first << " : {";
+      message << "  " << criterion->first << " : { ";
           for (auto const & criterionValue : criterion->second) // auto&& preferred?
           {
             message << criterionValue << " ";
           }
-          message << " }" << std::endl;
+          message << "}" << std::endl;
     }   
     std::cout << message.str();
 
