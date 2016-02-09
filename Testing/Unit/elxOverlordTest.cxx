@@ -34,16 +34,16 @@ public:
     /** make example blueprint configuration */
     blueprint = Blueprint::New();
     ParameterMapType metricComponentParameters;
-    metricComponentParameters["NameOfClass"] = ParameterValueType(1, "MetricComponent1");
+    metricComponentParameters["NameOfClass"] = { "MetricComponent1" };
 
     ParameterMapType transformComponentParameters;
-    transformComponentParameters["NameOfClass"] = ParameterValueType(1, "TransformComponent1");
+    transformComponentParameters["NameOfClass"] = { "TransformComponent1" };
 
     ComponentIndexType index0 = blueprint->AddComponent(metricComponentParameters);
     ComponentIndexType index1 = blueprint->AddComponent(transformComponentParameters);
     
     ParameterMapType metric2TransformConnectionParameters;
-    metric2TransformConnectionParameters["NameOfInterface"] = ParameterValueType(1, "TransformedImageInterface");
+    metric2TransformConnectionParameters["NameOfInterface"] = { "TransformedImageInterface" };
 
     //TODO: check direction
     blueprint->AddConnection(index1, index0, metric2TransformConnectionParameters);
