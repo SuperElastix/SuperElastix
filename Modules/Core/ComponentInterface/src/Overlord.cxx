@@ -8,8 +8,12 @@ namespace selx
     //this->m_SinkComponents = SinkComponentsContainerType::New();
     //this->m_SourceComponents = SourceComponentsContainerType::New();
     this->m_RunRegistrationComponents = ComponentsContainerType::New();
-    this->m_Readers = ReaderContainerType::New();
-    this->m_Writers = WriterContainerType::New();
+
+    // temporary solution
+    this->m_Readers2float = Reader2floatContainerType::New();
+    this->m_Writers2float = Writer2floatContainerType::New();
+    this->m_Readers3double = Reader3doubleContainerType::New();
+    this->m_Writers3double = Writer3doubleContainerType::New();
   }
 
   void Overlord::SetBlueprint(const Blueprint::Pointer blueprint)
@@ -33,11 +37,17 @@ namespace selx
 
     
     this->ConnectSources();
-    int numberSources = this->m_Readers->size(); // temporary solution
-    std::cout << "Found " << numberSources << " Source Components" << std::endl;
+
+    int numberSources2float = this->m_Readers2float->size(); // temporary solution
+    std::cout << "Found " << numberSources2float << " Source Components (2d float)" << std::endl;
+    int numberSources3double = this->m_Readers3double->size(); // temporary solution
+    std::cout << "Found " << numberSources3double << " Source Components (3d double)" << std::endl;
+
     this->ConnectSinks();
-    int numberSinks = this->m_Writers->size(); // temporary solution
-    std::cout << "Found " << numberSinks << " Sink Components" << std::endl;
+    int numberSinks2float = this->m_Writers2float->size(); // temporary solution
+    std::cout << "Found " << numberSinks2float << " Sink Components (2d float)" << std::endl;
+    int numberSinks3double = this->m_Writers3double->size(); // temporary solution
+    std::cout << "Found " << numberSinks3double << " Sink Components (3d double)" << std::endl;
 
 
 
@@ -195,20 +205,45 @@ namespace selx
         {
           itkExceptionMacro("dynamic_cast<SourceInterface*> fails, but based on component criterion it shouldn't")
         }
-
         //TODO: Make these connections available as inputs of the SuperElastix (filter). 
-        // For now, we just create the readers here.
-        ReaderType::Pointer reader;
-        reader = ReaderType::New();
-        std::stringstream filename;
-        //filename << "C:\\wp\\SuperElastix\\bld2\\SuperElastix-build\\bin\\Debug\\sourceimage" << readercounter << ".mhd";
-        filename << "sourceimage" << readercounter << ".mhd";
-        reader->SetFileName(filename.str());
-        this->m_Readers->push_back(reader);
 
-        //TODO which way is preferred?
-        // provingSourceInterface->ConnectToOverlordSource((itk::Object*)(reader.GetPointer()));
-        provingSourceInterface->ConnectToOverlordSource((itk::SmartPointer<itk::Object>) reader);
+        CriteriaType typeCriteria = { { "Dimensionality", { "3" } }, { "PixelType", { "double" } } };
+        if (component->MeetsCriteria(typeCriteria))
+        {
+          // For now, we just create the readers here.
+          Reader3doubleType::Pointer reader;
+          reader = Reader3doubleType::New();
+          std::stringstream filename;
+          //filename << "C:\\wp\\SuperElastix\\bld2\\SuperElastix-build\\bin\\Debug\\sourceimage" << readercounter << ".mhd";
+          filename << "source3dimage" << readercounter << ".mhd";
+          reader->SetFileName(filename.str());
+          this->m_Readers3double->push_back(reader);
+
+          //TODO which way is preferred?
+          // provingSourceInterface->ConnectToOverlordSource((itk::Object*)(reader.GetPointer()));
+          provingSourceInterface->ConnectToOverlordSource((itk::SmartPointer<itk::Object>) reader);
+
+        }
+        else if (component->MeetsCriteria({ { "Dimensionality", { "2" } }, { "PixelType", { "float" } } }))
+        {
+          // For now, we just create the readers here.
+          Reader2floatType::Pointer reader;
+          reader = Reader2floatType::New();
+          std::stringstream filename;
+          //filename << "C:\\wp\\SuperElastix\\bld2\\SuperElastix-build\\bin\\Debug\\sourceimage" << readercounter << ".mhd";
+          filename << "source2dimage" << readercounter << ".mhd";
+          reader->SetFileName(filename.str());
+          this->m_Readers2float->push_back(reader);
+
+          //TODO which way is preferred?
+          // provingSourceInterface->ConnectToOverlordSource((itk::Object*)(reader.GetPointer()));
+          provingSourceInterface->ConnectToOverlordSource((itk::SmartPointer<itk::Object>) reader);
+
+        }
+        else
+        {
+          itkExceptionMacro("Overlord implements only 2 float and 3 double for now");
+        }
         ++readercounter;
       }
     }
@@ -239,18 +274,37 @@ namespace selx
         }
 
         //TODO: Make these connections available as outputs of the SuperElastix (filter). 
-        // For now, we just create the writers here.
-        typedef itk::ImageFileWriter<itk::Image<double, 3>> WriterType;
-        WriterType::Pointer writer;
-        writer = WriterType::New();
-        std::stringstream filename;
-        filename << "sinkimage" << writercounter << ".mhd";
-        writer->SetFileName(filename.str());
-        this->m_Writers->push_back(writer);
+        if (component->MeetsCriteria({ { "Dimensionality", { "3" } }, { "PixelType", { "double" } } }))
+        {
+          // For now, we just create the writers here.
+          Writer3doubleType::Pointer writer;
+          writer = Writer3doubleType::New();
+          std::stringstream filename;
+          filename << "sink3dimage" << writercounter << ".mhd";
+          writer->SetFileName(filename.str());
+          this->m_Writers3double->push_back(writer);
 
-        // For testing purposes, all Sources are connected to an ImageWriter
-        provingSinkInterface->ConnectToOverlordSink((itk::SmartPointer<itk::Object>) writer);
+          // For testing purposes, all Sources are connected to an ImageWriter
+          provingSinkInterface->ConnectToOverlordSink((itk::SmartPointer<itk::Object>) writer);
+        }
+        else if (component->MeetsCriteria({ { "Dimensionality", { "2" } }, { "PixelType", { "float" } } }))
+        {
+          // For now, we just create the writers here.
+          Writer2floatType::Pointer writer;
+          writer = Writer2floatType::New();
+          std::stringstream filename;
+          filename << "sink2dimage" << writercounter << ".mhd";
+          writer->SetFileName(filename.str());
+          this->m_Writers2float->push_back(writer);
 
+          // For testing purposes, all Sources are connected to an ImageWriter
+          provingSinkInterface->ConnectToOverlordSink((itk::SmartPointer<itk::Object>) writer);
+        }
+        else
+        {
+          itkExceptionMacro("Overlord implements only 2 float and 3 double for now");
+        }
+        ++writercounter;
       }
     }
 
@@ -295,14 +349,15 @@ namespace selx
   }
   bool Overlord::Execute()
   {
-
-    for (auto const & reader : *(this->m_Readers)) // auto&& preferred?
+    
+    for (auto const & reader : *(this->m_Readers2float)) // auto&& preferred?
     {
-      char result[MAX_PATH];
-      std::cout << std::string(result, GetModuleFileName(NULL, result, MAX_PATH));
       reader->Update();
     }
-
+    for (auto const & reader : *(this->m_Readers3double)) // auto&& preferred?
+    {
+      reader->Update();
+    }
     // RunRegistrations is a simple execution model
     // E.g.if the components are true itk Process Object, the don't need an 'Update' call. 
     // The container of RunRegistrationsInterfaces will therefore be empty, since they will not be added if they don't expose this interface.
@@ -311,11 +366,15 @@ namespace selx
     this->RunRegistrations();
     
     //update all writers...
-    // should have stored the list of writers in overlord instead of sinkComponents
-    for (auto const & writer : *(this->m_Writers)) // auto&& preferred?
+    for (auto const & writer : *(this->m_Writers2float)) // auto&& preferred?
     {
       writer->Update();
     }
+    for (auto const & writer : *(this->m_Writers3double)) // auto&& preferred?
+    {
+      writer->Update();
+    }
+
     return true;
   }
 } // end namespace selx

@@ -23,11 +23,15 @@ public:
 
   virtual void SetUp() {
     /** register all example components */
-    ComponentFactory<ElastixComponent<3, double>>::RegisterOneFactory();
+    ComponentFactory<ElastixComponent<2, float>>::RegisterOneFactory();
     
     ComponentFactory<ItkImageSinkComponent>::RegisterOneFactory();
-    ComponentFactory<ItkImageSourceFixedComponent>::RegisterOneFactory();
-    ComponentFactory<ItkImageSourceMovingComponent>::RegisterOneFactory();
+
+    ComponentFactory<ItkImageSourceFixedComponent<2, float>>::RegisterOneFactory();
+    ComponentFactory<ItkImageSourceMovingComponent<2, float>>::RegisterOneFactory();
+
+    ComponentFactory<ItkImageSourceFixedComponent<3, double>>::RegisterOneFactory();
+    ComponentFactory<ItkImageSourceMovingComponent<3, double>>::RegisterOneFactory();
 
   }
 

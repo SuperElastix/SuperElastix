@@ -7,31 +7,87 @@
 #include "elxMacro.h"
 namespace selx
 {
+  template<int Dimensionality, class TPixel>
   class ItkImageSourceMovingComponent : 
     public Implements<
     Accepting<>,
-    Providing< SourceInterface, itkImageSourceMovingInterface<3,double > >
+    Providing< SourceInterface, itkImageSourceMovingInterface<Dimensionality, TPixel > >
     >
   {
   public:
     elxNewMacro(ItkImageSourceMovingComponent, ComponentBase);
 
+    itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
+
     ItkImageSourceMovingComponent();
     virtual ~ItkImageSourceMovingComponent();
 
-    typedef itk::ImageSource<itk::Image<double, 3>> ItkImageSourceMovingType;
+    typedef itk::ImageSource<itk::Image<TPixel, Dimensionality>> ItkImageSourceMovingType;
     
 
-    virtual ItkImageSourceMovingType::Pointer GetItkImageSourceMoving() override;
+    virtual typename ItkImageSourceMovingType::Pointer GetItkImageSourceMoving() override;
     virtual bool ConnectToOverlordSource(itk::Object::Pointer) override;
 
-    //int Update();
-    //virtual bool MeetsCriteria(const CriteriaType &criteria);
     virtual bool MeetsCriterion(const CriterionType &criterion) override;
-    //static const char * GetName() { return "GDOptimizer3rdPartyComponent"; } ;
     static const char * GetDescription() { return "ItkImageSourceMoving Component"; };
   private:
-    ItkImageSourceMovingType::Pointer m_Source;
+    typename ItkImageSourceMovingType::Pointer m_Source;
+  protected:
+    /* The following struct returns the string name of computation type */
+    /* default implementation */
+
+    static inline const std::string GetTypeNameString()
+    {
+      itkGenericExceptionMacro(<< "Unknown ScalarType" << typeid(TPixel).name());
+      // TODO: provide the user instructions how to enable the compilation of the component with the required template types (if desired)
+      // We might define an exception object that can communicate various error messages: for simple user, for developer user, etc
+    }
+
+    static inline const std::string GetPixelTypeNameString()
+    {
+      itkGenericExceptionMacro(<< "Unknown PixelType" << typeid(TPixel).name());
+      // TODO: provide the user instructions how to enable the compilation of the component with the required template types (if desired)
+      // We might define an exception object that can communicate various error messages: for simple user, for developer user, etc
+    }
+
   };
+
+
+
+  template <>
+  inline const std::string
+    ItkImageSourceMovingComponent<2, float>
+    ::GetPixelTypeNameString()
+  {
+    return std::string("float");
+  }
+
+
+  template <>
+  inline const std::string
+    ItkImageSourceMovingComponent<2, double>
+    ::GetPixelTypeNameString()
+  {
+    return std::string("double");
+  }
+
+  template <>
+  inline const std::string
+    ItkImageSourceMovingComponent<3, float>
+    ::GetPixelTypeNameString()
+  {
+    return std::string("float");
+  }
+
+  template <>
+  inline const std::string
+    ItkImageSourceMovingComponent<3, double>
+    ::GetPixelTypeNameString()
+  {
+    return std::string("double");
+  }
 } //end namespace selx
-#endif // #define GDOptimizer3rdPartyComponent_h
+#ifndef ITK_MANUAL_INSTANTIATION
+#include "selxItkImageSourceMoving.hxx"
+#endif
+#endif // #define selxItkImageSourceMoving_h

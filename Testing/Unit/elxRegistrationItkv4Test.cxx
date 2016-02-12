@@ -45,8 +45,12 @@ public:
     
     ComponentFactory<ItkImageSinkComponent>::RegisterOneFactory();
     ComponentFactory<ItkImageSourceComponent>::RegisterOneFactory();
-    ComponentFactory<ItkImageSourceFixedComponent>::RegisterOneFactory();
-    ComponentFactory<ItkImageSourceMovingComponent>::RegisterOneFactory();
+
+    ComponentFactory<ItkImageSourceFixedComponent<2, float>>::RegisterOneFactory();
+    ComponentFactory<ItkImageSourceMovingComponent<2, float>>::RegisterOneFactory();
+
+    ComponentFactory<ItkImageSourceFixedComponent<3, double>>::RegisterOneFactory();
+    ComponentFactory<ItkImageSourceMovingComponent<3, double>>::RegisterOneFactory();
 
 
     ComponentFactory<ItkSmoothingRecursiveGaussianImageFilterComponent<3, double>>::RegisterOneFactory();
@@ -79,14 +83,17 @@ TEST_F(RegistrationItkv4Test, ImagesOnly)
 
   ParameterMapType component1Parameters;
   component1Parameters["NameOfClass"] = { "ItkImageSourceFixedComponent" };
+  component1Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
   ComponentIndexType index1 = blueprint->AddComponent(component1Parameters);
 
   ParameterMapType component2Parameters;
   component2Parameters["NameOfClass"] = { "ItkImageSourceMovingComponent" };
+  component2Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
   ComponentIndexType index2 = blueprint->AddComponent(component2Parameters);
 
   ParameterMapType component3Parameters;
   component3Parameters["NameOfClass"] = { "ItkImageSinkComponent" };
+  //component3Parameters["Dimensionality"] = { "3" }; // should be derived from the outputs
   ComponentIndexType index3 = blueprint->AddComponent(component3Parameters);
 
 
