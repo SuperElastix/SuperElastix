@@ -25,7 +25,7 @@ public:
     /** register all example components */
     ComponentFactory<ElastixComponent<2, float>>::RegisterOneFactory();
     
-    ComponentFactory<ItkImageSinkComponent>::RegisterOneFactory();
+    ComponentFactory<ItkImageSinkComponent<2,float>>::RegisterOneFactory();
 
     ComponentFactory<ItkImageSourceFixedComponent<2, float>>::RegisterOneFactory();
     ComponentFactory<ItkImageSourceMovingComponent<2, float>>::RegisterOneFactory();
@@ -54,14 +54,17 @@ TEST_F(ElastixComponentTest, ImagesOnly)
 
   ParameterMapType component1Parameters;
   component1Parameters["NameOfClass"] = { "ItkImageSourceFixedComponent" };
+  component1Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
   ComponentIndexType index1 = blueprint->AddComponent(component1Parameters);
 
   ParameterMapType component2Parameters;
   component2Parameters["NameOfClass"] = { "ItkImageSourceMovingComponent" };
+  component2Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
   ComponentIndexType index2 = blueprint->AddComponent(component2Parameters);
 
   ParameterMapType component3Parameters;
   component3Parameters["NameOfClass"] = { "ItkImageSinkComponent" };
+  component3Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
   ComponentIndexType index3 = blueprint->AddComponent(component3Parameters);
 
 

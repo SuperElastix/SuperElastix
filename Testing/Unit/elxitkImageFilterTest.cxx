@@ -32,7 +32,7 @@ public:
     /** register all components used for this test */
     // For testing the itkfilter pipeline
     ComponentFactory<ItkSmoothingRecursiveGaussianImageFilterComponent<3, double>>::RegisterOneFactory();
-    ComponentFactory<ItkImageSinkComponent>::RegisterOneFactory();
+    ComponentFactory<ItkImageSinkComponent<3,double>>::RegisterOneFactory();
     ComponentFactory<ItkImageSourceComponent>::RegisterOneFactory();
     // For testing templated components
     ComponentFactory<ItkSmoothingRecursiveGaussianImageFilterComponent<2, double>>::RegisterOneFactory();
