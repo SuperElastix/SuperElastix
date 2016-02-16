@@ -1,9 +1,9 @@
 #include "Overlord.h"
 //#include "elxElastixFilter.h"
-//#include "elxParameterObject.h"
+#include "elxParameterObject.h"
 
 #include "selxElastixComponent.h"
-#include "selxItkImageSink.h"
+#include "selxItkImageFilterSink.h"
 #include "selxItkImageSourceFixed.h"
 #include "selxItkImageSourceMoving.h"
 
@@ -25,7 +25,7 @@ public:
     /** register all example components */
     ComponentFactory<ElastixComponent<2, float>>::RegisterOneFactory();
     
-    ComponentFactory<ItkImageSinkComponent<2,float>>::RegisterOneFactory();
+    ComponentFactory<ItkImageFilterSinkComponent<2, float>>::RegisterOneFactory();
 
     ComponentFactory<ItkImageSourceFixedComponent<2, float>>::RegisterOneFactory();
     ComponentFactory<ItkImageSourceMovingComponent<2, float>>::RegisterOneFactory();
@@ -50,21 +50,23 @@ TEST_F(ElastixComponentTest, ImagesOnly)
 
   ParameterMapType component0Parameters;
   component0Parameters["NameOfClass"] = { "ElastixComponent" };
+  component0Parameters["RegistrationSettings"] = { "rigid" };
   ComponentIndexType index0 = blueprint->AddComponent(component0Parameters);
+
 
   ParameterMapType component1Parameters;
   component1Parameters["NameOfClass"] = { "ItkImageSourceFixedComponent" };
-  component1Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
+  component1Parameters["Dimensionality"] = { "2" }; // should be derived from the inputs
   ComponentIndexType index1 = blueprint->AddComponent(component1Parameters);
 
   ParameterMapType component2Parameters;
   component2Parameters["NameOfClass"] = { "ItkImageSourceMovingComponent" };
-  component2Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
+  component2Parameters["Dimensionality"] = { "2" }; // should be derived from the inputs
   ComponentIndexType index2 = blueprint->AddComponent(component2Parameters);
 
   ParameterMapType component3Parameters;
-  component3Parameters["NameOfClass"] = { "ItkImageSinkComponent" };
-  component3Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
+  component3Parameters["NameOfClass"] = { "ItkImageFilterSinkComponent" };
+  component3Parameters["Dimensionality"] = { "2" }; // should be derived from the inputs
   ComponentIndexType index3 = blueprint->AddComponent(component3Parameters);
 
 

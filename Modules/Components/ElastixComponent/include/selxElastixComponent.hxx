@@ -6,6 +6,7 @@ namespace selx
   ElastixComponent< Dimensionality, TPixel>::ElastixComponent()
   {
     m_theItkFilter = TheItkFilterType::New();
+    //m_ParameterObject->SetParameterMap("rigid");
 
     //TODO: instantiating the filter in the constructor might be heavy for the use in component selector factory, since all components of the database are created during the selection process.
     // we could choose to keep the component light weighted (for checking criteria such as names and connections) until the settings are passed to the filter, but this requires an additional initialization step.
@@ -46,7 +47,7 @@ namespace selx
   template<int Dimensionality, class TPixel>
   void ElastixComponent< Dimensionality, TPixel>::RunRegistration(void)
   {
-    this->m_theItkFilter->Update();
+    //this->m_theItkFilter->Update();
   }
 
 
@@ -87,6 +88,30 @@ namespace selx
       {
         if (criterionValue != Self::GetPixelTypeNameString())
         {
+          meetsCriteria = false;
+        }
+      }
+
+    }
+    else if (criterion.first == "RegistrationSettings") //Supports this?
+    {
+      // temporary solution: pass all SuperElastixComponent parameters as is to elastix. This should be defined in deeper hierarchy of the criteria, but for now we have a flat mapping only.
+      elxParameterObjectPointer elxparameterObject = elxParameterObjectType::New();
+
+      meetsCriteria = true;
+      for (auto const & transformtype : criterion.second) // auto&& preferred?
+      {
+        //this->m_ParameterObject->AddParameterMap(transformtype, const unsigned int numberOfResolutions = 3u, const double finalGridSpacingInPhysicalUnits = 10.0);
+        elxparameterObject->AddParameterMap(transformtype);
+
+        try
+        {
+          this->m_theItkFilter->SetParameterObject(elxparameterObject);
+        }
+        catch (itk::ExceptionObject & err)
+        {
+          std::cout << err;
+          //TODO log the error message?
           meetsCriteria = false;
         }
       }

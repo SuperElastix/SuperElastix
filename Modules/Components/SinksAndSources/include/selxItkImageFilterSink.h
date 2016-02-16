@@ -1,5 +1,5 @@
-#ifndef selxItkImageSink_h
-#define selxItkImageSink_h
+#ifndef selxItkImageFilterSink_h
+#define selxItkImageFilterSink_h
 
 #include "ComponentBase.h"
 #include "Interfaces.h"
@@ -10,19 +10,19 @@
 namespace selx
 {
   template<int Dimensionality, class TPixel>
-  class ItkImageSinkComponent :
+  class ItkImageFilterSinkComponent :
     public Implements <
     Accepting< itkImageSourceInterface<Dimensionality, TPixel> >,
     Providing < SinkInterface >
     >
   {
   public:
-    elxNewMacro(ItkImageSinkComponent, ComponentBase);
+    elxNewMacro(ItkImageFilterSinkComponent, ComponentBase);
 
     itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
 
-    ItkImageSinkComponent();
-    virtual ~ItkImageSinkComponent();
+    ItkImageFilterSinkComponent();
+    virtual ~ItkImageFilterSinkComponent();
 
     typedef itk::ImageSource<itk::Image<TPixel, Dimensionality>> ItkImageSourceType;
 
@@ -30,7 +30,7 @@ namespace selx
     virtual bool ConnectToOverlordSink(itk::Object::Pointer) override;
 
     virtual bool MeetsCriterion(const CriterionType &criterion) override;
-    static const char * GetDescription() { return "ItkImageSink Component"; };
+    static const char * GetDescription() { return "ItkImageFilterSink Component"; };
   private:
     itk::ProcessObject::Pointer m_Sink;
     typename itk::ImageFileWriter<itk::Image<TPixel, Dimensionality>>::Pointer m_SinkWriter;
@@ -58,7 +58,7 @@ namespace selx
 
   template <>
   inline const std::string
-    ItkImageSinkComponent<2, float>
+    ItkImageFilterSinkComponent<2, float>
     ::GetPixelTypeNameString()
   {
     return std::string("float");
@@ -67,7 +67,7 @@ namespace selx
 
   template <>
   inline const std::string
-    ItkImageSinkComponent<2, double>
+    ItkImageFilterSinkComponent<2, double>
     ::GetPixelTypeNameString()
   {
     return std::string("double");
@@ -75,7 +75,7 @@ namespace selx
 
   template <>
   inline const std::string
-    ItkImageSinkComponent<3, float>
+    ItkImageFilterSinkComponent<3, float>
     ::GetPixelTypeNameString()
   {
     return std::string("float");
@@ -83,7 +83,7 @@ namespace selx
 
   template <>
   inline const std::string
-    ItkImageSinkComponent<3, double>
+    ItkImageFilterSinkComponent<3, double>
     ::GetPixelTypeNameString()
   {
     return std::string("double");
@@ -91,6 +91,6 @@ namespace selx
 
 } //end namespace selx
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "selxItkImageSink.hxx"
+#include "selxItkImageFilterSink.hxx"
 #endif
-#endif // #define selxItkImageSink_h
+#endif // #define selxItkImageFilterSink_h

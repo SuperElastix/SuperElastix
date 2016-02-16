@@ -74,6 +74,14 @@ namespace selx
     virtual typename itk::ImageSource<itk::Image<TPixel, Dimensionality>>::Pointer GetItkImageSourceFixed() = 0;
   };
 
+  template<int Dimensionality, class TPixel>
+  class GetItkImageInterface {
+    // An interface that passes the pointer of an output image
+    // This interface can be used if itk classes are not implement as true filters, i.e. if ((itk::ImageSource) filter)->GetOutput() does not work.
+  public:
+    virtual typename itk::Image<TPixel, Dimensionality>::Pointer GetItkImage() = 0;
+  };
+
   class SourceInterface {
     // A special interface: the Overlord checks components for this type of interface.
     // By this interface only Source Components can to talk to the Overlord.

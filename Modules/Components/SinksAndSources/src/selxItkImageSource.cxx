@@ -43,6 +43,30 @@ bool ItkImageSourceComponent::MeetsCriterion(const CriterionType &criterion)
       }
     }
   }
+  else if (criterion.first == "Dimensionality") //Supports this?
+  {
+    meetsCriteria = true;
+    for (auto const & criterionValue : criterion.second) // auto&& preferred?
+    {
+      if (std::stoi(criterionValue) != 3) //hardcoded
+      {
+        meetsCriteria = false;
+      }
+    }
+
+  }
+  else if (criterion.first == "PixelType") //Supports this?
+  {
+    meetsCriteria = true;
+    for (auto const & criterionValue : criterion.second) // auto&& preferred?
+    {
+      if (criterionValue != "double") //hardcoded
+      {
+        meetsCriteria = false;
+      }
+    }
+
+  }
   return meetsCriteria;
 }
 

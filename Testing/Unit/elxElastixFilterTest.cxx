@@ -4,6 +4,8 @@
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 
+#include "itkImageSource.h" // for test ImageSourceCast
+
 #include "elxDataManager.h"
 #include "gtest/gtest.h"
 
@@ -424,3 +426,40 @@ TEST_F( ElastixFilterTest, BSpline4D )
 }
 
 #endif // SUPERELASTIX_BUILD_LONG_TESTS
+
+TEST_F(ElastixFilterTest, ImageSourceCast)
+{
+  // Test just like UpdateOnGetOutputEuler2D, but elastixFilter is cast to an ImageSource.
+  // SuperElastix interfaces are defined to communicate ImageSource pointers
+  ParameterObject::Pointer parameterObject;
+  EXPECT_NO_THROW(parameterObject = ParameterObject::New());
+  EXPECT_NO_THROW(parameterObject->SetParameterMap("rigid"));
+
+  typedef itk::Image< float, 2 > ImageType;
+  typedef itk::ImageFileReader< ImageType > ImageFileReaderType;
+  typedef itk::ImageFileWriter< ImageType > ImageFileWriterType;
+  typedef ElastixFilter< ImageType, ImageType > ElastixFilterType;
+
+  DataManagerType::Pointer dataManager = DataManagerType::New();
+
+  ImageFileReaderType::Pointer fixedImageReader = ImageFileReaderType::New();
+  fixedImageReader->SetFileName(dataManager->GetInputFile("BrainProtonDensitySliceBorder20.png"));
+
+  ImageFileReaderType::Pointer movingImageReader = ImageFileReaderType::New();
+  movingImageReader->SetFileName(dataManager->GetInputFile("BrainProtonDensitySliceR10X13Y17.png"));
+
+  ElastixFilterType::Pointer elastixFilter;
+  EXPECT_NO_THROW(elastixFilter = ElastixFilterType::New());
+  EXPECT_NO_THROW(elastixFilter->LogToConsoleOn());
+  EXPECT_NO_THROW(elastixFilter->SetFixedImage(fixedImageReader->GetOutput()));
+  EXPECT_NO_THROW(elastixFilter->SetMovingImage(movingImageReader->GetOutput()));
+  EXPECT_NO_THROW(elastixFilter->SetParameterObject(parameterObject));
+  
+  // The elastixFilter class is derived from itk::ImageSource. This checks whether the pipeline methods are overriden correctly.
+  itk::ImageSource<ImageType>* elastixFilterAsImageSource = (itk::ImageSource<ImageType>*) elastixFilter.GetPointer();
+
+  ImageFileWriterType::Pointer writer = ImageFileWriterType::New();
+  EXPECT_NO_THROW(writer->SetFileName(dataManager->GetOutputFile("UpdateOnGetOutputEuler2DResultImage.nii")));
+  EXPECT_NO_THROW(writer->SetInput(elastixFilterAsImageSource->GetOutput()));
+  EXPECT_NO_THROW(writer->Update());
+}

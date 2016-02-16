@@ -9,7 +9,7 @@
 #include "SSDMetric4thPartyComponent.h"
 
 #include "selxItkSmoothingRecursiveGaussianImageFilterComponent.h"
-#include "selxItkImageSink.h"
+#include "selxItkImageFilterSink.h"
 #include "selxItkImageSource.h"
 
 
@@ -43,7 +43,7 @@ public:
     ComponentFactory<SSDMetric4thPartyComponent>::RegisterOneFactory();
 
     
-    ComponentFactory<ItkImageSinkComponent<3,double>>::RegisterOneFactory();
+    ComponentFactory<ItkImageFilterSinkComponent<3,double>>::RegisterOneFactory();
     ComponentFactory<ItkImageSourceComponent>::RegisterOneFactory();
 
     ComponentFactory<ItkImageSourceFixedComponent<2, float>>::RegisterOneFactory();
@@ -92,7 +92,7 @@ TEST_F(RegistrationItkv4Test, ImagesOnly)
   ComponentIndexType index2 = blueprint->AddComponent(component2Parameters);
 
   ParameterMapType component3Parameters;
-  component3Parameters["NameOfClass"] = { "ItkImageSinkComponent" };
+  component3Parameters["NameOfClass"] = { "ItkImageFilterSinkComponent" };
   //component3Parameters["Dimensionality"] = { "3" }; // should be derived from the outputs
   ComponentIndexType index3 = blueprint->AddComponent(component3Parameters);
 
@@ -139,7 +139,7 @@ TEST_F(RegistrationItkv4Test, WithANTSCCMetric)
   ComponentIndexType index2 = blueprint->AddComponent(component2Parameters);
 
   ParameterMapType component3Parameters;
-  component3Parameters["NameOfClass"] = { "ItkImageSinkComponent" };
+  component3Parameters["NameOfClass"] = { "ItkImageFilterSinkComponent" };
   component3Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
   ComponentIndexType index3 = blueprint->AddComponent(component3Parameters);
 
@@ -192,7 +192,7 @@ TEST_F(RegistrationItkv4Test, WithMeanSquaresMetric)
   ComponentIndexType index2 = blueprint->AddComponent(component2Parameters);
 
   ParameterMapType component3Parameters;
-  component3Parameters["NameOfClass"] = { "ItkImageSinkComponent" };
+  component3Parameters["NameOfClass"] = { "ItkImageFilterSinkComponent" };
   component3Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
   ComponentIndexType index3 = blueprint->AddComponent(component3Parameters);
 

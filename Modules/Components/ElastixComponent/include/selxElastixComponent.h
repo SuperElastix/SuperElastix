@@ -45,6 +45,8 @@ namespace selx
     typedef typename ItkImageSourceType::Pointer ItkImageSourcePointer;
 
     typedef elastix::ElastixFilter< FixedImageType, MovingImageType > TheItkFilterType;
+    typedef elastix::ParameterObject elxParameterObjectType;
+    typedef elxParameterObjectType::Pointer elxParameterObjectPointer;
 
     typedef itk::ResampleImageFilter<MovingImageType, ConnectionImageType> ResampleFilterType;
 
@@ -58,6 +60,7 @@ namespace selx
     static const char * GetDescription() { return "Elastix Component"; };
   private:
     typename TheItkFilterType::Pointer m_theItkFilter;
+    //elxParameterObjectPointer m_ParameterObject;
   protected:
     /* The following struct returns the string name of computation type */
     /* default implementation */

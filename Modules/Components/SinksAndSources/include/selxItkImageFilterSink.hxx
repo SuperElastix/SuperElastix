@@ -1,21 +1,21 @@
-#include "selxItkImageSink.h"
+#include "selxItkImageFilterSink.h"
 
 namespace selx
 {
   template<int Dimensionality, class TPixel>
-  ItkImageSinkComponent< Dimensionality, TPixel>::ItkImageSinkComponent()
+  ItkImageFilterSinkComponent< Dimensionality, TPixel>::ItkImageFilterSinkComponent()
   {
     this->m_Sink = nullptr;
     this->m_SinkWriter = nullptr;
   }
 
   template<int Dimensionality, class TPixel>
-  ItkImageSinkComponent< Dimensionality, TPixel>::~ItkImageSinkComponent()
+  ItkImageFilterSinkComponent< Dimensionality, TPixel>::~ItkImageFilterSinkComponent()
   {
   }
 
   template<int Dimensionality, class TPixel>
-  int ItkImageSinkComponent< Dimensionality, TPixel>::Set(itkImageSourceInterface<Dimensionality, TPixel>* other)
+  int ItkImageFilterSinkComponent< Dimensionality, TPixel>::Set(itkImageSourceInterface<Dimensionality, TPixel>* other)
   {
     if (this->m_SinkWriter == nullptr)
     {
@@ -27,7 +27,7 @@ namespace selx
   }
 
   template<int Dimensionality, class TPixel>
-  bool ItkImageSinkComponent< Dimensionality, TPixel>::ConnectToOverlordSink(itk::Object::Pointer object)
+  bool ItkImageFilterSinkComponent< Dimensionality, TPixel>::ConnectToOverlordSink(itk::Object::Pointer object)
   {
     bool anySuccessfulCast = false;
     this->m_Sink = dynamic_cast<itk::ProcessObject*>(object.GetPointer());
@@ -38,7 +38,7 @@ namespace selx
   }
 
   template<int Dimensionality, class TPixel>
-  bool ItkImageSinkComponent< Dimensionality, TPixel>::MeetsCriterion(const CriterionType &criterion)
+  bool ItkImageFilterSinkComponent< Dimensionality, TPixel>::MeetsCriterion(const CriterionType &criterion)
   {
     bool hasUndefinedCriteria(false);
     bool meetsCriteria(false);

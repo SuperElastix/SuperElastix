@@ -362,7 +362,8 @@ namespace selx
     // E.g.if the components are true itk Process Object, the don't need an 'Update' call. 
     // The container of RunRegistrationsInterfaces will therefore be empty, since they will not be added if they don't expose this interface.
     // If components need RunIterations() or RunResolution() we can explicitly 'Update' them here and control the flow.
-    
+    // TODO: see if signals-and-slots paradigm is appropriate here.
+
     this->RunRegistrations();
     
     //update all writers...
