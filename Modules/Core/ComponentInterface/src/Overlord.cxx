@@ -231,10 +231,11 @@ namespace selx
           // For now, we just create the readers here.
           Reader3doubleType::Pointer reader;
           reader = Reader3doubleType::New();
-          std::stringstream filename;
+          //std::stringstream filename;
           //filename << "C:\\wp\\SuperElastix\\bld2\\SuperElastix-build\\bin\\Debug\\sourceimage" << readercounter << ".mhd";
-          filename << "source3dimage" << readercounter << ".mhd";
-          reader->SetFileName(filename.str());
+          //filename << "source3dimage" << readercounter << ".mhd";
+          //reader->SetFileName(filename.str());
+          reader->SetFileName(this->inputFileNames[readercounter]);
           this->m_Readers3double->push_back(reader);
 
           //TODO which way is preferred?
@@ -247,10 +248,11 @@ namespace selx
           // For now, we just create the readers here.
           Reader2floatType::Pointer reader;
           reader = Reader2floatType::New();
-          std::stringstream filename;
+          //std::stringstream filename;
           //filename << "C:\\wp\\SuperElastix\\bld2\\SuperElastix-build\\bin\\Debug\\sourceimage" << readercounter << ".mhd";
-          filename << "source2dimage" << readercounter << ".mhd";
-          reader->SetFileName(filename.str());
+          //filename << "source2dimage" << readercounter << ".mhd";
+          //reader->SetFileName(filename.str());
+          reader->SetFileName(this->inputFileNames[readercounter]);
           this->m_Readers2float->push_back(reader);
 
           //TODO which way is preferred?
@@ -297,9 +299,10 @@ namespace selx
           // For now, we just create the writers here.
           Writer3doubleType::Pointer writer;
           writer = Writer3doubleType::New();
-          std::stringstream filename;
-          filename << "sink3dimage" << writercounter << ".mhd";
-          writer->SetFileName(filename.str());
+          //std::stringstream filename;
+          //filename << "sink3dimage" << writercounter << ".mhd";
+          //writer->SetFileName(filename.str());
+          writer->SetFileName(this->outputFileNames[writercounter]);
           this->m_Writers3double->push_back(writer);
 
           // For testing purposes, all Sources are connected to an ImageWriter
@@ -310,9 +313,10 @@ namespace selx
           // For now, we just create the writers here.
           Writer2floatType::Pointer writer;
           writer = Writer2floatType::New();
-          std::stringstream filename;
-          filename << "sink2dimage" << writercounter << ".mhd";
-          writer->SetFileName(filename.str());
+          //std::stringstream filename;
+          //filename << "sink2dimage" << writercounter << ".mhd";
+          //writer->SetFileName(filename.str());
+          writer->SetFileName(this->outputFileNames[writercounter]);
           this->m_Writers2float->push_back(writer);
 
           // For testing purposes, all Sources are connected to an ImageWriter

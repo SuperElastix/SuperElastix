@@ -87,6 +87,8 @@ TEST_F(ElastixComponentTest, ImagesOnly)
 
   EXPECT_NO_THROW(overlord = Overlord::New());
   EXPECT_NO_THROW(overlord->SetBlueprint(blueprint));
+  overlord->inputFileNames = { "source2dimage0.mhd", "source2dimage1.mhd" };
+  overlord->outputFileNames = { "sink2dimage0.mhd" };
   bool allUniqueComponents;
   EXPECT_NO_THROW(allUniqueComponents = overlord->Configure());
   EXPECT_TRUE(allUniqueComponents);

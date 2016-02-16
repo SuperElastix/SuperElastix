@@ -88,6 +88,9 @@ namespace selx
     void SetBlueprint(const Blueprint::Pointer);
     bool Configure();
     bool Execute();
+
+    std::vector<std::string> inputFileNames;
+    std::vector<std::string> outputFileNames;
   protected:
     
     Overlord();
@@ -116,9 +119,11 @@ namespace selx
     ComponentsContainerType::Pointer m_RunRegistrationComponents;
     ComponentsContainerType::Pointer m_AfterRegistrationComponents;
     
+
   };
 
 } // end namespace selx
 
 
 #endif // Overlord_h
+

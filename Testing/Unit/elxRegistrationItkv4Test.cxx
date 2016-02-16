@@ -111,6 +111,8 @@ TEST_F(RegistrationItkv4Test, ImagesOnly)
 
 
   EXPECT_NO_THROW(overlord = Overlord::New());
+  overlord->inputFileNames = { "source3dimage0.mhd", "source3dimage1.mhd" };
+  overlord->outputFileNames = { "sink3dimage0.mhd" };
   EXPECT_NO_THROW(overlord->SetBlueprint(blueprint));
   bool allUniqueComponents;
   EXPECT_NO_THROW(allUniqueComponents = overlord->Configure());
@@ -165,6 +167,8 @@ TEST_F(RegistrationItkv4Test, WithANTSCCMetric)
   blueprint->AddConnection(index4, index0, connection4Parameters);
 
   EXPECT_NO_THROW(overlord = Overlord::New());
+  overlord->inputFileNames = { "source3dimage0.mhd", "source3dimage1.mhd" };
+  overlord->outputFileNames = { "sink3dimage0.mhd" };
   EXPECT_NO_THROW(overlord->SetBlueprint(blueprint));
   bool allUniqueComponents;
   EXPECT_NO_THROW(allUniqueComponents = overlord->Configure());
@@ -218,6 +222,8 @@ TEST_F(RegistrationItkv4Test, WithMeanSquaresMetric)
   blueprint->AddConnection(index4, index0, connection4Parameters);
 
   EXPECT_NO_THROW(overlord = Overlord::New());
+  overlord->inputFileNames = { "source3dimage0.mhd", "source3dimage1.mhd" };
+  overlord->outputFileNames = { "sink3dimage0.mhd" };
   EXPECT_NO_THROW(overlord->SetBlueprint(blueprint));
   bool allUniqueComponents;
   EXPECT_NO_THROW(allUniqueComponents = overlord->Configure());
