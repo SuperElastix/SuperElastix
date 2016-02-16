@@ -21,6 +21,7 @@ set( ${MODULE}_TESTS
 set( ${MODULE}_SOURCE_FILES
   ${${MODULE}_SOURCE_DIR}/src/selxItkImageSource.cxx
   ${${MODULE}_SOURCE_DIR}/src/selxItkImageFilterSink.cxx
+  ${${MODULE}_SOURCE_DIR}/src/selxItkImageSink.cxx
   ${${MODULE}_SOURCE_DIR}/src/selxItkImageSourceFixed.cxx
   ${${MODULE}_SOURCE_DIR}/src/selxItkImageSourceMoving.cxx
 )

@@ -36,18 +36,29 @@ namespace selx
   }
 
 
-  template<int Dimensionality, class TPixel>
+  //Since elastixFilter is not a true itkfilter we cannot use itkImageSourceInterface (yet)
+  /*template<int Dimensionality, class TPixel>
   typename ElastixComponent< Dimensionality, TPixel>::ItkImageSourcePointer ElastixComponent< Dimensionality, TPixel>::GetItkImageSource()
   {
 
     return (ItkImageSourcePointer) this->m_theItkFilter;
   }
+  */
+
+  template<int Dimensionality, class TPixel>
+  typename ElastixComponent< Dimensionality, TPixel>::ItkImagePointer ElastixComponent< Dimensionality, TPixel>::GetItkImage()
+  {
+    // We cannot just call return this->m_theItkFilter->GetOutput(), since the network is generally not ready for execution during the handshake
+  return this->m_OutputImage;
+  }
+  
 
 
   template<int Dimensionality, class TPixel>
   void ElastixComponent< Dimensionality, TPixel>::RunRegistration(void)
   {
     //this->m_theItkFilter->Update();
+    this->m_OutputImage = this->m_theItkFilter->GetOutput();
   }
 
 

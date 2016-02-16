@@ -98,10 +98,22 @@ namespace selx
   };
 
   class RunRegistrationInterface {
+    // A special interface: the Overlord checks components for this type of interface.
+    // This interface is for to control the execution of the network
   public:
     virtual void RunRegistration() = 0;
   };
+  
+  class AfterRegistrationInterface {
+    // A special interface: the Overlord checks components for this type of interface.
+    // This interface is for to control the execution of the network
+  public:
+    virtual void AfterRegistration() = 0;
+  };
+
   class RunResolutionInterface {
+    // A special interface: the Overlord checks components for this type of interface.
+    // This interface is for to control the execution of the network
   public:
     virtual bool RunResolution() = 0;
   };

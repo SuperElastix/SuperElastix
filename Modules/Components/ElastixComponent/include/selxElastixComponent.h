@@ -20,7 +20,7 @@ namespace selx
         itkImageSourceMovingInterface<Dimensionality, TPixel>
       >,
       Providing< 
-        itkImageSourceInterface<Dimensionality, TPixel>,
+        GetItkImageInterface<Dimensionality, TPixel>, //Since elastixFilter is not a true itkfilter we cannot use itkImageSourceInterface (yet)
         RunRegistrationInterface
       >
     >
@@ -44,6 +44,8 @@ namespace selx
     typedef itk::ImageSource<ConnectionImageType> ItkImageSourceType;
     typedef typename ItkImageSourceType::Pointer ItkImageSourcePointer;
 
+    typedef typename ConnectionImageType::Pointer ItkImagePointer;
+
     typedef elastix::ElastixFilter< FixedImageType, MovingImageType > TheItkFilterType;
     typedef elastix::ParameterObject elxParameterObjectType;
     typedef elxParameterObjectType::Pointer elxParameterObjectPointer;
@@ -53,7 +55,9 @@ namespace selx
     virtual int Set(itkImageSourceFixedInterface<Dimensionality, TPixel>*) override;
     virtual int Set(itkImageSourceMovingInterface<Dimensionality, TPixel>*) override;
     
-    virtual ItkImageSourcePointer GetItkImageSource() override;
+    //Since elastixFilter is not a true itkfilter we cannot use itkImageSourceInterface (yet)
+    //virtual ItkImageSourcePointer GetItkImageSource() override;
+    virtual ItkImagePointer GetItkImage() override;
     virtual void RunRegistration() override;
 
     virtual bool MeetsCriterion(const CriterionType &criterion) override;
@@ -61,6 +65,8 @@ namespace selx
   private:
     typename TheItkFilterType::Pointer m_theItkFilter;
     //elxParameterObjectPointer m_ParameterObject;
+
+    typename ItkImagePointer m_OutputImage;
   protected:
     /* The following struct returns the string name of computation type */
     /* default implementation */

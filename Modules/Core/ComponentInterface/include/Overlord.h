@@ -98,9 +98,11 @@ namespace selx
     bool UpdateSelectors();
     bool ConnectComponents();
     bool FindRunRegistration();
+    bool FindAfterRegistration();
     bool ConnectSources();
     bool ConnectSinks();
     bool RunRegistrations();
+    bool AfterRegistrations();
     Blueprint::Pointer m_Blueprint;
     ComponentSelectorContainerType m_ComponentSelectorContainer;
     //ObjectContainerType::Pointer m_InputObjects;
@@ -112,6 +114,8 @@ namespace selx
     Reader2floatContainerType::Pointer m_Readers2float;
     Writer2floatContainerType::Pointer m_Writers2float;
     ComponentsContainerType::Pointer m_RunRegistrationComponents;
+    ComponentsContainerType::Pointer m_AfterRegistrationComponents;
+    
   };
 
 } // end namespace selx

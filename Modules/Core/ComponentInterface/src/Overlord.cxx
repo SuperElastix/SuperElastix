@@ -8,7 +8,7 @@ namespace selx
     //this->m_SinkComponents = SinkComponentsContainerType::New();
     //this->m_SourceComponents = SourceComponentsContainerType::New();
     this->m_RunRegistrationComponents = ComponentsContainerType::New();
-
+    this->m_AfterRegistrationComponents = ComponentsContainerType::New();
     // temporary solution
     this->m_Readers2float = Reader2floatContainerType::New();
     this->m_Writers2float = Writer2floatContainerType::New();
@@ -28,26 +28,41 @@ namespace selx
     bool isSuccess(false);
     bool allUniqueComponents;
     this->ApplyNodeConfiguration();
+    std::cout << "Applying Component Settings" << std::endl;
     allUniqueComponents = this->UpdateSelectors();
     std::cout << "Based on Component Criteria unique components could " << (allUniqueComponents ? "" : "not ") << "be selected" << std::endl;
 
+    std::cout << "Applying Connection Settings" << std::endl;
     this->ApplyConnectionConfiguration();
     allUniqueComponents = this->UpdateSelectors();
     std::cout << "By adding Connection Criteria unique components could " << (allUniqueComponents ? "" : "not ") << "be selected" << std::endl;
 
-    
+    std::cout << "Connecting Sources" << std::endl;
     this->ConnectSources();
 
     int numberSources2float = this->m_Readers2float->size(); // temporary solution
-    std::cout << "Found " << numberSources2float << " Source Components (2d float)" << std::endl;
+    if (numberSources2float > 0)
+    {
+      std::cout << "Found " << numberSources2float << " Source Components (2d float)" << std::endl;
+    }
     int numberSources3double = this->m_Readers3double->size(); // temporary solution
-    std::cout << "Found " << numberSources3double << " Source Components (3d double)" << std::endl;
-
+    if (numberSources3double > 0)
+    {
+      std::cout << "Found " << numberSources3double << " Source Components (3d double)" << std::endl;
+    }
+    std::cout << "Connecting Sinks" << std::endl;
     this->ConnectSinks();
+
     int numberSinks2float = this->m_Writers2float->size(); // temporary solution
-    std::cout << "Found " << numberSinks2float << " Sink Components (2d float)" << std::endl;
+    if (numberSinks2float > 0)
+    {
+      std::cout << "Found " << numberSinks2float << " Sink Components (2d float)" << std::endl;
+    }
     int numberSinks3double = this->m_Writers3double->size(); // temporary solution
-    std::cout << "Found " << numberSinks3double << " Sink Components (3d double)" << std::endl;
+    if (numberSinks3double > 0 )
+    {
+      std::cout << "Found " << numberSinks3double << " Sink Components (3d double)" << std::endl;
+    }
 
 
 
@@ -56,7 +71,10 @@ namespace selx
       isSuccess = this->ConnectComponents();
     }
 
+    std::cout << "Connecting Components: " << (isSuccess? "succeeded" : "failed") << std::endl;
+
     this->FindRunRegistration();
+    this->FindAfterRegistration();
     return isSuccess;
   }
 
@@ -332,18 +350,57 @@ namespace selx
     return true;
   }
 
+  bool Overlord::FindAfterRegistration()
+  {
+    /** Scans all Components to find those with Sourcing capability and store them in SourceComponents list */
+    const CriterionType afterRegistrationCriterion = CriterionType("HasProvidingInterface", { "AfterRegistrationInterface" });
+
+    // TODO redesign ComponentBase class to accept a single criterion instead of a criteria mapping.
+    CriteriaType afterRegistrationCriteria;
+    afterRegistrationCriteria.insert(afterRegistrationCriterion);
+
+    for (auto && componentSelector : (this->m_ComponentSelectorContainer))
+    {
+      ComponentBase::Pointer component = componentSelector->GetComponent();
+      if (component->MeetsCriteria(afterRegistrationCriteria)) // TODO MeetsCriterion
+      {
+        this->m_AfterRegistrationComponents->push_back(component);
+      }
+    }
+
+    return true;
+  }
+
+  
+
   bool Overlord::RunRegistrations()
   {
 
     for (auto const & runRegistrationComponent : *(this->m_RunRegistrationComponents)) // auto&& preferred?
     {
-      RunRegistrationInterface* provingRunRegistrationInterface = dynamic_cast<RunRegistrationInterface*> (&(*runRegistrationComponent));
-      if (provingRunRegistrationInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
+      RunRegistrationInterface* providingRunRegistrationInterface = dynamic_cast<RunRegistrationInterface*> (&(*runRegistrationComponent));
+      if (providingRunRegistrationInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
       {
         itkExceptionMacro("dynamic_cast<RunRegistrationInterface*> fails, but based on component criterion it shouldn't")
       }
       // For testing purposes, all Sources are connected to an ImageWriter
-      provingRunRegistrationInterface->RunRegistration();
+      providingRunRegistrationInterface->RunRegistration();
+    }
+    return true;
+  }
+
+  bool Overlord::AfterRegistrations()
+  {
+
+    for (auto const & afterRegistrationComponent : *(this->m_AfterRegistrationComponents)) // auto&& preferred?
+    {
+      AfterRegistrationInterface* providingAfterRegistrationInterface = dynamic_cast<AfterRegistrationInterface*> (&(*afterRegistrationComponent));
+      if (providingAfterRegistrationInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
+      {
+        itkExceptionMacro("dynamic_cast<AfterRegistrationInterface*> fails, but based on component criterion it shouldn't")
+      }
+      // For testing purposes, all Sources are connected to an ImageWriter
+      providingAfterRegistrationInterface->AfterRegistration();
     }
     return true;
   }
@@ -365,7 +422,7 @@ namespace selx
     // TODO: see if signals-and-slots paradigm is appropriate here.
 
     this->RunRegistrations();
-    
+    this->AfterRegistrations();
     //update all writers...
     for (auto const & writer : *(this->m_Writers2float)) // auto&& preferred?
     {

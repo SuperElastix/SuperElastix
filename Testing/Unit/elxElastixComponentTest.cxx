@@ -4,6 +4,7 @@
 
 #include "selxElastixComponent.h"
 #include "selxItkImageFilterSink.h"
+#include "selxItkImageSink.h"
 #include "selxItkImageSourceFixed.h"
 #include "selxItkImageSourceMoving.h"
 
@@ -26,6 +27,7 @@ public:
     ComponentFactory<ElastixComponent<2, float>>::RegisterOneFactory();
     
     ComponentFactory<ItkImageFilterSinkComponent<2, float>>::RegisterOneFactory();
+    ComponentFactory<ItkImageSinkComponent<2, float>>::RegisterOneFactory();
 
     ComponentFactory<ItkImageSourceFixedComponent<2, float>>::RegisterOneFactory();
     ComponentFactory<ItkImageSourceMovingComponent<2, float>>::RegisterOneFactory();
@@ -65,7 +67,7 @@ TEST_F(ElastixComponentTest, ImagesOnly)
   ComponentIndexType index2 = blueprint->AddComponent(component2Parameters);
 
   ParameterMapType component3Parameters;
-  component3Parameters["NameOfClass"] = { "ItkImageFilterSinkComponent" };
+  component3Parameters["NameOfClass"] = { "ItkImageSinkComponent" };
   component3Parameters["Dimensionality"] = { "2" }; // should be derived from the inputs
   ComponentIndexType index3 = blueprint->AddComponent(component3Parameters);
 
@@ -79,7 +81,7 @@ TEST_F(ElastixComponentTest, ImagesOnly)
   blueprint->AddConnection(index2, index0, connection2Parameters);
 
   ParameterMapType connection3Parameters;
-  connection3Parameters["NameOfInterface"] = { "itkImageSourceInterface" };
+  connection3Parameters["NameOfInterface"] = { "GetItkImageInterface" };
   blueprint->AddConnection(index0, index3, connection3Parameters);
 
 

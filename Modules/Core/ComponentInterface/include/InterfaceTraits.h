@@ -109,6 +109,17 @@ struct InterfaceName < itkImageSourceMovingInterface <D, TPixel> >
     return "itkImageSourceMovingInterface";
   }
 };
+
+template <int D, class TPixel>
+struct InterfaceName < GetItkImageInterface <D, TPixel> >
+{
+  static const char* Get()
+  {
+    return "GetItkImageInterface";
+  }
+};
+
+
 template <>
 struct InterfaceName < SourceInterface >
 {
@@ -145,7 +156,14 @@ struct InterfaceName < RunRegistrationInterface >
   }
 };
 
-
+template <>
+struct InterfaceName < AfterRegistrationInterface >
+{
+  static const char* Get()
+  {
+    return "AfterRegistrationInterface";
+  }
+};
 
 // partial specialization of InterfaceName
 // InterfaceName<T>::Get() should return the same name no matter whether T is an acceptor or provider interface.
