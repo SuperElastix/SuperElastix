@@ -59,6 +59,16 @@ namespace selx
       unsigned int, Writer3doubleType::Pointer > Writer3doubleContainerType;
 
 
+    typedef itk::ImageFileWriter<itk::Image<itk::Vector<float, 2>, 2>> WriterDisplacement2floatType;
+    typedef itk::ImageFileWriter<itk::Image<itk::Vector<double, 3>, 3>> WriterDisplacement3doubleType;
+
+    typedef itk::VectorContainer <
+      unsigned int, WriterDisplacement2floatType::Pointer > WriterDisplacement2floatContainerType;
+
+    typedef itk::VectorContainer <
+      unsigned int, WriterDisplacement3doubleType::Pointer > WriterDisplacement3doubleContainerType;
+
+
    // typedef itk::Object::Pointer ObjectPointer;
    // typedef itk::VectorContainer <
    //   unsigned int, ObjectPointer > ObjectContainerType;
@@ -116,9 +126,13 @@ namespace selx
     Writer3doubleContainerType::Pointer m_Writers3double;
     Reader2floatContainerType::Pointer m_Readers2float;
     Writer2floatContainerType::Pointer m_Writers2float;
+    WriterDisplacement2floatContainerType::Pointer m_WritersDisplacement2float;
+    WriterDisplacement3doubleContainerType::Pointer m_WritersDisplacement3double;
+    
     ComponentsContainerType::Pointer m_RunRegistrationComponents;
     ComponentsContainerType::Pointer m_AfterRegistrationComponents;
     
+
 
   };
 

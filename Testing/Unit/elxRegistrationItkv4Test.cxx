@@ -10,6 +10,7 @@
 
 #include "selxItkSmoothingRecursiveGaussianImageFilterComponent.h"
 #include "selxItkImageFilterSink.h"
+#include "selxDisplacementFieldItkImageFilterSink.h"
 #include "selxItkImageSource.h"
 
 
@@ -44,6 +45,7 @@ public:
 
     
     ComponentFactory<ItkImageFilterSinkComponent<3,double>>::RegisterOneFactory();
+    ComponentFactory<DisplacementFieldItkImageFilterSinkComponent<3, double>>::RegisterOneFactory();
     ComponentFactory<ItkImageSourceComponent>::RegisterOneFactory();
 
     ComponentFactory<ItkImageSourceFixedComponent<2, float>>::RegisterOneFactory();
@@ -230,5 +232,61 @@ TEST_F(RegistrationItkv4Test, WithMeanSquaresMetric)
   EXPECT_TRUE(allUniqueComponents);
   EXPECT_NO_THROW(overlord->Execute());
   //overlord->Execute();
+}
+
+TEST_F(RegistrationItkv4Test, ImagesOnlyGetDisplacementField)
+{
+  /** make example blueprint configuration */
+  blueprint = Blueprint::New();
+
+  ParameterMapType component0Parameters;
+  component0Parameters["NameOfClass"] = { "ItkImageRegistrationMethodv4Component" };
+  ComponentIndexType index0 = blueprint->AddComponent(component0Parameters);
+
+  ParameterMapType component1Parameters;
+  component1Parameters["NameOfClass"] = { "ItkImageSourceFixedComponent" };
+  component1Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
+  ComponentIndexType index1 = blueprint->AddComponent(component1Parameters);
+
+  ParameterMapType component2Parameters;
+  component2Parameters["NameOfClass"] = { "ItkImageSourceMovingComponent" };
+  component2Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
+  ComponentIndexType index2 = blueprint->AddComponent(component2Parameters);
+
+  ParameterMapType component3Parameters;
+  component3Parameters["NameOfClass"] = { "ItkImageFilterSinkComponent" };
+  //component3Parameters["Dimensionality"] = { "3" }; // should be derived from the outputs
+  ComponentIndexType index3 = blueprint->AddComponent(component3Parameters);
+
+  ParameterMapType component4Parameters;
+  component4Parameters["NameOfClass"] = { "DisplacementFieldItkImageFilterSinkComponent" };
+  //component3Parameters["Dimensionality"] = { "3" }; // should be derived from the outputs
+  ComponentIndexType index4 = blueprint->AddComponent(component4Parameters);
+
+  ParameterMapType connection1Parameters;
+  connection1Parameters["NameOfInterface"] = { "itkImageSourceFixedInterface" };
+  blueprint->AddConnection(index1, index0, connection1Parameters);
+
+  ParameterMapType connection2Parameters;
+  connection2Parameters["NameOfInterface"] = { "itkImageSourceMovingInterface" };
+  blueprint->AddConnection(index2, index0, connection2Parameters);
+
+  ParameterMapType connection3Parameters;
+  connection3Parameters["NameOfInterface"] = { "itkImageSourceInterface" };
+  blueprint->AddConnection(index0, index3, connection3Parameters);
+
+  ParameterMapType connection4Parameters;
+  connection4Parameters["NameOfInterface"] = { "DisplacementFieldItkImageSourceInterface" };
+  blueprint->AddConnection(index0, index4, connection4Parameters);
+
+  EXPECT_NO_THROW(overlord = Overlord::New());
+  overlord->inputFileNames = { "source3dimage0.mhd", "source3dimage1.mhd" };
+  overlord->outputFileNames = { "sink3dimage0.mhd", "sink3ddeformationfield1.mhd" };
+  EXPECT_NO_THROW(overlord->SetBlueprint(blueprint));
+  bool allUniqueComponents;
+  EXPECT_NO_THROW(allUniqueComponents = overlord->Configure());
+  EXPECT_TRUE(allUniqueComponents);
+  EXPECT_NO_THROW(overlord->Execute());
+
 }
 } // namespace elx

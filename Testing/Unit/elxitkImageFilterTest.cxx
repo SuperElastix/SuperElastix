@@ -90,6 +90,8 @@ public:
   TEST_F(itkImageFilterTest, Run)
 {
   overlord = Overlord::New();
+  overlord->inputFileNames = { "source3dimage0.mhd" };
+  overlord->outputFileNames = { "itkImageFilterTest_output.mhd" };
   overlord->SetBlueprint(blueprint);
   bool allUniqueComponents;
   

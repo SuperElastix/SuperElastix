@@ -82,6 +82,13 @@ namespace selx
     virtual typename itk::Image<TPixel, Dimensionality>::Pointer GetItkImage() = 0;
   };
 
+  template<int Dimensionality, class TPixel>
+  class DisplacementFieldItkImageSourceInterface {
+    // An interface that exposes that its internal filter is derived from itkImageSource
+  public:
+    virtual typename itk::ImageSource<itk::Image<itk::Vector< TPixel, Dimensionality >, Dimensionality>>::Pointer GetDisplacementFieldItkImageSource() = 0;
+  };
+
   class SourceInterface {
     // A special interface: the Overlord checks components for this type of interface.
     // By this interface only Source Components can to talk to the Overlord.

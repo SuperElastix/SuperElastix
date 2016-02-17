@@ -119,6 +119,17 @@ struct InterfaceName < GetItkImageInterface <D, TPixel> >
   }
 };
 
+template <int D, class TPixel>
+struct InterfaceName < DisplacementFieldItkImageSourceInterface <D, TPixel> >
+{
+  static const char* Get()
+  {
+    return "DisplacementFieldItkImageSourceInterface";
+  }
+};
+
+
+
 
 template <>
 struct InterfaceName < SourceInterface >

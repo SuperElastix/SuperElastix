@@ -24,6 +24,8 @@ set( ${MODULE}_SOURCE_FILES
   ${${MODULE}_SOURCE_DIR}/src/selxItkImageSink.cxx
   ${${MODULE}_SOURCE_DIR}/src/selxItkImageSourceFixed.cxx
   ${${MODULE}_SOURCE_DIR}/src/selxItkImageSourceMoving.cxx
+  ${${MODULE}_SOURCE_DIR}/src/selxDisplacementFieldItkImageFilterSink.cxx
+  
 )
 
 # Compile library

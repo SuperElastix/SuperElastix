@@ -14,6 +14,10 @@ namespace selx
     this->m_Writers2float = Writer2floatContainerType::New();
     this->m_Readers3double = Reader3doubleContainerType::New();
     this->m_Writers3double = Writer3doubleContainerType::New();
+    
+    this->m_WritersDisplacement2float = WriterDisplacement2floatContainerType::New();
+    this->m_WritersDisplacement3double = WriterDisplacement3doubleContainerType::New();
+    
   }
 
   void Overlord::SetBlueprint(const Blueprint::Pointer blueprint)
@@ -64,6 +68,16 @@ namespace selx
       std::cout << "Found " << numberSinks3double << " Sink Components (3d double)" << std::endl;
     }
 
+    int numberSinksDisplacement2float = this->m_WritersDisplacement2float->size(); // temporary solution
+    if (numberSinksDisplacement2float > 0)
+    {
+      std::cout << "Found " << numberSinksDisplacement2float << " Sink Components (Displacement 2d float)" << std::endl;
+    }
+    int numberSinksDisplacement3double = this->m_WritersDisplacement3double->size(); // temporary solution
+    if (numberSinksDisplacement3double > 0)
+    {
+      std::cout << "Found " << numberSinksDisplacement3double << " Sink Components (Displacement 3d double)" << std::endl;
+    }
 
 
     if (allUniqueComponents)
@@ -205,18 +219,14 @@ namespace selx
   {
     /** Scans all Components to find those with Sourcing capability and store them in SourceComponents list */
 
-    const CriterionType sourceCriterion = CriterionType("HasProvidingInterface", { "SourceInterface" });
-   
     int readercounter = 0; // temporary solution for reader filenames
 
     // TODO redesign ComponentBase class to accept a single criterion instead of a criteria mapping.
-    CriteriaType sourceCriteria;
-    sourceCriteria.insert(sourceCriterion);
-
     for (auto && componentSelector : (this->m_ComponentSelectorContainer))
     {
       ComponentBase::Pointer component = componentSelector->GetComponent();
-      if (component->MeetsCriteria(sourceCriteria)) // TODO MeetsCriterion
+
+      if (component->MeetsCriteria({ { "HasProvidingInterface", { "SourceInterface" } } })) // TODO MeetsCriterion
       {
         SourceInterface* provingSourceInterface = dynamic_cast<SourceInterface*> (&(*component));
         if (provingSourceInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
@@ -225,8 +235,8 @@ namespace selx
         }
         //TODO: Make these connections available as inputs of the SuperElastix (filter). 
 
-        CriteriaType typeCriteria = { { "Dimensionality", { "3" } }, { "PixelType", { "double" } } };
-        if (component->MeetsCriteria(typeCriteria))
+
+        if (component->MeetsCriteria({ { "Dimensionality", { "3" } }, { "PixelType", { "double" } } }))
         {
           // For now, we just create the readers here.
           Reader3doubleType::Pointer reader;
@@ -235,6 +245,10 @@ namespace selx
           //filename << "C:\\wp\\SuperElastix\\bld2\\SuperElastix-build\\bin\\Debug\\sourceimage" << readercounter << ".mhd";
           //filename << "source3dimage" << readercounter << ".mhd";
           //reader->SetFileName(filename.str());
+          if (readercounter >= this->inputFileNames.size())
+          {
+            itkExceptionMacro("not enough inputFileNames provided")
+          }
           reader->SetFileName(this->inputFileNames[readercounter]);
           this->m_Readers3double->push_back(reader);
 
@@ -252,6 +266,10 @@ namespace selx
           //filename << "C:\\wp\\SuperElastix\\bld2\\SuperElastix-build\\bin\\Debug\\sourceimage" << readercounter << ".mhd";
           //filename << "source2dimage" << readercounter << ".mhd";
           //reader->SetFileName(filename.str());
+          if (readercounter >= this->inputFileNames.size())
+          {
+            itkExceptionMacro("not enough inputFileNames provided")
+          }
           reader->SetFileName(this->inputFileNames[readercounter]);
           this->m_Readers2float->push_back(reader);
 
@@ -294,7 +312,37 @@ namespace selx
         }
 
         //TODO: Make these connections available as outputs of the SuperElastix (filter). 
-        if (component->MeetsCriteria({ { "Dimensionality", { "3" } }, { "PixelType", { "double" } } }))
+        if (component->MeetsCriteria({ { "IsVectorField", { "True" } }, { "Dimensionality", { "3" } }, { "PixelType", { "double" } } }))
+        {
+          // For now, we just create the readers here.
+          WriterDisplacement3doubleType::Pointer writer;
+          writer = WriterDisplacement3doubleType::New();
+
+          if (writercounter >= this->inputFileNames.size())
+          {
+            itkExceptionMacro("not enough outputFileNames provided")
+          }
+          writer->SetFileName(this->outputFileNames[writercounter]);
+          this->m_WritersDisplacement3double->push_back(writer);
+
+          provingSinkInterface->ConnectToOverlordSink((itk::SmartPointer<itk::Object>) writer);
+        }
+        else if (component->MeetsCriteria({ { "IsVectorField", { "True" } }, { "Dimensionality", { "2" } }, { "PixelType", { "float" } } }))
+        {
+          // For now, we just create the readers here.
+          WriterDisplacement2floatType::Pointer writer;
+          writer = WriterDisplacement2floatType::New();
+
+          if (writercounter >= this->inputFileNames.size())
+          {
+            itkExceptionMacro("not enough inputFileNames provided")
+          }
+          writer->SetFileName(this->outputFileNames[writercounter]);
+          this->m_WritersDisplacement2float->push_back(writer);
+
+          provingSinkInterface->ConnectToOverlordSink((itk::SmartPointer<itk::Object>) writer);
+        }
+        else if (component->MeetsCriteria({ { "Dimensionality", { "3" } }, { "PixelType", { "double" } } }))
         {
           // For now, we just create the writers here.
           Writer3doubleType::Pointer writer;
@@ -302,6 +350,10 @@ namespace selx
           //std::stringstream filename;
           //filename << "sink3dimage" << writercounter << ".mhd";
           //writer->SetFileName(filename.str());
+          if (writercounter >= this->outputFileNames.size())
+          {
+            itkExceptionMacro("not enough outputFileNames provided")
+          }
           writer->SetFileName(this->outputFileNames[writercounter]);
           this->m_Writers3double->push_back(writer);
 
@@ -316,6 +368,10 @@ namespace selx
           //std::stringstream filename;
           //filename << "sink2dimage" << writercounter << ".mhd";
           //writer->SetFileName(filename.str());
+          if (writercounter  >= this->outputFileNames.size())
+          {
+            itkExceptionMacro("not enough outputFileNames provided")
+          }
           writer->SetFileName(this->outputFileNames[writercounter]);
           this->m_Writers2float->push_back(writer);
 

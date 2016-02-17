@@ -7,7 +7,7 @@ namespace selx
 {
   m_theItkFilter = TheItkFilterType::New();
   m_resampler = ResampleFilterType::New();
-  
+  m_DisplacementFieldFilter = DisplacementFieldFilterType::New();
   //TODO: instantiating the filter in the constructor might be heavy for the use in component selector factory, since all components of the database are created during the selection process.
   // we could choose to keep the component light weighted (for checking criteria such as names and connections) until the settings are passed to the filter, but this requires an additional initialization step.
 }
@@ -61,6 +61,9 @@ void ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::RunRegistra
   this->m_resampler->SetOutputSpacing(fixedImage->GetSpacing());
   this->m_resampler->SetOutputDirection(fixedImage->GetDirection());
   this->m_resampler->SetDefaultPixelValue(0);
+
+  this->m_DisplacementFieldFilter->SetTransformInput(this->m_theItkFilter->GetTransformOutput());
+  this->m_DisplacementFieldFilter->SetReferenceImage(fixedImage);
 }
 
 template<int Dimensionality, class TPixel>
@@ -69,6 +72,16 @@ typename ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::ItkImag
   
   return (ItkImageSourcePointer) this->m_resampler;
 }
+
+
+template<int Dimensionality, class TPixel>
+typename ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::DisplacementFieldItkImageSourcePointer ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::GetDisplacementFieldItkImageSource()
+{
+
+  return (DisplacementFieldItkImageSourcePointer) this->m_DisplacementFieldFilter;
+}
+
+
 template<int Dimensionality, class TPixel>
 bool
 ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>

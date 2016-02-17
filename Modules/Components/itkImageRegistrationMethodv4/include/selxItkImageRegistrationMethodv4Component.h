@@ -6,6 +6,7 @@
 #include "itkImageRegistrationMethodv4.h"
 #include "itkGradientDescentOptimizerv4.h"
 #include "itkImageSource.h"
+#include <itkTransformToDisplacementFieldFilter.h>
 #include <string.h>
 #include "elxMacro.h"
 namespace selx
@@ -17,7 +18,8 @@ namespace selx
                itkImageSourceMovingInterface<Dimensionality, TPixel>,
                itkMetricv4Interface<Dimensionality, TPixel>
              >,
-    Providing< itkImageSourceInterface<Dimensionality, TPixel>,    
+    Providing< itkImageSourceInterface<Dimensionality, TPixel>,
+               DisplacementFieldItkImageSourceInterface<Dimensionality, TPixel>,
                RunRegistrationInterface
              >
     >
@@ -42,23 +44,33 @@ namespace selx
     typedef itk::ImageSource<ConnectionImageType> ItkImageSourceType;
     typedef typename ItkImageSourceType::Pointer ItkImageSourcePointer;
 
+    typedef itk::Image<itk::Vector<PixelType, Dimensionality>, Dimensionality> DisplacementFieldImageType;
+    typedef itk::ImageSource<DisplacementFieldImageType>DisplacementFieldItkImageSourceType;
+    typedef typename DisplacementFieldItkImageSourceType::Pointer DisplacementFieldItkImageSourcePointer;
+
     typedef itk::ImageRegistrationMethodv4<FixedImageType, MovingImageType> TheItkFilterType;
     
     typedef itk::ResampleImageFilter<MovingImageType, ConnectionImageType> ResampleFilterType;
-
+    typedef itk::TransformToDisplacementFieldFilter<DisplacementFieldImageType> DisplacementFieldFilterType;
+    //Accepting Interfaces:
     virtual int Set(itkImageSourceFixedInterface<Dimensionality, TPixel>*) override;
     virtual int Set(itkImageSourceMovingInterface<Dimensionality, TPixel>*) override;
     virtual int Set(itkMetricv4Interface<Dimensionality, TPixel>*) override;
-
+    
+    //Providing Interfaces:
     virtual ItkImageSourcePointer GetItkImageSource() override;
+    virtual DisplacementFieldItkImageSourcePointer GetDisplacementFieldItkImageSource() override;
+
     virtual void RunRegistration() override;
 
+    //BaseClass methods
     virtual bool MeetsCriterion(const CriterionType &criterion) override;    
     //static const char * GetName() { return "ItkImageRegistrationMethodv4"; } ;
     static const char * GetDescription() { return "ItkImageRegistrationMethodv4 Component"; };
   private:
     typename TheItkFilterType::Pointer m_theItkFilter;
     typename ResampleFilterType::Pointer m_resampler;
+    typename DisplacementFieldFilterType::Pointer m_DisplacementFieldFilter;
   protected:
     /* The following struct returns the string name of computation type */
     /* default implementation */
