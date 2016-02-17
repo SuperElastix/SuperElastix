@@ -24,8 +24,6 @@ protected:
   typedef itk::ImageFileWriter< ImageType > ImageFileWriterType;
   typedef ElastixFilter< ImageType, ImageType > ElastixFilterType;
   typedef TransformixFilter< ImageType > TransformixFilterType;
-
-  ElastixFilterType::Pointer elastixFilter;
 };
 
 TEST_F( TransformixFilterTest, Instantiation )
@@ -60,6 +58,36 @@ TEST_F( TransformixFilterTest, Euler2D )
   EXPECT_NO_THROW( transformixFilter->LogToFileOn() );
   EXPECT_NO_THROW( transformixFilter->Update() );
 
+  ImageFileWriterType::Pointer writer = ImageFileWriterType::New();
+  EXPECT_NO_THROW( writer->SetFileName( dataManager->GetOutputFile( "Euler2DTransformixResultImage.nii" ) ) );
+  EXPECT_NO_THROW( writer->SetInput( transformixFilter->GetOutput() ) );
+  EXPECT_NO_THROW( writer->Update() );
+}
+
+TEST_F( TransformixFilterTest, GetElastixOutputEuler2D )
+{
+  DataManagerType::Pointer dataManager = DataManagerType::New();
+
+  ImageFileReaderType::Pointer fixedImageReader = ImageFileReaderType::New();
+  fixedImageReader->SetFileName( dataManager->GetInputFile( "BrainProtonDensitySliceBorder20.png" ) );
+
+  ImageFileReaderType::Pointer movingImageReader = ImageFileReaderType::New();
+  movingImageReader->SetFileName( dataManager->GetInputFile( "BrainProtonDensitySliceR10X13Y17.png" ) );
+
+  ElastixFilterType::Pointer elastixFilter;
+  EXPECT_NO_THROW( elastixFilter = ElastixFilterType::New() );
+  EXPECT_NO_THROW( elastixFilter->SetFixedImage( fixedImageReader->GetOutput() ) );
+  EXPECT_NO_THROW( elastixFilter->SetMovingImage( movingImageReader->GetOutput() ) );
+  EXPECT_NO_THROW( elastixFilter->LogToConsoleOn() );
+
+  TransformixFilterType::Pointer transformixFilter;
+  EXPECT_NO_THROW( transformixFilter = TransformixFilterType::New() );
+  EXPECT_NO_THROW( transformixFilter->SetInputImage( elastixFilter->GetOutput() ) );
+  EXPECT_NO_THROW( transformixFilter->SetTransformParameterObject( elastixFilter->GetTransformParameterObject() ) );
+  EXPECT_NO_THROW( transformixFilter->SetOutputDirectory( dataManager->GetOutputDirectory() ) );
+  EXPECT_NO_THROW( transformixFilter->LogToConsoleOn() );
+  EXPECT_NO_THROW( transformixFilter->LogToFileOn() );
+  transformixFilter->Update();
   ImageFileWriterType::Pointer writer = ImageFileWriterType::New();
   EXPECT_NO_THROW( writer->SetFileName( dataManager->GetOutputFile( "Euler2DTransformixResultImage.nii" ) ) );
   EXPECT_NO_THROW( writer->SetInput( transformixFilter->GetOutput() ) );
@@ -136,6 +164,7 @@ TEST_F( TransformixFilterTest, ComputeSpatialJacobian )
   ImageFileReaderType::Pointer movingImageReader = ImageFileReaderType::New();
   movingImageReader->SetFileName( dataManager->GetInputFile( "BrainProtonDensitySliceR10X13Y17.png" ) );
 
+
   ElastixFilterType::Pointer elastixFilter;
   EXPECT_NO_THROW( elastixFilter = ElastixFilterType::New() );
   EXPECT_NO_THROW( elastixFilter->SetFixedImage( fixedImageReader->GetOutput() ) );
@@ -149,6 +178,7 @@ TEST_F( TransformixFilterTest, ComputeSpatialJacobian )
   EXPECT_NO_THROW( transformixFilter->LogToFileOn() );
   EXPECT_NO_THROW( transformixFilter->ComputeSpatialJacobianOn() );
   transformixFilter->Update();
+
 }
 
 TEST_F( TransformixFilterTest, ComputeDeterminantOfSpatialJacobian )
@@ -231,5 +261,42 @@ TEST_F( TransformixFilterTest, TransformPointSet )
   EXPECT_NO_THROW( transformixFilter->LogToConsoleOn() );
   EXPECT_NO_THROW( transformixFilter->LogToFileOn() );
   EXPECT_NO_THROW( transformixFilter->SetInputPointSetFileName( dataManager->GetInputFile( "InputPoints.pts" ) ) );
+  EXPECT_NO_THROW( transformixFilter->Update() );
+}
+
+TEST_F( TransformixFilterTest, SameTransformParameterMapForMultipleTransformations )
+{ 
+  typedef itk::Image< float, 2 > ImageType;
+  typedef itk::ImageFileReader< ImageType > ImageFileReaderType;
+  typedef itk::ImageFileWriter< ImageType > ImageFileWriterType;
+  typedef ElastixFilter< ImageType, ImageType > ElastixFilterType;
+
+  DataManagerType::Pointer dataManager = DataManagerType::New();
+
+  ImageFileReaderType::Pointer fixedImageReader = ImageFileReaderType::New();
+  fixedImageReader->SetFileName( dataManager->GetInputFile( "BrainProtonDensitySliceBorder20.png" ) );
+
+  ImageFileReaderType::Pointer movingImageReader1 = ImageFileReaderType::New();
+  movingImageReader1->SetFileName( dataManager->GetInputFile( "BrainProtonDensitySliceR10X13Y17.png" ) );
+
+  ImageFileReaderType::Pointer movingImageReader2 = ImageFileReaderType::New();
+  movingImageReader2->SetFileName( dataManager->GetInputFile( "BrainProtonDensitySliceR10X13Y17.png" ) );
+
+  ElastixFilterType::Pointer elastixFilter;
+  EXPECT_NO_THROW( elastixFilter = ElastixFilterType::New() );
+  EXPECT_NO_THROW( elastixFilter->LogToConsoleOn() );
+  EXPECT_NO_THROW( elastixFilter->SetFixedImage( fixedImageReader->GetOutput() ) );
+  EXPECT_NO_THROW( elastixFilter->SetMovingImage( movingImageReader1->GetOutput() ) );
+  EXPECT_NO_THROW( elastixFilter->Update() );
+
+  TransformixFilterType::Pointer transformixFilter;
+  EXPECT_NO_THROW( transformixFilter = TransformixFilterType::New() );
+  EXPECT_NO_THROW( transformixFilter->SetOutputDirectory( dataManager->GetOutputDirectory() ) );
+  EXPECT_NO_THROW( transformixFilter->SetTransformParameterObject( elastixFilter->GetTransformParameterObject() ) );
+  EXPECT_NO_THROW( transformixFilter->LogToConsoleOn() );
+  EXPECT_NO_THROW( transformixFilter->LogToFileOn() );
+  EXPECT_NO_THROW( transformixFilter->SetInputImage( movingImageReader1->GetOutput() ) );
+  EXPECT_NO_THROW( transformixFilter->Update() );
+  EXPECT_NO_THROW( transformixFilter->SetInputImage( movingImageReader2->GetOutput() ) );
   EXPECT_NO_THROW( transformixFilter->Update() );
 }
