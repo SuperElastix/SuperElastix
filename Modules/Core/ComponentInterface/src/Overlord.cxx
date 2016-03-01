@@ -492,7 +492,14 @@ namespace selx
     {
       writer->Update();
     }
-
+    for (auto const & writer : *(this->m_WritersDisplacement3double)) // auto&& preferred?
+    {
+      writer->Update();
+    }
+    for (auto const & writer : *(this->m_WritersDisplacement2float)) // auto&& preferred?
+    {
+      writer->Update();
+    }
     return true;
   }
 } // end namespace selx

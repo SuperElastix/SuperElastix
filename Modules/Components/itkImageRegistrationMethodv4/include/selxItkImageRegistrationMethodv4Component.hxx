@@ -63,6 +63,11 @@ void ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::RunRegistra
   this->m_resampler->SetDefaultPixelValue(0);
 
   this->m_DisplacementFieldFilter->SetTransformInput(this->m_theItkFilter->GetTransformOutput());
+  this->m_DisplacementFieldFilter->SetSize(fixedImage->GetBufferedRegion().GetSize()); //should be virtual image...
+  this->m_DisplacementFieldFilter->SetOutputOrigin(fixedImage->GetOrigin());
+  this->m_DisplacementFieldFilter->SetOutputSpacing(fixedImage->GetSpacing());
+  this->m_DisplacementFieldFilter->SetOutputDirection(fixedImage->GetDirection());
+
   this->m_DisplacementFieldFilter->SetReferenceImage(fixedImage);
 }
 
