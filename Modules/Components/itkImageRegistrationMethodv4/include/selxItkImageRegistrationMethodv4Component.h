@@ -9,6 +9,13 @@
 #include <itkTransformToDisplacementFieldFilter.h>
 #include <string.h>
 #include "elxMacro.h"
+
+
+#include "itkComposeDisplacementFieldsImageFilter.h"
+#include "itkGaussianExponentialDiffeomorphicTransform.h"
+#include "itkGaussianExponentialDiffeomorphicTransformParametersAdaptor.h"
+
+
 namespace selx
 {
   template <int Dimensionality, class TPixel>
@@ -33,7 +40,7 @@ namespace selx
     virtual ~ItkImageRegistrationMethodv4Component();
 
     typedef TPixel PixelType;
-
+   
     // the in and output image type of the component are chosen to be the same 
     typedef itk::Image<PixelType, Dimensionality> ConnectionImageType; 
 
@@ -48,7 +55,11 @@ namespace selx
     typedef itk::ImageSource<DisplacementFieldImageType>DisplacementFieldItkImageSourceType;
     typedef typename DisplacementFieldItkImageSourceType::Pointer DisplacementFieldItkImageSourcePointer;
 
-    typedef itk::ImageRegistrationMethodv4<FixedImageType, MovingImageType> TheItkFilterType;
+    // TODO for now we hard code the transform to be a stationary velocity field. See Set(*MetricInterface) for implementation
+    typedef double RealType;
+    typedef itk::GaussianExponentialDiffeomorphicTransform<RealType, Dimensionality> ConstantVelocityFieldTransformType;
+
+    typedef itk::ImageRegistrationMethodv4<FixedImageType, MovingImageType, ConstantVelocityFieldTransformType> TheItkFilterType;
     
     typedef itk::ResampleImageFilter<MovingImageType, ConnectionImageType> ResampleFilterType;
     typedef itk::TransformToDisplacementFieldFilter<DisplacementFieldImageType> DisplacementFieldFilterType;

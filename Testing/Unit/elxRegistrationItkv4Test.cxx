@@ -315,7 +315,8 @@ TEST_F(RegistrationItkv4Test, DisplacementField2D)
   bool allUniqueComponents;
   EXPECT_NO_THROW(allUniqueComponents = overlord->Configure());
   EXPECT_TRUE(allUniqueComponents);
-  EXPECT_NO_THROW(overlord->Execute());
-
+  //EXPECT_NO_THROW(overlord->Execute());
+  overlord->Execute();
 }
 } // namespace elx
+
