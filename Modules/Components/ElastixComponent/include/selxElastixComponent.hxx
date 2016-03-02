@@ -6,7 +6,13 @@ namespace selx
   ElastixComponent< Dimensionality, TPixel>::ElastixComponent()
   {
     m_theItkFilter = TheItkFilterType::New();
-   
+
+    // TODO: Due to some issues with Criteria being propagated as elastix settings, I need to empty the elxparameterObject.
+    elxParameterObjectPointer elxparameterObject = elxParameterObjectType::New();
+    elxparameterObject->SetParameterMap("rigid");
+    this->m_theItkFilter->SetParameterObject(elxparameterObject);
+
+    m_theItkFilter->LogToConsoleOn();
     //m_ParameterObject->SetParameterMap("rigid");
 
     //TODO: instantiating the filter in the constructor might be heavy for the use in component selector factory, since all components of the database are created during the selection process.
@@ -105,10 +111,11 @@ namespace selx
       }
 
     }
-    else if (criterion.first == "RegistrationSettings") //Supports this?
+    else if (criterion.first == "RegistrationPreset") //Supports this?
     {
       // Temporary solution: RegistrationSettings: rigid, nonrigid, etc overwrite the current elxparameterObject.
       // Warning: the order of Criteria matters, since elxparameterObject may be overwritten
+      // Warning: this probably fails because the Criteria map entries are processed in arbitrary order.
 
       elxParameterObjectPointer elxparameterObject = elxParameterObjectType::New();
 
@@ -134,7 +141,10 @@ namespace selx
     else
     {
       // temporary solution: pass all SuperElastixComponent parameters as is to elastix. This should be defined in deeper hierarchy of the criteria, but for now we have a flat mapping only.
-      this->m_theItkFilter->GetParameterObject()->GetParameterMap(0)[criterion.first] = criterion.second;
+      elxParameterObjectPointer elxparameterObject = this->m_theItkFilter->GetParameterObject();
+      elxparameterObject->GetParameterMap(0)[criterion.first] = criterion.second;
+      this->m_theItkFilter->SetParameterObject(elxparameterObject);
+      meetsCriteria = true;
     }
     return meetsCriteria;
   }
