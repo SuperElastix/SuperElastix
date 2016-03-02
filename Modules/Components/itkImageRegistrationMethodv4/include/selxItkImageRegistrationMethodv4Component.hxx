@@ -59,12 +59,12 @@ void ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::RunRegistra
 
   // TODO: for now we hard code the transform to be a stationary velocity field. See template declaration.
 
-  typedef itk::CompositeTransform<RealType, Dimensionality> CompositeTransformType;
-  typename CompositeTransformType::Pointer compositeTransform = CompositeTransformType::New();
+  //typedef itk::CompositeTransform<RealType, Dimensionality> CompositeTransformType;
+  //typename CompositeTransformType::Pointer compositeTransform = CompositeTransformType::New();
   
-  typedef itk::IdentityTransform < RealType, Dimensionality> IdentityTransformType;
-  typename IdentityTransformType::Pointer idTransform = IdentityTransformType::New();
-  compositeTransform->AddTransform(idTransform);
+  //typedef itk::IdentityTransform < RealType, Dimensionality> IdentityTransformType;
+  //typename IdentityTransformType::Pointer idTransform = IdentityTransformType::New();
+  //compositeTransform->AddTransform(idTransform);
   
 
   typedef itk::Vector<RealType, Dimensionality> VectorType;
@@ -86,31 +86,31 @@ void ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::RunRegistra
 
   //this->m_theItkFilter->SetMovingInitialTransform(compositeTransform);
   //this->m_theItkFilter->SetMovingInitialTransform(idTransform);
-
-  this->m_theItkFilter->SetNumberOfLevels(1);
   
+  this->m_theItkFilter->SetNumberOfLevels(1);
+  /*
   // Shrink the virtual domain by specified factors for each level.  See documentation
   // for the itkShrinkImageFilter for more detailed behavior.
   typename TheItkFilterType::ShrinkFactorsArrayType shrinkFactorsPerLevel;
-  shrinkFactorsPerLevel.SetSize(1);
-  //shrinkFactorsPerLevel[0] = 3;
-  //shrinkFactorsPerLevel[1] = 2;
-  shrinkFactorsPerLevel[0] = 1;
+  shrinkFactorsPerLevel.SetSize(3);
+  shrinkFactorsPerLevel[0] = 3;
+  shrinkFactorsPerLevel[1] = 2;
+  shrinkFactorsPerLevel[2] = 1;
   this->m_theItkFilter->SetShrinkFactorsPerLevel(shrinkFactorsPerLevel);
 
   // Smooth by specified gaussian sigmas for each level.  These values are specified in
   // physical units.
   typename TheItkFilterType::SmoothingSigmasArrayType smoothingSigmasPerLevel;
-  smoothingSigmasPerLevel.SetSize(1);
-  //smoothingSigmasPerLevel[0] = 2;
-  //smoothingSigmasPerLevel[1] = 1;
-  smoothingSigmasPerLevel[0] = 1;
+  smoothingSigmasPerLevel.SetSize(3);
+  smoothingSigmasPerLevel[0] = 2;
+  smoothingSigmasPerLevel[1] = 1;
+  smoothingSigmasPerLevel[2] = 1;
   this->m_theItkFilter->SetSmoothingSigmasPerLevel(smoothingSigmasPerLevel);
 
   typedef itk::GaussianExponentialDiffeomorphicTransformParametersAdaptor<ConstantVelocityFieldTransformType> VelocityFieldTransformAdaptorType;
 
   typename TheItkFilterType::TransformParametersAdaptorsContainerType adaptors;
-  /*
+  
   for (unsigned int level = 0; level < shrinkFactorsPerLevel.Size(); level++)
   {
     // We use the shrink image filter to calculate the fixed parameters of the virtual
@@ -131,7 +131,7 @@ void ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::RunRegistra
     adaptors.push_back(fieldTransformAdaptor.GetPointer());
   }
   */
-
+  /*
   typename VelocityFieldTransformAdaptorType::Pointer fieldTransformAdaptor = VelocityFieldTransformAdaptorType::New();
   fieldTransformAdaptor->SetRequiredSpacing(fixedImage->GetSpacing());
   fieldTransformAdaptor->SetRequiredSize(fixedImage->GetBufferedRegion().GetSize());
@@ -139,9 +139,9 @@ void ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::RunRegistra
   fieldTransformAdaptor->SetRequiredOrigin(fixedImage->GetOrigin());
 
   adaptors.push_back(fieldTransformAdaptor.GetPointer());
-
-  //this->m_theItkFilter->SetTransformParametersAdaptorsPerLevel(adaptors);
-
+  
+  this->m_theItkFilter->SetTransformParametersAdaptorsPerLevel(adaptors);
+  */
   this->m_theItkFilter->SetInitialTransform(fieldTransform);
   this->m_theItkFilter->InPlaceOn();
   

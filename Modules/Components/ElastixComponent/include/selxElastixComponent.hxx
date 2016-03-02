@@ -6,6 +6,7 @@ namespace selx
   ElastixComponent< Dimensionality, TPixel>::ElastixComponent()
   {
     m_theItkFilter = TheItkFilterType::New();
+   
     //m_ParameterObject->SetParameterMap("rigid");
 
     //TODO: instantiating the filter in the constructor might be heavy for the use in component selector factory, since all components of the database are created during the selection process.
@@ -106,15 +107,17 @@ namespace selx
     }
     else if (criterion.first == "RegistrationSettings") //Supports this?
     {
-      // temporary solution: pass all SuperElastixComponent parameters as is to elastix. This should be defined in deeper hierarchy of the criteria, but for now we have a flat mapping only.
+      // Temporary solution: RegistrationSettings: rigid, nonrigid, etc overwrite the current elxparameterObject.
+      // Warning: the order of Criteria matters, since elxparameterObject may be overwritten
+
       elxParameterObjectPointer elxparameterObject = elxParameterObjectType::New();
 
       meetsCriteria = true;
       for (auto const & transformtype : criterion.second) // auto&& preferred?
       {
         //this->m_ParameterObject->AddParameterMap(transformtype, const unsigned int numberOfResolutions = 3u, const double finalGridSpacingInPhysicalUnits = 10.0);
-        elxparameterObject->AddParameterMap(transformtype);
-
+        elxparameterObject->SetParameterMap(transformtype);
+        
         try
         {
           this->m_theItkFilter->SetParameterObject(elxparameterObject);
@@ -127,6 +130,11 @@ namespace selx
         }
       }
 
+    }
+    else
+    {
+      // temporary solution: pass all SuperElastixComponent parameters as is to elastix. This should be defined in deeper hierarchy of the criteria, but for now we have a flat mapping only.
+      this->m_theItkFilter->GetParameterObject()->GetParameterMap(0)[criterion.first] = criterion.second;
     }
     return meetsCriteria;
   }

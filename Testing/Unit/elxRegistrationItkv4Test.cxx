@@ -217,7 +217,7 @@ TEST_F(RegistrationItkv4Test, WithMeanSquaresMetric)
 
   ParameterMapType component4Parameters;
   component4Parameters["NameOfClass"] = { "ItkMeanSquaresImageToImageMetricv4Component" };
-  component3Parameters["Dimensionality"] = { "4" }; // should be derived from the inputs
+  component3Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
   ComponentIndexType index4 = blueprint->AddComponent(component4Parameters);
 
 
