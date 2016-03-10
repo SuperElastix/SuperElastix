@@ -7,6 +7,7 @@
 
 #include "elxElastixFilter.h"
 #include "elxParameterObject.h"
+#include "elxTransformixFilter.h"
 
 #include <string.h>
 #include "elxMacro.h"
@@ -49,6 +50,9 @@ namespace selx
     typedef elastix::ElastixFilter< FixedImageType, MovingImageType > TheItkFilterType;
     typedef elastix::ParameterObject elxParameterObjectType;
     typedef elxParameterObjectType::Pointer elxParameterObjectPointer;
+    
+    typedef elastix::TransformixFilter<FixedImageType> TransformixFilterType;
+
 
     typedef itk::ResampleImageFilter<MovingImageType, ConnectionImageType> ResampleFilterType;
 

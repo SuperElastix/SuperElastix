@@ -34,7 +34,7 @@ namespace selx
       //typedef ItkMetricv4Interface<Dimensionality, TPixel>::ImageToImageMetricv4Type ItkMetricv4Pointer
     typedef typename ImageToImageMetricv4Type::Pointer ItkMetricv4Pointer;
     
-    typedef typename itk::ANTSNeighborhoodCorrelationImageToImageMetricv4<FixedImageType, MovingImageType> TheItkFilterType;
+    typedef typename itk::MeanSquaresImageToImageMetricv4<FixedImageType, MovingImageType> TheItkFilterType;
     
     virtual typename ItkMetricv4Pointer GetItkMetricv4() override;
 
