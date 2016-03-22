@@ -128,6 +128,8 @@ TEST_F(WBIRDemoTest, itkv4_SVF_ANTSCC)
   connection5Parameters["NameOfInterface"] = { "itkMetricv4Interface" };
   blueprint->AddConnection(index5, index0, connection5Parameters);
 
+  blueprint->WriteBlueprint("itkv4_SVF_ANTSCC.dot");
+
   EXPECT_NO_THROW(overlord = Overlord::New());
 
   //The Overlord is not yet an itkfilter with inputs and outputs, therefore it reads and writes the files temporarily.
@@ -195,6 +197,8 @@ TEST_F(WBIRDemoTest, itkv4_SVF_MSD)
   connection5Parameters["NameOfInterface"] = { "itkMetricv4Interface" };
   blueprint->AddConnection(index5, index0, connection5Parameters);
 
+  blueprint->WriteBlueprint("itkv4_SVF_MSD.dot");
+
   EXPECT_NO_THROW(overlord = Overlord::New());
 
   //The Overlord is not yet an itkfilter with inputs and outputs, therefore it reads and writes the files temporarily.
@@ -248,6 +252,7 @@ TEST_F(WBIRDemoTest, elastix_BS_NCC)
   connection3Parameters["NameOfInterface"] = { "GetItkImageInterface" };
   blueprint->AddConnection(index0, index3, connection3Parameters);
 
+  blueprint->WriteBlueprint("elastix_BS_NCC.dot");
 
   EXPECT_NO_THROW(overlord = Overlord::New());
   EXPECT_NO_THROW(overlord->SetBlueprint(blueprint));
@@ -258,12 +263,12 @@ TEST_F(WBIRDemoTest, elastix_BS_NCC)
   overlord->inputFileNames = { dataManager->GetInputFile("coneA2d64.mhd"), dataManager->GetInputFile("coneB2d64.mhd") };
   overlord->outputFileNames = { dataManager->GetOutputFile("elastix_BS_NCC_Image.mhd"), dataManager->GetOutputFile("elastix_BS_NCC_Displacement.mhd") };
 
-  CopyElxDeformationField<2, float>(dataManager->GetOutputFile("elastix_BS_NCC_Displacement.mhd"));
-
   bool allUniqueComponents;
   EXPECT_NO_THROW(allUniqueComponents = overlord->Configure());
   EXPECT_TRUE(allUniqueComponents);
   EXPECT_NO_THROW(overlord->Execute());
+
+  CopyElxDeformationField<2, float>(dataManager->GetOutputFile("elastix_BS_NCC_Displacement.mhd"));
 }
 
 TEST_F(WBIRDemoTest, elastix_BS_MSD)
@@ -304,6 +309,7 @@ TEST_F(WBIRDemoTest, elastix_BS_MSD)
   connection3Parameters["NameOfInterface"] = { "GetItkImageInterface" };
   blueprint->AddConnection(index0, index3, connection3Parameters);
 
+  blueprint->WriteBlueprint("elastix_BS_MSD.dot");
 
   EXPECT_NO_THROW(overlord = Overlord::New());
   EXPECT_NO_THROW(overlord->SetBlueprint(blueprint));
@@ -314,12 +320,12 @@ TEST_F(WBIRDemoTest, elastix_BS_MSD)
   overlord->inputFileNames = { dataManager->GetInputFile("coneA2d64.mhd"), dataManager->GetInputFile("coneB2d64.mhd") };
   overlord->outputFileNames = { dataManager->GetOutputFile("elastix_BS_MSD_Image.mhd"), dataManager->GetOutputFile("elastix_BS_MSD_Displacement.mhd") };
 
-  CopyElxDeformationField<2, float>(dataManager->GetOutputFile("elastix_BS_MSD_Displacement.mhd"));
-
   bool allUniqueComponents;
   EXPECT_NO_THROW(allUniqueComponents = overlord->Configure());
   EXPECT_TRUE(allUniqueComponents);
   EXPECT_NO_THROW(overlord->Execute());
+
+  CopyElxDeformationField<2, float>(dataManager->GetOutputFile("elastix_BS_MSD_Displacement.mhd"));
 }
 
 } // namespace elx
