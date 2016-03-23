@@ -209,7 +209,11 @@ namespace selx
         //TODO GetComponent returns NULL if possible components !=1 we can check for that, but Overlord::UpdateSelectors() does something similar.
         ComponentBase::Pointer sourceComponent = this->m_ComponentSelectorContainer[ouputIt->m_source]->GetComponent();
         ComponentBase::Pointer targetComponent = this->m_ComponentSelectorContainer[ouputIt->m_target]->GetComponent();
-        targetComponent->AcceptConnectionFrom(sourceComponent);
+        int numberOfConnections = targetComponent->AcceptConnectionFrom(sourceComponent);
+        if (numberOfConnections == 0)
+        {
+          std::cout << "Warning: a connection was specified, but no compatible interfaces were found.";
+        }
       }
     }
     //TODO should we communicate by exceptions instead of returning booleans?

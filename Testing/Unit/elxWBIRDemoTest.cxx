@@ -23,6 +23,7 @@
 
 namespace selx {
 
+/** Temporary helper function to handle elastix deformation field output */
   template < int Dimensionality, typename PixelType> void CopyElxDeformationField(const std::string filename)
   {
     typedef itk::ImageFileReader<itk::Image<itk::Vector<PixelType, Dimensionality>, Dimensionality>> ReaderType;
@@ -36,7 +37,9 @@ namespace selx {
     writer->Update();
   };
 
+/** A demo for our WBIR paper written as a Unit Test in the Google Test Framework */
 class WBIRDemoTest : public ::testing::Test {
+ 
 public:
   typedef Overlord::Pointer                 OverlordPointerType;
   typedef Blueprint::Pointer                BlueprintPointerType;
@@ -46,24 +49,19 @@ public:
   typedef Blueprint::ParameterValueType     ParameterValueType;
   typedef DataManager DataManagerType;
 
+  /** Fill SUPERelastix' component data base by registering various components */
   virtual void SetUp() {
-    /** register all components */
+    
     
     ComponentFactory<ItkImageFilterSinkComponent<2, float>>::RegisterOneFactory();
-    ComponentFactory<DisplacementFieldItkImageFilterSinkComponent<2, float>>::RegisterOneFactory();
-   
+    ComponentFactory<DisplacementFieldItkImageFilterSinkComponent<2, float>>::RegisterOneFactory(); 
     ComponentFactory<ItkImageSourceFixedComponent<2, float>>::RegisterOneFactory();
     ComponentFactory<ItkImageSourceMovingComponent<2, float>>::RegisterOneFactory();
-
     ComponentFactory<ItkSmoothingRecursiveGaussianImageFilterComponent<2, float>>::RegisterOneFactory();
-
     ComponentFactory<ItkImageRegistrationMethodv4Component<2, float>>::RegisterOneFactory();
-
     ComponentFactory<ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component<2, float>>::RegisterOneFactory();
     ComponentFactory<ItkMeanSquaresImageToImageMetricv4Component<2, float>>::RegisterOneFactory();
-
     ComponentFactory<ElastixComponent<2, float>>::RegisterOneFactory();
-
     ComponentFactory<ItkImageSinkComponent<2, float>>::RegisterOneFactory();
 
   }
@@ -75,9 +73,9 @@ public:
   BlueprintPointerType blueprint;
   Overlord::Pointer overlord;
 
-
 };
 
+/** Experiment 2a: ITKv4 framework, stationary velocity field transform, ANTs neighborhood correlation metric */
 TEST_F(WBIRDemoTest, itkv4_SVF_ANTSCC)
 {
   /** make example blueprint configuration */
@@ -109,23 +107,28 @@ TEST_F(WBIRDemoTest, itkv4_SVF_ANTSCC)
 
 
   ParameterMapType connection1Parameters;
-  connection1Parameters["NameOfInterface"] = { "itkImageSourceFixedInterface" };
+  //optionally, tie properties to connection to avoid ambiguities
+  //connection1Parameters["NameOfInterface"] = { "itkImageSourceFixedInterface" };
   blueprint->AddConnection(index1, index0, connection1Parameters);
 
   ParameterMapType connection2Parameters;
-  connection2Parameters["NameOfInterface"] = { "itkImageSourceMovingInterface" };
+  //optionally, tie properties to connection to avoid ambiguities
+  //connection2Parameters["NameOfInterface"] = { "itkImageSourceMovingInterface" };
   blueprint->AddConnection(index2, index0, connection2Parameters);
 
   ParameterMapType connection3Parameters;
-  connection3Parameters["NameOfInterface"] = { "itkImageSourceInterface" };
+  //optionally, tie properties to connection to avoid ambiguities
+  //connection3Parameters["NameOfInterface"] = { "itkImageSourceInterface" };
   blueprint->AddConnection(index0, index3, connection3Parameters);
 
   ParameterMapType connection4Parameters;
-  connection4Parameters["NameOfInterface"] = { "DisplacementFieldItkImageSourceInterface" };
+  //optionally, tie properties to connection to avoid ambiguities
+  //connection4Parameters["NameOfInterface"] = { "DisplacementFieldItkImageSourceInterface" };
   blueprint->AddConnection(index0, index4, connection4Parameters);
 
   ParameterMapType connection5Parameters;
-  connection5Parameters["NameOfInterface"] = { "itkMetricv4Interface" };
+  //optionally, tie properties to connection to avoid ambiguities
+  //connection5Parameters["NameOfInterface"] = { "itkMetricv4Interface" };
   blueprint->AddConnection(index5, index0, connection5Parameters);
 
   blueprint->WriteBlueprint("itkv4_SVF_ANTSCC.dot");
@@ -134,10 +137,7 @@ TEST_F(WBIRDemoTest, itkv4_SVF_ANTSCC)
 
   //The Overlord is not yet an itkfilter with inputs and outputs, therefore it reads and writes the files temporarily.
   DataManagerType::Pointer dataManager = DataManagerType::New();
-  //overlord->inputFileNames = { dataManager->GetInputFile("BrainProtonDensitySliceBorder20.png"), dataManager->GetInputFile("BrainProtonDensitySliceR10X13Y17.png") };
   overlord->inputFileNames = { dataManager->GetInputFile("coneA2d64.mhd"), dataManager->GetInputFile("coneB2d64.mhd") };
-  //reverse fixed-moving
-  //overlord->inputFileNames = { dataManager->GetInputFile("coneB2d64.mhd"), dataManager->GetInputFile("coneA2d64.mhd") };
   overlord->outputFileNames = { dataManager->GetOutputFile("itkv4_SVF_ANTSCC_Image.mhd"), dataManager->GetOutputFile("itkv4_SVF_ANTSCC_Displacement.mhd") };
 
   EXPECT_NO_THROW(overlord->SetBlueprint(blueprint));
@@ -147,6 +147,7 @@ TEST_F(WBIRDemoTest, itkv4_SVF_ANTSCC)
   EXPECT_NO_THROW(overlord->Execute());
 }
 
+/** Experiment 2b: ITKv4 framework, stationary velocity field transform, mean squared differences metric */
 TEST_F(WBIRDemoTest, itkv4_SVF_MSD)
 {
   /** make example blueprint configuration */
@@ -178,23 +179,28 @@ TEST_F(WBIRDemoTest, itkv4_SVF_MSD)
 
 
   ParameterMapType connection1Parameters;
-  connection1Parameters["NameOfInterface"] = { "itkImageSourceFixedInterface" };
+  //optionally, tie properties to connection to avoid ambiguities
+  //connection1Parameters["NameOfInterface"] = { "itkImageSourceFixedInterface" };
   blueprint->AddConnection(index1, index0, connection1Parameters);
 
   ParameterMapType connection2Parameters;
-  connection2Parameters["NameOfInterface"] = { "itkImageSourceMovingInterface" };
+  //optionally, tie properties to connection to avoid ambiguities
+  //connection2Parameters["NameOfInterface"] = { "itkImageSourceMovingInterface" };
   blueprint->AddConnection(index2, index0, connection2Parameters);
 
   ParameterMapType connection3Parameters;
-  connection3Parameters["NameOfInterface"] = { "itkImageSourceInterface" };
+  //optionally, tie properties to connection to avoid ambiguities
+  //connection3Parameters["NameOfInterface"] = { "itkImageSourceInterface" };
   blueprint->AddConnection(index0, index3, connection3Parameters);
 
   ParameterMapType connection4Parameters;
-  connection4Parameters["NameOfInterface"] = { "DisplacementFieldItkImageSourceInterface" };
+  //optionally, tie properties to connection to avoid ambiguities
+  //connection4Parameters["NameOfInterface"] = { "DisplacementFieldItkImageSourceInterface" };
   blueprint->AddConnection(index0, index4, connection4Parameters);
 
   ParameterMapType connection5Parameters;
-  connection5Parameters["NameOfInterface"] = { "itkMetricv4Interface" };
+  //optionally, tie properties to connection to avoid ambiguities
+  //connection5Parameters["NameOfInterface"] = { "itkMetricv4Interface" };
   blueprint->AddConnection(index5, index0, connection5Parameters);
 
   blueprint->WriteBlueprint("itkv4_SVF_MSD.dot");
@@ -203,7 +209,6 @@ TEST_F(WBIRDemoTest, itkv4_SVF_MSD)
 
   //The Overlord is not yet an itkfilter with inputs and outputs, therefore it reads and writes the files temporarily.
   DataManagerType::Pointer dataManager = DataManagerType::New();
-  //overlord->inputFileNames = { dataManager->GetInputFile("BrainProtonDensitySliceBorder20.png"), dataManager->GetInputFile("BrainProtonDensitySliceR10X13Y17.png") };
   overlord->inputFileNames = { dataManager->GetInputFile("coneA2d64.mhd"), dataManager->GetInputFile("coneB2d64.mhd") };
   overlord->outputFileNames = { dataManager->GetOutputFile("itkv4_SVF_MSD_Image.mhd"), dataManager->GetOutputFile("itkv4_SVF_MSD_Displacement.mhd") };
   
@@ -214,6 +219,7 @@ TEST_F(WBIRDemoTest, itkv4_SVF_MSD)
   EXPECT_NO_THROW(overlord->Execute());
 }
 
+/** Experiment 1a: elastix framework, B-spline transform, normalized correlation metric */
 TEST_F(WBIRDemoTest, elastix_BS_NCC)
 {
   /** make example blueprint configuration */
@@ -226,7 +232,6 @@ TEST_F(WBIRDemoTest, elastix_BS_NCC)
   component0Parameters["Metric"] = { "AdvancedNormalizedCorrelation" };
   
   ComponentIndexType index0 = blueprint->AddComponent(component0Parameters);
-
 
   ParameterMapType component1Parameters;
   component1Parameters["NameOfClass"] = { "ItkImageSourceFixedComponent" };
@@ -241,15 +246,18 @@ TEST_F(WBIRDemoTest, elastix_BS_NCC)
   ComponentIndexType index3 = blueprint->AddComponent(component3Parameters);
 
   ParameterMapType connection1Parameters;
-  connection1Parameters["NameOfInterface"] = { "itkImageSourceFixedInterface" };
+  //optionally, tie properties to connection to avoid ambiguities
+  //connection1Parameters["NameOfInterface"] = { "itkImageSourceFixedInterface" };
   blueprint->AddConnection(index1, index0, connection1Parameters);
 
   ParameterMapType connection2Parameters;
-  connection2Parameters["NameOfInterface"] = { "itkImageSourceMovingInterface" };
+  //optionally, tie properties to connection to avoid ambiguities
+  //connection2Parameters["NameOfInterface"] = { "itkImageSourceMovingInterface" };
   blueprint->AddConnection(index2, index0, connection2Parameters);
 
   ParameterMapType connection3Parameters;
-  connection3Parameters["NameOfInterface"] = { "GetItkImageInterface" };
+  //optionally, tie properties to connection to avoid ambiguities
+  //connection3Parameters["NameOfInterface"] = { "GetItkImageInterface" };
   blueprint->AddConnection(index0, index3, connection3Parameters);
 
   blueprint->WriteBlueprint("elastix_BS_NCC.dot");
@@ -259,7 +267,6 @@ TEST_F(WBIRDemoTest, elastix_BS_NCC)
 
   //The Overlord is not yet an itkfilter with inputs and outputs, therefore it reads and writes the files temporarily.
   DataManagerType::Pointer dataManager = DataManagerType::New();
-  //overlord->inputFileNames = { dataManager->GetInputFile("BrainProtonDensitySliceBorder20.png"), dataManager->GetInputFile("BrainProtonDensitySliceR10X13Y17.png") };
   overlord->inputFileNames = { dataManager->GetInputFile("coneA2d64.mhd"), dataManager->GetInputFile("coneB2d64.mhd") };
   overlord->outputFileNames = { dataManager->GetOutputFile("elastix_BS_NCC_Image.mhd"), dataManager->GetOutputFile("elastix_BS_NCC_Displacement.mhd") };
 
@@ -271,6 +278,7 @@ TEST_F(WBIRDemoTest, elastix_BS_NCC)
   CopyElxDeformationField<2, float>(dataManager->GetOutputFile("elastix_BS_NCC_Displacement.mhd"));
 }
 
+/** Experiment 1b: elastix framework, B-spline transform, mean squared differences metric */
 TEST_F(WBIRDemoTest, elastix_BS_MSD)
 {
   /** make example blueprint configuration */
@@ -302,11 +310,13 @@ TEST_F(WBIRDemoTest, elastix_BS_MSD)
   blueprint->AddConnection(index1, index0, connection1Parameters);
 
   ParameterMapType connection2Parameters;
-  connection2Parameters["NameOfInterface"] = { "itkImageSourceMovingInterface" };
+  //optionally, tie properties to connection to avoid ambiguities
+  //connection2Parameters["NameOfInterface"] = { "itkImageSourceMovingInterface" };
   blueprint->AddConnection(index2, index0, connection2Parameters);
 
   ParameterMapType connection3Parameters;
-  connection3Parameters["NameOfInterface"] = { "GetItkImageInterface" };
+  //optionally, tie properties to connection to avoid ambiguities
+  //connection3Parameters["NameOfInterface"] = { "GetItkImageInterface" };
   blueprint->AddConnection(index0, index3, connection3Parameters);
 
   blueprint->WriteBlueprint("elastix_BS_MSD.dot");
@@ -316,7 +326,6 @@ TEST_F(WBIRDemoTest, elastix_BS_MSD)
 
   //The Overlord is not yet an itkfilter with inputs and outputs, therefore it reads and writes the files temporarily.
   DataManagerType::Pointer dataManager = DataManagerType::New();
-  //overlord->inputFileNames = { dataManager->GetInputFile("BrainProtonDensitySliceBorder20.png"), dataManager->GetInputFile("BrainProtonDensitySliceR10X13Y17.png") };
   overlord->inputFileNames = { dataManager->GetInputFile("coneA2d64.mhd"), dataManager->GetInputFile("coneB2d64.mhd") };
   overlord->outputFileNames = { dataManager->GetOutputFile("elastix_BS_MSD_Image.mhd"), dataManager->GetOutputFile("elastix_BS_MSD_Displacement.mhd") };
 
