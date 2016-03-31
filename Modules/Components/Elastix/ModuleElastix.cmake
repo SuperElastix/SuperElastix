@@ -1,7 +1,7 @@
 # Module that exposes old elastix as an ITK filter
 set( MODULE ModuleElastix )
 
-# If OpenMP is supported, elastix will have beeen compiled with
+# If OpenMP is supported, elastix will have been compiled with
 # OpenMP flags, and we need to add them here as well
 find_package( OpenMP )
 if( OPENMP_FOUND )
