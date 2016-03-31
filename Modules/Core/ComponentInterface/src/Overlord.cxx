@@ -1,5 +1,4 @@
 #include "Overlord.h"
-#include <windows.h>
 
 namespace selx
 {

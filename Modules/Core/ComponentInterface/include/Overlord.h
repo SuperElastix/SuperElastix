@@ -18,7 +18,7 @@
 #include "elxMacro.h"
 #include "elxBlueprint.h"
 #include "ComponentFactory.h"
-#include "interfaces.h"
+#include "Interfaces.h"
 namespace selx
 {
 
