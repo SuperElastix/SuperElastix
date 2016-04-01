@@ -18,7 +18,7 @@ list( APPEND ExternalData_URL_TEMPLATES
 # against files downloaded from servers in ExternalData_URL_TEMPLATES. These 
 # files are placed in a corresponding location in the build directory.
 file( GLOB_RECURSE SuperElastixDataContentLinks "*.md5" )
-foreach( SuperElastixDataContentLink ${SuperElastixDataContentLinks})
+foreach( SuperElastixDataContentLink ${SuperElastixDataContentLinks} )
   string( REGEX REPLACE "\\.md5$" "" SuperElastixDataContentLink ${SuperElastixDataContentLink} )
   ExternalData_Expand_Arguments( SuperElastixData
     SuperElastixDataFilenames
