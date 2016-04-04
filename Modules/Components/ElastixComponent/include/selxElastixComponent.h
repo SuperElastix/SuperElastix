@@ -29,10 +29,12 @@ namespace selx
   public:
     elxNewMacro(ElastixComponent, ComponentBase);
 
-    itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
+    //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
 
     ElastixComponent();
     virtual ~ElastixComponent();
+    
+    typedef typename ComponentBase::CriterionType CriterionType;
     typedef TPixel PixelType;
 
     // the in and output image type of the component are chosen to be the same 
