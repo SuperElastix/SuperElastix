@@ -5,17 +5,22 @@
 
 #include "Interfaces.h"
 #include "itkMacro.h"
+#include <boost/static_assert.hpp>
+
 namespace selx
 {
 // Traits to get printable interface name
+struct PLEASE_IMPLEMENT_INTERFACENAME_GET;
 // default implementation
 template <typename T>
 struct InterfaceName
 {
   static const char* Get()
-  {
+  { 
+    //TODO static_assert with type name in error message
+    //BOOST_MPL_ASSERT_MSG( false, PLEASE_IMPLEMENT_INTERFACENAME_GET, (T) );
     static_assert(false, "Please implement a template specialization for the appropriate InterfaceName");
-    itkExceptionMacro("Please implement a template specialization for the appropriate InterfaceName");
+    itkGenericExceptionMacro("Please implement a template specialization for the appropriate InterfaceName");
     return typeid(T).name();
   }
 };

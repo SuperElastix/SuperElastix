@@ -67,7 +67,7 @@ namespace selx
     //this->m_theItkFilter->Update();
     this->m_OutputImage = this->m_theItkFilter->GetOutput();
 
-    TransformixFilterType::Pointer transformixFilter;
+    typename TransformixFilterType::Pointer transformixFilter;
     transformixFilter = TransformixFilterType::New();
     // In the current transformix filter an input image is required even if we want a deformation field only.
     transformixFilter->SetInputImage(this->m_theItkFilter->GetOutput());

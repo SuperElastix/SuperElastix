@@ -72,7 +72,7 @@ namespace selx
     typename TheItkFilterType::Pointer m_theItkFilter;
     //elxParameterObjectPointer m_ParameterObject;
 
-    typename ItkImagePointer m_OutputImage;
+    ItkImagePointer m_OutputImage;
   protected:
     /* The following struct returns the string name of computation type */
     /* default implementation */
