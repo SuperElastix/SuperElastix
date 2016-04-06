@@ -19,7 +19,7 @@ namespace selx
   public:
     elxNewMacro(ItkImageSinkComponent, ComponentBase);
 
-    itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
+    //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
 
     ItkImageSinkComponent();
     virtual ~ItkImageSinkComponent();
@@ -31,7 +31,7 @@ namespace selx
     virtual bool ConnectToOverlordSink(itk::Object::Pointer) override;
     virtual void AfterRegistration() override;
 
-    virtual bool MeetsCriterion(const CriterionType &criterion) override;
+    virtual bool MeetsCriterion(const ComponentBase::CriterionType &criterion) override;
     static const char * GetDescription() { return "ItkImageSink Component"; };
   private:
     itk::ProcessObject::Pointer m_Sink;

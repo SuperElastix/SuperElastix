@@ -31,7 +31,7 @@ namespace selx
   }
 
   template<int Dimensionality, class TPixel>
-  bool ItkImageSourceFixedComponent< Dimensionality, TPixel>::MeetsCriterion(const CriterionType &criterion)
+  bool ItkImageSourceFixedComponent< Dimensionality, TPixel>::MeetsCriterion(const ComponentBase::CriterionType &criterion)
   {
     bool hasUndefinedCriteria(false);
     bool meetsCriteria(false);
@@ -51,7 +51,7 @@ namespace selx
       meetsCriteria = true;
       for (auto const & criterionValue : criterion.second) // auto&& preferred?
       {
-        if (std::stoi(criterionValue) != Self::Dimensionality)
+        if (std::stoi(criterionValue) != Dimensionality)
         {
           meetsCriteria = false;
         }

@@ -19,7 +19,7 @@ namespace selx
   public:
     elxNewMacro(DisplacementFieldItkImageFilterSinkComponent, ComponentBase);
 
-    itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
+    //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
 
     DisplacementFieldItkImageFilterSinkComponent();
     virtual ~DisplacementFieldItkImageFilterSinkComponent();
@@ -33,7 +33,7 @@ namespace selx
     virtual int Set(DisplacementFieldItkImageSourceInterface<Dimensionality, TPixel>*) override;
     virtual bool ConnectToOverlordSink(itk::Object::Pointer) override;
 
-    virtual bool MeetsCriterion(const CriterionType &criterion) override;
+    virtual bool MeetsCriterion(const ComponentBase::CriterionType &criterion) override;
     static const char * GetDescription() { return "DisplacementFieldItkImageFilterSink Component"; };
   private:
     itk::ProcessObject::Pointer m_Sink;

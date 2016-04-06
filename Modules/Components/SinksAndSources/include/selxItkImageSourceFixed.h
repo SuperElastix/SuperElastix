@@ -17,7 +17,7 @@ namespace selx
   public:
     elxNewMacro(ItkImageSourceFixedComponent, ComponentBase);
 
-    itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
+    //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
 
     ItkImageSourceFixedComponent();
     virtual ~ItkImageSourceFixedComponent();
@@ -28,7 +28,7 @@ namespace selx
     virtual typename ItkImageSourceFixedType::Pointer GetItkImageSourceFixed() override;
     virtual bool ConnectToOverlordSource(itk::Object::Pointer) override;
 
-    virtual bool MeetsCriterion(const CriterionType &criterion) override;
+    virtual bool MeetsCriterion(const ComponentBase::CriterionType &criterion) override;
     static const char * GetDescription() { return "ItkImageSourceFixed Component"; };
   private:
     typename ItkImageSourceFixedType::Pointer m_Source;

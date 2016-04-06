@@ -18,7 +18,7 @@ namespace selx
   public:
     elxNewMacro(ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component, ComponentBase);
 
-    itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
+    //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
 
     ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component();
     virtual ~ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component();
@@ -36,9 +36,9 @@ namespace selx
     
     typedef typename itk::ANTSNeighborhoodCorrelationImageToImageMetricv4<FixedImageType, MovingImageType> TheItkFilterType;
     
-    virtual typename ItkMetricv4Pointer GetItkMetricv4() override;
+    virtual ItkMetricv4Pointer GetItkMetricv4() override;
 
-    virtual bool MeetsCriterion(const CriterionType &criterion) override;    
+    virtual bool MeetsCriterion(const ComponentBase::CriterionType &criterion) override;    
     //static const char * GetName() { return "ItkANTSNeighborhoodCorrelationImageToImageMetricv4"; } ;
     static const char * GetDescription() { return "ItkANTSNeighborhoodCorrelationImageToImageMetricv4 Component"; };
   private:

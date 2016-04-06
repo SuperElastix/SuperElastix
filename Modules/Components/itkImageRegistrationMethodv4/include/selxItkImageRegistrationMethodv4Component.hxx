@@ -1,6 +1,6 @@
 #include "selxItkImageRegistrationMethodv4Component.h"
 
-//TODO: remove these
+//TODO: get rid of these
 #include "itkMeanSquaresImageToImageMetricv4.h"
 #include "itkANTSNeighborhoodCorrelationImageToImageMetricv4.h"
 #include "itkGradientDescentOptimizerv4.h"
@@ -8,9 +8,6 @@
 
 namespace selx
 {
-
-
-
   template<typename TFilter>
   class CommandIterationUpdate : public itk::Command
   {
@@ -145,8 +142,8 @@ template<int Dimensionality, class TPixel>
 void ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::RunRegistration(void)
 {
 
-  FixedImageType::ConstPointer fixedImage = this->m_theItkFilter->GetFixedImage();
-  MovingImageType::ConstPointer movingImage = this->m_theItkFilter->GetMovingImage();
+  typename FixedImageType::ConstPointer fixedImage = this->m_theItkFilter->GetFixedImage();
+  typename MovingImageType::ConstPointer movingImage = this->m_theItkFilter->GetMovingImage();
 
   // Below some hard coded options. Eventually, these should be part of new components.
 
@@ -155,11 +152,9 @@ void ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::RunRegistra
   typedef itk::GradientDescentOptimizerv4       OptimizerType;
   OptimizerType::Pointer      optimizer = OptimizerType::New();
   optimizer->SetNumberOfIterations(100);
-  optimizer->SetLearningRate(1.0);
+  optimizer->SetLearningRate(1.0);typename 
 
-  typedef TheItkFilterType::ImageMetricType ImageMetricType;
-  typedef itk::RegistrationParameterScalesFromPhysicalShift<ImageMetricType> ScalesEstimatorType;
-  typename ScalesEstimatorType::Pointer scalesEstimator = ScalesEstimatorType::New();
+  ScalesEstimatorType::Pointer scalesEstimator = ScalesEstimatorType::New();
   
   /*
   ImageMetricType::Pointer theMetric = dynamic_cast<ImageMetricType*>(this->m_theItkFilter->GetModifiableMetric());
@@ -301,36 +296,28 @@ void ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::RunRegistra
   typedef CommandIterationUpdate<TheItkFilterType> DisplacementFieldRegistrationCommandType;
   typename DisplacementFieldRegistrationCommandType::Pointer displacementFieldObserver = DisplacementFieldRegistrationCommandType::New();
   this->m_theItkFilter->AddObserver(itk::IterationEvent(), displacementFieldObserver);
-  // 
+  
+  // perform the actual registration
   this->m_theItkFilter->Update();
 
+  // TODO get access to the inverse transform
   //ConstantVelocityFieldTransformType::ConstPointer tranform = this->m_theItkFilter->GetTransformOutput()->Get();
   //ConstantVelocityFieldTransformType::ConstPointer inversetranform = tranform->GetInverseTransform();
 
   //ConstantVelocityFieldTransformType::ConstPointer tranform = this->m_theItkFilter->GetTransformOutput()->Get();
   //ConstantVelocityFieldTransformType::Pointer inversetranform = ConstantVelocityFieldTransformType::New();
   //typename ConstantVelocityFieldTransformType::Superclass::Pointer inversetranform = fieldTransform->GetInverseTransform();
-  typedef itk::ImageFileWriter<ConstantVelocityFieldType> FieldWriterType;
   
-  FieldWriterType::Pointer fieldwriter = FieldWriterType::New();
-  fieldwriter->SetFileName("forwardfield.mhd");
-  fieldwriter->SetInput(fieldTransform->GetDisplacementField());
-  fieldwriter->Update();
-
-  fieldwriter->SetFileName("backwardfield.mhd");
-  fieldwriter->SetInput(fieldTransform->GetInverseDisplacementField());
-  fieldwriter->Update();
-
   //Temporary solution: create new displacement field transforms
   typedef itk::DisplacementFieldTransform<RealType, Dimensionality> DisplacementFieldTransformType;
-  DisplacementFieldTransformType::Pointer forwardDisplacement = DisplacementFieldTransformType::New();
+  typename DisplacementFieldTransformType::Pointer forwardDisplacement = DisplacementFieldTransformType::New();
   forwardDisplacement->SetDisplacementField(fieldTransform->GetDisplacementField());
   //forwardDisplacement->SetSize(fixedImage->GetBufferedRegion().GetSize());  //should be virtual image...
   //forwardDisplacement->SetOutputOrigin(fixedImage->GetOrigin());
   //forwardDisplacement->SetOutputSpacing(fixedImage->GetSpacing());
   //forwardDisplacement->SetOutputDirection(fixedImage->GetDirection());
 
-  DisplacementFieldTransformType::Pointer backwardDisplacement = DisplacementFieldTransformType::New();
+  typename DisplacementFieldTransformType::Pointer backwardDisplacement = DisplacementFieldTransformType::New();
   backwardDisplacement->SetDisplacementField(fieldTransform->GetDisplacementField());
 
 
@@ -401,7 +388,7 @@ typename ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::Displac
 template<int Dimensionality, class TPixel>
 bool
 ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>
-::MeetsCriterion(const CriterionType &criterion)
+::MeetsCriterion(const ComponentBase::CriterionType &criterion)
 {
   bool hasUndefinedCriteria(false);
   bool meetsCriteria(false);
@@ -421,7 +408,7 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>
     meetsCriteria = true;
     for (auto const & criterionValue : criterion.second) // auto&& preferred?
     {
-      if (std::stoi(criterionValue) != Self::Dimensionality)
+      if (std::stoi(criterionValue) != Dimensionality)
       {
         meetsCriteria = false;
       }

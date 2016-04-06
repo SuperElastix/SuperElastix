@@ -34,7 +34,7 @@ namespace selx
   public:
     elxNewMacro(ItkImageRegistrationMethodv4Component, ComponentBase);
 
-    itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
+    //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
 
     ItkImageRegistrationMethodv4Component();
     virtual ~ItkImageRegistrationMethodv4Component();
@@ -58,11 +58,12 @@ namespace selx
     // TODO for now we hard code the transform to be a stationary velocity field. See Set(*MetricInterface) for implementation
     typedef double RealType;
     typedef itk::GaussianExponentialDiffeomorphicTransform<RealType, Dimensionality> ConstantVelocityFieldTransformType;
-
     typedef itk::ImageRegistrationMethodv4<FixedImageType, MovingImageType, ConstantVelocityFieldTransformType> TheItkFilterType;
-    
+    typedef typename TheItkFilterType::ImageMetricType ImageMetricType;
+    typedef itk::RegistrationParameterScalesFromPhysicalShift<ImageMetricType> ScalesEstimatorType;
     typedef itk::ResampleImageFilter<MovingImageType, ConnectionImageType> ResampleFilterType;
     typedef itk::TransformToDisplacementFieldFilter<DisplacementFieldImageType> DisplacementFieldFilterType;
+    
     //Accepting Interfaces:
     virtual int Set(itkImageSourceFixedInterface<Dimensionality, TPixel>*) override;
     virtual int Set(itkImageSourceMovingInterface<Dimensionality, TPixel>*) override;
@@ -75,7 +76,7 @@ namespace selx
     virtual void RunRegistration() override;
 
     //BaseClass methods
-    virtual bool MeetsCriterion(const CriterionType &criterion) override;    
+    virtual bool MeetsCriterion(const ComponentBase::CriterionType &criterion) override;    
     //static const char * GetName() { return "ItkImageRegistrationMethodv4"; } ;
     static const char * GetDescription() { return "ItkImageRegistrationMethodv4 Component"; };
   private:

@@ -17,7 +17,7 @@ namespace selx
   public:
     elxNewMacro(ItkImageSourceMovingComponent, ComponentBase);
 
-    itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
+    //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
 
     ItkImageSourceMovingComponent();
     virtual ~ItkImageSourceMovingComponent();
@@ -28,7 +28,7 @@ namespace selx
     virtual typename ItkImageSourceMovingType::Pointer GetItkImageSourceMoving() override;
     virtual bool ConnectToOverlordSource(itk::Object::Pointer) override;
 
-    virtual bool MeetsCriterion(const CriterionType &criterion) override;
+    virtual bool MeetsCriterion(const ComponentBase::CriterionType &criterion) override;
     static const char * GetDescription() { return "ItkImageSourceMoving Component"; };
   private:
     typename ItkImageSourceMovingType::Pointer m_Source;
