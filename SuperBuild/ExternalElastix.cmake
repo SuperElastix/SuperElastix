@@ -1,7 +1,7 @@
 set( proj Elastix )
 
 set( ELASTIX_REPOSITORY https://svn.bigr.nl/elastix/trunkpublic/ )
-set( ELASTIX_REVISION 5256 )
+set( ELASTIX_REVISION 5261 )
 
 ExternalProject_Add( ${proj} 
   SVN_REPOSITORY ${ELASTIX_REPOSITORY}
