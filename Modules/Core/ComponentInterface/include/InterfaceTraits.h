@@ -5,28 +5,33 @@
 
 #include "Interfaces.h"
 #include "itkMacro.h"
-#include <boost/static_assert.hpp>
+//#include <boost/static_assert.hpp>
+#include <boost/mpl/assert.hpp>
+//#include <type_traits>
 
 namespace selx
 {
 // Traits to get printable interface name
-struct PLEASE_IMPLEMENT_INTERFACENAME_GET;
-// default implementation
+
+// In our toolbox for each InterfaceType it is required to implement InterfaceName<InterfaceType>::Get()
+// If one omits this, the implementation falls back to the default implementation that provides a compiler error message including the InterfaceType name for which the specialization is missing.
 template <typename T>
 struct InterfaceName
 {
+  struct PLEASE_IMPLEMENT_INTERFACENAME_GET_FOR_THIS_TYPE; 
+  //TODO message produced by BOOST_MPL_ASSERT_MSG is not yet very clear
+  BOOST_MPL_ASSERT_MSG( false, PLEASE_IMPLEMENT_INTERFACENAME_GET_FOR_THIS_TYPE, (T) );
   static const char* Get()
   { 
-    //TODO static_assert with type name in error message
-    //BOOST_MPL_ASSERT_MSG( false, PLEASE_IMPLEMENT_INTERFACENAME_GET, (T) );
-    static_assert(false, "Please implement a template specialization for the appropriate InterfaceName");
+    //static_assert(false, "Please implement a template specialization for the appropriate InterfaceName");
+    // Exception should never happen since build should fail due to static assert of BOOST_MPL_ASSERT_MSG.
     itkGenericExceptionMacro("Please implement a template specialization for the appropriate InterfaceName");
     return typeid(T).name();
   }
 };
 
-// a specialization for each type of those you want to support
-// and don't like the string returned by typeid
+// The specializations for each type of Interface supported by the toolbox
+
 template <>
 struct InterfaceName < MetricValueInterface >
 {
