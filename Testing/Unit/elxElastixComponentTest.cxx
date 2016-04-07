@@ -21,7 +21,8 @@ public:
   typedef Blueprint::ComponentIndexType     ComponentIndexType;
   typedef Blueprint::ParameterMapType       ParameterMapType;
   typedef Blueprint::ParameterValueType     ParameterValueType;
-
+  typedef DataManager DataManagerType;
+  
   virtual void SetUp() {
     /** register all example components */
     ComponentFactory<ElastixComponent<2, float>>::RegisterOneFactory();
@@ -87,8 +88,12 @@ TEST_F(ElastixComponentTest, ImagesOnly)
 
   EXPECT_NO_THROW(overlord = Overlord::New());
   EXPECT_NO_THROW(overlord->SetBlueprint(blueprint));
-  overlord->inputFileNames = { "source2dimage0.mhd", "source2dimage1.mhd" };
-  overlord->outputFileNames = { "sink2dimage0.mhd" };
+  
+  //The Overlord is not yet an itkfilter with inputs and outputs, therefore it reads and writes the files temporarily.
+  DataManagerType::Pointer dataManager = DataManagerType::New();
+  overlord->inputFileNames = { dataManager->GetInputFile("BrainProtonDensitySliceBorder20.png"), dataManager->GetInputFile("BrainProtonDensitySliceR10X13Y17.png") };
+  overlord->outputFileNames = { dataManager->GetOutputFile("ElastixComponentTest_BrainProtonDensity.mhd") };
+  
   bool allUniqueComponents;
   EXPECT_NO_THROW(allUniqueComponents = overlord->Configure());
   EXPECT_TRUE(allUniqueComponents);

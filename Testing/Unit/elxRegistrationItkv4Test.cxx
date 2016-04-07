@@ -93,6 +93,7 @@ TEST_F(RegistrationItkv4Test, ImagesOnly)
 
   ParameterMapType component0Parameters;
   component0Parameters["NameOfClass"] = { "ItkImageRegistrationMethodv4Component" };
+  component0Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
   ComponentIndexType index0 = blueprint->AddComponent(component0Parameters);
 
   ParameterMapType component1Parameters;
@@ -107,7 +108,7 @@ TEST_F(RegistrationItkv4Test, ImagesOnly)
 
   ParameterMapType component3Parameters;
   component3Parameters["NameOfClass"] = { "ItkImageFilterSinkComponent" };
-  //component3Parameters["Dimensionality"] = { "3" }; // should be derived from the outputs
+  component3Parameters["Dimensionality"] = { "3" }; // should be derived from the outputs
   ComponentIndexType index3 = blueprint->AddComponent(component3Parameters);
 
 
@@ -123,11 +124,14 @@ TEST_F(RegistrationItkv4Test, ImagesOnly)
   connection3Parameters["NameOfInterface"] = { "itkImageSourceInterface" };
   blueprint->AddConnection(index0, index3, connection3Parameters);
 
-
   EXPECT_NO_THROW(overlord = Overlord::New());
-  overlord->inputFileNames = { "source3dimage0.mhd", "source3dimage1.mhd" };
-  overlord->outputFileNames = { "sink3dimage0.mhd" };
   EXPECT_NO_THROW(overlord->SetBlueprint(blueprint));
+  
+  //The Overlord is not yet an itkfilter with inputs and outputs, therefore it reads and writes the files temporarily.
+  DataManagerType::Pointer dataManager = DataManagerType::New();
+  overlord->inputFileNames = { dataManager->GetInputFile("sphereA3d.mhd"), dataManager->GetInputFile("sphereB3d.mhd") };
+  overlord->outputFileNames = { dataManager->GetOutputFile("RegistrationItkv4Test_ImagesOnly.mhd") };
+
   bool allUniqueComponents;
   EXPECT_NO_THROW(allUniqueComponents = overlord->Configure());
   EXPECT_TRUE(allUniqueComponents);
@@ -142,6 +146,7 @@ TEST_F(RegistrationItkv4Test, WithANTSCCMetric)
 
   ParameterMapType component0Parameters;
   component0Parameters["NameOfClass"] = { "ItkImageRegistrationMethodv4Component" };
+  component0Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
   ComponentIndexType index0 = blueprint->AddComponent(component0Parameters);
 
   ParameterMapType component1Parameters;
@@ -182,9 +187,13 @@ TEST_F(RegistrationItkv4Test, WithANTSCCMetric)
   blueprint->AddConnection(index4, index0, connection4Parameters);
 
   EXPECT_NO_THROW(overlord = Overlord::New());
-  overlord->inputFileNames = { "source3dimage0.mhd", "source3dimage1.mhd" };
-  overlord->outputFileNames = { "sink3dimage0.mhd" };
   EXPECT_NO_THROW(overlord->SetBlueprint(blueprint));
+  
+  //The Overlord is not yet an itkfilter with inputs and outputs, therefore it reads and writes the files temporarily.
+  DataManagerType::Pointer dataManager = DataManagerType::New();
+  overlord->inputFileNames = { dataManager->GetInputFile("sphereA3d.mhd"), dataManager->GetInputFile("sphereB3d.mhd") };
+  overlord->outputFileNames = { dataManager->GetOutputFile("RegistrationItkv4Test_WithANTSCCMetric.mhd") };
+
   bool allUniqueComponents;
   EXPECT_NO_THROW(allUniqueComponents = overlord->Configure());
   EXPECT_TRUE(allUniqueComponents);
@@ -198,6 +207,7 @@ TEST_F(RegistrationItkv4Test, WithMeanSquaresMetric)
 
   ParameterMapType component0Parameters;
   component0Parameters["NameOfClass"] = { "ItkImageRegistrationMethodv4Component" };
+  component0Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
   ComponentIndexType index0 = blueprint->AddComponent(component0Parameters);
 
   ParameterMapType component1Parameters;
@@ -238,9 +248,13 @@ TEST_F(RegistrationItkv4Test, WithMeanSquaresMetric)
   blueprint->AddConnection(index4, index0, connection4Parameters);
 
   EXPECT_NO_THROW(overlord = Overlord::New());
-  overlord->inputFileNames = { "source3dimage0.mhd", "source3dimage1.mhd" };
-  overlord->outputFileNames = { "sink3dimage0.mhd" };
   EXPECT_NO_THROW(overlord->SetBlueprint(blueprint));
+  
+  //The Overlord is not yet an itkfilter with inputs and outputs, therefore it reads and writes the files temporarily.
+  DataManagerType::Pointer dataManager = DataManagerType::New();
+  overlord->inputFileNames = { dataManager->GetInputFile("sphereA3d.mhd"), dataManager->GetInputFile("sphereB3d.mhd") };
+  overlord->outputFileNames = { dataManager->GetOutputFile("RegistrationItkv4Test_WithMeanSquaresMetric.mhd") };
+
   bool allUniqueComponents;
   EXPECT_NO_THROW(allUniqueComponents = overlord->Configure());
   EXPECT_TRUE(allUniqueComponents);
