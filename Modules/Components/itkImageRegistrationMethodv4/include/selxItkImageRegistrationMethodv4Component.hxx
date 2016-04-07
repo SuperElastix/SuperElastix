@@ -152,39 +152,39 @@ void ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::RunRegistra
   typedef itk::GradientDescentOptimizerv4       OptimizerType;
   OptimizerType::Pointer      optimizer = OptimizerType::New();
   optimizer->SetNumberOfIterations(100);
-  optimizer->SetLearningRate(1.0);typename 
-
-  ScalesEstimatorType::Pointer scalesEstimator = ScalesEstimatorType::New();
+  optimizer->SetLearningRate(1.0);
   
-  /*
-  ImageMetricType::Pointer theMetric = dynamic_cast<ImageMetricType*>(this->m_theItkFilter->GetModifiableMetric());
-  //ImageMetricType::Pointer theMetric = dynamic_cast<ImageMetricType*>(this->m_theItkFilter->GetMetric());
-  if (theMetric == NULL)
-  {
-    itkExceptionMacro("Error cast to ImageMetricType failed");
-  }
-  */
+  typename ScalesEstimatorType::Pointer scalesEstimator = ScalesEstimatorType::New();
+    
   typedef itk::MeanSquaresImageToImageMetricv4<FixedImageType, MovingImageType> MSDMetricType;
   typename MSDMetricType::Pointer msdMetric = dynamic_cast<MSDMetricType*>(this->m_theItkFilter->GetModifiableMetric());
 
   typedef itk::ANTSNeighborhoodCorrelationImageToImageMetricv4<FixedImageType, MovingImageType> ANTSCCMetricType;
   typename ANTSCCMetricType::Pointer nccMetric = dynamic_cast<ANTSCCMetricType*>(this->m_theItkFilter->GetModifiableMetric());
 
+  typename ImageMetricType* theMetric = dynamic_cast<ImageMetricType*>(this->m_theItkFilter->GetModifiableMetric());;
+
   if (msdMetric)
   {
+    //TODO: get rid of component specific checking
     scalesEstimator->SetMetric(msdMetric);
     optimizer->SetLearningRate(0.001);
   }
   else if (nccMetric)
   {
+    //TODO: get rid of component specific checking
     scalesEstimator->SetMetric(nccMetric);
     optimizer->SetLearningRate(100.0);
   }
+  else if (theMetric)
+  {
+    scalesEstimator->SetMetric(theMetric);
+  }
   else
   {
-    itkExceptionMacro("Error casting to either MeanSquaresImageToImageMetricv4 or ANTSNeighborhoodCorrelationImageToImageMetricv4 failed");
+    itkExceptionMacro("Error casting to either MeanSquaresImageToImageMetricv4 or ANTSNeighborhoodCorrelationImageToImageMetricv4 or ImageMetricType failed");
   }
-  
+ 
 
   //std::cout << "estimated step scale: " << scalesEstimator->EstimateStepScale(1.0);
   scalesEstimator->SetTransformForward(true);
