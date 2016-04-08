@@ -1,11 +1,11 @@
 set( proj Elastix )
 
-set( ELASTIX_REPOSITORY https://svn.bigr.nl/elastix/trunkpublic/ )
-set( ELASTIX_REVISION 5186 )
+set( ELASTIX_GIT_REPOSITORY http://github.com/kaspermarstal/elastix )
+set( ELASTIX_GIT_TAG 31d502ba103e56f1c878923680ca1a706f348011 )
 
 ExternalProject_Add( ${proj} 
-  SVN_REPOSITORY ${ELASTIX_REPOSITORY}
-  SVN_REVISION -r ${ELASTIX_REVISION}
+  GIT_REPOSITORY ${ELASTIX_GIT_REPOSITORY}
+  GIT_TAG ${ELASTIX_GIT_TAG}
   UPDATE_COMMAND ""
   SOURCE_DIR ${proj}
   BINARY_DIR ${proj}-build
