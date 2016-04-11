@@ -51,7 +51,7 @@ macro( _elxmodules_initialize )
      "${CMAKE_SOURCE_DIR}/Modules/*/Module*.cmake"
   )
 
-  message( STATUS "Found the following elastix modules:")
+  message( STATUS "Found the following SuperElastix modules:")
   foreach( MODULE_FILE ${MODULE_FILES})
     get_filename_component( MODULE_NAME ${MODULE_FILE} NAME_WE )
     get_filename_component( ${MODULE_NAME}_PATH ${MODULE_FILE} PATH )

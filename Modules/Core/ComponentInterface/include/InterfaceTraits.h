@@ -5,23 +5,33 @@
 
 #include "Interfaces.h"
 #include "itkMacro.h"
+//#include <boost/static_assert.hpp>
+#include <boost/mpl/assert.hpp>
+//#include <type_traits>
+
 namespace selx
 {
 // Traits to get printable interface name
-// default implementation
+
+// In our toolbox for each InterfaceType it is required to implement InterfaceName<InterfaceType>::Get()
+// If one omits this, the implementation falls back to the default implementation that provides a compiler error message including the InterfaceType name for which the specialization is missing.
 template <typename T>
 struct InterfaceName
 {
+  struct PLEASE_IMPLEMENT_INTERFACENAME_GET_FOR_THIS_TYPE; 
+  //TODO message produced by BOOST_MPL_ASSERT_MSG is not yet very clear
+  BOOST_MPL_ASSERT_MSG( false, PLEASE_IMPLEMENT_INTERFACENAME_GET_FOR_THIS_TYPE, (T) );
   static const char* Get()
-  {
-    static_assert(false, "Please implement a template specialization for the appropriate InterfaceName");
-    itkExceptionMacro("Please implement a template specialization for the appropriate InterfaceName");
+  { 
+    //static_assert(false, "Please implement a template specialization for the appropriate InterfaceName");
+    // Exception should never happen since build should fail due to static assert of BOOST_MPL_ASSERT_MSG.
+    itkGenericExceptionMacro("Please implement a template specialization for the appropriate InterfaceName");
     return typeid(T).name();
   }
 };
 
-// a specialization for each type of those you want to support
-// and don't like the string returned by typeid
+// The specializations for each type of Interface supported by the toolbox
+
 template <>
 struct InterfaceName < MetricValueInterface >
 {
@@ -109,6 +119,28 @@ struct InterfaceName < itkImageSourceMovingInterface <D, TPixel> >
     return "itkImageSourceMovingInterface";
   }
 };
+
+template <int D, class TPixel>
+struct InterfaceName < GetItkImageInterface <D, TPixel> >
+{
+  static const char* Get()
+  {
+    return "GetItkImageInterface";
+  }
+};
+
+template <int D, class TPixel>
+struct InterfaceName < DisplacementFieldItkImageSourceInterface <D, TPixel> >
+{
+  static const char* Get()
+  {
+    return "DisplacementFieldItkImageSourceInterface";
+  }
+};
+
+
+
+
 template <>
 struct InterfaceName < SourceInterface >
 {
@@ -145,7 +177,14 @@ struct InterfaceName < RunRegistrationInterface >
   }
 };
 
-
+template <>
+struct InterfaceName < AfterRegistrationInterface >
+{
+  static const char* Get()
+  {
+    return "AfterRegistrationInterface";
+  }
+};
 
 // partial specialization of InterfaceName
 // InterfaceName<T>::Get() should return the same name no matter whether T is an acceptor or provider interface.

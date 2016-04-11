@@ -23,7 +23,7 @@ namespace selx
   public:
     elxNewMacro(ItkSmoothingRecursiveGaussianImageFilterComponent, ComponentBase);
 
-    itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
+    // itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
 
     ItkSmoothingRecursiveGaussianImageFilterComponent();
     virtual ~ItkSmoothingRecursiveGaussianImageFilterComponent();
@@ -46,7 +46,7 @@ namespace selx
 
     //int Update();
     //virtual bool MeetsCriteria(const CriteriaType &criteria);
-    virtual bool MeetsCriterion(const CriterionType &criterion) override;    
+    virtual bool MeetsCriterion(const ComponentBase::CriterionType &criterion) override;    
     //static const char * GetName() { return "GDOptimizer3rdPartyComponent"; } ;
     static const char * GetDescription() { return "ItkSmoothingRecursiveGaussianImageFilter Component"; };
   private:

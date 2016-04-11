@@ -1,48 +1,78 @@
-#ifndef selxItkANTSNeighborhoodCorrelationImageToImageMetricv4Component_h
-#define selxItkANTSNeighborhoodCorrelationImageToImageMetricv4Component_h
+#ifndef selxElastixComponent_h
+#define selxElastixComponent_h
 
 #include "ComponentBase.h"
 #include "Interfaces.h"
-#include "itkANTSNeighborhoodCorrelationImageToImageMetricv4.h"
+#include "itkImageSource.h"
+
+#include "elxElastixFilter.h"
+#include "elxParameterObject.h"
+#include "elxTransformixFilter.h"
+
 #include <string.h>
 #include "elxMacro.h"
 namespace selx
 {
   template <int Dimensionality, class TPixel>
-  class ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component : 
+  class ElastixComponent : 
     public Implements<
-    Accepting< >,
-    Providing< itkMetricv4Interface<Dimensionality, TPixel>>
+      Accepting< 
+        itkImageSourceFixedInterface<Dimensionality, TPixel>,
+        itkImageSourceMovingInterface<Dimensionality, TPixel>
+      >,
+      Providing< 
+        GetItkImageInterface<Dimensionality, TPixel>, //Since elastixFilter is not a true itkfilter we cannot use itkImageSourceInterface (yet)
+        RunRegistrationInterface
+      >
     >
   {
   public:
-    elxNewMacro(ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component, ComponentBase);
+    elxNewMacro(ElastixComponent, ComponentBase);
 
     //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
 
-    ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component();
-    virtual ~ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component();
-
+    ElastixComponent();
+    virtual ~ElastixComponent();
+    
+    typedef typename ComponentBase::CriterionType CriterionType;
     typedef TPixel PixelType;
 
+    // the in and output image type of the component are chosen to be the same 
+    typedef itk::Image<PixelType, Dimensionality> ConnectionImageType;
+
     // fixed and moving image types are all the same, these aliases can be used to be explicit. 
-    typedef itk::Image<PixelType, Dimensionality> FixedImageType; 
+    typedef itk::Image<PixelType, Dimensionality> FixedImageType;
     typedef itk::Image<PixelType, Dimensionality> MovingImageType;
 
-    typedef typename itk::ImageToImageMetricv4<FixedImageType, MovingImageType> ImageToImageMetricv4Type;
-    //typedef typename ItkMetricv4Interface<Dimensionality, TPixel>::ImageToImageMetricv4Type ImageToImageMetricv4Type;
-      //typedef ItkMetricv4Interface<Dimensionality, TPixel>::ImageToImageMetricv4Type ItkMetricv4Pointer
-    typedef typename ImageToImageMetricv4Type::Pointer ItkMetricv4Pointer;
-    
-    typedef typename itk::ANTSNeighborhoodCorrelationImageToImageMetricv4<FixedImageType, MovingImageType> TheItkFilterType;
-    
-    virtual ItkMetricv4Pointer GetItkMetricv4() override;
+    typedef itk::ImageSource<ConnectionImageType> ItkImageSourceType;
+    typedef typename ItkImageSourceType::Pointer ItkImageSourcePointer;
 
-    virtual bool MeetsCriterion(const ComponentBase::CriterionType &criterion) override;    
-    //static const char * GetName() { return "ItkANTSNeighborhoodCorrelationImageToImageMetricv4"; } ;
-    static const char * GetDescription() { return "ItkANTSNeighborhoodCorrelationImageToImageMetricv4 Component"; };
+    typedef typename ConnectionImageType::Pointer ItkImagePointer;
+
+    typedef elastix::ElastixFilter< FixedImageType, MovingImageType > TheItkFilterType;
+    typedef elastix::ParameterObject elxParameterObjectType;
+    typedef elxParameterObjectType::Pointer elxParameterObjectPointer;
+    
+    typedef elastix::TransformixFilter<FixedImageType> TransformixFilterType;
+
+
+    typedef itk::ResampleImageFilter<MovingImageType, ConnectionImageType> ResampleFilterType;
+
+    virtual int Set(itkImageSourceFixedInterface<Dimensionality, TPixel>*) override;
+    virtual int Set(itkImageSourceMovingInterface<Dimensionality, TPixel>*) override;
+    
+    //Since elastixFilter is not a true itkfilter we cannot use itkImageSourceInterface (yet)
+    //virtual ItkImageSourcePointer GetItkImageSource() override;
+    virtual ItkImagePointer GetItkImage() override;
+    virtual void RunRegistration() override;
+
+    virtual bool MeetsCriterion(const CriterionType &criterion) override;
+    static const char * GetDescription() { return "Elastix Component"; };
   private:
     typename TheItkFilterType::Pointer m_theItkFilter;
+    //elxParameterObjectPointer m_ParameterObject;
+
+    ItkImagePointer m_OutputImage;
   protected:
     /* The following struct returns the string name of computation type */
     /* default implementation */
@@ -67,14 +97,14 @@ namespace selx
 
   /*
   template <int Dimensionality>
-  class ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component < Dimensionality, double >
+  class ElastixComponent < Dimensionality, double >
   {
     static inline const std::string GetPixelTypeNameString();
   };
 
   template <int Dimensionality>
   inline const std::string
-    ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component<Dimensionality, double>
+    ElastixComponent<Dimensionality, double>
     ::GetPixelTypeNameString()
   {
     return std::string("double");
@@ -83,7 +113,7 @@ namespace selx
 
   template <>
   inline const std::string
-    ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component<2, float>
+    ElastixComponent<2, float>
     ::GetPixelTypeNameString()
   {
     return std::string("float");
@@ -92,7 +122,7 @@ namespace selx
 
   template <>
   inline const std::string
-    ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component<2, double>
+    ElastixComponent<2, double>
     ::GetPixelTypeNameString()
   {
     return std::string("double");
@@ -100,7 +130,7 @@ namespace selx
 
   template <>
   inline const std::string
-    ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component<3, float>
+    ElastixComponent<3, float>
     ::GetPixelTypeNameString()
   {
     return std::string("float");
@@ -108,14 +138,14 @@ namespace selx
 
   template <>
   inline const std::string
-    ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component<3, double>
+    ElastixComponent<3, double>
     ::GetPixelTypeNameString()
   {
     return std::string("double");
   }
   template <>
   inline const std::string
-    ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component<2, float>
+    ElastixComponent<2, float>
     ::GetTypeNameString()
   {
     return std::string("2_float");
@@ -123,7 +153,7 @@ namespace selx
 
   template <>
   inline const std::string
-    ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component<2, double>
+    ElastixComponent<2, double>
     ::GetTypeNameString()
   {
     return std::string("2_double");
@@ -131,7 +161,7 @@ namespace selx
 
   template <>
   inline const std::string
-    ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component<3,float>
+    ElastixComponent<3,float>
     ::GetTypeNameString()
   {
     return std::string("3_float");
@@ -139,13 +169,13 @@ namespace selx
   
   template <>
   inline const std::string
-    ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component<3,double>
+    ElastixComponent<3,double>
     ::GetTypeNameString()
   {
     return std::string("3_double");
   }
 } //end namespace selx
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "selxItkANTSNeighborhoodCorrelationImageToImageMetricv4.hxx"
+#include "selxElastixComponent.hxx"
 #endif
 #endif // #define GDOptimizer3rdPartyComponent_h

@@ -25,7 +25,7 @@ typename ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< Dimensiona
 template<int Dimensionality, class TPixel>
 bool
 ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< Dimensionality, TPixel>
-::MeetsCriterion(const CriterionType &criterion)
+::MeetsCriterion(const ComponentBase::CriterionType &criterion)
 {
   bool hasUndefinedCriteria(false);
   bool meetsCriteria(false);
@@ -45,7 +45,7 @@ ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< Dimensionality, TPi
     meetsCriteria = true;
     for (auto const & criterionValue : criterion.second) // auto&& preferred?
     {
-      if (std::stoi(criterionValue) != Self::Dimensionality)
+      if (std::stoi(criterionValue) != Dimensionality)
       {
         meetsCriteria = false;
       }
@@ -77,7 +77,7 @@ ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< Dimensionality, TPi
       try
       {
         //TODO radius should be a vector in criteria
-        TheItkFilterType::RadiusType radius;
+        typename TheItkFilterType::RadiusType radius;
         radius.Fill(std::stod(criterionValue));
 
         this->m_theItkFilter->SetRadius(radius);

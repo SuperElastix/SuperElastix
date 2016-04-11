@@ -16,17 +16,16 @@ set( ${MODULE}_LIBRARIES
 # Export tests
 set( ${MODULE}_TESTS 
   elxRegistrationItkv4Test.cxx
+  elxWBIRDemoTest.cxx
 )
 
 # Module source files
 set( ${MODULE}_SOURCE_FILES
   ${${MODULE}_SOURCE_DIR}/src/selxItkImageRegistrationMethodv4.cxx 
-  ${${MODULE}_SOURCE_DIR}/src/selxItkImageSourceFixed.cxx 
-  ${${MODULE}_SOURCE_DIR}/src/selxItkImageSourceMoving.cxx 
   )
 
 # Compile library
 
-add_library( ${MODULE} STATIC "${${MODULE}_SOURCE_FILES} " ${${MODULE}_HEADER_FILES})
+add_library( ${MODULE} STATIC ${${MODULE}_SOURCE_FILES} ${${MODULE}_HEADER_FILES})
 
 target_link_libraries( ${MODULE} ${ELASTIX_LIBRARIES} )

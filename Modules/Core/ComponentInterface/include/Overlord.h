@@ -18,7 +18,7 @@
 #include "elxMacro.h"
 #include "elxBlueprint.h"
 #include "ComponentFactory.h"
-#include "interfaces.h"
+#include "Interfaces.h"
 namespace selx
 {
 
@@ -39,14 +39,34 @@ namespace selx
     typedef std::vector<ComponentSelectorPointer> ComponentSelectorContainerType;
     typedef ComponentSelectorContainerType::iterator ComponentSelectorIteratorType;
 
-    typedef itk::ImageFileReader<itk::Image<double, 3>> ReaderType;
-    typedef itk::ImageFileWriter<itk::Image<double, 3>> WriterType;
+    typedef itk::ImageFileReader<itk::Image<float, 2>> Reader2floatType;
+    typedef itk::ImageFileWriter<itk::Image<float, 2>> Writer2floatType;
 
     typedef itk::VectorContainer <
-      unsigned int, ReaderType::Pointer > ReaderContainerType;
+      unsigned int, Reader2floatType::Pointer > Reader2floatContainerType;
 
     typedef itk::VectorContainer <
-      unsigned int, WriterType::Pointer > WriterContainerType;
+      unsigned int, Writer2floatType::Pointer > Writer2floatContainerType;
+
+
+    typedef itk::ImageFileReader<itk::Image<double, 3>> Reader3doubleType;
+    typedef itk::ImageFileWriter<itk::Image<double, 3>> Writer3doubleType;
+
+    typedef itk::VectorContainer <
+      unsigned int, Reader3doubleType::Pointer > Reader3doubleContainerType;
+
+    typedef itk::VectorContainer <
+      unsigned int, Writer3doubleType::Pointer > Writer3doubleContainerType;
+
+
+    typedef itk::ImageFileWriter<itk::Image<itk::Vector<float, 2>, 2>> WriterDisplacement2floatType;
+    typedef itk::ImageFileWriter<itk::Image<itk::Vector<double, 3>, 3>> WriterDisplacement3doubleType;
+
+    typedef itk::VectorContainer <
+      unsigned int, WriterDisplacement2floatType::Pointer > WriterDisplacement2floatContainerType;
+
+    typedef itk::VectorContainer <
+      unsigned int, WriterDisplacement3doubleType::Pointer > WriterDisplacement3doubleContainerType;
 
 
    // typedef itk::Object::Pointer ObjectPointer;
@@ -78,6 +98,9 @@ namespace selx
     void SetBlueprint(const Blueprint::Pointer);
     bool Configure();
     bool Execute();
+
+    std::vector<std::string> inputFileNames;
+    std::vector<std::string> outputFileNames;
   protected:
     
     Overlord();
@@ -88,21 +111,33 @@ namespace selx
     bool UpdateSelectors();
     bool ConnectComponents();
     bool FindRunRegistration();
+    bool FindAfterRegistration();
     bool ConnectSources();
     bool ConnectSinks();
     bool RunRegistrations();
+    bool AfterRegistrations();
     Blueprint::Pointer m_Blueprint;
     ComponentSelectorContainerType m_ComponentSelectorContainer;
     //ObjectContainerType::Pointer m_InputObjects;
     //ObjectContainerType::Pointer m_OutputObjects;
     //SinkComponentsContainerType::Pointer m_SinkComponents;
     //SourceComponentsContainerType::Pointer m_SourceComponents;
-    ReaderContainerType::Pointer m_Readers;
-    WriterContainerType::Pointer m_Writers;
+    Reader3doubleContainerType::Pointer m_Readers3double;
+    Writer3doubleContainerType::Pointer m_Writers3double;
+    Reader2floatContainerType::Pointer m_Readers2float;
+    Writer2floatContainerType::Pointer m_Writers2float;
+    WriterDisplacement2floatContainerType::Pointer m_WritersDisplacement2float;
+    WriterDisplacement3doubleContainerType::Pointer m_WritersDisplacement3double;
+    
     ComponentsContainerType::Pointer m_RunRegistrationComponents;
+    ComponentsContainerType::Pointer m_AfterRegistrationComponents;
+    
+
+
   };
 
 } // end namespace selx
 
 
 #endif // Overlord_h
+

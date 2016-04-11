@@ -1,5 +1,5 @@
 #include "selxItkSmoothingRecursiveGaussianImageFilterComponent.h"
-#include "selxItkImageSink.h"
+#include "selxItkImageFilterSink.h"
 #include "selxItkImageSource.h"
 #include "Overlord.h"
 
@@ -32,7 +32,7 @@ public:
     /** register all components used for this test */
     // For testing the itkfilter pipeline
     ComponentFactory<ItkSmoothingRecursiveGaussianImageFilterComponent<3, double>>::RegisterOneFactory();
-    ComponentFactory<ItkImageSinkComponent>::RegisterOneFactory();
+    ComponentFactory<ItkImageFilterSinkComponent<3, double>>::RegisterOneFactory();
     ComponentFactory<ItkImageSourceComponent>::RegisterOneFactory();
     // For testing templated components
     ComponentFactory<ItkSmoothingRecursiveGaussianImageFilterComponent<2, double>>::RegisterOneFactory();
@@ -71,7 +71,7 @@ public:
 
     /** Add a description of the SinkComponent*/
     ParameterMapType sinkComponentParameters;
-    sinkComponentParameters["NameOfClass"] = { "ItkImageSinkComponent" };
+    sinkComponentParameters["NameOfClass"] = { "ItkImageFilterSinkComponent" };
     ComponentIndexType sinkIndex = blueprint->AddComponent(sinkComponentParameters);
     
     /** Connect Sink and Source to the itkImageFilter Components*/
@@ -90,6 +90,8 @@ public:
   TEST_F(itkImageFilterTest, Run)
 {
   overlord = Overlord::New();
+  overlord->inputFileNames = { "source3dimage0.mhd" };
+  overlord->outputFileNames = { "itkImageFilterTest_output.mhd" };
   overlord->SetBlueprint(blueprint);
   bool allUniqueComponents;
   

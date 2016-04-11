@@ -18,7 +18,7 @@ namespace selx
   public:
     elxNewMacro(ItkMeanSquaresImageToImageMetricv4Component, ComponentBase);
 
-    itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
+    //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
 
     ItkMeanSquaresImageToImageMetricv4Component();
     virtual ~ItkMeanSquaresImageToImageMetricv4Component();
@@ -34,11 +34,11 @@ namespace selx
       //typedef ItkMetricv4Interface<Dimensionality, TPixel>::ImageToImageMetricv4Type ItkMetricv4Pointer
     typedef typename ImageToImageMetricv4Type::Pointer ItkMetricv4Pointer;
     
-    typedef typename itk::ANTSNeighborhoodCorrelationImageToImageMetricv4<FixedImageType, MovingImageType> TheItkFilterType;
+    typedef typename itk::MeanSquaresImageToImageMetricv4<FixedImageType, MovingImageType> TheItkFilterType;
     
-    virtual typename ItkMetricv4Pointer GetItkMetricv4() override;
+    virtual ItkMetricv4Pointer GetItkMetricv4() override;
 
-    virtual bool MeetsCriterion(const CriterionType &criterion) override;    
+    virtual bool MeetsCriterion(const ComponentBase::CriterionType &criterion) override;    
     //static const char * GetName() { return "ItkMeanSquaresImageToImageMetricv4"; } ;
     static const char * GetDescription() { return "ItkMeanSquaresImageToImageMetricv4 Component"; };
   private:
