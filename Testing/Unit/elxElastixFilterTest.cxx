@@ -572,7 +572,7 @@ TEST_F( ElastixFilterTest, BSpline4D )
 
 #endif // SUPERELASTIX_BUILD_LONG_TESTS
 
-TEST_F(ElastixFilterTest, ImageSourceCast)
+TEST_F(ElastixFilterTest, DISABLED_ImageSourceCast)
 {
   // Test just like UpdateOnGetOutputEuler2D, but elastixFilter is cast to an ImageSource.
   // SuperElastix interfaces are defined to communicate ImageSource pointers
