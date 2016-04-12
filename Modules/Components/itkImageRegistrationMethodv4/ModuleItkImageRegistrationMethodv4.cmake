@@ -15,8 +15,8 @@ set( ${MODULE}_LIBRARIES
 
 # Export tests
 set( ${MODULE}_TESTS 
-  elxRegistrationItkv4Test.cxx
-  elxWBIRDemoTest.cxx
+  selxRegistrationItkv4Test.cxx
+  selxWBIRDemoTest.cxx
 )
 
 # Module source files

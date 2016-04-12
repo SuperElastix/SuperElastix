@@ -73,4 +73,4 @@ TEST_F(OverlordTest, Configure)
   EXPECT_TRUE(allUniqueComponents);
 }
 
-} // namespace elx
+} // namespace selx

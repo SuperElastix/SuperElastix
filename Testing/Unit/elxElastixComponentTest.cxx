@@ -1,6 +1,6 @@
 #include "Overlord.h"
-//#include "elxElastixFilter.h"
-#include "elxParameterObject.h"
+//#include "selxElastixFilter.h"
+#include "selxParameterObject.h"
 
 #include "selxElastixComponent.h"
 #include "selxItkImageFilterSink.h"
@@ -8,7 +8,7 @@
 #include "selxItkImageSourceFixed.h"
 #include "selxItkImageSourceMoving.h"
 
-#include "elxDataManager.h"
+#include "selxDataManager.h"
 #include "gtest/gtest.h"
 
 namespace selx {
@@ -101,4 +101,4 @@ TEST_F(ElastixComponentTest, ImagesOnly)
   
 }
 
-} // namespace elx
+} // namespace selx

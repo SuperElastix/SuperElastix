@@ -20,7 +20,7 @@
 #include "selxItkImageSourceFixed.h"
 #include "selxItkImageSourceMoving.h"
 
-#include "elxDataManager.h"
+#include "selxDataManager.h"
 #include "gtest/gtest.h"
 
 namespace selx {
@@ -332,5 +332,5 @@ TEST_F(RegistrationItkv4Test, DisplacementField2D)
   //EXPECT_NO_THROW(overlord->Execute());
   overlord->Execute();
 }
-} // namespace elx
+} // namespace selx
 

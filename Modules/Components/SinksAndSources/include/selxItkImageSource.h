@@ -4,7 +4,7 @@
 #include "ComponentBase.h"
 #include "Interfaces.h"
 #include <string.h>
-#include "elxMacro.h"
+#include "selxMacro.h"
 namespace selx
 {
   class ItkImageSourceComponent : 
@@ -14,7 +14,7 @@ namespace selx
     >
   {
   public:
-    elxNewMacro(ItkImageSourceComponent, ComponentBase);
+    selxNewMacro(ItkImageSourceComponent, ComponentBase);
 
     ItkImageSourceComponent();
     virtual ~ItkImageSourceComponent();

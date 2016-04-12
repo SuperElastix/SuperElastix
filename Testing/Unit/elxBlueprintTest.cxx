@@ -1,4 +1,4 @@
-#include "elxBlueprint.h"
+#include "selxBlueprint.h"
 
 #include "gtest/gtest.h"
 
@@ -53,7 +53,7 @@ TEST_F( BlueprintTest, SetComponent )
 }
 
 // TODO: The final line segfaults because GetComponent does not check that the index actually
-// actually exist. See explanation in elxBlueprint.h
+// actually exist. See explanation in selxBlueprint.h
 // TEST_F( BlueprintTest, DeleteComponent ) 
 // {
 //   BlueprintPointerType blueprint = Blueprint::New();

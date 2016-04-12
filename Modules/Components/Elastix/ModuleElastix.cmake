@@ -30,6 +30,6 @@ set( ${MODULE}_LIBRARIES
 
 # Export tests
 set( ${MODULE}_TESTS 
-  elxElastixFilterTest.cxx
-  elxTransformixFilterTest.cxx
+  selxElastixFilterTest.cxx
+  selxTransformixFilterTest.cxx
 )

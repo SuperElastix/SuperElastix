@@ -56,7 +56,7 @@ endif()
 
 find_package( ITK REQUIRED )
 include( ${ITK_USE_FILE} )
-include("${CMAKE_CURRENT_SOURCE_DIR}/CMake/elxRequiredITKModules.cmake")
+include("${CMAKE_CURRENT_SOURCE_DIR}/CMake/selxRequiredITKModules.cmake")
 
 # ---------------------------------------------------------------------
 # Boost Graph Library
@@ -67,14 +67,14 @@ include_directories( ${Boost_INCLUDE_DIRS} )
 # Build SuperElastix
 
 # For now we just enable all modules
-include( elxModules )
-elxmodule_enable( ModuleCore )
-elxmodule_enable( ModuleElastix )
-elxmodule_enable( ModuleExamples )
-elxmodule_enable( ModuleSinksAndSources )
-elxmodule_enable( ModuleItkSmoothingRecursiveGaussianImageFilter )
-elxmodule_enable( ModuleItkImageRegistrationMethodv4 )
-elxmodule_enable( ModuleElastixComponent )
+include( selxModules )
+selxmodule_enable( ModuleCore )
+selxmodule_enable( ModuleElastix )
+selxmodule_enable( ModuleExamples )
+selxmodule_enable( ModuleSinksAndSources )
+selxmodule_enable( ModuleItkSmoothingRecursiveGaussianImageFilter )
+selxmodule_enable( ModuleItkImageRegistrationMethodv4 )
+selxmodule_enable( ModuleElastixComponent )
 # TODO: Build tests depending on enabled modules
 
 # ---------------------------------------------------------------------

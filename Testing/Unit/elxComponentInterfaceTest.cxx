@@ -136,4 +136,4 @@ TEST_F(InterfaceTest, ConnectAll)
 
 }
 
-} // namespace elx
+} // namespace selx

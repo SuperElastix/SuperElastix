@@ -7,10 +7,10 @@ namespace selx
   {
     m_theItkFilter = TheItkFilterType::New();
 
-    // TODO: Due to some issues with Criteria being propagated as elastix settings, I need to empty the elxparameterObject.
-    elxParameterObjectPointer elxparameterObject = elxParameterObjectType::New();
-    elxparameterObject->SetParameterMap("rigid");
-    this->m_theItkFilter->SetParameterObject(elxparameterObject);
+    // TODO: Due to some issues with Criteria being propagated as elastix settings, I need to empty the selxparameterObject.
+    selxParameterObjectPointer selxparameterObject = selxParameterObjectType::New();
+    selxparameterObject->SetParameterMap("rigid");
+    this->m_theItkFilter->SetParameterObject(selxparameterObject);
 
     m_theItkFilter->LogToConsoleOn();
     //m_ParameterObject->SetParameterMap("rigid");
@@ -130,21 +130,21 @@ namespace selx
     }
     else if (criterion.first == "RegistrationPreset") //Supports this?
     {
-      // Temporary solution: RegistrationSettings: rigid, nonrigid, etc overwrite the current elxparameterObject.
-      // Warning: the order of Criteria matters, since elxparameterObject may be overwritten
+      // Temporary solution: RegistrationSettings: rigid, nonrigid, etc overwrite the current selxparameterObject.
+      // Warning: the order of Criteria matters, since selxparameterObject may be overwritten
       // Warning: this probably fails because the Criteria map entries are processed in arbitrary order.
 
-      elxParameterObjectPointer elxparameterObject = elxParameterObjectType::New();
+      selxParameterObjectPointer selxparameterObject = selxParameterObjectType::New();
 
       meetsCriteria = true;
       for (auto const & transformtype : criterion.second) // auto&& preferred?
       {
         //this->m_ParameterObject->AddParameterMap(transformtype, const unsigned int numberOfResolutions = 3u, const double finalGridSpacingInPhysicalUnits = 10.0);
-        elxparameterObject->SetParameterMap(transformtype);
+        selxparameterObject->SetParameterMap(transformtype);
         
         try
         {
-          this->m_theItkFilter->SetParameterObject(elxparameterObject);
+          this->m_theItkFilter->SetParameterObject(selxparameterObject);
         }
         catch (itk::ExceptionObject & err)
         {
@@ -158,9 +158,9 @@ namespace selx
     else
     {
       // temporary solution: pass all SuperElastixComponent parameters as is to elastix. This should be defined in deeper hierarchy of the criteria, but for now we have a flat mapping only.
-      elxParameterObjectPointer elxparameterObject = this->m_theItkFilter->GetParameterObject();
-      elxparameterObject->GetParameterMap(0)[criterion.first] = criterion.second;
-      this->m_theItkFilter->SetParameterObject(elxparameterObject);
+      selxParameterObjectPointer selxparameterObject = this->m_theItkFilter->GetParameterObject();
+      selxparameterObject->GetParameterMap(0)[criterion.first] = criterion.second;
+      this->m_theItkFilter->SetParameterObject(selxparameterObject);
       meetsCriteria = true;
     }
     return meetsCriteria;

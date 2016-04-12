@@ -8,7 +8,7 @@
 #include "itkImageSource.h"
 #include <itkTransformToDisplacementFieldFilter.h>
 #include <string.h>
-#include "elxMacro.h"
+#include "selxMacro.h"
 
 
 #include "itkComposeDisplacementFieldsImageFilter.h"
@@ -32,7 +32,7 @@ namespace selx
     >
   {
   public:
-    elxNewMacro(ItkImageRegistrationMethodv4Component, ComponentBase);
+    selxNewMacro(ItkImageRegistrationMethodv4Component, ComponentBase);
 
     //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
 

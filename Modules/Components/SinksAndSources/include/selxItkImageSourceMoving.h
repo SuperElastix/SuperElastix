@@ -4,7 +4,7 @@
 #include "ComponentBase.h"
 #include "Interfaces.h"
 #include <string.h>
-#include "elxMacro.h"
+#include "selxMacro.h"
 namespace selx
 {
   template<int Dimensionality, class TPixel>
@@ -15,7 +15,7 @@ namespace selx
     >
   {
   public:
-    elxNewMacro(ItkImageSourceMovingComponent, ComponentBase);
+    selxNewMacro(ItkImageSourceMovingComponent, ComponentBase);
 
     //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
 

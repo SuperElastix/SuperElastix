@@ -1,7 +1,7 @@
 # ---------------------------------------------------------------------
 # Private helper macros
 
-macro( _elxmodule_check_name MODULE )
+macro( _selxmodule_check_name MODULE )
   if( NOT "${_name}" MATCHES "^[a-zA-Z_]*$" )
     message( FATAL_ERROR "Invalid module name: ${MODULE}" )
   endif()
@@ -12,8 +12,8 @@ macro( _elxmodule_check_name MODULE )
   endif()
 endmacro()
 
-macro( _elxmodule_enable MODULE_NAME )
-  _elxmodule_check_name( ${MODULE_NAME} )
+macro( _selxmodule_enable MODULE_NAME )
+  _selxmodule_check_name( ${MODULE_NAME} )
 
   if( NOT ${MODULE_NAME}_ENABLED )
     set( ${MODULE_NAME}_ENABLED ON )
@@ -38,11 +38,11 @@ macro( _elxmodule_enable MODULE_NAME )
   endif()
 endmacro()
 
-macro( _elxmodule_disable MODULE_NAME )
-  # TODO: elxmodule_disable
+macro( _selxmodule_disable MODULE_NAME )
+  # TODO: selxmodule_disable
 endmacro()
 
-macro( _elxmodules_initialize )
+macro( _selxmodules_initialize )
   set( SUPERELASTIX_MODULES )
   set( SUPERELASTIX_LIBRARIES )
   set( SUPERELASTIX_TESTS )
@@ -73,12 +73,12 @@ macro( _elxmodules_initialize )
   endforeach()
 endmacro()
 
-_elxmodules_initialize()
+_selxmodules_initialize()
 
 # ---------------------------------------------------------------------
 # Public interface
 
-macro( elxmodule_enable MODULE )
-  _elxmodule_enable( ${MODULE} )
+macro( selxmodule_enable MODULE )
+  _selxmodule_enable( ${MODULE} )
 endmacro()
 

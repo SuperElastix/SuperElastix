@@ -28,7 +28,7 @@ set( ${MODULE}_LIBRARIES
 
 # Export tests
 set( ${MODULE}_TESTS 
-  elxElastixComponentTest.cxx
+  selxElastixComponentTest.cxx
 )
 
 # Module source files

@@ -5,12 +5,12 @@
 #include "Interfaces.h"
 #include "itkImageSource.h"
 
-#include "elxElastixFilter.h"
-#include "elxParameterObject.h"
-#include "elxTransformixFilter.h"
+#include "selxElastixFilter.h"
+#include "selxParameterObject.h"
+#include "selxTransformixFilter.h"
 
 #include <string.h>
-#include "elxMacro.h"
+#include "selxMacro.h"
 namespace selx
 {
   template <int Dimensionality, class TPixel>
@@ -27,7 +27,7 @@ namespace selx
     >
   {
   public:
-    elxNewMacro(ElastixComponent, ComponentBase);
+    selxNewMacro(ElastixComponent, ComponentBase);
 
     //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
 
@@ -50,8 +50,8 @@ namespace selx
     typedef typename ConnectionImageType::Pointer ItkImagePointer;
 
     typedef elastix::ElastixFilter< FixedImageType, MovingImageType > TheItkFilterType;
-    typedef elastix::ParameterObject elxParameterObjectType;
-    typedef elxParameterObjectType::Pointer elxParameterObjectPointer;
+    typedef elastix::ParameterObject selxParameterObjectType;
+    typedef selxParameterObjectType::Pointer selxParameterObjectPointer;
     
     typedef elastix::TransformixFilter<FixedImageType> TransformixFilterType;
 
@@ -70,7 +70,7 @@ namespace selx
     static const char * GetDescription() { return "Elastix Component"; };
   private:
     typename TheItkFilterType::Pointer m_theItkFilter;
-    //elxParameterObjectPointer m_ParameterObject;
+    //selxParameterObjectPointer m_ParameterObject;
 
     ItkImagePointer m_OutputImage;
   protected:

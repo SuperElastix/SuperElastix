@@ -205,4 +205,4 @@ TEST_F(ComponentFactoryTest, UnknownComponent)
   // we expect and exception here
   EXPECT_THROW(NodeComponent = Node->GetComponent(), itk::ExceptionObject);
 }
-} // namespace elx
+} // namespace selx

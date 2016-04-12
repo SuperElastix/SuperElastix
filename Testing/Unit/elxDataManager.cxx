@@ -2,7 +2,7 @@
 #define __DataManager_cxx
 
 #include <itkSimpleDataObjectDecorator.h>
-#include "elxDataManager.h"
+#include "selxDataManager.h"
 
 const std::string
 DataManager

@@ -1,6 +1,6 @@
-#include "elxElastixFilter.h"
-#include "elxTransformixFilter.h"
-#include "elxParameterObject.h"
+#include "selxElastixFilter.h"
+#include "selxTransformixFilter.h"
+#include "selxParameterObject.h"
 
 #include "itkCastImageFilter.h" 
 #include "itkImageFileReader.h"
@@ -8,7 +8,7 @@
 
 #include "itkImageSource.h" // for test ImageSourceCast
 
-#include "elxDataManager.h"
+#include "selxDataManager.h"
 #include "gtest/gtest.h"
 
 // TODO: Check that desired results are actually obtained, e.g. by comparing result

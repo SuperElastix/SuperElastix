@@ -7,7 +7,7 @@
 #include "itkObjectFactory.h"
 #include "itkDataObject.h"
 
-#include "elxMacro.h"
+#include "selxMacro.h"
 
 namespace selx {
 
@@ -15,7 +15,7 @@ class Blueprint : public itk::DataObject
 {
 public:
 
-  elxNewMacro( Blueprint, itk::DataObject );
+  selxNewMacro( Blueprint, itk::DataObject );
 
   typedef std::string                                                ParameterKeyType;
   typedef std::vector< std::string >                                 ParameterValueType;

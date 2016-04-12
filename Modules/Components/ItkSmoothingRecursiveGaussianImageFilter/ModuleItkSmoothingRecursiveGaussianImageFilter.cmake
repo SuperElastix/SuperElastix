@@ -15,7 +15,7 @@ set( ${MODULE}_LIBRARIES
 
 # Export tests
 set( ${MODULE}_TESTS 
-  elxitkImageFilterTest.cxx
+  selxitkImageFilterTest.cxx
 )
 
 # Module source files

@@ -15,8 +15,8 @@
 #include <cstring>
 #include <map>
 
-#include "elxMacro.h"
-#include "elxBlueprint.h"
+#include "selxMacro.h"
+#include "selxBlueprint.h"
 #include "ComponentFactory.h"
 #include "Interfaces.h"
 namespace selx
@@ -26,7 +26,7 @@ namespace selx
   {
   public:
 
-    elxNewMacro(Overlord, itk::LightProcessObject);
+    selxNewMacro(Overlord, itk::LightProcessObject);
 
     typedef ComponentBase::CriteriaType CriteriaType;
     typedef ComponentBase::CriterionType CriterionType;

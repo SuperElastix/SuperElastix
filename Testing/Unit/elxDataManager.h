@@ -4,16 +4,16 @@
 #include <string>
 #include <itkSimpleDataObjectDecorator.h>
 
-#include "elxMacro.h"
+#include "selxMacro.h"
 #include "itkObjectFactory.h"
 #include "itkLightObject.h"
-#include "elxDataDirectories.h"
+#include "selxDataDirectories.h"
 
 class DataManager : public itk::LightObject
 {
 public:
 
-  elxNewMacro( DataManager, itk::LightObject );
+  selxNewMacro( DataManager, itk::LightObject );
 
   DataManager()
   {

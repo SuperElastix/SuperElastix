@@ -19,15 +19,15 @@ set( ${MODULE}_LIBRARIES
 
 # Export tests
 set( ${MODULE}_TESTS
-  elxBlueprintTest.cxx
-  elxComponentFactoryTest.cxx
-  elxComponentInterfaceTest.cxx
-  elxOverlordTest.cxx
+  selxBlueprintTest.cxx
+  selxComponentFactoryTest.cxx
+  selxComponentInterfaceTest.cxx
+  selxOverlordTest.cxx
 )
 
 # Module source files
 set( ${MODULE}_SOURCE_FILES
-  ${${MODULE}_SOURCE_DIR}/Blueprints/src/elxBlueprint.cxx
+  ${${MODULE}_SOURCE_DIR}/Blueprints/src/selxBlueprint.cxx
   ${${MODULE}_SOURCE_DIR}/ComponentInterface/src/ComponentBase.cxx
   ${${MODULE}_SOURCE_DIR}/ComponentInterface/src/Overlord.cxx
   ${${MODULE}_SOURCE_DIR}/ComponentInterface/src/ComponentSelector.cxx

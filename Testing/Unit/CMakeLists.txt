@@ -30,13 +30,13 @@ endif()
 # Build test data manager
 
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/elxDataDirectories.h.in
-  ${CMAKE_CURRENT_BINARY_DIR}/elxDataDirectories.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/selxDataDirectories.h.in
+  ${CMAKE_CURRENT_BINARY_DIR}/selxDataDirectories.h
   ESCAPE_QUOTES
 )
 
 include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
-add_library( DataManager elxDataManager.cxx )
+add_library( DataManager selxDataManager.cxx )
 
 list( APPEND TEST_LIBRARIES 
   DataManager

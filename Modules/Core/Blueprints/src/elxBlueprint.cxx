@@ -3,7 +3,7 @@
 
 #include "boost/graph/graphviz.hpp"
 
-#include "elxBlueprint.h"
+#include "selxBlueprint.h"
 
 namespace selx {
 
@@ -49,7 +49,7 @@ Blueprint
   this->m_Graph[ index ].parameterMap = parameterMap;
 }
 
-// TODO: See explanation in elxBlueprint.h
+// TODO: See explanation in selxBlueprint.h
 // void
 // Blueprint
 // ::DeleteComponent( const ComponentIndexType index )

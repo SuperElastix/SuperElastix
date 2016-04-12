@@ -5,7 +5,7 @@
 #include "Interfaces.h"
 #include "itkANTSNeighborhoodCorrelationImageToImageMetricv4.h"
 #include <string.h>
-#include "elxMacro.h"
+#include "selxMacro.h"
 namespace selx
 {
   template <int Dimensionality, class TPixel>
@@ -16,7 +16,7 @@ namespace selx
     >
   {
   public:
-    elxNewMacro(ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component, ComponentBase);
+    selxNewMacro(ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component, ComponentBase);
 
     //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
 

@@ -15,7 +15,7 @@
 #include "selxItkImageSourceFixed.h"
 #include "selxItkImageSourceMoving.h"
 
-#include "elxDataManager.h"
+#include "selxDataManager.h"
 #include "gtest/gtest.h"
 
 #include "itkImageFileReader.h"
@@ -24,7 +24,7 @@
 namespace selx {
 
 /** Temporary helper function to handle elastix deformation field output */
-  template < int Dimensionality, typename PixelType> void CopyElxDeformationField(const std::string filename)
+  template < int Dimensionality, typename PixelType> void CopyselxDeformationField(const std::string filename)
   {
     typedef itk::ImageFileReader<itk::Image<itk::Vector<PixelType, Dimensionality>, Dimensionality>> ReaderType;
     typedef itk::ImageFileWriter<itk::Image<itk::Vector<PixelType, Dimensionality>, Dimensionality>> WriterType;
@@ -275,7 +275,7 @@ TEST_F(WBIRDemoTest, elastix_BS_NCC)
   EXPECT_TRUE(allUniqueComponents);
   EXPECT_NO_THROW(overlord->Execute());
 
-  CopyElxDeformationField<2, float>(dataManager->GetOutputFile("elastix_BS_NCC_Displacement.mhd"));
+  CopyselxDeformationField<2, float>(dataManager->GetOutputFile("elastix_BS_NCC_Displacement.mhd"));
 }
 
 /** Experiment 1b: elastix framework, B-spline transform, mean squared differences metric */
@@ -334,8 +334,8 @@ TEST_F(WBIRDemoTest, elastix_BS_MSD)
   EXPECT_TRUE(allUniqueComponents);
   EXPECT_NO_THROW(overlord->Execute());
 
-  CopyElxDeformationField<2, float>(dataManager->GetOutputFile("elastix_BS_MSD_Displacement.mhd"));
+  CopyselxDeformationField<2, float>(dataManager->GetOutputFile("elastix_BS_MSD_Displacement.mhd"));
 }
 
-} // namespace elx
+} // namespace selx
 

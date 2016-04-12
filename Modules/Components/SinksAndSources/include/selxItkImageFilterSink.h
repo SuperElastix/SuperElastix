@@ -4,7 +4,7 @@
 #include "ComponentBase.h"
 #include "Interfaces.h"
 #include <string.h>
-#include "elxMacro.h"
+#include "selxMacro.h"
 #include "itkImageFileWriter.h"
 
 namespace selx
@@ -17,7 +17,7 @@ namespace selx
     >
   {
   public:
-    elxNewMacro(ItkImageFilterSinkComponent, ComponentBase);
+    selxNewMacro(ItkImageFilterSinkComponent, ComponentBase);
 
     //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
 

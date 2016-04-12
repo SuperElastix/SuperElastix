@@ -5,7 +5,7 @@
 #include "Interfaces.h"
 #include "itkMeanSquaresImageToImageMetricv4.h"
 #include <string.h>
-#include "elxMacro.h"
+#include "selxMacro.h"
 namespace selx
 {
   template <int Dimensionality, class TPixel>
@@ -16,7 +16,7 @@ namespace selx
     >
   {
   public:
-    elxNewMacro(ItkMeanSquaresImageToImageMetricv4Component, ComponentBase);
+    selxNewMacro(ItkMeanSquaresImageToImageMetricv4Component, ComponentBase);
 
     //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
 
