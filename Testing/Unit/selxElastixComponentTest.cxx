@@ -1,6 +1,6 @@
 #include "Overlord.h"
-//#include "selxElastixFilter.h"
-#include "selxParameterObject.h"
+//#include "elxElastixFilter.h"
+#include "elxParameterObject.h"
 
 #include "selxElastixComponent.h"
 #include "selxItkImageFilterSink.h"

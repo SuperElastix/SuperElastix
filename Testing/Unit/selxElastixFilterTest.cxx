@@ -1,6 +1,6 @@
-#include "selxElastixFilter.h"
-#include "selxTransformixFilter.h"
-#include "selxParameterObject.h"
+#include "elxElastixFilter.h"
+#include "elxTransformixFilter.h"
+#include "elxParameterObject.h"
 
 #include "itkCastImageFilter.h" 
 #include "itkImageFileReader.h"

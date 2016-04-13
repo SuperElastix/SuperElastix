@@ -5,9 +5,9 @@
 #include "Interfaces.h"
 #include "itkImageSource.h"
 
-#include "selxElastixFilter.h"
-#include "selxParameterObject.h"
-#include "selxTransformixFilter.h"
+#include "elxElastixFilter.h"
+#include "elxParameterObject.h"
+#include "elxTransformixFilter.h"
 
 #include <string.h>
 #include "selxMacro.h"
