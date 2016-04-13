@@ -34,5 +34,5 @@ set( ${MODULE}_SOURCE_FILES
 )
 
 # Compile library
-add_library( ${MODULE} STATIC "${${MODULE}_SOURCE_FILES}" ${${MODULE}_HEADER_FILES} )
+add_library( ${MODULE} STATIC ${${MODULE}_SOURCE_FILES} ${${MODULE}_HEADER_FILES} )
 target_link_libraries( ${MODULE} ${SUPERELASTIX_LIBRARIES} )
