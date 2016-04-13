@@ -101,4 +101,4 @@ ExternalProject_Add( ${proj}
 ExternalProject_Get_Property( Elastix binary_dir )
 set( ELASTIX_USE_FILE "${binary_dir}/src/UseElastix.cmake" )
 
-list( APPEND ELASTIX_DEPENDENCIES ${proj} )
+list( APPEND SUPERELASTIX_DEPENDENCIES ${proj} )

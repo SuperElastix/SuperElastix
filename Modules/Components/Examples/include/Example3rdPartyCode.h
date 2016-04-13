@@ -6,7 +6,7 @@ namespace Example3rdParty
 {
 
   // test case: there are two (slightly) incompatible codebases (i.e. 3rd party and 4th party!), each with an optimizer object and a metric object. 
-  // goal: make elastix components of all objects and define a handshake that checks if connections can be made.
+  // goal: make SuperEelastix components from all objects and define a handshake that checks if connections can be made.
 
   /*************** below: example implementations of 3rd and 4th party code base (assume we cannot change that) *********************/
 

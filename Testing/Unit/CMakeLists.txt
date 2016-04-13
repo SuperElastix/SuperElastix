@@ -2,7 +2,7 @@
 # To add a test to the build system, append it to the module's list of
 # tests in the module's CMake file (e.g. "Modules/Core/ModuleCore.cmake"). 
 # Any GoogleTests in these files are automatically added to CTest and
-# the elastix dashboard. 
+# the SuperElastix dashboard. 
 
 # ---------------------------------------------------------------------
 # Options
@@ -22,7 +22,7 @@ endif()
 
 if( NOT EXISTS ${SUPERELASTIX_UNITTEST_OUTPUT_DATA_DIR} )
   message( FATAL_ERROR 
-    "Could not create directory for output data. Make sure elastix has permission to write to disk."
+    "Could not create directory for output data. Make sure SuperElastix has permission to write to disk."
   )
 endif()
 

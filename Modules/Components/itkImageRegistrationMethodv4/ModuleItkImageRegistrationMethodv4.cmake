@@ -28,4 +28,4 @@ set( ${MODULE}_SOURCE_FILES
 
 add_library( ${MODULE} STATIC ${${MODULE}_SOURCE_FILES} ${${MODULE}_HEADER_FILES})
 
-target_link_libraries( ${MODULE} ${ELASTIX_LIBRARIES} )
+target_link_libraries( ${MODULE} ${SUPERELASTIX_LIBRARIES} )

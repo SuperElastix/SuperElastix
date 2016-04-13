@@ -1,10 +1,10 @@
 {
   "network": {
-    "servers": [ "elastix:5043" ],
+    "servers": [ "SuperElastix:5043" ],
     "timeout": 15,
-    "ssl certificate": "/etc/ssl/@ELASTIX_DASHBOARD_LOGSTASH_CERTIFICATE@",
-    "ssl key": "/etc/ssl/@ELASTIX_DASHBOARD_LOGSTASH_RSA_PRIVATE_KEY@",
-    "ssl ca": "/etc/ssl/@ELASTIX_DASHBOARD_LOGSTASH_CERTIFICATE@"
+    "ssl certificate": "/etc/ssl/@SUPERELASTIX_DASHBOARD_LOGSTASH_CERTIFICATE@",
+    "ssl key": "/etc/ssl/@SUPERELASTIX_DASHBOARD_LOGSTASH_RSA_PRIVATE_KEY@",
+    "ssl ca": "/etc/ssl/@SUPERELASTIX_DASHBOARD_LOGSTASH_CERTIFICATE@"
   },
   "files": [
     {
@@ -13,7 +13,7 @@
        ],
       "fields": { 
         "type": "unittest",
-        "lib": "elastix" 
+        "lib": "SuperElastix" 
       }
     },
     {
@@ -22,7 +22,7 @@
        ],
       "fields": { 
         "type": "benchmark",
-        "lib": "elastix" 
+        "lib": "SuperElastix" 
       }
     }
    ]

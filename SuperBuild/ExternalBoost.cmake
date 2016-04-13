@@ -33,4 +33,4 @@ ExternalProject_Add( BOOST
 
 set( BOOST_ROOT "${CMAKE_INSTALL_PREFIX}/${proj}-prefix/src/BOOST" )
 
-list( APPEND ELASTIX_DEPENDENCIES ${proj} )
+list( APPEND SUPERELASTIX_DEPENDENCIES ${proj} )

@@ -1,14 +1,14 @@
 forwarder:
     image: willdurand/logstash-forwarder
     extra_hosts:
-        - "elastix:@ELASTIX_DASHBOARD_IP@"
+        - "SuperElastix:@SUPERELASTIX_DASHBOARD_IP@"
     volumes_from:
         - data
 
 data:
     image: busybox
     volumes:
-        - @ELASTIX_DASHBOARD_BINARY_DIR@/selxLogstashForwarder.json:/etc/logstash-forwarder/config.json
-        - @ELASTIX_DASHBOARD_SOURCE_DIR@:/etc/ssl
+        - @SUPERELASTIX_DASHBOARD_BINARY_DIR@/selxLogstashForwarder.json:/etc/logstash-forwarder/config.json
+        - @SUPERELASTIX_DASHBOARD_SOURCE_DIR@:/etc/ssl
         - @CMAKE_BINARY_DIR@/Testing/Unit:/var/unit
         - @CMAKE_BINARY_DIR@/Testing/Benchmark:/var/benchmark

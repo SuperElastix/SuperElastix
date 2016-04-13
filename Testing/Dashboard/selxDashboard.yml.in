@@ -1,4 +1,4 @@
-elastix:
+SuperElastix:
     image: willdurand/elk
     ports:
         - "80:80"
@@ -9,6 +9,6 @@ elastix:
 data:
     image: busybox
     volumes:
-        - @ELASTIX_DASHBOARD_SOURCE_DIR@:/etc/ssl
-        - @ELASTIX_DASHBOARD_VOLUME@:/data                   
-        - @ELASTIX_DASHBOARD_BINARY_DIR@/Logstash:/etc/logstash
+        - @SUPERELASTIX_DASHBOARD_SOURCE_DIR@:/etc/ssl
+        - @SUPERELASTIX_DASHBOARD_VOLUME@:/data                   
+        - @SUPERELASTIX_DASHBOARD_BINARY_DIR@/Logstash:/etc/logstash

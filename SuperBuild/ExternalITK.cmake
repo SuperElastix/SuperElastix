@@ -22,4 +22,4 @@ ExternalProject_Add( ${proj}
 ExternalProject_Get_Property( ${proj} install_dir )
 set( ITK_DIR "${install_dir}/lib/cmake/ITK-${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR}" )
 
-list( APPEND ELASTIX_DEPENDENCIES ${proj} )
+list( APPEND SUPERELASTIX_DEPENDENCIES ${proj} )

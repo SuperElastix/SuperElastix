@@ -1,47 +1,47 @@
 # ---------------------------------------------------------------------
 # Dashboard configuration
 
-mark_as_advanced( ELASTIX_DASHBOARD_SOURCE_DIR )
-set( ELASTIX_DASHBOARD_SOURCE_DIR "${CMAKE_SOURCE_DIR}/Testing/Dashboard" )
+mark_as_advanced( SUPERELASTIX_DASHBOARD_SOURCE_DIR )
+set( SUPERELASTIX_DASHBOARD_SOURCE_DIR "${CMAKE_SOURCE_DIR}/Testing/Dashboard" )
 
-mark_as_advanced( ELASTIX_DASHBOARD_BINARY_DIR )
-set( ELASTIX_DASHBOARD_BINARY_DIR "${CMAKE_BINARY_DIR}/Testing/Dashboard" )
+mark_as_advanced( SUPERELASTIX_DASHBOARD_BINARY_DIR )
+set( SUPERELASTIX_DASHBOARD_BINARY_DIR "${CMAKE_BINARY_DIR}/Testing/Dashboard" )
 
-mark_as_advanced( ELASTIX_DASHBOARD_LOGSTASH_CERTIFICATE )
-set( ELASTIX_DASHBOARD_LOGSTASH_CERTIFICATE "selxLogstash.crt" )
+mark_as_advanced( SUPERELASTIX_DASHBOARD_LOGSTASH_CERTIFICATE )
+set( SUPERELASTIX_DASHBOARD_LOGSTASH_CERTIFICATE "selxLogstash.crt" )
 
-mark_as_advanced( ELASTIX_DASHBOARD_LOGSTASH_RSA_PRIVATE_KEY )
-set( ELASTIX_DASHBOARD_LOGSTASH_RSA_PRIVATE_KEY "selxLogstash.key" )
+mark_as_advanced( SUPERELASTIX_DASHBOARD_LOGSTASH_RSA_PRIVATE_KEY )
+set( SUPERELASTIX_DASHBOARD_LOGSTASH_RSA_PRIVATE_KEY "selxLogstash.key" )
 
-mark_as_advanced( ELASTIX_DASHBOARD_VOLUME )
-if( NOT EXISTS "${ELASTIX_DASHBOARD_VOLUME}" )
-  set( ELASTIX_DASHBOARD_VOLUME "${ELASTIX_DASHBOARD_BINARY_DIR}/Data" )
-  file( MAKE_DIRECTORY "${ELASTIX_DASHBOARD_VOLUME}" )
+mark_as_advanced( SUPERELASTIX_DASHBOARD_VOLUME )
+if( NOT EXISTS "${SUPERELASTIX_DASHBOARD_VOLUME}" )
+  set( ELASTIX_DASHBOARD_VOLUME "${SUPERELASTIX_DASHBOARD_BINARY_DIR}/Data" )
+  file( MAKE_DIRECTORY "${SUPERELASTIX_DASHBOARD_VOLUME}" )
 endif()
 
 # Test/Benchmark results will be forwarded to this IP. You will probably
 # have change this in order to match docker settings on your own machine. 
-mark_as_advanced( ELASTIX_DASHBOARD_IP )
-set( ELASTIX_DASHBOARD_IP "192.168.59.103" )
+mark_as_advanced( SUPERELASTIX_DASHBOARD_IP )
+set( SUPERELASTIX_DASHBOARD_IP "192.168.59.103" )
 
 configure_file(
-  ${ELASTIX_DASHBOARD_SOURCE_DIR}/selxDashboard.yml.in
-  ${ELASTIX_DASHBOARD_BINARY_DIR}/selxDashboard.yml
+  ${SUPERELASTIX_DASHBOARD_SOURCE_DIR}/selxDashboard.yml.in
+  ${SUPERELASTIX_DASHBOARD_BINARY_DIR}/selxDashboard.yml
 )
 
 configure_file(
-  ${ELASTIX_DASHBOARD_SOURCE_DIR}/selxLogstashForwarder.yml.in
-  ${ELASTIX_DASHBOARD_BINARY_DIR}/selxLogstashForwarder.yml
+  ${SUPERELASTIX_DASHBOARD_SOURCE_DIR}/selxLogstashForwarder.yml.in
+  ${SUPERELASTIX_DASHBOARD_BINARY_DIR}/selxLogstashForwarder.yml
 )
 
 configure_file(
-  ${ELASTIX_DASHBOARD_SOURCE_DIR}/selxLogstash.conf.in
-  ${ELASTIX_DASHBOARD_BINARY_DIR}/Logstash/selxLogstash.conf
+  ${SUPERELASTIX_DASHBOARD_SOURCE_DIR}/selxLogstash.conf.in
+  ${SUPERELASTIX_DASHBOARD_BINARY_DIR}/Logstash/selxLogstash.conf
 )
 
 configure_file(
-  ${ELASTIX_DASHBOARD_SOURCE_DIR}/selxLogstashForwarder.json.in
-  ${ELASTIX_DASHBOARD_BINARY_DIR}/selxLogstashForwarder.json
+  ${SUPERELASTIX_DASHBOARD_SOURCE_DIR}/selxLogstashForwarder.json.in
+  ${SUPERELASTIX_DASHBOARD_BINARY_DIR}/selxLogstashForwarder.json
 )
 
 # ---------------------------------------------------------------------

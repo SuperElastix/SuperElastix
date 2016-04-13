@@ -4,7 +4,7 @@
 #include "gtest/gtest.h"
 
 /**
- * This example demonstrates the elastix framework.
+ * This example demonstrates the SuperElastix framework.
  * We run a couple of tests that outputs numbers for
  * use on the dashboard.
  */

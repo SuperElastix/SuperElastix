@@ -16,7 +16,7 @@ set( CMAKE_MODULE_PATH
 set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR} CACHE PATH "SuperBuild install directory" FORCE)
 
 # ---------------------------------------------------------------------
-# Elastix SuperBuild configuration
+# SuperElastix SuperBuild configuration
 
 # Build release by default
 if( NOT DEFINED CMAKE_BUILD_TYPE )
@@ -24,7 +24,7 @@ if( NOT DEFINED CMAKE_BUILD_TYPE )
 endif()
 
 # Build examples by default
-# Examples will be build as an external project to verify the installation of elastix
+# Examples will be build as an external project to verify the installation of SuperElastix
 option( SUPERELASTIX_BUILD_EXAMPLES "Enable building examples." ON )
 
 # Build tests by default
