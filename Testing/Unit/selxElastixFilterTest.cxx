@@ -540,7 +540,6 @@ TEST_F( ElastixFilterTest, BSpline4D )
   DataManagerType::Pointer dataManager = DataManagerType::New();
 
   ImageFileReaderType::Pointer imageReader = ImageFileReaderType::New();
-  ImageFileReaderType::Pointer imageReader = ImageFileReaderType::New();
   imageReader->SetFileName( dataManager->GetInputFile( "4D.nii.gz" ) );
 
   // Elastix is not compiled with the combination of float and dim = 4 by default
