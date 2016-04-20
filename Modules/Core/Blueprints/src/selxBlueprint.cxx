@@ -7,6 +7,39 @@
 
 namespace selx {
 
+  // Declared outside of the class body, so it is a free function
+  std::ostream& operator<<(std::ostream& out, const Blueprint::ParameterMapType& val){
+    for (auto const & mapPair : val)
+    {
+      out << mapPair.first << " : [ ";
+      for (auto const & value : mapPair.second)
+      {
+        out << value << " ";
+      }
+      out << "]\\n";
+    }
+    return out;
+  }
+
+  template <class ParameterMapType>
+  class parameterMaplabel_writer {
+
+  public:
+    parameterMaplabel_writer(ParameterMapType _parameterMap) : parameterMap(_parameterMap) {}
+    template <class VertexOrEdge>
+    void operator()(std::ostream& out, const VertexOrEdge& v) const {
+      out << "[label=\"" << parameterMap[v] << "\"]";
+    }
+  private:
+    ParameterMapType parameterMap;
+  };
+
+  template <class ParameterMapType>
+  inline parameterMaplabel_writer<ParameterMapType>
+    make_parameterMaplabel_writer(ParameterMapType n) {
+    return parameterMaplabel_writer<ParameterMapType>(n);
+  }
+
 Blueprint::ComponentIndexType
 Blueprint
 ::AddComponent( void )
@@ -152,7 +185,7 @@ Blueprint
 ::WriteBlueprint( const std::string filename ) 
 {
   std::ofstream dotfile( filename.c_str() );
-  boost::write_graphviz( dotfile, this->m_Graph );
+  boost::write_graphviz(dotfile, this->m_Graph, make_parameterMaplabel_writer(boost::get(&ComponentPropertyType::parameterMap, this->m_Graph)), make_parameterMaplabel_writer(boost::get(&ConnectionPropertyType::parameterMap, this->m_Graph)));
 }
 
 } // namespace selx 
