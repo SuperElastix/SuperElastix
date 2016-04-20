@@ -155,15 +155,37 @@ TEST_F( BlueprintTest, DeleteConnection )
 TEST_F( BlueprintTest, WriteBlueprint ) 
 {
   BlueprintPointerType blueprint = Blueprint::New();
+  
+  // create some made up configuration to show graphviz output
+  ParameterMapType component0Parameters;
+  component0Parameters["NameOfClass"] = { "MyMetric" };
+  component0Parameters["Dimensionality"] = { "3" };
+  component0Parameters["Kernel"] = { "5", "5", "5" };
+  ComponentIndexType index0 = blueprint->AddComponent(component0Parameters);
 
-  ComponentIndexType index0 = blueprint->AddComponent();
-  ComponentIndexType index1 = blueprint->AddComponent();
-  ComponentIndexType index2 = blueprint->AddComponent();
-  ComponentIndexType index3 = blueprint->AddComponent();
+  ParameterMapType component1Parameters;
+  component1Parameters["NameOfClass"] = { "MyFiniteDifferenceCalculator" };
+  component1Parameters["Delta"] = { "0.01" };
+  ComponentIndexType index1 = blueprint->AddComponent(component1Parameters);
 
-  blueprint->AddConnection( index0, index1 );
-  blueprint->AddConnection( index0, index2 );
+  ParameterMapType component2Parameters;
+  component2Parameters["NameOfClass"] = { "MyOptimizer" };
+  ComponentIndexType index2 = blueprint->AddComponent(component2Parameters);
+
+  ParameterMapType component3Parameters;
+  component3Parameters["NameOfClass"] = { "MyTransform" };
+  ComponentIndexType index3 = blueprint->AddComponent(component3Parameters);
+  
+  blueprint->AddConnection(index0, index1);
+  blueprint->AddConnection(index1, index2);
+
+  ParameterMapType connection0Parameters;
+  //optionally, tie properties to connection to avoid ambiguities
+  connection0Parameters["NameOfInterface"] = { "MetricValue" };
+  blueprint->AddConnection(index0, index2, connection0Parameters);
+
   blueprint->AddConnection( index2, index3 );
+  blueprint->AddConnection( index3, index0 );
 
   EXPECT_NO_THROW( blueprint->WriteBlueprint( "blueprint.dot" ) );
 }
