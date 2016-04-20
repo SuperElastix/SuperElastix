@@ -15,8 +15,8 @@ set( ${MODULE}_LIBRARIES
 
 # Export tests
 set( ${MODULE}_TESTS 
-  selxRegistrationItkv4Test.cxx
-  selxWBIRDemoTest.cxx
+  ${${MODULE}_SOURCE_DIR}/test/selxRegistrationItkv4Test.cxx
+  ${${MODULE}_SOURCE_DIR}/test/selxWBIRDemoTest.cxx
 )
 
 # Module source files
