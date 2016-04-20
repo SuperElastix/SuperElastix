@@ -24,11 +24,13 @@ file(GLOB ${MODULE}_HEADER_FILES "${${MODULE}_SOURCE_DIR}/include/*.*")
 # Export libraries
 set( ${MODULE}_LIBRARIES 
   ${MODULE}
+  elastix
+  transformix
 )
 
 # Export tests
 set( ${MODULE}_TESTS 
-  selxElastixComponentTest.cxx
+  ${${MODULE}_SOURCE_DIR}/test/selxElastixComponentTest.cxx
 )
 
 # Module source files
