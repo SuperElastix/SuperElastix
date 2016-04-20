@@ -42,11 +42,10 @@ namespace selx {
 
 Blueprint::ComponentIndexType
 Blueprint
-::AddComponent( void )
+::AddComponent(ComponentNameType name)
 {
   this->Modified();
-
-  ComponentIndexType index = boost::add_vertex( this->m_Graph );
+  ComponentIndexType index = this->m_Graph.add_vertex(name);
 
   // Return component index so component can retrieved at a later time
   return index;
@@ -54,12 +53,10 @@ Blueprint
 
 Blueprint::ComponentIndexType
 Blueprint
-::AddComponent( ParameterMapType parameterMap )
+::AddComponent(ComponentNameType name, ParameterMapType parameterMap)
 {
   this->Modified();
-
-  ComponentIndexType index = boost::add_vertex( this->m_Graph );
-  this->m_Graph[index].parameterMap = parameterMap;
+  ComponentIndexType index = this->m_Graph.add_vertex(name, { parameterMap });
 
   // Return component index so component can retrieved at a later time
   return index;
@@ -67,19 +64,18 @@ Blueprint
 
 Blueprint::ParameterMapType
 Blueprint
-::GetComponent( ComponentIndexType index )
+::GetComponent(ComponentNameType name)
 {
   this->Modified();
-
-  return this->m_Graph[ index ].parameterMap;
+  return this->m_Graph[name].parameterMap;
 }
 
 void
 Blueprint
-::SetComponent( ComponentIndexType index, ParameterMapType parameterMap )
+::SetComponent(ComponentNameType name, ParameterMapType parameterMap)
 {
   this->Modified();
-  this->m_Graph[ index ].parameterMap = parameterMap;
+  this->m_Graph[name].parameterMap = parameterMap;
 }
 
 // TODO: See explanation in selxBlueprint.h
@@ -95,7 +91,7 @@ Blueprint
 
 bool
 Blueprint
-::AddConnection( ComponentIndexType upstream, ComponentIndexType downstream )
+::AddConnection(ComponentNameType upstream, ComponentNameType downstream)
 {
   this->Modified();
 
@@ -104,18 +100,17 @@ Blueprint
   }
   
   // Adds directed connection from upstream component to downstream component
-  return boost::add_edge( upstream, downstream, this->m_Graph ).second;
+  return boost::add_edge_by_label(upstream, downstream, this->m_Graph).second;
 }
 
 bool
 Blueprint
-::AddConnection( ComponentIndexType upstream, ComponentIndexType downstream, ParameterMapType parameterMap )
+::AddConnection(ComponentNameType upstream, ComponentNameType downstream, ParameterMapType parameterMap)
 {
   this->Modified();
 
   if( !this->ConnectionExists( upstream, downstream ) ) {
-    ConnectionIndexType index = boost::add_edge( upstream, downstream, this->m_Graph ).first;
-    this->m_Graph[ index ].parameterMap = parameterMap;
+    boost::add_edge_by_label(upstream, downstream,  { parameterMap }, this->m_Graph);
     return true;
   }
 
@@ -127,7 +122,7 @@ Blueprint
 
 Blueprint::ParameterMapType
 Blueprint
-::GetConnection( ComponentIndexType upstream, ComponentIndexType downstream )
+::GetConnection( ComponentNameType upstream, ComponentNameType downstream )
 {
   this->Modified();
 
@@ -136,7 +131,7 @@ Blueprint
 
 bool
 Blueprint
-::SetConnection( ComponentIndexType upstream, ComponentIndexType downstream, ParameterMapType parameterMap )
+::SetConnection(ComponentNameType upstream, ComponentNameType downstream, ParameterMapType parameterMap)
 {
   this->Modified();
 
@@ -150,12 +145,12 @@ Blueprint
 
 bool
 Blueprint
-::DeleteConnection( ComponentIndexType upstream, ComponentIndexType downstream )
+::DeleteConnection(ComponentNameType upstream, ComponentNameType downstream)
 {
   this->Modified();
 
   if( this->ConnectionExists( upstream, downstream ) ) {
-    this->m_Graph.remove_edge( this->GetConnectionIndex( upstream, downstream ) );
+    boost::remove_edge_by_label(upstream, downstream, this->m_Graph);
   }
   
   return !this->ConnectionExists( upstream, downstream );
@@ -163,21 +158,21 @@ Blueprint
 
 bool
 Blueprint
-::ConnectionExists( ComponentIndexType upstream, ComponentIndexType downstream )
+::ConnectionExists( ComponentNameType upstream, ComponentNameType downstream )
 {
-  return boost::edge( upstream, downstream, this->m_Graph).second;
+  return boost::edge_by_label( upstream, downstream, this->m_Graph).second;
 }
 
 Blueprint::ConnectionIndexType
 Blueprint
-::GetConnectionIndex( ComponentIndexType upstream, ComponentIndexType downstream )
+::GetConnectionIndex( ComponentNameType upstream, ComponentNameType downstream )
 {
   // This function is part of the internal API and should fail hard if we use it incorrectly
   if( !this->ConnectionExists( upstream, downstream ) ) {
     itkExceptionMacro( "Blueprint does not contain connection from component " << upstream << " to " << downstream );
   }
   
-  return boost::edge( upstream, downstream, this->m_Graph).first;
+  return boost::edge_by_label(upstream, downstream, this->m_Graph).first;
 }
 
 void 
