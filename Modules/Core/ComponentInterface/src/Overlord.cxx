@@ -94,12 +94,10 @@ namespace selx
   bool Overlord::UpdateSelectors()
   {
     bool allUniqueComponents = true;
-    Blueprint::ComponentIteratorPairType componentItPair = this->m_Blueprint->GetComponentIterator();
-    Blueprint::ComponentIteratorPairType::first_type componentIt;
-    Blueprint::ComponentIteratorPairType::second_type componentItEnd = componentItPair.second;
-    for (componentIt = componentItPair.first; componentIt != componentItEnd; ++componentIt)
+    Blueprint::ComponentNamesType componentNames = this->m_Blueprint->GetComponentNames();
+    for (auto const & name : componentNames)
     {
-      ComponentSelector::NumberOfComponentsType numberOfComponents = this->m_ComponentSelectorContainer[*componentIt]->UpdatePossibleComponents();
+      ComponentSelector::NumberOfComponentsType numberOfComponents = this->m_ComponentSelectorContainer[name]->UpdatePossibleComponents();
 
       // The current idea of the configuration setup is that the number of 
       // possible components at a node can only be reduced by adding criteria.
@@ -112,7 +110,7 @@ namespace selx
       {
         allUniqueComponents = false;
       }
-      std::cout << "blueprint node " << *componentIt << " has selected " << numberOfComponents << " components" << std::endl;
+      std::cout << "blueprint node " << name << " has selected " << numberOfComponents << " components" << std::endl;
 
     }
     return allUniqueComponents;
@@ -120,15 +118,14 @@ namespace selx
 
   void Overlord::ApplyNodeConfiguration()
   {
-    Blueprint::ComponentIteratorPairType componentItPair = this->m_Blueprint->GetComponentIterator();
-    Blueprint::ComponentIteratorPairType::first_type componentIt;
-    Blueprint::ComponentIteratorPairType::second_type componentItEnd = componentItPair.second;
-    for (componentIt = componentItPair.first; componentIt != componentItEnd; ++componentIt)
+    Blueprint::ComponentNamesType componentNames = this->m_Blueprint->GetComponentNames();
+    for (auto const & name : componentNames)
     {
       ComponentSelectorPointer currentComponentSelector = ComponentSelector::New();
-      Blueprint::ParameterMapType currentProperty = this->m_Blueprint->GetComponent(*componentIt);
+      Blueprint::ParameterMapType currentProperty = this->m_Blueprint->GetComponent(name);
       currentComponentSelector->SetCriteria(currentProperty);
-      this->m_ComponentSelectorContainer.push_back(currentComponentSelector);
+      // insert new element
+      this->m_ComponentSelectorContainer[name]=currentComponentSelector;
     }
     return;
   }
@@ -162,30 +159,23 @@ namespace selx
     //{
     //}
 
-    
-    Blueprint::ComponentIndexType index;
-    for (index = 0; index < this->m_ComponentSelectorContainer.size(); ++index)
+    Blueprint::ComponentNamesType componentNames = this->m_Blueprint->GetComponentNames();
+    for (auto const & name : componentNames)
     {
-      Blueprint::OutputIteratorPairType ouputItPair = this->m_Blueprint->GetOutputIterator(index);
-      Blueprint::OutputIteratorPairType::first_type ouputIt;
-      Blueprint::OutputIteratorPairType::second_type ouputItEnd = ouputItPair.second;
-      for (ouputIt = ouputItPair.first; ouputIt != ouputItEnd; ++ouputIt)
+      for (auto const & outgoingName : this->m_Blueprint->GetOutputNames(name))
       {
         //TODO check direction upstream/downstream input/output source/target
-        Blueprint::ParameterMapType currentProperty = this->m_Blueprint->GetConnection(ouputIt->m_source, ouputIt->m_target);
-        for (Blueprint::ParameterMapType::const_iterator it = currentProperty.begin(); it != currentProperty.cend(); ++it)
+        Blueprint::ParameterMapType connectionProperties = this->m_Blueprint->GetConnection(name, outgoingName);
+        if (connectionProperties.count("NameOfInterface") > 0)
         {
-          if (it->first == "NameOfInterface")
-          {
-            ComponentBase::CriteriaType additionalSourceCriteria;            
-            additionalSourceCriteria.insert(ComponentBase::CriterionType("HasProvidingInterface", it->second));
+          ComponentBase::CriteriaType additionalSourceCriteria;
+          additionalSourceCriteria.insert(ComponentBase::CriterionType("HasProvidingInterface", connectionProperties["NameOfInterface"]));
 
-            ComponentBase::CriteriaType additionalTargetCriteria;
-            additionalTargetCriteria.insert(ComponentBase::CriterionType("HasAcceptingInterface", it->second));
+          ComponentBase::CriteriaType additionalTargetCriteria;
+          additionalTargetCriteria.insert(ComponentBase::CriterionType("HasAcceptingInterface", connectionProperties["NameOfInterface"]));
 
-            this->m_ComponentSelectorContainer[ouputIt->m_source]->AddCriteria(additionalSourceCriteria);
-            this->m_ComponentSelectorContainer[ouputIt->m_target]->AddCriteria(additionalTargetCriteria);
-          }
+          this->m_ComponentSelectorContainer[name]->AddCriteria(additionalSourceCriteria);
+          this->m_ComponentSelectorContainer[outgoingName]->AddCriteria(additionalTargetCriteria);
         }
       }
     }
@@ -194,29 +184,42 @@ namespace selx
   }
   bool Overlord::ConnectComponents()
   {
+    bool isAllSuccess = true;
 
-    //TODO: redesign loops, see ApplyConnectionConfiguration()
-    Blueprint::ComponentIndexType index;
-    for (index = 0; index < this->m_ComponentSelectorContainer.size(); ++index)
+    Blueprint::ComponentNamesType componentNames = this->m_Blueprint->GetComponentNames();
+    for (auto const & name : componentNames)
     {
-      Blueprint::OutputIteratorPairType ouputItPair = this->m_Blueprint->GetOutputIterator(index);
-      Blueprint::OutputIteratorPairType::first_type ouputIt;
-      Blueprint::OutputIteratorPairType::second_type ouputItEnd = ouputItPair.second;
-      for (ouputIt = ouputItPair.first; ouputIt != ouputItEnd; ++ouputIt)
+      for (auto const & outgoingName : this->m_Blueprint->GetOutputNames(name))
       {
         //TODO check direction upstream/downstream input/output source/target
         //TODO GetComponent returns NULL if possible components !=1 we can check for that, but Overlord::UpdateSelectors() does something similar.
-        ComponentBase::Pointer sourceComponent = this->m_ComponentSelectorContainer[ouputIt->m_source]->GetComponent();
-        ComponentBase::Pointer targetComponent = this->m_ComponentSelectorContainer[ouputIt->m_target]->GetComponent();
-        int numberOfConnections = targetComponent->AcceptConnectionFrom(sourceComponent);
+        ComponentBase::Pointer sourceComponent = this->m_ComponentSelectorContainer[name]->GetComponent();
+        ComponentBase::Pointer targetComponent = this->m_ComponentSelectorContainer[outgoingName]->GetComponent();
+
+        Blueprint::ParameterMapType connectionProperties = this->m_Blueprint->GetConnection(name, outgoingName);
+        int numberOfConnections = 0;
+        if (connectionProperties.count("NameOfInterface") > 0)
+        {
+          // connect only via interfaces provided by user configuration
+          for (auto const & interfaceName : connectionProperties["NameOfInterface"])
+          {
+            numberOfConnections += targetComponent->AcceptConnectionFrom(interfaceName.c_str(), sourceComponent);
+          }
+        }
+        else
+        {
+          // connect via all possible interfaces
+          numberOfConnections = targetComponent->AcceptConnectionFrom(sourceComponent);
+        }
+
         if (numberOfConnections == 0)
         {
+          isAllSuccess = false;
           std::cout << "Warning: a connection was specified, but no compatible interfaces were found.";
         }
       }
     }
-    //TODO should we communicate by exceptions instead of returning booleans?
-    return true;
+    return isAllSuccess;
   }
   bool Overlord::ConnectSources()
   {
@@ -225,9 +228,9 @@ namespace selx
     int readercounter = 0; // temporary solution for reader filenames
 
     // TODO redesign ComponentBase class to accept a single criterion instead of a criteria mapping.
-    for (auto && componentSelector : (this->m_ComponentSelectorContainer))
+    for (const auto & componentSelector : (this->m_ComponentSelectorContainer))
     {
-      ComponentBase::Pointer component = componentSelector->GetComponent();
+      ComponentBase::Pointer component = componentSelector.second->GetComponent();
 
       if (component->MeetsCriteria({ { "HasProvidingInterface", { "SourceInterface" } } })) // TODO MeetsCriterion
       {
@@ -244,14 +247,12 @@ namespace selx
           // For now, we just create the readers here.
           Reader3doubleType::Pointer reader;
           reader = Reader3doubleType::New();
-          //std::stringstream filename;
-          //filename << "C:\\wp\\SuperElastix\\bld2\\SuperElastix-build\\bin\\Debug\\sourceimage" << readercounter << ".mhd";
-          //filename << "source3dimage" << readercounter << ".mhd";
-          //reader->SetFileName(filename.str());
+
           if (readercounter >= this->inputFileNames.size())
           {
             itkExceptionMacro("not enough inputFileNames provided")
           }
+
           reader->SetFileName(this->inputFileNames[readercounter]);
           this->m_Readers3double->push_back(reader);
 
@@ -265,14 +266,12 @@ namespace selx
           // For now, we just create the readers here.
           Reader2floatType::Pointer reader;
           reader = Reader2floatType::New();
-          //std::stringstream filename;
-          //filename << "C:\\wp\\SuperElastix\\bld2\\SuperElastix-build\\bin\\Debug\\sourceimage" << readercounter << ".mhd";
-          //filename << "source2dimage" << readercounter << ".mhd";
-          //reader->SetFileName(filename.str());
+
           if (readercounter >= this->inputFileNames.size())
           {
             itkExceptionMacro("not enough inputFileNames provided")
           }
+
           reader->SetFileName(this->inputFileNames[readercounter]);
           this->m_Readers2float->push_back(reader);
 
@@ -303,9 +302,9 @@ namespace selx
     CriteriaType sinkCriteria;
     sinkCriteria.insert(sinkCriterion);
 
-    for (auto && componentSelector : (this->m_ComponentSelectorContainer))
+    for (auto const & componentSelector : (this->m_ComponentSelectorContainer))
     {
-      ComponentBase::Pointer component = componentSelector->GetComponent();
+      ComponentBase::Pointer component = componentSelector.second->GetComponent();
       if (component->MeetsCriteria(sinkCriteria))  // TODO MeetsCriterion
       {
         SinkInterface* provingSinkInterface = dynamic_cast<SinkInterface*> (&(*component));
@@ -325,6 +324,7 @@ namespace selx
           {
             itkExceptionMacro("not enough outputFileNames provided")
           }
+
           writer->SetFileName(this->outputFileNames[writercounter]);
           this->m_WritersDisplacement3double->push_back(writer);
 
@@ -340,6 +340,7 @@ namespace selx
           {
             itkExceptionMacro("not enough inputFileNames provided")
           }
+
           writer->SetFileName(this->outputFileNames[writercounter]);
           this->m_WritersDisplacement2float->push_back(writer);
 
@@ -350,13 +351,12 @@ namespace selx
           // For now, we just create the writers here.
           Writer3doubleType::Pointer writer;
           writer = Writer3doubleType::New();
-          //std::stringstream filename;
-          //filename << "sink3dimage" << writercounter << ".mhd";
-          //writer->SetFileName(filename.str());
+
           if (writercounter >= this->outputFileNames.size())
           {
             itkExceptionMacro("not enough outputFileNames provided")
           }
+
           writer->SetFileName(this->outputFileNames[writercounter]);
           this->m_Writers3double->push_back(writer);
 
@@ -368,9 +368,7 @@ namespace selx
           // For now, we just create the writers here.
           Writer2floatType::Pointer writer;
           writer = Writer2floatType::New();
-          //std::stringstream filename;
-          //filename << "sink2dimage" << writercounter << ".mhd";
-          //writer->SetFileName(filename.str());
+
           if (writercounter  >= this->outputFileNames.size())
           {
             itkExceptionMacro("not enough outputFileNames provided")
@@ -401,9 +399,9 @@ namespace selx
     CriteriaType runRegistrationCriteria;
     runRegistrationCriteria.insert(runRegistrationCriterion);
 
-    for (auto && componentSelector : (this->m_ComponentSelectorContainer))
+    for (auto const & componentSelector : (this->m_ComponentSelectorContainer))
     {
-      ComponentBase::Pointer component = componentSelector->GetComponent();
+      ComponentBase::Pointer component = componentSelector.second->GetComponent();
       if (component->MeetsCriteria(runRegistrationCriteria)) // TODO MeetsCriterion
       {
         this->m_RunRegistrationComponents->push_back(component);
@@ -422,9 +420,9 @@ namespace selx
     CriteriaType afterRegistrationCriteria;
     afterRegistrationCriteria.insert(afterRegistrationCriterion);
 
-    for (auto && componentSelector : (this->m_ComponentSelectorContainer))
+    for (auto const & componentSelector : (this->m_ComponentSelectorContainer))
     {
-      ComponentBase::Pointer component = componentSelector->GetComponent();
+      ComponentBase::Pointer component = componentSelector.second->GetComponent();
       if (component->MeetsCriteria(afterRegistrationCriteria)) // TODO MeetsCriterion
       {
         this->m_AfterRegistrationComponents->push_back(component);

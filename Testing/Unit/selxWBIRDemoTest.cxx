@@ -83,53 +83,53 @@ TEST_F(WBIRDemoTest, itkv4_SVF_ANTSCC)
 
   ParameterMapType component0Parameters;
   component0Parameters["NameOfClass"] = { "ItkImageRegistrationMethodv4Component" };
-  ComponentIndexType index0 = blueprint->AddComponent(component0Parameters);
+  ComponentIndexType index0 = blueprint->AddComponent("RegistrationMethod", component0Parameters);
 
   ParameterMapType component1Parameters;
   component1Parameters["NameOfClass"] = { "ItkImageSourceFixedComponent" };
-  ComponentIndexType index1 = blueprint->AddComponent(component1Parameters);
+  ComponentIndexType index1 = blueprint->AddComponent("FixedImageSource", component1Parameters);
 
   ParameterMapType component2Parameters;
   component2Parameters["NameOfClass"] = { "ItkImageSourceMovingComponent" };
-  ComponentIndexType index2 = blueprint->AddComponent(component2Parameters);
+  ComponentIndexType index2 = blueprint->AddComponent("MovingImageSource", component2Parameters);
 
   ParameterMapType component3Parameters;
   component3Parameters["NameOfClass"] = { "ItkImageFilterSinkComponent" };
-  ComponentIndexType index3 = blueprint->AddComponent(component3Parameters);
+  ComponentIndexType index3 = blueprint->AddComponent("ResultImageSink", component3Parameters);
 
   ParameterMapType component4Parameters;
   component4Parameters["NameOfClass"] = { "DisplacementFieldItkImageFilterSinkComponent" };
-  ComponentIndexType index4 = blueprint->AddComponent(component4Parameters);
+  ComponentIndexType index4 = blueprint->AddComponent("ResultDisplacementFieldSink", component4Parameters);
 
   ParameterMapType component5Parameters;
   component5Parameters["NameOfClass"] = { "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component" };
-  ComponentIndexType index5 = blueprint->AddComponent(component5Parameters);
+  ComponentIndexType index5 = blueprint->AddComponent("Metric", component5Parameters);
 
 
   ParameterMapType connection1Parameters;
   //optionally, tie properties to connection to avoid ambiguities
   //connection1Parameters["NameOfInterface"] = { "itkImageSourceFixedInterface" };
-  blueprint->AddConnection(index1, index0, connection1Parameters);
+  blueprint->AddConnection("FixedImageSource", "RegistrationMethod", connection1Parameters);
 
   ParameterMapType connection2Parameters;
   //optionally, tie properties to connection to avoid ambiguities
   //connection2Parameters["NameOfInterface"] = { "itkImageSourceMovingInterface" };
-  blueprint->AddConnection(index2, index0, connection2Parameters);
+  blueprint->AddConnection("MovingImageSource", "RegistrationMethod", connection2Parameters);
 
   ParameterMapType connection3Parameters;
   //optionally, tie properties to connection to avoid ambiguities
   //connection3Parameters["NameOfInterface"] = { "itkImageSourceInterface" };
-  blueprint->AddConnection(index0, index3, connection3Parameters);
+  blueprint->AddConnection("RegistrationMethod", "ResultImageSink", connection3Parameters);
 
   ParameterMapType connection4Parameters;
   //optionally, tie properties to connection to avoid ambiguities
   //connection4Parameters["NameOfInterface"] = { "DisplacementFieldItkImageSourceInterface" };
-  blueprint->AddConnection(index0, index4, connection4Parameters);
+  blueprint->AddConnection("RegistrationMethod", "ResultDisplacementFieldSink", connection4Parameters);
 
   ParameterMapType connection5Parameters;
   //optionally, tie properties to connection to avoid ambiguities
   //connection5Parameters["NameOfInterface"] = { "itkMetricv4Interface" };
-  blueprint->AddConnection(index5, index0, connection5Parameters);
+  blueprint->AddConnection("Metric", "RegistrationMethod", connection5Parameters);
 
   blueprint->WriteBlueprint("itkv4_SVF_ANTSCC.dot");
 
@@ -155,53 +155,53 @@ TEST_F(WBIRDemoTest, itkv4_SVF_MSD)
 
   ParameterMapType component0Parameters;
   component0Parameters["NameOfClass"] = { "ItkImageRegistrationMethodv4Component" };
-  ComponentIndexType index0 = blueprint->AddComponent(component0Parameters);
+  ComponentIndexType index0 = blueprint->AddComponent("RegistrationMethod", component0Parameters);
 
   ParameterMapType component1Parameters;
   component1Parameters["NameOfClass"] = { "ItkImageSourceFixedComponent" };
-  ComponentIndexType index1 = blueprint->AddComponent(component1Parameters);
+  ComponentIndexType index1 = blueprint->AddComponent("FixedImageSource", component1Parameters);
 
   ParameterMapType component2Parameters;
   component2Parameters["NameOfClass"] = { "ItkImageSourceMovingComponent" };
-  ComponentIndexType index2 = blueprint->AddComponent(component2Parameters);
+  ComponentIndexType index2 = blueprint->AddComponent("MovingImageSource", component2Parameters);
 
   ParameterMapType component3Parameters;
   component3Parameters["NameOfClass"] = { "ItkImageFilterSinkComponent" };
-  ComponentIndexType index3 = blueprint->AddComponent(component3Parameters);
+  ComponentIndexType index3 = blueprint->AddComponent("ResultImageSink", component3Parameters);
 
   ParameterMapType component4Parameters;
   component4Parameters["NameOfClass"] = { "DisplacementFieldItkImageFilterSinkComponent" };
-  ComponentIndexType index4 = blueprint->AddComponent(component4Parameters);
+  ComponentIndexType index4 = blueprint->AddComponent("ResultDisplacementFieldSink", component4Parameters);
 
   ParameterMapType component5Parameters;
   component5Parameters["NameOfClass"] = { "ItkMeanSquaresImageToImageMetricv4Component" };
-  ComponentIndexType index5 = blueprint->AddComponent(component5Parameters);
+  ComponentIndexType index5 = blueprint->AddComponent("Metric", component5Parameters);
 
 
   ParameterMapType connection1Parameters;
   //optionally, tie properties to connection to avoid ambiguities
   //connection1Parameters["NameOfInterface"] = { "itkImageSourceFixedInterface" };
-  blueprint->AddConnection(index1, index0, connection1Parameters);
+  blueprint->AddConnection("FixedImageSource", "RegistrationMethod", connection1Parameters);
 
   ParameterMapType connection2Parameters;
   //optionally, tie properties to connection to avoid ambiguities
   //connection2Parameters["NameOfInterface"] = { "itkImageSourceMovingInterface" };
-  blueprint->AddConnection(index2, index0, connection2Parameters);
+  blueprint->AddConnection("MovingImageSource", "RegistrationMethod", connection2Parameters);
 
   ParameterMapType connection3Parameters;
   //optionally, tie properties to connection to avoid ambiguities
   //connection3Parameters["NameOfInterface"] = { "itkImageSourceInterface" };
-  blueprint->AddConnection(index0, index3, connection3Parameters);
+  blueprint->AddConnection("RegistrationMethod", "ResultImageSink", connection3Parameters);
 
   ParameterMapType connection4Parameters;
   //optionally, tie properties to connection to avoid ambiguities
   //connection4Parameters["NameOfInterface"] = { "DisplacementFieldItkImageSourceInterface" };
-  blueprint->AddConnection(index0, index4, connection4Parameters);
+  blueprint->AddConnection("RegistrationMethod", "ResultDisplacementFieldSink", connection4Parameters);
 
   ParameterMapType connection5Parameters;
   //optionally, tie properties to connection to avoid ambiguities
   //connection5Parameters["NameOfInterface"] = { "itkMetricv4Interface" };
-  blueprint->AddConnection(index5, index0, connection5Parameters);
+  blueprint->AddConnection("Metric", "RegistrationMethod", connection5Parameters);
 
   blueprint->WriteBlueprint("itkv4_SVF_MSD.dot");
 
@@ -230,35 +230,34 @@ TEST_F(WBIRDemoTest, elastix_BS_NCC)
   //component0Parameters["RegistrationPreset"] = { "rigid" };
   component0Parameters["Transform"] = { "BSplineTransform" }; 
   component0Parameters["Metric"] = { "AdvancedNormalizedCorrelation" };
-  
-  ComponentIndexType index0 = blueprint->AddComponent(component0Parameters);
+  ComponentIndexType index0 = blueprint->AddComponent("RegistrationMethod", component0Parameters);
 
   ParameterMapType component1Parameters;
   component1Parameters["NameOfClass"] = { "ItkImageSourceFixedComponent" };
-  ComponentIndexType index1 = blueprint->AddComponent(component1Parameters);
+  ComponentIndexType index1 = blueprint->AddComponent("FixedImageSource", component1Parameters);
 
   ParameterMapType component2Parameters;
   component2Parameters["NameOfClass"] = { "ItkImageSourceMovingComponent" };
-  ComponentIndexType index2 = blueprint->AddComponent(component2Parameters);
+  ComponentIndexType index2 = blueprint->AddComponent("MovingImageSource", component2Parameters);
 
   ParameterMapType component3Parameters;
   component3Parameters["NameOfClass"] = { "ItkImageSinkComponent" };
-  ComponentIndexType index3 = blueprint->AddComponent(component3Parameters);
+  ComponentIndexType index3 = blueprint->AddComponent("ResultImageSink", component3Parameters);
 
   ParameterMapType connection1Parameters;
   //optionally, tie properties to connection to avoid ambiguities
   //connection1Parameters["NameOfInterface"] = { "itkImageSourceFixedInterface" };
-  blueprint->AddConnection(index1, index0, connection1Parameters);
+  blueprint->AddConnection("FixedImageSource", "RegistrationMethod", connection1Parameters);
 
   ParameterMapType connection2Parameters;
   //optionally, tie properties to connection to avoid ambiguities
   //connection2Parameters["NameOfInterface"] = { "itkImageSourceMovingInterface" };
-  blueprint->AddConnection(index2, index0, connection2Parameters);
+  blueprint->AddConnection("MovingImageSource", "RegistrationMethod", connection2Parameters);
 
   ParameterMapType connection3Parameters;
   //optionally, tie properties to connection to avoid ambiguities
   //connection3Parameters["NameOfInterface"] = { "GetItkImageInterface" };
-  blueprint->AddConnection(index0, index3, connection3Parameters);
+  blueprint->AddConnection("RegistrationMethod", "ResultImageSink", connection3Parameters);
 
   blueprint->WriteBlueprint("elastix_BS_NCC.dot");
 
@@ -289,35 +288,34 @@ TEST_F(WBIRDemoTest, elastix_BS_MSD)
   //component0Parameters["RegistrationPreset"] = { "rigid" };
   component0Parameters["Transform"] = { "BSplineTransform" };
   component0Parameters["Metric"] = { "AdvancedMeanSquares" };
-
-  ComponentIndexType index0 = blueprint->AddComponent(component0Parameters);
-
+  ComponentIndexType index0 = blueprint->AddComponent("RegistrationMethod", component0Parameters);
 
   ParameterMapType component1Parameters;
   component1Parameters["NameOfClass"] = { "ItkImageSourceFixedComponent" };
-  ComponentIndexType index1 = blueprint->AddComponent(component1Parameters);
+  ComponentIndexType index1 = blueprint->AddComponent("FixedImageSource", component1Parameters);
 
   ParameterMapType component2Parameters;
   component2Parameters["NameOfClass"] = { "ItkImageSourceMovingComponent" };
-  ComponentIndexType index2 = blueprint->AddComponent(component2Parameters);
+  ComponentIndexType index2 = blueprint->AddComponent("MovingImageSource", component2Parameters);
 
   ParameterMapType component3Parameters;
   component3Parameters["NameOfClass"] = { "ItkImageSinkComponent" };
-  ComponentIndexType index3 = blueprint->AddComponent(component3Parameters);
+  ComponentIndexType index3 = blueprint->AddComponent("ResultImageSink", component3Parameters);
 
   ParameterMapType connection1Parameters;
-  connection1Parameters["NameOfInterface"] = { "itkImageSourceFixedInterface" };
-  blueprint->AddConnection(index1, index0, connection1Parameters);
+  //optionally, tie properties to connection to avoid ambiguities
+  //connection1Parameters["NameOfInterface"] = { "itkImageSourceFixedInterface" };
+  blueprint->AddConnection("FixedImageSource", "RegistrationMethod", connection1Parameters);
 
   ParameterMapType connection2Parameters;
   //optionally, tie properties to connection to avoid ambiguities
   //connection2Parameters["NameOfInterface"] = { "itkImageSourceMovingInterface" };
-  blueprint->AddConnection(index2, index0, connection2Parameters);
+  blueprint->AddConnection("MovingImageSource", "RegistrationMethod", connection2Parameters);
 
   ParameterMapType connection3Parameters;
   //optionally, tie properties to connection to avoid ambiguities
   //connection3Parameters["NameOfInterface"] = { "GetItkImageInterface" };
-  blueprint->AddConnection(index0, index3, connection3Parameters);
+  blueprint->AddConnection("RegistrationMethod", "ResultImageSink", connection3Parameters);
 
   blueprint->WriteBlueprint("elastix_BS_MSD.dot");
 

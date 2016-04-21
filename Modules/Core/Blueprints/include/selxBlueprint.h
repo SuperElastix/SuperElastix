@@ -21,10 +21,13 @@ public:
   typedef std::string                                                ParameterKeyType;
   typedef std::vector< std::string >                                 ParameterValueType;
   typedef std::map< ParameterKeyType, ParameterValueType >           ParameterMapType;
-
-  // Component parameter map that sits on a node in the graph 
+  
+  typedef std::string                                                ComponentNameType;
+  
+    // Component parameter map that sits on a node in the graph 
   // and holds component configuration settings
   struct ComponentPropertyType { 
+    ComponentNameType name;
     ParameterMapType parameterMap;
   };
 
@@ -39,10 +42,13 @@ public:
                                                         boost::vecS,
                                                         boost::directedS,
                                                         ComponentPropertyType,
-                                                        ConnectionPropertyType >,
-                                 std::string >                        GraphType;
+                                                        ConnectionPropertyType 
+                                                        >,
+                                 ComponentNameType >                  GraphType;
   
-  typedef GraphType::label_type                                       ComponentNameType;
+  //typedef GraphType::label_type                                       ComponentNameType;
+  typedef std::vector<ComponentNameType>                              ComponentNamesType;
+
   typedef boost::graph_traits< GraphType >::vertex_descriptor         ComponentIndexType;
   typedef boost::graph_traits< GraphType >::vertex_iterator           ComponentIteratorType;
   typedef std::pair< ComponentIteratorType, ComponentIteratorType >   ComponentIteratorPairType;
@@ -70,6 +76,8 @@ public:
   // interface procedurally.
   // void DeleteComponent( ComponentIndexType );
 
+  ComponentNamesType GetComponentNames(void);
+
   ComponentIteratorPairType GetComponentIterator( void ) {
     return boost::vertices( this->m_Graph );
   }
@@ -85,15 +93,15 @@ public:
   bool ConnectionExists(ComponentNameType upstream, ComponentNameType downstream);
 
   // Returns iterator for all connections in the graph
-  ConnectionIteratorPairType GetConnectionIterator( void ) {
-    return boost::edges(this->m_Graph);
-  }
+  ConnectionIteratorPairType GetConnectionIterator(void);
 
   // Returns the outgoing connections from a component in the graph,
   // i.e. all components that reads data from given component
-  OutputIteratorPairType GetOutputIterator( const ComponentNameType name ) {
-    return boost::out_edges(this->m_Graph.vertex(name), this->m_Graph.graph());
-  }
+  OutputIteratorPairType GetOutputIterator(const ComponentNameType name);
+
+  // Returns a vector of the Component names at the outgoing direction
+  // TODO: should this be an iterator over the names?
+  ComponentNamesType GetOutputNames(const ComponentNameType name);
 
   void WriteBlueprint( const std::string filename );
 

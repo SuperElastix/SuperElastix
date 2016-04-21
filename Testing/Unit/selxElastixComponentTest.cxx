@@ -54,36 +54,35 @@ TEST_F(ElastixComponentTest, ImagesOnly)
   ParameterMapType component0Parameters;
   component0Parameters["NameOfClass"] = { "ElastixComponent" };
   component0Parameters["RegistrationSettings"] = { "rigid" };
-  ComponentIndexType index0 = blueprint->AddComponent(component0Parameters);
-
+  ComponentIndexType index0 = blueprint->AddComponent("RegistrationMethod", component0Parameters);
 
   ParameterMapType component1Parameters;
   component1Parameters["NameOfClass"] = { "ItkImageSourceFixedComponent" };
   component1Parameters["Dimensionality"] = { "2" }; // should be derived from the inputs
-  ComponentIndexType index1 = blueprint->AddComponent(component1Parameters);
+  ComponentIndexType index1 = blueprint->AddComponent("FixedImageSource", component1Parameters);
 
   ParameterMapType component2Parameters;
   component2Parameters["NameOfClass"] = { "ItkImageSourceMovingComponent" };
   component2Parameters["Dimensionality"] = { "2" }; // should be derived from the inputs
-  ComponentIndexType index2 = blueprint->AddComponent(component2Parameters);
+  ComponentIndexType index2 = blueprint->AddComponent("MovingImageSource", component2Parameters);
 
   ParameterMapType component3Parameters;
   component3Parameters["NameOfClass"] = { "ItkImageSinkComponent" };
   component3Parameters["Dimensionality"] = { "2" }; // should be derived from the inputs
-  ComponentIndexType index3 = blueprint->AddComponent(component3Parameters);
+  ComponentIndexType index3 = blueprint->AddComponent("ResultImageSink", component3Parameters);
 
 
   ParameterMapType connection1Parameters;
   connection1Parameters["NameOfInterface"] = { "itkImageSourceFixedInterface" };
-  blueprint->AddConnection(index1, index0, connection1Parameters);
+  blueprint->AddConnection("FixedImageSource", "RegistrationMethod", connection1Parameters);
 
   ParameterMapType connection2Parameters;
   connection2Parameters["NameOfInterface"] = { "itkImageSourceMovingInterface" };
-  blueprint->AddConnection(index2, index0, connection2Parameters);
+  blueprint->AddConnection("MovingImageSource", "RegistrationMethod", connection2Parameters);
 
   ParameterMapType connection3Parameters;
   connection3Parameters["NameOfInterface"] = { "GetItkImageInterface" };
-  blueprint->AddConnection(index0, index3, connection3Parameters);
+  blueprint->AddConnection("RegistrationMethod", "ResultImageSink", connection3Parameters);
 
 
   EXPECT_NO_THROW(overlord = Overlord::New());

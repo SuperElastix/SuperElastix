@@ -45,7 +45,7 @@ Blueprint
 ::AddComponent(ComponentNameType name)
 {
   this->Modified();
-  ComponentIndexType index = this->m_Graph.add_vertex(name);
+  ComponentIndexType index = this->m_Graph.add_vertex(name, { name, { {} } });
 
   // Return component index so component can retrieved at a later time
   return index;
@@ -56,7 +56,7 @@ Blueprint
 ::AddComponent(ComponentNameType name, ParameterMapType parameterMap)
 {
   this->Modified();
-  ComponentIndexType index = this->m_Graph.add_vertex(name, { parameterMap });
+  ComponentIndexType index = this->m_Graph.add_vertex(name, { name, parameterMap });
 
   // Return component index so component can retrieved at a later time
   return index;
@@ -88,6 +88,14 @@ Blueprint
 //   clear_vertex( index, this->m_Graph );
 //   remove_vertex( index, this->m_Graph );
 // }
+
+Blueprint::ComponentNamesType Blueprint::GetComponentNames(void){
+  ComponentNamesType container;
+  for (auto it = boost::vertices(this->m_Graph.graph()).first; it != boost::vertices(this->m_Graph.graph()).second; ++it){
+    container.push_back(this->m_Graph.graph()[*it].name);
+  }
+  return container;
+}
 
 bool
 Blueprint
@@ -162,6 +170,34 @@ Blueprint
 {
   return boost::edge_by_label( upstream, downstream, this->m_Graph).second;
 }
+
+
+Blueprint::ConnectionIteratorPairType 
+Blueprint
+::GetConnectionIterator(void) {
+  return boost::edges(this->m_Graph);
+}
+
+Blueprint::OutputIteratorPairType 
+Blueprint
+::GetOutputIterator(const ComponentNameType name) {
+  return boost::out_edges(this->m_Graph.vertex(name), this->m_Graph);
+}
+
+Blueprint::ComponentNamesType
+Blueprint
+::GetOutputNames(const ComponentNameType name) {
+  ComponentNamesType container;
+  OutputIteratorPairType outputIteratorPair = boost::out_edges(this->m_Graph.vertex(name), this->m_Graph);
+  for (auto it = outputIteratorPair.first; it != outputIteratorPair.second; ++it){
+    //boost::vertex()
+    //boost::edge_by_label(upstream, downstream, this->m_Graph).first
+    container.push_back(this->m_Graph.graph()[it->m_target].name);
+  }
+
+  return container;
+}
+
 
 Blueprint::ConnectionIndexType
 Blueprint

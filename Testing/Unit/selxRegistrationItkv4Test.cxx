@@ -94,35 +94,35 @@ TEST_F(RegistrationItkv4Test, ImagesOnly)
   ParameterMapType component0Parameters;
   component0Parameters["NameOfClass"] = { "ItkImageRegistrationMethodv4Component" };
   component0Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
-  ComponentIndexType index0 = blueprint->AddComponent(component0Parameters);
+  ComponentIndexType index0 = blueprint->AddComponent("RegistrationMethod", component0Parameters);
 
   ParameterMapType component1Parameters;
   component1Parameters["NameOfClass"] = { "ItkImageSourceFixedComponent" };
   component1Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
-  ComponentIndexType index1 = blueprint->AddComponent(component1Parameters);
+  ComponentIndexType index1 = blueprint->AddComponent("FixedImageSource", component1Parameters);
 
   ParameterMapType component2Parameters;
   component2Parameters["NameOfClass"] = { "ItkImageSourceMovingComponent" };
   component2Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
-  ComponentIndexType index2 = blueprint->AddComponent(component2Parameters);
+  ComponentIndexType index2 = blueprint->AddComponent("MovingImageSource", component2Parameters);
 
   ParameterMapType component3Parameters;
   component3Parameters["NameOfClass"] = { "ItkImageFilterSinkComponent" };
   component3Parameters["Dimensionality"] = { "3" }; // should be derived from the outputs
-  ComponentIndexType index3 = blueprint->AddComponent(component3Parameters);
+  ComponentIndexType index3 = blueprint->AddComponent("ResultImageSink", component3Parameters);
 
 
   ParameterMapType connection1Parameters;
   connection1Parameters["NameOfInterface"] = { "itkImageSourceFixedInterface" };
-  blueprint->AddConnection(index1, index0, connection1Parameters);
+  blueprint->AddConnection("FixedImageSource", "RegistrationMethod", connection1Parameters);
 
   ParameterMapType connection2Parameters;
   connection2Parameters["NameOfInterface"] = { "itkImageSourceMovingInterface" };
-  blueprint->AddConnection(index2, index0, connection2Parameters);
+  blueprint->AddConnection("MovingImageSource", "RegistrationMethod", connection2Parameters);
 
   ParameterMapType connection3Parameters;
   connection3Parameters["NameOfInterface"] = { "itkImageSourceInterface" };
-  blueprint->AddConnection(index0, index3, connection3Parameters);
+  blueprint->AddConnection("RegistrationMethod", "ResultImageSink", connection3Parameters);
 
   EXPECT_NO_THROW(overlord = Overlord::New());
   EXPECT_NO_THROW(overlord->SetBlueprint(blueprint));
@@ -147,44 +147,44 @@ TEST_F(RegistrationItkv4Test, WithANTSCCMetric)
   ParameterMapType component0Parameters;
   component0Parameters["NameOfClass"] = { "ItkImageRegistrationMethodv4Component" };
   component0Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
-  ComponentIndexType index0 = blueprint->AddComponent(component0Parameters);
+  ComponentIndexType index0 = blueprint->AddComponent("RegistrationMethod", component0Parameters);
 
   ParameterMapType component1Parameters;
   component1Parameters["NameOfClass"] = { "ItkImageSourceFixedComponent" };
   component1Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
-  ComponentIndexType index1 = blueprint->AddComponent(component1Parameters);
-  
+  ComponentIndexType index1 = blueprint->AddComponent("FixedImageSource", component1Parameters);
+
   ParameterMapType component2Parameters;
   component2Parameters["NameOfClass"] = { "ItkImageSourceMovingComponent" };
   component2Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
-  ComponentIndexType index2 = blueprint->AddComponent(component2Parameters);
+  ComponentIndexType index2 = blueprint->AddComponent("MovingImageSource", component2Parameters);
 
   ParameterMapType component3Parameters;
   component3Parameters["NameOfClass"] = { "ItkImageFilterSinkComponent" };
-  component3Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
-  ComponentIndexType index3 = blueprint->AddComponent(component3Parameters);
+  component3Parameters["Dimensionality"] = { "3" }; // should be derived from the outputs
+  ComponentIndexType index3 = blueprint->AddComponent("ResultImageSink", component3Parameters);
 
   ParameterMapType component4Parameters;
   component4Parameters["NameOfClass"] = { "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component" };
   component4Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
-  ComponentIndexType index4 = blueprint->AddComponent(component4Parameters);
+  ComponentIndexType index4 = blueprint->AddComponent("Metric", component4Parameters);
 
 
   ParameterMapType connection1Parameters;
   connection1Parameters["NameOfInterface"] = { "itkImageSourceFixedInterface" };
-  blueprint->AddConnection(index1, index0, connection1Parameters);
+  blueprint->AddConnection("FixedImageSource", "RegistrationMethod", connection1Parameters);
 
   ParameterMapType connection2Parameters;
   connection2Parameters["NameOfInterface"] = { "itkImageSourceMovingInterface" };
-  blueprint->AddConnection(index2, index0, connection2Parameters);
+  blueprint->AddConnection("MovingImageSource", "RegistrationMethod", connection2Parameters);
 
   ParameterMapType connection3Parameters;
   connection3Parameters["NameOfInterface"] = { "itkImageSourceInterface" };
-  blueprint->AddConnection(index0, index3, connection3Parameters);
-
+  blueprint->AddConnection("RegistrationMethod", "ResultImageSink", connection3Parameters);
+  
   ParameterMapType connection4Parameters;
   connection4Parameters["NameOfInterface"] = { "itkMetricv4Interface" };
-  blueprint->AddConnection(index4, index0, connection4Parameters);
+  blueprint->AddConnection("Metric", "RegistrationMethod", connection4Parameters);
 
   EXPECT_NO_THROW(overlord = Overlord::New());
   EXPECT_NO_THROW(overlord->SetBlueprint(blueprint));
@@ -208,44 +208,44 @@ TEST_F(RegistrationItkv4Test, WithMeanSquaresMetric)
   ParameterMapType component0Parameters;
   component0Parameters["NameOfClass"] = { "ItkImageRegistrationMethodv4Component" };
   component0Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
-  ComponentIndexType index0 = blueprint->AddComponent(component0Parameters);
+  ComponentIndexType index0 = blueprint->AddComponent("RegistrationMethod", component0Parameters);
 
   ParameterMapType component1Parameters;
   component1Parameters["NameOfClass"] = { "ItkImageSourceFixedComponent" };
   component1Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
-  ComponentIndexType index1 = blueprint->AddComponent(component1Parameters);
+  ComponentIndexType index1 = blueprint->AddComponent("FixedImageSource", component1Parameters);
 
   ParameterMapType component2Parameters;
   component2Parameters["NameOfClass"] = { "ItkImageSourceMovingComponent" };
   component2Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
-  ComponentIndexType index2 = blueprint->AddComponent(component2Parameters);
+  ComponentIndexType index2 = blueprint->AddComponent("MovingImageSource", component2Parameters);
 
   ParameterMapType component3Parameters;
   component3Parameters["NameOfClass"] = { "ItkImageFilterSinkComponent" };
-  component3Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
-  ComponentIndexType index3 = blueprint->AddComponent(component3Parameters);
+  component3Parameters["Dimensionality"] = { "3" }; // should be derived from the outputs
+  ComponentIndexType index3 = blueprint->AddComponent("ResultImageSink", component3Parameters);
 
   ParameterMapType component4Parameters;
   component4Parameters["NameOfClass"] = { "ItkMeanSquaresImageToImageMetricv4Component" };
   component4Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
-  ComponentIndexType index4 = blueprint->AddComponent(component4Parameters);
+  ComponentIndexType index4 = blueprint->AddComponent("Metric", component4Parameters);
 
 
   ParameterMapType connection1Parameters;
   connection1Parameters["NameOfInterface"] = { "itkImageSourceFixedInterface" };
-  blueprint->AddConnection(index1, index0, connection1Parameters);
+  blueprint->AddConnection("FixedImageSource", "RegistrationMethod", connection1Parameters);
 
   ParameterMapType connection2Parameters;
   connection2Parameters["NameOfInterface"] = { "itkImageSourceMovingInterface" };
-  blueprint->AddConnection(index2, index0, connection2Parameters);
+  blueprint->AddConnection("MovingImageSource", "RegistrationMethod", connection2Parameters);
 
   ParameterMapType connection3Parameters;
   connection3Parameters["NameOfInterface"] = { "itkImageSourceInterface" };
-  blueprint->AddConnection(index0, index3, connection3Parameters);
+  blueprint->AddConnection("RegistrationMethod", "ResultImageSink", connection3Parameters);
 
   ParameterMapType connection4Parameters;
   connection4Parameters["NameOfInterface"] = { "itkMetricv4Interface" };
-  blueprint->AddConnection(index4, index0, connection4Parameters);
+  blueprint->AddConnection("Metric", "RegistrationMethod", connection4Parameters);
 
   EXPECT_NO_THROW(overlord = Overlord::New());
   EXPECT_NO_THROW(overlord->SetBlueprint(blueprint));
@@ -270,62 +270,62 @@ TEST_F(RegistrationItkv4Test, DisplacementField2D)
   ParameterMapType component0Parameters;
   component0Parameters["NameOfClass"] = { "ItkImageRegistrationMethodv4Component" };
   component0Parameters["Dimensionality"] = { "2" }; // should be derived from the inputs
-  ComponentIndexType index0 = blueprint->AddComponent(component0Parameters);
+  ComponentIndexType index0 = blueprint->AddComponent("RegistrationMethod", component0Parameters);
 
   ParameterMapType component1Parameters;
   component1Parameters["NameOfClass"] = { "ItkImageSourceFixedComponent" };
   component1Parameters["Dimensionality"] = { "2" }; // should be derived from the inputs
-  ComponentIndexType index1 = blueprint->AddComponent(component1Parameters);
+  ComponentIndexType index1 = blueprint->AddComponent("FixedImageSource", component1Parameters);
 
   ParameterMapType component2Parameters;
   component2Parameters["NameOfClass"] = { "ItkImageSourceMovingComponent" };
   component2Parameters["Dimensionality"] = { "2" }; // should be derived from the inputs
-  ComponentIndexType index2 = blueprint->AddComponent(component2Parameters);
+  ComponentIndexType index2 = blueprint->AddComponent("MovingImageSource", component2Parameters);
 
   ParameterMapType component3Parameters;
   component3Parameters["NameOfClass"] = { "ItkImageFilterSinkComponent" };
   component3Parameters["Dimensionality"] = { "2" }; // should be derived from the outputs
-  ComponentIndexType index3 = blueprint->AddComponent(component3Parameters);
+  ComponentIndexType index3 = blueprint->AddComponent("ResultImageSink", component3Parameters);
 
   ParameterMapType component4Parameters;
   component4Parameters["NameOfClass"] = { "DisplacementFieldItkImageFilterSinkComponent" };
   component4Parameters["Dimensionality"] = { "2" }; // should be derived from the outputs
-  ComponentIndexType index4 = blueprint->AddComponent(component4Parameters);
+  ComponentIndexType index4 = blueprint->AddComponent("ResultDisplacementFieldSink", component4Parameters);
 
   ParameterMapType component5Parameters;
   component5Parameters["NameOfClass"] = { "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component" };
   component5Parameters["Dimensionality"] = { "2" }; // should be derived from the inputs
-  ComponentIndexType index5 = blueprint->AddComponent(component5Parameters);
+  ComponentIndexType index5 = blueprint->AddComponent("Metric", component5Parameters);
 
 
   ParameterMapType connection1Parameters;
   connection1Parameters["NameOfInterface"] = { "itkImageSourceFixedInterface" };
-  blueprint->AddConnection(index1, index0, connection1Parameters);
+  blueprint->AddConnection("FixedImageSource", "RegistrationMethod", connection1Parameters);
 
   ParameterMapType connection2Parameters;
   connection2Parameters["NameOfInterface"] = { "itkImageSourceMovingInterface" };
-  blueprint->AddConnection(index2, index0, connection2Parameters);
+  blueprint->AddConnection("MovingImageSource", "RegistrationMethod", connection2Parameters);
 
   ParameterMapType connection3Parameters;
   connection3Parameters["NameOfInterface"] = { "itkImageSourceInterface" };
-  blueprint->AddConnection(index0, index3, connection3Parameters);
+  blueprint->AddConnection("RegistrationMethod", "ResultImageSink", connection3Parameters);
 
   ParameterMapType connection4Parameters;
   connection4Parameters["NameOfInterface"] = { "DisplacementFieldItkImageSourceInterface" };
-  blueprint->AddConnection(index0, index4, connection4Parameters);
+  blueprint->AddConnection("RegistrationMethod", "ResultDisplacementFieldSink", connection4Parameters);
 
   ParameterMapType connection5Parameters;
   connection5Parameters["NameOfInterface"] = { "itkMetricv4Interface" };
-  blueprint->AddConnection(index5, index0, connection5Parameters);
+  blueprint->AddConnection("Metric", "RegistrationMethod", connection5Parameters);
 
   EXPECT_NO_THROW(overlord = Overlord::New());
+  EXPECT_NO_THROW(overlord->SetBlueprint(blueprint));
 
   //The Overlord is not yet an itkfilter with inputs and outputs, therefore it reads and writes the files temporarily.
   DataManagerType::Pointer dataManager = DataManagerType::New();
   overlord->inputFileNames = { dataManager->GetInputFile("BrainProtonDensitySliceBorder20.png"), dataManager->GetInputFile("BrainProtonDensitySliceR10X13Y17.png") };
   overlord->outputFileNames = { dataManager->GetOutputFile("RegistrationItkv4Test_BrainProtonDensity.mhd"), dataManager->GetOutputFile("RegistrationItkv4Test_Displacement_BrainProtonDensity.mhd") };
 
-  EXPECT_NO_THROW(overlord->SetBlueprint(blueprint));
   bool allUniqueComponents;
   EXPECT_NO_THROW(allUniqueComponents = overlord->Configure());
   EXPECT_TRUE(allUniqueComponents);

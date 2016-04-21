@@ -53,8 +53,8 @@ public:
     // Setting of the component are considered as criteria too. If the components can interpret the parameters, it's all good. 
     componentParameters["Sigma"] = { "2.5" };
 
-    ComponentIndexType index0 = blueprint->AddComponent(componentParameters);
-    ComponentIndexType index1 = blueprint->AddComponent(componentParameters);
+    ComponentIndexType index0 = blueprint->AddComponent("FistStageFilter", componentParameters);
+    ComponentIndexType index1 = blueprint->AddComponent("SecondStageFilter", componentParameters);
 
     // TODO: For now, the connections to make are explicitly indicated by the Interface name. 
     // Design consideration: connections might be indicated by higher concepts ( MetricCostConnection: value and/or derivative? DefaultPipeline? ) 
@@ -62,21 +62,21 @@ public:
     connectionParameters["NameOfInterface"] = { "itkImageSourceInterface" };
 
     //TODO: check direction
-    blueprint->AddConnection(index0, index1, connectionParameters);
+    blueprint->AddConnection("FistStageFilter", "SecondStageFilter", connectionParameters);
 
     /** Add a description of the SourceComponent*/
     ParameterMapType sourceComponentParameters;
     sourceComponentParameters["NameOfClass"] = { "ItkImageSourceComponent" };
-    ComponentIndexType sourceIndex = blueprint->AddComponent(sourceComponentParameters);
+    ComponentIndexType sourceIndex = blueprint->AddComponent("Source", sourceComponentParameters);
 
     /** Add a description of the SinkComponent*/
     ParameterMapType sinkComponentParameters;
     sinkComponentParameters["NameOfClass"] = { "ItkImageFilterSinkComponent" };
-    ComponentIndexType sinkIndex = blueprint->AddComponent(sinkComponentParameters);
+    ComponentIndexType sinkIndex = blueprint->AddComponent("Sink", sinkComponentParameters);
     
     /** Connect Sink and Source to the itkImageFilter Components*/
-    blueprint->AddConnection(sourceIndex,index0, connectionParameters); // 
-    blueprint->AddConnection(index1, sinkIndex, connectionParameters);
+    blueprint->AddConnection("Source", "FistStageFilter", connectionParameters); // 
+    blueprint->AddConnection("SecondStageFilter", "Sink", connectionParameters);
   }
 
   virtual void TearDown() {
