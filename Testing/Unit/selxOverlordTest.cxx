@@ -46,7 +46,7 @@ public:
     metric2TransformConnectionParameters["NameOfInterface"] = { "TransformedImageInterface" };
 
     //TODO: check direction
-    blueprint->AddConnection("Metric", "Transform", metric2TransformConnectionParameters);
+    blueprint->AddConnection("Transform","Metric", metric2TransformConnectionParameters);
 
   }
 

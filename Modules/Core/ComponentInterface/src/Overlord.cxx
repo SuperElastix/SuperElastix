@@ -104,7 +104,7 @@ namespace selx
       // If a node has 0 possible components, the configuration is aborted (with an exception)
       // If all nodes have exactly 1 possible component, no more criteria are needed.
       //
-      // Design consideration: should the exception be thrown by this->m_ComponentSelectorContainer[*componentIt]?
+      // Design consideration: should the exception be thrown by this->m_ComponentSelectorContainer[name]->UpdatePossibleComponents()?
       // The (failing) criteria can be printed as well.
       if (numberOfComponents > 1)
       {
@@ -118,6 +118,22 @@ namespace selx
 
   void Overlord::ApplyNodeConfiguration()
   {
+    // At the overlord we store all components selectors in a mapping based  
+    // on the keys we find in the graph. This is a flexible solution, but is
+    // fragile as well since correspondence is implicit.
+    // We might consider copying the blueprint graph to a component selector
+    // graph, such that all graph operations correspond
+    //
+    // This could be in line with the idea of maintaining 2 graphs: 
+    // 1 descriptive (= const blueprint) and 1 internal holding to realized 
+    // components.
+    // Manipulating the internal graph (combining component nodes into a 
+    // hybrid node, duplicating sub graphs, etc) is possible then.
+    //
+    // Additional redesign consideration: the final graph should hold the 
+    // realized components at each node and not the ComponentSelectors that, 
+    // in turn, hold 1 (or more) component.
+
     Blueprint::ComponentNamesType componentNames = this->m_Blueprint->GetComponentNames();
     for (auto const & name : componentNames)
     {
@@ -131,34 +147,6 @@ namespace selx
   }
   void Overlord::ApplyConnectionConfiguration()
   {
-    //typedef Blueprint::OutputIteratorType OutputIteratorType;
-    //typedef Blueprint::OutputIteratorPairType OutputIteratorPairType;
-
-    //TODO: these loops have to be redesigned for a number of reasons:
-    // - They rely on the assumption that the index of the vector equals the componentIndex in blueprint
-    // - Tedious, integer indexing.
-    //
-    // We might consider copying the blueprint graph to a component selector 
-    // graph, such that all graph operations correspond
-    //
-    // This could be in line with the idea of maintaining 2 graphs: 1 descriptive (= const blueprint) and
-    // 1 internal holding to realized components.
-    // Manipulating the internal graph (combining component nodes into a hybrid node, duplicating sub graphs, etc)
-    // is possible then.
-    //
-    // Additional redesign consideration: the final graph should hold the realized components at each node and not the 
-    // ComponentSelectors that, in turn, hold 1 (or more) component.
-    //
-    //
-    // Or loop over connections:
-    //Blueprint::ConnectionIteratorPairType connectionItPair = this->m_Blueprint->GetConnectionIterator();
-    //Blueprint::ConnectionIteratorPairType::first_type  connectionIt;
-    //Blueprint::ConnectionIteratorPairType::second_type  connectionItEnd = connectionItPair.second;
-    //int count = 0;
-    //for (connectionIt = connectionItPair.first; connectionIt != connectionItEnd; ++connectionIt)
-    //{
-    //}
-
     Blueprint::ComponentNamesType componentNames = this->m_Blueprint->GetComponentNames();
     for (auto const & name : componentNames)
     {
@@ -203,7 +191,7 @@ namespace selx
           // connect only via interfaces provided by user configuration
           for (auto const & interfaceName : connectionProperties["NameOfInterface"])
           {
-            numberOfConnections += targetComponent->AcceptConnectionFrom(interfaceName.c_str(), sourceComponent);
+            numberOfConnections += (targetComponent->AcceptConnectionFrom(interfaceName.c_str(), sourceComponent) == ComponentBase::interfaceStatus::success ? 1: 0);
           }
         }
         else
