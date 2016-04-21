@@ -188,9 +188,10 @@ TEST_F( BlueprintTest, WriteBlueprint )
   
   connection0Parameters["NameOfInterface"] = { "MetricValue" };
   blueprint->AddConnection("Metric", "Optimizer", connection0Parameters);
-
-  blueprint->AddConnection( "MetricGradient" , "Optimizer" );
-  blueprint->AddConnection("Optimizer", "Metric");
+  
+  blueprint->AddConnection("MetricGradient", "Optimizer");
+  blueprint->AddConnection("Optimizer", "Transform");
+  blueprint->AddConnection("Transform", "Metric");
 
   EXPECT_NO_THROW( blueprint->WriteBlueprint( "blueprint.dot" ) );
 }
