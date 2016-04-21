@@ -18,7 +18,6 @@ public:
   typedef Overlord::Pointer                 OverlordPointerType;
   typedef Blueprint::Pointer                BlueprintPointerType;
   typedef Blueprint::ConstPointer           BlueprintConstPointerType;
-  typedef Blueprint::ComponentIndexType     ComponentIndexType;
   typedef Blueprint::ParameterMapType       ParameterMapType;
   typedef Blueprint::ParameterValueType     ParameterValueType;
   typedef DataManager DataManagerType;
@@ -54,22 +53,22 @@ TEST_F(ElastixComponentTest, ImagesOnly)
   ParameterMapType component0Parameters;
   component0Parameters["NameOfClass"] = { "ElastixComponent" };
   component0Parameters["RegistrationSettings"] = { "rigid" };
-  ComponentIndexType index0 = blueprint->AddComponent("RegistrationMethod", component0Parameters);
+  blueprint->AddComponent("RegistrationMethod", component0Parameters);
 
   ParameterMapType component1Parameters;
   component1Parameters["NameOfClass"] = { "ItkImageSourceFixedComponent" };
   component1Parameters["Dimensionality"] = { "2" }; // should be derived from the inputs
-  ComponentIndexType index1 = blueprint->AddComponent("FixedImageSource", component1Parameters);
+  blueprint->AddComponent("FixedImageSource", component1Parameters);
 
   ParameterMapType component2Parameters;
   component2Parameters["NameOfClass"] = { "ItkImageSourceMovingComponent" };
   component2Parameters["Dimensionality"] = { "2" }; // should be derived from the inputs
-  ComponentIndexType index2 = blueprint->AddComponent("MovingImageSource", component2Parameters);
+  blueprint->AddComponent("MovingImageSource", component2Parameters);
 
   ParameterMapType component3Parameters;
   component3Parameters["NameOfClass"] = { "ItkImageSinkComponent" };
   component3Parameters["Dimensionality"] = { "2" }; // should be derived from the inputs
-  ComponentIndexType index3 = blueprint->AddComponent("ResultImageSink", component3Parameters);
+  blueprint->AddComponent("ResultImageSink", component3Parameters);
 
 
   ParameterMapType connection1Parameters;

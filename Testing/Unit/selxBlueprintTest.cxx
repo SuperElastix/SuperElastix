@@ -8,7 +8,6 @@ class BlueprintTest : public ::testing::Test {
 public:
 
   typedef Blueprint::Pointer                BlueprintPointerType;
-  typedef Blueprint::ComponentIndexType     ComponentIndexType;
   typedef Blueprint::ParameterMapType       ParameterMapType;
   typedef Blueprint::ParameterValueType     ParameterValueType;
 
@@ -24,17 +23,17 @@ TEST_F( BlueprintTest, AddComponent )
   BlueprintPointerType blueprint;
   EXPECT_NO_THROW( blueprint = Blueprint::New() );
 
-  ComponentIndexType index0;
-  EXPECT_NO_THROW( index0 = blueprint->AddComponent( "MyComponentName" ) );
+  bool success0;
+  EXPECT_NO_THROW( success0 = blueprint->AddComponent( "MyComponentName" ) );
 
-  ComponentIndexType index1;
-  EXPECT_NO_THROW(index1 = blueprint->AddComponent("MyComponentName", parameterMap));
+  bool success1;
+  EXPECT_NO_THROW( success1 = blueprint->AddComponent("MyComponentName", parameterMap));
 }
 
 TEST_F( BlueprintTest, GetComponent ) 
 {
   BlueprintPointerType blueprint = Blueprint::New();
-  ComponentIndexType index = blueprint->AddComponent("MyComponentName", parameterMap);
+  blueprint->AddComponent("MyComponentName", parameterMap);
 
   ParameterMapType parameterMapTest;
   EXPECT_NO_THROW( parameterMapTest = blueprint->GetComponent( "MyComponentName" ) );
@@ -44,7 +43,7 @@ TEST_F( BlueprintTest, GetComponent )
 TEST_F( BlueprintTest, SetComponent ) 
 {
   BlueprintPointerType blueprint = Blueprint::New();
-  ComponentIndexType index = blueprint->AddComponent( "MyComponentName", parameterMap);
+  blueprint->AddComponent( "MyComponentName", parameterMap);
 
   ParameterMapType parameterMapTest;
   EXPECT_NO_THROW(blueprint->SetComponent("MyComponentName", parameterMap));
@@ -57,7 +56,7 @@ TEST_F( BlueprintTest, SetComponent )
 // TEST_F( BlueprintTest, DeleteComponent ) 
 // {
 //   BlueprintPointerType blueprint = Blueprint::New();
-//   ComponentIndexType index = blueprint->AddComponent( parameterMap );
+//   blueprint->AddComponent( parameterMap );
 //
 //   ParameterMapType parameterMapTest;
 //   EXPECT_NO_THROW( parameterMapTest = blueprint->GetComponent( index ) );
@@ -71,9 +70,9 @@ TEST_F( BlueprintTest, AddConnection )
 {
   BlueprintPointerType blueprint = Blueprint::New();
 
-  ComponentIndexType index0 = blueprint->AddComponent( "Component0" );
-  ComponentIndexType index1 = blueprint->AddComponent( "Component1" );
-  ComponentIndexType index2 = blueprint->AddComponent( "Component2" );
+  blueprint->AddComponent( "Component0" );
+  blueprint->AddComponent( "Component1" );
+  blueprint->AddComponent( "Component2" );
 
   // Connection should not exist
   EXPECT_FALSE(blueprint->ConnectionExists("Component0", "Component1"));
@@ -104,8 +103,8 @@ TEST_F( BlueprintTest, GetConnection )
 {
   BlueprintPointerType blueprint = Blueprint::New();
 
-  ComponentIndexType index0 = blueprint->AddComponent("Component0");
-  ComponentIndexType index1 = blueprint->AddComponent("Component1");
+  blueprint->AddComponent("Component0");
+  blueprint->AddComponent("Component1");
 
   ParameterMapType parameterMapTest0;
   EXPECT_TRUE(blueprint->AddConnection("Component0", "Component1", parameterMap));
@@ -117,8 +116,8 @@ TEST_F( BlueprintTest, SetConnection )
 {
   BlueprintPointerType blueprint = Blueprint::New();
 
-  ComponentIndexType index0 = blueprint->AddComponent("Component0");
-  ComponentIndexType index1 = blueprint->AddComponent("Component1");
+  blueprint->AddComponent("Component0");
+  blueprint->AddComponent("Component1");
   blueprint->AddConnection("Component0", "Component1", parameterMap);
 
   ParameterMapType parameterMapTest0;
@@ -138,8 +137,8 @@ TEST_F( BlueprintTest, DeleteConnection )
 {
   BlueprintPointerType blueprint = Blueprint::New();
 
-  ComponentIndexType index0 = blueprint->AddComponent("Component0");
-  ComponentIndexType index1 = blueprint->AddComponent("Component1");
+  blueprint->AddComponent("Component0");
+  blueprint->AddComponent("Component1");
   blueprint->AddConnection("Component0", "Component1");
 
   // Connection should exist
@@ -161,20 +160,20 @@ TEST_F( BlueprintTest, WriteBlueprint )
   component0Parameters["NameOfClass"] = { "MyMetric" };
   component0Parameters["Dimensionality"] = { "3" };
   component0Parameters["Kernel"] = { "5", "5", "5" };
-  ComponentIndexType index0 = blueprint->AddComponent("Metric", component0Parameters);
+  blueprint->AddComponent("Metric", component0Parameters);
 
   ParameterMapType component1Parameters;
   component1Parameters["NameOfClass"] = { "MyFiniteDifferenceCalculator" };
   component1Parameters["Delta"] = { "0.01" };
-  ComponentIndexType index1 = blueprint->AddComponent("MetricGradient", component1Parameters);
+  blueprint->AddComponent("MetricGradient", component1Parameters);
 
   ParameterMapType component2Parameters;
   component2Parameters["NameOfClass"] = { "MyOptimizer" };
-  ComponentIndexType index2 = blueprint->AddComponent("Optimizer", component2Parameters);
+  blueprint->AddComponent("Optimizer", component2Parameters);
 
   ParameterMapType component3Parameters;
   component3Parameters["NameOfClass"] = { "MyTransform" };
-  ComponentIndexType index3 = blueprint->AddComponent("Transform", component3Parameters);
+  blueprint->AddComponent("Transform", component3Parameters);
   
   blueprint->AddConnection("Metric", "MetricGradient");
   blueprint->AddConnection("MetricGradient", "Optimizer");

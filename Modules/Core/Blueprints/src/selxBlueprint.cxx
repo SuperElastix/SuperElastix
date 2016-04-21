@@ -40,26 +40,24 @@ namespace selx {
     return parameterMaplabel_writer<ParameterMapType>(n);
   }
 
-Blueprint::ComponentIndexType
+bool
 Blueprint
 ::AddComponent(ComponentNameType name)
 {
   this->Modified();
-  ComponentIndexType index = this->m_Graph.add_vertex(name, { name, { {} } });
 
-  // Return component index so component can retrieved at a later time
-  return index;
+  // Returns true is addition was successful 
+  return this->m_Graph.insert_vertex(name, { name, { {} } }).second;
 }
 
-Blueprint::ComponentIndexType
+bool
 Blueprint
 ::AddComponent(ComponentNameType name, ParameterMapType parameterMap)
 {
   this->Modified();
-  ComponentIndexType index = this->m_Graph.add_vertex(name, { name, parameterMap });
 
-  // Return component index so component can retrieved at a later time
-  return index;
+  // Returns true is addition was successful 
+  return this->m_Graph.insert_vertex(name, { name, parameterMap }).second;
 }
 
 Blueprint::ParameterMapType
@@ -171,19 +169,20 @@ Blueprint
   return boost::edge_by_label( upstream, downstream, this->m_Graph).second;
 }
 
-
-Blueprint::ConnectionIteratorPairType 
+// TODO: can we really regard this as deprecated? Remove then.
+/*
+Blueprint::ConnectionIteratorPairType
 Blueprint
 ::GetConnectionIterator(void) {
   return boost::edges(this->m_Graph);
 }
 
-Blueprint::OutputIteratorPairType 
+Blueprint::OutputIteratorPairType
 Blueprint
 ::GetOutputIterator(const ComponentNameType name) {
   return boost::out_edges(this->m_Graph.vertex(name), this->m_Graph);
 }
-
+*/
 Blueprint::ComponentNamesType
 Blueprint
 ::GetOutputNames(const ComponentNameType name) {

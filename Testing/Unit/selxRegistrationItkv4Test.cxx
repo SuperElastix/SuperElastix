@@ -30,7 +30,6 @@ public:
   typedef Overlord::Pointer                 OverlordPointerType;
   typedef Blueprint::Pointer                BlueprintPointerType;
   typedef Blueprint::ConstPointer           BlueprintConstPointerType;
-  typedef Blueprint::ComponentIndexType     ComponentIndexType;
   typedef Blueprint::ParameterMapType       ParameterMapType;
   typedef Blueprint::ParameterValueType     ParameterValueType;
   typedef DataManager DataManagerType;
@@ -94,22 +93,22 @@ TEST_F(RegistrationItkv4Test, ImagesOnly)
   ParameterMapType component0Parameters;
   component0Parameters["NameOfClass"] = { "ItkImageRegistrationMethodv4Component" };
   component0Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
-  ComponentIndexType index0 = blueprint->AddComponent("RegistrationMethod", component0Parameters);
+  blueprint->AddComponent("RegistrationMethod", component0Parameters);
 
   ParameterMapType component1Parameters;
   component1Parameters["NameOfClass"] = { "ItkImageSourceFixedComponent" };
   component1Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
-  ComponentIndexType index1 = blueprint->AddComponent("FixedImageSource", component1Parameters);
+  blueprint->AddComponent("FixedImageSource", component1Parameters);
 
   ParameterMapType component2Parameters;
   component2Parameters["NameOfClass"] = { "ItkImageSourceMovingComponent" };
   component2Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
-  ComponentIndexType index2 = blueprint->AddComponent("MovingImageSource", component2Parameters);
+  blueprint->AddComponent("MovingImageSource", component2Parameters);
 
   ParameterMapType component3Parameters;
   component3Parameters["NameOfClass"] = { "ItkImageFilterSinkComponent" };
   component3Parameters["Dimensionality"] = { "3" }; // should be derived from the outputs
-  ComponentIndexType index3 = blueprint->AddComponent("ResultImageSink", component3Parameters);
+  blueprint->AddComponent("ResultImageSink", component3Parameters);
 
 
   ParameterMapType connection1Parameters;
@@ -147,27 +146,27 @@ TEST_F(RegistrationItkv4Test, WithANTSCCMetric)
   ParameterMapType component0Parameters;
   component0Parameters["NameOfClass"] = { "ItkImageRegistrationMethodv4Component" };
   component0Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
-  ComponentIndexType index0 = blueprint->AddComponent("RegistrationMethod", component0Parameters);
+  blueprint->AddComponent("RegistrationMethod", component0Parameters);
 
   ParameterMapType component1Parameters;
   component1Parameters["NameOfClass"] = { "ItkImageSourceFixedComponent" };
   component1Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
-  ComponentIndexType index1 = blueprint->AddComponent("FixedImageSource", component1Parameters);
+  blueprint->AddComponent("FixedImageSource", component1Parameters);
 
   ParameterMapType component2Parameters;
   component2Parameters["NameOfClass"] = { "ItkImageSourceMovingComponent" };
   component2Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
-  ComponentIndexType index2 = blueprint->AddComponent("MovingImageSource", component2Parameters);
+  blueprint->AddComponent("MovingImageSource", component2Parameters);
 
   ParameterMapType component3Parameters;
   component3Parameters["NameOfClass"] = { "ItkImageFilterSinkComponent" };
   component3Parameters["Dimensionality"] = { "3" }; // should be derived from the outputs
-  ComponentIndexType index3 = blueprint->AddComponent("ResultImageSink", component3Parameters);
+  blueprint->AddComponent("ResultImageSink", component3Parameters);
 
   ParameterMapType component4Parameters;
   component4Parameters["NameOfClass"] = { "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component" };
   component4Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
-  ComponentIndexType index4 = blueprint->AddComponent("Metric", component4Parameters);
+  blueprint->AddComponent("Metric", component4Parameters);
 
 
   ParameterMapType connection1Parameters;
@@ -208,27 +207,27 @@ TEST_F(RegistrationItkv4Test, WithMeanSquaresMetric)
   ParameterMapType component0Parameters;
   component0Parameters["NameOfClass"] = { "ItkImageRegistrationMethodv4Component" };
   component0Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
-  ComponentIndexType index0 = blueprint->AddComponent("RegistrationMethod", component0Parameters);
+  blueprint->AddComponent("RegistrationMethod", component0Parameters);
 
   ParameterMapType component1Parameters;
   component1Parameters["NameOfClass"] = { "ItkImageSourceFixedComponent" };
   component1Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
-  ComponentIndexType index1 = blueprint->AddComponent("FixedImageSource", component1Parameters);
+  blueprint->AddComponent("FixedImageSource", component1Parameters);
 
   ParameterMapType component2Parameters;
   component2Parameters["NameOfClass"] = { "ItkImageSourceMovingComponent" };
   component2Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
-  ComponentIndexType index2 = blueprint->AddComponent("MovingImageSource", component2Parameters);
+  blueprint->AddComponent("MovingImageSource", component2Parameters);
 
   ParameterMapType component3Parameters;
   component3Parameters["NameOfClass"] = { "ItkImageFilterSinkComponent" };
   component3Parameters["Dimensionality"] = { "3" }; // should be derived from the outputs
-  ComponentIndexType index3 = blueprint->AddComponent("ResultImageSink", component3Parameters);
+  blueprint->AddComponent("ResultImageSink", component3Parameters);
 
   ParameterMapType component4Parameters;
   component4Parameters["NameOfClass"] = { "ItkMeanSquaresImageToImageMetricv4Component" };
   component4Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
-  ComponentIndexType index4 = blueprint->AddComponent("Metric", component4Parameters);
+  blueprint->AddComponent("Metric", component4Parameters);
 
 
   ParameterMapType connection1Parameters;
@@ -270,32 +269,32 @@ TEST_F(RegistrationItkv4Test, DisplacementField2D)
   ParameterMapType component0Parameters;
   component0Parameters["NameOfClass"] = { "ItkImageRegistrationMethodv4Component" };
   component0Parameters["Dimensionality"] = { "2" }; // should be derived from the inputs
-  ComponentIndexType index0 = blueprint->AddComponent("RegistrationMethod", component0Parameters);
+  blueprint->AddComponent("RegistrationMethod", component0Parameters);
 
   ParameterMapType component1Parameters;
   component1Parameters["NameOfClass"] = { "ItkImageSourceFixedComponent" };
   component1Parameters["Dimensionality"] = { "2" }; // should be derived from the inputs
-  ComponentIndexType index1 = blueprint->AddComponent("FixedImageSource", component1Parameters);
+  blueprint->AddComponent("FixedImageSource", component1Parameters);
 
   ParameterMapType component2Parameters;
   component2Parameters["NameOfClass"] = { "ItkImageSourceMovingComponent" };
   component2Parameters["Dimensionality"] = { "2" }; // should be derived from the inputs
-  ComponentIndexType index2 = blueprint->AddComponent("MovingImageSource", component2Parameters);
+  blueprint->AddComponent("MovingImageSource", component2Parameters);
 
   ParameterMapType component3Parameters;
   component3Parameters["NameOfClass"] = { "ItkImageFilterSinkComponent" };
   component3Parameters["Dimensionality"] = { "2" }; // should be derived from the outputs
-  ComponentIndexType index3 = blueprint->AddComponent("ResultImageSink", component3Parameters);
+  blueprint->AddComponent("ResultImageSink", component3Parameters);
 
   ParameterMapType component4Parameters;
   component4Parameters["NameOfClass"] = { "DisplacementFieldItkImageFilterSinkComponent" };
   component4Parameters["Dimensionality"] = { "2" }; // should be derived from the outputs
-  ComponentIndexType index4 = blueprint->AddComponent("ResultDisplacementFieldSink", component4Parameters);
+  blueprint->AddComponent("ResultDisplacementFieldSink", component4Parameters);
 
   ParameterMapType component5Parameters;
   component5Parameters["NameOfClass"] = { "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component" };
   component5Parameters["Dimensionality"] = { "2" }; // should be derived from the inputs
-  ComponentIndexType index5 = blueprint->AddComponent("Metric", component5Parameters);
+  blueprint->AddComponent("Metric", component5Parameters);
 
 
   ParameterMapType connection1Parameters;

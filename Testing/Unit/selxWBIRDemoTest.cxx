@@ -44,7 +44,6 @@ public:
   typedef Overlord::Pointer                 OverlordPointerType;
   typedef Blueprint::Pointer                BlueprintPointerType;
   typedef Blueprint::ConstPointer           BlueprintConstPointerType;
-  typedef Blueprint::ComponentIndexType     ComponentIndexType;
   typedef Blueprint::ParameterMapType       ParameterMapType;
   typedef Blueprint::ParameterValueType     ParameterValueType;
   typedef DataManager DataManagerType;
@@ -83,27 +82,27 @@ TEST_F(WBIRDemoTest, itkv4_SVF_ANTSCC)
 
   ParameterMapType component0Parameters;
   component0Parameters["NameOfClass"] = { "ItkImageRegistrationMethodv4Component" };
-  ComponentIndexType index0 = blueprint->AddComponent("RegistrationMethod", component0Parameters);
+  blueprint->AddComponent("RegistrationMethod", component0Parameters);
 
   ParameterMapType component1Parameters;
   component1Parameters["NameOfClass"] = { "ItkImageSourceFixedComponent" };
-  ComponentIndexType index1 = blueprint->AddComponent("FixedImageSource", component1Parameters);
+  blueprint->AddComponent("FixedImageSource", component1Parameters);
 
   ParameterMapType component2Parameters;
   component2Parameters["NameOfClass"] = { "ItkImageSourceMovingComponent" };
-  ComponentIndexType index2 = blueprint->AddComponent("MovingImageSource", component2Parameters);
+  blueprint->AddComponent("MovingImageSource", component2Parameters);
 
   ParameterMapType component3Parameters;
   component3Parameters["NameOfClass"] = { "ItkImageFilterSinkComponent" };
-  ComponentIndexType index3 = blueprint->AddComponent("ResultImageSink", component3Parameters);
+  blueprint->AddComponent("ResultImageSink", component3Parameters);
 
   ParameterMapType component4Parameters;
   component4Parameters["NameOfClass"] = { "DisplacementFieldItkImageFilterSinkComponent" };
-  ComponentIndexType index4 = blueprint->AddComponent("ResultDisplacementFieldSink", component4Parameters);
+  blueprint->AddComponent("ResultDisplacementFieldSink", component4Parameters);
 
   ParameterMapType component5Parameters;
   component5Parameters["NameOfClass"] = { "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component" };
-  ComponentIndexType index5 = blueprint->AddComponent("Metric", component5Parameters);
+  blueprint->AddComponent("Metric", component5Parameters);
 
 
   ParameterMapType connection1Parameters;
@@ -155,27 +154,27 @@ TEST_F(WBIRDemoTest, itkv4_SVF_MSD)
 
   ParameterMapType component0Parameters;
   component0Parameters["NameOfClass"] = { "ItkImageRegistrationMethodv4Component" };
-  ComponentIndexType index0 = blueprint->AddComponent("RegistrationMethod", component0Parameters);
+  blueprint->AddComponent("RegistrationMethod", component0Parameters);
 
   ParameterMapType component1Parameters;
   component1Parameters["NameOfClass"] = { "ItkImageSourceFixedComponent" };
-  ComponentIndexType index1 = blueprint->AddComponent("FixedImageSource", component1Parameters);
+  blueprint->AddComponent("FixedImageSource", component1Parameters);
 
   ParameterMapType component2Parameters;
   component2Parameters["NameOfClass"] = { "ItkImageSourceMovingComponent" };
-  ComponentIndexType index2 = blueprint->AddComponent("MovingImageSource", component2Parameters);
+  blueprint->AddComponent("MovingImageSource", component2Parameters);
 
   ParameterMapType component3Parameters;
   component3Parameters["NameOfClass"] = { "ItkImageFilterSinkComponent" };
-  ComponentIndexType index3 = blueprint->AddComponent("ResultImageSink", component3Parameters);
+  blueprint->AddComponent("ResultImageSink", component3Parameters);
 
   ParameterMapType component4Parameters;
   component4Parameters["NameOfClass"] = { "DisplacementFieldItkImageFilterSinkComponent" };
-  ComponentIndexType index4 = blueprint->AddComponent("ResultDisplacementFieldSink", component4Parameters);
+  blueprint->AddComponent("ResultDisplacementFieldSink", component4Parameters);
 
   ParameterMapType component5Parameters;
   component5Parameters["NameOfClass"] = { "ItkMeanSquaresImageToImageMetricv4Component" };
-  ComponentIndexType index5 = blueprint->AddComponent("Metric", component5Parameters);
+  blueprint->AddComponent("Metric", component5Parameters);
 
 
   ParameterMapType connection1Parameters;
@@ -230,19 +229,19 @@ TEST_F(WBIRDemoTest, elastix_BS_NCC)
   //component0Parameters["RegistrationPreset"] = { "rigid" };
   component0Parameters["Transform"] = { "BSplineTransform" }; 
   component0Parameters["Metric"] = { "AdvancedNormalizedCorrelation" };
-  ComponentIndexType index0 = blueprint->AddComponent("RegistrationMethod", component0Parameters);
+  blueprint->AddComponent("RegistrationMethod", component0Parameters);
 
   ParameterMapType component1Parameters;
   component1Parameters["NameOfClass"] = { "ItkImageSourceFixedComponent" };
-  ComponentIndexType index1 = blueprint->AddComponent("FixedImageSource", component1Parameters);
+  blueprint->AddComponent("FixedImageSource", component1Parameters);
 
   ParameterMapType component2Parameters;
   component2Parameters["NameOfClass"] = { "ItkImageSourceMovingComponent" };
-  ComponentIndexType index2 = blueprint->AddComponent("MovingImageSource", component2Parameters);
+  blueprint->AddComponent("MovingImageSource", component2Parameters);
 
   ParameterMapType component3Parameters;
   component3Parameters["NameOfClass"] = { "ItkImageSinkComponent" };
-  ComponentIndexType index3 = blueprint->AddComponent("ResultImageSink", component3Parameters);
+  blueprint->AddComponent("ResultImageSink", component3Parameters);
 
   ParameterMapType connection1Parameters;
   //optionally, tie properties to connection to avoid ambiguities
@@ -288,19 +287,19 @@ TEST_F(WBIRDemoTest, elastix_BS_MSD)
   //component0Parameters["RegistrationPreset"] = { "rigid" };
   component0Parameters["Transform"] = { "BSplineTransform" };
   component0Parameters["Metric"] = { "AdvancedMeanSquares" };
-  ComponentIndexType index0 = blueprint->AddComponent("RegistrationMethod", component0Parameters);
+  blueprint->AddComponent("RegistrationMethod", component0Parameters);
 
   ParameterMapType component1Parameters;
   component1Parameters["NameOfClass"] = { "ItkImageSourceFixedComponent" };
-  ComponentIndexType index1 = blueprint->AddComponent("FixedImageSource", component1Parameters);
+  blueprint->AddComponent("FixedImageSource", component1Parameters);
 
   ParameterMapType component2Parameters;
   component2Parameters["NameOfClass"] = { "ItkImageSourceMovingComponent" };
-  ComponentIndexType index2 = blueprint->AddComponent("MovingImageSource", component2Parameters);
+  blueprint->AddComponent("MovingImageSource", component2Parameters);
 
   ParameterMapType component3Parameters;
   component3Parameters["NameOfClass"] = { "ItkImageSinkComponent" };
-  ComponentIndexType index3 = blueprint->AddComponent("ResultImageSink", component3Parameters);
+  blueprint->AddComponent("ResultImageSink", component3Parameters);
 
   ParameterMapType connection1Parameters;
   //optionally, tie properties to connection to avoid ambiguities

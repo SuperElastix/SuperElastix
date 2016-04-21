@@ -63,9 +63,10 @@ public:
   typedef boost::graph_traits< GraphType >::out_edge_iterator         OutputIteratorType;
   typedef std::pair< OutputIteratorType, OutputIteratorType >         OutputIteratorPairType;
 
+
   // Interface for managing components
-  ComponentIndexType AddComponent( ComponentNameType name);
-  ComponentIndexType AddComponent(ComponentNameType name, ParameterMapType parameterMap);
+  bool AddComponent( ComponentNameType name);
+  bool AddComponent(ComponentNameType name, ParameterMapType parameterMap);
   ParameterMapType GetComponent(ComponentNameType name);
   void SetComponent(ComponentNameType, ParameterMapType parameterMap);
 
@@ -92,12 +93,14 @@ public:
   bool DeleteConnection(ComponentNameType upstream, ComponentNameType downstream);
   bool ConnectionExists(ComponentNameType upstream, ComponentNameType downstream);
 
+
+  // TODO: can we really regard this as deprecated? Remove then.
   // Returns iterator for all connections in the graph
-  ConnectionIteratorPairType GetConnectionIterator(void);
+  //ConnectionIteratorPairType GetConnectionIterator(void);
 
   // Returns the outgoing connections from a component in the graph,
   // i.e. all components that reads data from given component
-  OutputIteratorPairType GetOutputIterator(const ComponentNameType name);
+  //OutputIteratorPairType GetOutputIterator(const ComponentNameType name);
 
   // Returns a vector of the Component names at the outgoing direction
   // TODO: should this be an iterator over the names?
@@ -106,7 +109,7 @@ public:
   void WriteBlueprint( const std::string filename );
 
 private:
-  
+ 
   ConnectionIndexType GetConnectionIndex( ComponentNameType upsteam, ComponentNameType downstream );
 
   GraphType m_Graph;
