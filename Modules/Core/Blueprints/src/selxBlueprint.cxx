@@ -21,11 +21,31 @@ namespace selx {
     return out;
   }
 
-  template <class ParameterMapType>
-  class parameterMaplabel_writer {
+  template <class NameType, class ParameterMapType>
+  class vertex_label_writer {
 
   public:
-    parameterMaplabel_writer(ParameterMapType _parameterMap) : parameterMap(_parameterMap) {}
+    vertex_label_writer(NameType _name, ParameterMapType _parameterMap) : name(_name), parameterMap(_parameterMap) {}
+    template <class VertexOrEdge>
+    void operator()(std::ostream& out, const VertexOrEdge& v) const {
+      out << "[label=\"" << name[v] << "\n" << parameterMap[v] << "\"]";
+    }
+  private:
+    NameType name;
+    ParameterMapType parameterMap;
+  };
+
+  template <class NameType, class ParameterMapType>
+  inline vertex_label_writer<NameType, ParameterMapType>
+    make_vertex_label_writer(NameType n, ParameterMapType p) {
+    return vertex_label_writer<NameType, ParameterMapType>(n, p);
+  }
+
+  template <class ParameterMapType>
+  class edge_label_writer {
+
+  public:
+    edge_label_writer(ParameterMapType _parameterMap) : parameterMap(_parameterMap) {}
     template <class VertexOrEdge>
     void operator()(std::ostream& out, const VertexOrEdge& v) const {
       out << "[label=\"" << parameterMap[v] << "\"]";
@@ -35,51 +55,44 @@ namespace selx {
   };
 
   template <class ParameterMapType>
-  inline parameterMaplabel_writer<ParameterMapType>
-    make_parameterMaplabel_writer(ParameterMapType n) {
-    return parameterMaplabel_writer<ParameterMapType>(n);
+  inline edge_label_writer<ParameterMapType>
+    make_edge_label_writer(ParameterMapType p) {
+    return edge_label_writer<ParameterMapType>(p);
   }
-
-Blueprint::ComponentIndexType
+bool
 Blueprint
-::AddComponent( void )
+::AddComponent(ComponentNameType name)
 {
   this->Modified();
 
-  ComponentIndexType index = boost::add_vertex( this->m_Graph );
-
-  // Return component index so component can retrieved at a later time
-  return index;
+  // Returns true is addition was successful 
+  return this->m_Graph.insert_vertex(name, { name, { {} } }).second;
 }
 
-Blueprint::ComponentIndexType
+bool
 Blueprint
-::AddComponent( ParameterMapType parameterMap )
+::AddComponent(ComponentNameType name, ParameterMapType parameterMap)
 {
   this->Modified();
 
-  ComponentIndexType index = boost::add_vertex( this->m_Graph );
-  this->m_Graph[index].parameterMap = parameterMap;
-
-  // Return component index so component can retrieved at a later time
-  return index;
+  // Returns true is addition was successful 
+  return this->m_Graph.insert_vertex(name, { name, parameterMap }).second;
 }
 
 Blueprint::ParameterMapType
 Blueprint
-::GetComponent( ComponentIndexType index )
+::GetComponent(ComponentNameType name)
 {
   this->Modified();
-
-  return this->m_Graph[ index ].parameterMap;
+  return this->m_Graph[name].parameterMap;
 }
 
 void
 Blueprint
-::SetComponent( ComponentIndexType index, ParameterMapType parameterMap )
+::SetComponent(ComponentNameType name, ParameterMapType parameterMap)
 {
   this->Modified();
-  this->m_Graph[ index ].parameterMap = parameterMap;
+  this->m_Graph[name].parameterMap = parameterMap;
 }
 
 // TODO: See explanation in selxBlueprint.h
@@ -93,9 +106,17 @@ Blueprint
 //   remove_vertex( index, this->m_Graph );
 // }
 
+Blueprint::ComponentNamesType Blueprint::GetComponentNames(void){
+  ComponentNamesType container;
+  for (auto it = boost::vertices(this->m_Graph.graph()).first; it != boost::vertices(this->m_Graph.graph()).second; ++it){
+    container.push_back(this->m_Graph.graph()[*it].name);
+  }
+  return container;
+}
+
 bool
 Blueprint
-::AddConnection( ComponentIndexType upstream, ComponentIndexType downstream )
+::AddConnection(ComponentNameType upstream, ComponentNameType downstream)
 {
   this->Modified();
 
@@ -104,18 +125,17 @@ Blueprint
   }
   
   // Adds directed connection from upstream component to downstream component
-  return boost::add_edge( upstream, downstream, this->m_Graph ).second;
+  return boost::add_edge_by_label(upstream, downstream, this->m_Graph).second;
 }
 
 bool
 Blueprint
-::AddConnection( ComponentIndexType upstream, ComponentIndexType downstream, ParameterMapType parameterMap )
+::AddConnection(ComponentNameType upstream, ComponentNameType downstream, ParameterMapType parameterMap)
 {
   this->Modified();
 
   if( !this->ConnectionExists( upstream, downstream ) ) {
-    ConnectionIndexType index = boost::add_edge( upstream, downstream, this->m_Graph ).first;
-    this->m_Graph[ index ].parameterMap = parameterMap;
+    boost::add_edge_by_label(upstream, downstream,  { parameterMap }, this->m_Graph);
     return true;
   }
 
@@ -127,7 +147,7 @@ Blueprint
 
 Blueprint::ParameterMapType
 Blueprint
-::GetConnection( ComponentIndexType upstream, ComponentIndexType downstream )
+::GetConnection( ComponentNameType upstream, ComponentNameType downstream )
 {
   this->Modified();
 
@@ -136,7 +156,7 @@ Blueprint
 
 bool
 Blueprint
-::SetConnection( ComponentIndexType upstream, ComponentIndexType downstream, ParameterMapType parameterMap )
+::SetConnection(ComponentNameType upstream, ComponentNameType downstream, ParameterMapType parameterMap)
 {
   this->Modified();
 
@@ -150,12 +170,12 @@ Blueprint
 
 bool
 Blueprint
-::DeleteConnection( ComponentIndexType upstream, ComponentIndexType downstream )
+::DeleteConnection(ComponentNameType upstream, ComponentNameType downstream)
 {
   this->Modified();
 
   if( this->ConnectionExists( upstream, downstream ) ) {
-    this->m_Graph.remove_edge( this->GetConnectionIndex( upstream, downstream ) );
+    boost::remove_edge_by_label(upstream, downstream, this->m_Graph);
   }
   
   return !this->ConnectionExists( upstream, downstream );
@@ -163,21 +183,50 @@ Blueprint
 
 bool
 Blueprint
-::ConnectionExists( ComponentIndexType upstream, ComponentIndexType downstream )
+::ConnectionExists( ComponentNameType upstream, ComponentNameType downstream )
 {
-  return boost::edge( upstream, downstream, this->m_Graph).second;
+  return boost::edge_by_label( upstream, downstream, this->m_Graph).second;
 }
+
+// TODO: can we really regard this as deprecated? Remove then.
+/*
+Blueprint::ConnectionIteratorPairType
+Blueprint
+::GetConnectionIterator(void) {
+  return boost::edges(this->m_Graph);
+}
+
+Blueprint::OutputIteratorPairType
+Blueprint
+::GetOutputIterator(const ComponentNameType name) {
+  return boost::out_edges(this->m_Graph.vertex(name), this->m_Graph);
+}
+*/
+Blueprint::ComponentNamesType
+Blueprint
+::GetOutputNames(const ComponentNameType name) {
+  ComponentNamesType container;
+  OutputIteratorPairType outputIteratorPair = boost::out_edges(this->m_Graph.vertex(name), this->m_Graph);
+  for (auto it = outputIteratorPair.first; it != outputIteratorPair.second; ++it){
+    //boost::vertex()
+    //boost::edge_by_label(upstream, downstream, this->m_Graph).first
+    container.push_back(this->m_Graph.graph()[it->m_target].name);
+  }
+
+  return container;
+}
+
 
 Blueprint::ConnectionIndexType
 Blueprint
-::GetConnectionIndex( ComponentIndexType upstream, ComponentIndexType downstream )
+::GetConnectionIndex( ComponentNameType upstream, ComponentNameType downstream )
 {
   // This function is part of the internal API and should fail hard if we use it incorrectly
   if( !this->ConnectionExists( upstream, downstream ) ) {
     itkExceptionMacro( "Blueprint does not contain connection from component " << upstream << " to " << downstream );
   }
   
-  return boost::edge( upstream, downstream, this->m_Graph).first;
+  return boost::edge_by_label(upstream, downstream, this->m_Graph).first;
 }
 
 void 
@@ -185,7 +234,10 @@ Blueprint
 ::WriteBlueprint( const std::string filename ) 
 {
   std::ofstream dotfile( filename.c_str() );
-  boost::write_graphviz(dotfile, this->m_Graph, make_parameterMaplabel_writer(boost::get(&ComponentPropertyType::parameterMap, this->m_Graph)), make_parameterMaplabel_writer(boost::get(&ConnectionPropertyType::parameterMap, this->m_Graph)));
+  boost::write_graphviz(dotfile, this->m_Graph, 
+    make_vertex_label_writer(boost::get(&ComponentPropertyType::name, this->m_Graph), 
+                             boost::get(&ComponentPropertyType::parameterMap, this->m_Graph)), 
+    make_edge_label_writer(boost::get(&ConnectionPropertyType::parameterMap, this->m_Graph)));
 }
 
 } // namespace selx 

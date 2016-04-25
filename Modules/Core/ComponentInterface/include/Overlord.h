@@ -36,7 +36,7 @@ namespace selx
 
     typedef ComponentBase       ComponentType;
     typedef ComponentSelector::Pointer ComponentSelectorPointer;
-    typedef std::vector<ComponentSelectorPointer> ComponentSelectorContainerType;
+    typedef std::map< Blueprint::ComponentNameType, ComponentSelectorPointer> ComponentSelectorContainerType;
     typedef ComponentSelectorContainerType::iterator ComponentSelectorIteratorType;
 
     typedef itk::ImageFileReader<itk::Image<float, 2>> Reader2floatType;

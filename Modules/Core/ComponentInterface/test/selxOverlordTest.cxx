@@ -18,7 +18,6 @@ public:
   typedef Overlord::Pointer                 OverlordPointerType;
   typedef Blueprint::Pointer                BlueprintPointerType;
   typedef Blueprint::ConstPointer           BlueprintConstPointerType;
-  typedef Blueprint::ComponentIndexType     ComponentIndexType;
   typedef Blueprint::ParameterMapType       ParameterMapType;
   typedef Blueprint::ParameterValueType     ParameterValueType;
 
@@ -39,14 +38,14 @@ public:
     ParameterMapType transformComponentParameters;
     transformComponentParameters["NameOfClass"] = { "TransformComponent1" };
 
-    ComponentIndexType index0 = blueprint->AddComponent(metricComponentParameters);
-    ComponentIndexType index1 = blueprint->AddComponent(transformComponentParameters);
+    blueprint->AddComponent("Metric", metricComponentParameters);
+    blueprint->AddComponent("Transform", transformComponentParameters);
     
     ParameterMapType metric2TransformConnectionParameters;
     metric2TransformConnectionParameters["NameOfInterface"] = { "TransformedImageInterface" };
 
     //TODO: check direction
-    blueprint->AddConnection(index1, index0, metric2TransformConnectionParameters);
+    blueprint->AddConnection("Transform","Metric", metric2TransformConnectionParameters);
 
   }
 

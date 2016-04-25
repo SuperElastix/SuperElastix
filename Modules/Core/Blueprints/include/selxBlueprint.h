@@ -3,6 +3,7 @@
 
 #include "boost/graph/graph_traits.hpp"
 #include "boost/graph/directed_graph.hpp"
+#include "boost/graph/labeled_graph.hpp"
 
 #include "itkObjectFactory.h"
 #include "itkDataObject.h"
@@ -20,10 +21,13 @@ public:
   typedef std::string                                                ParameterKeyType;
   typedef std::vector< std::string >                                 ParameterValueType;
   typedef std::map< ParameterKeyType, ParameterValueType >           ParameterMapType;
-
-  // Component parameter map that sits on a node in the graph 
+  
+  typedef std::string                                                ComponentNameType;
+  
+    // Component parameter map that sits on a node in the graph 
   // and holds component configuration settings
   struct ComponentPropertyType { 
+    ComponentNameType name;
     ParameterMapType parameterMap;
   };
 
@@ -33,11 +37,17 @@ public:
     ParameterMapType parameterMap;
   };
   
-  typedef boost::adjacency_list< boost::vecS,      
-                                 boost::vecS,      
-                                 boost::directedS,
-                                 ComponentPropertyType,
-                                 ConnectionPropertyType >             GraphType;
+  typedef boost::labeled_graph < boost::adjacency_list <                       
+                                                        boost::vecS,
+                                                        boost::vecS,
+                                                        boost::directedS,
+                                                        ComponentPropertyType,
+                                                        ConnectionPropertyType 
+                                                        >,
+                                 ComponentNameType >                  GraphType;
+  
+  //typedef GraphType::label_type                                       ComponentNameType;
+  typedef std::vector<ComponentNameType>                              ComponentNamesType;
 
   typedef boost::graph_traits< GraphType >::vertex_descriptor         ComponentIndexType;
   typedef boost::graph_traits< GraphType >::vertex_iterator           ComponentIteratorType;
@@ -53,11 +63,12 @@ public:
   typedef boost::graph_traits< GraphType >::out_edge_iterator         OutputIteratorType;
   typedef std::pair< OutputIteratorType, OutputIteratorType >         OutputIteratorPairType;
 
+
   // Interface for managing components
-  ComponentIndexType AddComponent( void );
-  ComponentIndexType AddComponent( ParameterMapType parameterMap );
-  ParameterMapType GetComponent( ComponentIndexType index );
-  void SetComponent( ComponentIndexType, ParameterMapType parameterMap );
+  bool AddComponent( ComponentNameType name);
+  bool AddComponent(ComponentNameType name, ParameterMapType parameterMap);
+  ParameterMapType GetComponent(ComponentNameType name);
+  void SetComponent(ComponentNameType, ParameterMapType parameterMap);
 
   // TODO: Let user delete component. Before we do this, we need a proper way of 
   // checking that a vertex exist. Otherwise a call to GetComponent() on 
@@ -66,6 +77,8 @@ public:
   // interface procedurally.
   // void DeleteComponent( ComponentIndexType );
 
+  ComponentNamesType GetComponentNames(void);
+
   ComponentIteratorPairType GetComponentIterator( void ) {
     return boost::vertices( this->m_Graph );
   }
@@ -73,29 +86,31 @@ public:
   // Interface for managing connections between components in which we 
   // deliberately avoid using connection indexes, but instead force
   // the user to think in terms of components (which is conceptually simpler)
-  bool AddConnection( ComponentIndexType upstream, ComponentIndexType downstream );
-  bool AddConnection( ComponentIndexType upstream, ComponentIndexType downstream, ParameterMapType parameterMap );
-  ParameterMapType GetConnection( ComponentIndexType upstream, ComponentIndexType downstream );
-  bool SetConnection(  ComponentIndexType upstream, ComponentIndexType downstream, ParameterMapType parameterMap );
-  bool DeleteConnection( ComponentIndexType upstream, ComponentIndexType downstream );
-  bool ConnectionExists( ComponentIndexType upstream, ComponentIndexType downstream );
+  bool AddConnection(ComponentNameType upstream, ComponentNameType downstream);
+  bool AddConnection(ComponentNameType upstream, ComponentNameType downstream, ParameterMapType parameterMap);
+  ParameterMapType GetConnection(ComponentNameType upstream, ComponentNameType downstream);
+  bool SetConnection(ComponentNameType upstream, ComponentNameType downstream, ParameterMapType parameterMap);
+  bool DeleteConnection(ComponentNameType upstream, ComponentNameType downstream);
+  bool ConnectionExists(ComponentNameType upstream, ComponentNameType downstream);
 
+
+  // TODO: can we really regard this as deprecated? Remove then.
   // Returns iterator for all connections in the graph
-  ConnectionIteratorPairType GetConnectionIterator( void ) {
-    return boost::edges(this->m_Graph);
-  }
+  //ConnectionIteratorPairType GetConnectionIterator(void);
 
   // Returns the outgoing connections from a component in the graph,
   // i.e. all components that reads data from given component
-  OutputIteratorPairType GetOutputIterator( const ComponentIndexType index ) {
-    return boost::out_edges( index, this->m_Graph );
-  }
+  //OutputIteratorPairType GetOutputIterator(const ComponentNameType name);
+
+  // Returns a vector of the Component names at the outgoing direction
+  // TODO: should this be an iterator over the names?
+  ComponentNamesType GetOutputNames(const ComponentNameType name);
 
   void WriteBlueprint( const std::string filename );
 
 private:
-  
-  ConnectionIndexType GetConnectionIndex( ComponentIndexType upsteam, ComponentIndexType downstream );
+ 
+  ConnectionIndexType GetConnectionIndex( ComponentNameType upsteam, ComponentNameType downstream );
 
   GraphType m_Graph;
 
