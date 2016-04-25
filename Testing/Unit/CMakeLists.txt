@@ -35,7 +35,8 @@ configure_file(
   ESCAPE_QUOTES
 )
 
-include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR} ) # selxDataManager.h
+include_directories( ${CMAKE_CURRENT_BINARY_DIR} ) # selxDataDirectories.h
 add_library( DataManager selxDataManager.cxx )
 
 list( APPEND TEST_LIBRARIES 
@@ -45,12 +46,12 @@ list( APPEND TEST_LIBRARIES
 # ---------------------------------------------------------------------
 # Build tests
 
-foreach( SuperElastixUnitTestFilename ${SUPERELASTIX_TESTS} )
+foreach( SuperElastixUnitTestFileName ${SUPERELASTIX_TESTS} )
   # Build tests executables
-  string( REPLACE ".cxx" "" SuperElastixUnitTest ${SuperElastixUnitTestFilename} )
-  add_executable( ${SuperElastixUnitTest} ${SuperElastixUnitTestFilename} )
+  get_filename_component( SuperElastixUnitTest ${SuperElastixUnitTestFileName} NAME )
+  add_executable( ${SuperElastixUnitTest} ${SuperElastixUnitTestFileName} )
   target_link_libraries( "${SuperElastixUnitTest}" ${SUPERELASTIX_LIBRARIES} ${ITK_LIBRARIES} ${TEST_LIBRARIES} )
 
   # Add GoogleTest to CTest
-  GTEST_ADD_TESTS( ${SuperElastixUnitTest} "--gtest_output=xml:${CMAKE_BINARY_DIR}/Testing/Unit/${SuperElastixUnitTest}.xml" ${SuperElastixUnitTestFilename} )
+  GTEST_ADD_TESTS( ${SuperElastixUnitTest} "--gtest_output=xml:${CMAKE_BINARY_DIR}/Testing/Unit/${SuperElastixUnitTest}.xml" ${SuperElastixUnitTestFileName} )
 endforeach()

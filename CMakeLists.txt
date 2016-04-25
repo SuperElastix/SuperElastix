@@ -69,7 +69,6 @@ include_directories( ${Boost_INCLUDE_DIRS} )
 # For now we just enable all modules
 include( selxModules )
 selxmodule_enable( ModuleCore )
-selxmodule_enable( ModuleElastix )
 selxmodule_enable( ModuleExamples )
 selxmodule_enable( ModuleSinksAndSources )
 selxmodule_enable( ModuleItkSmoothingRecursiveGaussianImageFilter )
