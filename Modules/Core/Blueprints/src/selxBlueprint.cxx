@@ -21,11 +21,31 @@ namespace selx {
     return out;
   }
 
-  template <class ParameterMapType>
-  class parameterMaplabel_writer {
+  template <class NameType, class ParameterMapType>
+  class vertex_label_writer {
 
   public:
-    parameterMaplabel_writer(ParameterMapType _parameterMap) : parameterMap(_parameterMap) {}
+    vertex_label_writer(NameType _name, ParameterMapType _parameterMap) : name(_name), parameterMap(_parameterMap) {}
+    template <class VertexOrEdge>
+    void operator()(std::ostream& out, const VertexOrEdge& v) const {
+      out << "[label=\"" << name[v] << "\n" << parameterMap[v] << "\"]";
+    }
+  private:
+    NameType name;
+    ParameterMapType parameterMap;
+  };
+
+  template <class NameType, class ParameterMapType>
+  inline vertex_label_writer<NameType, ParameterMapType>
+    make_vertex_label_writer(NameType n, ParameterMapType p) {
+    return vertex_label_writer<NameType, ParameterMapType>(n, p);
+  }
+
+  template <class ParameterMapType>
+  class edge_label_writer {
+
+  public:
+    edge_label_writer(ParameterMapType _parameterMap) : parameterMap(_parameterMap) {}
     template <class VertexOrEdge>
     void operator()(std::ostream& out, const VertexOrEdge& v) const {
       out << "[label=\"" << parameterMap[v] << "\"]";
@@ -35,11 +55,10 @@ namespace selx {
   };
 
   template <class ParameterMapType>
-  inline parameterMaplabel_writer<ParameterMapType>
-    make_parameterMaplabel_writer(ParameterMapType n) {
-    return parameterMaplabel_writer<ParameterMapType>(n);
+  inline edge_label_writer<ParameterMapType>
+    make_edge_label_writer(ParameterMapType p) {
+    return edge_label_writer<ParameterMapType>(p);
   }
-
 bool
 Blueprint
 ::AddComponent(ComponentNameType name)
@@ -215,7 +234,10 @@ Blueprint
 ::WriteBlueprint( const std::string filename ) 
 {
   std::ofstream dotfile( filename.c_str() );
-  boost::write_graphviz(dotfile, this->m_Graph, make_parameterMaplabel_writer(boost::get(&ComponentPropertyType::parameterMap, this->m_Graph)), make_parameterMaplabel_writer(boost::get(&ConnectionPropertyType::parameterMap, this->m_Graph)));
+  boost::write_graphviz(dotfile, this->m_Graph, 
+    make_vertex_label_writer(boost::get(&ComponentPropertyType::name, this->m_Graph), 
+                             boost::get(&ComponentPropertyType::parameterMap, this->m_Graph)), 
+    make_edge_label_writer(boost::get(&ConnectionPropertyType::parameterMap, this->m_Graph)));
 }
 
 } // namespace selx 
