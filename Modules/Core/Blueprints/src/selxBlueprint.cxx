@@ -83,6 +83,7 @@ Blueprint::ParameterMapType
 Blueprint
 ::GetComponent(ComponentNameType name)
 {
+  //TODO check if component exists: this->m_Graph[name] != graph_traits<GraphType>::null_vertex()
   this->Modified();
   return this->m_Graph[name].parameterMap;
 }
@@ -188,28 +189,12 @@ Blueprint
   return boost::edge_by_label( upstream, downstream, this->m_Graph).second;
 }
 
-// TODO: can we really regard this as deprecated? Remove then.
-/*
-Blueprint::ConnectionIteratorPairType
-Blueprint
-::GetConnectionIterator(void) {
-  return boost::edges(this->m_Graph);
-}
-
-Blueprint::OutputIteratorPairType
-Blueprint
-::GetOutputIterator(const ComponentNameType name) {
-  return boost::out_edges(this->m_Graph.vertex(name), this->m_Graph);
-}
-*/
 Blueprint::ComponentNamesType
 Blueprint
 ::GetOutputNames(const ComponentNameType name) {
   ComponentNamesType container;
   OutputIteratorPairType outputIteratorPair = boost::out_edges(this->m_Graph.vertex(name), this->m_Graph);
   for (auto it = outputIteratorPair.first; it != outputIteratorPair.second; ++it){
-    //boost::vertex()
-    //boost::edge_by_label(upstream, downstream, this->m_Graph).first
     container.push_back(this->m_Graph.graph()[it->m_target].name);
   }
 

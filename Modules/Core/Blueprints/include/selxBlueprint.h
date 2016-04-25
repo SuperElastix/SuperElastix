@@ -46,7 +46,6 @@ public:
                                                         >,
                                  ComponentNameType >                  GraphType;
   
-  //typedef GraphType::label_type                                       ComponentNameType;
   typedef std::vector<ComponentNameType>                              ComponentNamesType;
 
   typedef boost::graph_traits< GraphType >::vertex_descriptor         ComponentIndexType;
@@ -63,7 +62,6 @@ public:
   typedef boost::graph_traits< GraphType >::out_edge_iterator         OutputIteratorType;
   typedef std::pair< OutputIteratorType, OutputIteratorType >         OutputIteratorPairType;
 
-
   // Interface for managing components
   bool AddComponent( ComponentNameType name);
   bool AddComponent(ComponentNameType name, ParameterMapType parameterMap);
@@ -77,11 +75,9 @@ public:
   // interface procedurally.
   // void DeleteComponent( ComponentIndexType );
 
+  // Returns a vector of the all Component names in the graph.
+  // TODO: should this be an iterator over the names?
   ComponentNamesType GetComponentNames(void);
-
-  ComponentIteratorPairType GetComponentIterator( void ) {
-    return boost::vertices( this->m_Graph );
-  }
 
   // Interface for managing connections between components in which we 
   // deliberately avoid using connection indexes, but instead force
@@ -92,15 +88,6 @@ public:
   bool SetConnection(ComponentNameType upstream, ComponentNameType downstream, ParameterMapType parameterMap);
   bool DeleteConnection(ComponentNameType upstream, ComponentNameType downstream);
   bool ConnectionExists(ComponentNameType upstream, ComponentNameType downstream);
-
-
-  // TODO: can we really regard this as deprecated? Remove then.
-  // Returns iterator for all connections in the graph
-  //ConnectionIteratorPairType GetConnectionIterator(void);
-
-  // Returns the outgoing connections from a component in the graph,
-  // i.e. all components that reads data from given component
-  //OutputIteratorPairType GetOutputIterator(const ComponentNameType name);
 
   // Returns a vector of the Component names at the outgoing direction
   // TODO: should this be an iterator over the names?
