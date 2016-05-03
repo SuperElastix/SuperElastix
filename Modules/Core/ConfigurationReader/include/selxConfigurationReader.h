@@ -30,10 +30,12 @@ public:
   static BlueprintPointerType FromJson(const std::string &filename);
   
 private:
-
+  typedef boost::property_tree::ptree PropertyTreeType;
+  //typedef const PropertyTreeType::basic_ptree& ComponentOrConnectionTreeType;
   typedef const boost::property_tree::ptree::basic_ptree& ComponentOrConnectionTreeType;
-
+  
   static ParameterValueType VectorizeValues(ComponentOrConnectionTreeType componentOrConnectionTree);
+  static BlueprintPointerType FromPropertyTree(const PropertyTreeType &);
 
 };
 
