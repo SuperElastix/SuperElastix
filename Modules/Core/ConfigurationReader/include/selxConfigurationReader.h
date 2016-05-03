@@ -2,7 +2,6 @@
 #define ConfigurationReader_h
 
 #include "selxBlueprint.h"
-//#include "selxMacro.h"
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
@@ -10,8 +9,7 @@
 #include <boost/property_tree/info_parser.hpp>
 #include <boost/foreach.hpp>
 #include <string>
-#include <set>
-#include <exception>
+
 #include <iostream>
 #include <boost/algorithm/string.hpp>
 #include <vector>
@@ -22,8 +20,6 @@ namespace selx {
 class ConfigurationReader
 {
 public:
-
-  //selxNewMacro( ConfigurationReader, itk::DataObject );
 
   typedef Blueprint::ParameterKeyType                                ParameterKeyType;
   typedef Blueprint::ParameterValueType                              ParameterValueType;

@@ -15,8 +15,8 @@ TEST_F( ConfigurationReaderTest, ReadXML )
 	ConfigurationReader reader;
   ConfigurationReader::BlueprintPointerType blueprint;
 
-  EXPECT_NO_THROW(blueprint = reader.FromXML("parameterfile2.xml"));
-  blueprint->WriteBlueprint("parameterfile2.dot");
+  EXPECT_NO_THROW(blueprint = reader.FromXML("configurationReaderTest.xml"));
+  blueprint->WriteBlueprint("configurationReaderTest.xml.dot");
 	
 }
 

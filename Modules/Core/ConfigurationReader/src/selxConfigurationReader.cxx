@@ -6,32 +6,7 @@
 
 namespace selx {
 
-  /*
-// Declared outside of the class body, so it is a free function
-std::ostream& operator<<(std::ostream& out, const Blueprint::ParameterValueType& vector){
-  out << " : { ";
-  for (auto const & value : vector)
-  {
-    out << value << " ";
-  }
-  out << " }";
-  return out;
-}
-
-// Declared outside of the class body, so it is a free function
-std::ostream& operator<<(std::ostream& out, const Blueprint::ParameterMapType& val){
-  for (auto const & mapPair : val)
-  {
-    out << mapPair.first << " : { ";
-    for (auto const & value : mapPair.second)
-    {
-      out << value << " ";
-    }
-    out << "}, ";
-  }
-  return out;
-}
-*/
+ 
 ConfigurationReader::ParameterValueType ConfigurationReader::VectorizeValues(ComponentOrConnectionTreeType componentOrConnectionTree)
 {
   std::string propertySingleValue = componentOrConnectionTree.data();
@@ -62,14 +37,11 @@ ConfigurationReader::BlueprintPointerType ConfigurationReader::FromXML(const std
 
   read_xml(filename, pt, boost::property_tree::xml_parser::trim_whitespace);
 
-  //write_json("../parameterfile2.json", pt);
-
   BlueprintPointerType blueprint = Blueprint::New();
   
 
   BOOST_FOREACH(ptree::value_type &v, pt.equal_range("Component"))
   {
-    //std::string componentName = v.second.data();
     std::string componentName;
     ParameterMapType componentPropertyMap;
     for (auto const & elm : v.second)
@@ -85,7 +57,7 @@ ConfigurationReader::BlueprintPointerType ConfigurationReader::FromXML(const std
       std::string propertyKey = elm.first;
       componentPropertyMap[propertyKey] = propertyMultiValue;
     }
-    //std::cout << "blueprint->AddComponent(""" << componentName << """, {" << componentPropertyMap << "});" << std::endl;
+    
     blueprint->AddComponent(componentName, componentPropertyMap);
   }
 
@@ -127,7 +99,7 @@ ConfigurationReader::BlueprintPointerType ConfigurationReader::FromXML(const std
       }
 
     }
-    //std::cout << "blueprint->AddConnection(""" << outName << """, """ << inName << """, {" << componentPropertyMap << "});" << std::endl;
+   
     blueprint->AddConnection(outName, inName, componentPropertyMap);
 
   }
