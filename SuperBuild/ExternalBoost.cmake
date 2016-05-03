@@ -9,13 +9,13 @@ if( UNIX )
   set( BOOST_URL "http://sourceforge.net/projects/boost/files/boost/1.59.0/boost_1_59_0.tar.gz")
   set( BOOST_MD5 51528a0e3b33d9e10aaa311d9eb451e3 )
   set( BOOST_CONFIGURE_COMMAND ./bootstrap.sh )
-  set( BOOST_BUILD_COMMAND ./b2 )
+  set( BOOST_BUILD_COMMAND ./b2 --with-program_options )
 else()
   if( WIN32 )
     set( BOOST_URL "http://sourceforge.net/projects/boost/files/boost/1.59.0/boost_1_59_0.zip")
     set( BOOST_MD5 08d29a2d85db3ebc8c6fdfa3a1f2b83c )
     set( BOOST_CONFIGURE_COMMAND cmd /C bootstrap.bat msvc )
-    set( BOOST_BUILD_COMMAND b2.exe )
+    set( BOOST_BUILD_COMMAND b2.exe --with-program_options )
   endif()
 endif()
 
@@ -32,5 +32,6 @@ ExternalProject_Add( BOOST
 )
 
 set( BOOST_ROOT "${CMAKE_INSTALL_PREFIX}/${proj}-prefix/src/BOOST" )
+set( BOOST_LIBRARYDIR "${BOOST_ROOT}/stage/lib/" )
 
 list( APPEND SUPERELASTIX_DEPENDENCIES ${proj} )

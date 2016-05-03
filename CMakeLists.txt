@@ -74,6 +74,7 @@ selxmodule_enable( ModuleSinksAndSources )
 selxmodule_enable( ModuleItkSmoothingRecursiveGaussianImageFilter )
 selxmodule_enable( ModuleItkImageRegistrationMethodv4 )
 selxmodule_enable( ModuleElastixComponent )
+selxmodule_enable( ModuleCommandLine )
 # TODO: Build tests depending on enabled modules
 
 # ---------------------------------------------------------------------
