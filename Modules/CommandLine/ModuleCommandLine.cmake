@@ -38,6 +38,8 @@ find_package(Boost COMPONENTS program_options REQUIRED)
 
 # Compile library
 add_library( ${MODULE} STATIC ${${MODULE}_SOURCE_FILES} ${${MODULE}_HEADER_FILES} )
+target_link_libraries( ${MODULE} ${SUPERELASTIX_LIBRARIES} ${Boost_LIBRARIES})
+
 # Compile executable
 add_executable( SuperElastix ${${MODULE}_SOURCE_FILES} ${${MODULE}_HEADER_FILES} )
-target_link_libraries( SuperElastix ${SUPERELASTIX_LIBRARIES} )
+target_link_libraries( SuperElastix ${SUPERELASTIX_LIBRARIES} ${Boost_LIBRARIES})
