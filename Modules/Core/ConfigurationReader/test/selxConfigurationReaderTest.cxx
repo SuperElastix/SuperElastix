@@ -20,3 +20,12 @@ TEST_F( ConfigurationReaderTest, ReadXML )
 	
 }
 
+TEST_F(ConfigurationReaderTest, ReadJson)
+{
+  ConfigurationReader reader;
+  ConfigurationReader::BlueprintPointerType blueprint;
+
+  EXPECT_NO_THROW(blueprint = reader.FromJson("configurationReaderTest.json"));
+  blueprint->WriteBlueprint("configurationReaderTest.json.dot");
+
+}

@@ -27,6 +27,7 @@ public:
   typedef Blueprint::Pointer                                         BlueprintPointerType;
 
   static BlueprintPointerType FromXML(const std::string &filename);
+  static BlueprintPointerType FromJson(const std::string &filename);
   
 private:
 
