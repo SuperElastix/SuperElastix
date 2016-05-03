@@ -28,15 +28,15 @@ public:
   typedef Blueprint::ParameterKeyType                                ParameterKeyType;
   typedef Blueprint::ParameterValueType                              ParameterValueType;
   typedef Blueprint::ParameterMapType                                ParameterMapType;
-  
+  typedef Blueprint::Pointer                                         BlueprintPointerType;
 
-  void loadxml(const std::string &filename);
+  static BlueprintPointerType FromXML(const std::string &filename);
   
 private:
 
   typedef const boost::property_tree::ptree::basic_ptree& ComponentOrConnectionTreeType;
 
-  ParameterValueType VectorizeValues(ComponentOrConnectionTreeType componentOrConnectionTree);
+  static ParameterValueType VectorizeValues(ComponentOrConnectionTreeType componentOrConnectionTree);
 
 };
 

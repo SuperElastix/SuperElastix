@@ -6,6 +6,7 @@
 
 namespace selx {
 
+  /*
 // Declared outside of the class body, so it is a free function
 std::ostream& operator<<(std::ostream& out, const Blueprint::ParameterValueType& vector){
   out << " : { ";
@@ -30,7 +31,7 @@ std::ostream& operator<<(std::ostream& out, const Blueprint::ParameterMapType& v
   }
   return out;
 }
-
+*/
 ConfigurationReader::ParameterValueType ConfigurationReader::VectorizeValues(ComponentOrConnectionTreeType componentOrConnectionTree)
 {
   std::string propertySingleValue = componentOrConnectionTree.data();
@@ -53,7 +54,7 @@ ConfigurationReader::ParameterValueType ConfigurationReader::VectorizeValues(Com
   return propertyMultiValue;
 }
 
-void ConfigurationReader::loadxml(const std::string &filename)
+ConfigurationReader::BlueprintPointerType ConfigurationReader::FromXML(const std::string &filename)
 {
   // Create empty property tree object
   using boost::property_tree::ptree;
@@ -61,7 +62,10 @@ void ConfigurationReader::loadxml(const std::string &filename)
 
   read_xml(filename, pt, boost::property_tree::xml_parser::trim_whitespace);
 
-  write_json("../parameterfile2.json", pt);
+  //write_json("../parameterfile2.json", pt);
+
+  BlueprintPointerType blueprint = Blueprint::New();
+  
 
   BOOST_FOREACH(ptree::value_type &v, pt.equal_range("Component"))
   {
@@ -74,13 +78,15 @@ void ConfigurationReader::loadxml(const std::string &filename)
       if (componentKey == "Name")
       {
         componentName = elm.second.data();
+        continue;
       }
 
       ParameterValueType propertyMultiValue = VectorizeValues(elm.second);
       std::string propertyKey = elm.first;
       componentPropertyMap[propertyKey] = propertyMultiValue;
     }
-    std::cout << "blueprint->AddComponent(""" << componentName << """, {" << componentPropertyMap << "});" << std::endl;
+    //std::cout << "blueprint->AddComponent(""" << componentName << """, {" << componentPropertyMap << "});" << std::endl;
+    blueprint->AddComponent(componentName, componentPropertyMap);
   }
 
   BOOST_FOREACH(ptree::value_type &v, pt.equal_range("Connection"))
@@ -101,10 +107,17 @@ void ConfigurationReader::loadxml(const std::string &filename)
       if (connectionKey == "Out")
       {
         outName = elm.second.data();
+        continue;
       }
       else if (connectionKey == "In")      
       {
         inName = elm.second.data();
+        continue;
+      }
+      else if (connectionKey == "Name")
+      {
+        std::cout << "Warning: connection 'Name'-s are ignored." << std::endl;
+        continue;
       }
       else 
       {
@@ -114,10 +127,11 @@ void ConfigurationReader::loadxml(const std::string &filename)
       }
 
     }
-    std::cout << "blueprint->AddConnection(""" << outName << """, """ << inName << """, {" << componentPropertyMap << "});" << std::endl;
-    
-  }
+    //std::cout << "blueprint->AddConnection(""" << outName << """, """ << inName << """, {" << componentPropertyMap << "});" << std::endl;
+    blueprint->AddConnection(outName, inName, componentPropertyMap);
 
+  }
+  return blueprint;
 
 }
 } // namespace selx 

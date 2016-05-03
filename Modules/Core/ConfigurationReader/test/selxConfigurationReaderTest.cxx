@@ -13,7 +13,10 @@ public:
 TEST_F( ConfigurationReaderTest, ReadXML )
 {
 	ConfigurationReader reader;
-    EXPECT_NO_THROW(reader.loadxml("parameterfile2.xml"));
+  ConfigurationReader::BlueprintPointerType blueprint;
+
+  EXPECT_NO_THROW(blueprint = reader.FromXML("parameterfile2.xml"));
+  blueprint->WriteBlueprint("parameterfile2.dot");
 	
 }
 
