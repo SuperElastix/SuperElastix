@@ -33,7 +33,7 @@ set(Boost_USE_MULTITHREADED ON)
 set(BOOST_LIBRARYDIR ${BOOST_ROOT}/stage/lib)
 message(STATUS "BOOST_LIBRARYDIR: ${BOOST_LIBRARYDIR}")
 
-find_package(Boost COMPONENTS program_options REQUIRED) 
+find_package(Boost COMPONENTS program_options system filesystem REQUIRED) 
 #find_package(Boost REQUIRED) 
 
 # Compile library
