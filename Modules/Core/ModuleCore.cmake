@@ -26,6 +26,7 @@ set( ${MODULE}_INCLUDE_DIRS
   ${${MODULE}_SOURCE_DIR}/ParameterObject/include
   ${${MODULE}_SOURCE_DIR}/ComponentInterface/include
   ${${MODULE}_SOURCE_DIR}/ConfigurationReader/include
+  ${${MODULE}_SOURCE_DIR}/Filter/include
   )
 
 # Collect header files for Visual Studio Project 
@@ -44,6 +45,7 @@ set( ${MODULE}_TESTS
   ${${MODULE}_SOURCE_DIR}/ComponentInterface/test/selxComponentInterfaceTest.cxx
   ${${MODULE}_SOURCE_DIR}/ComponentInterface/test/selxOverlordTest.cxx
   ${${MODULE}_SOURCE_DIR}/ConfigurationReader/test/selxConfigurationReaderTest.cxx
+  ${${MODULE}_SOURCE_DIR}/Filter/test/selxSuperElastixFilterTest.cxx
 )
 
 # Module source files
@@ -53,6 +55,7 @@ set( ${MODULE}_SOURCE_FILES
   ${${MODULE}_SOURCE_DIR}/ComponentInterface/src/Overlord.cxx
   ${${MODULE}_SOURCE_DIR}/ComponentInterface/src/ComponentSelector.cxx
   ${${MODULE}_SOURCE_DIR}/ConfigurationReader/src/selxConfigurationReader.cxx
+  ${${MODULE}_SOURCE_DIR}/Filter/src/selxSuperElastixFilter.cxx
 )
 
 # Compile library
