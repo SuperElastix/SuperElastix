@@ -17,29 +17,23 @@
 #
 #=========================================================================
 
-set( MODULE ModuleCommandLine )
+set( COMMANDLINE_SOURCE_DIR
+  ${CMAKE_SOURCE_DIR}/Modules/CommandLine
+  )
 
+  
 # Export include files
-set( ${MODULE}_INCLUDE_DIRS
-  ${${MODULE}_SOURCE_DIR}/include
+set( COMMANDLINE_INCLUDE_DIRS
+  ${COMMANDLINE_SOURCE_DIR}/include
   )
 
 # Collect header files for Visual Studio Project 
 # http://stackoverflow.com/questions/8316104/specify-how-cmake-creates-visual-studio-project
-file(GLOB ${MODULE}_HEADER_FILES "${${MODULE}_SOURCE_DIR}/*/include/*.*")
-
-# Export libraries
-set( ${MODULE}_LIBRARIES 
-  ${MODULE}
-)
-
-# Export tests
-set( ${MODULE}_TESTS
-)
+file(GLOB COMMANDLINE_HEADER_FILES "${COMMANDLINE_SOURCE_DIR}/*/include/*.*")
 
 # Module source files
-set( ${MODULE}_SOURCE_FILES
-  ${${MODULE}_SOURCE_DIR}/src/CommandLine.cxx
+set( COMMANDLINE_SOURCE_FILES
+  ${COMMANDLINE_SOURCE_DIR}/src/CommandLine.cxx
 )
 
 message(STATUS "BOOST_LIBRARYDIR: ${BOOST_LIBRARYDIR}")
@@ -55,10 +49,7 @@ message(STATUS "BOOST_LIBRARYDIR: ${BOOST_LIBRARYDIR}")
 find_package(Boost COMPONENTS program_options system filesystem REQUIRED) 
 #find_package(Boost REQUIRED) 
 
-# Compile library
-add_library( ${MODULE} STATIC ${${MODULE}_SOURCE_FILES} ${${MODULE}_HEADER_FILES} )
-target_link_libraries( ${MODULE} ${SUPERELASTIX_LIBRARIES} ${Boost_LIBRARIES})
-
+include_directories( ${COMMANDLINE_INCLUDE_DIRS} )
 # Compile executable
-add_executable( SuperElastix ${${MODULE}_SOURCE_FILES} ${${MODULE}_HEADER_FILES} )
+add_executable( SuperElastix ${COMMANDLINE_SOURCE_FILES} ${COMMANDLINE_HEADER_FILES} )
 target_link_libraries( SuperElastix ${SUPERELASTIX_LIBRARIES} ${Boost_LIBRARIES})
