@@ -81,7 +81,7 @@ namespace selx
 
   template<int Dimensionality, class TPixel>
   class itkImageInterface {
-    // An interface that exposes that its internal filter is derived from itkImageSource
+    // An interface that passes the pointer of an output image
   public:
     virtual typename itk::Image<TPixel, Dimensionality>::Pointer GetItkImage() = 0;
   };

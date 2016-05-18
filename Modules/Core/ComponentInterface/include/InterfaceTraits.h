@@ -188,6 +188,24 @@ struct InterfaceName < SinkInterface >
   }
 };
 
+template <>
+struct InterfaceName < SourceInterface2 >
+{
+  static const char* Get()
+  {
+    return "SourceInterface2";
+  }
+};
+
+template <>
+struct InterfaceName < SinkInterface2 >
+{
+  static const char* Get()
+  {
+    return "SinkInterface2";
+  }
+};
+
 template <int D, class TPixel>
 struct InterfaceName < itkMetricv4Interface <D, TPixel> >
 {

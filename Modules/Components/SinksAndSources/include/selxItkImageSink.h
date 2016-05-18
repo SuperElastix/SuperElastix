@@ -32,7 +32,7 @@ namespace selx
   class ItkImageSinkComponent :
     public Implements <
     Accepting< itkImageInterface<Dimensionality, TPixel> >,
-    Providing < SinkInterface, AfterRegistrationInterface >
+    Providing < SinkInterface2, AfterRegistrationInterface >
     >
   {
   public:
@@ -44,17 +44,18 @@ namespace selx
     virtual ~ItkImageSinkComponent();
 
     typedef itk::ImageSource<itk::Image<TPixel, Dimensionality>> ItkImageSourceType;
+    typedef itk::Image<TPixel, Dimensionality> ItkImageType;
 
     virtual int Set(itkImageInterface<Dimensionality, TPixel>*) override;
     //virtual int Set(GetItkImageInterface<Dimensionality, TPixel>*) override;
-    virtual bool ConnectToOverlordSink(itk::Object::Pointer) override;
+    virtual bool ConnectToOverlordSink(itk::DataObject::Pointer) override;
     virtual void AfterRegistration() override;
 
     virtual bool MeetsCriterion(const ComponentBase::CriterionType &criterion) override;
     static const char * GetDescription() { return "ItkImageSink Component"; };
   private:
-    itk::ProcessObject::Pointer m_Sink;
-    typename itk::ImageFileWriter<itk::Image<TPixel, Dimensionality>>::Pointer m_SinkWriter;
+    typename ItkImageType::Pointer m_Image;
+    
     GetItkImageInterface<Dimensionality, TPixel>* m_ProvidingGetItkImageInterface;
   protected:
     /* The following struct returns the string name of computation type */
