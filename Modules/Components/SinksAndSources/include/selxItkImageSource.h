@@ -29,7 +29,7 @@ namespace selx
   class ItkImageSourceComponent : 
     public Implements<
     Accepting<>,
-    Providing< SourceInterface, itkImageSourceInterface<3,double > >
+    Providing< SourceInterface, itkImageInterface<3,double > >
     >
   {
   public:
@@ -39,13 +39,14 @@ namespace selx
     virtual ~ItkImageSourceComponent();
 
     typedef itk::ImageSource<itk::Image<double, 3>> ItkImageSourceType;
+    typedef itk::Image<double, 3> ItkImageType;
     
-    virtual ItkImageSourceType::Pointer GetItkImageSource() override;
+    virtual ItkImageType::Pointer GetItkImage() override;
     virtual bool ConnectToOverlordSource(itk::Object::Pointer) override;
     virtual bool MeetsCriterion(const ComponentBase::CriterionType &criterion) override;
     static const char * GetDescription() { return "ItkImageSource Component"; };
   private:
-    ItkImageSourceType::Pointer m_Source;
+    ItkImageType::Pointer m_Source;
   };
 } //end namespace selx
 #endif // #define GDOptimizer3rdPartyComponent_h

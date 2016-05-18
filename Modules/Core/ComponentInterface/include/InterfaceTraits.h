@@ -123,6 +123,16 @@ struct InterfaceName < itkImageSourceInterface <D, TPixel> >
 };
 
 template <int D, class TPixel>
+struct InterfaceName < itkImageInterface <D, TPixel> >
+{
+  static const char* Get()
+  {
+    return "itkImageInterface";
+  }
+};
+
+
+template <int D, class TPixel>
 struct InterfaceName < itkImageSourceFixedInterface <D, TPixel> >
 {
   static const char* Get()

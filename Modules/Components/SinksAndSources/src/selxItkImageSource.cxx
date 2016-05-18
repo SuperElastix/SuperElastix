@@ -31,7 +31,7 @@ namespace selx
   {
   }
 
-  ItkImageSourceComponent::ItkImageSourceType::Pointer ItkImageSourceComponent::GetItkImageSource()
+  ItkImageSourceComponent::ItkImageType::Pointer ItkImageSourceComponent::GetItkImage()
 {
   if (this->m_Source == nullptr)
   {
@@ -42,8 +42,16 @@ namespace selx
 
   bool ItkImageSourceComponent::ConnectToOverlordSource(itk::Object::Pointer object)
 {
-  this->m_Source = dynamic_cast<ItkImageSourceType*>(object.GetPointer());
-  return (this->m_Source == nullptr);
+  auto source = dynamic_cast<ItkImageSourceType*>(object.GetPointer());
+  if (source == nullptr)
+  {
+    return true;
+  }
+  else
+  {
+    this->m_Source = source->GetOutput();
+    return (this->m_Source == nullptr);
+  }
 }
 
 

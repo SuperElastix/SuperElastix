@@ -19,9 +19,11 @@
 
 #include "selxItkSmoothingRecursiveGaussianImageFilterComponent.h"
 #include "selxItkImageFilterSink.h"
+#include "selxItkImageSink.h"
 #include "selxItkImageSource.h"
 #include "Overlord.h"
 
+#include "selxDataManager.h"
 #include "gtest/gtest.h"
 
 /** this test uses the following blueprint setup
@@ -43,6 +45,7 @@ public:
   typedef Blueprint::ConstPointer           BlueprintConstPointerType;
   typedef Blueprint::ParameterMapType       ParameterMapType;
   typedef Blueprint::ParameterValueType     ParameterValueType;
+  typedef DataManager DataManagerType;
 
   virtual void SetUp() {
 
@@ -51,6 +54,7 @@ public:
     // For testing the itkfilter pipeline
     ComponentFactory<ItkSmoothingRecursiveGaussianImageFilterComponent<3, double>>::RegisterOneFactory();
     ComponentFactory<ItkImageFilterSinkComponent<3, double>>::RegisterOneFactory();
+    ComponentFactory<ItkImageSinkComponent<3, double>>::RegisterOneFactory();
     ComponentFactory<ItkImageSourceComponent>::RegisterOneFactory();
     // For testing templated components
     ComponentFactory<ItkSmoothingRecursiveGaussianImageFilterComponent<2, double>>::RegisterOneFactory();
@@ -77,7 +81,7 @@ public:
     // TODO: For now, the connections to make are explicitly indicated by the Interface name. 
     // Design consideration: connections might be indicated by higher concepts ( MetricCostConnection: value and/or derivative? DefaultPipeline? ) 
     ParameterMapType connectionParameters;
-    connectionParameters["NameOfInterface"] = { "itkImageSourceInterface" };
+    //connectionParameters["NameOfInterface"] = { "itkImageSourceInterface" };
 
     //TODO: check direction
     blueprint->AddConnection("FistStageFilter", "SecondStageFilter", connectionParameters);
@@ -89,7 +93,7 @@ public:
 
     /** Add a description of the SinkComponent*/
     ParameterMapType sinkComponentParameters;
-    sinkComponentParameters["NameOfClass"] = { "ItkImageFilterSinkComponent" };
+    sinkComponentParameters["NameOfClass"] = { "ItkImageSinkComponent" };
     blueprint->AddComponent("Sink", sinkComponentParameters);
     
     /** Connect Sink and Source to the itkImageFilter Components*/
@@ -108,8 +112,9 @@ public:
   TEST_F(itkImageFilterTest, Run)
 {
   overlord = Overlord::New();
-  overlord->inputFileNames = { "source3dimage0.mhd" };
-  overlord->outputFileNames = { "itkImageFilterTest_output.mhd" };
+  DataManagerType::Pointer dataManager = DataManagerType::New();
+  overlord->inputFileNames = { dataManager->GetInputFile("sphereA3d.mhd") };
+  overlord->outputFileNames = { dataManager->GetOutputFile("itkImageFilterTest.mhd") };
   overlord->SetBlueprint(blueprint);
   bool allUniqueComponents;
   

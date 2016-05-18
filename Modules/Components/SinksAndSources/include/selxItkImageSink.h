@@ -31,7 +31,7 @@ namespace selx
   template<int Dimensionality, class TPixel>
   class ItkImageSinkComponent :
     public Implements <
-    Accepting< itkImageSourceInterface<Dimensionality, TPixel>, GetItkImageInterface < Dimensionality, TPixel> >,
+    Accepting< itkImageInterface<Dimensionality, TPixel> >,
     Providing < SinkInterface, AfterRegistrationInterface >
     >
   {
@@ -45,8 +45,8 @@ namespace selx
 
     typedef itk::ImageSource<itk::Image<TPixel, Dimensionality>> ItkImageSourceType;
 
-    virtual int Set(itkImageSourceInterface<Dimensionality, TPixel>*) override;
-    virtual int Set(GetItkImageInterface<Dimensionality, TPixel>*) override;
+    virtual int Set(itkImageInterface<Dimensionality, TPixel>*) override;
+    //virtual int Set(GetItkImageInterface<Dimensionality, TPixel>*) override;
     virtual bool ConnectToOverlordSink(itk::Object::Pointer) override;
     virtual void AfterRegistration() override;
 

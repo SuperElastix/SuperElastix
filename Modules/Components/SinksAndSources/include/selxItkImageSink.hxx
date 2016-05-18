@@ -35,23 +35,23 @@ namespace selx
   }
 
   template<int Dimensionality, class TPixel>
-  int ItkImageSinkComponent< Dimensionality, TPixel>::Set(itkImageSourceInterface<Dimensionality, TPixel>* other)
+  int ItkImageSinkComponent< Dimensionality, TPixel>::Set(itkImageInterface<Dimensionality, TPixel>* other)
   {
     if (this->m_SinkWriter == nullptr)
     {
       itkExceptionMacro("SinkComponent needs to be initialized by ConnectToOverlordSink()");
     }
     
-    this->m_SinkWriter->SetInput(other->GetItkImageSource()->GetOutput());
+    this->m_SinkWriter->SetInput(other->GetItkImage());
     return 0;
   }
 
-  template<int Dimensionality, class TPixel>
-  int ItkImageSinkComponent< Dimensionality, TPixel>::Set(GetItkImageInterface<Dimensionality, TPixel>* other)
-  {
-    this->m_ProvidingGetItkImageInterface = other;
-    return 0;
-  }
+  //template<int Dimensionality, class TPixel>
+  //int ItkImageSinkComponent< Dimensionality, TPixel>::Set(GetItkImageInterface<Dimensionality, TPixel>* other)
+  //{
+  //  this->m_ProvidingGetItkImageInterface = other;
+  //  return 0;
+  //}
 
   template<int Dimensionality, class TPixel>
   void ItkImageSinkComponent< Dimensionality, TPixel>::AfterRegistration()

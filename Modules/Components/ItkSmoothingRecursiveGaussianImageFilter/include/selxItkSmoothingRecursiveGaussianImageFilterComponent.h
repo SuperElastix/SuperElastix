@@ -31,8 +31,8 @@ namespace selx
   template <int Dimensionality, class TPixel>
   class ItkSmoothingRecursiveGaussianImageFilterComponent : 
     public Implements<
-    Accepting< itkImageSourceInterface<Dimensionality, TPixel> >,
-    Providing< itkImageSourceInterface<Dimensionality, TPixel> >
+    Accepting< itkImageInterface<Dimensionality, TPixel> >,
+    Providing< itkImageInterface<Dimensionality, TPixel> >
     >
     // TODO: see if itkImageSourceInterface is the right way to connect itk filters..
     //Accepting< itkProcessObjectInterface, itkImageToImageFilterInterface >,
@@ -49,8 +49,8 @@ namespace selx
 
     typedef TPixel PixelType;
     typedef itk::SmoothingRecursiveGaussianImageFilter<itk::Image<PixelType, Dimensionality>, itk::Image<PixelType, Dimensionality>> TheItkFilterType;
-    typedef itk::ImageSource<itk::Image<PixelType, Dimensionality>> ItkImageSourceType;
-    typedef typename ItkImageSourceType::Pointer ItkImageSourcePointer;
+    typedef itk::Image<PixelType, Dimensionality> ItkImageType;
+    typedef typename ItkImageType::Pointer ItkImagePointer;
 
     // TODO: see if itkImageSourceInterface is the right way to connect itk filters..
     /*
@@ -60,8 +60,8 @@ namespace selx
     virtual int Set(itkImageToImageFilterInterface*) override;
     virtual itk::ImageToImageFilter<itk::Image<double, 3>, itk::Image<double, 3>>::Pointer GetItkImageToImageFilter() override;
     */
-    virtual int Set(itkImageSourceInterface<Dimensionality, TPixel>*) override;
-    virtual ItkImageSourcePointer GetItkImageSource() override;
+    virtual int Set(itkImageInterface<Dimensionality, TPixel>*) override;
+    virtual ItkImagePointer GetItkImage() override;
 
     //int Update();
     //virtual bool MeetsCriteria(const CriteriaType &criteria);

@@ -80,6 +80,13 @@ namespace selx
   };
 
   template<int Dimensionality, class TPixel>
+  class itkImageInterface {
+    // An interface that exposes that its internal filter is derived from itkImageSource
+  public:
+    virtual typename itk::Image<TPixel, Dimensionality>::Pointer GetItkImage() = 0;
+  };
+
+  template<int Dimensionality, class TPixel>
   class itkImageSourceMovingInterface {
     // An interface that exposes that its internal filter which is derived from itkImageSource
   public:
@@ -121,6 +128,21 @@ namespace selx
     // How specific Sink Components connect to the graph is up to them, i.e. they might adapt the passed Object to other types.
   public:
     virtual bool ConnectToOverlordSink(itk::Object::Pointer) = 0;
+  };
+
+  class SourceInterface2 {
+    // A special interface: the Overlord checks components for this type of interface.
+    // By this interface only Source Components can to talk to the Overlord.
+    // How specific Source Components connect to the graph is up to them, i.e. they might adapt the passed Object to other types.
+  public:
+    virtual bool ConnectToOverlordSource(itk::DataObject::Pointer) = 0;
+  };
+  class SinkInterface2 {
+    // A special interface: the Overlord checks components for this type of interface.
+    // By this interface only Sink Components can to talk to the Overlord
+    // How specific Sink Components connect to the graph is up to them, i.e. they might adapt the passed Object to other types.
+  public:
+    virtual bool ConnectToOverlordSink(itk::DataObject::Pointer) = 0;
   };
 
   class RunRegistrationInterface {
