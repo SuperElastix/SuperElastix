@@ -49,6 +49,7 @@ namespace po = boost::program_options;
 #include <algorithm>
 #include <iterator>
 #include <string>
+#include <stdexcept>
 
 using namespace std;
 using namespace selx;
@@ -138,7 +139,7 @@ int main(int ac, char* av[])
       blueprint = ConfigurationReader::FromJson(configurationPath.string());
     }
     else {
-      throw exception("Configuration file requires extension .xml or .json");
+      throw invalid_argument("Configuration file requires extension .xml or .json");
     }
 
     if (vm.count("graphout"))

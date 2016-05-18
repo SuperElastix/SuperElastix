@@ -134,7 +134,7 @@ SuperElastixFilter< TFixedImage, TMovingImage >
 {
   // Purposely not checking the outputName, but just create the requested&named data object in the filter. 
   // When connecting the Sinks the the elxFilter names and data types are checked.
-  ReturnType::Pointer newOutput = ReturnType::New();
+  typename ReturnType::Pointer newOutput = ReturnType::New();
   Superclass::SetOutput(outputName, newOutput);
 
   //DataObject* baseOutputData = Superclass::GetOutput(outputName);

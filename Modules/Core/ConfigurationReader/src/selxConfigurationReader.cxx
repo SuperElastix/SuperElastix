@@ -26,7 +26,7 @@
 namespace selx {
 
  
-ConfigurationReader::ParameterValueType ConfigurationReader::VectorizeValues(ComponentOrConnectionTreeType componentOrConnectionTree)
+ConfigurationReader::ParameterValueType ConfigurationReader::VectorizeValues(const ComponentOrConnectionTreeType& componentOrConnectionTree)
 {
   std::string propertySingleValue = componentOrConnectionTree.data();
   ParameterValueType propertyMultiValue;
