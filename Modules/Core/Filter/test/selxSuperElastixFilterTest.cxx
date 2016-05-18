@@ -81,8 +81,9 @@ namespace selx {
     mySuperElastix->SetConfiguration();
     mySuperElastix->SetInput("FixedImage", imageReader->GetOutput());
     imageWriter->SetInput(mySuperElastix->GetOutput<ImageType>("ResultImage"));
+    //imageWriter->SetInput(mySuperElastix->GetOutput<ImageType>("Blabla"));
     //imageWriter->SetInput(imageReader->GetOutput());
-    mySuperElastix->SetInput("FixedMesh", meshReader->GetOutput());
+    mySuperElastix->SetInput("FixedMesh", meshReader->GetOutput());  
     meshWriter->SetInput(mySuperElastix->GetOutput<MeshType>("ResultMesh"));
     //meshWriter->SetInput(meshReader->GetOutput());
     EXPECT_NO_THROW(imageWriter->Update());

@@ -5,6 +5,9 @@
 #include "itkImageToImageFilter.h"
 #include "itkMesh.h"
 
+#include <itkConnectedRegionsMeshFilter.h>
+#include <itkAbsImageFilter.h>
+
 /**
  * \class SuperElastixFilter
  * \brief ITK Filter interface to the SuperElastix registration library.
@@ -54,6 +57,23 @@ protected:
   virtual void GenerateData(void) ITK_OVERRIDE;
   virtual void GenerateOutputInformation(void) ITK_OVERRIDE;
 
+private:
+  // For testing purposes only. TODO remove.
+  // Assume we have 2 components: A and B
+  void ConnectSourceA(itk::DataObject*);
+  void ConnectSourceB(itk::DataObject*);
+  void ConnectPlaceholderSinkA(itk::DataObject*);
+  void ConnectPlaceholderSinkB(itk::DataObject*);
+  itk::DataObject* ConnectDataSinkA();
+  itk::DataObject* ConnectDataSinkB();
+
+  typedef itk::Image<float, 2> ImageType;
+  typedef itk::AbsImageFilter< ImageType, ImageType > ImageFilterType;
+
+  typedef itk::Mesh<float, 2> MeshType;
+  typedef itk::ConnectedRegionsMeshFilter<MeshType, MeshType> MeshFilterType;
+  ImageFilterType::Pointer m_imageFilter;
+  MeshFilterType::Pointer m_meshFilter;
 };
 
 } // namespace elx
