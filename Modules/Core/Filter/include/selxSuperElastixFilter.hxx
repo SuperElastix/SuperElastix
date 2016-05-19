@@ -63,6 +63,13 @@ SuperElastixFilter< TFixedImage, TMovingImage >
   this->ConnectSourceB(this->GetInput("FixedMesh"));
   this->ConnectPlaceholderSinkB(this->GetOutput("ResultMesh"));
 
+  if (allUniqueComponents)
+  {
+    isSuccess = this->m_Overlord->ConnectComponents();
+  }
+  std::cout << "Connecting Components: " << (isSuccess ? "succeeded" : "failed") << std::endl;
+
+  this->m_Overlord->FindAfterRegistration();
   this->m_Overlord->Execute();
 
   this->m_imageFilter->Update();
@@ -72,11 +79,6 @@ SuperElastixFilter< TFixedImage, TMovingImage >
   this->GetOutput("ResultImage")->Graft(this->ConnectDataSinkA());
   this->GetOutput("ResultMesh")->Graft(this->ConnectDataSinkB());
 
-  if (allUniqueComponents)
-  {
-    isSuccess = this->m_Overlord->ConnectComponents();
-  }
-  std::cout << "Connecting Components: " << (isSuccess ? "succeeded" : "failed") << std::endl;
 
   for (const auto & nameAndInterface : sinks)
   {
@@ -117,6 +119,9 @@ SuperElastixFilter< TFixedImage, TMovingImage >
   this->GetOutput("ResultImage")->CopyInformation(GetInput("FixedImage"));
   this->GetOutput("ResultMesh")->CopyInformation(GetInput("FixedMesh"));
 
+  auto source = GetInput("Source");
+  source->UpdateOutputInformation();
+  this->GetOutput("Sink")->CopyInformation(source);
 }
 
 template< typename TFixedImage, typename TMovingImage >

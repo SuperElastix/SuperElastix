@@ -140,9 +140,10 @@ namespace selx
     void ApplyConnectionConfiguration();
     bool UpdateSelectors();
     bool ConnectComponents();
+    bool FindAfterRegistration();
   private:
     bool FindRunRegistration();
-    bool FindAfterRegistration();
+    
     bool ConnectSources();
     bool ConnectSinks();
     bool RunRegistrations();

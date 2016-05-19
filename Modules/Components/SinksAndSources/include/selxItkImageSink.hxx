@@ -57,7 +57,7 @@ namespace selx
   template<int Dimensionality, class TPixel>
   void ItkImageSinkComponent< Dimensionality, TPixel>::AfterRegistration()
   {
-
+    this->m_MiniPipelineOutputImage->Update();
   }
   template<int Dimensionality, class TPixel>
   void ItkImageSinkComponent< Dimensionality, TPixel>::SetMiniPipelineOutput(itk::DataObject::Pointer overlordOutput)
