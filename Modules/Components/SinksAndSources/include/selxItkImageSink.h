@@ -48,14 +48,18 @@ namespace selx
 
     virtual int Set(itkImageInterface<Dimensionality, TPixel>*) override;
     //virtual int Set(GetItkImageInterface<Dimensionality, TPixel>*) override;
-    virtual bool ConnectToOverlordSink(itk::DataObject::Pointer) override;
+    //virtual bool ConnectToOverlordSink(itk::DataObject::Pointer) override;
+    virtual void SetMiniPipelineOutput(itk::DataObject::Pointer) override;
+    virtual itk::DataObject::Pointer GetMiniPipelineOutput(void)override;
+
     virtual void AfterRegistration() override;
 
     virtual bool MeetsCriterion(const ComponentBase::CriterionType &criterion) override;
     static const char * GetDescription() { return "ItkImageSink Component"; };
   private:
-    typename ItkImageType::Pointer m_Image;
-    
+    typename ItkImageType::Pointer m_MiniPipelineOutputImage;
+    typename ItkImageType::Pointer m_OverlordOutputImage;
+
     GetItkImageInterface<Dimensionality, TPixel>* m_ProvidingGetItkImageInterface;
   protected:
     /* The following struct returns the string name of computation type */

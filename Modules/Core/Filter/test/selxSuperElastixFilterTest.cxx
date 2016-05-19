@@ -19,6 +19,11 @@
 
 
 #include "selxSuperElastixFilter.h"
+
+#include "selxItkSmoothingRecursiveGaussianImageFilterComponent.h"
+#include "selxItkImageSink.h"
+#include "selxItkImageSource.h"
+
 #include "itkImage.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
@@ -32,15 +37,20 @@
 #include "itkMeshFileReader.h"
 #include "itkMeshFileWriter.h"
 
+#include "selxDataManager.h"
 #include "gtest/gtest.h"
 
 namespace selx {
 
   class SuperElastixFilterTest : public ::testing::Test {
   public:
-    typedef itk::Image<float, 2> ImageType;
-    typedef itk::ImageFileReader<ImageType> ImageReaderType;
-    typedef itk::ImageFileWriter<ImageType> ImageWriterType;
+    typedef itk::Image<float, 2> Image2DType;
+    typedef itk::ImageFileReader<Image2DType> ImageReader2DType;
+    typedef itk::ImageFileWriter<Image2DType> ImageWriter2DType;
+
+    typedef itk::Image<double, 3> Image3DType;
+    typedef itk::ImageFileReader<Image3DType> ImageReader3DType;
+    typedef itk::ImageFileWriter<Image3DType> ImageWriter3DType;
 
     typedef float dummyType;
     typedef dummyType FixedType;
@@ -51,6 +61,7 @@ namespace selx {
     typedef itk::MeshFileReader<MeshType> MeshReaderType;
     typedef itk::MeshFileWriter<MeshType> MeshWriterType;
 
+    typedef DataManager DataManagerType;
     virtual void SetUp() {
 
     }
@@ -63,10 +74,16 @@ namespace selx {
 
   TEST_F(SuperElastixFilterTest, IO)
   {
-    ImageReaderType::Pointer imageReader = ImageReaderType::New();
-    ImageWriterType::Pointer imageWriter = ImageWriterType::New();
-    imageReader->SetFileName("in2dimage.mhd");
-    imageWriter->SetFileName("out2dimage.mhd");
+    ImageReader2DType::Pointer imageReader2D = ImageReader2DType::New();
+    ImageWriter2DType::Pointer imageWriter2D = ImageWriter2DType::New();
+    imageReader2D->SetFileName("in2dimage.mhd");
+    imageWriter2D->SetFileName("out2dimage.mhd");
+
+    ImageReader3DType::Pointer imageReader3D = ImageReader3DType::New();
+    ImageWriter3DType::Pointer imageWriter3D = ImageWriter3DType::New();
+    DataManagerType::Pointer dataManager = DataManagerType::New();
+    imageReader3D->SetFileName(dataManager->GetInputFile("sphereA3d.mhd"));
+    imageWriter3D->SetFileName(dataManager->GetOutputFile("SuperElastixFilterTest_sphereA3d.mhd"));
 
     MeshReaderType::Pointer meshReader = MeshReaderType::New();
     MeshWriterType::Pointer meshWriter = MeshWriterType::New();
@@ -76,18 +93,35 @@ namespace selx {
 
     auto mesh = meshReader->GetOutput();
 
+    ComponentFactory<ItkImageSinkComponent<3, double>>::RegisterOneFactory();
+    ComponentFactory<ItkImageSourceComponent>::RegisterOneFactory();
+    ComponentFactory<ItkSmoothingRecursiveGaussianImageFilterComponent<3, double>>::RegisterOneFactory();
+
     SuperElastixFilterType::Pointer mySuperElastix;
+    
+    Blueprint::Pointer blueprint = Blueprint::New();
+    //ParameterMapType componentParameters = { { "NameOfClass", { "ItkSmoothingRecursiveGaussianImageFilterComponent" } } };
+    
+    blueprint->AddComponent("Source", { { "NameOfClass", { "ItkImageSourceComponent" } } });
+    blueprint->AddComponent("ImageFilter", { { "NameOfClass", { "ItkSmoothingRecursiveGaussianImageFilterComponent" } } });
+    blueprint->AddComponent("Sink", { { "NameOfClass", { "ItkImageSinkComponent" } } });
+    blueprint->AddConnection("Source", "ImageFilter", Blueprint::ParameterMapType()); // 
+    blueprint->AddConnection("ImageFilter", "Sink", Blueprint::ParameterMapType());
+
     EXPECT_NO_THROW(mySuperElastix = SuperElastixFilterType::New());
-    mySuperElastix->SetConfiguration();
-    mySuperElastix->SetInput("FixedImage", imageReader->GetOutput());
-    imageWriter->SetInput(mySuperElastix->GetOutput<ImageType>("ResultImage"));
-    //imageWriter->SetInput(mySuperElastix->GetOutput<ImageType>("Blabla"));
-    //imageWriter->SetInput(imageReader->GetOutput());
+    mySuperElastix->SetBlueprint(blueprint);
+
+    mySuperElastix->SetInput("FixedImage", imageReader2D->GetOutput());
+    imageWriter2D->SetInput(mySuperElastix->GetOutput<Image2DType>("ResultImage"));
     mySuperElastix->SetInput("FixedMesh", meshReader->GetOutput());  
     meshWriter->SetInput(mySuperElastix->GetOutput<MeshType>("ResultMesh"));
-    //meshWriter->SetInput(meshReader->GetOutput());
-    EXPECT_NO_THROW(imageWriter->Update());
-    EXPECT_NO_THROW(meshWriter->Update());
 
+    mySuperElastix->SetInput("Source", imageReader3D->GetOutput());
+    imageWriter3D->SetInput(mySuperElastix->GetOutput<Image3DType>("Sink"));
+
+
+    EXPECT_NO_THROW(imageWriter2D->Update());
+    EXPECT_NO_THROW(meshWriter->Update());
+    EXPECT_NO_THROW(imageWriter3D->Update());
   }
 }

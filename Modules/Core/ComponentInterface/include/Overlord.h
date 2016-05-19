@@ -94,27 +94,38 @@ namespace selx
 
     //typedef itk::VectorContainer <
     //  unsigned int, SinkInterface* > SinkComponentsContainerType;
-
+    
     //typedef itk::VectorContainer <
-    //  unsigned int, SourceInterface* > SourceComponentsContainerType;
+    //  unsigned int, SourceInterface* > SourceInterfaceContainerType;
+
+    typedef std::map <
+      std::string, SourceInterface2* > SourceInterfaceMapType;
+
+    typedef std::map <
+      std::string, SinkInterface2* > SinkInterfaceMapType;
 
     //TODO these containers are not interface specific
-    typedef itk::VectorContainer <
-      unsigned int, ComponentType::Pointer > SinkComponentsContainerType;
+    //typedef itk::VectorContainer <
+    //  unsigned int, ComponentType::Pointer > SinkComponentsContainerType;
 
-    typedef itk::VectorContainer <
-      unsigned int, ComponentType::Pointer > SourceComponentsContainerType;
+    //typedef itk::VectorContainer <
+    //  unsigned int, ComponentType::Pointer > SourceComponentsContainerType;
 
    // typedef std::vector <
    //   unsigned int, SinkInterface* > SinkComponentsContainerType;
 
-   // typedef std::vector <
-   //   unsigned int, SourceInterface* > SourceComponentsContainerType;
+   typedef std::vector <
+      unsigned int, SourceInterface* > SourceComponentsContainerType;
+
+   SourceInterfaceMapType GetSourceInterfaces();
+   SinkInterfaceMapType GetSinkInterfaces();
 
     typedef itk::VectorContainer <
       unsigned int, ComponentType::Pointer > ComponentsContainerType;
 
-    void SetBlueprint(const Blueprint::Pointer);
+    //TODO make const correct
+    //itkSetConstObjectMacro(Blueprint, Blueprint);
+    itkSetObjectMacro(Blueprint, Blueprint);
     bool Configure();
     bool Execute();
 
@@ -124,17 +135,20 @@ namespace selx
     
     Overlord();
     virtual ~Overlord() {};
-  private:
+  public: // temporarily from private to public during refactoring SuperElastixFilter.
     void ApplyNodeConfiguration();
     void ApplyConnectionConfiguration();
     bool UpdateSelectors();
     bool ConnectComponents();
+  private:
     bool FindRunRegistration();
     bool FindAfterRegistration();
     bool ConnectSources();
     bool ConnectSinks();
     bool RunRegistrations();
     bool AfterRegistrations();
+    //TODO make const correct
+    //Blueprint::ConstPointer m_Blueprint;
     Blueprint::Pointer m_Blueprint;
     ComponentSelectorContainerType m_ComponentSelectorContainer;
     //ObjectContainerType::Pointer m_InputObjects;

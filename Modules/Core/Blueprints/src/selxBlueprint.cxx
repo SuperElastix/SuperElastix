@@ -100,7 +100,7 @@ Blueprint
 
 Blueprint::ParameterMapType
 Blueprint
-::GetComponent(ComponentNameType name)
+::GetComponent(ComponentNameType name) const
 {
   //TODO check if component exists: this->m_Graph[name] != graph_traits<GraphType>::null_vertex()
   this->Modified();
@@ -126,7 +126,7 @@ Blueprint
 //   remove_vertex( index, this->m_Graph );
 // }
 
-Blueprint::ComponentNamesType Blueprint::GetComponentNames(void){
+Blueprint::ComponentNamesType Blueprint::GetComponentNames(void) const{
   ComponentNamesType container;
   for (auto it = boost::vertices(this->m_Graph.graph()).first; it != boost::vertices(this->m_Graph.graph()).second; ++it){
     container.push_back(this->m_Graph.graph()[*it].name);
@@ -155,6 +155,7 @@ Blueprint
   this->Modified();
 
   if( !this->ConnectionExists( upstream, downstream ) ) {
+    // TODO check if vertices exist
     boost::add_edge_by_label(upstream, downstream,  { parameterMap }, this->m_Graph);
     return true;
   }
@@ -167,7 +168,7 @@ Blueprint
 
 Blueprint::ParameterMapType
 Blueprint
-::GetConnection( ComponentNameType upstream, ComponentNameType downstream )
+::GetConnection( ComponentNameType upstream, ComponentNameType downstream ) const
 {
   this->Modified();
 
@@ -203,14 +204,14 @@ Blueprint
 
 bool
 Blueprint
-::ConnectionExists( ComponentNameType upstream, ComponentNameType downstream )
+::ConnectionExists( ComponentNameType upstream, ComponentNameType downstream ) const
 {
   return boost::edge_by_label( upstream, downstream, this->m_Graph).second;
 }
 
 Blueprint::ComponentNamesType
 Blueprint
-::GetOutputNames(const ComponentNameType name) {
+::GetOutputNames(const ComponentNameType name) const{
   ComponentNamesType container;
   OutputIteratorPairType outputIteratorPair = boost::out_edges(this->m_Graph.vertex(name), this->m_Graph);
   for (auto it = outputIteratorPair.first; it != outputIteratorPair.second; ++it){
@@ -223,7 +224,7 @@ Blueprint
 
 Blueprint::ConnectionIndexType
 Blueprint
-::GetConnectionIndex( ComponentNameType upstream, ComponentNameType downstream )
+::GetConnectionIndex( ComponentNameType upstream, ComponentNameType downstream ) const
 {
   // This function is part of the internal API and should fail hard if we use it incorrectly
   if( !this->ConnectionExists( upstream, downstream ) ) {

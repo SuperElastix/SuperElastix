@@ -15,37 +15,9 @@ template< typename TFixedImage, typename TMovingImage >
 SuperElastixFilter< TFixedImage, TMovingImage >
 ::SuperElastixFilter( void )
 {
+  this->m_Overlord = Overlord::New();
   this->m_imageFilter = ImageFilterType::New();
   this->m_meshFilter = MeshFilterType::New();
-
-} // end Constructor
-
-template< typename TFixedImage, typename TMovingImage >
-void
-SuperElastixFilter< TFixedImage, TMovingImage >
-::SetConfiguration(void)
-{
-  /** Implement some dummy configuration */
-  //DummyDataObjectType::Pointer dummyData = DummyDataObjectType::New();
-  //dummyData->Allocate();
-  //this->SetPrimaryInputName("dummy");
-  //this->SetPrimaryInput(dummyData);
-  //this->SetPrimaryOutputName("dummy");
-  //this->SetPrimaryOutput(dummyData);
-
-  //this->SetPrimaryInputName("FixedImage");
-  //this->SetPrimaryOutputName("ResultImage");
-
-  //this->AddRequiredInputName("FixedImage");
-  //this->AddRequiredInputName("FixedMesh");
-
-  //typedef itk::Image<float, 2> ImageType;
-  //ImageType::Pointer resultImage = ImageType::New();
-  //SetOutput("ResultImage", resultImage);
-
-  //typedef itk::Mesh<float, 2> MeshType;
-  //MeshType::Pointer resultMesh = MeshType::New();
-  //SetOutput("ResultMesh", resultMesh);
 
 } // end Constructor
 
@@ -59,11 +31,39 @@ void
 SuperElastixFilter< TFixedImage, TMovingImage >
 ::GenerateData(void)
 {
+  this->m_Overlord->SetBlueprint(this->m_Blueprint);
+  bool isSuccess(false);
+  bool allUniqueComponents;
+  this->m_Overlord->ApplyNodeConfiguration();
+  std::cout << "Applying Component Settings" << std::endl;
+  allUniqueComponents = this->m_Overlord->UpdateSelectors();
+  std::cout << "Based on Component Criteria unique components could " << (allUniqueComponents ? "" : "not ") << "be selected" << std::endl;
+
+  std::cout << "Applying Connection Settings" << std::endl;
+  this->m_Overlord->ApplyConnectionConfiguration();
+  allUniqueComponents = this->m_Overlord->UpdateSelectors();
+  std::cout << "By adding Connection Criteria unique components could " << (allUniqueComponents ? "" : "not ") << "be selected" << std::endl;
+
+  Overlord::SourceInterfaceMapType sources = this->m_Overlord->GetSourceInterfaces();
+  for (const auto & nameAndInterface : sources)
+  {
+    nameAndInterface.second->ConnectToOverlordSource(this->GetInput(nameAndInterface.first));
+  }
+
+  Overlord::SinkInterfaceMapType sinks = this->m_Overlord->GetSinkInterfaces();
+  for (const auto & nameAndInterface : sinks)
+  {
+    nameAndInterface.second->SetMiniPipelineOutput(this->GetOutput(nameAndInterface.first));
+  }
+
+
   this->ConnectSourceA(this->GetInput("FixedImage"));
   this->ConnectPlaceholderSinkA(this->GetOutput("ResultImage"));
 
   this->ConnectSourceB(this->GetInput("FixedMesh"));
   this->ConnectPlaceholderSinkB(this->GetOutput("ResultMesh"));
+
+  this->m_Overlord->Execute();
 
   this->m_imageFilter->Update();
   this->m_meshFilter->Update();
@@ -71,6 +71,17 @@ SuperElastixFilter< TFixedImage, TMovingImage >
 
   this->GetOutput("ResultImage")->Graft(this->ConnectDataSinkA());
   this->GetOutput("ResultMesh")->Graft(this->ConnectDataSinkB());
+
+  if (allUniqueComponents)
+  {
+    isSuccess = this->m_Overlord->ConnectComponents();
+  }
+  std::cout << "Connecting Components: " << (isSuccess ? "succeeded" : "failed") << std::endl;
+
+  for (const auto & nameAndInterface : sinks)
+  {
+    this->GetOutput(nameAndInterface.first)->Graft(nameAndInterface.second->GetMiniPipelineOutput());
+  }
 
   //this->GetOutput("ResultImage")->Graft(GetInput("FixedImage"));
   //this->GetOutput("ResultMesh")->Graft(GetInput("FixedMesh"));

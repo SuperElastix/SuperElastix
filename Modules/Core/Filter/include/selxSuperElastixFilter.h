@@ -8,6 +8,8 @@
 #include <itkConnectedRegionsMeshFilter.h>
 #include <itkAbsImageFilter.h>
 
+#include "selxBlueprint.h"
+#include "Overlord.h"
 /**
  * \class SuperElastixFilter
  * \brief ITK Filter interface to the SuperElastix registration library.
@@ -38,8 +40,10 @@ public:
 
   typedef itk::Image<bool,1> DummyDataObjectType;
 
-  void SetConfiguration();
-
+  //TODO make const correct
+  //itkSetConstObjectMacro(Blueprint,Blueprint)
+  itkSetObjectMacro(Blueprint, Blueprint)
+  
   /** SetInput accepts any input data as long as it is derived from itk::DataObject */
   void SetInput(const DataObjectIdentifierType&, InputDataType*) ITK_OVERRIDE;
   
@@ -58,6 +62,10 @@ protected:
   virtual void GenerateOutputInformation(void) ITK_OVERRIDE;
 
 private:
+  //TODO make const correct
+  //Blueprint::ConstPointer m_Blueprint;
+  Blueprint::Pointer m_Blueprint;
+  Overlord::Pointer m_Overlord;
   // For testing purposes only. TODO remove.
   // Assume we have 2 components: A and B
   void ConnectSourceA(itk::DataObject*);

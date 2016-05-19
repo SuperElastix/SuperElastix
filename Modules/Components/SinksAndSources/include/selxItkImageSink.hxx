@@ -22,10 +22,9 @@
 namespace selx
 {
   template<int Dimensionality, class TPixel>
-  ItkImageSinkComponent< Dimensionality, TPixel>::ItkImageSinkComponent()
+  ItkImageSinkComponent< Dimensionality, TPixel>::ItkImageSinkComponent() :
+    m_MiniPipelineOutputImage(nullptr), m_OverlordOutputImage(nullptr)
   {
-    this->m_Image = nullptr;
-    //this->m_ProvidingGetItkImageInterface = nullptr;
   }
 
   template<int Dimensionality, class TPixel>
@@ -36,11 +35,15 @@ namespace selx
   template<int Dimensionality, class TPixel>
   int ItkImageSinkComponent< Dimensionality, TPixel>::Set(itkImageInterface<Dimensionality, TPixel>* other)
   {
-    if (this->m_Image == nullptr)
+    if (this->m_OverlordOutputImage == nullptr)
     {
       itkExceptionMacro("SinkComponent needs to be initialized by ConnectToOverlordSink()");
     }
-    other->GetItkImage()->Graft(this->m_Image);
+
+    // Store pointer to MiniPipelineOutputImage for later grafting onto Overlord output.
+    this->m_MiniPipelineOutputImage = other->GetItkImage();
+    // Graft Overlord output onto MiniPipelineOutputImage.
+    this->m_MiniPipelineOutputImage->Graft(this->m_OverlordOutputImage);
     return 0;
   }
 
@@ -56,14 +59,32 @@ namespace selx
   {
 
   }
+  template<int Dimensionality, class TPixel>
+  void ItkImageSinkComponent< Dimensionality, TPixel>::SetMiniPipelineOutput(itk::DataObject::Pointer overlordOutput)
+  {
+    /** Tries to cast the overlordOutput to an image (data object) and stores the result. 
+     *  The resulting output image will be grafted into when the sink component is connected to an other component.
+     * */
+    // 
+    this->m_OverlordOutputImage = dynamic_cast<ItkImageType*>(&(*overlordOutput));
+    if (this->m_OverlordOutputImage == nullptr)
+    {
+      itkExceptionMacro("SinkComponent cannot cast the Overlord's Output to the required type");
+    }
+  }
 
   template<int Dimensionality, class TPixel>
-  bool ItkImageSinkComponent< Dimensionality, TPixel>::ConnectToOverlordSink(itk::DataObject::Pointer object)
+  typename itk::DataObject::Pointer ItkImageSinkComponent< Dimensionality, TPixel>::GetMiniPipelineOutput()
   {
-    this->m_Image = dynamic_cast<ItkImageType*>(&(*object));
-
-    return (this->m_Image != nullptr);
+    return this->m_MiniPipelineOutputImage;
   }
+  //template<int Dimensionality, class TPixel>
+  //bool ItkImageSinkComponent< Dimensionality, TPixel>::ConnectToOverlordSink(itk::DataObject::Pointer object)
+  //{
+  //  this->m_Image = dynamic_cast<ItkImageType*>(&(*object));
+
+  //  return (this->m_Image != nullptr);
+  //}
 
   template<int Dimensionality, class TPixel>
   bool ItkImageSinkComponent< Dimensionality, TPixel>::MeetsCriterion(const ComponentBase::CriterionType &criterion)

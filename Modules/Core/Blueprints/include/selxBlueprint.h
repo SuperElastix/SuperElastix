@@ -84,7 +84,7 @@ public:
   // Interface for managing components
   bool AddComponent( ComponentNameType name);
   bool AddComponent(ComponentNameType name, ParameterMapType parameterMap);
-  ParameterMapType GetComponent(ComponentNameType name);
+  ParameterMapType GetComponent(ComponentNameType name) const;
   void SetComponent(ComponentNameType, ParameterMapType parameterMap);
 
   // TODO: Let user delete component. Before we do this, we need a proper way of 
@@ -96,27 +96,27 @@ public:
 
   // Returns a vector of the all Component names in the graph.
   // TODO: should this be an iterator over the names?
-  ComponentNamesType GetComponentNames(void);
+  ComponentNamesType GetComponentNames(void) const;
 
   // Interface for managing connections between components in which we 
   // deliberately avoid using connection indexes, but instead force
   // the user to think in terms of components (which is conceptually simpler)
   bool AddConnection(ComponentNameType upstream, ComponentNameType downstream);
   bool AddConnection(ComponentNameType upstream, ComponentNameType downstream, ParameterMapType parameterMap);
-  ParameterMapType GetConnection(ComponentNameType upstream, ComponentNameType downstream);
+  ParameterMapType GetConnection(ComponentNameType upstream, ComponentNameType downstream) const;
   bool SetConnection(ComponentNameType upstream, ComponentNameType downstream, ParameterMapType parameterMap);
   bool DeleteConnection(ComponentNameType upstream, ComponentNameType downstream);
-  bool ConnectionExists(ComponentNameType upstream, ComponentNameType downstream);
+  bool ConnectionExists(ComponentNameType upstream, ComponentNameType downstream) const;
 
   // Returns a vector of the Component names at the outgoing direction
   // TODO: should this be an iterator over the names?
-  ComponentNamesType GetOutputNames(const ComponentNameType name);
+  ComponentNamesType GetOutputNames(const ComponentNameType name) const;
 
   void WriteBlueprint( const std::string filename );
 
 private:
  
-  ConnectionIndexType GetConnectionIndex( ComponentNameType upsteam, ComponentNameType downstream );
+  ConnectionIndexType GetConnectionIndex( ComponentNameType upsteam, ComponentNameType downstream ) const;
 
   GraphType m_Graph;
 

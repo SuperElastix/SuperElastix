@@ -38,13 +38,6 @@ namespace selx
     
   }
 
-  void Overlord::SetBlueprint(const Blueprint::Pointer blueprint)
-  {
-    m_Blueprint = blueprint;
-    return;
-
-  }
-
   bool Overlord::Configure()
   {
     bool isSuccess(false);
@@ -113,7 +106,7 @@ namespace selx
   bool Overlord::UpdateSelectors()
   {
     bool allUniqueComponents = true;
-    Blueprint::ComponentNamesType componentNames = this->m_Blueprint->GetComponentNames();
+    const Blueprint::ComponentNamesType componentNames = m_Blueprint->GetComponentNames();
     for (auto const & name : componentNames)
     {
       ComponentSelector::NumberOfComponentsType numberOfComponents = this->m_ComponentSelectorContainer[name]->UpdatePossibleComponents();
@@ -228,6 +221,56 @@ namespace selx
     }
     return isAllSuccess;
   }
+  Overlord::SourceInterfaceMapType Overlord::GetSourceInterfaces()
+  {
+    /** Scans all Components to find those with Sourcing capability and store them in SourceComponents list */
+    
+    // BIG TODO SourceInterface2->SourceInterface
+    const CriteriaType sourceCriteria = { { "HasProvidingInterface", { "SourceInterface2" } } };
+    SourceInterfaceMapType sourceInterfaceMap;
+    // TODO redesign ComponentBase class to accept a single criterion instead of a criteria mapping.
+    for (const auto & componentSelector : (this->m_ComponentSelectorContainer))
+    {
+      ComponentBase::Pointer component = componentSelector.second->GetComponent();
+      if (component->MeetsCriteria(sourceCriteria)) // TODO MeetsCriterion
+      {
+        SourceInterface2* provingSourceInterface = dynamic_cast<SourceInterface2*> (&(*component));
+        if (provingSourceInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
+        {
+          itkExceptionMacro("dynamic_cast<SourceInterface*> fails, but based on component criterion it shouldn't")
+        }
+        sourceInterfaceMap[componentSelector.first]=provingSourceInterface;
+        
+      }
+    }
+    return sourceInterfaceMap;
+  }
+
+  Overlord::SinkInterfaceMapType Overlord::GetSinkInterfaces()
+  {
+    /** Scans all Components to find those with Sinking capability and store them in SinkComponents list */
+    // BIG TODO SinkInterface2 -> SinkInterface
+    // TODO redesign ComponentBase class to accept a single criterion instead of a criteria mapping.
+    const CriteriaType sinkCriteria = { { "HasProvidingInterface", { "SinkInterface2" } } };
+    
+    SinkInterfaceMapType sinkInterfaceMap;
+
+    for (auto const & componentSelector : (this->m_ComponentSelectorContainer))
+    {
+      ComponentBase::Pointer component = componentSelector.second->GetComponent();
+      if (component->MeetsCriteria(sinkCriteria))  // TODO MeetsCriterion
+      {
+        SinkInterface2* provingSinkInterface = dynamic_cast<SinkInterface2*> (&(*component));
+        if (provingSinkInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
+        {
+          itkExceptionMacro("dynamic_cast<SinkInterface*> fails, but based on component criterion it shouldn't")
+        }
+        sinkInterfaceMap[componentSelector.first] = provingSinkInterface;
+      }
+    }
+    return sinkInterfaceMap;
+  }
+
   bool Overlord::ConnectSources()
   {
     /** Scans all Components to find those with Sourcing capability and store them in SourceComponents list */
