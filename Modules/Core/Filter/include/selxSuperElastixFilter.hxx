@@ -16,8 +16,9 @@ SuperElastixFilter< TFixedImage, TMovingImage >
 ::SuperElastixFilter( void )
 {
   this->m_Overlord = Overlord::New();
-  this->m_imageFilter = ImageFilterType::New();
-  this->m_meshFilter = MeshFilterType::New();
+  
+  //Disable "Primary" as required input
+  this->SetRequiredInputNames({});
 
 } // end Constructor
 
@@ -74,11 +75,6 @@ SuperElastixFilter< TFixedImage, TMovingImage >
     nameAndInterface.second->GetMiniPipelineOutput()->UpdateOutputInformation();
   }
 
-
-  // dummy implementation
-  this->GetOutput("ResultImage")->CopyInformation(GetInput("FixedImage"));
-  this->GetOutput("ResultMesh")->CopyInformation(GetInput("FixedMesh"));
-
 }
 
 /**
@@ -91,22 +87,7 @@ SuperElastixFilter< TFixedImage, TMovingImage >
 ::GenerateData(void)
 {
 
-  this->ConnectSourceA(this->GetInput("FixedImage"));
-  this->ConnectPlaceholderSinkA(this->GetOutput("ResultImage"));
-
-  this->ConnectSourceB(this->GetInput("FixedMesh"));
-  this->ConnectPlaceholderSinkB(this->GetOutput("ResultMesh"));
-
-
   this->m_Overlord->Execute();
-
-  // dummy implementation
-  this->m_imageFilter->Update();
-  this->m_meshFilter->Update();
-
-
-  this->GetOutput("ResultImage")->Graft(this->ConnectDataSinkA());
-  this->GetOutput("ResultMesh")->Graft(this->ConnectDataSinkB());
 
   Overlord::SinkInterfaceMapType sinks = this->m_Overlord->GetSinkInterfaces();
   for (const auto & nameAndInterface : sinks)
