@@ -40,14 +40,14 @@ namespace selx
   return this->m_Image;
 }
 
-  bool ItkImageSourceComponent::ConnectToOverlordSource(itk::DataObject::Pointer object)
+  void ItkImageSourceComponent::SetMiniPipelineInput(itk::DataObject::Pointer object)
 {
   this->m_Image = dynamic_cast<ItkImageType*>(&(*object));
   if (this->m_Image == nullptr)
   {
     itkExceptionMacro("DataObject passed by the Overlord is not of the right or not at all an ImageType");
   }
-  return false;
+  return;
 
 }
 

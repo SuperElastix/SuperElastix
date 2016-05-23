@@ -42,7 +42,7 @@ namespace selx
     typedef itk::Image<double, 3> ItkImageType;
     
     virtual ItkImageType::Pointer GetItkImage() override;
-    virtual bool ConnectToOverlordSource(itk::DataObject::Pointer) override;
+    virtual void SetMiniPipelineInput(itk::DataObject::Pointer) override;
     virtual bool MeetsCriterion(const ComponentBase::CriterionType &criterion) override;
     static const char * GetDescription() { return "ItkImageSource Component"; };
   private:

@@ -58,8 +58,9 @@ protected:
 
   SuperElastixFilter(void);
 
-  virtual void GenerateData(void) ITK_OVERRIDE;
   virtual void GenerateOutputInformation(void) ITK_OVERRIDE;
+  virtual void GenerateData(void) ITK_OVERRIDE;
+
 
 private:
   //TODO make const correct

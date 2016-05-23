@@ -135,7 +135,7 @@ namespace selx
     // By this interface only Source Components can to talk to the Overlord.
     // How specific Source Components connect to the graph is up to them, i.e. they might adapt the passed Object to other types.
   public:
-    virtual bool ConnectToOverlordSource(itk::DataObject::Pointer) = 0;
+    virtual void SetMiniPipelineInput(itk::DataObject::Pointer) = 0;
   };
   class SinkInterface2 {
     // A special interface: the Overlord checks components for this type of interface.

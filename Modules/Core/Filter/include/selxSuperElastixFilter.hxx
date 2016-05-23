@@ -23,14 +23,19 @@ SuperElastixFilter< TFixedImage, TMovingImage >
 
 
 /**
- * ********************* GenerateData *********************
- */
+* ********************* GenerateOutputInformation *********************
+*/
+
 
 template< typename TFixedImage, typename TMovingImage >
 void
 SuperElastixFilter< TFixedImage, TMovingImage >
-::GenerateData(void)
+::GenerateOutputInformation()
 {
+  /*
+  * Override the ProcessObject default implementation, since outputs may be different types and
+  * therefore the output information must come from the sink components.
+  */
   this->m_Overlord->SetBlueprint(this->m_Blueprint);
   bool isSuccess(false);
   bool allUniqueComponents;
@@ -47,7 +52,7 @@ SuperElastixFilter< TFixedImage, TMovingImage >
   Overlord::SourceInterfaceMapType sources = this->m_Overlord->GetSourceInterfaces();
   for (const auto & nameAndInterface : sources)
   {
-    nameAndInterface.second->ConnectToOverlordSource(this->GetInput(nameAndInterface.first));
+    nameAndInterface.second->SetMiniPipelineInput(this->GetInput(nameAndInterface.first));
   }
 
   Overlord::SinkInterfaceMapType sinks = this->m_Overlord->GetSinkInterfaces();
@@ -56,13 +61,6 @@ SuperElastixFilter< TFixedImage, TMovingImage >
     nameAndInterface.second->SetMiniPipelineOutput(this->GetOutput(nameAndInterface.first));
   }
 
-
-  this->ConnectSourceA(this->GetInput("FixedImage"));
-  this->ConnectPlaceholderSinkA(this->GetOutput("ResultImage"));
-
-  this->ConnectSourceB(this->GetInput("FixedMesh"));
-  this->ConnectPlaceholderSinkB(this->GetOutput("ResultMesh"));
-
   if (allUniqueComponents)
   {
     isSuccess = this->m_Overlord->ConnectComponents();
@@ -70,8 +68,39 @@ SuperElastixFilter< TFixedImage, TMovingImage >
   std::cout << "Connecting Components: " << (isSuccess ? "succeeded" : "failed") << std::endl;
 
   this->m_Overlord->FindAfterRegistration();
+
+  for (const auto & nameAndInterface : sinks)
+  {
+    nameAndInterface.second->GetMiniPipelineOutput()->UpdateOutputInformation();
+  }
+
+
+  // dummy implementation
+  this->GetOutput("ResultImage")->CopyInformation(GetInput("FixedImage"));
+  this->GetOutput("ResultMesh")->CopyInformation(GetInput("FixedMesh"));
+
+}
+
+/**
+ * ********************* GenerateData *********************
+ */
+
+template< typename TFixedImage, typename TMovingImage >
+void
+SuperElastixFilter< TFixedImage, TMovingImage >
+::GenerateData(void)
+{
+
+  this->ConnectSourceA(this->GetInput("FixedImage"));
+  this->ConnectPlaceholderSinkA(this->GetOutput("ResultImage"));
+
+  this->ConnectSourceB(this->GetInput("FixedMesh"));
+  this->ConnectPlaceholderSinkB(this->GetOutput("ResultMesh"));
+
+
   this->m_Overlord->Execute();
 
+  // dummy implementation
   this->m_imageFilter->Update();
   this->m_meshFilter->Update();
 
@@ -79,49 +108,12 @@ SuperElastixFilter< TFixedImage, TMovingImage >
   this->GetOutput("ResultImage")->Graft(this->ConnectDataSinkA());
   this->GetOutput("ResultMesh")->Graft(this->ConnectDataSinkB());
 
-
+  Overlord::SinkInterfaceMapType sinks = this->m_Overlord->GetSinkInterfaces();
   for (const auto & nameAndInterface : sinks)
   {
     this->GetOutput(nameAndInterface.first)->Graft(nameAndInterface.second->GetMiniPipelineOutput());
   }
 
-  //this->GetOutput("ResultImage")->Graft(GetInput("FixedImage"));
-  //this->GetOutput("ResultMesh")->Graft(GetInput("FixedMesh"));
-
-  /*
-  // This filter simply passes its named inputs as named outputs 
-  for (const auto& inputname : this->GetInputNames())
-  { 
-    InputDataType* inputData = this->GetInput(inputname);
-    if (inputData)
-    {
-      inputData->Update();
-    }
-    //OutputDataType* copiedInputData = inputData->Clone();
-    //this->GraftOutput(inputname, this->GetInput(inputname));
-    this->SetOutput(inputname, inputData);
-  }
-  */
-}
-
-
-template< typename TFixedImage, typename TMovingImage >
-void
-SuperElastixFilter< TFixedImage, TMovingImage >
-::GenerateOutputInformation()
-{
-  /*
-  * Override the ProcessObject default implementation, since outputs may be different types and 
-  * therefore the output information must come from the sink components.
-  */
-
-   // dummy implementation
-  this->GetOutput("ResultImage")->CopyInformation(GetInput("FixedImage"));
-  this->GetOutput("ResultMesh")->CopyInformation(GetInput("FixedMesh"));
-
-  auto source = GetInput("Source");
-  source->UpdateOutputInformation();
-  this->GetOutput("Sink")->CopyInformation(source);
 }
 
 template< typename TFixedImage, typename TMovingImage >
