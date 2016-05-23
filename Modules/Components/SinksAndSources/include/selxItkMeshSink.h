@@ -17,38 +17,49 @@
  *
  *=========================================================================*/
 
-#ifndef selxItkImageSource_h
-#define selxItkImageSource_h
+#ifndef selxItkMeshSink_h
+#define selxItkMeshSink_h
 
 #include "ComponentBase.h"
 #include "Interfaces.h"
 #include <string.h>
 #include "selxMacro.h"
+#include "itkMeshFileWriter.h"
+
 namespace selx
 {
   template<int Dimensionality, class TPixel>
-  class ItkImageSourceComponent : 
-    public Implements<
-    Accepting<>,
-    Providing< SourceInterface2, itkImageInterface<Dimensionality, TPixel > >
+  class ItkMeshSinkComponent :
+    public Implements <
+    Accepting< itkMeshInterface<Dimensionality, TPixel> >,
+    Providing < SinkInterface2, AfterRegistrationInterface >
     >
   {
   public:
-    selxNewMacro(ItkImageSourceComponent, ComponentBase);
+    selxNewMacro(ItkMeshSinkComponent, ComponentBase);
 
-    ItkImageSourceComponent();
-    virtual ~ItkImageSourceComponent();
+    //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
 
-    typedef itk::ImageSource<itk::Image<TPixel, Dimensionality>> ItkImageSourceType;
-    typedef itk::Image<TPixel, Dimensionality> ItkImageType;
-    
-    virtual typename ItkImageType::Pointer GetItkImage() override;
-    virtual void SetMiniPipelineInput(itk::DataObject::Pointer) override;
+    ItkMeshSinkComponent();
+    virtual ~ItkMeshSinkComponent();
+
+    typedef itk::Mesh<TPixel, Dimensionality> ItkMeshType;
+
+    virtual int Set(itkMeshInterface<Dimensionality, TPixel>*) override;
+    //virtual int Set(GetItkMeshInterface<Dimensionality, TPixel>*) override;
+    //virtual bool ConnectToOverlordSink(itk::DataObject::Pointer) override;
+    virtual void SetMiniPipelineOutput(itk::DataObject::Pointer) override;
+    virtual itk::DataObject::Pointer GetMiniPipelineOutput(void)override;
+
+    virtual void AfterRegistration() override;
+
     virtual bool MeetsCriterion(const ComponentBase::CriterionType &criterion) override;
-    static const char * GetDescription() { return "ItkImageSource Component"; };
+    static const char * GetDescription() { return "ItkMeshSink Component"; };
   private:
-    typename ItkImageType::Pointer m_Image;
+    typename ItkMeshType::Pointer m_MiniPipelineOutputMesh;
+    typename ItkMeshType::Pointer m_OverlordOutputMesh;
 
+    itkMeshInterface<Dimensionality, TPixel>* m_ProvidingGetItkMeshInterface;
   protected:
     /* The following struct returns the string name of computation type */
     /* default implementation */
@@ -73,7 +84,7 @@ namespace selx
 
   template <>
   inline const std::string
-    ItkImageSourceComponent<2, float>
+    ItkMeshSinkComponent<2, float>
     ::GetPixelTypeNameString()
   {
     return std::string("float");
@@ -82,7 +93,7 @@ namespace selx
 
   template <>
   inline const std::string
-    ItkImageSourceComponent<2, double>
+    ItkMeshSinkComponent<2, double>
     ::GetPixelTypeNameString()
   {
     return std::string("double");
@@ -90,7 +101,7 @@ namespace selx
 
   template <>
   inline const std::string
-    ItkImageSourceComponent<3, float>
+    ItkMeshSinkComponent<3, float>
     ::GetPixelTypeNameString()
   {
     return std::string("float");
@@ -98,7 +109,7 @@ namespace selx
 
   template <>
   inline const std::string
-    ItkImageSourceComponent<3, double>
+    ItkMeshSinkComponent<3, double>
     ::GetPixelTypeNameString()
   {
     return std::string("double");
@@ -106,6 +117,6 @@ namespace selx
 
 } //end namespace selx
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "selxItkImageSource.hxx"
+#include "selxItkMeshSink.hxx"
 #endif
-#endif // #define selxItkImageSource_h
+#endif // #define selxItkMeshSink_h

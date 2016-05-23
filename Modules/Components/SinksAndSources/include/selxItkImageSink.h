@@ -60,7 +60,7 @@ namespace selx
     typename ItkImageType::Pointer m_MiniPipelineOutputImage;
     typename ItkImageType::Pointer m_OverlordOutputImage;
 
-    GetItkImageInterface<Dimensionality, TPixel>* m_ProvidingGetItkImageInterface;
+    itkImageInterface<Dimensionality, TPixel>* m_ProvidingGetItkImageInterface;
   protected:
     /* The following struct returns the string name of computation type */
     /* default implementation */

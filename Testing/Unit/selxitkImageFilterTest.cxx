@@ -55,7 +55,7 @@ public:
     ComponentFactory<ItkSmoothingRecursiveGaussianImageFilterComponent<3, double>>::RegisterOneFactory();
     ComponentFactory<ItkImageFilterSinkComponent<3, double>>::RegisterOneFactory();
     ComponentFactory<ItkImageSinkComponent<3, double>>::RegisterOneFactory();
-    ComponentFactory<ItkImageSourceComponent>::RegisterOneFactory();
+    ComponentFactory<ItkImageSourceComponent<3, double>>::RegisterOneFactory();
     // For testing templated components
     ComponentFactory<ItkSmoothingRecursiveGaussianImageFilterComponent<2, double>>::RegisterOneFactory();
     ComponentFactory<ItkSmoothingRecursiveGaussianImageFilterComponent<3, float>>::RegisterOneFactory();

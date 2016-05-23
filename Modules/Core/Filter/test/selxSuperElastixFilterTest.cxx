@@ -94,7 +94,7 @@ namespace selx {
     auto mesh = meshReader->GetOutput();
 
     ComponentFactory<ItkImageSinkComponent<3, double>>::RegisterOneFactory();
-    ComponentFactory<ItkImageSourceComponent>::RegisterOneFactory();
+    ComponentFactory<ItkImageSourceComponent<3, double>>::RegisterOneFactory();
     ComponentFactory<ItkSmoothingRecursiveGaussianImageFilterComponent<3, double>>::RegisterOneFactory();
 
     SuperElastixFilterType::Pointer mySuperElastix;

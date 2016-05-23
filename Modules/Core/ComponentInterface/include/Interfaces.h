@@ -27,6 +27,10 @@
 #include "itkProcessObject.h"
 #include "itkImageToImageFilter.h"
 #include "itkImageToImageMetricv4.h"
+
+#include "itkImage.h"
+#include "itkMesh.h"
+
 namespace selx
 {
   // Define the providing interfaces abstractly
@@ -113,6 +117,14 @@ namespace selx
     // An interface that exposes that its internal filter is derived from itkImageSource
   public:
     virtual typename itk::ImageSource<itk::Image<itk::Vector< TPixel, Dimensionality >, Dimensionality>>::Pointer GetDisplacementFieldItkImageSource() = 0;
+  };
+
+
+  template<int Dimensionality, class TPixel>
+  class itkMeshInterface {
+    // An interface that passes the pointer of an output image
+  public:
+    virtual typename itk::Mesh<TPixel, Dimensionality>::Pointer GetItkMesh() = 0;
   };
 
   class SourceInterface {
