@@ -94,6 +94,7 @@ struct InterfaceName < TransformedImageInterface >
   }
 };
 
+//TODO Deprecated
 template <>
 struct InterfaceName < itkProcessObjectInterface >
 {
@@ -103,6 +104,7 @@ struct InterfaceName < itkProcessObjectInterface >
   }
 };
 
+//TODO Deprecated
 template <>
 struct InterfaceName < itkImageToImageFilterInterface >
 {
@@ -112,7 +114,10 @@ struct InterfaceName < itkImageToImageFilterInterface >
   }
 };
 
+
 // InterfaceName<T>::Get() should return "itkImageSourceInterface" no matter over which arguments itkImageSourceInterface is templated
+
+//TODO Deprecated
 template <int D, class TPixel>
 struct InterfaceName < itkImageSourceInterface <D, TPixel> >
 {
@@ -131,7 +136,16 @@ struct InterfaceName < itkImageInterface <D, TPixel> >
   }
 };
 
+template <int D, class TPixel>
+struct InterfaceName < itkImageFixedInterface <D, TPixel> >
+{
+	static const char* Get()
+	{
+		return "itkImageFixedInterface";
+	}
+};
 
+//TODO Deprecated
 template <int D, class TPixel>
 struct InterfaceName < itkImageSourceFixedInterface <D, TPixel> >
 {
@@ -140,6 +154,8 @@ struct InterfaceName < itkImageSourceFixedInterface <D, TPixel> >
     return "itkImageSourceFixedInterface";
   }
 };
+
+//TODO Deprecated
 template <int D, class TPixel>
 struct InterfaceName < itkImageSourceMovingInterface <D, TPixel> >
 {
@@ -149,6 +165,7 @@ struct InterfaceName < itkImageSourceMovingInterface <D, TPixel> >
   }
 };
 
+//TODO Deprecated
 template <int D, class TPixel>
 struct InterfaceName < GetItkImageInterface <D, TPixel> >
 {

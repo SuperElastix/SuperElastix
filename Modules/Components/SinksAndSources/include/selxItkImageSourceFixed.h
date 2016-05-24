@@ -30,7 +30,7 @@ namespace selx
   class ItkImageSourceFixedComponent : 
     public Implements<
     Accepting<>,
-    Providing< SourceInterface, itkImageSourceFixedInterface<Dimensionality, TPixel > >
+    Providing< SourceInterface2, itkImageFixedInterface<Dimensionality, TPixel > >
     >
   {
   public:
@@ -41,16 +41,16 @@ namespace selx
     ItkImageSourceFixedComponent();
     virtual ~ItkImageSourceFixedComponent();
 
-    typedef typename itk::ImageSource<itk::Image<TPixel, Dimensionality>> ItkImageSourceFixedType;
+    typedef typename itkImageFixedInterface<Dimensionality, TPixel >::ItkImageType ItkImageType;
     
 
-    virtual typename ItkImageSourceFixedType::Pointer GetItkImageSourceFixed() override;
-    virtual bool ConnectToOverlordSource(itk::Object::Pointer) override;
+    virtual typename ItkImageType::Pointer GetItkImageFixed() override;
+    virtual void SetMiniPipelineInput(itk::DataObject::Pointer) override;
 
     virtual bool MeetsCriterion(const ComponentBase::CriterionType &criterion) override;
     static const char * GetDescription() { return "ItkImageSourceFixed Component"; };
   private:
-    typename ItkImageSourceFixedType::Pointer m_Source;
+    typename ItkImageType::Pointer m_Image;
 
   protected:
     /* The following struct returns the string name of computation type */

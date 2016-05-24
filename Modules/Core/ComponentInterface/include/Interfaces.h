@@ -65,17 +65,20 @@ namespace selx
     virtual int Update(ConflictinUpdateInterface*) = 0;
   };
 
+  //TODO Deprecated
   class itkProcessObjectInterface {
     public:
       virtual itk::ProcessObject::Pointer GetItkProcessObject() = 0;
   };
 
+  //TODO Deprecated
   class itkImageToImageFilterInterface {
     // An interface that exposes the entire filter
   public:
     virtual itk::ImageToImageFilter<itk::Image<double, 3>, itk::Image<double, 3>>::Pointer GetItkImageToImageFilter() = 0;
   };
 
+  //TODO Deprecated
   template<int Dimensionality, class TPixel>
   class itkImageSourceInterface {
     // An interface that exposes that its internal filter is derived from itkImageSource
@@ -91,12 +94,23 @@ namespace selx
   };
 
   template<int Dimensionality, class TPixel>
+  class itkImageFixedInterface {
+	  // An interface that passes the pointer of an output image
+  public:
+    typedef typename itk::Image<TPixel, Dimensionality> ItkImageType;
+    virtual typename ItkImageType::Pointer GetItkImageFixed() = 0;
+  };
+
+  
+  //TODO Deprecated
+  template<int Dimensionality, class TPixel>
   class itkImageSourceMovingInterface {
     // An interface that exposes that its internal filter which is derived from itkImageSource
   public:
     virtual typename itk::ImageSource<itk::Image<TPixel, Dimensionality>>::Pointer GetItkImageSourceMoving() = 0;
   };
 
+  //TODO Deprecated
   template<int Dimensionality, class TPixel>
   class itkImageSourceFixedInterface {
     // An interface that exposes that its internal filter which is derived from itkImageSource
@@ -104,6 +118,7 @@ namespace selx
     virtual typename itk::ImageSource<itk::Image<TPixel, Dimensionality>>::Pointer GetItkImageSourceFixed() = 0;
   };
 
+  //TODO Deprecated
   template<int Dimensionality, class TPixel>
   class GetItkImageInterface {
     // An interface that passes the pointer of an output image
@@ -127,6 +142,7 @@ namespace selx
     virtual typename itk::Mesh<TPixel, Dimensionality>::Pointer GetItkMesh() = 0;
   };
 
+  //TODO Deprecated
   class SourceInterface {
     // A special interface: the Overlord checks components for this type of interface.
     // By this interface only Source Components can to talk to the Overlord.
@@ -134,6 +150,7 @@ namespace selx
   public:
     virtual bool ConnectToOverlordSource(itk::Object::Pointer) = 0;
   };
+  //TODO Deprecated
   class SinkInterface {
     // A special interface: the Overlord checks components for this type of interface.
     // By this interface only Sink Components can to talk to the Overlord

@@ -95,7 +95,7 @@ namespace selx
     meetsCriteria = true;
     for (auto const & criterionValue : criterion.second) // auto&& preferred?
     {
-      if (criterionValue != Self::GetPixelTypeNameString()) //hardcoded
+      if (criterionValue != Self::GetPixelTypeNameString())
       {
         meetsCriteria = false;
       }
