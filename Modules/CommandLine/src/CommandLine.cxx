@@ -22,12 +22,10 @@
 #include "selxConfigurationReader.h"
 
 #include "selxItkSmoothingRecursiveGaussianImageFilterComponent.h"
-#include "selxItkImageFilterSink.h"
 #include "selxDisplacementFieldItkImageFilterSink.h"
 #include "selxItkImageSource.h"
 
 #include "selxElastixComponent.h"
-#include "selxItkImageFilterSink.h"
 #include "selxItkImageSink.h"
 
 #include "selxItkImageRegistrationMethodv4Component.h"
@@ -147,7 +145,6 @@ int main(int ac, char* av[])
       blueprint->WriteBlueprint(vm["graphout"].as<path>().string());
     }
 
-    ComponentFactory<ItkImageFilterSinkComponent<2, float>>::RegisterOneFactory();
     ComponentFactory<DisplacementFieldItkImageFilterSinkComponent<2, float>>::RegisterOneFactory();
     ComponentFactory<ItkImageSourceFixedComponent<2, float>>::RegisterOneFactory();
     ComponentFactory<ItkImageSourceMovingComponent<2, float>>::RegisterOneFactory();

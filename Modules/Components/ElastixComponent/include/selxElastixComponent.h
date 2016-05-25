@@ -36,11 +36,11 @@ namespace selx
   class ElastixComponent : 
     public Implements<
       Accepting< 
-        itkImageSourceFixedInterface<Dimensionality, TPixel>,
-        itkImageSourceMovingInterface<Dimensionality, TPixel>
+        itkImageFixedInterface<Dimensionality, TPixel>,
+        itkImageMovingInterface<Dimensionality, TPixel>
       >,
       Providing< 
-        GetItkImageInterface<Dimensionality, TPixel>, //Since elastixFilter is not a true itkfilter we cannot use itkImageSourceInterface (yet)
+        itkImageInterface<Dimensionality, TPixel>, 
         RunRegistrationInterface
       >
     >
@@ -63,9 +63,6 @@ namespace selx
     typedef itk::Image<PixelType, Dimensionality> FixedImageType;
     typedef itk::Image<PixelType, Dimensionality> MovingImageType;
 
-    typedef itk::ImageSource<ConnectionImageType> ItkImageSourceType;
-    typedef typename ItkImageSourceType::Pointer ItkImageSourcePointer;
-
     typedef typename ConnectionImageType::Pointer ItkImagePointer;
 
     typedef elastix::ElastixFilter< FixedImageType, MovingImageType > TheItkFilterType;
@@ -77,11 +74,9 @@ namespace selx
 
     typedef itk::ResampleImageFilter<MovingImageType, ConnectionImageType> ResampleFilterType;
 
-    virtual int Set(itkImageSourceFixedInterface<Dimensionality, TPixel>*) override;
-    virtual int Set(itkImageSourceMovingInterface<Dimensionality, TPixel>*) override;
+    virtual int Set(itkImageFixedInterface<Dimensionality, TPixel>*) override;
+    virtual int Set(itkImageMovingInterface<Dimensionality, TPixel>*) override;
     
-    //Since elastixFilter is not a true itkfilter we cannot use itkImageSourceInterface (yet)
-    //virtual ItkImageSourcePointer GetItkImageSource() override;
     virtual ItkImagePointer GetItkImage() override;
     virtual void RunRegistration() override;
 

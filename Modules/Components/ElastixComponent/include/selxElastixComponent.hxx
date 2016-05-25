@@ -44,23 +44,22 @@ namespace selx
   }
 
   template<int Dimensionality, class TPixel>
-  int ElastixComponent< Dimensionality, TPixel>::Set(itkImageSourceFixedInterface<Dimensionality, TPixel>* component)
+  int ElastixComponent< Dimensionality, TPixel>::Set(itkImageFixedInterface<Dimensionality, TPixel>* component)
   {
-    auto other = component->GetItkImageSourceFixed();
+    auto image = component->GetItkImageFixed();
     // connect the itk pipeline
-    this->m_theItkFilter->SetFixedImage(other->GetOutput());
-    return 1;
+    this->m_theItkFilter->SetFixedImage(image);
+    return 0;
   }
 
   template<int Dimensionality, class TPixel>
-  int ElastixComponent< Dimensionality, TPixel>::Set(itkImageSourceMovingInterface<Dimensionality, TPixel>* component)
+  int ElastixComponent< Dimensionality, TPixel>::Set(itkImageMovingInterface<Dimensionality, TPixel>* component)
   {
-    auto other = component->GetItkImageSourceMoving();
+    auto image = component->GetItkImageMoving();
     // connect the itk pipeline
-    this->m_theItkFilter->SetMovingImage(other->GetOutput());
-    return 1;
+    this->m_theItkFilter->SetMovingImage(image);
+    return 0;
   }
-
 
   //Since elastixFilter is not a true itkfilter we cannot use itkImageSourceInterface (yet)
   /*template<int Dimensionality, class TPixel>

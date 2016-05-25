@@ -22,10 +22,9 @@
 namespace selx
 {
   template<int Dimensionality, class TPixel>
-  DisplacementFieldItkImageFilterSinkComponent< Dimensionality, TPixel>::DisplacementFieldItkImageFilterSinkComponent()
+  DisplacementFieldItkImageFilterSinkComponent< Dimensionality, TPixel>::DisplacementFieldItkImageFilterSinkComponent():
+    m_MiniPipelineOutputImage(nullptr), m_OverlordOutputImage(nullptr)
   {
-    this->m_Sink = nullptr;
-    this->m_SinkWriter = nullptr;
   }
 
   template<int Dimensionality, class TPixel>
@@ -34,26 +33,45 @@ namespace selx
   }
 
   template<int Dimensionality, class TPixel>
-  int DisplacementFieldItkImageFilterSinkComponent< Dimensionality, TPixel>::Set(DisplacementFieldItkImageSourceInterface<Dimensionality, TPixel>* other)
+  int DisplacementFieldItkImageFilterSinkComponent< Dimensionality, TPixel>::Set(AcceptingDisplacementFieldInterfaceType* other)
   {
-    if (this->m_SinkWriter == nullptr)
+    if (this->m_OverlordOutputImage == nullptr)
     {
-      itkExceptionMacro("SinkComponent needs to be initialized by ConnectToOverlordSink()");
+      itkExceptionMacro("SinkComponent needs to be initialized by SetMiniPipelineOutput()");
     }
-    
-    this->m_SinkWriter->SetInput(other->GetDisplacementFieldItkImageSource()->GetOutput());
+
+    // Store pointer to MiniPipelineOutputImage for later grafting onto Overlord output.
+    this->m_MiniPipelineOutputImage = other->GetDisplacementFieldItkImage();
+    // Graft Overlord output onto MiniPipelineOutputImage.
+    this->m_MiniPipelineOutputImage->Graft(this->m_OverlordOutputImage);
     return 0;
   }
 
+
   template<int Dimensionality, class TPixel>
-  bool DisplacementFieldItkImageFilterSinkComponent< Dimensionality, TPixel>::ConnectToOverlordSink(itk::Object::Pointer object)
+  void DisplacementFieldItkImageFilterSinkComponent< Dimensionality, TPixel>::AfterRegistration()
   {
-    bool anySuccessfulCast = false;
-    this->m_Sink = dynamic_cast<itk::ProcessObject*>(object.GetPointer());
-    anySuccessfulCast = this->m_Sink ? true : anySuccessfulCast;
-    this->m_SinkWriter = dynamic_cast<itk::ImageFileWriter<itk::Image<itk::Vector<TPixel, Dimensionality>, Dimensionality>>*>(object.GetPointer());
-    anySuccessfulCast = this->m_SinkWriter ? true : anySuccessfulCast;
-    return anySuccessfulCast;
+    this->m_MiniPipelineOutputImage->Update();
+  }
+
+  template<int Dimensionality, class TPixel>
+  void DisplacementFieldItkImageFilterSinkComponent< Dimensionality, TPixel>::SetMiniPipelineOutput(itk::DataObject::Pointer overlordOutput)
+  {
+    /** Tries to cast the overlordOutput to an image (data object) and stores the result.
+    *  The resulting output image will be grafted into when the sink component is connected to an other component.
+    * */
+    // 
+    this->m_OverlordOutputImage = dynamic_cast<DeformationFieldImageType*>(&(*overlordOutput));
+    if (this->m_OverlordOutputImage == nullptr)
+    {
+      itkExceptionMacro("SinkComponent cannot cast the Overlord's Output to the required type");
+    }
+  }
+
+  template<int Dimensionality, class TPixel>
+  typename itk::DataObject::Pointer DisplacementFieldItkImageFilterSinkComponent< Dimensionality, TPixel>::GetMiniPipelineOutput()
+  {
+    return this->m_MiniPipelineOutputImage;
   }
 
   template<int Dimensionality, class TPixel>

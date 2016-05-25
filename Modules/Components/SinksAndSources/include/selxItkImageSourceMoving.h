@@ -30,7 +30,7 @@ namespace selx
   class ItkImageSourceMovingComponent : 
     public Implements<
     Accepting<>,
-    Providing< SourceInterface2, itkImageMovingInterface<Dimensionality, TPixel > >
+    Providing< SourceInterface, itkImageMovingInterface<Dimensionality, TPixel > >
     >
   {
   public:

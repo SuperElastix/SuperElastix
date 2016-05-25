@@ -30,7 +30,7 @@ namespace selx
   class ItkMeshSourceComponent : 
     public Implements<
     Accepting<>,
-    Providing< SourceInterface2, itkMeshInterface<Dimensionality, TPixel > >
+    Providing< SourceInterface, itkMeshInterface<Dimensionality, TPixel > >
     >
   {
   public:

@@ -37,7 +37,7 @@ namespace selx
   {
     if (this->m_OverlordOutputImage == nullptr)
     {
-      itkExceptionMacro("SinkComponent needs to be initialized by ConnectToOverlordSink()");
+      itkExceptionMacro("SinkComponent needs to be initialized by SetMiniPipelineOutput()");
     }
 
     // Store pointer to MiniPipelineOutputImage for later grafting onto Overlord output.
@@ -59,6 +59,7 @@ namespace selx
   {
     this->m_MiniPipelineOutputImage->Update();
   }
+
   template<int Dimensionality, class TPixel>
   void ItkImageSinkComponent< Dimensionality, TPixel>::SetMiniPipelineOutput(itk::DataObject::Pointer overlordOutput)
   {

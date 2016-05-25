@@ -32,7 +32,7 @@ namespace selx
   class ItkMeshSinkComponent :
     public Implements <
     Accepting< itkMeshInterface<Dimensionality, TPixel> >,
-    Providing < SinkInterface2, AfterRegistrationInterface >
+    Providing < SinkInterface, AfterRegistrationInterface >
     >
   {
   public:

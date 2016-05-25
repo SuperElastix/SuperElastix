@@ -133,21 +133,23 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::~ItkImageRegistr
 }
 
 template<int Dimensionality, class TPixel>
-int ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::Set(itkImageSourceFixedInterface<Dimensionality, TPixel>* component)
+int ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>
+::Set(itkImageFixedInterface<Dimensionality, TPixel>* component)
 {
-  auto other = component->GetItkImageSourceFixed();
+  auto image = component->GetItkImageFixed();
   // connect the itk pipeline
-  this->m_theItkFilter->SetFixedImage(other->GetOutput());
-  return 1;
+  this->m_theItkFilter->SetFixedImage(image);
+  return 0;
 }
 
 template<int Dimensionality, class TPixel>
-int ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::Set(itkImageSourceMovingInterface<Dimensionality, TPixel>* component)
+int ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>
+::Set(itkImageMovingInterface<Dimensionality, TPixel>* component)
 {
-  auto other = component->GetItkImageSourceMoving();
+  auto image = component->GetItkImageMoving();
   // connect the itk pipeline
-  this->m_theItkFilter->SetMovingImage(other->GetOutput());
-  return 1;
+  this->m_theItkFilter->SetMovingImage(image);
+  return 0;
 }
 template<int Dimensionality, class TPixel>
 int ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::Set(itkMetricv4Interface<Dimensionality, TPixel>* component)
@@ -389,18 +391,21 @@ void ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::RunRegistra
 }
 
 template<int Dimensionality, class TPixel>
-typename ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::ItkImageSourcePointer ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::GetItkImageSource()
+typename ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::ResultItkImageType::Pointer 
+ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>
+::GetItkImage()
 {
-  
-  return (ItkImageSourcePointer) this->m_resampler;
+  return this->m_resampler->GetOutput();
 }
 
 
 template<int Dimensionality, class TPixel>
-typename ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::DisplacementFieldItkImageSourcePointer ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::GetDisplacementFieldItkImageSource()
+typename ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::DisplacementFieldImageType::Pointer
+ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>
+::GetDisplacementFieldItkImage()
 {
 
-  return (DisplacementFieldItkImageSourcePointer) this->m_DisplacementFieldFilter;
+  return this->m_DisplacementFieldFilter->GetOutput();
 }
 
 

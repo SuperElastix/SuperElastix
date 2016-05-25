@@ -94,39 +94,8 @@ struct InterfaceName < TransformedImageInterface >
   }
 };
 
-//TODO Deprecated
-template <>
-struct InterfaceName < itkProcessObjectInterface >
-{
-  static const char* Get()
-  {
-    return "itkProcessObjectInterface";
-  }
-};
-
-//TODO Deprecated
-template <>
-struct InterfaceName < itkImageToImageFilterInterface >
-{
-  static const char* Get()
-  {
-    return "itkImageToImageFilterInterface";
-  }
-};
-
 
 // InterfaceName<T>::Get() should return "itkImageSourceInterface" no matter over which arguments itkImageSourceInterface is templated
-
-//TODO Deprecated
-template <int D, class TPixel>
-struct InterfaceName < itkImageSourceInterface <D, TPixel> >
-{
-  static const char* Get()
-  {
-    return "itkImageSourceInterface";
-  }
-};
-
 template <int D, class TPixel>
 struct InterfaceName < itkImageInterface <D, TPixel> >
 {
@@ -154,35 +123,6 @@ struct InterfaceName < itkImageMovingInterface <D, TPixel> >
   }
 };
 
-//TODO Deprecated
-template <int D, class TPixel>
-struct InterfaceName < itkImageSourceFixedInterface <D, TPixel> >
-{
-  static const char* Get()
-  {
-    return "itkImageSourceFixedInterface";
-  }
-};
-
-//TODO Deprecated
-template <int D, class TPixel>
-struct InterfaceName < itkImageSourceMovingInterface <D, TPixel> >
-{
-  static const char* Get()
-  {
-    return "itkImageSourceMovingInterface";
-  }
-};
-
-//TODO Deprecated
-template <int D, class TPixel>
-struct InterfaceName < GetItkImageInterface <D, TPixel> >
-{
-  static const char* Get()
-  {
-    return "GetItkImageInterface";
-  }
-};
 
 template <int D, class TPixel>
 struct InterfaceName < DisplacementFieldItkImageSourceInterface <D, TPixel> >
@@ -221,23 +161,6 @@ struct InterfaceName < SinkInterface >
   }
 };
 
-template <>
-struct InterfaceName < SourceInterface2 >
-{
-  static const char* Get()
-  {
-    return "SourceInterface2";
-  }
-};
-
-template <>
-struct InterfaceName < SinkInterface2 >
-{
-  static const char* Get()
-  {
-    return "SinkInterface2";
-  }
-};
 
 template <int D, class TPixel>
 struct InterfaceName < itkMetricv4Interface <D, TPixel> >

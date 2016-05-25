@@ -28,7 +28,6 @@
 #include "SSDMetric4thPartyComponent.h"
 
 #include "selxItkSmoothingRecursiveGaussianImageFilterComponent.h"
-#include "selxItkImageFilterSink.h"
 #include "selxDisplacementFieldItkImageFilterSink.h"
 #include "selxItkImageSource.h"
 
@@ -61,10 +60,6 @@ public:
     ComponentFactory<GDOptimizer4thPartyComponent>::RegisterOneFactory();
     ComponentFactory<SSDMetric3rdPartyComponent>::RegisterOneFactory();
     ComponentFactory<SSDMetric4thPartyComponent>::RegisterOneFactory();
-
-    
-    ComponentFactory<ItkImageFilterSinkComponent<3,double>>::RegisterOneFactory();
-    ComponentFactory<ItkImageFilterSinkComponent<2, float>>::RegisterOneFactory();
 
     ComponentFactory<DisplacementFieldItkImageFilterSinkComponent<3, double>>::RegisterOneFactory();
     ComponentFactory<DisplacementFieldItkImageFilterSinkComponent<2, float>>::RegisterOneFactory();
@@ -131,11 +126,11 @@ TEST_F(RegistrationItkv4Test, ImagesOnly)
 
 
   ParameterMapType connection1Parameters;
-  connection1Parameters["NameOfInterface"] = { "itkImageSourceFixedInterface" };
+  connection1Parameters["NameOfInterface"] = { "itkImageFixedInterface" };
   blueprint->AddConnection("FixedImageSource", "RegistrationMethod", connection1Parameters);
 
   ParameterMapType connection2Parameters;
-  connection2Parameters["NameOfInterface"] = { "itkImageSourceMovingInterface" };
+  connection2Parameters["NameOfInterface"] = { "itkImageMovingInterface" };
   blueprint->AddConnection("MovingImageSource", "RegistrationMethod", connection2Parameters);
 
   ParameterMapType connection3Parameters;
@@ -189,11 +184,11 @@ TEST_F(RegistrationItkv4Test, WithANTSCCMetric)
 
 
   ParameterMapType connection1Parameters;
-  connection1Parameters["NameOfInterface"] = { "itkImageSourceFixedInterface" };
+  connection1Parameters["NameOfInterface"] = { "itkImageFixedInterface" };
   blueprint->AddConnection("FixedImageSource", "RegistrationMethod", connection1Parameters);
 
   ParameterMapType connection2Parameters;
-  connection2Parameters["NameOfInterface"] = { "itkImageSourceMovingInterface" };
+  connection2Parameters["NameOfInterface"] = { "itkImageMovingInterface" };
   blueprint->AddConnection("MovingImageSource", "RegistrationMethod", connection2Parameters);
 
   ParameterMapType connection3Parameters;
@@ -250,11 +245,11 @@ TEST_F(RegistrationItkv4Test, WithMeanSquaresMetric)
 
 
   ParameterMapType connection1Parameters;
-  connection1Parameters["NameOfInterface"] = { "itkImageSourceFixedInterface" };
+  connection1Parameters["NameOfInterface"] = { "itkImageFixedInterface" };
   blueprint->AddConnection("FixedImageSource", "RegistrationMethod", connection1Parameters);
 
   ParameterMapType connection2Parameters;
-  connection2Parameters["NameOfInterface"] = { "itkImageSourceMovingInterface" };
+  connection2Parameters["NameOfInterface"] = { "itkImageMovingInterface" };
   blueprint->AddConnection("MovingImageSource", "RegistrationMethod", connection2Parameters);
 
   ParameterMapType connection3Parameters;
@@ -317,11 +312,11 @@ TEST_F(RegistrationItkv4Test, DisplacementField2D)
 
 
   ParameterMapType connection1Parameters;
-  connection1Parameters["NameOfInterface"] = { "itkImageSourceFixedInterface" };
+  connection1Parameters["NameOfInterface"] = { "itkImageFixedInterface" };
   blueprint->AddConnection("FixedImageSource", "RegistrationMethod", connection1Parameters);
 
   ParameterMapType connection2Parameters;
-  connection2Parameters["NameOfInterface"] = { "itkImageSourceMovingInterface" };
+  connection2Parameters["NameOfInterface"] = { "itkImageMovingInterface" };
   blueprint->AddConnection("MovingImageSource", "RegistrationMethod", connection2Parameters);
 
   ParameterMapType connection3Parameters;

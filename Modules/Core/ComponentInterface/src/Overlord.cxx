@@ -234,7 +234,7 @@ namespace selx
       ComponentBase::Pointer component = componentSelector.second->GetComponent();
       if (component->MeetsCriteria(sourceCriteria)) // TODO MeetsCriterion
       {
-        SourceInterface2* provingSourceInterface = dynamic_cast<SourceInterface2*> (&(*component));
+        SourceInterface* provingSourceInterface = dynamic_cast<SourceInterface*> (&(*component));
         if (provingSourceInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
         {
           itkExceptionMacro("dynamic_cast<SourceInterface*> fails, but based on component criterion it shouldn't")
@@ -260,7 +260,7 @@ namespace selx
       ComponentBase::Pointer component = componentSelector.second->GetComponent();
       if (component->MeetsCriteria(sinkCriteria))  // TODO MeetsCriterion
       {
-        SinkInterface2* provingSinkInterface = dynamic_cast<SinkInterface2*> (&(*component));
+        SinkInterface* provingSinkInterface = dynamic_cast<SinkInterface*> (&(*component));
         if (provingSinkInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
         {
           itkExceptionMacro("dynamic_cast<SinkInterface*> fails, but based on component criterion it shouldn't")
@@ -306,9 +306,8 @@ namespace selx
           reader->SetFileName(this->inputFileNames[readercounter]);
           this->m_Readers3double->push_back(reader);
 
-          //TODO which way is preferred?
-          // provingSourceInterface->ConnectToOverlordSource((itk::Object*)(reader.GetPointer()));
-          provingSourceInterface->ConnectToOverlordSource((itk::SmartPointer<itk::Object>) reader);
+          //TODO refactor
+          //provingSourceInterface->ConnectToOverlordSource((itk::SmartPointer<itk::Object>) reader);
 
         }
         else if (component->MeetsCriteria({ { "Dimensionality", { "2" } }, { "PixelType", { "float" } } }))
@@ -325,9 +324,8 @@ namespace selx
           reader->SetFileName(this->inputFileNames[readercounter]);
           this->m_Readers2float->push_back(reader);
 
-          //TODO which way is preferred?
-          // provingSourceInterface->ConnectToOverlordSource((itk::Object*)(reader.GetPointer()));
-          provingSourceInterface->ConnectToOverlordSource((itk::SmartPointer<itk::Object>) reader);
+          //TODO refactor
+          //provingSourceInterface->ConnectToOverlordSource((itk::SmartPointer<itk::Object>) reader);
 
         }
         else
@@ -378,7 +376,8 @@ namespace selx
           writer->SetFileName(this->outputFileNames[writercounter]);
           this->m_WritersDisplacement3double->push_back(writer);
 
-          provingSinkInterface->ConnectToOverlordSink((itk::SmartPointer<itk::Object>) writer);
+          //TODO refactor
+          //provingSinkInterface->ConnectToOverlordSink((itk::SmartPointer<itk::Object>) writer);
         }
         else if (component->MeetsCriteria({ { "IsVectorField", { "True" } }, { "Dimensionality", { "2" } }, { "PixelType", { "float" } } }))
         {
@@ -394,7 +393,8 @@ namespace selx
           writer->SetFileName(this->outputFileNames[writercounter]);
           this->m_WritersDisplacement2float->push_back(writer);
 
-          provingSinkInterface->ConnectToOverlordSink((itk::SmartPointer<itk::Object>) writer);
+          //TODO refactor
+          //provingSinkInterface->ConnectToOverlordSink((itk::SmartPointer<itk::Object>) writer);
         }
         else if (component->MeetsCriteria({ { "Dimensionality", { "3" } }, { "PixelType", { "double" } } }))
         {
@@ -411,7 +411,8 @@ namespace selx
           this->m_Writers3double->push_back(writer);
 
           // For testing purposes, all Sources are connected to an ImageWriter
-          provingSinkInterface->ConnectToOverlordSink((itk::SmartPointer<itk::Object>) writer);
+          //TODO refactor
+          //provingSinkInterface->ConnectToOverlordSink((itk::SmartPointer<itk::Object>) writer);
         }
         else if (component->MeetsCriteria({ { "Dimensionality", { "2" } }, { "PixelType", { "float" } } }))
         {
@@ -427,7 +428,8 @@ namespace selx
           this->m_Writers2float->push_back(writer);
 
           // For testing purposes, all Sources are connected to an ImageWriter
-          provingSinkInterface->ConnectToOverlordSink((itk::SmartPointer<itk::Object>) writer);
+          //TODO refactor
+          //provingSinkInterface->ConnectToOverlordSink((itk::SmartPointer<itk::Object>) writer);
         }
         else
         {

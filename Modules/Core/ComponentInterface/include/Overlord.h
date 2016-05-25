@@ -99,10 +99,10 @@ namespace selx
     //  unsigned int, SourceInterface* > SourceInterfaceContainerType;
 
     typedef std::map <
-      std::string, SourceInterface2* > SourceInterfaceMapType;
+      std::string, SourceInterface* > SourceInterfaceMapType;
 
     typedef std::map <
-      std::string, SinkInterface2* > SinkInterfaceMapType;
+      std::string, SinkInterface* > SinkInterfaceMapType;
 
     //TODO these containers are not interface specific
     //typedef itk::VectorContainer <

@@ -18,7 +18,6 @@
  *=========================================================================*/
 
 #include "selxItkSmoothingRecursiveGaussianImageFilterComponent.h"
-#include "selxItkImageFilterSink.h"
 #include "selxItkImageSink.h"
 #include "selxItkImageSource.h"
 #include "Overlord.h"
@@ -53,7 +52,6 @@ public:
     /** register all components used for this test */
     // For testing the itkfilter pipeline
     ComponentFactory<ItkSmoothingRecursiveGaussianImageFilterComponent<3, double>>::RegisterOneFactory();
-    ComponentFactory<ItkImageFilterSinkComponent<3, double>>::RegisterOneFactory();
     ComponentFactory<ItkImageSinkComponent<3, double>>::RegisterOneFactory();
     ComponentFactory<ItkImageSourceComponent<3, double>>::RegisterOneFactory();
     // For testing templated components

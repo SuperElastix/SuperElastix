@@ -20,12 +20,10 @@
 #include "Overlord.h"
 
 #include "selxItkSmoothingRecursiveGaussianImageFilterComponent.h"
-#include "selxItkImageFilterSink.h"
 #include "selxDisplacementFieldItkImageFilterSink.h"
 #include "selxItkImageSource.h"
 
 #include "selxElastixComponent.h"
-#include "selxItkImageFilterSink.h"
 #include "selxItkImageSink.h"
 
 #include "selxItkImageRegistrationMethodv4Component.h"
@@ -71,7 +69,6 @@ public:
   virtual void SetUp() {
     
     
-    ComponentFactory<ItkImageFilterSinkComponent<2, float>>::RegisterOneFactory();
     ComponentFactory<DisplacementFieldItkImageFilterSinkComponent<2, float>>::RegisterOneFactory(); 
     ComponentFactory<ItkImageSourceFixedComponent<2, float>>::RegisterOneFactory();
     ComponentFactory<ItkImageSourceMovingComponent<2, float>>::RegisterOneFactory();
@@ -126,12 +123,12 @@ TEST_F(WBIRDemoTest, itkv4_SVF_ANTSCC)
 
   ParameterMapType connection1Parameters;
   //optionally, tie properties to connection to avoid ambiguities
-  //connection1Parameters["NameOfInterface"] = { "itkImageSourceFixedInterface" };
+  //connection1Parameters["NameOfInterface"] = { "itkImageFixedInterface" };
   blueprint->AddConnection("FixedImageSource", "RegistrationMethod", connection1Parameters);
 
   ParameterMapType connection2Parameters;
   //optionally, tie properties to connection to avoid ambiguities
-  //connection2Parameters["NameOfInterface"] = { "itkImageSourceMovingInterface" };
+  //connection2Parameters["NameOfInterface"] = { "itkImageMovingInterface" };
   blueprint->AddConnection("MovingImageSource", "RegistrationMethod", connection2Parameters);
 
   ParameterMapType connection3Parameters;
@@ -198,12 +195,12 @@ TEST_F(WBIRDemoTest, itkv4_SVF_MSD)
 
   ParameterMapType connection1Parameters;
   //optionally, tie properties to connection to avoid ambiguities
-  //connection1Parameters["NameOfInterface"] = { "itkImageSourceFixedInterface" };
+  //connection1Parameters["NameOfInterface"] = { "itkImageFixedInterface" };
   blueprint->AddConnection("FixedImageSource", "RegistrationMethod", connection1Parameters);
 
   ParameterMapType connection2Parameters;
   //optionally, tie properties to connection to avoid ambiguities
-  //connection2Parameters["NameOfInterface"] = { "itkImageSourceMovingInterface" };
+  //connection2Parameters["NameOfInterface"] = { "itkImageMovingInterface" };
   blueprint->AddConnection("MovingImageSource", "RegistrationMethod", connection2Parameters);
 
   ParameterMapType connection3Parameters;
@@ -264,12 +261,12 @@ TEST_F(WBIRDemoTest, elastix_BS_NCC)
 
   ParameterMapType connection1Parameters;
   //optionally, tie properties to connection to avoid ambiguities
-  //connection1Parameters["NameOfInterface"] = { "itkImageSourceFixedInterface" };
+  //connection1Parameters["NameOfInterface"] = { "itkImageFixedInterface" };
   blueprint->AddConnection("FixedImageSource", "RegistrationMethod", connection1Parameters);
 
   ParameterMapType connection2Parameters;
   //optionally, tie properties to connection to avoid ambiguities
-  //connection2Parameters["NameOfInterface"] = { "itkImageSourceMovingInterface" };
+  //connection2Parameters["NameOfInterface"] = { "itkImageMovingInterface" };
   blueprint->AddConnection("MovingImageSource", "RegistrationMethod", connection2Parameters);
 
   ParameterMapType connection3Parameters;
@@ -322,12 +319,12 @@ TEST_F(WBIRDemoTest, elastix_BS_MSD)
 
   ParameterMapType connection1Parameters;
   //optionally, tie properties to connection to avoid ambiguities
-  //connection1Parameters["NameOfInterface"] = { "itkImageSourceFixedInterface" };
+  //connection1Parameters["NameOfInterface"] = { "itkImageFixedInterface" };
   blueprint->AddConnection("FixedImageSource", "RegistrationMethod", connection1Parameters);
 
   ParameterMapType connection2Parameters;
   //optionally, tie properties to connection to avoid ambiguities
-  //connection2Parameters["NameOfInterface"] = { "itkImageSourceMovingInterface" };
+  //connection2Parameters["NameOfInterface"] = { "itkImageMovingInterface" };
   blueprint->AddConnection("MovingImageSource", "RegistrationMethod", connection2Parameters);
 
   ParameterMapType connection3Parameters;

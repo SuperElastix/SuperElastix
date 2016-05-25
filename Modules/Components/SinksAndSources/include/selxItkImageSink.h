@@ -32,7 +32,7 @@ namespace selx
   class ItkImageSinkComponent :
     public Implements <
     Accepting< itkImageInterface<Dimensionality, TPixel> >,
-    Providing < SinkInterface2, AfterRegistrationInterface >
+    Providing < SinkInterface, AfterRegistrationInterface >
     >
   {
   public:
@@ -43,14 +43,14 @@ namespace selx
     ItkImageSinkComponent();
     virtual ~ItkImageSinkComponent();
 
-    typedef itk::ImageSource<itk::Image<TPixel, Dimensionality>> ItkImageSourceType;
-    typedef itk::Image<TPixel, Dimensionality> ItkImageType;
+    typedef itkImageInterface<Dimensionality, TPixel> AcceptingImageInterfaceType;
+    typedef typename AcceptingImageInterfaceType::ItkImageType ItkImageType;
+    typedef typename ItkImageType::Pointer ItkImagePointer;
 
-    virtual int Set(itkImageInterface<Dimensionality, TPixel>*) override;
-    //virtual int Set(GetItkImageInterface<Dimensionality, TPixel>*) override;
-    //virtual bool ConnectToOverlordSink(itk::DataObject::Pointer) override;
+
+    virtual int Set(AcceptingImageInterfaceType*) override;
     virtual void SetMiniPipelineOutput(itk::DataObject::Pointer) override;
-    virtual itk::DataObject::Pointer GetMiniPipelineOutput(void)override;
+    virtual itk::DataObject::Pointer GetMiniPipelineOutput(void) override;
 
     virtual void AfterRegistration() override;
 
@@ -60,8 +60,7 @@ namespace selx
     typename ItkImageType::Pointer m_MiniPipelineOutputImage;
     typename ItkImageType::Pointer m_OverlordOutputImage;
 
-    itkImageInterface<Dimensionality, TPixel>* m_ProvidingGetItkImageInterface;
-  protected:
+    protected:
     /* The following struct returns the string name of computation type */
     /* default implementation */
 

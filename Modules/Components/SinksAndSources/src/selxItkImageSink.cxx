@@ -17,4 +17,4 @@
  *
  *=========================================================================*/
 
-#include "selxItkImageFilterSink.h"
+#include "selxItkImageSink.h"

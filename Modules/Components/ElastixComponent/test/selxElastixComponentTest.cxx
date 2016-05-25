@@ -22,7 +22,6 @@
 #include "elxParameterObject.h"
 
 #include "selxElastixComponent.h"
-#include "selxItkImageFilterSink.h"
 #include "selxItkImageSink.h"
 #include "selxItkImageSourceFixed.h"
 #include "selxItkImageSourceMoving.h"
@@ -45,7 +44,6 @@ public:
     /** register all example components */
     ComponentFactory<ElastixComponent<2, float>>::RegisterOneFactory();
     
-    ComponentFactory<ItkImageFilterSinkComponent<2, float>>::RegisterOneFactory();
     ComponentFactory<ItkImageSinkComponent<2, float>>::RegisterOneFactory();
 
     ComponentFactory<ItkImageSourceFixedComponent<2, float>>::RegisterOneFactory();
@@ -91,11 +89,11 @@ TEST_F(ElastixComponentTest, ImagesOnly)
 
 
   ParameterMapType connection1Parameters;
-  connection1Parameters["NameOfInterface"] = { "itkImageSourceFixedInterface" };
+  connection1Parameters["NameOfInterface"] = { "itkImageFixedInterface" };
   blueprint->AddConnection("FixedImageSource", "RegistrationMethod", connection1Parameters);
 
   ParameterMapType connection2Parameters;
-  connection2Parameters["NameOfInterface"] = { "itkImageSourceMovingInterface" };
+  connection2Parameters["NameOfInterface"] = { "itkImageMovingInterface" };
   blueprint->AddConnection("MovingImageSource", "RegistrationMethod", connection2Parameters);
 
   ParameterMapType connection3Parameters;

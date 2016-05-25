@@ -30,7 +30,7 @@ namespace selx
   class ItkImageSourceFixedComponent : 
     public Implements<
     Accepting<>,
-    Providing< SourceInterface2, itkImageFixedInterface<Dimensionality, TPixel > >
+    Providing< SourceInterface, itkImageFixedInterface<Dimensionality, TPixel > >
     >
   {
   public:

@@ -40,11 +40,11 @@ namespace selx
   template <int Dimensionality, class TPixel>
   class ItkImageRegistrationMethodv4Component : 
     public Implements<
-    Accepting< itkImageSourceFixedInterface<Dimensionality, TPixel>, 
-               itkImageSourceMovingInterface<Dimensionality, TPixel>,
+    Accepting< itkImageFixedInterface<Dimensionality, TPixel>, 
+               itkImageMovingInterface<Dimensionality, TPixel>,
                itkMetricv4Interface<Dimensionality, TPixel>
              >,
-    Providing< itkImageSourceInterface<Dimensionality, TPixel>,
+    Providing< itkImageInterface<Dimensionality, TPixel>,
                DisplacementFieldItkImageSourceInterface<Dimensionality, TPixel>,
                RunRegistrationInterface
              >
@@ -67,12 +67,9 @@ namespace selx
     typedef itk::Image<PixelType, Dimensionality> FixedImageType; 
     typedef itk::Image<PixelType, Dimensionality> MovingImageType;
     
-    typedef itk::ImageSource<ConnectionImageType> ItkImageSourceType;
-    typedef typename ItkImageSourceType::Pointer ItkImageSourcePointer;
-
-    typedef itk::Image<itk::Vector<PixelType, Dimensionality>, Dimensionality> DisplacementFieldImageType;
-    typedef itk::ImageSource<DisplacementFieldImageType>DisplacementFieldItkImageSourceType;
-    typedef typename DisplacementFieldItkImageSourceType::Pointer DisplacementFieldItkImageSourcePointer;
+    typedef typename itk::Image<itk::Vector<PixelType, Dimensionality>, Dimensionality> DisplacementFieldImageType;
+    typedef typename itkImageInterface<Dimensionality, TPixel>::ItkImageType ResultItkImageType;
+    
 
     // TODO for now we hard code the transform to be a stationary velocity field. See Set(*MetricInterface) for implementation
     typedef double RealType;
@@ -84,13 +81,13 @@ namespace selx
     typedef itk::TransformToDisplacementFieldFilter<DisplacementFieldImageType> DisplacementFieldFilterType;
     
     //Accepting Interfaces:
-    virtual int Set(itkImageSourceFixedInterface<Dimensionality, TPixel>*) override;
-    virtual int Set(itkImageSourceMovingInterface<Dimensionality, TPixel>*) override;
+    virtual int Set(itkImageFixedInterface<Dimensionality, TPixel>*) override;
+    virtual int Set(itkImageMovingInterface<Dimensionality, TPixel>*) override;
     virtual int Set(itkMetricv4Interface<Dimensionality, TPixel>*) override;
     
     //Providing Interfaces:
-    virtual ItkImageSourcePointer GetItkImageSource() override;
-    virtual DisplacementFieldItkImageSourcePointer GetDisplacementFieldItkImageSource() override;
+    virtual typename ResultItkImageType::Pointer GetItkImage() override;
+    virtual typename DisplacementFieldImageType::Pointer GetDisplacementFieldItkImage() override;
 
     virtual void RunRegistration() override;
 
