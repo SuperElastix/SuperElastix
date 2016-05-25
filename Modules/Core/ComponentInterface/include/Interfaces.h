@@ -101,7 +101,13 @@ namespace selx
     virtual typename ItkImageType::Pointer GetItkImageFixed() = 0;
   };
 
-  
+  template<int Dimensionality, class TPixel>
+  class itkImageMovingInterface {
+    // An interface that passes the pointer of an output image
+  public:
+    typedef typename itk::Image<TPixel, Dimensionality> ItkImageType;
+    virtual typename ItkImageType::Pointer GetItkImageMoving() = 0;
+  };
   //TODO Deprecated
   template<int Dimensionality, class TPixel>
   class itkImageSourceMovingInterface {

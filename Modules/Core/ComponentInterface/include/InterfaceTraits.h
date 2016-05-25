@@ -145,6 +145,15 @@ struct InterfaceName < itkImageFixedInterface <D, TPixel> >
 	}
 };
 
+template <int D, class TPixel>
+struct InterfaceName < itkImageMovingInterface <D, TPixel> >
+{
+  static const char* Get()
+  {
+    return "itkImageMovingInterface";
+  }
+};
+
 //TODO Deprecated
 template <int D, class TPixel>
 struct InterfaceName < itkImageSourceFixedInterface <D, TPixel> >
