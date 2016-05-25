@@ -226,7 +226,7 @@ namespace selx
     /** Scans all Components to find those with Sourcing capability and store them in SourceComponents list */
     
     // BIG TODO SourceInterface2->SourceInterface
-    const CriteriaType sourceCriteria = { { "HasProvidingInterface", { "SourceInterface2" } } };
+    const CriteriaType sourceCriteria = { { "HasProvidingInterface", { "SourceInterface" } } };
     SourceInterfaceMapType sourceInterfaceMap;
     // TODO redesign ComponentBase class to accept a single criterion instead of a criteria mapping.
     for (const auto & componentSelector : (this->m_ComponentSelectorContainer))
@@ -251,7 +251,7 @@ namespace selx
     /** Scans all Components to find those with Sinking capability and store them in SinkComponents list */
     // BIG TODO SinkInterface2 -> SinkInterface
     // TODO redesign ComponentBase class to accept a single criterion instead of a criteria mapping.
-    const CriteriaType sinkCriteria = { { "HasProvidingInterface", { "SinkInterface2" } } };
+    const CriteriaType sinkCriteria = { { "HasProvidingInterface", { "SinkInterface" } } };
     
     SinkInterfaceMapType sinkInterfaceMap;
 

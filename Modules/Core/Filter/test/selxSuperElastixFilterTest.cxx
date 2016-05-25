@@ -90,7 +90,7 @@ namespace selx {
     MeshReaderType::Pointer meshReader = MeshReaderType::New();
     MeshWriterType::Pointer meshWriter = MeshWriterType::New();
 
-    meshReader->SetFileName(dataManager->GetInputFile("in2dmesh.vtk"));
+    meshReader->SetFileName(dataManager->GetInputFile("2dmesh.vtk"));
     meshWriter->SetFileName(dataManager->GetOutputFile("out2dmesh.vtk"));
 
     //auto mesh = meshReader->GetOutput();
