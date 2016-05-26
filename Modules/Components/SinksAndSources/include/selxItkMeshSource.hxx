@@ -63,7 +63,7 @@ namespace selx
   template<int Dimensionality, class TPixel>
   bool
   ItkMeshSourceComponent< Dimensionality, TPixel>
-  ::MeetsCriterion(const CriterionType &criterion)
+  ::MeetsCriterion(const ComponentBase::CriterionType &criterion)
 {
   bool hasUndefinedCriteria(false);
   bool meetsCriteria(false);
