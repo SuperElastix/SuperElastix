@@ -77,7 +77,7 @@ namespace selx
   template<int Dimensionality, class TPixel>
   typename itk::DataObject::Pointer ItkImageSinkComponent< Dimensionality, TPixel>::GetMiniPipelineOutput()
   {
-    return this->m_MiniPipelineOutputImage;
+    return &(*this->m_MiniPipelineOutputImage);
   }
   //template<int Dimensionality, class TPixel>
   //bool ItkImageSinkComponent< Dimensionality, TPixel>::ConnectToOverlordSink(itk::DataObject::Pointer object)

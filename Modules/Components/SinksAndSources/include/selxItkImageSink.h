@@ -25,6 +25,7 @@
 #include <string.h>
 #include "selxMacro.h"
 #include "itkImageFileWriter.h"
+#include "itkSmartPointer.h"
 
 namespace selx
 {
