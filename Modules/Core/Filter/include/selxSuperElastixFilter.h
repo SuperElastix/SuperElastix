@@ -18,7 +18,7 @@
 namespace selx
 {
 
-template< typename TFixedImage, typename TMovingImage >
+template< typename ComponentTypeList >
 class SuperElastixFilter : public itk::ProcessObject
 {
 public:
@@ -67,14 +67,6 @@ private:
   //Blueprint::ConstPointer m_Blueprint;
   Blueprint::Pointer m_Blueprint;
   Overlord::Pointer m_Overlord;
-  // For testing purposes only. TODO remove.
-  // Assume we have 2 components: A and B
-  void ConnectSourceA(itk::DataObject*);
-  void ConnectSourceB(itk::DataObject*);
-  void ConnectPlaceholderSinkA(itk::DataObject*);
-  void ConnectPlaceholderSinkB(itk::DataObject*);
-  itk::DataObject* ConnectDataSinkA();
-  itk::DataObject* ConnectDataSinkB();
 
   typedef itk::Image<float, 2> ImageType;
   typedef itk::AbsImageFilter< ImageType, ImageType > ImageFilterType;

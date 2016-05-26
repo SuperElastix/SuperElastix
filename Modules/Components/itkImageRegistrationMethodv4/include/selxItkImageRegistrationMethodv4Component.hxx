@@ -386,7 +386,7 @@ void ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::RunRegistra
 
   this->m_DisplacementFieldFilter->SetReferenceImage(fixedImage);
   // TODO: is this needed?
-  //this->m_DisplacementFieldFilter->Update();
+  this->m_DisplacementFieldFilter->Update();
 
 }
 

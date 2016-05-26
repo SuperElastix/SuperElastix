@@ -55,7 +55,7 @@ namespace selx {
     typedef itk::ImageFileWriter<Image3DType> ImageWriter3DType;
 
     //TODO make SuperElastixFilter templated over Components
-    typedef selx::SuperElastixFilter < bool, bool > SuperElastixFilterType;
+    typedef selx::SuperElastixFilter < bool > SuperElastixFilterType;
 
     typedef itk::Mesh<float, 2> MeshType;
     typedef itk::MeshFileReader<MeshType> MeshReaderType;

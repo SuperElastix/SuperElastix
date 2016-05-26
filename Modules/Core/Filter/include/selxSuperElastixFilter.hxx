@@ -11,8 +11,8 @@ namespace selx
  * ********************* Constructor *********************
  */
 
-template< typename TFixedImage, typename TMovingImage >
-SuperElastixFilter< TFixedImage, TMovingImage >
+  template< typename ComponentTypeList >
+  SuperElastixFilter< ComponentTypeList >
 ::SuperElastixFilter( void )
 {
   this->m_Overlord = Overlord::New();
@@ -28,9 +28,9 @@ SuperElastixFilter< TFixedImage, TMovingImage >
 */
 
 
-template< typename TFixedImage, typename TMovingImage >
+  template< typename ComponentTypeList >
 void
-SuperElastixFilter< TFixedImage, TMovingImage >
+SuperElastixFilter< ComponentTypeList >
 ::GenerateOutputInformation()
 {
   /*
@@ -68,6 +68,8 @@ SuperElastixFilter< TFixedImage, TMovingImage >
   }
   std::cout << "Connecting Components: " << (isSuccess ? "succeeded" : "failed") << std::endl;
 
+  // TODO make one "update button" for the overlord
+  this->m_Overlord->FindRunRegistration();
   this->m_Overlord->FindAfterRegistration();
 
   for (const auto & nameAndInterface : sinks)
@@ -81,9 +83,9 @@ SuperElastixFilter< TFixedImage, TMovingImage >
  * ********************* GenerateData *********************
  */
 
-template< typename TFixedImage, typename TMovingImage >
+template< typename ComponentTypeList >
 void
-SuperElastixFilter< TFixedImage, TMovingImage >
+SuperElastixFilter< ComponentTypeList >
 ::GenerateData(void)
 {
 
@@ -97,28 +99,28 @@ SuperElastixFilter< TFixedImage, TMovingImage >
 
 }
 
-template< typename TFixedImage, typename TMovingImage >
+template< typename ComponentTypeList>
 void
-SuperElastixFilter< TFixedImage, TMovingImage >
+SuperElastixFilter< ComponentTypeList >
 ::SetInput(const DataObjectIdentifierType& inputName, itk::DataObject* input)
 {
   Superclass::SetInput(inputName, input);
   //this->Modified();
 }
 
-template< typename TFixedImage, typename TMovingImage >
-typename SuperElastixFilter< TFixedImage, TMovingImage >::OutputDataType*
-SuperElastixFilter< TFixedImage, TMovingImage >
+template< typename ComponentTypeList >
+typename SuperElastixFilter< ComponentTypeList >::OutputDataType*
+SuperElastixFilter< ComponentTypeList >
 ::GetOutput(const DataObjectIdentifierType& outputName)
 {
   //this->SetPrimaryOutput()
   return Superclass::GetOutput(outputName);
 }
 
-template< typename TFixedImage, typename TMovingImage >
-template<typename ReturnType>
+template< typename ComponentTypeList >
+template< typename ReturnType >
 ReturnType*
-SuperElastixFilter< TFixedImage, TMovingImage >
+SuperElastixFilter< ComponentTypeList >
 ::GetOutput(const DataObjectIdentifierType& outputName)
 {
   // Purposely not checking the outputName, but just create the requested&named data object in the filter. 
@@ -142,46 +144,6 @@ SuperElastixFilter< TFixedImage, TMovingImage >
   return newOutput;
 }
 
-template< typename TFixedImage, typename TMovingImage >
-void SuperElastixFilter< TFixedImage, TMovingImage >
-::ConnectSourceA(itk::DataObject* inputData)
-{
-  ImageType* fixedImage = dynamic_cast<ImageType*>(inputData);
-  this->m_imageFilter->SetInput(fixedImage);
-}
-template< typename TFixedImage, typename TMovingImage >
-void SuperElastixFilter< TFixedImage, TMovingImage >
-::ConnectSourceB(itk::DataObject* inputData)
-{
-  MeshType* fixedMesh = dynamic_cast<MeshType*>(inputData);
-  this->m_meshFilter->SetInput(fixedMesh);
-}
-
-template< typename TFixedImage, typename TMovingImage >
-void SuperElastixFilter< TFixedImage, TMovingImage >
-::ConnectPlaceholderSinkA(itk::DataObject* outputPlaceholder)
-{
-  this->m_imageFilter->GraftOutput(outputPlaceholder);
-}
-template< typename TFixedImage, typename TMovingImage >
-itk::DataObject* SuperElastixFilter< TFixedImage, TMovingImage >
-::ConnectDataSinkA()
-{
-  return this->m_imageFilter->GetOutput();
-}
-
-template< typename TFixedImage, typename TMovingImage >
-void SuperElastixFilter< TFixedImage, TMovingImage >
-::ConnectPlaceholderSinkB(itk::DataObject* outputPlaceholder)
-{
-  this->m_meshFilter->GraftOutput(outputPlaceholder);
-}
-template< typename TFixedImage, typename TMovingImage >
-itk::DataObject* SuperElastixFilter < TFixedImage, TMovingImage >
-::ConnectDataSinkB()
-{
-  return this->m_meshFilter->GetOutput();
-}
 } // namespace elx
 
 #endif // selxSuperElastixFilter_hxx

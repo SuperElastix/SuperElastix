@@ -141,9 +141,8 @@ namespace selx
     bool UpdateSelectors();
     bool ConnectComponents();
     bool FindAfterRegistration();
-  private:
     bool FindRunRegistration();
-    
+  private:
     bool ConnectSources();
     bool ConnectSinks();
     bool RunRegistrations();
