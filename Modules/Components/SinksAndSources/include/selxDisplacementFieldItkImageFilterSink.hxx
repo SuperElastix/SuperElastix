@@ -71,7 +71,7 @@ namespace selx
   template<int Dimensionality, class TPixel>
   typename itk::DataObject::Pointer DisplacementFieldItkImageFilterSinkComponent< Dimensionality, TPixel>::GetMiniPipelineOutput()
   {
-    return this->m_MiniPipelineOutputImage;
+    return this->m_MiniPipelineOutputImage.GetPointer();
   }
 
   template<int Dimensionality, class TPixel>
