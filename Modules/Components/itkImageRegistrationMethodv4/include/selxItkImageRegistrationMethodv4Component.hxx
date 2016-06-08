@@ -125,7 +125,11 @@ namespace selx
   m_DisplacementFieldFilter = DisplacementFieldFilterType::New();
   //m_DisplacementFieldFilter->GetTransformInput()->Graft<ConstantVelocityFieldTransformType>(&(const_cast<ConstantVelocityFieldTransformType>( m_theItkFilter->GetOutput())));
   //m_DisplacementFieldFilter->GetTransformInput()->Graft(m_theItkFilter->GetOutput());
-  m_DisplacementFieldFilter->GetTransformInput()->Graft(const_cast< itk::DataObjectDecorator<ConstantVelocityFieldTransformType>*>(m_theItkFilter->GetOutput()));
+  itk::DataObjectDecorator<ConstantVelocityFieldTransformType::Superclass::Superclass::Superclass>* decoratedTransform = itk::DataObjectDecorator<ConstantVelocityFieldTransformType::Superclass::Superclass::Superclass>::New();
+  decoratedTransform->Set(m_theItkFilter->GetOutput()->Get());
+  m_DisplacementFieldFilter->SetTransformInput(const_cast< itk::DataObjectDecorator<ConstantVelocityFieldTransformType::Superclass::Superclass::Superclass>*>(decoratedTransform));
+  //m_DisplacementFieldFilter->SetTransformInput(const_cast< itk::DataObjectDecorator<ConstantVelocityFieldTransformType::Superclass::Superclass::Superclass>*>(m_theItkFilter->GetOutput()));
+  //m_DisplacementFieldFilter->GetTransformInput()->Graft(const_cast< itk::DataObjectDecorator<ConstantVelocityFieldTransformType>*>(m_theItkFilter->GetOutput()));
    //m_DisplacementFieldFilter->GetOutput()->SetLargestPossibleRegion()
   //TODO: instantiating the filter in the constructor might be heavy for the use in component selector factory, since all components of the database are created during the selection process.
   // we could choose to keep the component light weighted (for checking criteria such as names and connections) until the settings are passed to the filter, but this requires an additional initialization step.
