@@ -124,7 +124,7 @@ SuperElastixFilter< ComponentTypeList >
 ::GetOutput(const DataObjectIdentifierType& outputName)
 {
   // Purposely not checking the outputName, but just create the requested&named data object in the filter. 
-  // When connecting the Sinks the the elxFilter names and data types are checked.
+  // When connecting the Sinks the selxFilter names and data types are checked.
   typename ReturnType::Pointer newOutput = ReturnType::New();
   Superclass::SetOutput(outputName, newOutput);
 

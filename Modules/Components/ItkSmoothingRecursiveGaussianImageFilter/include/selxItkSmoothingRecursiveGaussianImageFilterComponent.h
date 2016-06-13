@@ -51,10 +51,8 @@ namespace selx
     virtual int Set(itkImageInterface<Dimensionality, TPixel>*) override;
     virtual ItkImagePointer GetItkImage() override;
 
-    //int Update();
     //virtual bool MeetsCriteria(const CriteriaType &criteria);
     virtual bool MeetsCriterion(const ComponentBase::CriterionType &criterion) override;    
-    //static const char * GetName() { return "GDOptimizer3rdPartyComponent"; } ;
     static const char * GetDescription() { return "ItkSmoothingRecursiveGaussianImageFilter Component"; };
   private:
     typename TheItkFilterType::Pointer m_theItkFilter;

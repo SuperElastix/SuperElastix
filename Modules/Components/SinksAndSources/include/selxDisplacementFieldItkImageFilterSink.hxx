@@ -61,7 +61,7 @@ namespace selx
     *  The resulting output image will be grafted into when the sink component is connected to an other component.
     * */
     // 
-    this->m_OverlordOutputImage = dynamic_cast<DeformationFieldImageType*>(&(*overlordOutput));
+    this->m_OverlordOutputImage = dynamic_cast<DeformationFieldImageType*>(overlordOutput.GetPointer());
     if (this->m_OverlordOutputImage == nullptr)
     {
       itkExceptionMacro("SinkComponent cannot cast the Overlord's Output to the required type");

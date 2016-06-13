@@ -50,7 +50,7 @@ namespace selx
   ItkImageSourceComponent< Dimensionality, TPixel>
   ::SetMiniPipelineInput(itk::DataObject::Pointer object)
 {
-  this->m_Image = dynamic_cast<ItkImageType*>(&(*object));
+  this->m_Image = dynamic_cast<ItkImageType*>(object.GetPointer());
   if (this->m_Image == nullptr)
   {
     itkExceptionMacro("DataObject passed by the Overlord is not of the right ImageType or not at all an ImageType");

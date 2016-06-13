@@ -31,34 +31,6 @@ ItkSmoothingRecursiveGaussianImageFilterComponent< Dimensionality, TPixel>::~Itk
 {
 }
 
-// TODO: see if itkImageSourceInterface is the right way to connect itk filters..
-/*
-int ItkSmoothingRecursiveGaussianImageFilterComponent::Set(itkProcessObjectInterface* component)
-{
-  auto other = component->GetItkProcessObject();
-  // connect the itk pipeline
-  //this->m_theItkFilter->SetInput(other->GetOutputs()[0]);
-  return 0;
-}
-
-itk::ProcessObject::Pointer ItkSmoothingRecursiveGaussianImageFilterComponent::GetItkProcessObject()
-{
-  return m_theItkFilter;
-}
-
-int ItkSmoothingRecursiveGaussianImageFilterComponent::Set(itkImageToImageFilterInterface* component)
-{
-  auto other = component->GetItkImageToImageFilter();
-  // connect the itk pipeline
-  this->m_theItkFilter->SetInput(other->GetOutput());
-  return 0;
-}
-
-itk::ImageToImageFilter<itk::Image<double, 3>, itk::Image<double, 3>>::Pointer ItkSmoothingRecursiveGaussianImageFilterComponent::GetItkImageToImageFilter()
-{
-  return m_theItkFilter;
-}
-*/
 template<int Dimensionality, class TPixel>
 int ItkSmoothingRecursiveGaussianImageFilterComponent< Dimensionality, TPixel>
 ::Set(itkImageInterface<Dimensionality, TPixel>* component)

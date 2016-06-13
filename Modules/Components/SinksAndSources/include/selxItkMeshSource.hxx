@@ -50,7 +50,7 @@ namespace selx
   ItkMeshSourceComponent< Dimensionality, TPixel>
   ::SetMiniPipelineInput(itk::DataObject::Pointer object)
 {
-  this->m_Mesh = dynamic_cast<ItkMeshType*>(&(*object));
+  this->m_Mesh = dynamic_cast<ItkMeshType*>(object.GetPointer());
   if (this->m_Mesh == nullptr)
   {
     itkExceptionMacro("DataObject passed by the Overlord is not of the right MeshType or not at all an MeshType");
