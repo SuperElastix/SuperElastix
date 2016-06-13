@@ -125,9 +125,18 @@ namespace selx
   m_DisplacementFieldFilter = DisplacementFieldFilterType::New();
   //m_DisplacementFieldFilter->GetTransformInput()->Graft<ConstantVelocityFieldTransformType>(&(const_cast<ConstantVelocityFieldTransformType>( m_theItkFilter->GetOutput())));
   //m_DisplacementFieldFilter->GetTransformInput()->Graft(m_theItkFilter->GetOutput());
-  itk::DataObjectDecorator<ConstantVelocityFieldTransformType::Superclass::Superclass::Superclass>* decoratedTransform = itk::DataObjectDecorator<ConstantVelocityFieldTransformType::Superclass::Superclass::Superclass>::New();
-  decoratedTransform->Set(m_theItkFilter->GetOutput()->Get());
-  m_DisplacementFieldFilter->SetTransformInput(const_cast< itk::DataObjectDecorator<ConstantVelocityFieldTransformType::Superclass::Superclass::Superclass>*>(decoratedTransform));
+  
+  itk::DataObjectDecorator<ConstantVelocityFieldTransformType::Superclass::Superclass::Superclass>::Pointer decoratedDummyTransform = itk::DataObjectDecorator<ConstantVelocityFieldTransformType::Superclass::Superclass::Superclass>::New();
+  ConstantVelocityFieldTransformType::Pointer dummyTranform = ConstantVelocityFieldTransformType::New();
+  decoratedDummyTransform->Set(dummyTranform);
+
+  //decoratedTransform->Set(m_theItkFilter->GetOutput()->Get());
+  //m_DisplacementFieldFilter->SetTransformInput(const_cast< itk::DataObjectDecorator<ConstantVelocityFieldTransformType::Superclass::Superclass::Superclass>*>(decoratedTransform));
+  
+  m_DisplacementFieldFilter->SetTransformInput(decoratedDummyTransform);
+  //m_theItkFilter->GetOutput()->Graft(m_DisplacementFieldFilter->GetTransformInput());
+  //m_DisplacementFieldFilter->GetTransformInput()->Graft(decoratedTransform);
+
   //m_DisplacementFieldFilter->SetTransformInput(const_cast< itk::DataObjectDecorator<ConstantVelocityFieldTransformType::Superclass::Superclass::Superclass>*>(m_theItkFilter->GetOutput()));
   //m_DisplacementFieldFilter->GetTransformInput()->Graft(const_cast< itk::DataObjectDecorator<ConstantVelocityFieldTransformType>*>(m_theItkFilter->GetOutput()));
    //m_DisplacementFieldFilter->GetOutput()->SetLargestPossibleRegion()
@@ -144,9 +153,22 @@ template<int Dimensionality, class TPixel>
 int ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>
 ::Set(itkImageFixedInterface<Dimensionality, TPixel>* component)
 {
-  auto image = component->GetItkImageFixed();
+  auto fixedImage = component->GetItkImageFixed();
   // connect the itk pipeline
-  this->m_theItkFilter->SetFixedImage(image);
+  this->m_theItkFilter->SetFixedImage(fixedImage);
+
+  this->m_DisplacementFieldFilter->SetSize(fixedImage->GetBufferedRegion().GetSize()); //should be virtual image...
+  this->m_DisplacementFieldFilter->SetOutputOrigin(fixedImage->GetOrigin());
+  this->m_DisplacementFieldFilter->SetOutputSpacing(fixedImage->GetSpacing());
+  this->m_DisplacementFieldFilter->SetOutputDirection(fixedImage->GetDirection());
+  this->m_DisplacementFieldFilter->UpdateOutputInformation();
+
+  this->m_resampler->SetSize(fixedImage->GetBufferedRegion().GetSize());  //should be virtual image...
+  this->m_resampler->SetOutputOrigin(fixedImage->GetOrigin());
+  this->m_resampler->SetOutputSpacing(fixedImage->GetSpacing());
+  this->m_resampler->SetOutputDirection(fixedImage->GetDirection());
+  this->m_resampler->SetDefaultPixelValue(0);
+
   return 0;
 }
 
@@ -154,9 +176,12 @@ template<int Dimensionality, class TPixel>
 int ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>
 ::Set(itkImageMovingInterface<Dimensionality, TPixel>* component)
 {
-  auto image = component->GetItkImageMoving();
+  auto movingImage = component->GetItkImageMoving();
   // connect the itk pipeline
-  this->m_theItkFilter->SetMovingImage(image);
+  this->m_theItkFilter->SetMovingImage(movingImage);
+
+  this->m_resampler->SetInput(movingImage);
+  this->m_resampler->UpdateOutputInformation();
   return 0;
 }
 template<int Dimensionality, class TPixel>
@@ -368,12 +393,7 @@ void ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::RunRegistra
   this->m_resampler->SetTransform(forwardDisplacement);
   
   //this->m_resampler->SetTransform(this->m_theItkFilter->GetOutput());
-  this->m_resampler->SetInput(movingImage);
-  this->m_resampler->SetSize(fixedImage->GetBufferedRegion().GetSize());  //should be virtual image...
-  this->m_resampler->SetOutputOrigin(fixedImage->GetOrigin());
-  this->m_resampler->SetOutputSpacing(fixedImage->GetSpacing());
-  this->m_resampler->SetOutputDirection(fixedImage->GetDirection());
-  this->m_resampler->SetDefaultPixelValue(0);
+
   
   // TODO: is this needed?
   //this->m_resampler->Update();

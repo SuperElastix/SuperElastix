@@ -186,9 +186,52 @@ namespace selx
   {
     bool isAllSuccess = true;
 
+    // TODO for pure itk components the order of connecting components is important since this affects the UpdateOutputInformations calls
+    // We might consider to implement the connecting procedure via a breadth-first search on the boost graph.
+    // For now we explicitly start with the sources and assume that the rest is connected in the right order.
+    //*********Start temporary implementation *************
+    SourceInterfaceMapType sourcesMap = this->GetSourceInterfaces();
+    for (const auto &sourcesMapPair : sourcesMap) {
+
+      for (auto const & outgoingName : this->m_Blueprint->GetOutputNames(sourcesMapPair.first))
+      {
+        //TODO check direction upstream/downstream input/output source/target
+        //TODO GetComponent returns NULL if possible components !=1 we can check for that, but Overlord::UpdateSelectors() does something similar.
+        ComponentBase::Pointer sourceComponent = this->m_ComponentSelectorContainer[sourcesMapPair.first]->GetComponent();
+        ComponentBase::Pointer targetComponent = this->m_ComponentSelectorContainer[outgoingName]->GetComponent();
+
+        Blueprint::ParameterMapType connectionProperties = this->m_Blueprint->GetConnection(sourcesMapPair.first, outgoingName);
+        int numberOfConnections = 0;
+        if (connectionProperties.count("NameOfInterface") > 0)
+        {
+          // connect only via interfaces provided by user configuration
+          for (auto const & interfaceName : connectionProperties["NameOfInterface"])
+          {
+            numberOfConnections += (targetComponent->AcceptConnectionFrom(interfaceName.c_str(), sourceComponent) == ComponentBase::interfaceStatus::success ? 1 : 0);
+          }
+        }
+        else
+        {
+          // connect via all possible interfaces
+          numberOfConnections = targetComponent->AcceptConnectionFrom(sourceComponent);
+        }
+
+        if (numberOfConnections == 0)
+        {
+          isAllSuccess = false;
+          std::cout << "Warning: a connection was specified, but no compatible interfaces were found.";
+        }
+      }
+    }
+    //*********End temporary implementation *************
+    // Normal loop
     Blueprint::ComponentNamesType componentNames = this->m_Blueprint->GetComponentNames();
     for (auto const & name : componentNames)
     {
+      if (sourcesMap.count(name) == 1) // ******** Exclude source component dealt with in temporary implementation
+      {
+        continue;
+      }
       for (auto const & outgoingName : this->m_Blueprint->GetOutputNames(name))
       {
         //TODO check direction upstream/downstream input/output source/target
