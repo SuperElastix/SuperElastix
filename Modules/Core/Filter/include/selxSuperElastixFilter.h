@@ -54,6 +54,7 @@ public:
   template<typename ReturnType>
   ReturnType* GetOutput(const DataObjectIdentifierType&);
 
+  void Update(void) ITK_OVERRIDE;
 protected:
 
   SuperElastixFilter(void);

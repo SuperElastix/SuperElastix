@@ -182,6 +182,9 @@ TEST_F(WBIRDemoTest, itkv4_SVF_ANTSCC)
 
   EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
 
+  //TODO remove Update call
+  //superElastixFilter->Update();
+
   EXPECT_NO_THROW(resultImageWriter->Update());
   EXPECT_NO_THROW(vectorImageWriter->Update());
 

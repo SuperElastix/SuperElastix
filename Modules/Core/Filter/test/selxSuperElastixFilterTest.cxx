@@ -113,9 +113,9 @@ namespace selx {
     blueprint->AddConnection("ImageFilter", "OutputImage", Blueprint::ParameterMapType());
 
 
-    blueprint->AddComponent("InputMesh", { { "NameOfClass", { "ItkMeshSourceComponent" } } });
-    blueprint->AddComponent("OutputMesh", { { "NameOfClass", { "ItkMeshSinkComponent" } } });
-    blueprint->AddConnection("InputMesh", "OutputMesh", Blueprint::ParameterMapType());
+    //blueprint->AddComponent("InputMesh", { { "NameOfClass", { "ItkMeshSourceComponent" } } });
+    //blueprint->AddComponent("OutputMesh", { { "NameOfClass", { "ItkMeshSinkComponent" } } });
+    //blueprint->AddConnection("InputMesh", "OutputMesh", Blueprint::ParameterMapType());
 
     EXPECT_NO_THROW(mySuperElastix = SuperElastixFilterType::New());
     mySuperElastix->SetBlueprint(blueprint);
@@ -123,15 +123,16 @@ namespace selx {
     //mySuperElastix->SetInput("FixedImage", imageReader2D->GetOutput());
     //imageWriter2D->SetInput(mySuperElastix->GetOutput<Image2DType>("ResultImage"));
     
-    mySuperElastix->SetInput("InputMesh", meshReader->GetOutput());  
-    meshWriter->SetInput(mySuperElastix->GetOutput<MeshType>("OutputMesh"));
+    //mySuperElastix->SetInput("InputMesh", meshReader->GetOutput());  
+    //meshWriter->SetInput(mySuperElastix->GetOutput<MeshType>("OutputMesh"));
 
     mySuperElastix->SetInput("InputImage", imageReader3D->GetOutput());
     imageWriter3D->SetInput(mySuperElastix->GetOutput<Image3DType>("OutputImage"));
-
+    
+    //mySuperElastix->Update();
 
     //EXPECT_NO_THROW(imageWriter2D->Update());
-    EXPECT_NO_THROW(meshWriter->Update());
+    //EXPECT_NO_THROW(meshWriter->Update());
     EXPECT_NO_THROW(imageWriter3D->Update());
   }
 }

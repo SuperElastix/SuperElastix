@@ -75,6 +75,7 @@ SuperElastixFilter< ComponentTypeList >
   for (const auto & nameAndInterface : sinks)
   {
     nameAndInterface.second->GetMiniPipelineOutput()->UpdateOutputInformation();
+    //this->GetOutput(nameAndInterface.first)->Graft(nameAndInterface.second->GetMiniPipelineOutput());
   }
 
 }
@@ -126,6 +127,7 @@ SuperElastixFilter< ComponentTypeList >
   // Purposely not checking the outputName, but just create the requested&named data object in the filter. 
   // When connecting the Sinks the selxFilter names and data types are checked.
   typename ReturnType::Pointer newOutput = ReturnType::New();
+  
   Superclass::SetOutput(outputName, newOutput);
 
   //DataObject* baseOutputData = Superclass::GetOutput(outputName);
@@ -142,6 +144,15 @@ SuperElastixFilter< ComponentTypeList >
   //}
   //return outputData;
   return newOutput;
+}
+
+template< typename ComponentTypeList >
+void SuperElastixFilter< ComponentTypeList >
+::Update(void)
+{
+  //this->SetPrimaryOutput()
+  this->GenerateOutputInformation();
+  this->GenerateData();
 }
 
 } // namespace elx
