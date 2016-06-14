@@ -17,10 +17,14 @@
  *
  *=========================================================================*/
 
+#include "selxSuperElastixFilter.h"
+
 #include "selxItkSmoothingRecursiveGaussianImageFilterComponent.h"
 #include "selxItkImageSink.h"
 #include "selxItkImageSource.h"
-#include "Overlord.h"
+
+#include "itkImageFileReader.h"
+#include "itkImageFileWriter.h"
 
 #include "selxDataManager.h"
 #include "gtest/gtest.h"
@@ -45,6 +49,12 @@ public:
   typedef Blueprint::ParameterMapType       ParameterMapType;
   typedef Blueprint::ParameterValueType     ParameterValueType;
   typedef DataManager DataManagerType;
+
+  typedef SuperElastixFilter<bool>          SuperElastixFilterType;
+
+  typedef itk::Image<double, 3> Image3DType;
+  typedef itk::ImageFileReader<Image3DType> ImageReader3DType;
+  typedef itk::ImageFileWriter<Image3DType> ImageWriter3DType;
 
   virtual void SetUp() {
 
@@ -109,21 +119,32 @@ public:
 
   TEST_F(itkImageFilterTest, Run)
 {
-  overlord = Overlord::New();
-  DataManagerType::Pointer dataManager = DataManagerType::New();
-  overlord->inputFileNames = { dataManager->GetInputFile("sphereA3d.mhd") };
-  overlord->outputFileNames = { dataManager->GetOutputFile("itkImageFilterTest.mhd") };
-  overlord->SetBlueprint(blueprint);
-  bool allUniqueComponents;
-  
-  // Read the blueprint and try to realize all components
-  // If for any node no components could be selected an exception is thrown.
-  EXPECT_NO_THROW(allUniqueComponents = overlord->Configure());
-  // If for any node multiple components are selected, allUniqueComponents is false.
-  EXPECT_TRUE(allUniqueComponents);
+  // Instantiate SuperElastix
+  SuperElastixFilterType::Pointer superElastixFilter;
+  EXPECT_NO_THROW(superElastixFilter = SuperElastixFilterType::New());
 
-  // If Configuration was successful, the graph (pipeline) can be executed.
-  EXPECT_NO_THROW(overlord->Execute());
+  // Data manager provides the paths to the input and output data for unit tests
+  DataManagerType::Pointer dataManager = DataManagerType::New();
+
+  // Set up the readers and writers
+  ImageReader3DType::Pointer inputImageReader = ImageReader3DType::New();
+  inputImageReader->SetFileName(dataManager->GetInputFile("sphereA3d.mhd"));
+
+  ImageWriter3DType::Pointer resultImageWriter = ImageWriter3DType::New();
+  resultImageWriter->SetFileName(dataManager->GetOutputFile("itkImageFilterTest.mhd"));
+
+
+  // Connect SuperElastix in an itk pipeline
+  superElastixFilter->SetInput("Source", inputImageReader->GetOutput());
+  resultImageWriter->SetInput(superElastixFilter->GetOutput<Image3DType>("Sink"));
+  
+  EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
+
+  //Optional Update call
+  //superElastixFilter->Update();
+
+  // Update call on the writers triggers SuperElastix to configure and execute
+  EXPECT_NO_THROW(resultImageWriter->Update());
 }
 
 } // namespace selx

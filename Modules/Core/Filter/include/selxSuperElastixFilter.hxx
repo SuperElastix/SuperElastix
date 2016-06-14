@@ -75,7 +75,7 @@ SuperElastixFilter< ComponentTypeList >
   for (const auto & nameAndInterface : sinks)
   {
     nameAndInterface.second->GetMiniPipelineOutput()->UpdateOutputInformation();
-    //this->GetOutput(nameAndInterface.first)->Graft(nameAndInterface.second->GetMiniPipelineOutput());
+    this->GetOutput(nameAndInterface.first)->Graft(nameAndInterface.second->GetMiniPipelineOutput());
   }
 
 }
@@ -90,7 +90,7 @@ SuperElastixFilter< ComponentTypeList >
 ::GenerateData(void)
 {
 
-  this->m_Overlord->Execute();
+  this->m_Overlord->Execute(); // calls updates of sink filters
 
   Overlord::SinkInterfaceMapType sinks = this->m_Overlord->GetSinkInterfaces();
   for (const auto & nameAndInterface : sinks)

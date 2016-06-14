@@ -24,15 +24,27 @@ namespace selx
   template<int Dimensionality, class TPixel>
   ElastixComponent< Dimensionality, TPixel>::ElastixComponent()
   {
-    m_theItkFilter = TheItkFilterType::New();
+    m_elastixFilter = ElastixFilterType::New();
+    m_transformixFilter = TransformixFilterType::New();
 
     // TODO: Due to some issues with Criteria being propagated as elastix settings, I need to empty the selxparameterObject.
-    selxParameterObjectPointer selxparameterObject = selxParameterObjectType::New();
-    selxparameterObject->SetParameterMap("rigid");
-    this->m_theItkFilter->SetParameterObject(selxparameterObject);
+    elxParameterObjectPointer elxParameterObject = elxParameterObjectType::New();
+    typename elxParameterObjectType::ParameterMapType defaultParameters = elxParameterObject->GetDefaultParameterMap("rigid");
 
-    m_theItkFilter->LogToConsoleOn();
-    //m_ParameterObject->SetParameterMap("rigid");
+    elxParameterObject->SetParameterMap(defaultParameters);
+    m_elastixFilter->SetParameterObject(elxParameterObject);
+
+    m_elastixFilter->LogToConsoleOn();
+    
+    m_transformixFilter->ComputeDeformationFieldOn();
+    m_transformixFilter->LogToConsoleOn();
+    m_transformixFilter->LogToFileOn();
+    // In the current transformix filter an input image is required even if we want a deformation field only.
+    m_transformixFilter->SetInput(m_elastixFilter->GetOutput());
+    
+    //TODO m_elastixFilter returns a nullptr GetTransformParameterObject instead of a valid object. However, we need this object to satisfy the input conditions of m_transformixFilter
+    //m_transformixFilter->SetTransformParameterObject(m_elastixFilter->GetTransformParameterObject());
+    m_transformixFilter->SetTransformParameterObject(elxParameterObject); // supply a dummy object
 
     //TODO: instantiating the filter in the constructor might be heavy for the use in component selector factory, since all components of the database are created during the selection process.
     // we could choose to keep the component light weighted (for checking criteria such as names and connections) until the settings are passed to the filter, but this requires an additional initialization step.
@@ -46,18 +58,18 @@ namespace selx
   template<int Dimensionality, class TPixel>
   int ElastixComponent< Dimensionality, TPixel>::Set(itkImageFixedInterface<Dimensionality, TPixel>* component)
   {
-    auto image = component->GetItkImageFixed();
+    auto fixedImage = component->GetItkImageFixed();
     // connect the itk pipeline
-    this->m_theItkFilter->SetFixedImage(image);
+    this->m_elastixFilter->SetFixedImage(fixedImage);
     return 0;
   }
 
   template<int Dimensionality, class TPixel>
   int ElastixComponent< Dimensionality, TPixel>::Set(itkImageMovingInterface<Dimensionality, TPixel>* component)
   {
-    auto image = component->GetItkImageMoving();
+    auto movingImage = component->GetItkImageMoving();
     // connect the itk pipeline
-    this->m_theItkFilter->SetMovingImage(image);
+    this->m_elastixFilter->SetMovingImage(movingImage);
     return 0;
   }
 
@@ -73,8 +85,7 @@ namespace selx
   template<int Dimensionality, class TPixel>
   typename ElastixComponent< Dimensionality, TPixel>::ItkImagePointer ElastixComponent< Dimensionality, TPixel>::GetItkImage()
   {
-    // We cannot just call return this->m_theItkFilter->GetOutput(), since the network is generally not ready for execution during the handshake
-  return this->m_OutputImage;
+    return this->m_transformixFilter->GetOutput();
   }
   
 
@@ -82,24 +93,11 @@ namespace selx
   template<int Dimensionality, class TPixel>
   void ElastixComponent< Dimensionality, TPixel>::RunRegistration(void)
   {
-    //this->m_theItkFilter->Update();
-    this->m_OutputImage = this->m_theItkFilter->GetOutput();
+    this->m_elastixFilter->Update();
+    this->m_transformixFilter->SetTransformParameterObject(this->m_elastixFilter->GetTransformParameterObject());
 
-    typename TransformixFilterType::Pointer transformixFilter;
-    transformixFilter = TransformixFilterType::New();
-    // In the current transformix filter an input image is required even if we want a deformation field only.
-    transformixFilter->SetInputImage(this->m_theItkFilter->GetOutput());
+    this->m_transformixFilter->Update();
     
-    transformixFilter->SetTransformParameterObject(this->m_theItkFilter->GetTransformParameterObject());
-    //transformixFilter->SetOutputDirectory(dataManager->GetOutputDirectory());
-    transformixFilter->ComputeDeformationFieldOn();
-    transformixFilter->LogToConsoleOn();
-    transformixFilter->LogToFileOn();
-    transformixFilter->Update();
-    //ImageFileWriterType::Pointer writer = ImageFileWriterType::New();
-    //writer->SetFileName(dataManager->GetOutputFile("Euler2DTransformixResultImage.nii"));
-    //writer->SetInput(transformixFilter->GetOutput());
-    //writer->Update();
 
   }
 
@@ -148,21 +146,21 @@ namespace selx
     }
     else if (criterion.first == "RegistrationPreset") //Supports this?
     {
-      // Temporary solution: RegistrationSettings: rigid, nonrigid, etc overwrite the current selxparameterObject.
+      // Temporary solution: RegistrationPreset: rigid, nonrigid, etc overwrite the current selxparameterObject.
       // Warning: the order of Criteria matters, since selxparameterObject may be overwritten
       // Warning: this probably fails because the Criteria map entries are processed in arbitrary order.
 
-      selxParameterObjectPointer selxparameterObject = selxParameterObjectType::New();
+      elxParameterObjectPointer elxParameterObject = elxParameterObjectType::New();
 
       meetsCriteria = true;
-      for (auto const & transformtype : criterion.second) // auto&& preferred?
+      for (auto const & presetName : criterion.second) // auto&& preferred?
       {
-        //this->m_ParameterObject->AddParameterMap(transformtype, const unsigned int numberOfResolutions = 3u, const double finalGridSpacingInPhysicalUnits = 10.0);
-        selxparameterObject->SetParameterMap(transformtype);
+        typename elxParameterObjectType::ParameterMapType presetParameters = elxParameterObject->GetDefaultParameterMap(presetName);
+        elxParameterObject->SetParameterMap(presetParameters);
         
         try
         {
-          this->m_theItkFilter->SetParameterObject(selxparameterObject);
+          this->m_elastixFilter->SetParameterObject(elxParameterObject);
         }
         catch (itk::ExceptionObject & err)
         {
@@ -176,9 +174,12 @@ namespace selx
     else
     {
       // temporary solution: pass all SuperElastixComponent parameters as is to elastix. This should be defined in deeper hierarchy of the criteria, but for now we have a flat mapping only.
-      selxParameterObjectPointer selxparameterObject = this->m_theItkFilter->GetParameterObject();
-      selxparameterObject->GetParameterMap(0)[criterion.first] = criterion.second;
-      this->m_theItkFilter->SetParameterObject(selxparameterObject);
+      elxParameterObjectPointer elxParameterObject = this->m_elastixFilter->GetParameterObject();
+      typename elxParameterObjectType::ParameterMapType newParameterMap = elxParameterObject->GetParameterMap(0); //copy const paramtermap to a non const map
+      newParameterMap[criterion.first] = criterion.second; //overwrite element
+      elxParameterObjectPointer newParameterObject = elxParameterObjectType::New();
+      newParameterObject->SetParameterMap(newParameterMap);
+      this->m_elastixFilter->SetParameterObject(newParameterObject);
       meetsCriteria = true;
     }
     return meetsCriteria;

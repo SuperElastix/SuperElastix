@@ -65,9 +65,9 @@ namespace selx
 
     typedef typename ConnectionImageType::Pointer ItkImagePointer;
 
-    typedef elastix::ElastixFilter< FixedImageType, MovingImageType > TheItkFilterType;
-    typedef elastix::ParameterObject selxParameterObjectType;
-    typedef selxParameterObjectType::Pointer selxParameterObjectPointer;
+    typedef elastix::ElastixFilter< FixedImageType, MovingImageType > ElastixFilterType;
+    typedef elastix::ParameterObject elxParameterObjectType;
+    typedef elxParameterObjectType::Pointer elxParameterObjectPointer;
     
     typedef elastix::TransformixFilter<FixedImageType> TransformixFilterType;
 
@@ -83,7 +83,8 @@ namespace selx
     virtual bool MeetsCriterion(const CriterionType &criterion) override;
     static const char * GetDescription() { return "Elastix Component"; };
   private:
-    typename TheItkFilterType::Pointer m_theItkFilter;
+    typename ElastixFilterType::Pointer m_elastixFilter;
+    typename TransformixFilterType::Pointer m_transformixFilter;
     //selxParameterObjectPointer m_ParameterObject;
 
     ItkImagePointer m_OutputImage;
