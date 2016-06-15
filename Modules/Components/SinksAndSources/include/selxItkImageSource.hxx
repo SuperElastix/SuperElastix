@@ -23,9 +23,8 @@ namespace selx
 {
   template<int Dimensionality, class TPixel>
   ItkImageSourceComponent< Dimensionality, TPixel>
-  ::ItkImageSourceComponent()
+    ::ItkImageSourceComponent() : m_Image(nullptr)
 {
-  this->m_Image = nullptr;
 }
 
   template<int Dimensionality, class TPixel>

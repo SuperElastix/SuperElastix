@@ -89,6 +89,9 @@ int main(int ac, char* av[])
     vector<string> inputPairs;
     vector<string> outputPairs;
 
+    // Store the reader so that they will not be destroyed before the pipeline is executed.
+    vector<ImageReader2DType::Pointer> fileReaders;
+    // Store the writers for the update call
     vector<ImageWriter2DType::Pointer> fileWriters;
 
     po::options_description desc("Allowed options");
@@ -127,6 +130,7 @@ int main(int ac, char* av[])
         ImageReader2DType::Pointer reader = ImageReader2DType::New();
         reader->SetFileName(path);
         superElastixFilter->SetInput(name, reader->GetOutput());
+        fileReaders.push_back(reader);
       }
     }
     if (vm.count("out")) {
