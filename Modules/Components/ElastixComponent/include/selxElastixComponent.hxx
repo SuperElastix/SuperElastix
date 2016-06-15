@@ -93,12 +93,10 @@ namespace selx
   template<int Dimensionality, class TPixel>
   void ElastixComponent< Dimensionality, TPixel>::RunRegistration(void)
   {
+    // TODO currently, the pipeline with elastix and tranformix can only be created after the update of elastix
     this->m_elastixFilter->Update();
     this->m_transformixFilter->SetTransformParameterObject(this->m_elastixFilter->GetTransformParameterObject());
-
     this->m_transformixFilter->Update();
-    
-
   }
 
 

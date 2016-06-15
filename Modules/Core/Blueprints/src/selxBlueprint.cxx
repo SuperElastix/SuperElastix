@@ -102,7 +102,10 @@ Blueprint::ParameterMapType
 Blueprint
 ::GetComponent(ComponentNameType name) const
 {
-  //TODO check if component exists: this->m_Graph[name] != graph_traits<GraphType>::null_vertex()
+  if (!this->ComponentExists(name))
+  {
+    itkExceptionMacro("Blueprint does not contain component " << name);
+  }
   this->Modified();
   return this->m_Graph[name].parameterMap;
 }
@@ -204,8 +207,25 @@ Blueprint
 
 bool
 Blueprint
+::ComponentExists(ComponentNameType componentName) const
+{
+  const GraphType::vertex_descriptor descriptor = this->m_Graph.vertex(componentName);
+  return descriptor != boost::graph_traits<GraphType>::null_vertex();
+}
+
+bool
+Blueprint
 ::ConnectionExists( ComponentNameType upstream, ComponentNameType downstream ) const
 {
+  if (!this->ComponentExists(upstream))
+  {
+    itkExceptionMacro("Blueprint does not contain component " << upstream);
+  }
+  if (!this->ComponentExists(downstream))
+  {
+    itkExceptionMacro("Blueprint does not contain component " << downstream);
+  }
+
   return boost::edge_by_label( upstream, downstream, this->m_Graph).second;
 }
 

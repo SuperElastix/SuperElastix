@@ -17,7 +17,7 @@
  *
  *=========================================================================*/
 
-#include "Overlord.h"
+#include "selxSuperElastixFilter.h"
 #include "selxBlueprint.h"
 #include "selxConfigurationReader.h"
 
@@ -36,6 +36,8 @@
 
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
+
+#include <boost/algorithm/string.hpp>
 
 #include <boost/filesystem.hpp>
 using namespace boost::filesystem;
@@ -64,17 +66,37 @@ ostream& operator<<(ostream& os, const vector<T>& v)
 int main(int ac, char* av[])
 {
   try {
+    typedef itk::Image<float, 2> Image2DType;
+    typedef itk::ImageFileReader<Image2DType> ImageReader2DType;
+    typedef itk::ImageFileWriter<Image2DType> ImageWriter2DType;
+
+    typedef vector< string > split_vector_type;
+
+    ComponentFactory<DisplacementFieldItkImageFilterSinkComponent<2, float>>::RegisterOneFactory();
+    ComponentFactory<ItkImageSourceFixedComponent<2, float>>::RegisterOneFactory();
+    ComponentFactory<ItkImageSourceMovingComponent<2, float>>::RegisterOneFactory();
+    ComponentFactory<ItkSmoothingRecursiveGaussianImageFilterComponent<2, float>>::RegisterOneFactory();
+    ComponentFactory<ItkImageRegistrationMethodv4Component<2, float>>::RegisterOneFactory();
+    ComponentFactory<ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component<2, float>>::RegisterOneFactory();
+    ComponentFactory<ItkMeanSquaresImageToImageMetricv4Component<2, float>>::RegisterOneFactory();
+    ComponentFactory<ElastixComponent<2, float>>::RegisterOneFactory();
+    ComponentFactory<ItkImageSinkComponent<2, float>>::RegisterOneFactory();
+
+    SuperElastixFilter<bool>::Pointer superElastixFilter = SuperElastixFilter<bool>::New();
+    
 
     path configurationPath;
-    vector<path> inputFilePaths;
-    vector<path> outputFilePaths;
+    vector<string> inputPairs;
+    vector<string> outputPairs;
+
+    vector<ImageWriter2DType::Pointer> fileWriters;
 
     po::options_description desc("Allowed options");
     desc.add_options()
       ("help", "produce help message")
       ("conf", po::value<path>(&configurationPath)->required(), "Configuration file")
-      ("in", po::value<vector<path>>(&inputFilePaths)->multitoken(), "Input data: images, labels, meshes, etc.")
-      ("out", po::value<vector<path>>(&outputFilePaths)->multitoken(), "Output data: images, labels, meshes, etc.")
+      ("in", po::value<vector<string>>(&inputPairs)->multitoken(), "Input data: images, labels, meshes, etc. Usage <name>=<path>")
+      ("out", po::value<vector<string>>(&outputPairs)->multitoken(), "Output data: images, labels, meshes, etc. Usage <name>=<path>")
       ("graphout", po::value<path>(), "Output Graphviz dot file")
       //("levels", po::value<int>(), "number of resolution levels")
       //("iterations", po::value<vector<int>>(), "number of iterations per level")
@@ -90,21 +112,40 @@ int main(int ac, char* av[])
     }
 
     if (vm.count("in")) {
-      cout << "Number of input data: " << inputFilePaths.size() << "\n";
+      cout << "Number of input data: " << inputPairs.size() << "\n";
       int index = 0;
-      for (const auto & inname : inputFilePaths)
+      for (const auto & inputPair : inputPairs)
       {
-        cout << "  [" << index << "]: " << inname << "\n";
+        split_vector_type nameAndPath;
+        boost::split(nameAndPath, inputPair, boost::is_any_of("="));  // NameAndPath == { "name","path" }
+        const string & name = nameAndPath[0];
+        const string & path = nameAndPath[1];
+
+        cout << " " << index << " " << name << " : " << path << "\n";
         ++index;
+
+        ImageReader2DType::Pointer reader = ImageReader2DType::New();
+        reader->SetFileName(path);
+        superElastixFilter->SetInput(name, reader->GetOutput());
       }
     }
     if (vm.count("out")) {
-      cout << "Number of output data: " << outputFilePaths.size() << "\n";
+      cout << "Number of output data: " << outputPairs.size() << "\n";
       int index = 0;
-      for (const auto & outname : outputFilePaths)
+      for (const auto & outputPair : outputPairs)
       {
-        cout << "  [" << index << "]: " << outname << "\n";
+        split_vector_type nameAndPath;
+        boost::split(nameAndPath, outputPair, boost::is_any_of("="));  // NameAndPath == { "name","path" }
+        const string & name = nameAndPath[0];
+        const string & path = nameAndPath[1];
+
+        cout << " " << index << " " << name << " : " << path << "\n";
         ++index;
+
+        ImageWriter2DType::Pointer writer = ImageWriter2DType::New();
+        writer->SetFileName(path);
+        writer->SetInput(superElastixFilter->GetOutput<Image2DType>(name));
+        fileWriters.push_back(writer);
       }
     }
     /*
@@ -145,42 +186,14 @@ int main(int ac, char* av[])
       blueprint->WriteBlueprint(vm["graphout"].as<path>().string());
     }
 
-    ComponentFactory<DisplacementFieldItkImageFilterSinkComponent<2, float>>::RegisterOneFactory();
-    ComponentFactory<ItkImageSourceFixedComponent<2, float>>::RegisterOneFactory();
-    ComponentFactory<ItkImageSourceMovingComponent<2, float>>::RegisterOneFactory();
-    ComponentFactory<ItkSmoothingRecursiveGaussianImageFilterComponent<2, float>>::RegisterOneFactory();
-    ComponentFactory<ItkImageRegistrationMethodv4Component<2, float>>::RegisterOneFactory();
-    ComponentFactory<ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component<2, float>>::RegisterOneFactory();
-    ComponentFactory<ItkMeanSquaresImageToImageMetricv4Component<2, float>>::RegisterOneFactory();
-    ComponentFactory<ElastixComponent<2, float>>::RegisterOneFactory();
-    ComponentFactory<ItkImageSinkComponent<2, float>>::RegisterOneFactory();
+    superElastixFilter->SetBlueprint(blueprint);
 
-    Overlord::Pointer overlord = Overlord::New();
+    /* Execute SuperElastix by updating the writers */
 
-
-    vector<string> inputFileStings;
-    std::transform(std::begin(inputFilePaths),
-      std::end(inputFilePaths),
-      std::back_inserter(inputFileStings),
-      [](path p) { return p.string(); }
-    );
-
-    vector<string> outputFileStings;
-    std::transform(std::begin(outputFilePaths),
-      std::end(outputFilePaths),
-      std::back_inserter(outputFileStings),
-      [](path p) { return p.string(); }
-    );
-
-
-    //The Overlord is not yet an itkfilter with inputs and outputs, therefore it reads and writes the files temporarily.
-    overlord->inputFileNames = inputFileStings;
-    overlord->outputFileNames = outputFileStings;
-
-    overlord->SetBlueprint(blueprint);
-    bool allUniqueComponents;
-    allUniqueComponents = overlord->Configure();
-    overlord->Execute();
+    for (auto & writer : fileWriters)
+    {
+      writer->Update();
+    }
 
 
   }
