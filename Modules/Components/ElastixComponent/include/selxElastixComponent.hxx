@@ -33,12 +33,15 @@ namespace selx
 
     elxParameterObject->SetParameterMap(defaultParameters);
     m_elastixFilter->SetParameterObject(elxParameterObject);
-
     m_elastixFilter->LogToConsoleOn();
-    
+    m_elastixFilter->LogToFileOff();
+    m_elastixFilter->SetOutputDirectory(".");
+
     m_transformixFilter->ComputeDeformationFieldOn();
     m_transformixFilter->LogToConsoleOn();
-    m_transformixFilter->LogToFileOn();
+    m_transformixFilter->LogToFileOff();
+    m_transformixFilter->SetOutputDirectory(".");
+
     // In the current transformix filter an input image is required even if we want a deformation field only.
     m_transformixFilter->SetInput(m_elastixFilter->GetOutput());
     
