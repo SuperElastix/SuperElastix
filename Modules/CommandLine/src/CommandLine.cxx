@@ -101,8 +101,6 @@ int main(int ac, char* av[])
       ("in", po::value<vector<string>>(&inputPairs)->multitoken(), "Input data: images, labels, meshes, etc. Usage <name>=<path>")
       ("out", po::value<vector<string>>(&outputPairs)->multitoken(), "Output data: images, labels, meshes, etc. Usage <name>=<path>")
       ("graphout", po::value<path>(), "Output Graphviz dot file")
-      //("levels", po::value<int>(), "number of resolution levels")
-      //("iterations", po::value<vector<int>>(), "number of iterations per level")
       ;
 
     po::variables_map vm;
@@ -152,24 +150,7 @@ int main(int ac, char* av[])
         fileWriters.push_back(writer);
       }
     }
-    /*
-    if (vm.count("levels")) {
-    cout << "number of resolution levels was set to "
-    << vm["levels"].as<int>() << ".\n";
-    }
-    else {
-    cout << "number of resolution levels was not set.\n";
-    }
-
-    if (vm.count("iterations")) {
-    cout << "number of iterations per level was set to "
-    << vm["iterations"].as< vector<int> >() << "\n";
-    }
-    else {
-    cout << "number of iterations per level was not set.\n";
-    }
-    */
-
+    
     Blueprint::Pointer blueprint;
     if (configurationPath.extension() == ".xml")
     {

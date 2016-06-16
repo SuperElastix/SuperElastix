@@ -50,29 +50,55 @@ namespace selx {
     EXPECT_NO_THROW(image2DReader = DecoratedImage2DReaderType::New());
 
     // assign the reader for 2d images to an agnostic reader type 
-    selx::AnyFileReader::Pointer anyReader;
-    EXPECT_NO_THROW(anyReader = image2DReader);
+    AnyFileReader::Pointer anyReader1;
+    EXPECT_NO_THROW(anyReader1 = image2DReader);
 
-    anyReader->SetFileName(dataManager->GetInputFile("coneA2d64.mhd"));
+    anyReader1->SetFileName(dataManager->GetInputFile("coneA2d64.mhd"));
 
-    itk::DataObject::Pointer anyOutput = anyReader->GetOutput();
+    // anyReaders output is a generic DataObject (i.e. the base class of itk image, meshes, etc.)
+    itk::DataObject::Pointer anyOutput1 = anyReader1->GetOutput();
+    EXPECT_NO_THROW(anyReader1->Update());
 
-    anyReader->Update();
-
-    Image2DType::Pointer image2DOutput = dynamic_cast<Image2DType*>(anyOutput.GetPointer());
-
+    // see if the anyReader delegated the actual data reading to a reader of the right type.
+    Image2DType::Pointer image2DOutput = dynamic_cast<Image2DType*>(anyOutput1.GetPointer());
     EXPECT_FALSE(image2DOutput == nullptr);
 
-    //ImageReaderType::Pointer imageReader = ImageReaderType::New();
-    //ImageWriterType::Pointer imageWriter = ImageWriterType::New();
 
-    //imageReader->SetFileName("in2dimage.mhd");
-    //imageWriter->SetFileName("out2dimage.mhd");
+    DecoratedMesh2DReaderType::Pointer mesh2DReader;
+    EXPECT_NO_THROW(mesh2DReader = DecoratedMesh2DReaderType::New());
 
-    Mesh2DReaderType::Pointer mesh2DReader = Mesh2DReaderType::New();
-    Mesh2DWriterType::Pointer mesh2DWriter = Mesh2DWriterType::New();
+    // assign the reader for 2d meshes to an agnostic reader type 
+    AnyFileReader::Pointer anyReader2;
+    EXPECT_NO_THROW(anyReader2 = mesh2DReader);
 
-    mesh2DReader->SetFileName(dataManager->GetInputFile("in2dmesh.vtk"));
-    mesh2DWriter->SetFileName(dataManager->GetInputFile("out2dmesh.vtk"));
+    anyReader2->SetFileName(dataManager->GetInputFile("in2dmesh.vtk"));
+
+    // anyReaders output is a generic DataObject (i.e. the base class of itk image, meshes, etc.)
+    itk::DataObject::Pointer anyOutput2 = anyReader2->GetOutput();
+    EXPECT_NO_THROW(anyReader2->Update());
+
+    // see if the anyReader delegated the actual data reading to a reader of the right type.
+    Mesh2DType::Pointer mesh2DOutput = dynamic_cast<Mesh2DType*>(anyOutput2.GetPointer());
+    EXPECT_FALSE(mesh2DOutput == nullptr);
+
+
+
+    DecoratedImage3DReaderType::Pointer image3DReader;
+    EXPECT_NO_THROW(image3DReader = DecoratedImage3DReaderType::New());
+
+    // assign the reader for 3d images to an agnostic reader type 
+    AnyFileReader::Pointer anyReader3;
+    EXPECT_NO_THROW(anyReader3 = image3DReader);
+
+    anyReader3->SetFileName(dataManager->GetInputFile("sphereA3d.mhd"));
+
+    // anyReaders output is a generic DataObject (i.e. the base class of itk image, meshes, etc.)
+    itk::DataObject::Pointer anyOutput3 = anyReader3->GetOutput();
+    EXPECT_NO_THROW(anyReader3->Update());
+
+    // see if the anyReader delegated the actual data reading to a reader of the right type.
+    Image3DType::Pointer image3DOutput = dynamic_cast<Image3DType*>(anyOutput3.GetPointer());
+    EXPECT_FALSE(image3DOutput == nullptr);
+
   }
 }
