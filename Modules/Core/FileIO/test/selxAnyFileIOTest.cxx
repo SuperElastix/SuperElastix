@@ -1,6 +1,9 @@
 #include "selxAnyFileReader.h"
 #include "selxFileReaderDecorator.h"
 
+#include "selxAnyFileWriter.h"
+#include "selxFileWriterDecorator.h"
+
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 
@@ -20,16 +23,19 @@ namespace selx {
     typedef itk::ImageFileReader<Image2DType> Image2DReaderType;
     typedef itk::ImageFileWriter<Image2DType> Image2DWriterType;
     typedef FileReaderDecorator<Image2DReaderType> DecoratedImage2DReaderType;
+    typedef FileWriterDecorator<Image2DWriterType> DecoratedImage2DWriterType;
 
     typedef itk::Image<double, 3> Image3DType;
     typedef itk::ImageFileReader<Image3DType> Image3DReaderType;
     typedef itk::ImageFileWriter<Image3DType> Image3DWriterType;
     typedef FileReaderDecorator<Image3DReaderType> DecoratedImage3DReaderType;
+    typedef FileWriterDecorator<Image3DWriterType> DecoratedImage3DWriterType;
 
     typedef itk::Mesh<float, 2> Mesh2DType;
     typedef itk::MeshFileReader<Mesh2DType> Mesh2DReaderType;
     typedef itk::MeshFileWriter<Mesh2DType> Mesh2DWriterType;
     typedef FileReaderDecorator<Mesh2DReaderType> DecoratedMesh2DReaderType;
+    typedef FileWriterDecorator<Mesh2DWriterType> DecoratedMesh2DWriterType;
 
     typedef DataManager DataManagerType;
     virtual void SetUp()
@@ -42,7 +48,7 @@ namespace selx {
 
   };
 
-  TEST_F(AnyFileIOTest, Reader)
+  TEST_F(AnyFileIOTest, Readers)
   {
     DataManagerType::Pointer dataManager = DataManagerType::New();
 
@@ -99,6 +105,48 @@ namespace selx {
     // see if the anyReader delegated the actual data reading to a reader of the right type.
     Image3DType::Pointer image3DOutput = dynamic_cast<Image3DType*>(anyOutput3.GetPointer());
     EXPECT_FALSE(image3DOutput == nullptr);
+  }
+  TEST_F(AnyFileIOTest, Writers)
+  {
+    DataManagerType::Pointer dataManager = DataManagerType::New();
+
+    // Create a dataObject of a known type by reading from disk;
+    Image2DReaderType::Pointer image2DReader = Image2DReaderType::New();
+    image2DReader->SetFileName(dataManager->GetInputFile("coneA2d64.mhd"));
+
+    DecoratedImage2DWriterType::Pointer image2DWriter;
+    EXPECT_NO_THROW(image2DWriter = DecoratedImage2DWriterType::New());
+
+    // assign the writer for 2d images to an agnostic writer type 
+    AnyFileWriter::Pointer anyWriter1;
+    EXPECT_NO_THROW(anyWriter1 = image2DWriter);
+
+    anyWriter1->SetFileName(dataManager->GetOutputFile("AnyFileIOTest_Writers_coneA2d64.mhd"));
+
+    // anyWriter input is a generic DataObject, but with help of polymorphism it gets casted to the DataType of the decorated writer
+    anyWriter1->SetInput(image2DReader->GetOutput()); 
+    EXPECT_NO_THROW(anyWriter1->Update());
+
+
+    //TODO: mesh writer requires the FileWriterDecorator to be templated with traits class, see FileWriterDecorator.h
+
+
+    // Create a dataObject of a known type by reading from disk;
+    Image3DReaderType::Pointer image3DReader = Image3DReaderType::New();
+    image3DReader->SetFileName(dataManager->GetInputFile("sphereA3d.mhd"));
+
+    DecoratedImage3DWriterType::Pointer image3DWriter;
+    EXPECT_NO_THROW(image3DWriter = DecoratedImage3DWriterType::New());
+
+    // assign the writer for 3d images to an agnostic writer type 
+    AnyFileWriter::Pointer anyWriter3;
+    EXPECT_NO_THROW(anyWriter3 = image3DWriter);
+
+    anyWriter3->SetFileName(dataManager->GetOutputFile("AnyFileIOTest_Writers_sphereA3d.mhd"));
+
+    // anyWriter input is a generic DataObject, but with help of polymorphism it gets casted to the DataType of the decorated writer
+    anyWriter3->SetInput(image3DReader->GetOutput()); 
+    EXPECT_NO_THROW(anyWriter3->Update());
 
   }
 }
