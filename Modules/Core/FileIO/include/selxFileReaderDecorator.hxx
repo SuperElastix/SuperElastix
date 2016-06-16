@@ -29,7 +29,7 @@ namespace selx
 
 template< typename TReader >
 FileReaderDecorator< TReader >
-::FileReaderDecorator(void)
+::FileReaderDecorator()
 {
   m_Reader = ReaderType::New();
 } // end Constructor
@@ -40,7 +40,7 @@ FileReaderDecorator< TReader >
 
 template< typename TReader >
 FileReaderDecorator< TReader >
-::~FileReaderDecorator(void)
+::~FileReaderDecorator()
 {
 } // end Destructor
 

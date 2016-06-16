@@ -100,6 +100,55 @@ SuperElastixFilter< ComponentTypeList >
 
 }
 
+
+template< typename ComponentTypeList >
+typename SuperElastixFilter< ComponentTypeList >::AnyFileReaderType::Pointer
+SuperElastixFilter< ComponentTypeList >
+::GetInputFileReader(const DataObjectIdentifierType& inputName)
+{
+  //TODO: Before we can get the reader the Blueprint needs to set and applied in the overlord.
+  // This is not like the itk pipeline philosophy
+  this->m_Overlord->SetBlueprint(this->m_Blueprint);
+  bool isSuccess(false);
+  bool allUniqueComponents;
+  this->m_Overlord->ApplyNodeConfiguration();
+  std::cout << "Applying Component Settings" << std::endl;
+  allUniqueComponents = this->m_Overlord->UpdateSelectors();
+  std::cout << "Based on Component Criteria unique components could " << (allUniqueComponents ? "" : "not ") << "be selected" << std::endl;
+
+  std::cout << "Applying Connection Settings" << std::endl;
+  this->m_Overlord->ApplyConnectionConfiguration();
+  allUniqueComponents = this->m_Overlord->UpdateSelectors();
+  std::cout << "By adding Connection Criteria unique components could " << (allUniqueComponents ? "" : "not ") << "be selected" << std::endl;
+
+
+  return this->m_Overlord->GetInputFileReader(const DataObjectIdentifierType& inputName);
+}
+
+template< typename ComponentTypeList >
+typename SuperElastixFilter< ComponentTypeList >::AnyFileWriterType::Pointer
+SuperElastixFilter< ComponentTypeList >
+::GetOutputFileWriter(const DataObjectIdentifierType& outputName)
+{
+  //TODO: Before we can get the reader the Blueprint needs to set and applied in the overlord.
+  // This is not like the itk pipeline philosophy
+  this->m_Overlord->SetBlueprint(this->m_Blueprint);
+  bool isSuccess(false);
+  bool allUniqueComponents;
+  this->m_Overlord->ApplyNodeConfiguration();
+  std::cout << "Applying Component Settings" << std::endl;
+  allUniqueComponents = this->m_Overlord->UpdateSelectors();
+  std::cout << "Based on Component Criteria unique components could " << (allUniqueComponents ? "" : "not ") << "be selected" << std::endl;
+
+  std::cout << "Applying Connection Settings" << std::endl;
+  this->m_Overlord->ApplyConnectionConfiguration();
+  allUniqueComponents = this->m_Overlord->UpdateSelectors();
+  std::cout << "By adding Connection Criteria unique components could " << (allUniqueComponents ? "" : "not ") << "be selected" << std::endl;
+
+
+  return this->m_Overlord->GetOutputFileWriter(outputName);
+}
+
 template< typename ComponentTypeList>
 void
 SuperElastixFilter< ComponentTypeList >
@@ -114,8 +163,13 @@ typename SuperElastixFilter< ComponentTypeList >::OutputDataType*
 SuperElastixFilter< ComponentTypeList >
 ::GetOutput(const DataObjectIdentifierType& outputName)
 {
+  typename OutputDataType::Pointer newOutput = OutputDataType::New();
+
+  Superclass::SetOutput(outputName, newOutput);
+
   //this->SetPrimaryOutput()
-  return Superclass::GetOutput(outputName);
+  //return Superclass::GetOutput(outputName);
+  return newOutput;
 }
 
 template< typename ComponentTypeList >

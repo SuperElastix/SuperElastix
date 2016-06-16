@@ -26,6 +26,8 @@
 #include "selxMacro.h"
 #include "itkImageFileWriter.h"
 #include "itkSmartPointer.h"
+#include "selxAnyFileWriter.h"
+#include "selxFileWriterDecorator.h"
 
 namespace selx
 {
@@ -47,11 +49,13 @@ namespace selx
     typedef itkImageInterface<Dimensionality, TPixel> AcceptingImageInterfaceType;
     typedef typename AcceptingImageInterfaceType::ItkImageType ItkImageType;
     typedef typename ItkImageType::Pointer ItkImagePointer;
-
+    typedef typename itk::ImageFileWriter<ItkImageType> ItkImageWriterType;
+    typedef typename FileWriterDecorator<ItkImageWriterType>  DecoratedWriterType;
 
     virtual int Set(AcceptingImageInterfaceType*) override;
     virtual void SetMiniPipelineOutput(itk::DataObject::Pointer) override;
     virtual itk::DataObject::Pointer GetMiniPipelineOutput(void) override;
+    virtual AnyFileWriter::Pointer GetOutputFileWriter(void) override;
 
     virtual void AfterRegistration() override;
 

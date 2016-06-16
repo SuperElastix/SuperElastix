@@ -25,6 +25,8 @@
 #include <string.h>
 #include "selxMacro.h"
 #include "itkImageFileWriter.h"
+#include "selxAnyFileWriter.h"
+#include "selxFileWriterDecorator.h"
 
 namespace selx
 {
@@ -45,15 +47,16 @@ namespace selx
 
     typedef TPixel PixelType;
 
-    typedef itk::Image<itk::Vector<PixelType, Dimensionality>, Dimensionality> DeformationFieldImageType;
-    
     typedef DisplacementFieldItkImageSourceInterface<Dimensionality, TPixel> AcceptingDisplacementFieldInterfaceType;
-    //typedef typename AcceptingImageInterfaceType::ItkImageType ItkImageType;
-    //typedef typename ItkImageType::Pointer ItkImagePointer;
+    typedef typename itk::Image<itk::Vector<PixelType, Dimensionality>, Dimensionality> DeformationFieldImageType;
+    typedef typename DeformationFieldImageType::Pointer DeformationFieldImageTypePointer;
+    typedef typename itk::ImageFileWriter<DeformationFieldImageType> DeformationFieldImageWriterType;
+    typedef typename FileWriterDecorator<DeformationFieldImageWriterType>  DecoratedWriterType;
 
     virtual int Set(AcceptingDisplacementFieldInterfaceType*) override;
     virtual void SetMiniPipelineOutput(itk::DataObject::Pointer) override;
     virtual itk::DataObject::Pointer GetMiniPipelineOutput(void) override;
+    virtual AnyFileWriter::Pointer GetOutputFileWriter(void) override;
 
     virtual void AfterRegistration() override;
 

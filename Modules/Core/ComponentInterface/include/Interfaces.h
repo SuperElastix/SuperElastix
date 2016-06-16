@@ -31,6 +31,9 @@
 #include "itkImage.h"
 #include "itkMesh.h"
 
+#include "selxAnyFileReader.h"
+#include "selxAnyFileWriter.h"
+
 namespace selx
 {
   // Define the providing interfaces abstractly
@@ -118,6 +121,7 @@ namespace selx
   public:
     virtual void SetMiniPipelineOutput(itk::DataObject::Pointer) = 0;
     virtual itk::DataObject::Pointer GetMiniPipelineOutput(void) = 0;
+    virtual AnyFileWriter::Pointer GetOutputFileWriter(void) = 0;
   };
 
   class RunRegistrationInterface {

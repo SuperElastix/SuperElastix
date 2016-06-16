@@ -555,5 +555,28 @@ namespace selx
     }
     return true;
   }
+
+  AnyFileReader::Pointer Overlord::GetInputFileReader(const Overlord::ComponentNameType& inputName)
+  {
+    SourceInterfaceMapType sources = this->GetSourceInterfaces();
+    if (sources.count(inputName) != 1)
+    {
+      itkExceptionMacro(<< "No Source component found by name:" << inputName);
+    }
+
+    //return sources[inputName]->GetInputFileReader();
+    return nullptr;
+  }
+  
+  AnyFileWriter::Pointer Overlord::GetOutputFileWriter(const Overlord::ComponentNameType& outputName)
+  {
+    SinkInterfaceMapType sinks = this->GetSinkInterfaces();
+    if (sinks.count(outputName) != 1)
+    {
+      itkExceptionMacro(<< "No Sink component found by name:" << outputName);
+    }
+
+    return sinks[outputName]->GetOutputFileWriter();
+  }
 } // end namespace selx
 

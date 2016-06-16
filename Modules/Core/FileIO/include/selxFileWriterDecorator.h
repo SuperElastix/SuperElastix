@@ -2,6 +2,7 @@
 #define selxFileWriterDecorator_h
 
 #include "selxAnyFileWriter.h"
+#include "selxFileWriterDecoratorDefaultTraits.h"
 
 /**
  * \class selxFileWriterDecorator
@@ -11,7 +12,7 @@
 namespace selx
 {
 
-template< typename TWriter>
+  template< typename TWriter, typename FileWriterDecoratorTraits = FileWriterDecoratorDefaultTraits<TWriter>>
 class FileWriterDecorator : public AnyFileWriter
 {
 public:
@@ -36,7 +37,11 @@ public:
 
   //TODO: DerivedInputDataType is defined as an ImageType, which is should be an MeshType if WriterType is a MeshReader
   //Use a Traits Class for this with template specialization to Images, Meshes etc.
-  typedef typename WriterType::InputImageType DerivedInputDataType;
+
+  // Since we don't know the typename of the Input of the writer, we use a traits class with template specialization to Images, Meshes etc.
+  //typedef typename WriterType::InputImageType DerivedInputDataType;
+  //typedef typename WriterType::InputMeshType DerivedInputDataType;
+  typedef typename FileWriterDecoratorTraits::DerivedInputDataType DerivedInputDataType;
   
   virtual void SetFileName(const std::string) ITK_OVERRIDE;
 

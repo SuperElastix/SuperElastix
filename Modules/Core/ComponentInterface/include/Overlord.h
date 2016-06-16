@@ -26,6 +26,9 @@
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 
+#include "selxAnyFileReader.h"
+#include "selxAnyFileWriter.h"
+
 #include <list>
 #include <vector>
 #include <iostream>
@@ -55,8 +58,13 @@ namespace selx
 
     typedef ComponentBase       ComponentType;
     typedef ComponentSelector::Pointer ComponentSelectorPointer;
-    typedef std::map< Blueprint::ComponentNameType, ComponentSelectorPointer> ComponentSelectorContainerType;
+    typedef Blueprint BlueprintType;
+    typedef BlueprintType::ComponentNameType ComponentNameType;
+    typedef std::map< ComponentNameType, ComponentSelectorPointer> ComponentSelectorContainerType;
     typedef ComponentSelectorContainerType::iterator ComponentSelectorIteratorType;
+
+    typedef AnyFileReader AnyFileReaderType;
+    typedef AnyFileWriter AnyFileWriterType;
 
     typedef itk::ImageFileReader<itk::Image<float, 2>> Reader2floatType;
     typedef itk::ImageFileWriter<itk::Image<float, 2>> Writer2floatType;
@@ -129,6 +137,10 @@ namespace selx
     bool Configure();
     bool Execute();
 
+    AnyFileReaderType::Pointer GetInputFileReader(const ComponentNameType&);
+    AnyFileWriterType::Pointer GetOutputFileWriter(const ComponentNameType&);
+
+
     std::vector<std::string> inputFileNames;
     std::vector<std::string> outputFileNames;
   protected:
@@ -149,7 +161,7 @@ namespace selx
     bool AfterRegistrations();
     //TODO make const correct
     //Blueprint::ConstPointer m_Blueprint;
-    Blueprint::Pointer m_Blueprint;
+    BlueprintType::Pointer m_Blueprint;
     ComponentSelectorContainerType m_ComponentSelectorContainer;
     //ObjectContainerType::Pointer m_InputObjects;
     //ObjectContainerType::Pointer m_OutputObjects;

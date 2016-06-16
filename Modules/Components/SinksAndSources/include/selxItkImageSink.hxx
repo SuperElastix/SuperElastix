@@ -79,13 +79,13 @@ namespace selx
   {
     return this->m_MiniPipelineOutputImage.GetPointer();
   }
-  //template<int Dimensionality, class TPixel>
-  //bool ItkImageSinkComponent< Dimensionality, TPixel>::ConnectToOverlordSink(itk::DataObject::Pointer object)
-  //{
-  //  this->m_Image = dynamic_cast<ItkImageType*>(&(*object));
 
-  //  return (this->m_Image != nullptr);
-  //}
+  template<int Dimensionality, class TPixel>
+  typename AnyFileWriter::Pointer ItkImageSinkComponent< Dimensionality, TPixel>::GetOutputFileWriter()
+  {
+    // Instanstiate an image file writer, decorated such that it can be implicitly cast to an AnyFileWriterType
+    return DecoratedWriterType::New();
+  }
 
   template<int Dimensionality, class TPixel>
   bool ItkImageSinkComponent< Dimensionality, TPixel>::MeetsCriterion(const ComponentBase::CriterionType &criterion)

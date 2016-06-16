@@ -25,6 +25,8 @@
 #include <string.h>
 #include "selxMacro.h"
 #include "itkMeshFileWriter.h"
+#include "selxAnyFileWriter.h"
+#include "selxFileWriterDecorator.h"
 
 namespace selx
 {
@@ -44,12 +46,15 @@ namespace selx
     virtual ~ItkMeshSinkComponent();
 
     typedef itk::Mesh<TPixel, Dimensionality> ItkMeshType;
+    typedef typename itk::MeshFileWriter<ItkMeshType> ItkMeshWriterType;
+    typedef typename FileWriterDecorator<ItkMeshWriterType>  DecoratedWriterType;
+
 
     virtual int Set(itkMeshInterface<Dimensionality, TPixel>*) override;
-    //virtual int Set(GetItkMeshInterface<Dimensionality, TPixel>*) override;
-    //virtual bool ConnectToOverlordSink(itk::DataObject::Pointer) override;
+
     virtual void SetMiniPipelineOutput(itk::DataObject::Pointer) override;
-    virtual itk::DataObject::Pointer GetMiniPipelineOutput(void)override;
+    virtual itk::DataObject::Pointer GetMiniPipelineOutput(void) override;
+    virtual AnyFileWriter::Pointer GetOutputFileWriter(void) override;
 
     virtual void AfterRegistration() override;
 

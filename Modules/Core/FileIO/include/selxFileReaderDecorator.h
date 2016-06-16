@@ -47,8 +47,8 @@ public:
   /** GetOutput tries dynamic cast to required output type */
   //template<typename ReturnType>
   //ReturnType* GetOutput(const DataObjectIdentifierType&);
-  FileReaderDecorator(void);
-  ~FileReaderDecorator(void);
+  FileReaderDecorator();
+  ~FileReaderDecorator();
 protected:
 
 

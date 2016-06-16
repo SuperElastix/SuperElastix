@@ -36,6 +36,7 @@
 
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
+#include "selxAnyFileWriter.h"
 
 #include <boost/algorithm/string.hpp>
 
@@ -69,6 +70,7 @@ int main(int ac, char* av[])
     typedef itk::Image<float, 2> Image2DType;
     typedef itk::ImageFileReader<Image2DType> ImageReader2DType;
     typedef itk::ImageFileWriter<Image2DType> ImageWriter2DType;
+    
 
     typedef vector< string > split_vector_type;
 
@@ -92,7 +94,8 @@ int main(int ac, char* av[])
     // Store the reader so that they will not be destroyed before the pipeline is executed.
     vector<ImageReader2DType::Pointer> fileReaders;
     // Store the writers for the update call
-    vector<ImageWriter2DType::Pointer> fileWriters;
+    //vector<ImageWriter2DType::Pointer> fileWriters;
+    vector<AnyFileWriter::Pointer> fileWriters;
 
     po::options_description desc("Allowed options");
     desc.add_options()
@@ -112,45 +115,6 @@ int main(int ac, char* av[])
       return 0;
     }
 
-    if (vm.count("in")) {
-      cout << "Number of input data: " << inputPairs.size() << "\n";
-      int index = 0;
-      for (const auto & inputPair : inputPairs)
-      {
-        split_vector_type nameAndPath;
-        boost::split(nameAndPath, inputPair, boost::is_any_of("="));  // NameAndPath == { "name","path" }
-        const string & name = nameAndPath[0];
-        const string & path = nameAndPath[1];
-
-        cout << " " << index << " " << name << " : " << path << "\n";
-        ++index;
-
-        ImageReader2DType::Pointer reader = ImageReader2DType::New();
-        reader->SetFileName(path);
-        superElastixFilter->SetInput(name, reader->GetOutput());
-        fileReaders.push_back(reader);
-      }
-    }
-    if (vm.count("out")) {
-      cout << "Number of output data: " << outputPairs.size() << "\n";
-      int index = 0;
-      for (const auto & outputPair : outputPairs)
-      {
-        split_vector_type nameAndPath;
-        boost::split(nameAndPath, outputPair, boost::is_any_of("="));  // NameAndPath == { "name","path" }
-        const string & name = nameAndPath[0];
-        const string & path = nameAndPath[1];
-
-        cout << " " << index << " " << name << " : " << path << "\n";
-        ++index;
-
-        ImageWriter2DType::Pointer writer = ImageWriter2DType::New();
-        writer->SetFileName(path);
-        writer->SetInput(superElastixFilter->GetOutput<Image2DType>(name));
-        fileWriters.push_back(writer);
-      }
-    }
-    
     Blueprint::Pointer blueprint;
     if (configurationPath.extension() == ".xml")
     {
@@ -173,6 +137,49 @@ int main(int ac, char* av[])
 
     superElastixFilter->SetBlueprint(blueprint);
 
+    if (vm.count("in")) {
+      cout << "Number of input data: " << inputPairs.size() << "\n";
+      int index = 0;
+      for (const auto & inputPair : inputPairs)
+      {
+        split_vector_type nameAndPath;
+        boost::split(nameAndPath, inputPair, boost::is_any_of("="));  // NameAndPath == { "name","path" }
+        const string & name = nameAndPath[0];
+        const string & path = nameAndPath[1];
+
+        cout << " " << index << " " << name << " : " << path << "\n";
+        ++index;
+
+        ImageReader2DType::Pointer reader = ImageReader2DType::New();
+        reader->SetFileName(path);
+        superElastixFilter->SetInput(name, reader->GetOutput());
+        fileReaders.push_back(reader);
+      }
+    }
+
+    if (vm.count("out")) {
+      cout << "Number of output data: " << outputPairs.size() << "\n";
+      int index = 0;
+      for (const auto & outputPair : outputPairs)
+      {
+        split_vector_type nameAndPath;
+        boost::split(nameAndPath, outputPair, boost::is_any_of("="));  // NameAndPath == { "name","path" }
+        const string & name = nameAndPath[0];
+        const string & path = nameAndPath[1];
+
+        cout << " " << index << " " << name << " : " << path << "\n";
+        ++index;
+
+        AnyFileWriter::Pointer writer = superElastixFilter->GetOutputFileWriter(name);
+        
+        //ImageWriter2DType::Pointer writer = ImageWriter2DType::New();
+        writer->SetFileName(path);
+        //writer->SetInput(superElastixFilter->GetOutput<Image2DType>(name));
+        writer->SetInput(superElastixFilter->GetOutput(name));
+        fileWriters.push_back(writer);
+      }
+    }
+    
     /* Execute SuperElastix by updating the writers */
 
     for (auto & writer : fileWriters)

@@ -27,9 +27,9 @@ namespace selx
  * ********************* Constructor *********************
  */
 
-template< typename TWriter >
-FileWriterDecorator< TWriter >
-::FileWriterDecorator(void)
+  template< typename TWriter, typename FileWriterDecoratorTraits >
+  FileWriterDecorator< TWriter, typename FileWriterDecoratorTraits>
+::FileWriterDecorator()
 {
   m_Writer = WriterType::New();
 } // end Constructor
@@ -38,24 +38,24 @@ FileWriterDecorator< TWriter >
 * ********************* Destructor *********************
 */
 
-template< typename TWriter >
-FileWriterDecorator< TWriter >
-::~FileWriterDecorator(void)
+  template< typename TWriter, typename FileWriterDecoratorTraits>
+  FileWriterDecorator< TWriter, typename FileWriterDecoratorTraits>
+::~FileWriterDecorator()
 {
 } // end Destructor
 
 
-template< typename TWriter >
+  template< typename TWriter, typename FileWriterDecoratorTraits>
 void
-FileWriterDecorator< TWriter >
+FileWriterDecorator< TWriter, typename FileWriterDecoratorTraits>
 ::SetFileName(const std::string _arg)
 {
   return m_Writer->SetFileName(_arg);
 }
 
-template< typename TWriter >
+template< typename TWriter, typename FileWriterDecoratorTraits>
 void
-FileWriterDecorator< TWriter >
+FileWriterDecorator< TWriter, typename FileWriterDecoratorTraits>
 ::SetInput(const InputDataType* input)
 {
   DerivedInputDataType::ConstPointer derivedData = dynamic_cast<const DerivedInputDataType*>(input);	
@@ -67,9 +67,9 @@ FileWriterDecorator< TWriter >
   return m_Writer->SetInput(derivedData);
 }
 
-template< typename TWriter >
+template< typename TWriter, typename FileWriterDecoratorTraits>
 void
-FileWriterDecorator< TWriter >
+FileWriterDecorator< TWriter, typename FileWriterDecoratorTraits>
 ::Update()
 {
   return m_Writer->Update();
