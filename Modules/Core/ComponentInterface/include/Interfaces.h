@@ -119,9 +119,11 @@ namespace selx
     // By this interface only Sink Components can to talk to the Overlord
     // How specific Sink Components connect to the graph is up to them, i.e. they might adapt the passed Object to other types.
   public:
-    virtual void SetMiniPipelineOutput(itk::DataObject::Pointer) = 0;
-    virtual itk::DataObject::Pointer GetMiniPipelineOutput(void) = 0;
+    typedef itk::DataObject::Pointer DataObjectPointer;
+    virtual void SetMiniPipelineOutput(DataObjectPointer) = 0;
+    virtual DataObjectPointer GetMiniPipelineOutput(void) = 0;
     virtual AnyFileWriter::Pointer GetOutputFileWriter(void) = 0;
+    virtual DataObjectPointer GetInitializedOutput(void) = 0;
   };
 
   class RunRegistrationInterface {

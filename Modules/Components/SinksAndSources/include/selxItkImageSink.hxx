@@ -42,6 +42,7 @@ namespace selx
 
     // Store pointer to MiniPipelineOutputImage for later grafting onto Overlord output.
     this->m_MiniPipelineOutputImage = other->GetItkImage();
+    //this->m_MiniPipelineOutputImage->Graft(other->GetItkImage());
     // Graft Overlord output onto MiniPipelineOutputImage.
     //this->m_MiniPipelineOutputImage->Graft(this->m_OverlordOutputImage);
     return 0;
@@ -85,6 +86,12 @@ namespace selx
   {
     // Instanstiate an image file writer, decorated such that it can be implicitly cast to an AnyFileWriterType
     return DecoratedWriterType::New();
+  }
+
+  template<int Dimensionality, class TPixel>
+  typename itk::DataObject::Pointer ItkImageSinkComponent< Dimensionality, TPixel>::GetInitializedOutput()
+  {
+    return ItkImageType::New();
   }
 
   template<int Dimensionality, class TPixel>

@@ -55,6 +55,7 @@ namespace selx
     virtual void SetMiniPipelineOutput(itk::DataObject::Pointer) override;
     virtual itk::DataObject::Pointer GetMiniPipelineOutput(void) override;
     virtual AnyFileWriter::Pointer GetOutputFileWriter(void) override;
+    virtual itk::DataObject::Pointer GetInitializedOutput(void) override;
 
     virtual void AfterRegistration() override;
 

@@ -38,18 +38,8 @@ SuperElastixFilter< ComponentTypeList >
   * therefore the output information must come from the sink components.
   */
   this->m_Overlord->SetBlueprint(this->m_Blueprint);
-  bool isSuccess(false);
-  bool allUniqueComponents;
-  this->m_Overlord->ApplyNodeConfiguration();
-  std::cout << "Applying Component Settings" << std::endl;
-  allUniqueComponents = this->m_Overlord->UpdateSelectors();
-  std::cout << "Based on Component Criteria unique components could " << (allUniqueComponents ? "" : "not ") << "be selected" << std::endl;
-
-  std::cout << "Applying Connection Settings" << std::endl;
-  this->m_Overlord->ApplyConnectionConfiguration();
-  allUniqueComponents = this->m_Overlord->UpdateSelectors();
-  std::cout << "By adding Connection Criteria unique components could " << (allUniqueComponents ? "" : "not ") << "be selected" << std::endl;
-
+  bool allUniqueComponents = this->m_Overlord->Configure();
+  
   Overlord::SourceInterfaceMapType sources = this->m_Overlord->GetSourceInterfaces();
   for (const auto & nameAndInterface : sources)
   {
@@ -62,15 +52,13 @@ SuperElastixFilter< ComponentTypeList >
     nameAndInterface.second->SetMiniPipelineOutput(this->GetOutput(nameAndInterface.first));
   }
 
+  bool isSuccess(false);
+
   if (allUniqueComponents)
   {
     isSuccess = this->m_Overlord->ConnectComponents();
   }
   std::cout << "Connecting Components: " << (isSuccess ? "succeeded" : "failed") << std::endl;
-
-  // TODO make one "update button" for the overlord
-  this->m_Overlord->FindRunRegistration();
-  this->m_Overlord->FindAfterRegistration();
 
   for (const auto & nameAndInterface : sinks)
   {
@@ -108,21 +96,14 @@ SuperElastixFilter< ComponentTypeList >
 {
   //TODO: Before we can get the reader the Blueprint needs to set and applied in the overlord.
   // This is not like the itk pipeline philosophy
+  if (!this->m_Blueprint)
+  {
+    itkExceptionMacro(<< "Setting a Blueprint is required first.")
+  }
   this->m_Overlord->SetBlueprint(this->m_Blueprint);
-  bool isSuccess(false);
-  bool allUniqueComponents;
-  this->m_Overlord->ApplyNodeConfiguration();
-  std::cout << "Applying Component Settings" << std::endl;
-  allUniqueComponents = this->m_Overlord->UpdateSelectors();
-  std::cout << "Based on Component Criteria unique components could " << (allUniqueComponents ? "" : "not ") << "be selected" << std::endl;
-
-  std::cout << "Applying Connection Settings" << std::endl;
-  this->m_Overlord->ApplyConnectionConfiguration();
-  allUniqueComponents = this->m_Overlord->UpdateSelectors();
-  std::cout << "By adding Connection Criteria unique components could " << (allUniqueComponents ? "" : "not ") << "be selected" << std::endl;
-
-
-  return this->m_Overlord->GetInputFileReader(const DataObjectIdentifierType& inputName);
+  this->m_Overlord->Configure();
+  
+  return this->m_Overlord->GetInputFileReader(inputName);
 }
 
 template< typename ComponentTypeList >
@@ -132,19 +113,13 @@ SuperElastixFilter< ComponentTypeList >
 {
   //TODO: Before we can get the reader the Blueprint needs to set and applied in the overlord.
   // This is not like the itk pipeline philosophy
+  if (!this->m_Blueprint)
+  {
+    itkExceptionMacro(<< "Setting a Blueprint is required first.")
+  }
+
   this->m_Overlord->SetBlueprint(this->m_Blueprint);
-  bool isSuccess(false);
-  bool allUniqueComponents;
-  this->m_Overlord->ApplyNodeConfiguration();
-  std::cout << "Applying Component Settings" << std::endl;
-  allUniqueComponents = this->m_Overlord->UpdateSelectors();
-  std::cout << "Based on Component Criteria unique components could " << (allUniqueComponents ? "" : "not ") << "be selected" << std::endl;
-
-  std::cout << "Applying Connection Settings" << std::endl;
-  this->m_Overlord->ApplyConnectionConfiguration();
-  allUniqueComponents = this->m_Overlord->UpdateSelectors();
-  std::cout << "By adding Connection Criteria unique components could " << (allUniqueComponents ? "" : "not ") << "be selected" << std::endl;
-
+  this->m_Overlord->Configure();
 
   return this->m_Overlord->GetOutputFileWriter(outputName);
 }
@@ -163,13 +138,27 @@ typename SuperElastixFilter< ComponentTypeList >::OutputDataType*
 SuperElastixFilter< ComponentTypeList >
 ::GetOutput(const DataObjectIdentifierType& outputName)
 {
-  typename OutputDataType::Pointer newOutput = OutputDataType::New();
+  OutputDataType* output = Superclass::GetOutput(outputName);
+  if (output != nullptr)
+  {
+    return output;
+  }
+  else
+  {
 
-  Superclass::SetOutput(outputName, newOutput);
+    if (!this->m_Blueprint)
+    {
+      itkExceptionMacro(<< "Setting a Blueprint is required first.")
+    }
+    this->m_Overlord->SetBlueprint(this->m_Blueprint);
+    this->m_Overlord->Configure();
 
-  //this->SetPrimaryOutput()
-  //return Superclass::GetOutput(outputName);
-  return newOutput;
+    typename OutputDataType::Pointer newOutput = this->m_Overlord->GetInitializedOutput(outputName);
+
+    Superclass::SetOutput(outputName, newOutput);
+
+    return newOutput;
+  }
 }
 
 template< typename ComponentTypeList >

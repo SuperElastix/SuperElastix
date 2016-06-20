@@ -21,86 +21,41 @@
 
 namespace selx
 {
-  Overlord::Overlord()
+  Overlord::Overlord() : m_isConfigured(false), m_allUniqueComponents(false)
   {
-    //this->m_SinkComponents = SinkComponentsContainerType::New();
-    //this->m_SourceComponents = SourceComponentsContainerType::New();
     this->m_RunRegistrationComponents = ComponentsContainerType::New();
-    this->m_AfterRegistrationComponents = ComponentsContainerType::New();
-    // temporary solution
-    this->m_Readers2float = Reader2floatContainerType::New();
-    this->m_Writers2float = Writer2floatContainerType::New();
-    this->m_Readers3double = Reader3doubleContainerType::New();
-    this->m_Writers3double = Writer3doubleContainerType::New();
-    
-    this->m_WritersDisplacement2float = WriterDisplacement2floatContainerType::New();
-    this->m_WritersDisplacement3double = WriterDisplacement3doubleContainerType::New();
-    
+    this->m_AfterRegistrationComponents = ComponentsContainerType::New();   
   }
 
   bool Overlord::Configure()
   {
-    bool isSuccess(false);
-    bool allUniqueComponents;
-    this->ApplyNodeConfiguration();
-    std::cout << "Applying Component Settings" << std::endl;
-    allUniqueComponents = this->UpdateSelectors();
-    std::cout << "Based on Component Criteria unique components could " << (allUniqueComponents ? "" : "not ") << "be selected" << std::endl;
-
-    std::cout << "Applying Connection Settings" << std::endl;
-    this->ApplyConnectionConfiguration();
-    allUniqueComponents = this->UpdateSelectors();
-    std::cout << "By adding Connection Criteria unique components could " << (allUniqueComponents ? "" : "not ") << "be selected" << std::endl;
-
-    std::cout << "Connecting Sources" << std::endl;
-    this->ConnectSources();
-
-    int numberSources2float = this->m_Readers2float->size(); // temporary solution
-    if (numberSources2float > 0)
+    if (!this->m_isConfigured)
     {
-      std::cout << "Found " << numberSources2float << " Source Components (2d float)" << std::endl;
-    }
-    int numberSources3double = this->m_Readers3double->size(); // temporary solution
-    if (numberSources3double > 0)
-    {
-      std::cout << "Found " << numberSources3double << " Source Components (3d double)" << std::endl;
-    }
-    std::cout << "Connecting Sinks" << std::endl;
-    this->ConnectSinks();
+      this->m_isConfigured = true;
+      this->ApplyNodeConfiguration();
+      std::cout << "Applying Component Settings" << std::endl;
+      this->m_allUniqueComponents = this->UpdateSelectors();
+      std::cout << "Based on Component Criteria unique components could " << (this->m_allUniqueComponents ? "" : "not ") << "be selected" << std::endl;
 
-    int numberSinks2float = this->m_Writers2float->size(); // temporary solution
-    if (numberSinks2float > 0)
-    {
-      std::cout << "Found " << numberSinks2float << " Sink Components (2d float)" << std::endl;
-    }
-    int numberSinks3double = this->m_Writers3double->size(); // temporary solution
-    if (numberSinks3double > 0 )
-    {
-      std::cout << "Found " << numberSinks3double << " Sink Components (3d double)" << std::endl;
-    }
+      std::cout << "Applying Connection Settings" << std::endl;
+      this->ApplyConnectionConfiguration();
+      this->m_allUniqueComponents = this->UpdateSelectors();
+      std::cout << "By adding Connection Criteria unique components could " << (this->m_allUniqueComponents ? "" : "not ") << "be selected" << std::endl;
 
-    int numberSinksDisplacement2float = this->m_WritersDisplacement2float->size(); // temporary solution
-    if (numberSinksDisplacement2float > 0)
-    {
-      std::cout << "Found " << numberSinksDisplacement2float << " Sink Components (Displacement 2d float)" << std::endl;
+      //TODO: make a while loop until stable:
+      // - propagate for each unique component the required interfaces to neighboring components
+      // - update selectors
+
+      //if (allUniqueComponents)
+      //{
+      //  isSuccess = this->ConnectComponents();
+      //}
+
+      //std::cout << "Connecting Components: " << (isSuccess? "succeeded" : "failed") << std::endl;
+
+      //return isSuccess;
     }
-    int numberSinksDisplacement3double = this->m_WritersDisplacement3double->size(); // temporary solution
-    if (numberSinksDisplacement3double > 0)
-    {
-      std::cout << "Found " << numberSinksDisplacement3double << " Sink Components (Displacement 3d double)" << std::endl;
-    }
-
-
-    if (allUniqueComponents)
-    {
-      isSuccess = this->ConnectComponents();
-    }
-
-    std::cout << "Connecting Components: " << (isSuccess? "succeeded" : "failed") << std::endl;
-
-    this->FindRunRegistration();
-    this->FindAfterRegistration();
-    return isSuccess;
+    return this->m_allUniqueComponents;
   }
 
   bool Overlord::UpdateSelectors()
@@ -225,7 +180,6 @@ namespace selx
   {
     /** Scans all Components to find those with Sourcing capability and store them in SourceComponents list */
     
-    // BIG TODO SourceInterface2->SourceInterface
     const CriteriaType sourceCriteria = { { "HasProvidingInterface", { "SourceInterface" } } };
     SourceInterfaceMapType sourceInterfaceMap;
     // TODO redesign ComponentBase class to accept a single criterion instead of a criteria mapping.
@@ -271,178 +225,7 @@ namespace selx
     return sinkInterfaceMap;
   }
 
-  bool Overlord::ConnectSources()
-  {
-    /** Scans all Components to find those with Sourcing capability and store them in SourceComponents list */
-
-    int readercounter = 0; // temporary solution for reader filenames
-
-    // TODO redesign ComponentBase class to accept a single criterion instead of a criteria mapping.
-    for (const auto & componentSelector : (this->m_ComponentSelectorContainer))
-    {
-      ComponentBase::Pointer component = componentSelector.second->GetComponent();
-
-      if (component->MeetsCriteria({ { "HasProvidingInterface", { "SourceInterface" } } })) // TODO MeetsCriterion
-      {
-        SourceInterface* provingSourceInterface = dynamic_cast<SourceInterface*> (&(*component));
-        if (provingSourceInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
-        {
-          itkExceptionMacro("dynamic_cast<SourceInterface*> fails, but based on component criterion it shouldn't")
-        }
-        //TODO: Make these connections available as inputs of the SuperElastix (filter). 
-
-
-        if (component->MeetsCriteria({ { "Dimensionality", { "3" } }, { "PixelType", { "double" } } }))
-        {
-          // For now, we just create the readers here.
-          Reader3doubleType::Pointer reader;
-          reader = Reader3doubleType::New();
-
-          if (readercounter >= this->inputFileNames.size())
-          {
-            itkExceptionMacro("not enough inputFileNames provided")
-          }
-
-          reader->SetFileName(this->inputFileNames[readercounter]);
-          this->m_Readers3double->push_back(reader);
-
-          //TODO refactor
-          //provingSourceInterface->ConnectToOverlordSource((itk::SmartPointer<itk::Object>) reader);
-
-        }
-        else if (component->MeetsCriteria({ { "Dimensionality", { "2" } }, { "PixelType", { "float" } } }))
-        {
-          // For now, we just create the readers here.
-          Reader2floatType::Pointer reader;
-          reader = Reader2floatType::New();
-
-          if (readercounter >= this->inputFileNames.size())
-          {
-            itkExceptionMacro("not enough inputFileNames provided")
-          }
-
-          reader->SetFileName(this->inputFileNames[readercounter]);
-          this->m_Readers2float->push_back(reader);
-
-          //TODO refactor
-          //provingSourceInterface->ConnectToOverlordSource((itk::SmartPointer<itk::Object>) reader);
-
-        }
-        else
-        {
-          itkExceptionMacro("Overlord implements only 2 float and 3 double for now");
-        }
-        ++readercounter;
-      }
-    }
-
-    return true;
-  }
-
-  bool Overlord::ConnectSinks()
-  {
-    /** Scans all Components to find those with Sinking capability and store them in SinkComponents list */
-    const CriterionType sinkCriterion = CriterionType("HasProvidingInterface", { "SinkInterface" });
-
-    int writercounter = 0; // temporary solution for writer filenames
-
-    // TODO redesign ComponentBase class to accept a single criterion instead of a criteria mapping.
-    CriteriaType sinkCriteria;
-    sinkCriteria.insert(sinkCriterion);
-
-    for (auto const & componentSelector : (this->m_ComponentSelectorContainer))
-    {
-      ComponentBase::Pointer component = componentSelector.second->GetComponent();
-      if (component->MeetsCriteria(sinkCriteria))  // TODO MeetsCriterion
-      {
-        SinkInterface* provingSinkInterface = dynamic_cast<SinkInterface*> (&(*component));
-        if (provingSinkInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
-        {
-          itkExceptionMacro("dynamic_cast<SinkInterface*> fails, but based on component criterion it shouldn't")
-        }
-
-        //TODO: Make these connections available as outputs of the SuperElastix (filter). 
-        if (component->MeetsCriteria({ { "IsVectorField", { "True" } }, { "Dimensionality", { "3" } }, { "PixelType", { "double" } } }))
-        {
-          // For now, we just create the readers here.
-          WriterDisplacement3doubleType::Pointer writer;
-          writer = WriterDisplacement3doubleType::New();
-
-          if (writercounter >= this->inputFileNames.size())
-          {
-            itkExceptionMacro("not enough outputFileNames provided")
-          }
-
-          writer->SetFileName(this->outputFileNames[writercounter]);
-          this->m_WritersDisplacement3double->push_back(writer);
-
-          //TODO refactor
-          //provingSinkInterface->ConnectToOverlordSink((itk::SmartPointer<itk::Object>) writer);
-        }
-        else if (component->MeetsCriteria({ { "IsVectorField", { "True" } }, { "Dimensionality", { "2" } }, { "PixelType", { "float" } } }))
-        {
-          // For now, we just create the readers here.
-          WriterDisplacement2floatType::Pointer writer;
-          writer = WriterDisplacement2floatType::New();
-
-          if (writercounter >= this->inputFileNames.size())
-          {
-            itkExceptionMacro("not enough inputFileNames provided")
-          }
-
-          writer->SetFileName(this->outputFileNames[writercounter]);
-          this->m_WritersDisplacement2float->push_back(writer);
-
-          //TODO refactor
-          //provingSinkInterface->ConnectToOverlordSink((itk::SmartPointer<itk::Object>) writer);
-        }
-        else if (component->MeetsCriteria({ { "Dimensionality", { "3" } }, { "PixelType", { "double" } } }))
-        {
-          // For now, we just create the writers here.
-          Writer3doubleType::Pointer writer;
-          writer = Writer3doubleType::New();
-
-          if (writercounter >= this->outputFileNames.size())
-          {
-            itkExceptionMacro("not enough outputFileNames provided")
-          }
-
-          writer->SetFileName(this->outputFileNames[writercounter]);
-          this->m_Writers3double->push_back(writer);
-
-          // For testing purposes, all Sources are connected to an ImageWriter
-          //TODO refactor
-          //provingSinkInterface->ConnectToOverlordSink((itk::SmartPointer<itk::Object>) writer);
-        }
-        else if (component->MeetsCriteria({ { "Dimensionality", { "2" } }, { "PixelType", { "float" } } }))
-        {
-          // For now, we just create the writers here.
-          Writer2floatType::Pointer writer;
-          writer = Writer2floatType::New();
-
-          if (writercounter  >= this->outputFileNames.size())
-          {
-            itkExceptionMacro("not enough outputFileNames provided")
-          }
-          writer->SetFileName(this->outputFileNames[writercounter]);
-          this->m_Writers2float->push_back(writer);
-
-          // For testing purposes, all Sources are connected to an ImageWriter
-          //TODO refactor
-          //provingSinkInterface->ConnectToOverlordSink((itk::SmartPointer<itk::Object>) writer);
-        }
-        else
-        {
-          itkExceptionMacro("Overlord implements only 2 float and 3 double for now");
-        }
-        ++writercounter;
-      }
-    }
-
-    return true;
-  }
-
-  bool Overlord::FindRunRegistration()
+    bool Overlord::FindRunRegistration()
   {
     /** Scans all Components to find those with Sourcing capability and store them in SourceComponents list */
     const CriterionType runRegistrationCriterion = CriterionType("HasProvidingInterface", { "RunRegistrationInterface" });
@@ -520,14 +303,10 @@ namespace selx
   bool Overlord::Execute()
   {
     
-    for (auto const & reader : *(this->m_Readers2float)) // auto&& preferred?
-    {
-      reader->Update();
-    }
-    for (auto const & reader : *(this->m_Readers3double)) // auto&& preferred?
-    {
-      reader->Update();
-    }
+    // TODO make one "update button" for the overlord
+    this->FindRunRegistration();
+    this->FindAfterRegistration();
+
     // RunRegistrations is a simple execution model
     // E.g.if the components are true itk Process Object, the don't need an 'Update' call. 
     // The container of RunRegistrationsInterfaces will therefore be empty, since they will not be added if they don't expose this interface.
@@ -537,22 +316,7 @@ namespace selx
     this->RunRegistrations();
     this->AfterRegistrations();
     //update all writers...
-    for (auto const & writer : *(this->m_Writers2float)) // auto&& preferred?
-    {
-      writer->Update();
-    }
-    for (auto const & writer : *(this->m_Writers3double)) // auto&& preferred?
-    {
-      writer->Update();
-    }
-    for (auto const & writer : *(this->m_WritersDisplacement3double)) // auto&& preferred?
-    {
-      writer->Update();
-    }
-    for (auto const & writer : *(this->m_WritersDisplacement2float)) // auto&& preferred?
-    {
-      writer->Update();
-    }
+    
     return true;
   }
 
@@ -578,5 +342,17 @@ namespace selx
 
     return sinks[outputName]->GetOutputFileWriter();
   }
+
+  SinkInterface::DataObjectPointer Overlord::GetInitializedOutput(const Overlord::ComponentNameType& outputName)
+  {
+    SinkInterfaceMapType sinks = this->GetSinkInterfaces();
+    if (sinks.count(outputName) != 1)
+    {
+      itkExceptionMacro(<< "No Sink component found by name:" << outputName);
+    }
+
+    return sinks[outputName]->GetInitializedOutput();
+  }
+
 } // end namespace selx
 

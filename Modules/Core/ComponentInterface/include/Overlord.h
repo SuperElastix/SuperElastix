@@ -128,6 +128,8 @@ namespace selx
    SourceInterfaceMapType GetSourceInterfaces();
    SinkInterfaceMapType GetSinkInterfaces();
 
+   SinkInterface::DataObjectPointer GetInitializedOutput(const Overlord::ComponentNameType&);
+
     typedef itk::VectorContainer <
       unsigned int, ComponentType::Pointer > ComponentsContainerType;
 
@@ -163,6 +165,8 @@ namespace selx
     //Blueprint::ConstPointer m_Blueprint;
     BlueprintType::Pointer m_Blueprint;
     ComponentSelectorContainerType m_ComponentSelectorContainer;
+    bool m_isConfigured;
+    bool m_allUniqueComponents;
     //ObjectContainerType::Pointer m_InputObjects;
     //ObjectContainerType::Pointer m_OutputObjects;
     //SinkComponentsContainerType::Pointer m_SinkComponents;

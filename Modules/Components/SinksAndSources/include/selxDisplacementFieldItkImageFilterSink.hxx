@@ -82,6 +82,12 @@ namespace selx
   }
 
   template<int Dimensionality, class TPixel>
+  typename itk::DataObject::Pointer DisplacementFieldItkImageFilterSinkComponent< Dimensionality, TPixel>::GetInitializedOutput()
+  {
+    return DeformationFieldImageType::New();
+  }
+
+  template<int Dimensionality, class TPixel>
   bool DisplacementFieldItkImageFilterSinkComponent< Dimensionality, TPixel>::MeetsCriterion(const ComponentBase::CriterionType &criterion)
   {
     bool hasUndefinedCriteria(false);

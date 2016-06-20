@@ -86,7 +86,13 @@ namespace selx
 
   //  return (this->m_Mesh != nullptr);
   //}
+  template<int Dimensionality, class TPixel>
+  typename itk::DataObject::Pointer ItkMeshSinkComponent< Dimensionality, TPixel>::GetInitializedOutput()
+  {
+    return ItkMeshType::New();
+  }
 
+  
   template<int Dimensionality, class TPixel>
   bool ItkMeshSinkComponent< Dimensionality, TPixel>::MeetsCriterion(const ComponentBase::CriterionType &criterion)
   {
