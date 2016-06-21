@@ -17,9 +17,8 @@
  *
  *=========================================================================*/
 
-#include "Overlord.h"
+#include "selxSuperElastixFilter.h"
 
-//#include "ComponentFactory.h"
 #include "TransformComponent1.h"
 #include "MetricComponent1.h"
 #include "GDOptimizer3rdPartyComponent.h"
@@ -30,7 +29,7 @@
 #include "selxItkSmoothingRecursiveGaussianImageFilterComponent.h"
 #include "selxDisplacementFieldItkImageFilterSink.h"
 #include "selxItkImageSource.h"
-
+#include "selxItkImageSink.h"
 
 #include "selxItkImageRegistrationMethodv4Component.h"
 #include "selxItkANTSNeighborhoodCorrelationImageToImageMetricv4.h"
@@ -45,12 +44,22 @@ namespace selx {
 
 class RegistrationItkv4Test : public ::testing::Test {
 public:
-  typedef Overlord::Pointer                 OverlordPointerType;
   typedef Blueprint::Pointer                BlueprintPointerType;
   typedef Blueprint::ConstPointer           BlueprintConstPointerType;
   typedef Blueprint::ParameterMapType       ParameterMapType;
   typedef Blueprint::ParameterValueType     ParameterValueType;
   typedef DataManager DataManagerType;
+  typedef SuperElastixFilter<bool>          SuperElastixFilterType;
+
+  typedef itk::Image<float, 2> Image2DType;
+  typedef itk::ImageFileReader<Image2DType> ImageReader2DType;
+  typedef itk::ImageFileWriter<Image2DType> ImageWriter2DType;
+
+  typedef itk::Image<double, 3> Image3DType;
+  typedef itk::ImageFileReader<Image3DType> ImageReader3DType;
+  typedef itk::ImageFileWriter<Image3DType> ImageWriter3DType;
+  typedef itk::Image<itk::Vector<double,3>, 3> DisplacementImage3DType;
+  typedef itk::ImageFileWriter<DisplacementImage3DType> DisplacementImageWriter3DType;
 
   virtual void SetUp() {
     /** register all example components */
@@ -64,7 +73,8 @@ public:
     ComponentFactory<DisplacementFieldItkImageFilterSinkComponent<3, double>>::RegisterOneFactory();
     ComponentFactory<DisplacementFieldItkImageFilterSinkComponent<2, float>>::RegisterOneFactory();
     
-    //ComponentFactory<ItkImageSourceComponent>::RegisterOneFactory();
+    ComponentFactory<ItkImageSinkComponent<3, double>>::RegisterOneFactory();
+    ComponentFactory<ItkImageSinkComponent<2, float>>::RegisterOneFactory();
 
     ComponentFactory<ItkImageSourceFixedComponent<2, float>>::RegisterOneFactory();
     ComponentFactory<ItkImageSourceMovingComponent<2, float>>::RegisterOneFactory();
@@ -120,7 +130,7 @@ TEST_F(RegistrationItkv4Test, ImagesOnly)
   blueprint->AddComponent("MovingImageSource", component2Parameters);
 
   ParameterMapType component3Parameters;
-  component3Parameters["NameOfClass"] = { "ItkImageFilterSinkComponent" };
+  component3Parameters["NameOfClass"] = { "ItkImageSinkComponent" };
   component3Parameters["Dimensionality"] = { "3" }; // should be derived from the outputs
   blueprint->AddComponent("ResultImageSink", component3Parameters);
 
@@ -134,22 +144,39 @@ TEST_F(RegistrationItkv4Test, ImagesOnly)
   blueprint->AddConnection("MovingImageSource", "RegistrationMethod", connection2Parameters);
 
   ParameterMapType connection3Parameters;
-  connection3Parameters["NameOfInterface"] = { "itkImageSourceInterface" };
+  connection3Parameters["NameOfInterface"] = { "itkImageInterface" };
   blueprint->AddConnection("RegistrationMethod", "ResultImageSink", connection3Parameters);
 
-  EXPECT_NO_THROW(overlord = Overlord::New());
-  EXPECT_NO_THROW(overlord->SetBlueprint(blueprint));
-  
-  //The Overlord is not yet an itkfilter with inputs and outputs, therefore it reads and writes the files temporarily.
-  DataManagerType::Pointer dataManager = DataManagerType::New();
-  overlord->inputFileNames = { dataManager->GetInputFile("sphereA3d.mhd"), dataManager->GetInputFile("sphereB3d.mhd") };
-  overlord->outputFileNames = { dataManager->GetOutputFile("RegistrationItkv4Test_ImagesOnly.mhd") };
+  // Instantiate SuperElastix
+  SuperElastixFilterType::Pointer superElastixFilter;
+  EXPECT_NO_THROW(superElastixFilter = SuperElastixFilterType::New());
 
-  bool allUniqueComponents;
-  EXPECT_NO_THROW(allUniqueComponents = overlord->Configure());
-  EXPECT_TRUE(allUniqueComponents);
-  EXPECT_NO_THROW(overlord->Execute());
-  
+  // Data manager provides the paths to the input and output data for unit tests
+  DataManagerType::Pointer dataManager = DataManagerType::New();
+
+  // Set up the readers and writers
+  ImageReader3DType::Pointer fixedImageReader = ImageReader3DType::New();
+  fixedImageReader->SetFileName(dataManager->GetInputFile("sphereA3d.mhd"));
+
+  ImageReader3DType::Pointer movingImageReader = ImageReader3DType::New();
+  movingImageReader->SetFileName(dataManager->GetInputFile("sphereB3d.mhd"));
+
+  ImageWriter3DType::Pointer resultImageWriter = ImageWriter3DType::New();
+  resultImageWriter->SetFileName(dataManager->GetOutputFile("RegistrationItkv4Test_ImagesOnly.mhd"));
+
+  // Connect SuperElastix in an itk pipeline
+  superElastixFilter->SetInput("FixedImageSource", fixedImageReader->GetOutput());
+  superElastixFilter->SetInput("MovingImageSource", movingImageReader->GetOutput());
+  resultImageWriter->SetInput(superElastixFilter->GetOutput<Image3DType>("ResultImageSink"));
+
+  EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
+
+  //Optional Update call
+  //superElastixFilter->Update();
+
+  // Update call on the writers triggers SuperElastix to configure and execute
+  EXPECT_NO_THROW(resultImageWriter->Update());
+    
 }
 
 TEST_F(RegistrationItkv4Test, WithANTSCCMetric)
@@ -173,7 +200,7 @@ TEST_F(RegistrationItkv4Test, WithANTSCCMetric)
   blueprint->AddComponent("MovingImageSource", component2Parameters);
 
   ParameterMapType component3Parameters;
-  component3Parameters["NameOfClass"] = { "ItkImageFilterSinkComponent" };
+  component3Parameters["NameOfClass"] = { "ItkImageSinkComponent" };
   component3Parameters["Dimensionality"] = { "3" }; // should be derived from the outputs
   blueprint->AddComponent("ResultImageSink", component3Parameters);
 
@@ -192,26 +219,42 @@ TEST_F(RegistrationItkv4Test, WithANTSCCMetric)
   blueprint->AddConnection("MovingImageSource", "RegistrationMethod", connection2Parameters);
 
   ParameterMapType connection3Parameters;
-  connection3Parameters["NameOfInterface"] = { "itkImageSourceInterface" };
+  connection3Parameters["NameOfInterface"] = { "itkImageInterface" };
   blueprint->AddConnection("RegistrationMethod", "ResultImageSink", connection3Parameters);
   
   ParameterMapType connection4Parameters;
   connection4Parameters["NameOfInterface"] = { "itkMetricv4Interface" };
   blueprint->AddConnection("Metric", "RegistrationMethod", connection4Parameters);
 
-  EXPECT_NO_THROW(overlord = Overlord::New());
-  EXPECT_NO_THROW(overlord->SetBlueprint(blueprint));
-  
-  //The Overlord is not yet an itkfilter with inputs and outputs, therefore it reads and writes the files temporarily.
-  DataManagerType::Pointer dataManager = DataManagerType::New();
-  overlord->inputFileNames = { dataManager->GetInputFile("sphereA3d.mhd"), dataManager->GetInputFile("sphereB3d.mhd") };
-  overlord->outputFileNames = { dataManager->GetOutputFile("RegistrationItkv4Test_WithANTSCCMetric.mhd") };
+  // Instantiate SuperElastix
+  SuperElastixFilterType::Pointer superElastixFilter;
+  EXPECT_NO_THROW(superElastixFilter = SuperElastixFilterType::New());
 
-  bool allUniqueComponents;
-  EXPECT_NO_THROW(allUniqueComponents = overlord->Configure());
-  EXPECT_TRUE(allUniqueComponents);
-  EXPECT_NO_THROW(overlord->Execute());
-  //overlord->Execute();
+  // Data manager provides the paths to the input and output data for unit tests
+  DataManagerType::Pointer dataManager = DataManagerType::New();
+
+  // Set up the readers and writers
+  ImageReader3DType::Pointer fixedImageReader = ImageReader3DType::New();
+  fixedImageReader->SetFileName(dataManager->GetInputFile("sphereA3d.mhd"));
+
+  ImageReader3DType::Pointer movingImageReader = ImageReader3DType::New();
+  movingImageReader->SetFileName(dataManager->GetInputFile("sphereB3d.mhd"));
+
+  ImageWriter3DType::Pointer resultImageWriter = ImageWriter3DType::New();
+  resultImageWriter->SetFileName(dataManager->GetOutputFile("RegistrationItkv4Test_WithANTSCCMetric.mhd"));
+
+  // Connect SuperElastix in an itk pipeline
+  superElastixFilter->SetInput("FixedImageSource", fixedImageReader->GetOutput());
+  superElastixFilter->SetInput("MovingImageSource", movingImageReader->GetOutput());
+  resultImageWriter->SetInput(superElastixFilter->GetOutput<Image3DType>("ResultImageSink"));
+
+  EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
+
+  //Optional Update call
+  //superElastixFilter->Update();
+
+  // Update call on the writers triggers SuperElastix to configure and execute
+  EXPECT_NO_THROW(resultImageWriter->Update());
 }
 TEST_F(RegistrationItkv4Test, WithMeanSquaresMetric)
 {
@@ -234,7 +277,7 @@ TEST_F(RegistrationItkv4Test, WithMeanSquaresMetric)
   blueprint->AddComponent("MovingImageSource", component2Parameters);
 
   ParameterMapType component3Parameters;
-  component3Parameters["NameOfClass"] = { "ItkImageFilterSinkComponent" };
+  component3Parameters["NameOfClass"] = { "ItkImageSinkComponent" };
   component3Parameters["Dimensionality"] = { "3" }; // should be derived from the outputs
   blueprint->AddComponent("ResultImageSink", component3Parameters);
 
@@ -253,61 +296,78 @@ TEST_F(RegistrationItkv4Test, WithMeanSquaresMetric)
   blueprint->AddConnection("MovingImageSource", "RegistrationMethod", connection2Parameters);
 
   ParameterMapType connection3Parameters;
-  connection3Parameters["NameOfInterface"] = { "itkImageSourceInterface" };
+  connection3Parameters["NameOfInterface"] = { "itkImageInterface" };
   blueprint->AddConnection("RegistrationMethod", "ResultImageSink", connection3Parameters);
 
   ParameterMapType connection4Parameters;
   connection4Parameters["NameOfInterface"] = { "itkMetricv4Interface" };
   blueprint->AddConnection("Metric", "RegistrationMethod", connection4Parameters);
 
-  EXPECT_NO_THROW(overlord = Overlord::New());
-  EXPECT_NO_THROW(overlord->SetBlueprint(blueprint));
-  
-  //The Overlord is not yet an itkfilter with inputs and outputs, therefore it reads and writes the files temporarily.
-  DataManagerType::Pointer dataManager = DataManagerType::New();
-  overlord->inputFileNames = { dataManager->GetInputFile("sphereA3d.mhd"), dataManager->GetInputFile("sphereB3d.mhd") };
-  overlord->outputFileNames = { dataManager->GetOutputFile("RegistrationItkv4Test_WithMeanSquaresMetric.mhd") };
+  // Instantiate SuperElastix
+  SuperElastixFilterType::Pointer superElastixFilter;
+  EXPECT_NO_THROW(superElastixFilter = SuperElastixFilterType::New());
 
-  bool allUniqueComponents;
-  EXPECT_NO_THROW(allUniqueComponents = overlord->Configure());
-  EXPECT_TRUE(allUniqueComponents);
-  EXPECT_NO_THROW(overlord->Execute());
-  //overlord->Execute();
+  // Data manager provides the paths to the input and output data for unit tests
+  DataManagerType::Pointer dataManager = DataManagerType::New();
+
+  // Set up the readers and writers
+  ImageReader3DType::Pointer fixedImageReader = ImageReader3DType::New();
+  fixedImageReader->SetFileName(dataManager->GetInputFile("sphereA3d.mhd"));
+
+  ImageReader3DType::Pointer movingImageReader = ImageReader3DType::New();
+  movingImageReader->SetFileName(dataManager->GetInputFile("sphereB3d.mhd"));
+
+  ImageWriter3DType::Pointer resultImageWriter = ImageWriter3DType::New();
+  resultImageWriter->SetFileName(dataManager->GetOutputFile("RegistrationItkv4Test_WithMeanSquaresMetric.mhd"));
+
+  // Connect SuperElastix in an itk pipeline
+  superElastixFilter->SetInput("FixedImageSource", fixedImageReader->GetOutput());
+  superElastixFilter->SetInput("MovingImageSource", movingImageReader->GetOutput());
+  resultImageWriter->SetInput(superElastixFilter->GetOutput<Image3DType>("ResultImageSink"));
+
+  EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
+
+  //Optional Update call
+  //superElastixFilter->Update();
+
+  // Update call on the writers triggers SuperElastix to configure and execute
+  EXPECT_NO_THROW(resultImageWriter->Update());
+
 }
 
-TEST_F(RegistrationItkv4Test, DisplacementField2D)
+TEST_F(RegistrationItkv4Test, DisplacementField)
 {
   /** make example blueprint configuration */
   blueprint = Blueprint::New();
 
   ParameterMapType component0Parameters;
   component0Parameters["NameOfClass"] = { "ItkImageRegistrationMethodv4Component" };
-  component0Parameters["Dimensionality"] = { "2" }; // should be derived from the inputs
+  component0Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
   blueprint->AddComponent("RegistrationMethod", component0Parameters);
 
   ParameterMapType component1Parameters;
   component1Parameters["NameOfClass"] = { "ItkImageSourceFixedComponent" };
-  component1Parameters["Dimensionality"] = { "2" }; // should be derived from the inputs
+  component1Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
   blueprint->AddComponent("FixedImageSource", component1Parameters);
 
   ParameterMapType component2Parameters;
   component2Parameters["NameOfClass"] = { "ItkImageSourceMovingComponent" };
-  component2Parameters["Dimensionality"] = { "2" }; // should be derived from the inputs
+  component2Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
   blueprint->AddComponent("MovingImageSource", component2Parameters);
 
   ParameterMapType component3Parameters;
-  component3Parameters["NameOfClass"] = { "ItkImageFilterSinkComponent" };
+  component3Parameters["NameOfClass"] = { "ItkImageSinkComponent" };
   component3Parameters["Dimensionality"] = { "2" }; // should be derived from the outputs
   blueprint->AddComponent("ResultImageSink", component3Parameters);
 
   ParameterMapType component4Parameters;
   component4Parameters["NameOfClass"] = { "DisplacementFieldItkImageFilterSinkComponent" };
-  component4Parameters["Dimensionality"] = { "2" }; // should be derived from the outputs
+  component4Parameters["Dimensionality"] = { "3" }; // should be derived from the outputs
   blueprint->AddComponent("ResultDisplacementFieldSink", component4Parameters);
 
   ParameterMapType component5Parameters;
   component5Parameters["NameOfClass"] = { "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component" };
-  component5Parameters["Dimensionality"] = { "2" }; // should be derived from the inputs
+  component5Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
   blueprint->AddComponent("Metric", component5Parameters);
 
 
@@ -320,7 +380,7 @@ TEST_F(RegistrationItkv4Test, DisplacementField2D)
   blueprint->AddConnection("MovingImageSource", "RegistrationMethod", connection2Parameters);
 
   ParameterMapType connection3Parameters;
-  connection3Parameters["NameOfInterface"] = { "itkImageSourceInterface" };
+  connection3Parameters["NameOfInterface"] = { "itkImageInterface" };
   blueprint->AddConnection("RegistrationMethod", "ResultImageSink", connection3Parameters);
 
   ParameterMapType connection4Parameters;
@@ -331,19 +391,42 @@ TEST_F(RegistrationItkv4Test, DisplacementField2D)
   connection5Parameters["NameOfInterface"] = { "itkMetricv4Interface" };
   blueprint->AddConnection("Metric", "RegistrationMethod", connection5Parameters);
 
-  EXPECT_NO_THROW(overlord = Overlord::New());
-  EXPECT_NO_THROW(overlord->SetBlueprint(blueprint));
+  // Instantiate SuperElastix
+  SuperElastixFilterType::Pointer superElastixFilter;
+  EXPECT_NO_THROW(superElastixFilter = SuperElastixFilterType::New());
 
-  //The Overlord is not yet an itkfilter with inputs and outputs, therefore it reads and writes the files temporarily.
+  // Data manager provides the paths to the input and output data for unit tests
   DataManagerType::Pointer dataManager = DataManagerType::New();
-  overlord->inputFileNames = { dataManager->GetInputFile("BrainProtonDensitySliceBorder20.png"), dataManager->GetInputFile("BrainProtonDensitySliceR10X13Y17.png") };
-  overlord->outputFileNames = { dataManager->GetOutputFile("RegistrationItkv4Test_BrainProtonDensity.mhd"), dataManager->GetOutputFile("RegistrationItkv4Test_Displacement_BrainProtonDensity.mhd") };
 
-  bool allUniqueComponents;
-  EXPECT_NO_THROW(allUniqueComponents = overlord->Configure());
-  EXPECT_TRUE(allUniqueComponents);
-  //EXPECT_NO_THROW(overlord->Execute());
-  overlord->Execute();
+  // Set up the readers and writers
+  ImageReader3DType::Pointer fixedImageReader = ImageReader3DType::New();
+  fixedImageReader->SetFileName(dataManager->GetInputFile("sphereA3d.mhd"));
+
+  ImageReader3DType::Pointer movingImageReader = ImageReader3DType::New();
+  movingImageReader->SetFileName(dataManager->GetInputFile("sphereB3d.mhd"));
+
+  ImageWriter3DType::Pointer resultImageWriter = ImageWriter3DType::New();
+  resultImageWriter->SetFileName(dataManager->GetOutputFile("RegistrationItkv4Test_DisplacementField_image.mhd"));
+
+  DisplacementImageWriter3DType::Pointer resultDisplacementWriter = DisplacementImageWriter3DType::New();
+  resultDisplacementWriter->SetFileName(dataManager->GetOutputFile("RegistrationItkv4Test_DisplacementField_displacement.mhd"));
+
+
+  // Connect SuperElastix in an itk pipeline
+  superElastixFilter->SetInput("FixedImageSource", fixedImageReader->GetOutput());
+  superElastixFilter->SetInput("MovingImageSource", movingImageReader->GetOutput());
+  resultImageWriter->SetInput(superElastixFilter->GetOutput<Image3DType>("ResultImageSink"));
+  resultDisplacementWriter->SetInput(superElastixFilter->GetOutput<DisplacementImage3DType>("ResultDisplacementFieldSink"));
+
+  EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
+
+  //Optional Update call
+  //superElastixFilter->Update();
+
+  // Update call on the writers triggers SuperElastix to configure and execute
+  EXPECT_NO_THROW(resultImageWriter->Update());
+  EXPECT_NO_THROW(resultDisplacementWriter->Update());
+
 }
 } // namespace selx
 

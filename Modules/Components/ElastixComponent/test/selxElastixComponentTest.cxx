@@ -17,14 +17,17 @@
  *
  *=========================================================================*/
 
-#include "Overlord.h"
-//#include "elxElastixFilter.h"
+#include "selxSuperElastixFilter.h"
+
 #include "elxParameterObject.h"
 
 #include "selxElastixComponent.h"
 #include "selxItkImageSink.h"
 #include "selxItkImageSourceFixed.h"
 #include "selxItkImageSourceMoving.h"
+
+#include "itkImageFileReader.h"
+#include "itkImageFileWriter.h"
 
 #include "selxDataManager.h"
 #include "gtest/gtest.h"
@@ -33,13 +36,17 @@ namespace selx {
 
 class ElastixComponentTest : public ::testing::Test {
 public:
-  typedef Overlord::Pointer                 OverlordPointerType;
   typedef Blueprint::Pointer                BlueprintPointerType;
   typedef Blueprint::ConstPointer           BlueprintConstPointerType;
   typedef Blueprint::ParameterMapType       ParameterMapType;
   typedef Blueprint::ParameterValueType     ParameterValueType;
   typedef DataManager DataManagerType;
-  
+  typedef SuperElastixFilter<bool>          SuperElastixFilterType;
+
+  typedef itk::Image<float, 2> Image2DType;
+  typedef itk::ImageFileReader<Image2DType> ImageReader2DType;
+  typedef itk::ImageFileWriter<Image2DType> ImageWriter2DType;
+
   virtual void SetUp() {
     /** register all example components */
     ComponentFactory<ElastixComponent<2, float>>::RegisterOneFactory();
@@ -89,30 +96,46 @@ TEST_F(ElastixComponentTest, ImagesOnly)
 
 
   ParameterMapType connection1Parameters;
-  connection1Parameters["NameOfInterface"] = { "itkImageFixedInterface" };
+  //connection1Parameters["NameOfInterface"] = { "itkImageFixedInterface" };
   blueprint->AddConnection("FixedImageSource", "RegistrationMethod", connection1Parameters);
 
   ParameterMapType connection2Parameters;
-  connection2Parameters["NameOfInterface"] = { "itkImageMovingInterface" };
+  //connection2Parameters["NameOfInterface"] = { "itkImageMovingInterface" };
   blueprint->AddConnection("MovingImageSource", "RegistrationMethod", connection2Parameters);
 
   ParameterMapType connection3Parameters;
-  connection3Parameters["NameOfInterface"] = { "GetItkImageInterface" };
+  //connection3Parameters["NameOfInterface"] = { "GetItkImageInterface" };
   blueprint->AddConnection("RegistrationMethod", "ResultImageSink", connection3Parameters);
 
+  // Instantiate SuperElastix
+  SuperElastixFilterType::Pointer superElastixFilter;
+  EXPECT_NO_THROW(superElastixFilter = SuperElastixFilterType::New());
 
-  EXPECT_NO_THROW(overlord = Overlord::New());
-  EXPECT_NO_THROW(overlord->SetBlueprint(blueprint));
-  
-  //The Overlord is not yet an itkfilter with inputs and outputs, therefore it reads and writes the files temporarily.
+  // Data manager provides the paths to the input and output data for unit tests
   DataManagerType::Pointer dataManager = DataManagerType::New();
-  overlord->inputFileNames = { dataManager->GetInputFile("BrainProtonDensitySliceBorder20.png"), dataManager->GetInputFile("BrainProtonDensitySliceR10X13Y17.png") };
-  overlord->outputFileNames = { dataManager->GetOutputFile("ElastixComponentTest_BrainProtonDensity.mhd") };
-  
-  bool allUniqueComponents;
-  EXPECT_NO_THROW(allUniqueComponents = overlord->Configure());
-  EXPECT_TRUE(allUniqueComponents);
-  EXPECT_NO_THROW(overlord->Execute());
+
+  // Set up the readers and writers
+  ImageReader2DType::Pointer fixedImageReader = ImageReader2DType::New();
+  fixedImageReader->SetFileName(dataManager->GetInputFile("BrainProtonDensitySliceBorder20.png"));
+
+  ImageReader2DType::Pointer movingImageReader = ImageReader2DType::New();
+  movingImageReader->SetFileName(dataManager->GetInputFile("BrainProtonDensitySliceR10X13Y17.png"));
+
+  ImageWriter2DType::Pointer resultImageWriter = ImageWriter2DType::New();
+  resultImageWriter->SetFileName(dataManager->GetOutputFile("ElastixComponentTest_BrainProtonDensity.mhd"));
+
+  // Connect SuperElastix in an itk pipeline
+  superElastixFilter->SetInput("FixedImageSource", fixedImageReader->GetOutput());
+  superElastixFilter->SetInput("MovingImageSource", movingImageReader->GetOutput());
+  resultImageWriter->SetInput(superElastixFilter->GetOutput<Image2DType>("ResultImageSink"));
+
+  EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
+
+  //Optional Update call
+  //superElastixFilter->Update();
+
+  // Update call on the writers triggers SuperElastix to configure and execute
+  EXPECT_NO_THROW(resultImageWriter->Update());
   
 }
 

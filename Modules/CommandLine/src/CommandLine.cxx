@@ -20,28 +20,27 @@
 #include "selxSuperElastixFilter.h"
 #include "selxBlueprint.h"
 #include "selxConfigurationReader.h"
+#include "itkImageFileReader.h"
+#include "itkImageFileWriter.h"
+#include "selxAnyFileWriter.h"
 
+//TODO move these includes to a Cmake controlled header file
 #include "selxItkSmoothingRecursiveGaussianImageFilterComponent.h"
 #include "selxDisplacementFieldItkImageFilterSink.h"
 #include "selxItkImageSource.h"
-
 #include "selxElastixComponent.h"
 #include "selxItkImageSink.h"
-
 #include "selxItkImageRegistrationMethodv4Component.h"
 #include "selxItkANTSNeighborhoodCorrelationImageToImageMetricv4.h"
 #include "selxItkMeanSquaresImageToImageMetricv4.h"
 #include "selxItkImageSourceFixed.h"
 #include "selxItkImageSourceMoving.h"
 
-#include "itkImageFileReader.h"
-#include "itkImageFileWriter.h"
-#include "selxAnyFileWriter.h"
 
 #include <boost/algorithm/string.hpp>
 
 #include <boost/filesystem.hpp>
-using namespace boost::filesystem;
+namespace fs = boost::filesystem;
 
 #include <boost/program_options.hpp>
 namespace po = boost::program_options;
@@ -54,6 +53,7 @@ namespace po = boost::program_options;
 
 using namespace std;
 using namespace selx;
+
 template<class T>
 ostream& operator<<(ostream& os, const vector<T>& v)
 {
@@ -84,10 +84,11 @@ int main(int ac, char* av[])
     ComponentFactory<ElastixComponent<2, float>>::RegisterOneFactory();
     ComponentFactory<ItkImageSinkComponent<2, float>>::RegisterOneFactory();
 
+    //TODO make SuperElastixFilter templated over Components
     SuperElastixFilter<bool>::Pointer superElastixFilter = SuperElastixFilter<bool>::New();
     
 
-    path configurationPath;
+    fs::path configurationPath;
     vector<string> inputPairs;
     vector<string> outputPairs;
 
@@ -100,10 +101,10 @@ int main(int ac, char* av[])
     po::options_description desc("Allowed options");
     desc.add_options()
       ("help", "produce help message")
-      ("conf", po::value<path>(&configurationPath)->required(), "Configuration file")
+      ("conf", po::value<fs::path>(&configurationPath)->required(), "Configuration file")
       ("in", po::value<vector<string>>(&inputPairs)->multitoken(), "Input data: images, labels, meshes, etc. Usage <name>=<path>")
       ("out", po::value<vector<string>>(&outputPairs)->multitoken(), "Output data: images, labels, meshes, etc. Usage <name>=<path>")
-      ("graphout", po::value<path>(), "Output Graphviz dot file")
+      ("graphout", po::value<fs::path>(), "Output Graphviz dot file")
       ;
 
     po::variables_map vm;
@@ -132,7 +133,7 @@ int main(int ac, char* av[])
 
     if (vm.count("graphout"))
     {
-      blueprint->WriteBlueprint(vm["graphout"].as<path>().string());
+      blueprint->WriteBlueprint(vm["graphout"].as<fs::path>().string());
     }
 
     superElastixFilter->SetBlueprint(blueprint);

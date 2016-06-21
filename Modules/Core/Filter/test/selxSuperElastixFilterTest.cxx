@@ -108,11 +108,6 @@ namespace selx {
   {
     DataManagerType::Pointer dataManager = DataManagerType::New();
 
-    //ImageReader2DType::Pointer imageReader2D = ImageReader2DType::New();
-    //ImageWriter2DType::Pointer imageWriter2D = ImageWriter2DType::New();
-    //imageReader2D->SetFileName(dataManager->GetInputFile("in2dimage.mhd"));
-    //imageWriter2D->SetFileName(dataManager->GetOutputFile("out2dimage.mhd"));
-
     ImageReader3DType::Pointer imageReader3D = ImageReader3DType::New();
     ImageWriter3DType::Pointer imageWriter3D = ImageWriter3DType::New();
 
@@ -122,8 +117,8 @@ namespace selx {
     MeshReaderType::Pointer meshReader = MeshReaderType::New();
     MeshWriterType::Pointer meshWriter = MeshWriterType::New();
 
-    meshReader->SetFileName(dataManager->GetInputFile("2dmesh.vtk"));
-    meshWriter->SetFileName(dataManager->GetOutputFile("out2dmesh.vtk"));
+    meshReader->SetFileName(dataManager->GetInputFile("2dSquare.vtk"));
+    meshWriter->SetFileName(dataManager->GetOutputFile("SuperElastixFilterTest_2dSquare.vtk"));
 
 
     ComponentFactory<ItkImageSinkComponent<3, double>>::RegisterOneFactory();
@@ -151,9 +146,6 @@ namespace selx {
     EXPECT_NO_THROW(mySuperElastix = SuperElastixFilterType::New());
     mySuperElastix->SetBlueprint(blueprint);
 
-    //mySuperElastix->SetInput("FixedImage", imageReader2D->GetOutput());
-    //imageWriter2D->SetInput(mySuperElastix->GetOutput<Image2DType>("ResultImage"));
-
     mySuperElastix->SetInput("InputMesh", meshReader->GetOutput());  
     meshWriter->SetInput(mySuperElastix->GetOutput<MeshType>("OutputMesh"));
 
@@ -162,7 +154,6 @@ namespace selx {
 
     //mySuperElastix->Update();
 
-    //EXPECT_NO_THROW(imageWriter2D->Update());
     EXPECT_NO_THROW(meshWriter->Update());
     EXPECT_NO_THROW(imageWriter3D->Update());
   }
