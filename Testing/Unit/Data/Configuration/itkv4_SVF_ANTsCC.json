@@ -1,0 +1,57 @@
+{
+    "Component": {
+        "Name": "RegistrationMethod",
+        "NameOfClass": "ItkImageRegistrationMethodv4Component",
+        "Dimensionality": "2"
+    },
+    "Component": {
+        "Name": "FixedImage",
+        "NameOfClass": "ItkImageSourceFixedComponent",
+        "Dimensionality": "2"
+    },
+    "Component": {
+        "Name": "MovingImage",
+        "NameOfClass": "ItkImageSourceMovingComponent",
+        "Dimensionality": "2"
+    },
+    "Component": {
+        "Name": "ResultImage",
+        "NameOfClass": "ItkImageSinkComponent",
+        "Dimensionality": "2"
+    },
+    "Component": {
+        "Name": "ResultDisplacementField",
+        "NameOfClass": "DisplacementFieldItkImageFilterSinkComponent",
+        "Dimensionality": "2"
+    },
+    "Component": {
+        "Name": "Metric",
+        "NameOfClass": "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component",
+        "Dimensionality": "2"
+    },
+    "Connection": {
+        "Out": "FixedImage",
+        "In": "RegistrationMethod",
+        "NameOfInterface": "itkImageFixedInterface"
+    },
+    "Connection": {
+        "Out": "MovingImage",
+        "In": "RegistrationMethod",
+        "NameOfInterface": "itkImageMovingInterface"
+    },
+    "Connection": {
+        "Out": "RegistrationMethod",
+        "In": "ResultImage",
+        "NameOfInterface": "itkImageInterface"
+    },
+    "Connection": {
+        "Out": "RegistrationMethod",
+        "In": "ResultDisplacementField",
+        "NameOfInterface": "DisplacementFieldItkImageSourceInterface"
+    },
+    "Connection": {
+        "Out": "Metric",
+        "In": "RegistrationMethod",
+        "NameOfInterface": "itkMetricv4Interface"
+    }
+}

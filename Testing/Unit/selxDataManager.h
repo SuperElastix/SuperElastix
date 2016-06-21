@@ -39,15 +39,19 @@ public:
     this->m_InputDirectory = SUPERELASTIX_UNITTEST_INPUT_DATA_DIR;
     this->m_OutputDirectory = SUPERELASTIX_UNITTEST_OUTPUT_DATA_DIR;
     this->m_BaselineDirectory = SUPERELASTIX_UNITTEST_BASELINE_DATA_DIR;
+    this->m_ConfigurationDirectory = SUPERELASTIX_UNITTEST_CONFIGURATION_DATA_DIR;
   }
 
   std::string GetInputDirectory( void ) const { return this->m_InputDirectory; };
   std::string GetOutputDirectory( void ) const { return this->m_OutputDirectory; };
   std::string GetBaselineDirectory( void ) const { return this->m_BaselineDirectory; };
+  std::string GetConfigurationDirectory(void) const { return this->m_ConfigurationDirectory; };
 
   const std::string GetInputFile( const std::string filename ) const;
   const std::string GetOutputFile( const std::string filename ) const;
   const std::string GetBaselineFile( const std::string filename ) const;
+  const std::string GetConfigurationFile(const std::string filename) const;
+  
 
   std::string GetFolderSeparator() const
   {
@@ -72,7 +76,7 @@ private:
   std::string m_InputDirectory;
   std::string m_BaselineDirectory;
   std::string m_OutputDirectory;
-
+  std::string m_ConfigurationDirectory;
 };
 
 #endif // __DataManager_h

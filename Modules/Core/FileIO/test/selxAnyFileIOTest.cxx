@@ -77,7 +77,7 @@ namespace selx {
     AnyFileReader::Pointer anyReader2;
     EXPECT_NO_THROW(anyReader2 = mesh2DReader);
 
-    anyReader2->SetFileName(dataManager->GetInputFile("in2dmesh.vtk"));
+    anyReader2->SetFileName(dataManager->GetInputFile("2dSquare.vtk"));
 
     // anyReaders output is a generic DataObject (i.e. the base class of itk image, meshes, etc.)
     itk::DataObject::Pointer anyOutput2 = anyReader2->GetOutput();

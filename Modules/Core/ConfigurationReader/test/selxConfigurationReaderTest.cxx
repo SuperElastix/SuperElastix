@@ -19,13 +19,19 @@
 
 #include "selxConfigurationReader.h"
 
+#include "selxDataManager.h"
 #include "gtest/gtest.h"
 
 using namespace selx;
 
 class ConfigurationReaderTest : public ::testing::Test {
 public:
+  typedef DataManager DataManagerType;
+  
+  DataManagerType::Pointer dataManager;
+  
   virtual void SetUp() {
+    this->dataManager = DataManagerType::New();
   }
 };
 
@@ -33,8 +39,9 @@ TEST_F( ConfigurationReaderTest, ReadXML )
 {
   ConfigurationReader::BlueprintPointerType blueprint;
 
-  EXPECT_NO_THROW(blueprint = ConfigurationReader::FromXML("configurationReaderTest.xml"));
-  blueprint->WriteBlueprint("configurationReaderTest.xml.dot");
+
+  EXPECT_NO_THROW(blueprint = ConfigurationReader::FromXML(this->dataManager->GetConfigurationFile("itkv4_SVF_ANTsCC.xml")));
+  blueprint->WriteBlueprint(this->dataManager->GetOutputFile("configurationReaderTest_itkv4_SVF_ANTsCC.xml.dot"));
 	
 }
 
@@ -42,7 +49,7 @@ TEST_F(ConfigurationReaderTest, ReadJson)
 {
   ConfigurationReader::BlueprintPointerType blueprint;
 
-  EXPECT_NO_THROW(blueprint = ConfigurationReader::FromJson("configurationReaderTest.json"));
-  blueprint->WriteBlueprint("configurationReaderTest.json.dot");
+  EXPECT_NO_THROW(blueprint = ConfigurationReader::FromJson(this->dataManager->GetConfigurationFile("itkv4_SVF_ANTsCC.json")));
+  blueprint->WriteBlueprint(this->dataManager->GetOutputFile("configurationReaderTest_itkv4_SVF_ANTsCC.json.dot"));
 
 }
