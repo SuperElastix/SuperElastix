@@ -39,7 +39,6 @@ TEST_F( ConfigurationReaderTest, ReadXML )
 {
   ConfigurationReader::BlueprintPointerType blueprint;
 
-
   EXPECT_NO_THROW(blueprint = ConfigurationReader::FromXML(this->dataManager->GetConfigurationFile("itkv4_SVF_ANTsCC.xml")));
   blueprint->WriteBlueprint(this->dataManager->GetOutputFile("configurationReaderTest_itkv4_SVF_ANTsCC.xml.dot"));
 	

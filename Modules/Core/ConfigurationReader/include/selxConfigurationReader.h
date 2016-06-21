@@ -50,10 +50,11 @@ public:
   
 private:
 
-  typedef boost::property_tree::ptree ComponentOrConnectionTreeType;
-  //typedef const boost::property_tree::ptree::basic_ptree ComponentOrConnectionTreeType;
-
-  static ParameterValueType VectorizeValues(const ComponentOrConnectionTreeType& componentOrConnectionTree);
+  typedef boost::property_tree::ptree PropertyTreeType;
+  typedef const boost::property_tree::ptree::basic_ptree& ComponentOrConnectionTreeType;
+  
+  static ParameterValueType VectorizeValues(ComponentOrConnectionTreeType componentOrConnectionTree);
+  static BlueprintPointerType FromPropertyTree(const PropertyTreeType &);
 
 };
 
