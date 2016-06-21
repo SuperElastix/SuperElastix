@@ -37,6 +37,12 @@
 #include "selxItkImageSourceFixed.h"
 #include "selxItkImageSourceMoving.h"
 
+#include "itkImageFileReader.h"
+#include "itkImageFileWriter.h"
+
+#include "itkMeshFileReader.h"
+#include "itkMeshFileWriter.h" 
+
 #include "selxDataManager.h"
 #include "gtest/gtest.h"
 
@@ -105,8 +111,7 @@ public:
   }
 
   BlueprintPointerType blueprint;
-  Overlord::Pointer overlord;
-
+  
 
 };
 
