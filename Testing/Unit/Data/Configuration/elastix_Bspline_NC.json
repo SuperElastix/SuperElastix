@@ -1,0 +1,39 @@
+{
+    "Component": {
+        "Name": "RegistrationMethod",
+        "NameOfClass": "ElastixComponent",
+        "Dimensionality": "2",
+		"Transform": "BSplineTransform",
+        "Metric": "AdvancedNormalizedCorrelation" 
+    },
+    "Component": {
+        "Name": "FixedImage",
+        "NameOfClass": "ItkImageSourceFixedComponent",
+        "Dimensionality": "2"
+    },
+    "Component": {
+        "Name": "MovingImage",
+        "NameOfClass": "ItkImageSourceMovingComponent",
+        "Dimensionality": "2"
+    },
+    "Component": {
+        "Name": "ResultImage",
+        "NameOfClass": "ItkImageSinkComponent",
+        "Dimensionality": "2"
+    },
+
+    "Connection": {
+        "Out": "FixedImage",
+        "In": "RegistrationMethod",
+        "NameOfInterface": "itkImageFixedInterface"
+    },
+    "Connection": {
+        "Out": "MovingImage",
+        "In": "RegistrationMethod",
+        "NameOfInterface": "itkImageMovingInterface"
+    },
+    "Connection": {
+        "Out": "RegistrationMethod",
+        "In": "ResultImage"
+    }
+}

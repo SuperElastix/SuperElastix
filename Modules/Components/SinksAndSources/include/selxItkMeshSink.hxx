@@ -43,22 +43,23 @@ namespace selx
     // Store pointer to MiniPipelineOutputMesh for later grafting onto Overlord output.
     this->m_MiniPipelineOutputMesh = other->GetItkMesh();
     // Graft Overlord output onto MiniPipelineOutputMesh.
-    this->m_MiniPipelineOutputMesh->Graft(this->m_OverlordOutputMesh);
+    // this->m_MiniPipelineOutputMesh->Graft(this->m_OverlordOutputMesh);
     return 0;
   }
-
-  //template<int Dimensionality, class TPixel>
-  //int ItkMeshSinkComponent< Dimensionality, TPixel>::Set(GetItkMeshInterface<Dimensionality, TPixel>* other)
-  //{
-  //  this->m_ProvidingGetItkMeshInterface = other;
-  //  return 0;
-  //}
 
   template<int Dimensionality, class TPixel>
   void ItkMeshSinkComponent< Dimensionality, TPixel>::AfterRegistration()
   {
     this->m_MiniPipelineOutputMesh->Update();
   }
+
+  template<int Dimensionality, class TPixel>
+  typename AnyFileWriter::Pointer ItkMeshSinkComponent< Dimensionality, TPixel>::GetOutputFileWriter()
+  {
+    // Instanstiate an image file writer, decorated such that it can be implicitly cast to an AnyFileWriterType
+    return DecoratedWriterType::New();
+  }
+
   template<int Dimensionality, class TPixel>
   void ItkMeshSinkComponent< Dimensionality, TPixel>::SetMiniPipelineOutput(itk::DataObject::Pointer overlordOutput)
   {
@@ -85,7 +86,13 @@ namespace selx
 
   //  return (this->m_Mesh != nullptr);
   //}
+  template<int Dimensionality, class TPixel>
+  typename itk::DataObject::Pointer ItkMeshSinkComponent< Dimensionality, TPixel>::GetInitializedOutput()
+  {
+    return ItkMeshType::New();
+  }
 
+  
   template<int Dimensionality, class TPixel>
   bool ItkMeshSinkComponent< Dimensionality, TPixel>::MeetsCriterion(const ComponentBase::CriterionType &criterion)
   {

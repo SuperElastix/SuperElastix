@@ -25,6 +25,8 @@
 #include <string.h>
 #include "selxMacro.h"
 #include "itkImageFileWriter.h"
+#include "selxAnyFileWriter.h"
+#include "selxFileWriterDecorator.h"
 
 namespace selx
 {
@@ -32,7 +34,7 @@ namespace selx
   class DisplacementFieldItkImageFilterSinkComponent :
     public Implements <
     Accepting< DisplacementFieldItkImageSourceInterface<Dimensionality, TPixel> >,
-    Providing < SinkInterface >
+    Providing < SinkInterface, AfterRegistrationInterface >
     >
   {
   public:
@@ -45,18 +47,29 @@ namespace selx
 
     typedef TPixel PixelType;
 
-    typedef itk::Image<itk::Vector<PixelType, Dimensionality>, Dimensionality> DeformationFieldImageType;
-    typedef itk::ImageSource<DeformationFieldImageType> DeformationFieldItkImageSourceType;
-    typedef typename DeformationFieldItkImageSourceType::Pointer DeformationFieldItkImageSourcePointer;
+    typedef DisplacementFieldItkImageSourceInterface<Dimensionality, TPixel> AcceptingDisplacementFieldInterfaceType;
+    typedef typename itk::Image<itk::Vector<PixelType, Dimensionality>, Dimensionality> DeformationFieldImageType;
+    typedef typename DeformationFieldImageType::Pointer DeformationFieldImageTypePointer;
+    typedef typename itk::ImageFileWriter<DeformationFieldImageType> DeformationFieldImageWriterType;
+    typedef typename FileWriterDecorator<DeformationFieldImageWriterType>  DecoratedWriterType;
 
-    virtual int Set(DisplacementFieldItkImageSourceInterface<Dimensionality, TPixel>*) override;
-    virtual bool ConnectToOverlordSink(itk::Object::Pointer) override;
+    virtual int Set(AcceptingDisplacementFieldInterfaceType*) override;
+    virtual void SetMiniPipelineOutput(itk::DataObject::Pointer) override;
+    virtual itk::DataObject::Pointer GetMiniPipelineOutput(void) override;
+    virtual AnyFileWriter::Pointer GetOutputFileWriter(void) override;
+    virtual itk::DataObject::Pointer GetInitializedOutput(void) override;
+
+    virtual void AfterRegistration() override;
 
     virtual bool MeetsCriterion(const ComponentBase::CriterionType &criterion) override;
     static const char * GetDescription() { return "DisplacementFieldItkImageFilterSink Component"; };
   private:
-    itk::ProcessObject::Pointer m_Sink;
-    typename itk::ImageFileWriter<itk::Image<itk::Vector<TPixel,Dimensionality>, Dimensionality>>::Pointer m_SinkWriter;
+    //itk::ProcessObject::Pointer m_Sink;
+    //typename itk::ImageFileWriter<itk::Image<itk::Vector<TPixel,Dimensionality>, Dimensionality>>::Pointer m_SinkWriter;
+    typename DeformationFieldImageType::Pointer m_MiniPipelineOutputImage;
+    typename DeformationFieldImageType::Pointer m_OverlordOutputImage;
+    
+
   protected:
     /* The following struct returns the string name of computation type */
     /* default implementation */

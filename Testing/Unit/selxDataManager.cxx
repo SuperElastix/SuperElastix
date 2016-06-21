@@ -47,4 +47,11 @@ DataManager
   return path;
 }
 
+const std::string
+DataManager
+::GetConfigurationFile(const std::string filename) const
+{
+  const std::string path = this->GetConfigurationDirectory() + this->GetFolderSeparator() + filename;
+  return path;
+}
 #endif // __DataManager_cxx

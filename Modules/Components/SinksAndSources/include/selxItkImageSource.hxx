@@ -23,9 +23,8 @@ namespace selx
 {
   template<int Dimensionality, class TPixel>
   ItkImageSourceComponent< Dimensionality, TPixel>
-  ::ItkImageSourceComponent()
+    ::ItkImageSourceComponent() : m_Image(nullptr)
 {
-  this->m_Image = nullptr;
 }
 
   template<int Dimensionality, class TPixel>
@@ -50,7 +49,7 @@ namespace selx
   ItkImageSourceComponent< Dimensionality, TPixel>
   ::SetMiniPipelineInput(itk::DataObject::Pointer object)
 {
-  this->m_Image = dynamic_cast<ItkImageType*>(&(*object));
+  this->m_Image = dynamic_cast<ItkImageType*>(object.GetPointer());
   if (this->m_Image == nullptr)
   {
     itkExceptionMacro("DataObject passed by the Overlord is not of the right ImageType or not at all an ImageType");
@@ -95,7 +94,7 @@ namespace selx
     meetsCriteria = true;
     for (auto const & criterionValue : criterion.second) // auto&& preferred?
     {
-      if (criterionValue != Self::GetPixelTypeNameString()) //hardcoded
+      if (criterionValue != Self::GetPixelTypeNameString())
       {
         meetsCriteria = false;
       }

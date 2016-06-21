@@ -106,6 +106,8 @@ public:
   ParameterMapType GetConnection(ComponentNameType upstream, ComponentNameType downstream) const;
   bool SetConnection(ComponentNameType upstream, ComponentNameType downstream, ParameterMapType parameterMap);
   bool DeleteConnection(ComponentNameType upstream, ComponentNameType downstream);
+
+  bool ComponentExists(ComponentNameType componentName) const;
   bool ConnectionExists(ComponentNameType upstream, ComponentNameType downstream) const;
 
   // Returns a vector of the Component names at the outgoing direction

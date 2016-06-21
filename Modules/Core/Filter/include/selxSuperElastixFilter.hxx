@@ -11,8 +11,8 @@ namespace selx
  * ********************* Constructor *********************
  */
 
-template< typename TFixedImage, typename TMovingImage >
-SuperElastixFilter< TFixedImage, TMovingImage >
+  template< typename ComponentTypeList >
+  SuperElastixFilter< ComponentTypeList >
 ::SuperElastixFilter( void )
 {
   this->m_Overlord = Overlord::New();
@@ -28,9 +28,9 @@ SuperElastixFilter< TFixedImage, TMovingImage >
 */
 
 
-template< typename TFixedImage, typename TMovingImage >
+  template< typename ComponentTypeList >
 void
-SuperElastixFilter< TFixedImage, TMovingImage >
+SuperElastixFilter< ComponentTypeList >
 ::GenerateOutputInformation()
 {
   /*
@@ -38,18 +38,8 @@ SuperElastixFilter< TFixedImage, TMovingImage >
   * therefore the output information must come from the sink components.
   */
   this->m_Overlord->SetBlueprint(this->m_Blueprint);
-  bool isSuccess(false);
-  bool allUniqueComponents;
-  this->m_Overlord->ApplyNodeConfiguration();
-  std::cout << "Applying Component Settings" << std::endl;
-  allUniqueComponents = this->m_Overlord->UpdateSelectors();
-  std::cout << "Based on Component Criteria unique components could " << (allUniqueComponents ? "" : "not ") << "be selected" << std::endl;
-
-  std::cout << "Applying Connection Settings" << std::endl;
-  this->m_Overlord->ApplyConnectionConfiguration();
-  allUniqueComponents = this->m_Overlord->UpdateSelectors();
-  std::cout << "By adding Connection Criteria unique components could " << (allUniqueComponents ? "" : "not ") << "be selected" << std::endl;
-
+  bool allUniqueComponents = this->m_Overlord->Configure();
+  
   Overlord::SourceInterfaceMapType sources = this->m_Overlord->GetSourceInterfaces();
   for (const auto & nameAndInterface : sources)
   {
@@ -62,17 +52,18 @@ SuperElastixFilter< TFixedImage, TMovingImage >
     nameAndInterface.second->SetMiniPipelineOutput(this->GetOutput(nameAndInterface.first));
   }
 
+  bool isSuccess(false);
+
   if (allUniqueComponents)
   {
     isSuccess = this->m_Overlord->ConnectComponents();
   }
   std::cout << "Connecting Components: " << (isSuccess ? "succeeded" : "failed") << std::endl;
 
-  this->m_Overlord->FindAfterRegistration();
-
   for (const auto & nameAndInterface : sinks)
   {
     nameAndInterface.second->GetMiniPipelineOutput()->UpdateOutputInformation();
+    this->GetOutput(nameAndInterface.first)->Graft(nameAndInterface.second->GetMiniPipelineOutput());
   }
 
 }
@@ -81,13 +72,13 @@ SuperElastixFilter< TFixedImage, TMovingImage >
  * ********************* GenerateData *********************
  */
 
-template< typename TFixedImage, typename TMovingImage >
+template< typename ComponentTypeList >
 void
-SuperElastixFilter< TFixedImage, TMovingImage >
+SuperElastixFilter< ComponentTypeList >
 ::GenerateData(void)
 {
 
-  this->m_Overlord->Execute();
+  this->m_Overlord->Execute(); // calls updates of sink filters
 
   Overlord::SinkInterfaceMapType sinks = this->m_Overlord->GetSinkInterfaces();
   for (const auto & nameAndInterface : sinks)
@@ -97,33 +88,89 @@ SuperElastixFilter< TFixedImage, TMovingImage >
 
 }
 
-template< typename TFixedImage, typename TMovingImage >
+
+template< typename ComponentTypeList >
+typename SuperElastixFilter< ComponentTypeList >::AnyFileReaderType::Pointer
+SuperElastixFilter< ComponentTypeList >
+::GetInputFileReader(const DataObjectIdentifierType& inputName)
+{
+  //TODO: Before we can get the reader the Blueprint needs to set and applied in the overlord.
+  // This is not like the itk pipeline philosophy
+  if (!this->m_Blueprint)
+  {
+    itkExceptionMacro(<< "Setting a Blueprint is required first.")
+  }
+  this->m_Overlord->SetBlueprint(this->m_Blueprint);
+  this->m_Overlord->Configure();
+  
+  return this->m_Overlord->GetInputFileReader(inputName);
+}
+
+template< typename ComponentTypeList >
+typename SuperElastixFilter< ComponentTypeList >::AnyFileWriterType::Pointer
+SuperElastixFilter< ComponentTypeList >
+::GetOutputFileWriter(const DataObjectIdentifierType& outputName)
+{
+  //TODO: Before we can get the reader the Blueprint needs to set and applied in the overlord.
+  // This is not like the itk pipeline philosophy
+  if (!this->m_Blueprint)
+  {
+    itkExceptionMacro(<< "Setting a Blueprint is required first.")
+  }
+
+  this->m_Overlord->SetBlueprint(this->m_Blueprint);
+  this->m_Overlord->Configure();
+
+  return this->m_Overlord->GetOutputFileWriter(outputName);
+}
+
+template< typename ComponentTypeList>
 void
-SuperElastixFilter< TFixedImage, TMovingImage >
+SuperElastixFilter< ComponentTypeList >
 ::SetInput(const DataObjectIdentifierType& inputName, itk::DataObject* input)
 {
   Superclass::SetInput(inputName, input);
   //this->Modified();
 }
 
-template< typename TFixedImage, typename TMovingImage >
-typename SuperElastixFilter< TFixedImage, TMovingImage >::OutputDataType*
-SuperElastixFilter< TFixedImage, TMovingImage >
+template< typename ComponentTypeList >
+typename SuperElastixFilter< ComponentTypeList >::OutputDataType*
+SuperElastixFilter< ComponentTypeList >
 ::GetOutput(const DataObjectIdentifierType& outputName)
 {
-  //this->SetPrimaryOutput()
-  return Superclass::GetOutput(outputName);
+  OutputDataType* output = Superclass::GetOutput(outputName);
+  if (output != nullptr)
+  {
+    return output;
+  }
+  else
+  {
+
+    if (!this->m_Blueprint)
+    {
+      itkExceptionMacro(<< "Setting a Blueprint is required first.")
+    }
+    this->m_Overlord->SetBlueprint(this->m_Blueprint);
+    this->m_Overlord->Configure();
+
+    typename OutputDataType::Pointer newOutput = this->m_Overlord->GetInitializedOutput(outputName);
+
+    Superclass::SetOutput(outputName, newOutput);
+
+    return newOutput;
+  }
 }
 
-template< typename TFixedImage, typename TMovingImage >
-template<typename ReturnType>
+template< typename ComponentTypeList >
+template< typename ReturnType >
 ReturnType*
-SuperElastixFilter< TFixedImage, TMovingImage >
+SuperElastixFilter< ComponentTypeList >
 ::GetOutput(const DataObjectIdentifierType& outputName)
 {
   // Purposely not checking the outputName, but just create the requested&named data object in the filter. 
-  // When connecting the Sinks the the elxFilter names and data types are checked.
+  // When connecting the Sinks the selxFilter names and data types are checked.
   typename ReturnType::Pointer newOutput = ReturnType::New();
+  
   Superclass::SetOutput(outputName, newOutput);
 
   //DataObject* baseOutputData = Superclass::GetOutput(outputName);
@@ -142,46 +189,15 @@ SuperElastixFilter< TFixedImage, TMovingImage >
   return newOutput;
 }
 
-template< typename TFixedImage, typename TMovingImage >
-void SuperElastixFilter< TFixedImage, TMovingImage >
-::ConnectSourceA(itk::DataObject* inputData)
+template< typename ComponentTypeList >
+void SuperElastixFilter< ComponentTypeList >
+::Update(void)
 {
-  ImageType* fixedImage = dynamic_cast<ImageType*>(inputData);
-  this->m_imageFilter->SetInput(fixedImage);
-}
-template< typename TFixedImage, typename TMovingImage >
-void SuperElastixFilter< TFixedImage, TMovingImage >
-::ConnectSourceB(itk::DataObject* inputData)
-{
-  MeshType* fixedMesh = dynamic_cast<MeshType*>(inputData);
-  this->m_meshFilter->SetInput(fixedMesh);
+  //this->SetPrimaryOutput()
+  this->GenerateOutputInformation();
+  this->GenerateData();
 }
 
-template< typename TFixedImage, typename TMovingImage >
-void SuperElastixFilter< TFixedImage, TMovingImage >
-::ConnectPlaceholderSinkA(itk::DataObject* outputPlaceholder)
-{
-  this->m_imageFilter->GraftOutput(outputPlaceholder);
-}
-template< typename TFixedImage, typename TMovingImage >
-itk::DataObject* SuperElastixFilter< TFixedImage, TMovingImage >
-::ConnectDataSinkA()
-{
-  return this->m_imageFilter->GetOutput();
-}
-
-template< typename TFixedImage, typename TMovingImage >
-void SuperElastixFilter< TFixedImage, TMovingImage >
-::ConnectPlaceholderSinkB(itk::DataObject* outputPlaceholder)
-{
-  this->m_meshFilter->GraftOutput(outputPlaceholder);
-}
-template< typename TFixedImage, typename TMovingImage >
-itk::DataObject* SuperElastixFilter < TFixedImage, TMovingImage >
-::ConnectDataSinkB()
-{
-  return this->m_meshFilter->GetOutput();
-}
 } // namespace elx
 
 #endif // selxSuperElastixFilter_hxx

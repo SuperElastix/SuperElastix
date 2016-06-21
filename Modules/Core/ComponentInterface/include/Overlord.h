@@ -23,8 +23,9 @@
 #include "itkLightProcessObject.h"
 #include "itkObjectFactory.h"
 #include "itkVectorContainer.h"
-#include "itkImageFileReader.h"
-#include "itkImageFileWriter.h"
+
+#include "selxAnyFileReader.h"
+#include "selxAnyFileWriter.h"
 
 #include <list>
 #include <vector>
@@ -50,75 +51,27 @@ namespace selx
     typedef ComponentBase::CriteriaType CriteriaType;
     typedef ComponentBase::CriterionType CriterionType;
     typedef ComponentBase::ParameterValueType ParameterValueType;
-    //typedef std::map<std::string, std::string> CriteriaType;
-    //typedef std::pair<std::string, std::string> CriterionType;
 
     typedef ComponentBase       ComponentType;
     typedef ComponentSelector::Pointer ComponentSelectorPointer;
-    typedef std::map< Blueprint::ComponentNameType, ComponentSelectorPointer> ComponentSelectorContainerType;
+    typedef Blueprint BlueprintType;
+    typedef BlueprintType::ComponentNameType ComponentNameType;
+    typedef std::map< ComponentNameType, ComponentSelectorPointer> ComponentSelectorContainerType;
     typedef ComponentSelectorContainerType::iterator ComponentSelectorIteratorType;
 
-    typedef itk::ImageFileReader<itk::Image<float, 2>> Reader2floatType;
-    typedef itk::ImageFileWriter<itk::Image<float, 2>> Writer2floatType;
-
-    typedef itk::VectorContainer <
-      unsigned int, Reader2floatType::Pointer > Reader2floatContainerType;
-
-    typedef itk::VectorContainer <
-      unsigned int, Writer2floatType::Pointer > Writer2floatContainerType;
-
-
-    typedef itk::ImageFileReader<itk::Image<double, 3>> Reader3doubleType;
-    typedef itk::ImageFileWriter<itk::Image<double, 3>> Writer3doubleType;
-
-    typedef itk::VectorContainer <
-      unsigned int, Reader3doubleType::Pointer > Reader3doubleContainerType;
-
-    typedef itk::VectorContainer <
-      unsigned int, Writer3doubleType::Pointer > Writer3doubleContainerType;
-
-
-    typedef itk::ImageFileWriter<itk::Image<itk::Vector<float, 2>, 2>> WriterDisplacement2floatType;
-    typedef itk::ImageFileWriter<itk::Image<itk::Vector<double, 3>, 3>> WriterDisplacement3doubleType;
-
-    typedef itk::VectorContainer <
-      unsigned int, WriterDisplacement2floatType::Pointer > WriterDisplacement2floatContainerType;
-
-    typedef itk::VectorContainer <
-      unsigned int, WriterDisplacement3doubleType::Pointer > WriterDisplacement3doubleContainerType;
-
-
-   // typedef itk::Object::Pointer ObjectPointer;
-   // typedef itk::VectorContainer <
-   //   unsigned int, ObjectPointer > ObjectContainerType;
-
-    //typedef itk::VectorContainer <
-    //  unsigned int, SinkInterface* > SinkComponentsContainerType;
-    
-    //typedef itk::VectorContainer <
-    //  unsigned int, SourceInterface* > SourceInterfaceContainerType;
+    typedef AnyFileReader AnyFileReaderType;
+    typedef AnyFileWriter AnyFileWriterType;
 
     typedef std::map <
-      std::string, SourceInterface2* > SourceInterfaceMapType;
+      std::string, SourceInterface* > SourceInterfaceMapType;
 
     typedef std::map <
-      std::string, SinkInterface2* > SinkInterfaceMapType;
-
-    //TODO these containers are not interface specific
-    //typedef itk::VectorContainer <
-    //  unsigned int, ComponentType::Pointer > SinkComponentsContainerType;
-
-    //typedef itk::VectorContainer <
-    //  unsigned int, ComponentType::Pointer > SourceComponentsContainerType;
-
-   // typedef std::vector <
-   //   unsigned int, SinkInterface* > SinkComponentsContainerType;
-
-   typedef std::vector <
-      unsigned int, SourceInterface* > SourceComponentsContainerType;
+      std::string, SinkInterface* > SinkInterfaceMapType;
 
    SourceInterfaceMapType GetSourceInterfaces();
    SinkInterfaceMapType GetSinkInterfaces();
+
+   SinkInterface::DataObjectPointer GetInitializedOutput(const Overlord::ComponentNameType&);
 
     typedef itk::VectorContainer <
       unsigned int, ComponentType::Pointer > ComponentsContainerType;
@@ -129,8 +82,9 @@ namespace selx
     bool Configure();
     bool Execute();
 
-    std::vector<std::string> inputFileNames;
-    std::vector<std::string> outputFileNames;
+    AnyFileReaderType::Pointer GetInputFileReader(const ComponentNameType&);
+    AnyFileWriterType::Pointer GetOutputFileWriter(const ComponentNameType&);
+
   protected:
     
     Overlord();
@@ -141,27 +95,19 @@ namespace selx
     bool UpdateSelectors();
     bool ConnectComponents();
     bool FindAfterRegistration();
-  private:
     bool FindRunRegistration();
-    
+  private:
     bool ConnectSources();
     bool ConnectSinks();
     bool RunRegistrations();
     bool AfterRegistrations();
+
     //TODO make const correct
     //Blueprint::ConstPointer m_Blueprint;
-    Blueprint::Pointer m_Blueprint;
+    BlueprintType::Pointer m_Blueprint;
     ComponentSelectorContainerType m_ComponentSelectorContainer;
-    //ObjectContainerType::Pointer m_InputObjects;
-    //ObjectContainerType::Pointer m_OutputObjects;
-    //SinkComponentsContainerType::Pointer m_SinkComponents;
-    //SourceComponentsContainerType::Pointer m_SourceComponents;
-    Reader3doubleContainerType::Pointer m_Readers3double;
-    Writer3doubleContainerType::Pointer m_Writers3double;
-    Reader2floatContainerType::Pointer m_Readers2float;
-    Writer2floatContainerType::Pointer m_Writers2float;
-    WriterDisplacement2floatContainerType::Pointer m_WritersDisplacement2float;
-    WriterDisplacement3doubleContainerType::Pointer m_WritersDisplacement3double;
+    bool m_isConfigured;
+    bool m_allUniqueComponents;
     
     ComponentsContainerType::Pointer m_RunRegistrationComponents;
     ComponentsContainerType::Pointer m_AfterRegistrationComponents;

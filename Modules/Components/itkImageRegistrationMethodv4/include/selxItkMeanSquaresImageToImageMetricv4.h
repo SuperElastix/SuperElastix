@@ -49,8 +49,6 @@ namespace selx
     typedef itk::Image<PixelType, Dimensionality> MovingImageType;
 
     typedef typename itk::ImageToImageMetricv4<FixedImageType, MovingImageType> ImageToImageMetricv4Type;
-    //typedef typename ItkMetricv4Interface<Dimensionality, TPixel>::ImageToImageMetricv4Type ImageToImageMetricv4Type;
-      //typedef ItkMetricv4Interface<Dimensionality, TPixel>::ImageToImageMetricv4Type ItkMetricv4Pointer
     typedef typename ImageToImageMetricv4Type::Pointer ItkMetricv4Pointer;
     
     typedef typename itk::MeanSquaresImageToImageMetricv4<FixedImageType, MovingImageType> TheItkFilterType;
@@ -167,4 +165,4 @@ namespace selx
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "selxItkMeanSquaresImageToImageMetricv4.hxx"
 #endif
-#endif // #define GDOptimizer3rdPartyComponent_h
+#endif // #define selxItkMeanSquaresImageToImageMetricv4Component_h

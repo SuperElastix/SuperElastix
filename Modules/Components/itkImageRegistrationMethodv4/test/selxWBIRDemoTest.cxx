@@ -17,15 +17,13 @@
  *
  *=========================================================================*/
 
-#include "Overlord.h"
+#include "selxSuperElastixFilter.h"
 
 #include "selxItkSmoothingRecursiveGaussianImageFilterComponent.h"
-#include "selxItkImageFilterSink.h"
 #include "selxDisplacementFieldItkImageFilterSink.h"
 #include "selxItkImageSource.h"
 
 #include "selxElastixComponent.h"
-#include "selxItkImageFilterSink.h"
 #include "selxItkImageSink.h"
 
 #include "selxItkImageRegistrationMethodv4Component.h"
@@ -61,17 +59,24 @@ class WBIRDemoTest : public ::testing::Test {
  
 public:
   typedef Overlord::Pointer                 OverlordPointerType;
+  typedef SuperElastixFilter<bool>          SuperElastixFilterType;
   typedef Blueprint::Pointer                BlueprintPointerType;
   typedef Blueprint::ConstPointer           BlueprintConstPointerType;
   typedef Blueprint::ParameterMapType       ParameterMapType;
   typedef Blueprint::ParameterValueType     ParameterValueType;
   typedef DataManager DataManagerType;
 
+  typedef itk::Image<float, 2> Image2DType;
+  typedef itk::ImageFileReader<Image2DType> ImageReader2DType;
+  typedef itk::ImageFileWriter<Image2DType> ImageWriter2DType;
+
+  typedef itk::Image<itk::Vector<float, 2>, 2> VectorImage2DType;
+  typedef itk::ImageFileWriter<VectorImage2DType> VectorImageWriter2DType;
+
   /** Fill SUPERelastix' component data base by registering various components */
   virtual void SetUp() {
     
     
-    ComponentFactory<ItkImageFilterSinkComponent<2, float>>::RegisterOneFactory();
     ComponentFactory<DisplacementFieldItkImageFilterSinkComponent<2, float>>::RegisterOneFactory(); 
     ComponentFactory<ItkImageSourceFixedComponent<2, float>>::RegisterOneFactory();
     ComponentFactory<ItkImageSourceMovingComponent<2, float>>::RegisterOneFactory();
@@ -89,8 +94,8 @@ public:
   }
 
   BlueprintPointerType blueprint;
-  Overlord::Pointer overlord;
-
+  //Overlord::Pointer overlord;
+  SuperElastixFilterType::Pointer superElastixFilter;
 };
 
 /** Experiment 2a: ITKv4 framework, stationary velocity field transform, ANTs neighborhood correlation metric */
@@ -112,7 +117,7 @@ TEST_F(WBIRDemoTest, itkv4_SVF_ANTSCC)
   blueprint->AddComponent("MovingImageSource", component2Parameters);
 
   ParameterMapType component3Parameters;
-  component3Parameters["NameOfClass"] = { "ItkImageFilterSinkComponent" };
+  component3Parameters["NameOfClass"] = { "ItkImageSinkComponent" };
   blueprint->AddComponent("ResultImageSink", component3Parameters);
 
   ParameterMapType component4Parameters;
@@ -126,12 +131,12 @@ TEST_F(WBIRDemoTest, itkv4_SVF_ANTSCC)
 
   ParameterMapType connection1Parameters;
   //optionally, tie properties to connection to avoid ambiguities
-  //connection1Parameters["NameOfInterface"] = { "itkImageSourceFixedInterface" };
+  //connection1Parameters["NameOfInterface"] = { "itkImageFixedInterface" };
   blueprint->AddConnection("FixedImageSource", "RegistrationMethod", connection1Parameters);
 
   ParameterMapType connection2Parameters;
   //optionally, tie properties to connection to avoid ambiguities
-  //connection2Parameters["NameOfInterface"] = { "itkImageSourceMovingInterface" };
+  //connection2Parameters["NameOfInterface"] = { "itkImageMovingInterface" };
   blueprint->AddConnection("MovingImageSource", "RegistrationMethod", connection2Parameters);
 
   ParameterMapType connection3Parameters;
@@ -151,18 +156,41 @@ TEST_F(WBIRDemoTest, itkv4_SVF_ANTSCC)
 
   blueprint->WriteBlueprint("itkv4_SVF_ANTSCC.dot");
 
-  EXPECT_NO_THROW(overlord = Overlord::New());
+  // Instantiate SuperElastix
+  EXPECT_NO_THROW(superElastixFilter = SuperElastixFilterType::New());
 
-  //The Overlord is not yet an itkfilter with inputs and outputs, therefore it reads and writes the files temporarily.
+  // Data manager provides the paths to the input and output data for unit tests
   DataManagerType::Pointer dataManager = DataManagerType::New();
-  overlord->inputFileNames = { dataManager->GetInputFile("coneA2d64.mhd"), dataManager->GetInputFile("coneB2d64.mhd") };
-  overlord->outputFileNames = { dataManager->GetOutputFile("itkv4_SVF_ANTSCC_Image.mhd"), dataManager->GetOutputFile("itkv4_SVF_ANTSCC_Displacement.mhd") };
 
-  EXPECT_NO_THROW(overlord->SetBlueprint(blueprint));
-  bool allUniqueComponents;
-  EXPECT_NO_THROW(allUniqueComponents = overlord->Configure());
-  EXPECT_TRUE(allUniqueComponents);
-  EXPECT_NO_THROW(overlord->Execute());
+  // Set up the readers and writers
+  ImageReader2DType::Pointer fixedImageReader = ImageReader2DType::New();
+  fixedImageReader->SetFileName(dataManager->GetInputFile("coneA2d64.mhd"));
+
+  ImageReader2DType::Pointer movingImageReader = ImageReader2DType::New();
+  movingImageReader->SetFileName(dataManager->GetInputFile("coneB2d64.mhd"));
+  
+  ImageWriter2DType::Pointer resultImageWriter = ImageWriter2DType::New();
+  resultImageWriter->SetFileName(dataManager->GetOutputFile("itkv4_SVF_ANTSCC_Image.mhd"));
+
+  VectorImageWriter2DType::Pointer vectorImageWriter = VectorImageWriter2DType::New();
+  vectorImageWriter->SetFileName(dataManager->GetOutputFile("itkv4_SVF_ANTSCC_Displacement.mhd"));
+  
+  // Connect SuperElastix in an itk pipeline
+  superElastixFilter->SetInput("FixedImageSource", fixedImageReader->GetOutput());
+  superElastixFilter->SetInput("MovingImageSource", movingImageReader->GetOutput());
+
+  resultImageWriter->SetInput(superElastixFilter->GetOutput<Image2DType>("ResultImageSink"));
+  vectorImageWriter->SetInput(superElastixFilter->GetOutput<VectorImage2DType>("ResultDisplacementFieldSink"));
+
+  EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
+
+  //Optional Update call
+  //superElastixFilter->Update();
+
+  // Update call on the writers triggers SuperElastix to configure and execute
+  EXPECT_NO_THROW(resultImageWriter->Update());
+  EXPECT_NO_THROW(vectorImageWriter->Update());
+
 }
 
 /** Experiment 2b: ITKv4 framework, stationary velocity field transform, mean squared differences metric */
@@ -184,7 +212,7 @@ TEST_F(WBIRDemoTest, itkv4_SVF_MSD)
   blueprint->AddComponent("MovingImageSource", component2Parameters);
 
   ParameterMapType component3Parameters;
-  component3Parameters["NameOfClass"] = { "ItkImageFilterSinkComponent" };
+  component3Parameters["NameOfClass"] = { "ItkImageSinkComponent" };
   blueprint->AddComponent("ResultImageSink", component3Parameters);
 
   ParameterMapType component4Parameters;
@@ -198,12 +226,12 @@ TEST_F(WBIRDemoTest, itkv4_SVF_MSD)
 
   ParameterMapType connection1Parameters;
   //optionally, tie properties to connection to avoid ambiguities
-  //connection1Parameters["NameOfInterface"] = { "itkImageSourceFixedInterface" };
+  //connection1Parameters["NameOfInterface"] = { "itkImageFixedInterface" };
   blueprint->AddConnection("FixedImageSource", "RegistrationMethod", connection1Parameters);
 
   ParameterMapType connection2Parameters;
   //optionally, tie properties to connection to avoid ambiguities
-  //connection2Parameters["NameOfInterface"] = { "itkImageSourceMovingInterface" };
+  //connection2Parameters["NameOfInterface"] = { "itkImageMovingInterface" };
   blueprint->AddConnection("MovingImageSource", "RegistrationMethod", connection2Parameters);
 
   ParameterMapType connection3Parameters;
@@ -223,18 +251,41 @@ TEST_F(WBIRDemoTest, itkv4_SVF_MSD)
 
   blueprint->WriteBlueprint("itkv4_SVF_MSD.dot");
 
-  EXPECT_NO_THROW(overlord = Overlord::New());
+  // Instantiate SuperElastix
+  EXPECT_NO_THROW(superElastixFilter = SuperElastixFilterType::New());
 
-  //The Overlord is not yet an itkfilter with inputs and outputs, therefore it reads and writes the files temporarily.
+  // Data manager provides the paths to the input and output data for unit tests
   DataManagerType::Pointer dataManager = DataManagerType::New();
-  overlord->inputFileNames = { dataManager->GetInputFile("coneA2d64.mhd"), dataManager->GetInputFile("coneB2d64.mhd") };
-  overlord->outputFileNames = { dataManager->GetOutputFile("itkv4_SVF_MSD_Image.mhd"), dataManager->GetOutputFile("itkv4_SVF_MSD_Displacement.mhd") };
-  
-  EXPECT_NO_THROW(overlord->SetBlueprint(blueprint));
-  bool allUniqueComponents;
-  EXPECT_NO_THROW(allUniqueComponents = overlord->Configure());
-  EXPECT_TRUE(allUniqueComponents);
-  EXPECT_NO_THROW(overlord->Execute());
+
+  // Set up the readers and writers
+  ImageReader2DType::Pointer fixedImageReader = ImageReader2DType::New();
+  fixedImageReader->SetFileName(dataManager->GetInputFile("coneA2d64.mhd"));
+
+  ImageReader2DType::Pointer movingImageReader = ImageReader2DType::New();
+  movingImageReader->SetFileName(dataManager->GetInputFile("coneB2d64.mhd"));
+
+  ImageWriter2DType::Pointer resultImageWriter = ImageWriter2DType::New();
+  resultImageWriter->SetFileName(dataManager->GetOutputFile("itkv4_SVF_MSD_Image.mhd"));
+
+  VectorImageWriter2DType::Pointer vectorImageWriter = VectorImageWriter2DType::New();
+  vectorImageWriter->SetFileName(dataManager->GetOutputFile("itkv4_SVF_MSD_Displacement.mhd"));
+
+  // Connect SuperElastix in an itk pipeline
+  superElastixFilter->SetInput("FixedImageSource", fixedImageReader->GetOutput());
+  superElastixFilter->SetInput("MovingImageSource", movingImageReader->GetOutput());
+
+  resultImageWriter->SetInput(superElastixFilter->GetOutput<Image2DType>("ResultImageSink"));
+  vectorImageWriter->SetInput(superElastixFilter->GetOutput<VectorImage2DType>("ResultDisplacementFieldSink"));
+
+  EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
+
+  //Optional Update call
+  //superElastixFilter->Update();
+
+  // Update call on the writers triggers SuperElastix to configure and execute
+  EXPECT_NO_THROW(resultImageWriter->Update());
+  EXPECT_NO_THROW(vectorImageWriter->Update());
+
 }
 
 /** Experiment 1a: elastix framework, B-spline transform, normalized correlation metric */
@@ -264,12 +315,12 @@ TEST_F(WBIRDemoTest, elastix_BS_NCC)
 
   ParameterMapType connection1Parameters;
   //optionally, tie properties to connection to avoid ambiguities
-  //connection1Parameters["NameOfInterface"] = { "itkImageSourceFixedInterface" };
+  //connection1Parameters["NameOfInterface"] = { "itkImageFixedInterface" };
   blueprint->AddConnection("FixedImageSource", "RegistrationMethod", connection1Parameters);
 
   ParameterMapType connection2Parameters;
   //optionally, tie properties to connection to avoid ambiguities
-  //connection2Parameters["NameOfInterface"] = { "itkImageSourceMovingInterface" };
+  //connection2Parameters["NameOfInterface"] = { "itkImageMovingInterface" };
   blueprint->AddConnection("MovingImageSource", "RegistrationMethod", connection2Parameters);
 
   ParameterMapType connection3Parameters;
@@ -279,18 +330,40 @@ TEST_F(WBIRDemoTest, elastix_BS_NCC)
 
   blueprint->WriteBlueprint("elastix_BS_NCC.dot");
 
-  EXPECT_NO_THROW(overlord = Overlord::New());
-  EXPECT_NO_THROW(overlord->SetBlueprint(blueprint));
+  // Instantiate SuperElastix
+  EXPECT_NO_THROW(superElastixFilter = SuperElastixFilterType::New());
 
-  //The Overlord is not yet an itkfilter with inputs and outputs, therefore it reads and writes the files temporarily.
+  // Data manager provides the paths to the input and output data for unit tests
   DataManagerType::Pointer dataManager = DataManagerType::New();
-  overlord->inputFileNames = { dataManager->GetInputFile("coneA2d64.mhd"), dataManager->GetInputFile("coneB2d64.mhd") };
-  overlord->outputFileNames = { dataManager->GetOutputFile("elastix_BS_NCC_Image.mhd"), dataManager->GetOutputFile("elastix_BS_NCC_Displacement.mhd") };
 
-  bool allUniqueComponents;
-  EXPECT_NO_THROW(allUniqueComponents = overlord->Configure());
-  EXPECT_TRUE(allUniqueComponents);
-  EXPECT_NO_THROW(overlord->Execute());
+  // Set up the readers and writers
+  ImageReader2DType::Pointer fixedImageReader = ImageReader2DType::New();
+  fixedImageReader->SetFileName(dataManager->GetInputFile("coneA2d64.mhd"));
+
+  ImageReader2DType::Pointer movingImageReader = ImageReader2DType::New();
+  movingImageReader->SetFileName(dataManager->GetInputFile("coneB2d64.mhd"));
+
+  ImageWriter2DType::Pointer resultImageWriter = ImageWriter2DType::New();
+  resultImageWriter->SetFileName(dataManager->GetOutputFile("elastix_BS_NCC_Image.mhd"));
+
+  VectorImageWriter2DType::Pointer vectorImageWriter = VectorImageWriter2DType::New();
+  vectorImageWriter->SetFileName(dataManager->GetOutputFile("elastix_BS_NCC_Displacement.mhd"));
+
+  // Connect SuperElastix in an itk pipeline
+  superElastixFilter->SetInput("FixedImageSource", fixedImageReader->GetOutput());
+  superElastixFilter->SetInput("MovingImageSource", movingImageReader->GetOutput());
+
+  resultImageWriter->SetInput(superElastixFilter->GetOutput<Image2DType>("ResultImageSink"));
+  vectorImageWriter->SetInput(superElastixFilter->GetOutput<VectorImage2DType>("ResultDisplacementFieldSink"));
+
+  EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
+
+  //Optional Update call
+  //superElastixFilter->Update();
+
+  // Update call on the writers triggers SuperElastix to configure and execute
+  EXPECT_NO_THROW(resultImageWriter->Update());
+  //EXPECT_NO_THROW(vectorImageWriter->Update());
 
   CopyselxDeformationField<2, float>(dataManager->GetOutputFile("elastix_BS_NCC_Displacement.mhd"));
 }
@@ -322,12 +395,12 @@ TEST_F(WBIRDemoTest, elastix_BS_MSD)
 
   ParameterMapType connection1Parameters;
   //optionally, tie properties to connection to avoid ambiguities
-  //connection1Parameters["NameOfInterface"] = { "itkImageSourceFixedInterface" };
+  //connection1Parameters["NameOfInterface"] = { "itkImageFixedInterface" };
   blueprint->AddConnection("FixedImageSource", "RegistrationMethod", connection1Parameters);
 
   ParameterMapType connection2Parameters;
   //optionally, tie properties to connection to avoid ambiguities
-  //connection2Parameters["NameOfInterface"] = { "itkImageSourceMovingInterface" };
+  //connection2Parameters["NameOfInterface"] = { "itkImageMovingInterface" };
   blueprint->AddConnection("MovingImageSource", "RegistrationMethod", connection2Parameters);
 
   ParameterMapType connection3Parameters;
@@ -337,19 +410,41 @@ TEST_F(WBIRDemoTest, elastix_BS_MSD)
 
   blueprint->WriteBlueprint("elastix_BS_MSD.dot");
 
-  EXPECT_NO_THROW(overlord = Overlord::New());
-  EXPECT_NO_THROW(overlord->SetBlueprint(blueprint));
+  // Instantiate SuperElastix
+  EXPECT_NO_THROW(superElastixFilter = SuperElastixFilterType::New());
 
-  //The Overlord is not yet an itkfilter with inputs and outputs, therefore it reads and writes the files temporarily.
+  // Data manager provides the paths to the input and output data for unit tests
   DataManagerType::Pointer dataManager = DataManagerType::New();
-  overlord->inputFileNames = { dataManager->GetInputFile("coneA2d64.mhd"), dataManager->GetInputFile("coneB2d64.mhd") };
-  overlord->outputFileNames = { dataManager->GetOutputFile("elastix_BS_MSD_Image.mhd"), dataManager->GetOutputFile("elastix_BS_MSD_Displacement.mhd") };
 
-  bool allUniqueComponents;
-  EXPECT_NO_THROW(allUniqueComponents = overlord->Configure());
-  EXPECT_TRUE(allUniqueComponents);
-  EXPECT_NO_THROW(overlord->Execute());
+  // Set up the readers and writers
+  ImageReader2DType::Pointer fixedImageReader = ImageReader2DType::New();
+  fixedImageReader->SetFileName(dataManager->GetInputFile("coneA2d64.mhd"));
 
+  ImageReader2DType::Pointer movingImageReader = ImageReader2DType::New();
+  movingImageReader->SetFileName(dataManager->GetInputFile("coneB2d64.mhd"));
+
+  ImageWriter2DType::Pointer resultImageWriter = ImageWriter2DType::New();
+  resultImageWriter->SetFileName(dataManager->GetOutputFile("elastix_BS_MSD_Image.mhd"));
+
+  VectorImageWriter2DType::Pointer vectorImageWriter = VectorImageWriter2DType::New();
+  vectorImageWriter->SetFileName(dataManager->GetOutputFile("elastix_BS_MSD_Displacement.mhd"));
+
+  // Connect SuperElastix in an itk pipeline
+  superElastixFilter->SetInput("FixedImageSource", fixedImageReader->GetOutput());
+  superElastixFilter->SetInput("MovingImageSource", movingImageReader->GetOutput());
+
+  resultImageWriter->SetInput(superElastixFilter->GetOutput<Image2DType>("ResultImageSink"));
+  vectorImageWriter->SetInput(superElastixFilter->GetOutput<VectorImage2DType>("ResultDisplacementFieldSink"));
+
+  EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
+
+  //Optional Update call
+  //superElastixFilter->Update();
+
+  // Update call on the writers triggers SuperElastix to configure and execute
+  EXPECT_NO_THROW(resultImageWriter->Update());
+  //EXPECT_NO_THROW(vectorImageWriter->Update());
+  
   CopyselxDeformationField<2, float>(dataManager->GetOutputFile("elastix_BS_MSD_Displacement.mhd"));
 }
 

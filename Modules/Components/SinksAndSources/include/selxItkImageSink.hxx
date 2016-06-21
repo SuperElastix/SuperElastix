@@ -37,13 +37,14 @@ namespace selx
   {
     if (this->m_OverlordOutputImage == nullptr)
     {
-      itkExceptionMacro("SinkComponent needs to be initialized by ConnectToOverlordSink()");
+      itkExceptionMacro("SinkComponent needs to be initialized by SetMiniPipelineOutput()");
     }
 
     // Store pointer to MiniPipelineOutputImage for later grafting onto Overlord output.
     this->m_MiniPipelineOutputImage = other->GetItkImage();
+    //this->m_MiniPipelineOutputImage->Graft(other->GetItkImage());
     // Graft Overlord output onto MiniPipelineOutputImage.
-    this->m_MiniPipelineOutputImage->Graft(this->m_OverlordOutputImage);
+    //this->m_MiniPipelineOutputImage->Graft(this->m_OverlordOutputImage);
     return 0;
   }
 
@@ -59,6 +60,7 @@ namespace selx
   {
     this->m_MiniPipelineOutputImage->Update();
   }
+
   template<int Dimensionality, class TPixel>
   void ItkImageSinkComponent< Dimensionality, TPixel>::SetMiniPipelineOutput(itk::DataObject::Pointer overlordOutput)
   {
@@ -66,7 +68,7 @@ namespace selx
      *  The resulting output image will be grafted into when the sink component is connected to an other component.
      * */
     // 
-    this->m_OverlordOutputImage = dynamic_cast<ItkImageType*>(&(*overlordOutput));
+    this->m_OverlordOutputImage = dynamic_cast<ItkImageType*>(overlordOutput.GetPointer());
     if (this->m_OverlordOutputImage == nullptr)
     {
       itkExceptionMacro("SinkComponent cannot cast the Overlord's Output to the required type");
@@ -76,15 +78,21 @@ namespace selx
   template<int Dimensionality, class TPixel>
   typename itk::DataObject::Pointer ItkImageSinkComponent< Dimensionality, TPixel>::GetMiniPipelineOutput()
   {
-    return &(*this->m_MiniPipelineOutputImage);
+    return this->m_MiniPipelineOutputImage.GetPointer();
   }
-  //template<int Dimensionality, class TPixel>
-  //bool ItkImageSinkComponent< Dimensionality, TPixel>::ConnectToOverlordSink(itk::DataObject::Pointer object)
-  //{
-  //  this->m_Image = dynamic_cast<ItkImageType*>(&(*object));
 
-  //  return (this->m_Image != nullptr);
-  //}
+  template<int Dimensionality, class TPixel>
+  typename AnyFileWriter::Pointer ItkImageSinkComponent< Dimensionality, TPixel>::GetOutputFileWriter()
+  {
+    // Instanstiate an image file writer, decorated such that it can be implicitly cast to an AnyFileWriterType
+    return DecoratedWriterType::New();
+  }
+
+  template<int Dimensionality, class TPixel>
+  typename itk::DataObject::Pointer ItkImageSinkComponent< Dimensionality, TPixel>::GetInitializedOutput()
+  {
+    return ItkImageType::New();
+  }
 
   template<int Dimensionality, class TPixel>
   bool ItkImageSinkComponent< Dimensionality, TPixel>::MeetsCriterion(const ComponentBase::CriterionType &criterion)

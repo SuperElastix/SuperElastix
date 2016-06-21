@@ -27,6 +27,7 @@ set( ${MODULE}_INCLUDE_DIRS
   ${${MODULE}_SOURCE_DIR}/ComponentInterface/include
   ${${MODULE}_SOURCE_DIR}/ConfigurationReader/include
   ${${MODULE}_SOURCE_DIR}/Filter/include
+  ${${MODULE}_SOURCE_DIR}/FileIO/include
   )
 
 # Collect header files for Visual Studio Project 
@@ -46,6 +47,7 @@ set( ${MODULE}_TESTS
   ${${MODULE}_SOURCE_DIR}/ComponentInterface/test/selxOverlordTest.cxx
   ${${MODULE}_SOURCE_DIR}/ConfigurationReader/test/selxConfigurationReaderTest.cxx
   ${${MODULE}_SOURCE_DIR}/Filter/test/selxSuperElastixFilterTest.cxx
+  ${${MODULE}_SOURCE_DIR}/FileIO/test/selxAnyFileIOTest.cxx
 )
 
 # Module source files

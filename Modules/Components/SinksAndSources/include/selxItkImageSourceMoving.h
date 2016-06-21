@@ -30,7 +30,7 @@ namespace selx
   class ItkImageSourceMovingComponent : 
     public Implements<
     Accepting<>,
-    Providing< SourceInterface, itkImageSourceMovingInterface<Dimensionality, TPixel > >
+    Providing< SourceInterface, itkImageMovingInterface<Dimensionality, TPixel > >
     >
   {
   public:
@@ -41,16 +41,17 @@ namespace selx
     ItkImageSourceMovingComponent();
     virtual ~ItkImageSourceMovingComponent();
 
-    typedef itk::ImageSource<itk::Image<TPixel, Dimensionality>> ItkImageSourceMovingType;
+    typedef typename itkImageMovingInterface<Dimensionality, TPixel >::ItkImageType ItkImageType;
     
 
-    virtual typename ItkImageSourceMovingType::Pointer GetItkImageSourceMoving() override;
-    virtual bool ConnectToOverlordSource(itk::Object::Pointer) override;
+    virtual typename ItkImageType::Pointer GetItkImageMoving() override;
+    virtual void SetMiniPipelineInput(itk::DataObject::Pointer) override;
 
     virtual bool MeetsCriterion(const ComponentBase::CriterionType &criterion) override;
     static const char * GetDescription() { return "ItkImageSourceMoving Component"; };
   private:
-    typename ItkImageSourceMovingType::Pointer m_Source;
+    typename ItkImageType::Pointer m_Image;
+
   protected:
     /* The following struct returns the string name of computation type */
     /* default implementation */
@@ -105,6 +106,7 @@ namespace selx
   {
     return std::string("double");
   }
+
 } //end namespace selx
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "selxItkImageSourceMoving.hxx"

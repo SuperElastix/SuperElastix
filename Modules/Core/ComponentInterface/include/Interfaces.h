@@ -31,6 +31,9 @@
 #include "itkImage.h"
 #include "itkMesh.h"
 
+#include "selxAnyFileReader.h"
+#include "selxAnyFileWriter.h"
+
 namespace selx
 {
   // Define the providing interfaces abstractly
@@ -65,60 +68,37 @@ namespace selx
     virtual int Update(ConflictinUpdateInterface*) = 0;
   };
 
-  class itkProcessObjectInterface {
-    public:
-      virtual itk::ProcessObject::Pointer GetItkProcessObject() = 0;
-  };
-
-  class itkImageToImageFilterInterface {
-    // An interface that exposes the entire filter
-  public:
-    virtual itk::ImageToImageFilter<itk::Image<double, 3>, itk::Image<double, 3>>::Pointer GetItkImageToImageFilter() = 0;
-  };
-
-  template<int Dimensionality, class TPixel>
-  class itkImageSourceInterface {
-    // An interface that exposes that its internal filter is derived from itkImageSource
-  public:
-    virtual typename itk::ImageSource<itk::Image<TPixel, Dimensionality>>::Pointer GetItkImageSource() = 0;
-  };
 
   template<int Dimensionality, class TPixel>
   class itkImageInterface {
     // An interface that passes the pointer of an output image
   public:
-    virtual typename itk::Image<TPixel, Dimensionality>::Pointer GetItkImage() = 0;
+    typedef typename itk::Image<TPixel, Dimensionality> ItkImageType;
+    virtual typename ItkImageType::Pointer GetItkImage() = 0;
   };
 
   template<int Dimensionality, class TPixel>
-  class itkImageSourceMovingInterface {
-    // An interface that exposes that its internal filter which is derived from itkImageSource
+  class itkImageFixedInterface {
+	  // An interface that passes the pointer of an output image
   public:
-    virtual typename itk::ImageSource<itk::Image<TPixel, Dimensionality>>::Pointer GetItkImageSourceMoving() = 0;
+    typedef typename itk::Image<TPixel, Dimensionality> ItkImageType;
+    virtual typename ItkImageType::Pointer GetItkImageFixed() = 0;
   };
 
   template<int Dimensionality, class TPixel>
-  class itkImageSourceFixedInterface {
-    // An interface that exposes that its internal filter which is derived from itkImageSource
-  public:
-    virtual typename itk::ImageSource<itk::Image<TPixel, Dimensionality>>::Pointer GetItkImageSourceFixed() = 0;
-  };
-
-  template<int Dimensionality, class TPixel>
-  class GetItkImageInterface {
+  class itkImageMovingInterface {
     // An interface that passes the pointer of an output image
-    // This interface can be used if itk classes are not implement as true filters, i.e. if ((itk::ImageSource) filter)->GetOutput() does not work.
   public:
-    virtual typename itk::Image<TPixel, Dimensionality>::Pointer GetItkImage() = 0;
+    typedef typename itk::Image<TPixel, Dimensionality> ItkImageType;
+    virtual typename ItkImageType::Pointer GetItkImageMoving() = 0;
   };
-
   template<int Dimensionality, class TPixel>
   class DisplacementFieldItkImageSourceInterface {
     // An interface that exposes that its internal filter is derived from itkImageSource
   public:
-    virtual typename itk::ImageSource<itk::Image<itk::Vector< TPixel, Dimensionality >, Dimensionality>>::Pointer GetDisplacementFieldItkImageSource() = 0;
+    typedef typename itk::Image<itk::Vector< TPixel, Dimensionality >, Dimensionality> ItkImageType;
+    virtual typename ItkImageType::Pointer GetDisplacementFieldItkImage() = 0;
   };
-
 
   template<int Dimensionality, class TPixel>
   class itkMeshInterface {
@@ -132,30 +112,18 @@ namespace selx
     // By this interface only Source Components can to talk to the Overlord.
     // How specific Source Components connect to the graph is up to them, i.e. they might adapt the passed Object to other types.
   public:
-    virtual bool ConnectToOverlordSource(itk::Object::Pointer) = 0;
+    virtual void SetMiniPipelineInput(itk::DataObject::Pointer) = 0;
   };
   class SinkInterface {
     // A special interface: the Overlord checks components for this type of interface.
     // By this interface only Sink Components can to talk to the Overlord
     // How specific Sink Components connect to the graph is up to them, i.e. they might adapt the passed Object to other types.
   public:
-    virtual bool ConnectToOverlordSink(itk::Object::Pointer) = 0;
-  };
-
-  class SourceInterface2 {
-    // A special interface: the Overlord checks components for this type of interface.
-    // By this interface only Source Components can to talk to the Overlord.
-    // How specific Source Components connect to the graph is up to them, i.e. they might adapt the passed Object to other types.
-  public:
-    virtual void SetMiniPipelineInput(itk::DataObject::Pointer) = 0;
-  };
-  class SinkInterface2 {
-    // A special interface: the Overlord checks components for this type of interface.
-    // By this interface only Sink Components can to talk to the Overlord
-    // How specific Sink Components connect to the graph is up to them, i.e. they might adapt the passed Object to other types.
-  public:
-    virtual void SetMiniPipelineOutput(itk::DataObject::Pointer) = 0;
-    virtual itk::DataObject::Pointer GetMiniPipelineOutput(void) = 0;
+    typedef itk::DataObject::Pointer DataObjectPointer;
+    virtual void SetMiniPipelineOutput(DataObjectPointer) = 0;
+    virtual DataObjectPointer GetMiniPipelineOutput(void) = 0;
+    virtual AnyFileWriter::Pointer GetOutputFileWriter(void) = 0;
+    virtual DataObjectPointer GetInitializedOutput(void) = 0;
   };
 
   class RunRegistrationInterface {
