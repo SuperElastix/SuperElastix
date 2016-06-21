@@ -58,6 +58,7 @@ public:
   typedef itk::Image<double, 3> Image3DType;
   typedef itk::ImageFileReader<Image3DType> ImageReader3DType;
   typedef itk::ImageFileWriter<Image3DType> ImageWriter3DType;
+
   typedef itk::Image<itk::Vector<double,3>, 3> DisplacementImage3DType;
   typedef itk::ImageFileWriter<DisplacementImage3DType> DisplacementImageWriter3DType;
 
@@ -357,7 +358,7 @@ TEST_F(RegistrationItkv4Test, DisplacementField)
 
   ParameterMapType component3Parameters;
   component3Parameters["NameOfClass"] = { "ItkImageSinkComponent" };
-  component3Parameters["Dimensionality"] = { "2" }; // should be derived from the outputs
+  component3Parameters["Dimensionality"] = { "3" }; // should be derived from the outputs
   blueprint->AddComponent("ResultImageSink", component3Parameters);
 
   ParameterMapType component4Parameters;
