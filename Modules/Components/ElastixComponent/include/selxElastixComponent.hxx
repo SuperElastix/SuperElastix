@@ -42,8 +42,6 @@ namespace selx
     m_transformixFilter->LogToFileOff();
     m_transformixFilter->SetOutputDirectory(".");
 
-    // In the current transformix filter an input image is required even if we want a deformation field only.
-    m_transformixFilter->SetInput(m_elastixFilter->GetOutput());
     
     //TODO m_elastixFilter returns a nullptr GetTransformParameterObject instead of a valid object. However, we need this object to satisfy the input conditions of m_transformixFilter
     //m_transformixFilter->SetTransformParameterObject(m_elastixFilter->GetTransformParameterObject());
@@ -73,6 +71,8 @@ namespace selx
     auto movingImage = component->GetItkImageMoving();
     // connect the itk pipeline
     this->m_elastixFilter->SetMovingImage(movingImage);
+    // In the current transformix filter an input image is required even if we want a deformation field only.
+    this->m_transformixFilter->SetInput(movingImage);
     return 0;
   }
 
