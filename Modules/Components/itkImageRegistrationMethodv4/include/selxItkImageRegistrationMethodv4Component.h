@@ -1,3 +1,22 @@
+/*=========================================================================
+ *
+ *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Center and contributors
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *=========================================================================*/
+
 #ifndef selxItkImageRegistrationMethodv4Component_h
 #define selxItkImageRegistrationMethodv4Component_h
 
@@ -8,7 +27,7 @@
 #include "itkImageSource.h"
 #include <itkTransformToDisplacementFieldFilter.h>
 #include <string.h>
-#include "elxMacro.h"
+#include "selxMacro.h"
 
 
 #include "itkComposeDisplacementFieldsImageFilter.h"
@@ -21,18 +40,18 @@ namespace selx
   template <int Dimensionality, class TPixel>
   class ItkImageRegistrationMethodv4Component : 
     public Implements<
-    Accepting< itkImageSourceFixedInterface<Dimensionality, TPixel>, 
-               itkImageSourceMovingInterface<Dimensionality, TPixel>,
+    Accepting< itkImageFixedInterface<Dimensionality, TPixel>, 
+               itkImageMovingInterface<Dimensionality, TPixel>,
                itkMetricv4Interface<Dimensionality, TPixel>
              >,
-    Providing< itkImageSourceInterface<Dimensionality, TPixel>,
+    Providing< itkImageInterface<Dimensionality, TPixel>,
                DisplacementFieldItkImageSourceInterface<Dimensionality, TPixel>,
                RunRegistrationInterface
              >
     >
   {
   public:
-    elxNewMacro(ItkImageRegistrationMethodv4Component, ComponentBase);
+    selxNewMacro(ItkImageRegistrationMethodv4Component, ComponentBase);
 
     //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
 
@@ -48,12 +67,9 @@ namespace selx
     typedef itk::Image<PixelType, Dimensionality> FixedImageType; 
     typedef itk::Image<PixelType, Dimensionality> MovingImageType;
     
-    typedef itk::ImageSource<ConnectionImageType> ItkImageSourceType;
-    typedef typename ItkImageSourceType::Pointer ItkImageSourcePointer;
-
-    typedef itk::Image<itk::Vector<PixelType, Dimensionality>, Dimensionality> DisplacementFieldImageType;
-    typedef itk::ImageSource<DisplacementFieldImageType>DisplacementFieldItkImageSourceType;
-    typedef typename DisplacementFieldItkImageSourceType::Pointer DisplacementFieldItkImageSourcePointer;
+    typedef typename itk::Image<itk::Vector<PixelType, Dimensionality>, Dimensionality> DisplacementFieldImageType;
+    typedef typename itkImageInterface<Dimensionality, TPixel>::ItkImageType ResultItkImageType;
+    
 
     // TODO for now we hard code the transform to be a stationary velocity field. See Set(*MetricInterface) for implementation
     typedef double RealType;
@@ -65,13 +81,13 @@ namespace selx
     typedef itk::TransformToDisplacementFieldFilter<DisplacementFieldImageType> DisplacementFieldFilterType;
     
     //Accepting Interfaces:
-    virtual int Set(itkImageSourceFixedInterface<Dimensionality, TPixel>*) override;
-    virtual int Set(itkImageSourceMovingInterface<Dimensionality, TPixel>*) override;
+    virtual int Set(itkImageFixedInterface<Dimensionality, TPixel>*) override;
+    virtual int Set(itkImageMovingInterface<Dimensionality, TPixel>*) override;
     virtual int Set(itkMetricv4Interface<Dimensionality, TPixel>*) override;
     
     //Providing Interfaces:
-    virtual ItkImageSourcePointer GetItkImageSource() override;
-    virtual DisplacementFieldItkImageSourcePointer GetDisplacementFieldItkImageSource() override;
+    virtual typename ResultItkImageType::Pointer GetItkImage() override;
+    virtual typename DisplacementFieldImageType::Pointer GetDisplacementFieldItkImage() override;
 
     virtual void RunRegistration() override;
 

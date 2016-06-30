@@ -1,3 +1,22 @@
+/*=========================================================================
+ *
+ *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Center and contributors
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *=========================================================================*/
+
 #ifndef selxItkSmoothingRecursiveGaussianImageFilterComponent_h
 #define selxItkSmoothingRecursiveGaussianImageFilterComponent_h
 
@@ -6,22 +25,18 @@
 #include "itkSmoothingRecursiveGaussianImageFilter.h"
 #include "itkImageSource.h"
 #include <string.h>
-#include "elxMacro.h"
+#include "selxMacro.h"
 namespace selx
 {
   template <int Dimensionality, class TPixel>
   class ItkSmoothingRecursiveGaussianImageFilterComponent : 
     public Implements<
-    Accepting< itkImageSourceInterface<Dimensionality, TPixel> >,
-    Providing< itkImageSourceInterface<Dimensionality, TPixel> >
+    Accepting< itkImageInterface<Dimensionality, TPixel> >,
+    Providing< itkImageInterface<Dimensionality, TPixel> >
     >
-    // TODO: see if itkImageSourceInterface is the right way to connect itk filters..
-    //Accepting< itkProcessObjectInterface, itkImageToImageFilterInterface >,
-    //Providing< itkProcessObjectInterface, itkImageToImageFilterInterface >
-    //>
   {
   public:
-    elxNewMacro(ItkSmoothingRecursiveGaussianImageFilterComponent, ComponentBase);
+    selxNewMacro(ItkSmoothingRecursiveGaussianImageFilterComponent, ComponentBase);
 
     // itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
 
@@ -30,24 +45,14 @@ namespace selx
 
     typedef TPixel PixelType;
     typedef itk::SmoothingRecursiveGaussianImageFilter<itk::Image<PixelType, Dimensionality>, itk::Image<PixelType, Dimensionality>> TheItkFilterType;
-    typedef itk::ImageSource<itk::Image<PixelType, Dimensionality>> ItkImageSourceType;
-    typedef typename ItkImageSourceType::Pointer ItkImageSourcePointer;
+    typedef itk::Image<PixelType, Dimensionality> ItkImageType;
+    typedef typename ItkImageType::Pointer ItkImagePointer;
 
-    // TODO: see if itkImageSourceInterface is the right way to connect itk filters..
-    /*
-    virtual int Set(itkProcessObjectInterface*) override;
-    virtual itk::ProcessObject::Pointer GetItkProcessObject() override;
+    virtual int Set(itkImageInterface<Dimensionality, TPixel>*) override;
+    virtual ItkImagePointer GetItkImage() override;
 
-    virtual int Set(itkImageToImageFilterInterface*) override;
-    virtual itk::ImageToImageFilter<itk::Image<double, 3>, itk::Image<double, 3>>::Pointer GetItkImageToImageFilter() override;
-    */
-    virtual int Set(itkImageSourceInterface<Dimensionality, TPixel>*) override;
-    virtual ItkImageSourcePointer GetItkImageSource() override;
-
-    //int Update();
     //virtual bool MeetsCriteria(const CriteriaType &criteria);
     virtual bool MeetsCriterion(const ComponentBase::CriterionType &criterion) override;    
-    //static const char * GetName() { return "GDOptimizer3rdPartyComponent"; } ;
     static const char * GetDescription() { return "ItkSmoothingRecursiveGaussianImageFilter Component"; };
   private:
     typename TheItkFilterType::Pointer m_theItkFilter;

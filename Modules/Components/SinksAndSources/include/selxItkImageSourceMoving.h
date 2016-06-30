@@ -1,37 +1,57 @@
+/*=========================================================================
+ *
+ *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Center and contributors
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *=========================================================================*/
+
 #ifndef selxItkImageSourceMoving_h
 #define selxItkImageSourceMoving_h
 
 #include "ComponentBase.h"
 #include "Interfaces.h"
 #include <string.h>
-#include "elxMacro.h"
+#include "selxMacro.h"
 namespace selx
 {
   template<int Dimensionality, class TPixel>
   class ItkImageSourceMovingComponent : 
     public Implements<
     Accepting<>,
-    Providing< SourceInterface, itkImageSourceMovingInterface<Dimensionality, TPixel > >
+    Providing< SourceInterface, itkImageMovingInterface<Dimensionality, TPixel > >
     >
   {
   public:
-    elxNewMacro(ItkImageSourceMovingComponent, ComponentBase);
+    selxNewMacro(ItkImageSourceMovingComponent, ComponentBase);
 
     //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
 
     ItkImageSourceMovingComponent();
     virtual ~ItkImageSourceMovingComponent();
 
-    typedef itk::ImageSource<itk::Image<TPixel, Dimensionality>> ItkImageSourceMovingType;
+    typedef typename itkImageMovingInterface<Dimensionality, TPixel >::ItkImageType ItkImageType;
     
 
-    virtual typename ItkImageSourceMovingType::Pointer GetItkImageSourceMoving() override;
-    virtual bool ConnectToOverlordSource(itk::Object::Pointer) override;
+    virtual typename ItkImageType::Pointer GetItkImageMoving() override;
+    virtual void SetMiniPipelineInput(itk::DataObject::Pointer) override;
 
     virtual bool MeetsCriterion(const ComponentBase::CriterionType &criterion) override;
     static const char * GetDescription() { return "ItkImageSourceMoving Component"; };
   private:
-    typename ItkImageSourceMovingType::Pointer m_Source;
+    typename ItkImageType::Pointer m_Image;
+
   protected:
     /* The following struct returns the string name of computation type */
     /* default implementation */
@@ -86,6 +106,7 @@ namespace selx
   {
     return std::string("double");
   }
+
 } //end namespace selx
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "selxItkImageSourceMoving.hxx"

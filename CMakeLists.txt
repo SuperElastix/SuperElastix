@@ -1,3 +1,22 @@
+#=========================================================================
+#
+#  Copyright Leiden University Medical Center, Erasmus University Medical 
+#  Center and contributors
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#        http://www.apache.org/licenses/LICENSE-2.0.txt
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+#=========================================================================
+
 cmake_minimum_required( VERSION 3.0.2 )
 
 # Explicitly add INCREMENTAL linking option to command lines.
@@ -67,14 +86,15 @@ include_directories( ${Boost_INCLUDE_DIRS} )
 # Build SuperElastix
 
 # For now we just enable all modules
-include( elxModules )
-elxmodule_enable( ModuleCore )
-elxmodule_enable( ModuleElastix )
-elxmodule_enable( ModuleExamples )
-elxmodule_enable( ModuleSinksAndSources )
-elxmodule_enable( ModuleItkSmoothingRecursiveGaussianImageFilter )
-elxmodule_enable( ModuleItkImageRegistrationMethodv4 )
-elxmodule_enable( ModuleElastixComponent )
+include( selxModules )
+selxmodule_enable( ModuleCore )
+selxmodule_enable( ModuleExamples )
+selxmodule_enable( ModuleSinksAndSources )
+selxmodule_enable( ModuleItkSmoothingRecursiveGaussianImageFilter )
+selxmodule_enable( ModuleItkImageRegistrationMethodv4 )
+selxmodule_enable( ModuleElastixComponent )
+#selxmodule_enable( ModuleCommandLine )
+include(${CMAKE_SOURCE_DIR}/Modules/CommandLine/CommandLine.cmake)
 # TODO: Build tests depending on enabled modules
 
 # ---------------------------------------------------------------------

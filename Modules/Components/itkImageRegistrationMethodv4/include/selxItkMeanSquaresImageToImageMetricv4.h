@@ -1,3 +1,22 @@
+/*=========================================================================
+ *
+ *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Center and contributors
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *=========================================================================*/
+
 #ifndef selxItkMeanSquaresImageToImageMetricv4Component_h
 #define selxItkMeanSquaresImageToImageMetricv4Component_h
 
@@ -5,7 +24,7 @@
 #include "Interfaces.h"
 #include "itkMeanSquaresImageToImageMetricv4.h"
 #include <string.h>
-#include "elxMacro.h"
+#include "selxMacro.h"
 namespace selx
 {
   template <int Dimensionality, class TPixel>
@@ -16,7 +35,7 @@ namespace selx
     >
   {
   public:
-    elxNewMacro(ItkMeanSquaresImageToImageMetricv4Component, ComponentBase);
+    selxNewMacro(ItkMeanSquaresImageToImageMetricv4Component, ComponentBase);
 
     //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
 
@@ -30,8 +49,6 @@ namespace selx
     typedef itk::Image<PixelType, Dimensionality> MovingImageType;
 
     typedef typename itk::ImageToImageMetricv4<FixedImageType, MovingImageType> ImageToImageMetricv4Type;
-    //typedef typename ItkMetricv4Interface<Dimensionality, TPixel>::ImageToImageMetricv4Type ImageToImageMetricv4Type;
-      //typedef ItkMetricv4Interface<Dimensionality, TPixel>::ImageToImageMetricv4Type ItkMetricv4Pointer
     typedef typename ImageToImageMetricv4Type::Pointer ItkMetricv4Pointer;
     
     typedef typename itk::MeanSquaresImageToImageMetricv4<FixedImageType, MovingImageType> TheItkFilterType;
@@ -148,4 +165,4 @@ namespace selx
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "selxItkMeanSquaresImageToImageMetricv4.hxx"
 #endif
-#endif // #define GDOptimizer3rdPartyComponent_h
+#endif // #define selxItkMeanSquaresImageToImageMetricv4Component_h

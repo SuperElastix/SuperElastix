@@ -1,0 +1,66 @@
+<Component>
+    <Name>RegistrationMethod</Name>
+	<NameOfClass>ItkImageRegistrationMethodv4Component</NameOfClass>
+	<Dimensionality>2</Dimensionality>
+</Component>
+
+<Component>
+    <Name>FixedImage</Name>
+	<NameOfClass>ItkImageSourceFixedComponent</NameOfClass>
+	<Dimensionality>2</Dimensionality>
+</Component>
+
+<Component>
+    <Name>MovingImage</Name>
+	<NameOfClass>ItkImageSourceMovingComponent</NameOfClass>
+	<Dimensionality>2</Dimensionality>
+</Component>
+
+<Component>
+    <Name>ResultImage</Name>
+	<NameOfClass>ItkImageFilterSinkComponent</NameOfClass>
+	<Dimensionality>2</Dimensionality>
+</Component>
+
+<Component>
+    <Name>ResultDisplacementField</Name>
+	<NameOfClass>DisplacementFieldItkImageFilterSinkComponent</NameOfClass>
+	<Dimensionality>2</Dimensionality>
+</Component>
+
+<Component>
+    <Name>Metric</Name>
+	<NameOfClass>ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component</NameOfClass>
+	<Dimensionality>2</Dimensionality>
+</Component>
+
+
+<Connection>
+	<Out>FixedImage</Out>
+	<In>RegistrationMethod</In>
+	<NameOfInterface>itkImageFixedInterface</NameOfInterface>
+</Connection>
+
+<Connection>
+	<Out>MovingImage</Out>
+	<In>RegistrationMethod</In>
+	<NameOfInterface>itkImageMovingInterface</NameOfInterface>
+</Connection>
+
+<Connection>
+	<Out>RegistrationMethod</Out>
+	<In>ResultImage</In>
+	<NameOfInterface>itkImageInterface</NameOfInterface>
+</Connection>
+
+<Connection>
+	<Out>RegistrationMethod</Out>
+	<In>ResultDisplacementField</In>
+	<NameOfInterface>DisplacementFieldItkImageInterface</NameOfInterface>
+</Connection>
+
+<Connection>
+	<Out>Metric</Out>
+	<In>RegistrationMethod</In>
+	<NameOfInterface>itkMetricv4Interface</NameOfInterface>
+</Connection>

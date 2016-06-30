@@ -1,6 +1,7 @@
 /*=========================================================================
  *
- *  Copyright Insight Software Consortium
+ *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Center and contributors
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.

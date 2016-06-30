@@ -1,3 +1,22 @@
+#=========================================================================
+#
+#  Copyright Leiden University Medical Center, Erasmus University Medical 
+#  Center and contributors
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#        http://www.apache.org/licenses/LICENSE-2.0.txt
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+#=========================================================================
+
 cmake_minimum_required( VERSION 3.0.2 )
 
 # ---------------------------------------------------------------------
@@ -16,7 +35,7 @@ set( CMAKE_MODULE_PATH
 set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR} CACHE PATH "SuperBuild install directory" FORCE)
 
 # ---------------------------------------------------------------------
-# Elastix SuperBuild configuration
+# SuperElastix SuperBuild configuration
 
 # Build release by default
 if( NOT DEFINED CMAKE_BUILD_TYPE )
@@ -24,7 +43,7 @@ if( NOT DEFINED CMAKE_BUILD_TYPE )
 endif()
 
 # Build examples by default
-# Examples will be build as an external project to verify the installation of elastix
+# Examples will be build as an external project to verify the installation of SuperElastix
 option( SUPERELASTIX_BUILD_EXAMPLES "Enable building examples." ON )
 
 # Build tests by default
@@ -80,7 +99,7 @@ endif()
 mark_as_advanced( USE_SYSTEM_BOOST )
 option( USE_SYSTEM_BOOST "Use an installed version of BOOST" OFF )
 if( USE_SYSTEM_BOOST )
-  find_package( BOOST REQUIRED graph )
+  find_package( BOOST REQUIRED graph program_options filesystem)
 else()
   include( ExternalBoost )
 endif()

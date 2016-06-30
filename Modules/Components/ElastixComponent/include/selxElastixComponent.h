@@ -1,3 +1,22 @@
+/*=========================================================================
+ *
+ *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Center and contributors
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *=========================================================================*/
+
 #ifndef selxElastixComponent_h
 #define selxElastixComponent_h
 
@@ -10,24 +29,24 @@
 #include "elxTransformixFilter.h"
 
 #include <string.h>
-#include "elxMacro.h"
+#include "selxMacro.h"
 namespace selx
 {
   template <int Dimensionality, class TPixel>
   class ElastixComponent : 
     public Implements<
       Accepting< 
-        itkImageSourceFixedInterface<Dimensionality, TPixel>,
-        itkImageSourceMovingInterface<Dimensionality, TPixel>
+        itkImageFixedInterface<Dimensionality, TPixel>,
+        itkImageMovingInterface<Dimensionality, TPixel>
       >,
       Providing< 
-        GetItkImageInterface<Dimensionality, TPixel>, //Since elastixFilter is not a true itkfilter we cannot use itkImageSourceInterface (yet)
+        itkImageInterface<Dimensionality, TPixel>, 
         RunRegistrationInterface
       >
     >
   {
   public:
-    elxNewMacro(ElastixComponent, ComponentBase);
+    selxNewMacro(ElastixComponent, ComponentBase);
 
     //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
 
@@ -44,12 +63,9 @@ namespace selx
     typedef itk::Image<PixelType, Dimensionality> FixedImageType;
     typedef itk::Image<PixelType, Dimensionality> MovingImageType;
 
-    typedef itk::ImageSource<ConnectionImageType> ItkImageSourceType;
-    typedef typename ItkImageSourceType::Pointer ItkImageSourcePointer;
-
     typedef typename ConnectionImageType::Pointer ItkImagePointer;
 
-    typedef elastix::ElastixFilter< FixedImageType, MovingImageType > TheItkFilterType;
+    typedef elastix::ElastixFilter< FixedImageType, MovingImageType > ElastixFilterType;
     typedef elastix::ParameterObject elxParameterObjectType;
     typedef elxParameterObjectType::Pointer elxParameterObjectPointer;
     
@@ -58,19 +74,18 @@ namespace selx
 
     typedef itk::ResampleImageFilter<MovingImageType, ConnectionImageType> ResampleFilterType;
 
-    virtual int Set(itkImageSourceFixedInterface<Dimensionality, TPixel>*) override;
-    virtual int Set(itkImageSourceMovingInterface<Dimensionality, TPixel>*) override;
+    virtual int Set(itkImageFixedInterface<Dimensionality, TPixel>*) override;
+    virtual int Set(itkImageMovingInterface<Dimensionality, TPixel>*) override;
     
-    //Since elastixFilter is not a true itkfilter we cannot use itkImageSourceInterface (yet)
-    //virtual ItkImageSourcePointer GetItkImageSource() override;
     virtual ItkImagePointer GetItkImage() override;
     virtual void RunRegistration() override;
 
     virtual bool MeetsCriterion(const CriterionType &criterion) override;
     static const char * GetDescription() { return "Elastix Component"; };
   private:
-    typename TheItkFilterType::Pointer m_theItkFilter;
-    //elxParameterObjectPointer m_ParameterObject;
+    typename ElastixFilterType::Pointer m_elastixFilter;
+    typename TransformixFilterType::Pointer m_transformixFilter;
+    //selxParameterObjectPointer m_ParameterObject;
 
     ItkImagePointer m_OutputImage;
   protected:

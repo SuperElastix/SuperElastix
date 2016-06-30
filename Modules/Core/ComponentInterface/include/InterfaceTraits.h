@@ -1,3 +1,22 @@
+/*=========================================================================
+ *
+ *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Center and contributors
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *=========================================================================*/
+
 #ifndef InterfaceTraits_h
 #define InterfaceTraits_h
 
@@ -75,59 +94,35 @@ struct InterfaceName < TransformedImageInterface >
   }
 };
 
-template <>
-struct InterfaceName < itkProcessObjectInterface >
-{
-  static const char* Get()
-  {
-    return "itkProcessObjectInterface";
-  }
-};
-
-template <>
-struct InterfaceName < itkImageToImageFilterInterface >
-{
-  static const char* Get()
-  {
-    return "itkImageToImageFilterInterface";
-  }
-};
 
 // InterfaceName<T>::Get() should return "itkImageSourceInterface" no matter over which arguments itkImageSourceInterface is templated
 template <int D, class TPixel>
-struct InterfaceName < itkImageSourceInterface <D, TPixel> >
+struct InterfaceName < itkImageInterface <D, TPixel> >
 {
   static const char* Get()
   {
-    return "itkImageSourceInterface";
+    return "itkImageInterface";
   }
 };
 
 template <int D, class TPixel>
-struct InterfaceName < itkImageSourceFixedInterface <D, TPixel> >
+struct InterfaceName < itkImageFixedInterface <D, TPixel> >
 {
-  static const char* Get()
-  {
-    return "itkImageSourceFixedInterface";
-  }
-};
-template <int D, class TPixel>
-struct InterfaceName < itkImageSourceMovingInterface <D, TPixel> >
-{
-  static const char* Get()
-  {
-    return "itkImageSourceMovingInterface";
-  }
+	static const char* Get()
+	{
+		return "itkImageFixedInterface";
+	}
 };
 
 template <int D, class TPixel>
-struct InterfaceName < GetItkImageInterface <D, TPixel> >
+struct InterfaceName < itkImageMovingInterface <D, TPixel> >
 {
   static const char* Get()
   {
-    return "GetItkImageInterface";
+    return "itkImageMovingInterface";
   }
 };
+
 
 template <int D, class TPixel>
 struct InterfaceName < DisplacementFieldItkImageSourceInterface <D, TPixel> >
@@ -138,7 +133,14 @@ struct InterfaceName < DisplacementFieldItkImageSourceInterface <D, TPixel> >
   }
 };
 
-
+template <int D, class TPixel>
+struct InterfaceName < itkMeshInterface <D, TPixel> >
+{
+  static const char* Get()
+  {
+    return "itkMeshInterface";
+  }
+};
 
 
 template <>
@@ -158,6 +160,7 @@ struct InterfaceName < SinkInterface >
     return "SinkInterface";
   }
 };
+
 
 template <int D, class TPixel>
 struct InterfaceName < itkMetricv4Interface <D, TPixel> >

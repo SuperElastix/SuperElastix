@@ -1,37 +1,56 @@
+/*=========================================================================
+ *
+ *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Center and contributors
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *=========================================================================*/
+
 #ifndef selxItkImageSourceFixed_h
 #define selxItkImageSourceFixed_h
 
 #include "ComponentBase.h"
 #include "Interfaces.h"
 #include <string.h>
-#include "elxMacro.h"
+#include "selxMacro.h"
 namespace selx
 {
   template<int Dimensionality, class TPixel>
   class ItkImageSourceFixedComponent : 
     public Implements<
     Accepting<>,
-    Providing< SourceInterface, itkImageSourceFixedInterface<Dimensionality, TPixel > >
+    Providing< SourceInterface, itkImageFixedInterface<Dimensionality, TPixel > >
     >
   {
   public:
-    elxNewMacro(ItkImageSourceFixedComponent, ComponentBase);
+    selxNewMacro(ItkImageSourceFixedComponent, ComponentBase);
 
     //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
 
     ItkImageSourceFixedComponent();
     virtual ~ItkImageSourceFixedComponent();
 
-    typedef typename itk::ImageSource<itk::Image<TPixel, Dimensionality>> ItkImageSourceFixedType;
+    typedef typename itkImageFixedInterface<Dimensionality, TPixel >::ItkImageType ItkImageType;
     
 
-    virtual typename ItkImageSourceFixedType::Pointer GetItkImageSourceFixed() override;
-    virtual bool ConnectToOverlordSource(itk::Object::Pointer) override;
+    virtual typename ItkImageType::Pointer GetItkImageFixed() override;
+    virtual void SetMiniPipelineInput(itk::DataObject::Pointer) override;
 
     virtual bool MeetsCriterion(const ComponentBase::CriterionType &criterion) override;
     static const char * GetDescription() { return "ItkImageSourceFixed Component"; };
   private:
-    typename ItkImageSourceFixedType::Pointer m_Source;
+    typename ItkImageType::Pointer m_Image;
 
   protected:
     /* The following struct returns the string name of computation type */

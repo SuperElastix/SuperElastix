@@ -1,7 +1,26 @@
+#=========================================================================
+#
+#  Copyright Leiden University Medical Center, Erasmus University Medical 
+#  Center and contributors
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#        http://www.apache.org/licenses/LICENSE-2.0.txt
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+#=========================================================================
+
 set( proj Elastix )
 
 set( ELASTIX_GIT_REPOSITORY http://github.com/kaspermarstal/elastix )
-set( ELASTIX_GIT_TAG 31d502ba103e56f1c878923680ca1a706f348011 )
+set( ELASTIX_GIT_TAG 25c9dec600979a997faa373d7cd5259f65fac220 )
 
 ExternalProject_Add( ${proj} 
   GIT_REPOSITORY ${ELASTIX_GIT_REPOSITORY}
@@ -101,4 +120,4 @@ ExternalProject_Add( ${proj}
 ExternalProject_Get_Property( Elastix binary_dir )
 set( ELASTIX_USE_FILE "${binary_dir}/src/UseElastix.cmake" )
 
-list( APPEND ELASTIX_DEPENDENCIES ${proj} )
+list( APPEND SUPERELASTIX_DEPENDENCIES ${proj} )

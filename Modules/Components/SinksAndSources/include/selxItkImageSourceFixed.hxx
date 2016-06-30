@@ -1,37 +1,67 @@
+/*=========================================================================
+ *
+ *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Center and contributors
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *=========================================================================*/
+
 #include "selxItkImageSourceFixed.h"
 
 namespace selx
 {
   template<int Dimensionality, class TPixel>
-  ItkImageSourceFixedComponent< Dimensionality, TPixel>::ItkImageSourceFixedComponent()
-  {
-    this->m_Source = nullptr;
-  }
-
-  template<int Dimensionality, class TPixel>
-  ItkImageSourceFixedComponent< Dimensionality, TPixel>::~ItkImageSourceFixedComponent()
+  ItkImageSourceFixedComponent< Dimensionality, TPixel>
+    ::ItkImageSourceFixedComponent() : m_Image(nullptr)
   {
   }
 
   template<int Dimensionality, class TPixel>
-  typename ItkImageSourceFixedComponent< Dimensionality, TPixel>::ItkImageSourceFixedType::Pointer ItkImageSourceFixedComponent< Dimensionality, TPixel>::GetItkImageSourceFixed()
+  ItkImageSourceFixedComponent< Dimensionality, TPixel>
+  ::~ItkImageSourceFixedComponent()
   {
-    if (this->m_Source == nullptr)
+  }
+
+  template<int Dimensionality, class TPixel>
+  typename ItkImageSourceFixedComponent< Dimensionality, TPixel>::ItkImageType::Pointer 
+  ItkImageSourceFixedComponent< Dimensionality, TPixel>
+  ::GetItkImageFixed()
+  {
+    if (this->m_Image == nullptr)
     {
-      itkExceptionMacro("SourceComponent needs to be initialized by ConnectToOverlordSource()");
+      itkExceptionMacro("SourceComponent needs to be initialized by SetMiniPipelineInput()");
     }
-    return this->m_Source;
+    return this->m_Image;
   }
 
   template<int Dimensionality, class TPixel>
-  bool ItkImageSourceFixedComponent< Dimensionality, TPixel>::ConnectToOverlordSource(itk::Object::Pointer object)
+  void 
+  ItkImageSourceFixedComponent< Dimensionality, TPixel>
+  ::SetMiniPipelineInput(itk::DataObject::Pointer object)
   {
-    this->m_Source = dynamic_cast<ItkImageSourceFixedType*>(object.GetPointer());
-    return (this->m_Source == nullptr);
+    this->m_Image = dynamic_cast<ItkImageType*>(object.GetPointer());
+    if (this->m_Image == nullptr)
+    {
+      itkExceptionMacro("DataObject passed by the Overlord is not of the right ImageType or not at all an ImageType");
+    }
+    return;
   }
 
   template<int Dimensionality, class TPixel>
-  bool ItkImageSourceFixedComponent< Dimensionality, TPixel>::MeetsCriterion(const ComponentBase::CriterionType &criterion)
+  bool 
+  ItkImageSourceFixedComponent< Dimensionality, TPixel>
+  ::MeetsCriterion(const ComponentBase::CriterionType &criterion)
   {
     bool hasUndefinedCriteria(false);
     bool meetsCriteria(false);
