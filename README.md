@@ -15,7 +15,7 @@ aims at covering a wide range of image registration methodologies in a single ex
 while considering both user-friendliness and algorithm
 modularity.
 ##Documentation
-- "The design of SuperElastix - a unifying framework for a wide range of image registration methodologies", F. F. Berendsen, K. Marstal, S. Klein and M. Staring, [WBIR2016](http://wbir2016.doc.ic.ac.uk/), [[latex source](Documentation/source/paperWBIR16/WBIRSuperElastix.tex)]
+- "The design of SuperElastix - a unifying framework for a wide range of image registration methodologies", F. F. Berendsen, K. Marstal, S. Klein and M. Staring, [WBIR2016](http://wbir2016.doc.ic.ac.uk/), [[paper latex source](Documentation/source/paperWBIR16/WBIRSuperElastix.tex)] [[poster](Documentation/source/posterWBIR16/Poster_SuperElastix_WBIR.svg)]
 - [Build and Usage instructions](http://superelastix.readthedocs.io/en/latest/index.html)
 
 ##Authors:
