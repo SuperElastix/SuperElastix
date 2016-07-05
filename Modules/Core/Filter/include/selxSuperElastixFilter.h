@@ -46,10 +46,10 @@ public:
   typename AnyFileWriterType::Pointer GetOutputFileWriter(const DataObjectIdentifierType&);
 
   /** SetInput accepts any input data as long as it is derived from itk::DataObject */
-  void SetInput(const DataObjectIdentifierType&, InputDataType*) ITK_OVERRIDE;
+  void SetInput(const DataObjectIdentifierType&, InputDataType*);
   
   /** Non type-specific GetOutput */
-  OutputDataType * GetOutput(const DataObjectIdentifierType&) ITK_OVERRIDE;
+  OutputDataType * GetOutput(const DataObjectIdentifierType&);
 
   /** GetOutput tries dynamic cast to required output type */
   template<typename ReturnType>

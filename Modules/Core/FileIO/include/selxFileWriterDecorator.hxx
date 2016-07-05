@@ -28,7 +28,7 @@ namespace selx
  */
 
   template< typename TWriter, typename FileWriterDecoratorTraits >
-  FileWriterDecorator< TWriter, typename FileWriterDecoratorTraits>
+  FileWriterDecorator< TWriter, FileWriterDecoratorTraits>
 ::FileWriterDecorator()
 {
   m_Writer = WriterType::New();
@@ -39,7 +39,7 @@ namespace selx
 */
 
   template< typename TWriter, typename FileWriterDecoratorTraits>
-  FileWriterDecorator< TWriter, typename FileWriterDecoratorTraits>
+  FileWriterDecorator< TWriter, FileWriterDecoratorTraits>
 ::~FileWriterDecorator()
 {
 } // end Destructor
@@ -47,7 +47,7 @@ namespace selx
 
   template< typename TWriter, typename FileWriterDecoratorTraits>
 void
-FileWriterDecorator< TWriter, typename FileWriterDecoratorTraits>
+FileWriterDecorator< TWriter, FileWriterDecoratorTraits>
 ::SetFileName(const std::string _arg)
 {
   return m_Writer->SetFileName(_arg);
@@ -55,10 +55,10 @@ FileWriterDecorator< TWriter, typename FileWriterDecoratorTraits>
 
 template< typename TWriter, typename FileWriterDecoratorTraits>
 void
-FileWriterDecorator< TWriter, typename FileWriterDecoratorTraits>
+FileWriterDecorator< TWriter, FileWriterDecoratorTraits>
 ::SetInput(const InputDataType* input)
 {
-  DerivedInputDataType::ConstPointer derivedData = dynamic_cast<const DerivedInputDataType*>(input);	
+  typename DerivedInputDataType::ConstPointer derivedData = dynamic_cast<const DerivedInputDataType*>(input);	
   if (derivedData==nullptr)
   {
       itkExceptionMacro("The AnyFileWriter redirects to a FileWriterDecorator with a WriterType not compatible with the input data");
@@ -69,7 +69,7 @@ FileWriterDecorator< TWriter, typename FileWriterDecoratorTraits>
 
 template< typename TWriter, typename FileWriterDecoratorTraits>
 void
-FileWriterDecorator< TWriter, typename FileWriterDecoratorTraits>
+FileWriterDecorator< TWriter, FileWriterDecoratorTraits>
 ::Update()
 {
   return m_Writer->Update();

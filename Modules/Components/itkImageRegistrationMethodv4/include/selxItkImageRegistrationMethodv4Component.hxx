@@ -126,8 +126,8 @@ namespace selx
   //m_DisplacementFieldFilter->GetTransformInput()->Graft<ConstantVelocityFieldTransformType>(&(const_cast<ConstantVelocityFieldTransformType>( m_theItkFilter->GetOutput())));
   //m_DisplacementFieldFilter->GetTransformInput()->Graft(m_theItkFilter->GetOutput());
   
-  itk::DataObjectDecorator<ConstantVelocityFieldTransformType::Superclass::Superclass::Superclass>::Pointer decoratedDummyTransform = itk::DataObjectDecorator<ConstantVelocityFieldTransformType::Superclass::Superclass::Superclass>::New();
-  ConstantVelocityFieldTransformType::Pointer dummyTranform = ConstantVelocityFieldTransformType::New();
+  typename itk::DataObjectDecorator<typename ConstantVelocityFieldTransformType::Superclass::Superclass::Superclass>::Pointer decoratedDummyTransform = itk::DataObjectDecorator<typename ConstantVelocityFieldTransformType::Superclass::Superclass::Superclass>::New();
+  typename ConstantVelocityFieldTransformType::Pointer dummyTranform = ConstantVelocityFieldTransformType::New();
   decoratedDummyTransform->Set(dummyTranform);
 
   //decoratedTransform->Set(m_theItkFilter->GetOutput()->Get());
