@@ -26,6 +26,8 @@
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 
+#include "DefaultComponents.h"
+
 #include "selxDataManager.h"
 #include "gtest/gtest.h"
 
@@ -50,7 +52,7 @@ public:
   typedef Blueprint::ParameterValueType     ParameterValueType;
   typedef DataManager DataManagerType;
 
-  typedef SuperElastixFilter<bool>          SuperElastixFilterType;
+  typedef SuperElastixFilter<TypeList<>>          SuperElastixFilterType;
 
   typedef itk::Image<double, 3> Image3DType;
   typedef itk::ImageFileReader<Image3DType> ImageReader3DType;

@@ -36,6 +36,7 @@
 #include "selxItkImageSourceFixed.h"
 #include "selxItkImageSourceMoving.h"
 
+#include "DefaultComponents.h"
 
 #include <boost/algorithm/string.hpp>
 
@@ -85,7 +86,7 @@ int main(int ac, char* av[])
     ComponentFactory<ItkImageSinkComponent<2, float>>::RegisterOneFactory();
 
     //TODO make SuperElastixFilter templated over Components
-    SuperElastixFilter<bool>::Pointer superElastixFilter = SuperElastixFilter<bool>::New();
+    SuperElastixFilter<DefaultComponents>::Pointer superElastixFilter = SuperElastixFilter<DefaultComponents>::New();
     
 
     fs::path configurationPath;

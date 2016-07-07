@@ -28,6 +28,8 @@ set( ${MODULE}_INCLUDE_DIRS
   ${${MODULE}_SOURCE_DIR}/ConfigurationReader/include
   ${${MODULE}_SOURCE_DIR}/Filter/include
   ${${MODULE}_SOURCE_DIR}/FileIO/include
+  ${${MODULE}_SOURCE_DIR}/Meta/include
+  ${${MODULE}_SOURCE_DIR}/ComponentRegistration/include
   )
 
 # Collect header files for Visual Studio Project 

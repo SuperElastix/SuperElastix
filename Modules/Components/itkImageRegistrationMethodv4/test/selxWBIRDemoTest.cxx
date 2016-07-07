@@ -32,6 +32,8 @@
 #include "selxItkImageSourceFixed.h"
 #include "selxItkImageSourceMoving.h"
 
+#include "DefaultComponents.h"
+
 #include "selxDataManager.h"
 #include "gtest/gtest.h"
 
@@ -59,7 +61,7 @@ class WBIRDemoTest : public ::testing::Test {
  
 public:
   typedef Overlord::Pointer                 OverlordPointerType;
-  typedef SuperElastixFilter<bool>          SuperElastixFilterType;
+  typedef SuperElastixFilter<TypeList<>>          SuperElastixFilterType;
   typedef Blueprint::Pointer                BlueprintPointerType;
   typedef Blueprint::ConstPointer           BlueprintConstPointerType;
   typedef Blueprint::ParameterMapType       ParameterMapType;

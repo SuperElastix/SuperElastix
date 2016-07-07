@@ -2,7 +2,7 @@
 #define selxSuperElastixFilter_hxx
 
 #include "selxSuperElastixFilter.h"
-
+#include "RegisterByTypeList.h"
 
 namespace selx
 {
@@ -16,7 +16,9 @@ namespace selx
 ::SuperElastixFilter( void )
 {
   this->m_Overlord = Overlord::New();
-  
+
+  RegisterFactoriesByTypeList<ComponentTypeList>::Register();
+
   //Disable "Primary" as required input
   this->SetRequiredInputNames({});
 
