@@ -75,17 +75,6 @@ int main(int ac, char* av[])
 
     typedef vector< string > split_vector_type;
 
-    ComponentFactory<DisplacementFieldItkImageFilterSinkComponent<2, float>>::RegisterOneFactory();
-    ComponentFactory<ItkImageSourceFixedComponent<2, float>>::RegisterOneFactory();
-    ComponentFactory<ItkImageSourceMovingComponent<2, float>>::RegisterOneFactory();
-    ComponentFactory<ItkSmoothingRecursiveGaussianImageFilterComponent<2, float>>::RegisterOneFactory();
-    ComponentFactory<ItkImageRegistrationMethodv4Component<2, float>>::RegisterOneFactory();
-    ComponentFactory<ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component<2, float>>::RegisterOneFactory();
-    ComponentFactory<ItkMeanSquaresImageToImageMetricv4Component<2, float>>::RegisterOneFactory();
-    ComponentFactory<ElastixComponent<2, float>>::RegisterOneFactory();
-    ComponentFactory<ItkImageSinkComponent<2, float>>::RegisterOneFactory();
-
-    //TODO make SuperElastixFilter templated over Components
     SuperElastixFilter<DefaultComponents>::Pointer superElastixFilter = SuperElastixFilter<DefaultComponents>::New();
     
 
