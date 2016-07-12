@@ -35,9 +35,6 @@ public:
   typedef itk::DataObject OutputDataType;
   typedef itk::DataObject DataObject;
 
-  //TODO: DerivedInputDataType is defined as an ImageType, which is should be an MeshType if WriterType is a MeshReader
-  //Use a Traits Class for this with template specialization to Images, Meshes etc.
-
   // Since we don't know the typename of the Input of the writer, we use a traits class with template specialization to Images, Meshes etc.
   //typedef typename WriterType::InputImageType DerivedInputDataType;
   //typedef typename WriterType::InputMeshType DerivedInputDataType;

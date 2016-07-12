@@ -51,7 +51,7 @@ namespace selx
     typedef typename itk::Image<itk::Vector<PixelType, Dimensionality>, Dimensionality> DeformationFieldImageType;
     typedef typename DeformationFieldImageType::Pointer DeformationFieldImageTypePointer;
     typedef typename itk::ImageFileWriter<DeformationFieldImageType> DeformationFieldImageWriterType;
-    typedef typename FileWriterDecorator<DeformationFieldImageWriterType>  DecoratedWriterType;
+    typedef FileWriterDecorator<DeformationFieldImageWriterType>  DecoratedWriterType;
 
     virtual int Set(AcceptingDisplacementFieldInterfaceType*) override;
     virtual void SetMiniPipelineOutput(itk::DataObject::Pointer) override;

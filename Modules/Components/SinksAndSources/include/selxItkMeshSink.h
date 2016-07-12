@@ -47,7 +47,7 @@ namespace selx
 
     typedef itk::Mesh<TPixel, Dimensionality> ItkMeshType;
     typedef typename itk::MeshFileWriter<ItkMeshType> ItkMeshWriterType;
-    typedef typename FileWriterDecorator<ItkMeshWriterType>  DecoratedWriterType;
+    typedef FileWriterDecorator<ItkMeshWriterType>  DecoratedWriterType;
 
 
     virtual int Set(itkMeshInterface<Dimensionality, TPixel>*) override;

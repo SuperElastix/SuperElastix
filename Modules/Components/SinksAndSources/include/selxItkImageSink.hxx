@@ -85,13 +85,13 @@ namespace selx
   typename AnyFileWriter::Pointer ItkImageSinkComponent< Dimensionality, TPixel>::GetOutputFileWriter()
   {
     // Instanstiate an image file writer, decorated such that it can be implicitly cast to an AnyFileWriterType
-    return DecoratedWriterType::New();
+    return DecoratedWriterType::New().GetPointer();
   }
 
   template<int Dimensionality, class TPixel>
   typename itk::DataObject::Pointer ItkImageSinkComponent< Dimensionality, TPixel>::GetInitializedOutput()
   {
-    return ItkImageType::New();
+    return ItkImageType::New().GetPointer();
   }
 
   template<int Dimensionality, class TPixel>
