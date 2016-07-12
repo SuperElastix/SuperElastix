@@ -57,7 +57,7 @@ namespace selx
   typename AnyFileWriter::Pointer ItkMeshSinkComponent< Dimensionality, TPixel>::GetOutputFileWriter()
   {
     // Instanstiate an image file writer, decorated such that it can be implicitly cast to an AnyFileWriterType
-    return DecoratedWriterType::New();
+    return DecoratedWriterType::New().GetPointer();
   }
 
   template<int Dimensionality, class TPixel>
@@ -77,7 +77,7 @@ namespace selx
   template<int Dimensionality, class TPixel>
   typename itk::DataObject::Pointer ItkMeshSinkComponent< Dimensionality, TPixel>::GetMiniPipelineOutput()
   {
-    return this->m_MiniPipelineOutputMesh;
+    return this->m_MiniPipelineOutputMesh.GetPointer();
   }
   //template<int Dimensionality, class TPixel>
   //bool ItkMeshSinkComponent< Dimensionality, TPixel>::ConnectToOverlordSink(itk::DataObject::Pointer object)
@@ -89,7 +89,7 @@ namespace selx
   template<int Dimensionality, class TPixel>
   typename itk::DataObject::Pointer ItkMeshSinkComponent< Dimensionality, TPixel>::GetInitializedOutput()
   {
-    return ItkMeshType::New();
+    return ItkMeshType::New().GetPointer();
   }
 
   
