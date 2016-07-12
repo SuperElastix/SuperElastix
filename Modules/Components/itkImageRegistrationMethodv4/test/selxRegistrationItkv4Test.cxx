@@ -59,39 +59,30 @@ public:
   typedef DataManager DataManagerType;
   
      /** register all example components */
-  typedef TypeList<TransformComponent1,
-        MetricComponent1,
-        GDOptimizer3rdPartyComponent,
-        GDOptimizer4thPartyComponent,
-        SSDMetric3rdPartyComponent,
-        SSDMetric4thPartyComponent,
-
-        DisplacementFieldItkImageFilterSinkComponent<3, double>,
-        DisplacementFieldItkImageFilterSinkComponent<2, float>,
-    
-        ItkImageSinkComponent<3, double>,
-        ItkImageSinkComponent<2, float>,
-
-        ItkImageSourceFixedComponent<2, float>,
-        ItkImageSourceMovingComponent<2, float>,
-
-        ItkImageSourceFixedComponent<3, double>,
-        ItkImageSourceMovingComponent<3, double>,
-
-
-        ItkSmoothingRecursiveGaussianImageFilterComponent<3, double>,
-        ItkSmoothingRecursiveGaussianImageFilterComponent<2, double>,
-        ItkSmoothingRecursiveGaussianImageFilterComponent<3, float>,
-        ItkSmoothingRecursiveGaussianImageFilterComponent<2, float>,
-
-        ItkImageRegistrationMethodv4Component<3, double>,
-        ItkImageRegistrationMethodv4Component<2, float>,
-
-        ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component<3, double>,
-        ItkMeanSquaresImageToImageMetricv4Component<3, double>,
-
-        ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component<2, float>,
-        ItkMeanSquaresImageToImageMetricv4Component<2, float>> RegisterComponents
+  typedef TypeList < TransformComponent1,
+    MetricComponent1,
+    GDOptimizer3rdPartyComponent,
+    GDOptimizer4thPartyComponent,
+    SSDMetric3rdPartyComponent,
+    SSDMetric4thPartyComponent,
+    DisplacementFieldItkImageFilterSinkComponent<3, double>,
+    DisplacementFieldItkImageFilterSinkComponent<2, float>,
+    ItkImageSinkComponent<3, double>,
+    ItkImageSinkComponent<2, float>,
+    ItkImageSourceFixedComponent<2, float>,
+    ItkImageSourceMovingComponent<2, float>,
+    ItkImageSourceFixedComponent<3, double>,
+    ItkImageSourceMovingComponent<3, double>,
+    ItkSmoothingRecursiveGaussianImageFilterComponent<3, double>,
+    ItkSmoothingRecursiveGaussianImageFilterComponent<2, double>,
+    ItkSmoothingRecursiveGaussianImageFilterComponent<3, float>,
+    ItkSmoothingRecursiveGaussianImageFilterComponent<2, float>,
+    ItkImageRegistrationMethodv4Component<3, double>,
+    ItkImageRegistrationMethodv4Component<2, float>,
+    ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component<3, double>,
+    ItkMeanSquaresImageToImageMetricv4Component<3, double>,
+    ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component<2, float>,
+    ItkMeanSquaresImageToImageMetricv4Component < 2, float >> RegisterComponents;
 	
   typedef SuperElastixFilter<RegisterComponents>          SuperElastixFilterType;
 

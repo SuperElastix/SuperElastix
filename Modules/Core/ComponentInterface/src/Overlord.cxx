@@ -328,8 +328,7 @@ namespace selx
       itkExceptionMacro(<< "No Source component found by name:" << inputName);
     }
 
-    //return sources[inputName]->GetInputFileReader();
-    return nullptr;
+    return sources[inputName]->GetInputFileReader();
   }
   
   AnyFileWriter::Pointer Overlord::GetOutputFileWriter(const Overlord::ComponentNameType& outputName)

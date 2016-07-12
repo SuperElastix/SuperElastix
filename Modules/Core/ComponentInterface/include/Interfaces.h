@@ -113,6 +113,7 @@ namespace selx
     // How specific Source Components connect to the graph is up to them, i.e. they might adapt the passed Object to other types.
   public:
     virtual void SetMiniPipelineInput(itk::DataObject::Pointer) = 0;
+    virtual AnyFileReader::Pointer GetInputFileReader(void) = 0;
   };
   class SinkInterface {
     // A special interface: the Overlord checks components for this type of interface.

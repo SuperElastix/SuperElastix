@@ -59,6 +59,13 @@ namespace selx
   }
 
   template<int Dimensionality, class TPixel>
+  typename AnyFileReader::Pointer ItkImageSourceMovingComponent< Dimensionality, TPixel>::GetInputFileReader()
+  {
+    // Instanstiate an image file reader, decorated such that it can be implicitly cast to an AnyFileReaderType
+    return DecoratedReaderType::New().GetPointer();
+  }
+
+  template<int Dimensionality, class TPixel>
   bool 
   ItkImageSourceMovingComponent< Dimensionality, TPixel>
   ::MeetsCriterion(const ComponentBase::CriterionType &criterion)

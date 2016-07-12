@@ -20,21 +20,8 @@
 #include "selxSuperElastixFilter.h"
 #include "selxBlueprint.h"
 #include "selxConfigurationReader.h"
-#include "itkImageFileReader.h"
-#include "itkImageFileWriter.h"
+#include "selxAnyFileReader.h"
 #include "selxAnyFileWriter.h"
-
-//TODO move these includes to a Cmake controlled header file
-#include "selxItkSmoothingRecursiveGaussianImageFilterComponent.h"
-#include "selxDisplacementFieldItkImageFilterSink.h"
-#include "selxItkImageSource.h"
-#include "selxElastixComponent.h"
-#include "selxItkImageSink.h"
-#include "selxItkImageRegistrationMethodv4Component.h"
-#include "selxItkANTSNeighborhoodCorrelationImageToImageMetricv4.h"
-#include "selxItkMeanSquaresImageToImageMetricv4.h"
-#include "selxItkImageSourceFixed.h"
-#include "selxItkImageSourceMoving.h"
 
 #include "DefaultComponents.h"
 
@@ -68,10 +55,7 @@ ostream& operator<<(ostream& os, const vector<T>& v)
 int main(int ac, char* av[])
 {
   try {
-    typedef itk::Image<float, 2> Image2DType;
-    typedef itk::ImageFileReader<Image2DType> ImageReader2DType;
-    typedef itk::ImageFileWriter<Image2DType> ImageWriter2DType;
-    
+   
 
     typedef vector< string > split_vector_type;
 
@@ -83,7 +67,7 @@ int main(int ac, char* av[])
     vector<string> outputPairs;
 
     // Store the reader so that they will not be destroyed before the pipeline is executed.
-    vector<ImageReader2DType::Pointer> fileReaders;
+    vector<AnyFileReader::Pointer> fileReaders;
     // Store the writers for the update call
     //vector<ImageWriter2DType::Pointer> fileWriters;
     vector<AnyFileWriter::Pointer> fileWriters;
@@ -141,7 +125,10 @@ int main(int ac, char* av[])
         cout << " " << index << " " << name << " : " << path << "\n";
         ++index;
 
-        ImageReader2DType::Pointer reader = ImageReader2DType::New();
+        // since we do not know which reader type we should instantiate for input "name", 
+        // we ask SuperElastix for a reader that matches the type of the source component "name"
+
+        AnyFileReader::Pointer reader = superElastixFilter->GetInputFileReader(name);        
         reader->SetFileName(path);
         superElastixFilter->SetInput(name, reader->GetOutput());
         fileReaders.push_back(reader);
@@ -161,6 +148,8 @@ int main(int ac, char* av[])
         cout << " " << index << " " << name << " : " << path << "\n";
         ++index;
 
+        // since we do not know which writer type we should instantiate for output "name", 
+        // we ask SuperElastix for a writer that matches the type of the sink component "name"
         AnyFileWriter::Pointer writer = superElastixFilter->GetOutputFileWriter(name);
         
         //ImageWriter2DType::Pointer writer = ImageWriter2DType::New();
