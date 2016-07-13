@@ -43,24 +43,20 @@ public:
   typedef Blueprint::ParameterMapType       ParameterMapType;
   typedef Blueprint::ParameterValueType     ParameterValueType;
   typedef DataManager DataManagerType;
-  typedef SuperElastixFilter<TypeList<>>          SuperElastixFilterType;
+  /** register all example components */
+  typedef TypeList<ElastixComponent<2, float>,
+                   ItkImageSinkComponent<2, float>,
+				   ItkImageSourceFixedComponent<2, float>,
+				   ItkImageSourceMovingComponent<2, float>,
+				   ItkImageSourceFixedComponent<3, double>,
+				   ItkImageSourceMovingComponent<3, double>> RegisterComponents;
+  typedef SuperElastixFilter<RegisterComponents>          SuperElastixFilterType;
 
   typedef itk::Image<float, 2> Image2DType;
   typedef itk::ImageFileReader<Image2DType> ImageReader2DType;
   typedef itk::ImageFileWriter<Image2DType> ImageWriter2DType;
 
   virtual void SetUp() {
-    /** register all example components */
-    ComponentFactory<ElastixComponent<2, float>>::RegisterOneFactory();
-    
-    ComponentFactory<ItkImageSinkComponent<2, float>>::RegisterOneFactory();
-
-    ComponentFactory<ItkImageSourceFixedComponent<2, float>>::RegisterOneFactory();
-    ComponentFactory<ItkImageSourceMovingComponent<2, float>>::RegisterOneFactory();
-
-    ComponentFactory<ItkImageSourceFixedComponent<3, double>>::RegisterOneFactory();
-    ComponentFactory<ItkImageSourceMovingComponent<3, double>>::RegisterOneFactory();
-
   }
 
   virtual void TearDown() {

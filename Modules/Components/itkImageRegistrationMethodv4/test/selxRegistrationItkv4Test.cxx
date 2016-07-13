@@ -57,7 +57,34 @@ public:
   typedef Blueprint::ParameterMapType       ParameterMapType;
   typedef Blueprint::ParameterValueType     ParameterValueType;
   typedef DataManager DataManagerType;
-  typedef SuperElastixFilter<TypeList<>>          SuperElastixFilterType;
+  
+     /** register all example components */
+  typedef TypeList < TransformComponent1,
+    MetricComponent1,
+    GDOptimizer3rdPartyComponent,
+    GDOptimizer4thPartyComponent,
+    SSDMetric3rdPartyComponent,
+    SSDMetric4thPartyComponent,
+    DisplacementFieldItkImageFilterSinkComponent<3, double>,
+    DisplacementFieldItkImageFilterSinkComponent<2, float>,
+    ItkImageSinkComponent<3, double>,
+    ItkImageSinkComponent<2, float>,
+    ItkImageSourceFixedComponent<2, float>,
+    ItkImageSourceMovingComponent<2, float>,
+    ItkImageSourceFixedComponent<3, double>,
+    ItkImageSourceMovingComponent<3, double>,
+    ItkSmoothingRecursiveGaussianImageFilterComponent<3, double>,
+    ItkSmoothingRecursiveGaussianImageFilterComponent<2, double>,
+    ItkSmoothingRecursiveGaussianImageFilterComponent<3, float>,
+    ItkSmoothingRecursiveGaussianImageFilterComponent<2, float>,
+    ItkImageRegistrationMethodv4Component<3, double>,
+    ItkImageRegistrationMethodv4Component<2, float>,
+    ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component<3, double>,
+    ItkMeanSquaresImageToImageMetricv4Component<3, double>,
+    ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component<2, float>,
+    ItkMeanSquaresImageToImageMetricv4Component < 2, float >> RegisterComponents;
+	
+  typedef SuperElastixFilter<RegisterComponents>          SuperElastixFilterType;
 
   typedef itk::Image<float, 2> Image2DType;
   typedef itk::ImageFileReader<Image2DType> ImageReader2DType;
@@ -71,40 +98,7 @@ public:
   typedef itk::ImageFileWriter<DisplacementImage3DType> DisplacementImageWriter3DType;
 
   virtual void SetUp() {
-    /** register all example components */
-    ComponentFactory<TransformComponent1>::RegisterOneFactory();
-    ComponentFactory<MetricComponent1>::RegisterOneFactory();
-    ComponentFactory<GDOptimizer3rdPartyComponent>::RegisterOneFactory();
-    ComponentFactory<GDOptimizer4thPartyComponent>::RegisterOneFactory();
-    ComponentFactory<SSDMetric3rdPartyComponent>::RegisterOneFactory();
-    ComponentFactory<SSDMetric4thPartyComponent>::RegisterOneFactory();
-
-    ComponentFactory<DisplacementFieldItkImageFilterSinkComponent<3, double>>::RegisterOneFactory();
-    ComponentFactory<DisplacementFieldItkImageFilterSinkComponent<2, float>>::RegisterOneFactory();
-    
-    ComponentFactory<ItkImageSinkComponent<3, double>>::RegisterOneFactory();
-    ComponentFactory<ItkImageSinkComponent<2, float>>::RegisterOneFactory();
-
-    ComponentFactory<ItkImageSourceFixedComponent<2, float>>::RegisterOneFactory();
-    ComponentFactory<ItkImageSourceMovingComponent<2, float>>::RegisterOneFactory();
-
-    ComponentFactory<ItkImageSourceFixedComponent<3, double>>::RegisterOneFactory();
-    ComponentFactory<ItkImageSourceMovingComponent<3, double>>::RegisterOneFactory();
-
-
-    ComponentFactory<ItkSmoothingRecursiveGaussianImageFilterComponent<3, double>>::RegisterOneFactory();
-    ComponentFactory<ItkSmoothingRecursiveGaussianImageFilterComponent<2, double>>::RegisterOneFactory();
-    ComponentFactory<ItkSmoothingRecursiveGaussianImageFilterComponent<3, float>>::RegisterOneFactory();
-    ComponentFactory<ItkSmoothingRecursiveGaussianImageFilterComponent<2, float>>::RegisterOneFactory();
-
-    ComponentFactory<ItkImageRegistrationMethodv4Component<3, double>>::RegisterOneFactory();
-    ComponentFactory<ItkImageRegistrationMethodv4Component<2, float>>::RegisterOneFactory();
-
-    ComponentFactory<ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component<3, double>>::RegisterOneFactory();
-    ComponentFactory<ItkMeanSquaresImageToImageMetricv4Component<3, double>>::RegisterOneFactory();
-
-    ComponentFactory<ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component<2, float>>::RegisterOneFactory();
-    ComponentFactory<ItkMeanSquaresImageToImageMetricv4Component<2, float>>::RegisterOneFactory();
+ 
 
   }
 

@@ -24,6 +24,9 @@
 #include "Interfaces.h"
 #include <string.h>
 #include "selxMacro.h"
+#include "itkImageFileReader.h"
+#include "selxAnyFileReader.h"
+#include "selxFileReaderDecorator.h"
 namespace selx
 {
   template<int Dimensionality, class TPixel>
@@ -42,10 +45,12 @@ namespace selx
     virtual ~ItkImageSourceMovingComponent();
 
     typedef typename itkImageMovingInterface<Dimensionality, TPixel >::ItkImageType ItkImageType;
-    
+    typedef typename itk::ImageFileReader<ItkImageType> ItkImageReaderType;
+    typedef typename FileReaderDecorator<ItkImageReaderType> DecoratedReaderType;
 
     virtual typename ItkImageType::Pointer GetItkImageMoving() override;
     virtual void SetMiniPipelineInput(itk::DataObject::Pointer) override;
+    virtual AnyFileReader::Pointer GetInputFileReader(void) override;
 
     virtual bool MeetsCriterion(const ComponentBase::CriterionType &criterion) override;
     static const char * GetDescription() { return "ItkImageSourceMoving Component"; };

@@ -24,6 +24,10 @@
 #include "Interfaces.h"
 #include <string.h>
 #include "selxMacro.h"
+#include "itkMeshFileReader.h"
+#include "selxAnyFileReader.h"
+#include "selxFileReaderDecorator.h"
+
 namespace selx
 {
   template<int Dimensionality, class TPixel>
@@ -40,9 +44,13 @@ namespace selx
     virtual ~ItkMeshSourceComponent();
 
     typedef itk::Mesh<TPixel, Dimensionality> ItkMeshType;
-    
+    typedef typename itk::MeshFileReader<ItkMeshType> ItkMeshReaderType;
+    typedef typename FileReaderDecorator<ItkMeshReaderType>  DecoratedReaderType;
+
     virtual typename ItkMeshType::Pointer GetItkMesh() override;
     virtual void SetMiniPipelineInput(itk::DataObject::Pointer) override;
+    virtual AnyFileReader::Pointer GetInputFileReader(void) override;
+
     virtual bool MeetsCriterion(const ComponentBase::CriterionType &criterion) override;
     static const char * GetDescription() { return "ItkMeshSource Component"; };
   private:
