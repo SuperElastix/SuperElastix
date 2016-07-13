@@ -50,7 +50,7 @@ namespace selx
     typedef typename AcceptingImageInterfaceType::ItkImageType ItkImageType;
     typedef typename ItkImageType::Pointer ItkImagePointer;
     typedef typename itk::ImageFileWriter<ItkImageType> ItkImageWriterType;
-    typedef typename FileWriterDecorator<ItkImageWriterType>  DecoratedWriterType;
+    typedef FileWriterDecorator<ItkImageWriterType>  DecoratedWriterType;
 
     virtual int Set(AcceptingImageInterfaceType*) override;
     virtual void SetMiniPipelineOutput(itk::DataObject::Pointer) override;

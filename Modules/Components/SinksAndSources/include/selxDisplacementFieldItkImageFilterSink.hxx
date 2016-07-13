@@ -58,7 +58,7 @@ namespace selx
   typename AnyFileWriter::Pointer DisplacementFieldItkImageFilterSinkComponent< Dimensionality, TPixel>::GetOutputFileWriter()
   {
     // Instanstiate an image file writer, decorated such that it can be implicitly cast to an AnyFileWriterType
-    return DecoratedWriterType::New();
+    return DecoratedWriterType::New().GetPointer();
   }
 
   template<int Dimensionality, class TPixel>
@@ -84,7 +84,7 @@ namespace selx
   template<int Dimensionality, class TPixel>
   typename itk::DataObject::Pointer DisplacementFieldItkImageFilterSinkComponent< Dimensionality, TPixel>::GetInitializedOutput()
   {
-    return DeformationFieldImageType::New();
+    return DeformationFieldImageType::New().GetPointer();
   }
 
   template<int Dimensionality, class TPixel>
