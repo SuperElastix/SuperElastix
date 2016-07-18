@@ -42,7 +42,8 @@ namespace selx
     public Implements<
     Accepting< itkImageFixedInterface<Dimensionality, TPixel>, 
                itkImageMovingInterface<Dimensionality, TPixel>,
-               itkMetricv4Interface<Dimensionality, TPixel>
+               itkMetricv4Interface<Dimensionality, TPixel>,
+               itkOptimizerv4Interface<double>
              >,
     Providing< itkImageInterface<Dimensionality, TPixel>,
                DisplacementFieldItkImageSourceInterface<Dimensionality, TPixel>,
@@ -59,13 +60,13 @@ namespace selx
     virtual ~ItkImageRegistrationMethodv4Component();
 
     typedef TPixel PixelType;
-   
+    typedef itkOptimizerv4Interface<double>::InternalComputationValueType InternalComputationValueType;
     // the in and output image type of the component are chosen to be the same 
     typedef itk::Image<PixelType, Dimensionality> ConnectionImageType; 
 
     // fixed and moving image types are all the same, these aliases can be used to be explicit. 
-    typedef itk::Image<PixelType, Dimensionality> FixedImageType; 
-    typedef itk::Image<PixelType, Dimensionality> MovingImageType;
+    typedef typename itkImageFixedInterface<Dimensionality, TPixel>::ItkImageType FixedImageType;
+    typedef typename itkImageMovingInterface<Dimensionality, TPixel>::ItkImageType MovingImageType;
     
     typedef typename itk::Image<itk::Vector<PixelType, Dimensionality>, Dimensionality> DisplacementFieldImageType;
     typedef typename itkImageInterface<Dimensionality, TPixel>::ItkImageType ResultItkImageType;
@@ -84,6 +85,7 @@ namespace selx
     virtual int Set(itkImageFixedInterface<Dimensionality, TPixel>*) override;
     virtual int Set(itkImageMovingInterface<Dimensionality, TPixel>*) override;
     virtual int Set(itkMetricv4Interface<Dimensionality, TPixel>*) override;
+    virtual int Set(itkOptimizerv4Interface<InternalComputationValueType>*) override;
     
     //Providing Interfaces:
     virtual typename ResultItkImageType::Pointer GetItkImage() override;

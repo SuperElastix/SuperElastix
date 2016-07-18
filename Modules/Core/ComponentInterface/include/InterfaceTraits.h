@@ -171,6 +171,15 @@ struct InterfaceName < itkMetricv4Interface <D, TPixel> >
   }
 };
 
+template <class InternalComputationValueType>
+struct InterfaceName < itkOptimizerv4Interface <InternalComputationValueType> >
+{
+  static const char* Get()
+  {
+    return "itkOptimizerv4Interface";
+  }
+};
+
 template <>
 struct InterfaceName < RunRegistrationInterface >
 {

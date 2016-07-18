@@ -186,10 +186,19 @@ int ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>
   this->m_resampler->UpdateOutputInformation();
   return 0;
 }
+
 template<int Dimensionality, class TPixel>
 int ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::Set(itkMetricv4Interface<Dimensionality, TPixel>* component)
 {
    this->m_theItkFilter->SetMetric(component->GetItkMetricv4());
+
+  return 1;
+}
+
+template<int Dimensionality, class TPixel>
+int ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::Set(itkOptimizerv4Interface<InternalComputationValueType>* component)
+{
+  this->m_theItkFilter->SetOptimizer(component->GetItkOptimizerv4());
 
   return 1;
 }
@@ -205,10 +214,10 @@ void ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::RunRegistra
 
   //TODO: Setting the optimizer explicitly is a work around for a bug in itkv4. 
   //TODO: report bug to itk: when setting a metric, the optimizer must be set explicitly as well, since default optimizer setup breaks.
-  typedef itk::GradientDescentOptimizerv4       OptimizerType;
-  OptimizerType::Pointer      optimizer = OptimizerType::New();
-  optimizer->SetNumberOfIterations(100);
-  optimizer->SetLearningRate(1.0);
+  //typedef itk::GradientDescentOptimizerv4       OptimizerType;
+  //OptimizerType::Pointer      optimizer = OptimizerType::New();
+  //optimizer->SetNumberOfIterations(100);
+  //optimizer->SetLearningRate(1.0);
   
   typename ScalesEstimatorType::Pointer scalesEstimator = ScalesEstimatorType::New();
     
@@ -219,6 +228,10 @@ void ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::RunRegistra
   typename ANTSCCMetricType::Pointer nccMetric = dynamic_cast<ANTSCCMetricType*>(this->m_theItkFilter->GetModifiableMetric());
 
   ImageMetricType* theMetric = dynamic_cast<ImageMetricType*>(this->m_theItkFilter->GetModifiableMetric());;
+
+  auto optimizer = dynamic_cast<itk::GradientDescentOptimizerv4 *>(this->m_theItkFilter->GetModifiableOptimizer());
+  //auto optimizer = dynamic_cast<itk::ObjectToObjectOptimizerBaseTemplate< InternalComputationValueType > *>(this->m_theItkFilter->GetModifiableOptimizer());
+  
 
   if (msdMetric)
   {

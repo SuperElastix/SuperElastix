@@ -27,6 +27,7 @@
 #include "itkProcessObject.h"
 #include "itkImageToImageFilter.h"
 #include "itkImageToImageMetricv4.h"
+#include "itkObjectToObjectOptimizerBase.h"
 
 #include "itkImage.h"
 #include "itkMesh.h"
@@ -94,7 +95,7 @@ namespace selx
   };
   template<int Dimensionality, class TPixel>
   class DisplacementFieldItkImageSourceInterface {
-    // An interface that exposes that its internal filter is derived from itkImageSource
+    // An interface that passes the pointer of an output image
   public:
     typedef typename itk::Image<itk::Vector< TPixel, Dimensionality >, Dimensionality> ItkImageType;
     virtual typename ItkImageType::Pointer GetDisplacementFieldItkImage() = 0;
@@ -102,7 +103,7 @@ namespace selx
 
   template<int Dimensionality, class TPixel>
   class itkMeshInterface {
-    // An interface that passes the pointer of an output image
+    // An interface that passes the pointer of an output mesh
   public:
     virtual typename itk::Mesh<TPixel, Dimensionality>::Pointer GetItkMesh() = 0;
   };
@@ -156,6 +157,16 @@ namespace selx
     typedef typename itk::ImageToImageMetricv4<FixedImageType, MovingImageType> ImageToImageMetricv4Type;
 
     virtual typename ImageToImageMetricv4Type::Pointer GetItkMetricv4() = 0;
+  };
+
+  template<class TInternalComputationValueType>
+  class itkOptimizerv4Interface {
+  public:
+    /**  Type of the optimizer. */
+    typedef TInternalComputationValueType InternalComputationValueType;
+    typedef itk::ObjectToObjectOptimizerBaseTemplate<InternalComputationValueType>               OptimizerType;
+    typedef typename OptimizerType::Pointer                             Optimizerv4Pointer;
+    virtual Optimizerv4Pointer GetItkOptimizerv4() = 0;
   };
 
   // Define the accepting interfaces as templated by the providing interface
