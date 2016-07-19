@@ -34,6 +34,7 @@
 #include "selxItkImageRegistrationMethodv4Component.h"
 #include "selxItkANTSNeighborhoodCorrelationImageToImageMetricv4.h"
 #include "selxItkMeanSquaresImageToImageMetricv4.h"
+#include "selxItkGradientDescentOptimizerv4.h"
 #include "selxItkImageSourceFixed.h"
 #include "selxItkImageSourceMoving.h"
 
@@ -82,7 +83,8 @@ public:
     ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component<3, double>,
     ItkMeanSquaresImageToImageMetricv4Component<3, double>,
     ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component<2, float>,
-    ItkMeanSquaresImageToImageMetricv4Component < 2, float >> RegisterComponents;
+    ItkMeanSquaresImageToImageMetricv4Component < 2, float >,
+    ItkGradientDescentOptimizerv4Component<double>> RegisterComponents;
 	
   typedef SuperElastixFilter<RegisterComponents>          SuperElastixFilterType;
 
@@ -211,6 +213,9 @@ TEST_F(RegistrationItkv4Test, WithANTSCCMetric)
   component4Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
   blueprint->AddComponent("Metric", component4Parameters);
 
+  ParameterMapType component5Parameters;
+  component5Parameters["NameOfClass"] = { "ItkGradientDescentOptimizerv4Component" };
+  blueprint->AddComponent("Optimizer", component5Parameters);
 
   ParameterMapType connection1Parameters;
   connection1Parameters["NameOfInterface"] = { "itkImageFixedInterface" };
@@ -227,6 +232,11 @@ TEST_F(RegistrationItkv4Test, WithANTSCCMetric)
   ParameterMapType connection4Parameters;
   connection4Parameters["NameOfInterface"] = { "itkMetricv4Interface" };
   blueprint->AddConnection("Metric", "RegistrationMethod", connection4Parameters);
+
+  ParameterMapType connection5Parameters;
+  connection5Parameters["NameOfInterface"] = { "itkOptimizerv4Interface" };
+  blueprint->AddConnection("Optimizer", "RegistrationMethod", connection5Parameters);
+
 
   // Instantiate SuperElastix
   SuperElastixFilterType::Pointer superElastixFilter;

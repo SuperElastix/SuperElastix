@@ -45,13 +45,13 @@ namespace selx
     typedef double InternalComputationValueType;
     
 	  /**  Type of the optimizer. */
-    typedef ObjectToObjectOptimizerBaseTemplate<InternalComputationValueType>               OptimizerType;
+    typedef typename itk::ObjectToObjectOptimizerBaseTemplate<InternalComputationValueType>               OptimizerType;
     typedef typename OptimizerType::Pointer                             Optimizerv4Pointer;
 
     
-    typedef typename itk::GradientDescentOptimizerv4<InternalComputationValueType> GradientDescentOptimizerv4Type;
-    
-	virtual Optimizerv4Pointer GetItkOptimizerv4() override;
+    typedef typename itk::GradientDescentOptimizerv4Template<InternalComputationValueType> GradientDescentOptimizerv4Type;
+
+    virtual Optimizerv4Pointer GetItkOptimizerv4() override;
 
     virtual bool MeetsCriterion(const ComponentBase::CriterionType &criterion) override;    
     //static const char * GetName() { return "ItkGradientDescentOptimizerv4"; } ;

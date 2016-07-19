@@ -38,7 +38,7 @@ ItkGradientDescentOptimizerv4Component< InternalComputationValueType>::~ItkGradi
 }
 
 template<class InternalComputationValueType>
-typename ItkGradientDescentOptimizerv4Component< InternalComputationValueType>::ItkMetricv4Pointer ItkGradientDescentOptimizerv4Component< InternalComputationValueType>::GetItkMetricv4()
+typename ItkGradientDescentOptimizerv4Component< InternalComputationValueType>::Optimizerv4Pointer ItkGradientDescentOptimizerv4Component< InternalComputationValueType>::GetItkOptimizerv4()
 {
   
   return (Optimizerv4Pointer) this->m_Optimizer;
