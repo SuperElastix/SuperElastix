@@ -17,46 +17,46 @@
  *
  *=========================================================================*/
 
-#ifndef selxItkGradientDescentOptimizerv4Component_h
-#define selxItkGradientDescentOptimizerv4Component_h
+#ifndef selxItkAffineTransformComponent_h
+#define selxItkAffineTransformComponent_h
 
 #include "ComponentBase.h"
 #include "Interfaces.h"
-#include "itkGradientDescentOptimizerv4.h"
+#include "itkAffineTransform.h"
 #include <string.h>
 #include "selxMacro.h"
 namespace selx
 {
-  template <class InternalComputationValueType>
-  class ItkGradientDescentOptimizerv4Component : 
+  template <class InternalComputationValueType, int Dimensionality>
+  class ItkAffineTransformComponent : 
     public Implements<
     Accepting< >,
-    Providing< itkOptimizerv4Interface<InternalComputationValueType>>
+    Providing< itkTransformInterface<InternalComputationValueType,Dimensionality>>
     >
   {
   public:
-    selxNewMacro(ItkGradientDescentOptimizerv4Component, ComponentBase);
+    selxNewMacro(ItkAffineTransformComponent, ComponentBase);
 
     //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
 
-    ItkGradientDescentOptimizerv4Component();
-    virtual ~ItkGradientDescentOptimizerv4Component();
+    ItkAffineTransformComponent();
+    virtual ~ItkAffineTransformComponent();
 
-       
-	  /**  Type of the optimizer. */
-    typedef typename itk::ObjectToObjectOptimizerBaseTemplate<InternalComputationValueType>               OptimizerType;
-    typedef typename OptimizerType::Pointer                             Optimizerv4Pointer;
-
+    //typedef double InternalComputationValueType;
     
-    typedef typename itk::GradientDescentOptimizerv4Template<InternalComputationValueType> GradientDescentOptimizerv4Type;
+	  /**  Type of the optimizer. */
+    using TransformType = typename itkTransformInterface<InternalComputationValueType,Dimensionality>::TransformType;
+    using TransformPointer = typename itkTransformInterface<InternalComputationValueType,Dimensionality>::TransformPointer;
+    
+    typedef typename itk::AffineTransform<InternalComputationValueType, Dimensionality> AffineTransformType;
 
-    virtual Optimizerv4Pointer GetItkOptimizerv4() override;
+    virtual TransformPointer GetItkTransform() override;
 
     virtual bool MeetsCriterion(const ComponentBase::CriterionType &criterion) override;    
-    //static const char * GetName() { return "ItkGradientDescentOptimizerv4"; } ;
-    static const char * GetDescription() { return "ItkGradientDescentOptimizerv4 Component"; };
+    //static const char * GetName() { return "ItkAffineTransform"; } ;
+    static const char * GetDescription() { return "ItkAffineTransform Component"; };
   private:
-    typename GradientDescentOptimizerv4Type::Pointer m_Optimizer;
+    typename AffineTransformType::Pointer m_Transform;
   protected:
     /* The following struct returns the string name of computation type */
     /* default implementation */
@@ -64,6 +64,6 @@ namespace selx
 
 } //end namespace selx
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "selxItkGradientDescentOptimizerv4.hxx"
+#include "selxItkAffineTransform.hxx"
 #endif
-#endif // #define selxItkGradientDescentOptimizerv4Component_h
+#endif // #define selxItkAffineTransformComponent_h

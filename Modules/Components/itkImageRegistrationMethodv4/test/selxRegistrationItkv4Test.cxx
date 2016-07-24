@@ -35,6 +35,7 @@
 #include "selxItkANTSNeighborhoodCorrelationImageToImageMetricv4.h"
 #include "selxItkMeanSquaresImageToImageMetricv4.h"
 #include "selxItkGradientDescentOptimizerv4.h"
+#include "selxItkAffineTransform.h"
 #include "selxItkImageSourceFixed.h"
 #include "selxItkImageSourceMoving.h"
 
@@ -84,7 +85,8 @@ public:
     ItkMeanSquaresImageToImageMetricv4Component<3, double>,
     ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component<2, float>,
     ItkMeanSquaresImageToImageMetricv4Component < 2, float >,
-    ItkGradientDescentOptimizerv4Component<double>> RegisterComponents;
+    ItkGradientDescentOptimizerv4Component<double>,
+    ItkAffineTransformComponent<double,3>> RegisterComponents;
 	
   typedef SuperElastixFilter<RegisterComponents>          SuperElastixFilterType;
 

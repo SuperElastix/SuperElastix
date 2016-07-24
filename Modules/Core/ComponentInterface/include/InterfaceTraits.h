@@ -180,6 +180,16 @@ struct InterfaceName < itkOptimizerv4Interface <InternalComputationValueType> >
   }
 };
 
+template <class InternalComputationValueType, int D>
+struct InterfaceName < itkTransformInterface <InternalComputationValueType, D> >
+{
+  static const char* Get()
+  {
+    return "itkTransformInterface";
+  }
+};
+
+
 template <>
 struct InterfaceName < RunRegistrationInterface >
 {

@@ -169,6 +169,15 @@ namespace selx
     virtual Optimizerv4Pointer GetItkOptimizerv4() = 0;
   };
 
+    template<class TInternalComputationValueType, int Dimensionality>
+  class itkTransformInterface {
+  public:
+    typedef typename itk::Transform<TInternalComputationValueType, Dimensionality>       TransformType;
+    typedef typename TransformType::Pointer                             TransformPointer;
+
+    virtual TransformPointer GetItkTransform() = 0;
+  };
+  
   // Define the accepting interfaces as templated by the providing interface
 
   template<class InterfaceT>

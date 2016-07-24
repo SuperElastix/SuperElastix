@@ -47,7 +47,7 @@ namespace selx
     typedef typename itkImageFixedInterface<Dimensionality, TPixel >::ItkImageType ItkImageType;
     
     typedef typename itk::ImageFileReader<ItkImageType> ItkImageReaderType;
-    typedef typename FileReaderDecorator<ItkImageReaderType> DecoratedReaderType;
+    typedef FileReaderDecorator<ItkImageReaderType> DecoratedReaderType;
 
     virtual typename ItkImageType::Pointer GetItkImageFixed() override;
     virtual void SetMiniPipelineInput(itk::DataObject::Pointer) override;

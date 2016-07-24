@@ -45,7 +45,7 @@ namespace selx
 
     typedef itk::Mesh<TPixel, Dimensionality> ItkMeshType;
     typedef typename itk::MeshFileReader<ItkMeshType> ItkMeshReaderType;
-    typedef typename FileReaderDecorator<ItkMeshReaderType>  DecoratedReaderType;
+    typedef FileReaderDecorator<ItkMeshReaderType>  DecoratedReaderType;
 
     virtual typename ItkMeshType::Pointer GetItkMesh() override;
     virtual void SetMiniPipelineInput(itk::DataObject::Pointer) override;
