@@ -1,0 +1,187 @@
+/*=========================================================================
+ *
+ *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Center and contributors
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *=========================================================================*/
+
+#ifndef selxItkTransformDisplacementFilter_h
+#define selxItkTransformDisplacementFilter_h
+
+#include "ComponentBase.h"
+#include "Interfaces.h"
+#include "itkImageRegistrationMethodv4.h"
+#include "itkGradientDescentOptimizerv4.h"
+#include "itkImageSource.h"
+#include <itkTransformToDisplacementFieldFilter.h>
+#include <string.h>
+#include "selxMacro.h"
+
+
+#include "itkComposeDisplacementFieldsImageFilter.h"
+#include "itkGaussianExponentialDiffeomorphicTransform.h"
+#include "itkGaussianExponentialDiffeomorphicTransformParametersAdaptor.h"
+
+
+namespace selx
+{
+  template <int Dimensionality, class TPixel, class TInternalComputationValue>
+  class ItkTransformDisplacementFilter : 
+    public Implements<
+    Accepting< itkTransformInterface<TInternalComputationValue, Dimensionality>,
+               itkImageFixedInterface<Dimensionality, TPixel> //TODO should be FixedImageDomainInterface, we do not require intensities
+             >,
+    Providing< DisplacementFieldItkImageSourceInterface<Dimensionality, TPixel>
+             >
+    >
+  {
+  public:
+    selxNewMacro(ItkTransformDisplacementFilter, ComponentBase);
+
+    //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
+
+    ItkTransformDisplacementFilter();
+    virtual ~ItkTransformDisplacementFilter();
+
+    typedef TPixel PixelType;
+
+    // Get the type definitions from the interfaces 
+    typedef typename itkImageFixedInterface<Dimensionality, TPixel>::ItkImageType FixedImageType; 
+	typedef typename DisplacementFieldItkImageSourceInterface<Dimensionality, TPixel>::ItkImageType DisplacementFieldImageType;
+	
+    // TODO for now we hard code the transform to be a stationary velocity field. See Set(*MetricInterface) for implementation
+        
+	typedef itk::TransformToDisplacementFieldFilter<DisplacementFieldImageType> DisplacementFieldFilterType;
+    
+    //Accepting Interfaces:
+    virtual int Set(itkImageFixedInterface<Dimensionality, TPixel>*) override;
+    virtual int Set(itkTransformInterface<TInternalComputationValue, Dimensionality>*) override;
+        
+    //Providing Interfaces:
+    virtual typename DisplacementFieldImageType::Pointer GetDisplacementFieldItkImage() override;
+
+    //BaseClass methods
+    virtual bool MeetsCriterion(const ComponentBase::CriterionType &criterion) override;    
+    //static const char * GetName() { return "ItkTransformDisplacement"; } ;
+    static const char * GetDescription() { return "ItkTransformDisplacement Component"; };
+  private:
+
+	  typename DisplacementFieldFilterType::Pointer m_DisplacementFieldFilter;
+  protected:
+    /* The following struct returns the string name of computation type */
+    /* default implementation */
+
+    static inline const std::string GetTypeNameString()
+    {
+      itkGenericExceptionMacro(<< "Unknown ScalarType" << typeid(TPixel).name());
+      // TODO: provide the user instructions how to enable the compilation of the component with the required template types (if desired)
+      // We might define an exception object that can communicate various error messages: for simple user, for developer user, etc
+    }
+
+    static inline const std::string GetPixelTypeNameString()
+    {
+      itkGenericExceptionMacro(<< "Unknown PixelType" << typeid(TPixel).name());
+      // TODO: provide the user instructions how to enable the compilation of the component with the required template types (if desired)
+      // We might define an exception object that can communicate various error messages: for simple user, for developer user, etc
+    }
+
+  };
+
+  // unfortunately partial specialization of member functions is not allowed, without partially specializing the entire class.
+
+  /*
+  template <int Dimensionality>
+  class ItkTransformDisplacementComponent < Dimensionality, double >
+  {
+    static inline const std::string GetPixelTypeNameString();
+  };
+
+  template <int Dimensionality>
+  inline const std::string
+    ItkTransformDisplacementComponent<Dimensionality, double>
+    ::GetPixelTypeNameString()
+  {
+    return std::string("double");
+  }
+  */
+
+  template <>
+  inline const std::string
+    ItkTransformDisplacementFilter<2, float, double>
+    ::GetPixelTypeNameString()
+  {
+    return std::string("float");
+  }
+
+
+  template <>
+  inline const std::string
+    ItkTransformDisplacementFilter<2, double, double>
+    ::GetPixelTypeNameString()
+  {
+    return std::string("double");
+  }
+
+  template <>
+  inline const std::string
+    ItkTransformDisplacementFilter<3, float, double>
+    ::GetPixelTypeNameString()
+  {
+    return std::string("float");
+  }
+
+  template <>
+  inline const std::string
+    ItkTransformDisplacementFilter<3, double, double>
+    ::GetPixelTypeNameString()
+  {
+    return std::string("double");
+  }
+  template <>
+  inline const std::string
+    ItkTransformDisplacementFilter<2, float, double>
+    ::GetTypeNameString()
+  {
+    return std::string("2_float");
+  }
+
+  template <>
+  inline const std::string
+    ItkTransformDisplacementFilter<2, double, double>
+    ::GetTypeNameString()
+  {
+    return std::string("2_double");
+  }
+
+  template <>
+  inline const std::string
+    ItkTransformDisplacementFilter<3, float, double>
+    ::GetTypeNameString()
+  {
+    return std::string("3_float");
+  }
+  
+  template <>
+  inline const std::string
+    ItkTransformDisplacementFilter<3, double, double>
+    ::GetTypeNameString()
+  {
+    return std::string("3_double");
+  }
+} //end namespace selx
+#ifndef ITK_MANUAL_INSTANTIATION
+#include "selxItkTransformDisplacementFilter.hxx"
+#endif
+#endif // #define GDOptimizer3rdPartyComponent_h
