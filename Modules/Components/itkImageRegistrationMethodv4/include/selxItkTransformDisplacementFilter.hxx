@@ -23,7 +23,7 @@ namespace selx
 {
 
   template <int Dimensionality, class TPixel, class TInternalComputationValue>
-  ItkTransformDisplacementFilter< Dimensionality, TPixel, TInternalComputationValue>::ItkTransformDisplacementFilter()
+  ItkTransformDisplacementFilterComponent< Dimensionality, TPixel, TInternalComputationValue>::ItkTransformDisplacementFilterComponent()
 {
   m_DisplacementFieldFilter = DisplacementFieldFilterType::New();
   //TODO: instantiating the filter in the constructor might be heavy for the use in component selector factory, since all components of the database are created during the selection process.
@@ -31,12 +31,12 @@ namespace selx
 }
 
   template <int Dimensionality, class TPixel, class TInternalComputationValue>
-  ItkTransformDisplacementFilter< Dimensionality, TPixel, TInternalComputationValue>::~ItkTransformDisplacementFilter()
+  ItkTransformDisplacementFilterComponent< Dimensionality, TPixel, TInternalComputationValue>::~ItkTransformDisplacementFilterComponent()
 {
 }
 
 template <int Dimensionality, class TPixel, class TInternalComputationValue>
-int ItkTransformDisplacementFilter< Dimensionality, TPixel, TInternalComputationValue>
+int ItkTransformDisplacementFilterComponent< Dimensionality, TPixel, TInternalComputationValue>
 ::Set(itkImageFixedInterface<Dimensionality, TPixel>* component)
 {
   auto fixedImage = component->GetItkImageFixed();
@@ -52,7 +52,7 @@ int ItkTransformDisplacementFilter< Dimensionality, TPixel, TInternalComputation
 }
 
 template <int Dimensionality, class TPixel, class TInternalComputationValue>
-int ItkTransformDisplacementFilter< Dimensionality, TPixel, TInternalComputationValue>
+int ItkTransformDisplacementFilterComponent< Dimensionality, TPixel, TInternalComputationValue>
 ::Set(itkTransformInterface<TInternalComputationValue, Dimensionality >* component)
 {
   auto transform = component->GetItkTransform();
@@ -64,8 +64,8 @@ int ItkTransformDisplacementFilter< Dimensionality, TPixel, TInternalComputation
 
 
 template <int Dimensionality, class TPixel, class TInternalComputationValue>
-typename ItkTransformDisplacementFilter< Dimensionality, TPixel, TInternalComputationValue>::DisplacementFieldImageType::Pointer
-ItkTransformDisplacementFilter< Dimensionality, TPixel, TInternalComputationValue>
+typename ItkTransformDisplacementFilterComponent< Dimensionality, TPixel, TInternalComputationValue>::DisplacementFieldImageType::Pointer
+ItkTransformDisplacementFilterComponent< Dimensionality, TPixel, TInternalComputationValue>
 ::GetDisplacementFieldItkImage()
 {
 
@@ -75,7 +75,7 @@ ItkTransformDisplacementFilter< Dimensionality, TPixel, TInternalComputationValu
 
 template <int Dimensionality, class TPixel, class TInternalComputationValue>
 bool
-ItkTransformDisplacementFilter< Dimensionality, TPixel, TInternalComputationValue>
+ItkTransformDisplacementFilterComponent< Dimensionality, TPixel, TInternalComputationValue>
 ::MeetsCriterion(const ComponentBase::CriterionType &criterion)
 {
   bool hasUndefinedCriteria(false);

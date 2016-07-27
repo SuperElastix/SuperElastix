@@ -46,7 +46,7 @@ namespace selx
                itkOptimizerv4Interface<double>
              >,
     Providing< itkImageInterface<Dimensionality, TPixel>,
-               DisplacementFieldItkImageSourceInterface<Dimensionality, TPixel>,
+               itkTransformInterface<double, Dimensionality>,
                RunRegistrationInterface
              >
     >
@@ -60,26 +60,24 @@ namespace selx
     virtual ~ItkImageRegistrationMethodv4Component();
 
     typedef TPixel PixelType;
-    typedef itkOptimizerv4Interface<double>::InternalComputationValueType InternalComputationValueType;
-    // the in and output image type of the component are chosen to be the same 
-    typedef itk::Image<PixelType, Dimensionality> ConnectionImageType; 
-
-    // fixed and moving image types are all the same, these aliases can be used to be explicit. 
+    
+    // Get the type definitions from the interfaces 
     typedef typename itkImageFixedInterface<Dimensionality, TPixel>::ItkImageType FixedImageType;
     typedef typename itkImageMovingInterface<Dimensionality, TPixel>::ItkImageType MovingImageType;
-    
-    typedef typename itk::Image<itk::Vector<PixelType, Dimensionality>, Dimensionality> DisplacementFieldImageType;
+    typedef typename itkTransformInterface<double, Dimensionality>::TransformPointer TransformPointer;
+    typedef typename itkOptimizerv4Interface<double>::InternalComputationValueType InternalComputationValueType;
     typedef typename itkImageInterface<Dimensionality, TPixel>::ItkImageType ResultItkImageType;
     
 
     // TODO for now we hard code the transform to be a stationary velocity field. See Set(*MetricInterface) for implementation
     typedef double RealType;
     typedef itk::GaussianExponentialDiffeomorphicTransform<RealType, Dimensionality> ConstantVelocityFieldTransformType;
-    typedef itk::ImageRegistrationMethodv4<FixedImageType, MovingImageType, ConstantVelocityFieldTransformType> TheItkFilterType;
+    //typedef itk::ImageRegistrationMethodv4<FixedImageType, MovingImageType, ConstantVelocityFieldTransformType> TheItkFilterType;
+    typedef itk::ImageRegistrationMethodv4<FixedImageType, MovingImageType> TheItkFilterType;
     typedef typename TheItkFilterType::ImageMetricType ImageMetricType;
     typedef itk::RegistrationParameterScalesFromPhysicalShift<ImageMetricType> ScalesEstimatorType;
-    typedef itk::ResampleImageFilter<MovingImageType, ConnectionImageType> ResampleFilterType;
-    typedef itk::TransformToDisplacementFieldFilter<DisplacementFieldImageType> DisplacementFieldFilterType;
+    typedef itk::ResampleImageFilter<MovingImageType, ResultItkImageType> ResampleFilterType;
+    //typedef itk::TransformToDisplacementFieldFilter<DisplacementFieldImageType> DisplacementFieldFilterType;
     
     //Accepting Interfaces:
     virtual int Set(itkImageFixedInterface<Dimensionality, TPixel>*) override;
@@ -89,7 +87,8 @@ namespace selx
     
     //Providing Interfaces:
     virtual typename ResultItkImageType::Pointer GetItkImage() override;
-    virtual typename DisplacementFieldImageType::Pointer GetDisplacementFieldItkImage() override;
+    virtual TransformPointer GetItkTransform() override;
+    //virtual typename DisplacementFieldImageType::Pointer GetDisplacementFieldItkImage() override;
 
     virtual void RunRegistration() override;
 
@@ -100,7 +99,6 @@ namespace selx
   private:
     typename TheItkFilterType::Pointer m_theItkFilter;
     typename ResampleFilterType::Pointer m_resampler;
-    typename DisplacementFieldFilterType::Pointer m_DisplacementFieldFilter;
   protected:
     /* The following struct returns the string name of computation type */
     /* default implementation */

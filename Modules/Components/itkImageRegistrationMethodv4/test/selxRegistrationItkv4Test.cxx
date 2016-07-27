@@ -88,7 +88,8 @@ public:
     ItkMeanSquaresImageToImageMetricv4Component < 2, float >,
     ItkGradientDescentOptimizerv4Component<double>,
     ItkAffineTransformComponent<double,3>,
-    ItkTransformDisplacementFilter<2, float, double >> RegisterComponents;
+    ItkTransformDisplacementFilterComponent<2, float, double >,
+    ItkTransformDisplacementFilterComponent<3, double, double >> RegisterComponents;
 	
   typedef SuperElastixFilter<RegisterComponents>          SuperElastixFilterType;
 
@@ -386,6 +387,10 @@ TEST_F(RegistrationItkv4Test, DisplacementField)
   component5Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
   blueprint->AddComponent("Metric", component5Parameters);
 
+  ParameterMapType component6Parameters;
+  component6Parameters["NameOfClass"] = { "ItkTransformDisplacementFilterComponent" };
+  component6Parameters["Dimensionality"] = { "3" }; // should be derived from the outputs
+  blueprint->AddComponent("TransformDisplacementFilter", component6Parameters);
 
   ParameterMapType connection1Parameters;
   connection1Parameters["NameOfInterface"] = { "itkImageFixedInterface" };
@@ -401,11 +406,14 @@ TEST_F(RegistrationItkv4Test, DisplacementField)
 
   ParameterMapType connection4Parameters;
   connection4Parameters["NameOfInterface"] = { "DisplacementFieldItkImageSourceInterface" };
-  blueprint->AddConnection("RegistrationMethod", "ResultDisplacementFieldSink", connection4Parameters);
+  blueprint->AddConnection("TransformDisplacementFilter", "ResultDisplacementFieldSink", connection4Parameters);
 
   ParameterMapType connection5Parameters;
   connection5Parameters["NameOfInterface"] = { "itkMetricv4Interface" };
   blueprint->AddConnection("Metric", "RegistrationMethod", connection5Parameters);
+
+  blueprint->AddConnection("RegistrationMethod", "TransformDisplacementFilter", { {} });
+  blueprint->AddConnection("FixedImageSource", "TransformDisplacementFilter", { {} });
 
   // Instantiate SuperElastix
   SuperElastixFilterType::Pointer superElastixFilter;

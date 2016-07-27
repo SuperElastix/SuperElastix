@@ -122,10 +122,15 @@ namespace selx
 {
   m_theItkFilter = TheItkFilterType::New();
   m_resampler = ResampleFilterType::New();
-  m_DisplacementFieldFilter = DisplacementFieldFilterType::New();
+  //m_DisplacementFieldFilter = DisplacementFieldFilterType::New();
   //m_DisplacementFieldFilter->GetTransformInput()->Graft<ConstantVelocityFieldTransformType>(&(const_cast<ConstantVelocityFieldTransformType>( m_theItkFilter->GetOutput())));
   //m_DisplacementFieldFilter->GetTransformInput()->Graft(m_theItkFilter->GetOutput());
   
+  ConstantVelocityFieldTransformType::Pointer transform = ConstantVelocityFieldTransformType::New();
+  m_theItkFilter->SetInitialTransform(transform);
+
+  m_theItkFilter->InPlaceOff();
+
   typename itk::DataObjectDecorator<typename ConstantVelocityFieldTransformType::Superclass::Superclass::Superclass>::Pointer decoratedDummyTransform = itk::DataObjectDecorator<typename ConstantVelocityFieldTransformType::Superclass::Superclass::Superclass>::New();
   typename ConstantVelocityFieldTransformType::Pointer dummyTranform = ConstantVelocityFieldTransformType::New();
   decoratedDummyTransform->Set(dummyTranform);
@@ -133,7 +138,7 @@ namespace selx
   //decoratedTransform->Set(m_theItkFilter->GetOutput()->Get());
   //m_DisplacementFieldFilter->SetTransformInput(const_cast< itk::DataObjectDecorator<ConstantVelocityFieldTransformType::Superclass::Superclass::Superclass>*>(decoratedTransform));
   
-  m_DisplacementFieldFilter->SetTransformInput(decoratedDummyTransform);
+  //m_DisplacementFieldFilter->SetTransformInput(decoratedDummyTransform);
   //m_theItkFilter->GetOutput()->Graft(m_DisplacementFieldFilter->GetTransformInput());
   //m_DisplacementFieldFilter->GetTransformInput()->Graft(decoratedTransform);
 
@@ -156,13 +161,6 @@ int ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>
   auto fixedImage = component->GetItkImageFixed();
   // connect the itk pipeline
   this->m_theItkFilter->SetFixedImage(fixedImage);
-
-  //this->m_DisplacementFieldFilter->SetSize(fixedImage->GetBufferedRegion().GetSize()); //should be virtual image...
-  this->m_DisplacementFieldFilter->SetSize(fixedImage->GetLargestPossibleRegion().GetSize()); //should be virtual image...
-  this->m_DisplacementFieldFilter->SetOutputOrigin(fixedImage->GetOrigin());
-  this->m_DisplacementFieldFilter->SetOutputSpacing(fixedImage->GetSpacing());
-  this->m_DisplacementFieldFilter->SetOutputDirection(fixedImage->GetDirection());
-  this->m_DisplacementFieldFilter->UpdateOutputInformation();
 
   //this->m_resampler->SetSize(fixedImage->GetBufferedRegion().GetSize());  //should be virtual image...
   this->m_resampler->SetSize(fixedImage->GetLargestPossibleRegion().GetSize());  //should be virtual image...
@@ -419,18 +417,6 @@ void ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::RunRegistra
   //this->m_DisplacementFieldFilter->SetTransform(inversetranform);
   //this->m_DisplacementFieldFilter->SetTransform(fieldTransform);
 
-  this->m_DisplacementFieldFilter->SetTransform(forwardDisplacement);
-
-  //this->m_DisplacementFieldFilter->SetTransform(this->m_theItkFilter->GetTransformOutput()->Get());
-  this->m_DisplacementFieldFilter->SetSize(fixedImage->GetBufferedRegion().GetSize()); //should be virtual image...
-  this->m_DisplacementFieldFilter->SetOutputOrigin(fixedImage->GetOrigin());
-  this->m_DisplacementFieldFilter->SetOutputSpacing(fixedImage->GetSpacing());
-  this->m_DisplacementFieldFilter->SetOutputDirection(fixedImage->GetDirection());
-
-  this->m_DisplacementFieldFilter->SetReferenceImage(fixedImage);
-  // TODO: is this needed?
-  this->m_DisplacementFieldFilter->Update();
-
 }
 
 template<int Dimensionality, class TPixel>
@@ -443,12 +429,13 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>
 
 
 template<int Dimensionality, class TPixel>
-typename ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::DisplacementFieldImageType::Pointer
+typename ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::TransformPointer
 ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>
-::GetDisplacementFieldItkImage()
+::GetItkTransform()
 {
 
-  return this->m_DisplacementFieldFilter->GetOutput();
+  //return this->m_theItkFilter->GetOutput().GetPointer();
+  return this->m_theItkFilter->GetModifiableTransform();
 }
 
 

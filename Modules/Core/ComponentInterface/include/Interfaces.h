@@ -236,6 +236,7 @@ protected:
 //{
 //};
 
+//TODO rename Implements to SuperElastixComponent
 template<typename AcceptingInterfaces, typename ProvidingInterfaces>
 class Implements : public AcceptingInterfaces, public ProvidingInterfaces, public ComponentBase
 {

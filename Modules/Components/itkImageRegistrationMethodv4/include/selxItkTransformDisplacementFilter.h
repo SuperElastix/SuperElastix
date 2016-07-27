@@ -38,7 +38,7 @@
 namespace selx
 {
   template <int Dimensionality, class TPixel, class TInternalComputationValue>
-  class ItkTransformDisplacementFilter : 
+  class ItkTransformDisplacementFilterComponent : 
     public Implements<
     Accepting< itkTransformInterface<TInternalComputationValue, Dimensionality>,
                itkImageFixedInterface<Dimensionality, TPixel> //TODO should be FixedImageDomainInterface, we do not require intensities
@@ -48,18 +48,18 @@ namespace selx
     >
   {
   public:
-    selxNewMacro(ItkTransformDisplacementFilter, ComponentBase);
+    selxNewMacro(ItkTransformDisplacementFilterComponent, ComponentBase);
 
     //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
 
-    ItkTransformDisplacementFilter();
-    virtual ~ItkTransformDisplacementFilter();
+    ItkTransformDisplacementFilterComponent();
+    virtual ~ItkTransformDisplacementFilterComponent();
 
     typedef TPixel PixelType;
 
     // Get the type definitions from the interfaces 
     typedef typename itkImageFixedInterface<Dimensionality, TPixel>::ItkImageType FixedImageType; 
-	typedef typename DisplacementFieldItkImageSourceInterface<Dimensionality, TPixel>::ItkImageType DisplacementFieldImageType;
+	  typedef typename DisplacementFieldItkImageSourceInterface<Dimensionality, TPixel>::ItkImageType DisplacementFieldImageType;
 	
     // TODO for now we hard code the transform to be a stationary velocity field. See Set(*MetricInterface) for implementation
         
@@ -119,7 +119,7 @@ namespace selx
 
   template <>
   inline const std::string
-    ItkTransformDisplacementFilter<2, float, double>
+    ItkTransformDisplacementFilterComponent<2, float, double>
     ::GetPixelTypeNameString()
   {
     return std::string("float");
@@ -128,7 +128,7 @@ namespace selx
 
   template <>
   inline const std::string
-    ItkTransformDisplacementFilter<2, double, double>
+    ItkTransformDisplacementFilterComponent<2, double, double>
     ::GetPixelTypeNameString()
   {
     return std::string("double");
@@ -136,7 +136,7 @@ namespace selx
 
   template <>
   inline const std::string
-    ItkTransformDisplacementFilter<3, float, double>
+    ItkTransformDisplacementFilterComponent<3, float, double>
     ::GetPixelTypeNameString()
   {
     return std::string("float");
@@ -144,14 +144,14 @@ namespace selx
 
   template <>
   inline const std::string
-    ItkTransformDisplacementFilter<3, double, double>
+    ItkTransformDisplacementFilterComponent<3, double, double>
     ::GetPixelTypeNameString()
   {
     return std::string("double");
   }
   template <>
   inline const std::string
-    ItkTransformDisplacementFilter<2, float, double>
+    ItkTransformDisplacementFilterComponent<2, float, double>
     ::GetTypeNameString()
   {
     return std::string("2_float");
@@ -159,7 +159,7 @@ namespace selx
 
   template <>
   inline const std::string
-    ItkTransformDisplacementFilter<2, double, double>
+    ItkTransformDisplacementFilterComponent<2, double, double>
     ::GetTypeNameString()
   {
     return std::string("2_double");
@@ -167,7 +167,7 @@ namespace selx
 
   template <>
   inline const std::string
-    ItkTransformDisplacementFilter<3, float, double>
+    ItkTransformDisplacementFilterComponent<3, float, double>
     ::GetTypeNameString()
   {
     return std::string("3_float");
@@ -175,7 +175,7 @@ namespace selx
   
   template <>
   inline const std::string
-    ItkTransformDisplacementFilter<3, double, double>
+    ItkTransformDisplacementFilterComponent<3, double, double>
     ::GetTypeNameString()
   {
     return std::string("3_double");
