@@ -43,7 +43,7 @@ namespace selx
     // Store pointer to MiniPipelineOutputImage for later grafting onto Overlord output.
     this->m_MiniPipelineOutputImage = other->GetDisplacementFieldItkImage();
     // Graft Overlord output onto MiniPipelineOutputImage.
-    this->m_MiniPipelineOutputImage->Graft(this->m_OverlordOutputImage);
+    //this->m_MiniPipelineOutputImage->Graft(this->m_OverlordOutputImage);
     return 0;
   }
 
