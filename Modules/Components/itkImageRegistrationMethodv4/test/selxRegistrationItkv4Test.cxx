@@ -220,6 +220,7 @@ TEST_F(RegistrationItkv4Test, WithANTSCCMetric)
 
   ParameterMapType component5Parameters;
   component5Parameters["NameOfClass"] = { "ItkGradientDescentOptimizerv4Component" };
+  component5Parameters["NumberOfIterations"] = { "1" };
   blueprint->AddComponent("Optimizer", component5Parameters);
 
   ParameterMapType connection1Parameters;
@@ -303,6 +304,10 @@ TEST_F(RegistrationItkv4Test, WithMeanSquaresMetric)
   component4Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
   blueprint->AddComponent("Metric", component4Parameters);
 
+  ParameterMapType component5Parameters;
+  component5Parameters["NameOfClass"] = { "ItkGradientDescentOptimizerv4Component" };
+  component5Parameters["NumberOfIterations"] = { "1" };
+  blueprint->AddComponent("Optimizer", component5Parameters);
 
   ParameterMapType connection1Parameters;
   connection1Parameters["NameOfInterface"] = { "itkImageFixedInterface" };
@@ -319,6 +324,10 @@ TEST_F(RegistrationItkv4Test, WithMeanSquaresMetric)
   ParameterMapType connection4Parameters;
   connection4Parameters["NameOfInterface"] = { "itkMetricv4Interface" };
   blueprint->AddConnection("Metric", "RegistrationMethod", connection4Parameters);
+
+  ParameterMapType connection5Parameters;
+  connection5Parameters["NameOfInterface"] = { "itkOptimizerv4Interface" };
+  blueprint->AddConnection("Optimizer", "RegistrationMethod", connection5Parameters);
 
   // Instantiate SuperElastix
   SuperElastixFilterType::Pointer superElastixFilter;
@@ -392,6 +401,11 @@ TEST_F(RegistrationItkv4Test, DisplacementField)
   component6Parameters["Dimensionality"] = { "3" }; // should be derived from the outputs
   blueprint->AddComponent("TransformDisplacementFilter", component6Parameters);
 
+  ParameterMapType component7Parameters;
+  component7Parameters["NameOfClass"] = { "ItkGradientDescentOptimizerv4Component" };
+  component7Parameters["NumberOfIterations"] = { "1" };
+  blueprint->AddComponent("Optimizer", component7Parameters);
+
   ParameterMapType connection1Parameters;
   connection1Parameters["NameOfInterface"] = { "itkImageFixedInterface" };
   blueprint->AddConnection("FixedImageSource", "RegistrationMethod", connection1Parameters);
@@ -414,6 +428,7 @@ TEST_F(RegistrationItkv4Test, DisplacementField)
 
   blueprint->AddConnection("RegistrationMethod", "TransformDisplacementFilter", { {} });
   blueprint->AddConnection("FixedImageSource", "TransformDisplacementFilter", { {} });
+  blueprint->AddConnection("Optimizer", "RegistrationMethod", { {} });
 
   // Instantiate SuperElastix
   SuperElastixFilterType::Pointer superElastixFilter;
