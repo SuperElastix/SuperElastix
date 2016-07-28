@@ -36,6 +36,7 @@
 #include "selxItkMeanSquaresImageToImageMetricv4.h"
 #include "selxItkGradientDescentOptimizerv4.h"
 #include "selxItkAffineTransform.h"
+#include "selxItkGaussianExponentialDiffeomorphicTransform.h"
 #include "selxItkTransformDisplacementFilter.h"
 #include "selxItkResampleFilter.h"
 #include "selxItkImageSourceFixed.h"
@@ -89,6 +90,7 @@ public:
     ItkMeanSquaresImageToImageMetricv4Component < 2, float >,
     ItkGradientDescentOptimizerv4Component<double>,
     ItkAffineTransformComponent<double,3>,
+    ItkGaussianExponentialDiffeomorphicTransformComponent<double, 3>,
     ItkTransformDisplacementFilterComponent<2, float, double >,
     ItkTransformDisplacementFilterComponent<3, double, double >,
     ItkResampleFilterComponent<2, float, double >,
@@ -409,11 +411,12 @@ TEST_F(RegistrationItkv4Test, DisplacementField)
   component7Parameters["NumberOfIterations"] = { "1" };
   blueprint->AddComponent("Optimizer", component7Parameters);
 
-  ParameterMapType component8Parameters;
-  component8Parameters["NameOfClass"] = { "ItkResampleFilterComponent" };
-  component8Parameters["Dimensionality"] = { "3" }; // should be derived from the outputs
-  blueprint->AddComponent("ResampleFilter", component8Parameters);
 
+  blueprint->AddComponent("ResampleFilter", { { "NameOfClass",    { "ItkResampleFilterComponent" } },
+                                              { "Dimensionality", { "3" } } });
+                                            
+  blueprint->AddComponent("Transform",      { { "NameOfClass",    { "ItkGaussianExponentialDiffeomorphicTransformComponent" } },
+                                              { "Dimensionality", { "3" } } });
 
   ParameterMapType connection1Parameters;
   connection1Parameters["NameOfInterface"] = { "itkImageFixedInterface" };
@@ -434,7 +437,8 @@ TEST_F(RegistrationItkv4Test, DisplacementField)
   ParameterMapType connection5Parameters;
   connection5Parameters["NameOfInterface"] = { "itkMetricv4Interface" };
   blueprint->AddConnection("Metric", "RegistrationMethod", connection5Parameters);
-
+  
+  blueprint->AddConnection("Transform", "RegistrationMethod", { {} }); 
   blueprint->AddConnection("Optimizer", "RegistrationMethod", { {} });
   blueprint->AddConnection("RegistrationMethod", "TransformDisplacementFilter", { {} });
   blueprint->AddConnection("FixedImageSource", "TransformDisplacementFilter", { {} });

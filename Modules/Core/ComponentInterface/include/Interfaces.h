@@ -172,6 +172,7 @@ namespace selx
     template<class TInternalComputationValueType, int Dimensionality>
   class itkTransformInterface {
   public:
+    typedef TInternalComputationValueType InternalComputationValueType;
     typedef typename itk::Transform<TInternalComputationValueType, Dimensionality, Dimensionality>       TransformType;
     typedef typename TransformType::Pointer                             TransformPointer;
 

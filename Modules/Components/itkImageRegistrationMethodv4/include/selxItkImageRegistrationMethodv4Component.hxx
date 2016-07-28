@@ -121,10 +121,6 @@ namespace selx
   ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::ItkImageRegistrationMethodv4Component()
 {
   m_theItkFilter = TheItkFilterType::New();
-  
-  typename ConstantVelocityFieldTransformType::Pointer transform = ConstantVelocityFieldTransformType::New();
-  m_theItkFilter->SetInitialTransform(transform);
-
   m_theItkFilter->InPlaceOff();
 
   //TODO: instantiating the filter in the constructor might be heavy for the use in component selector factory, since all components of the database are created during the selection process.
@@ -157,6 +153,16 @@ int ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>
   return 0;
 }
 
+
+template<int Dimensionality, class TPixel>
+int ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::Set(itkTransformInterface<TransformInternalComputationValueType, Dimensionality>* component)
+{
+  this->m_theItkFilter->SetInitialTransform(component->GetItkTransform());
+
+  return 0;
+}
+
+
 template<int Dimensionality, class TPixel>
 int ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::Set(itkMetricv4Interface<Dimensionality, TPixel>* component)
 {
@@ -166,7 +172,7 @@ int ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::Set(itkMetri
 }
 
 template<int Dimensionality, class TPixel>
-int ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::Set(itkOptimizerv4Interface<InternalComputationValueType>* component)
+int ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::Set(itkOptimizerv4Interface<OptimizerInternalComputationValueType>* component)
 {
   this->m_theItkFilter->SetOptimizer(component->GetItkOptimizerv4());
 
@@ -239,39 +245,7 @@ void ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::RunRegistra
 
 
   this->m_theItkFilter->SetOptimizer(optimizer);
-
-  // TODO: for now we hard code the transform to be a stationary velocity field. See template declaration.
-
-  //typedef itk::CompositeTransform<RealType, Dimensionality> CompositeTransformType;
-  //typename CompositeTransformType::Pointer compositeTransform = CompositeTransformType::New();
-  
-  //typedef itk::IdentityTransform < RealType, Dimensionality> IdentityTransformType;
-  //typename IdentityTransformType::Pointer idTransform = IdentityTransformType::New();
-  //compositeTransform->AddTransform(idTransform);
-  
-
-  typedef itk::Vector<RealType, Dimensionality> VectorType;
-  VectorType zeroVector(0.0);
-  typedef itk::Image<VectorType, Dimensionality> DisplacementFieldType;
-  typedef itk::Image<VectorType, Dimensionality> ConstantVelocityFieldType;
-  typename ConstantVelocityFieldType::Pointer displacementField = ConstantVelocityFieldType::New();
-  displacementField->CopyInformation(fixedImage);
-  displacementField->SetRegions(fixedImage->GetBufferedRegion());
-  displacementField->Allocate();
-  displacementField->FillBuffer(zeroVector);
-
-  typename ConstantVelocityFieldTransformType::Pointer fieldTransform = ConstantVelocityFieldTransformType::New();
-  //fieldTransform->SetGaussianSmoothingVarianceForTheUpdateField(0.75);
-  //fieldTransform->SetGaussianSmoothingVarianceForTheConstantVelocityField(1.5);
-  fieldTransform->SetGaussianSmoothingVarianceForTheUpdateField(3.0);
-  fieldTransform->SetGaussianSmoothingVarianceForTheConstantVelocityField(6.0);
-  fieldTransform->SetConstantVelocityField(displacementField);
-  fieldTransform->SetCalculateNumberOfIntegrationStepsAutomatically(true);
-  fieldTransform->IntegrateVelocityField();
-
-  //this->m_theItkFilter->SetMovingInitialTransform(compositeTransform);
-  //this->m_theItkFilter->SetMovingInitialTransform(idTransform);
-  
+ 
   this->m_theItkFilter->SetNumberOfLevels(3);
   
   // Shrink the virtual domain by specified factors for each level.  See documentation
@@ -292,6 +266,11 @@ void ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::RunRegistra
   smoothingSigmasPerLevel[2] = 1;
   this->m_theItkFilter->SetSmoothingSigmasPerLevel(smoothingSigmasPerLevel);
 
+
+  // TODO for now we hard code the transform to be a stationary velocity field.
+  typedef double RealType;
+  typedef itk::GaussianExponentialDiffeomorphicTransform<RealType, Dimensionality> ConstantVelocityFieldTransformType;
+  typedef ConstantVelocityFieldTransformType::ConstantVelocityFieldType ConstantVelocityFieldType;
   typedef itk::GaussianExponentialDiffeomorphicTransformParametersAdaptor<ConstantVelocityFieldTransformType> VelocityFieldTransformAdaptorType;
 
   typename TheItkFilterType::TransformParametersAdaptorsContainerType adaptors;
@@ -302,10 +281,10 @@ void ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::RunRegistra
     // domain at each level.  To speed up calculation and avoid unnecessary memory
     // usage, we could calculate these fixed parameters directly.
 
-    typedef itk::ShrinkImageFilter<ConstantVelocityFieldType, ConstantVelocityFieldType> ShrinkFilterType;
+    typedef itk::ShrinkImageFilter<FixedImageType, FixedImageType> ShrinkFilterType;
     typename ShrinkFilterType::Pointer shrinkFilter = ShrinkFilterType::New();
     shrinkFilter->SetShrinkFactors(shrinkFactorsPerLevel[level]);
-    shrinkFilter->SetInput(fieldTransform->GetConstantVelocityField());
+    shrinkFilter->SetInput(fixedImage);
     shrinkFilter->Update();
 
     typename VelocityFieldTransformAdaptorType::Pointer fieldTransformAdaptor = VelocityFieldTransformAdaptorType::New();
@@ -328,13 +307,10 @@ void ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::RunRegistra
   */
   this->m_theItkFilter->SetTransformParametersAdaptorsPerLevel(adaptors);
   
-  this->m_theItkFilter->SetInitialTransform(fieldTransform);
-  this->m_theItkFilter->InPlaceOn();
   
-  
-  typedef CommandIterationUpdate<TheItkFilterType> DisplacementFieldRegistrationCommandType;
-  typename DisplacementFieldRegistrationCommandType::Pointer displacementFieldObserver = DisplacementFieldRegistrationCommandType::New();
-  this->m_theItkFilter->AddObserver(itk::IterationEvent(), displacementFieldObserver);
+  typedef CommandIterationUpdate<TheItkFilterType> RegistrationCommandType;
+  typename RegistrationCommandType::Pointer registrationObserver = RegistrationCommandType::New();
+  this->m_theItkFilter->AddObserver(itk::IterationEvent(), registrationObserver);
   
   // perform the actual registration
   this->m_theItkFilter->Update();

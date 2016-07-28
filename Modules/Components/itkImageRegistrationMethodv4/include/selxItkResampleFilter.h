@@ -17,8 +17,8 @@
  *
  *=========================================================================*/
 
-#ifndef selxItkImageRegistrationMethodv4Component_h
-#define selxItkImageRegistrationMethodv4Component_h
+#ifndef selxItkResampleFilter_h
+#define selxItkResampleFilter_h
 
 #include "ComponentBase.h"
 #include "Interfaces.h"
@@ -37,60 +37,49 @@
 
 namespace selx
 {
-  template <int Dimensionality, class TPixel>
-  class ItkImageRegistrationMethodv4Component : 
+  template <int Dimensionality, class TPixel, class TInternalComputationValue>
+  class ItkResampleFilterComponent : 
     public Implements<
-    Accepting< itkImageFixedInterface<Dimensionality, TPixel>, 
-               itkImageMovingInterface<Dimensionality, TPixel>,
-               itkTransformInterface<double, Dimensionality>,
-               itkMetricv4Interface<Dimensionality, TPixel>,
-               itkOptimizerv4Interface<double>
+    Accepting< itkTransformInterface<TInternalComputationValue, Dimensionality>,
+               itkImageFixedInterface<Dimensionality, TPixel>, //TODO should be FixedImageDomainInterface, we do not require intensities
+			         itkImageMovingInterface<Dimensionality, TPixel> 
              >,
-    Providing< itkTransformInterface<double, Dimensionality>,
-               RunRegistrationInterface
+    Providing< itkImageInterface<Dimensionality, TPixel>
              >
     >
   {
   public:
-    selxNewMacro(ItkImageRegistrationMethodv4Component, ComponentBase);
+    selxNewMacro(ItkResampleFilterComponent, ComponentBase);
 
     //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
 
-    ItkImageRegistrationMethodv4Component();
-    virtual ~ItkImageRegistrationMethodv4Component();
+    ItkResampleFilterComponent();
+    virtual ~ItkResampleFilterComponent();
 
     typedef TPixel PixelType;
-    
-    // Get the type definitions from the interfaces 
-    typedef typename itkImageFixedInterface<Dimensionality, TPixel>::ItkImageType FixedImageType;
-    typedef typename itkImageMovingInterface<Dimensionality, TPixel>::ItkImageType MovingImageType;
-    typedef typename itkTransformInterface<double, Dimensionality>::TransformType TransformType;
-    typedef typename itkTransformInterface<double, Dimensionality>::TransformPointer TransformPointer;
 
-    typedef typename itkOptimizerv4Interface<double>::InternalComputationValueType OptimizerInternalComputationValueType; //should be from class template
-    typedef typename itkTransformInterface<double, Dimensionality>::InternalComputationValueType TransformInternalComputationValueType; //should be from class template
-    
-    typedef itk::ImageRegistrationMethodv4<FixedImageType, MovingImageType> TheItkFilterType;
-    typedef typename TheItkFilterType::ImageMetricType ImageMetricType;
-    typedef itk::RegistrationParameterScalesFromPhysicalShift<ImageMetricType> ScalesEstimatorType;
-    
+    // Get the type definitions from the interfaces 
+    typedef typename itkImageFixedInterface<Dimensionality, TPixel>::ItkImageType FixedImageType; 
+	typedef typename itkImageMovingInterface<Dimensionality, TPixel>::ItkImageType MovingImageType; 
+	typedef typename itkImageInterface<Dimensionality, TPixel>::ItkImageType ResultImageType; 
+	        
+	typedef itk::ResampleImageFilter<MovingImageType, ResultImageType> ResampleFilterType;
+	
     //Accepting Interfaces:
     virtual int Set(itkImageFixedInterface<Dimensionality, TPixel>*) override;
-    virtual int Set(itkImageMovingInterface<Dimensionality, TPixel>*) override;
-    virtual int Set(itkTransformInterface<TransformInternalComputationValueType, Dimensionality>*) override;
-    virtual int Set(itkMetricv4Interface<Dimensionality, TPixel>*) override;
-    virtual int Set(itkOptimizerv4Interface<OptimizerInternalComputationValueType>*) override;
-    
+  	virtual int Set(itkImageMovingInterface<Dimensionality, TPixel>*) override;
+    virtual int Set(itkTransformInterface<TInternalComputationValue, Dimensionality>*) override;
+        
     //Providing Interfaces:
-    virtual TransformPointer GetItkTransform() override;
-    virtual void RunRegistration() override;
+    virtual typename ResultImageType::Pointer GetItkImage() override;
 
     //BaseClass methods
     virtual bool MeetsCriterion(const ComponentBase::CriterionType &criterion) override;    
-    //static const char * GetName() { return "ItkImageRegistrationMethodv4"; } ;
-    static const char * GetDescription() { return "ItkImageRegistrationMethodv4 Component"; };
+    //static const char * GetName() { return "ItkResampleFilter"; } ;
+    static const char * GetDescription() { return "ItkResampleFilter Component"; };
   private:
-    typename TheItkFilterType::Pointer m_theItkFilter;
+
+	  typename ResampleFilterType::Pointer m_ResampleFilter;
   protected:
     /* The following struct returns the string name of computation type */
     /* default implementation */
@@ -115,14 +104,14 @@ namespace selx
 
   /*
   template <int Dimensionality>
-  class ItkImageRegistrationMethodv4Component < Dimensionality, double >
+  class ItkResampleFilterComponent < Dimensionality, double >
   {
     static inline const std::string GetPixelTypeNameString();
   };
 
   template <int Dimensionality>
   inline const std::string
-    ItkImageRegistrationMethodv4Component<Dimensionality, double>
+    ItkResampleFilterComponent<Dimensionality, double>
     ::GetPixelTypeNameString()
   {
     return std::string("double");
@@ -131,7 +120,7 @@ namespace selx
 
   template <>
   inline const std::string
-    ItkImageRegistrationMethodv4Component<2, float>
+    ItkResampleFilterComponent<2, float, double>
     ::GetPixelTypeNameString()
   {
     return std::string("float");
@@ -140,7 +129,7 @@ namespace selx
 
   template <>
   inline const std::string
-    ItkImageRegistrationMethodv4Component<2, double>
+    ItkResampleFilterComponent<2, double, double>
     ::GetPixelTypeNameString()
   {
     return std::string("double");
@@ -148,7 +137,7 @@ namespace selx
 
   template <>
   inline const std::string
-    ItkImageRegistrationMethodv4Component<3, float>
+    ItkResampleFilterComponent<3, float, double>
     ::GetPixelTypeNameString()
   {
     return std::string("float");
@@ -156,14 +145,14 @@ namespace selx
 
   template <>
   inline const std::string
-    ItkImageRegistrationMethodv4Component<3, double>
+    ItkResampleFilterComponent<3, double, double>
     ::GetPixelTypeNameString()
   {
     return std::string("double");
   }
   template <>
   inline const std::string
-    ItkImageRegistrationMethodv4Component<2, float>
+    ItkResampleFilterComponent<2, float, double>
     ::GetTypeNameString()
   {
     return std::string("2_float");
@@ -171,7 +160,7 @@ namespace selx
 
   template <>
   inline const std::string
-    ItkImageRegistrationMethodv4Component<2, double>
+    ItkResampleFilterComponent<2, double, double>
     ::GetTypeNameString()
   {
     return std::string("2_double");
@@ -179,7 +168,7 @@ namespace selx
 
   template <>
   inline const std::string
-    ItkImageRegistrationMethodv4Component<3,float>
+    ItkResampleFilterComponent<3, float, double>
     ::GetTypeNameString()
   {
     return std::string("3_float");
@@ -187,13 +176,13 @@ namespace selx
   
   template <>
   inline const std::string
-    ItkImageRegistrationMethodv4Component<3,double>
+    ItkResampleFilterComponent<3, double, double>
     ::GetTypeNameString()
   {
     return std::string("3_double");
   }
 } //end namespace selx
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "selxItkImageRegistrationMethodv4Component.hxx"
+#include "selxItkResampleFilter.hxx"
 #endif
 #endif // #define GDOptimizer3rdPartyComponent_h
