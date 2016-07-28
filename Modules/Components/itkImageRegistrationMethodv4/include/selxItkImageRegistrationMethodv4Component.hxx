@@ -126,7 +126,7 @@ namespace selx
   //m_DisplacementFieldFilter->GetTransformInput()->Graft<ConstantVelocityFieldTransformType>(&(const_cast<ConstantVelocityFieldTransformType>( m_theItkFilter->GetOutput())));
   //m_DisplacementFieldFilter->GetTransformInput()->Graft(m_theItkFilter->GetOutput());
   
-  ConstantVelocityFieldTransformType::Pointer transform = ConstantVelocityFieldTransformType::New();
+  typename ConstantVelocityFieldTransformType::Pointer transform = ConstantVelocityFieldTransformType::New();
   m_theItkFilter->SetInitialTransform(transform);
 
   m_theItkFilter->InPlaceOff();
