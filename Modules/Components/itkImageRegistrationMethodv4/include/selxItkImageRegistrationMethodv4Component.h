@@ -45,8 +45,7 @@ namespace selx
                itkMetricv4Interface<Dimensionality, TPixel>,
                itkOptimizerv4Interface<double>
              >,
-    Providing< itkImageInterface<Dimensionality, TPixel>,
-               itkTransformInterface<double, Dimensionality>,
+    Providing< itkTransformInterface<double, Dimensionality>,
                RunRegistrationInterface
              >
     >
@@ -66,7 +65,6 @@ namespace selx
     typedef typename itkImageMovingInterface<Dimensionality, TPixel>::ItkImageType MovingImageType;
     typedef typename itkTransformInterface<double, Dimensionality>::TransformPointer TransformPointer;
     typedef typename itkOptimizerv4Interface<double>::InternalComputationValueType InternalComputationValueType;
-    typedef typename itkImageInterface<Dimensionality, TPixel>::ItkImageType ResultItkImageType;
     
 
     // TODO for now we hard code the transform to be a stationary velocity field. See Set(*MetricInterface) for implementation
@@ -76,8 +74,6 @@ namespace selx
     typedef itk::ImageRegistrationMethodv4<FixedImageType, MovingImageType> TheItkFilterType;
     typedef typename TheItkFilterType::ImageMetricType ImageMetricType;
     typedef itk::RegistrationParameterScalesFromPhysicalShift<ImageMetricType> ScalesEstimatorType;
-    typedef itk::ResampleImageFilter<MovingImageType, ResultItkImageType> ResampleFilterType;
-    //typedef itk::TransformToDisplacementFieldFilter<DisplacementFieldImageType> DisplacementFieldFilterType;
     
     //Accepting Interfaces:
     virtual int Set(itkImageFixedInterface<Dimensionality, TPixel>*) override;
@@ -86,10 +82,7 @@ namespace selx
     virtual int Set(itkOptimizerv4Interface<InternalComputationValueType>*) override;
     
     //Providing Interfaces:
-    virtual typename ResultItkImageType::Pointer GetItkImage() override;
     virtual TransformPointer GetItkTransform() override;
-    //virtual typename DisplacementFieldImageType::Pointer GetDisplacementFieldItkImage() override;
-
     virtual void RunRegistration() override;
 
     //BaseClass methods
@@ -98,7 +91,6 @@ namespace selx
     static const char * GetDescription() { return "ItkImageRegistrationMethodv4 Component"; };
   private:
     typename TheItkFilterType::Pointer m_theItkFilter;
-    typename ResampleFilterType::Pointer m_resampler;
   protected:
     /* The following struct returns the string name of computation type */
     /* default implementation */

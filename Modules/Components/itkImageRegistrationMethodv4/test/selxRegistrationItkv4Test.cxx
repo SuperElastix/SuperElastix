@@ -37,6 +37,7 @@
 #include "selxItkGradientDescentOptimizerv4.h"
 #include "selxItkAffineTransform.h"
 #include "selxItkTransformDisplacementFilter.h"
+#include "selxItkResampleFilter.h"
 #include "selxItkImageSourceFixed.h"
 #include "selxItkImageSourceMoving.h"
 
@@ -89,7 +90,9 @@ public:
     ItkGradientDescentOptimizerv4Component<double>,
     ItkAffineTransformComponent<double,3>,
     ItkTransformDisplacementFilterComponent<2, float, double >,
-    ItkTransformDisplacementFilterComponent<3, double, double >> RegisterComponents;
+    ItkTransformDisplacementFilterComponent<3, double, double >,
+    ItkResampleFilterComponent<2, float, double >,
+    ItkResampleFilterComponent<3, double, double >> RegisterComponents;
 	
   typedef SuperElastixFilter<RegisterComponents>          SuperElastixFilterType;
 
@@ -406,6 +409,12 @@ TEST_F(RegistrationItkv4Test, DisplacementField)
   component7Parameters["NumberOfIterations"] = { "1" };
   blueprint->AddComponent("Optimizer", component7Parameters);
 
+  ParameterMapType component8Parameters;
+  component8Parameters["NameOfClass"] = { "ItkResampleFilterComponent" };
+  component8Parameters["Dimensionality"] = { "3" }; // should be derived from the outputs
+  blueprint->AddComponent("ResampleFilter", component8Parameters);
+
+
   ParameterMapType connection1Parameters;
   connection1Parameters["NameOfInterface"] = { "itkImageFixedInterface" };
   blueprint->AddConnection("FixedImageSource", "RegistrationMethod", connection1Parameters);
@@ -416,7 +425,7 @@ TEST_F(RegistrationItkv4Test, DisplacementField)
 
   ParameterMapType connection3Parameters;
   connection3Parameters["NameOfInterface"] = { "itkImageInterface" };
-  blueprint->AddConnection("RegistrationMethod", "ResultImageSink", connection3Parameters);
+  blueprint->AddConnection("ResampleFilter", "ResultImageSink", connection3Parameters);
 
   ParameterMapType connection4Parameters;
   connection4Parameters["NameOfInterface"] = { "DisplacementFieldItkImageSourceInterface" };
@@ -426,9 +435,12 @@ TEST_F(RegistrationItkv4Test, DisplacementField)
   connection5Parameters["NameOfInterface"] = { "itkMetricv4Interface" };
   blueprint->AddConnection("Metric", "RegistrationMethod", connection5Parameters);
 
+  blueprint->AddConnection("Optimizer", "RegistrationMethod", { {} });
   blueprint->AddConnection("RegistrationMethod", "TransformDisplacementFilter", { {} });
   blueprint->AddConnection("FixedImageSource", "TransformDisplacementFilter", { {} });
-  blueprint->AddConnection("Optimizer", "RegistrationMethod", { {} });
+  blueprint->AddConnection("RegistrationMethod", "ResampleFilter", { {} });
+  blueprint->AddConnection("FixedImageSource", "ResampleFilter", { {} });
+  blueprint->AddConnection("MovingImageSource", "ResampleFilter", { {} });
 
   // Instantiate SuperElastix
   SuperElastixFilterType::Pointer superElastixFilter;
