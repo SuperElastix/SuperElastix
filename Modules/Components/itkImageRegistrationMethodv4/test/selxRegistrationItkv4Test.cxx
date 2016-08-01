@@ -438,6 +438,7 @@ TEST_F(RegistrationItkv4Test, DisplacementField)
   connection5Parameters["NameOfInterface"] = { "itkMetricv4Interface" };
   blueprint->AddConnection("Metric", "RegistrationMethod", connection5Parameters);
   
+  blueprint->AddConnection("FixedImageSource", "Transform", { {} });
   blueprint->AddConnection("Transform", "RegistrationMethod", { {} }); 
   blueprint->AddConnection("Optimizer", "RegistrationMethod", { {} });
   blueprint->AddConnection("RegistrationMethod", "TransformDisplacementFilter", { {} });
@@ -481,6 +482,8 @@ TEST_F(RegistrationItkv4Test, DisplacementField)
   // Update call on the writers triggers SuperElastix to configure and execute
   EXPECT_NO_THROW(resultImageWriter->Update());
   EXPECT_NO_THROW(resultDisplacementWriter->Update());
+
+  blueprint->WriteBlueprint(dataManager->GetOutputFile("RegistrationItkv4Test_DisplacementField_network.dot"));
 
 }
 } // namespace selx

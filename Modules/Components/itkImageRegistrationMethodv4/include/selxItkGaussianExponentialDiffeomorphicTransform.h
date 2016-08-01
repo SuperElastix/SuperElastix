@@ -30,9 +30,11 @@ namespace selx
   template <class InternalComputationValueType, int Dimensionality>
   class ItkGaussianExponentialDiffeomorphicTransformComponent : 
     public Implements<
-    Accepting< >,
-    Providing< itkTransformInterface<InternalComputationValueType,Dimensionality>>
-    >
+    Accepting< itkImageFixedInterface<Dimensionality, double> >,
+    Providing< itkTransformInterface<InternalComputationValueType,Dimensionality>,
+    RunRegistrationInterface
+    >>
+    //Should be fixed domain only
   {
   public:
     selxNewMacro(ItkGaussianExponentialDiffeomorphicTransformComponent, ComponentBase);
@@ -49,14 +51,21 @@ namespace selx
     using TransformPointer = typename itkTransformInterface<InternalComputationValueType,Dimensionality>::TransformPointer;
     
     typedef typename itk::GaussianExponentialDiffeomorphicTransform<InternalComputationValueType, Dimensionality> GaussianExponentialDiffeomorphicTransformType;
+    
+    //Accepting Interfaces:
+    virtual int Set(itkImageFixedInterface<Dimensionality, double>*) override;
 
+    //Providing Interfaces:
     virtual TransformPointer GetItkTransform() override;
+    virtual void RunRegistration() override;
 
+    //BaseClass methods
     virtual bool MeetsCriterion(const ComponentBase::CriterionType &criterion) override;    
     //static const char * GetName() { return "ItkGaussianExponentialDiffeomorphicTransform"; } ;
     static const char * GetDescription() { return "ItkGaussianExponentialDiffeomorphicTransform Component"; };
   private:
     typename GaussianExponentialDiffeomorphicTransformType::Pointer m_Transform;
+    typename itk::Image<double, Dimensionality>::Pointer m_FixedImage;
   protected:
     /* The following struct returns the string name of computation type */
     /* default implementation */

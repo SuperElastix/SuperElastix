@@ -26,20 +26,7 @@ namespace selx
 {
   m_Transform = GaussianExponentialDiffeomorphicTransformType::New();
   
-  typedef itk::Image<VectorType, Dimensionality> ConstantVelocityFieldType;
-  typename ConstantVelocityFieldType::Pointer displacementField = ConstantVelocityFieldType::New();
-  displacementField->CopyInformation(fixedImage);
-  displacementField->SetRegions(fixedImage->GetBufferedRegion());
-  displacementField->Allocate();
-  displacementField->FillBuffer(zeroVector);
-  
-  typename ConstantVelocityFieldTransformType::Pointer fieldTransform = ConstantVelocityFieldTransformType::New();
 
-  fieldTransform->SetGaussianSmoothingVarianceForTheUpdateField(3.0);
-  fieldTransform->SetGaussianSmoothingVarianceForTheConstantVelocityField(6.0); 
-  fieldTransform->SetConstantVelocityField(displacementField);
-  fieldTransform->SetCalculateNumberOfIntegrationStepsAutomatically(true);
-  fieldTransform->IntegrateVelocityField();
   
 
   //TODO: instantiating the filter in the constructor might be heavy for the use in component selector factory, since all components of the database are created during the selection process.
@@ -52,11 +39,45 @@ ItkGaussianExponentialDiffeomorphicTransformComponent< InternalComputationValueT
 }
 
 template<class InternalComputationValueType, int Dimensionality>
+int ItkGaussianExponentialDiffeomorphicTransformComponent< InternalComputationValueType, Dimensionality>
+::Set(itkImageFixedInterface<Dimensionality, double>* component)
+{
+  this->m_FixedImage = component->GetItkImageFixed();
+
+  auto displacementField = GaussianExponentialDiffeomorphicTransformType::DisplacementFieldType::New();
+  //auto zeroVector = itk::NumericTraits<GaussianExponentialDiffeomorphicTransformType::DisplacementFieldType::PixelType>::Zero();
+  auto zeroVector = GaussianExponentialDiffeomorphicTransformType::DisplacementFieldType::PixelType(0.0);
+
+  displacementField->CopyInformation(this->m_FixedImage);
+  displacementField->SetRegions(this->m_FixedImage->GetBufferedRegion());
+  displacementField->Allocate();
+  displacementField->FillBuffer(zeroVector);
+
+  m_Transform->SetGaussianSmoothingVarianceForTheUpdateField(3.0);
+  m_Transform->SetGaussianSmoothingVarianceForTheConstantVelocityField(6.0);
+  m_Transform->SetConstantVelocityField(displacementField);
+  m_Transform->SetCalculateNumberOfIntegrationStepsAutomatically(true);
+  m_Transform->IntegrateVelocityField();
+
+  return 0;
+}
+
+template<class InternalComputationValueType, int Dimensionality>
 typename ItkGaussianExponentialDiffeomorphicTransformComponent< InternalComputationValueType, Dimensionality>::TransformPointer ItkGaussianExponentialDiffeomorphicTransformComponent< InternalComputationValueType, Dimensionality>::GetItkTransform()
 {
   
   return (TransformPointer) this->m_Transform;
 }
+
+template<class InternalComputationValueType, int Dimensionality>
+void ItkGaussianExponentialDiffeomorphicTransformComponent< InternalComputationValueType, Dimensionality>::RunRegistration()
+{
+
+
+
+}
+
+
 template<class InternalComputationValueType, int Dimensionality>
 bool
 ItkGaussianExponentialDiffeomorphicTransformComponent< InternalComputationValueType, Dimensionality>
