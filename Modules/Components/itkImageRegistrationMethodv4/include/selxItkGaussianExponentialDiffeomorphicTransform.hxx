@@ -46,7 +46,7 @@ int ItkGaussianExponentialDiffeomorphicTransformComponent< InternalComputationVa
 
   auto displacementField = GaussianExponentialDiffeomorphicTransformType::DisplacementFieldType::New();
   //auto zeroVector = itk::NumericTraits<GaussianExponentialDiffeomorphicTransformType::DisplacementFieldType::PixelType>::Zero();
-  auto zeroVector = GaussianExponentialDiffeomorphicTransformType::DisplacementFieldType::PixelType(0.0);
+  auto zeroVector = typename GaussianExponentialDiffeomorphicTransformType::DisplacementFieldType::PixelType(0.0);
 
   displacementField->CopyInformation(this->m_FixedImage);
   displacementField->SetRegions(this->m_FixedImage->GetBufferedRegion());
