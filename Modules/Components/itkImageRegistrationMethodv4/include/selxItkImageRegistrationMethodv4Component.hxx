@@ -270,7 +270,7 @@ void ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::RunRegistra
   // TODO for now we hard code the transform to be a stationary velocity field.
   typedef double RealType;
   typedef itk::GaussianExponentialDiffeomorphicTransform<RealType, Dimensionality> ConstantVelocityFieldTransformType;
-  typedef ConstantVelocityFieldTransformType::ConstantVelocityFieldType ConstantVelocityFieldType;
+  typedef typename ConstantVelocityFieldTransformType::ConstantVelocityFieldType ConstantVelocityFieldType;
   typedef itk::GaussianExponentialDiffeomorphicTransformParametersAdaptor<ConstantVelocityFieldTransformType> VelocityFieldTransformAdaptorType;
 
   typename TheItkFilterType::TransformParametersAdaptorsContainerType adaptors;
