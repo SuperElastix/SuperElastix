@@ -65,9 +65,12 @@ template <int Dimensionality, class TPixel, class TInternalComputationValue>
 int ItkResampleFilterComponent< Dimensionality, TPixel, TInternalComputationValue>
 ::Set(itkTransformInterface<TInternalComputationValue, Dimensionality >* component)
 {
+  //Store interface for later use
+  this->m_TransformComponent = component;
+
   auto transform = component->GetItkTransform();
   // connect the itk pipeline
-  this->m_ResampleFilter->SetTransform(transform.GetPointer());
+  this->m_ResampleFilter->SetTransform(transform);
 
   return 0;
 }
@@ -82,6 +85,14 @@ ItkResampleFilterComponent< Dimensionality, TPixel, TInternalComputationValue>
   return this->m_ResampleFilter->GetOutput();
 }
 
+template <int Dimensionality, class TPixel, class TInternalComputationValue>
+void ItkResampleFilterComponent< Dimensionality, TPixel, TInternalComputationValue>
+::ReconnectTransform()
+{
+  auto transform = this->m_TransformComponent->GetItkTransform();
+  // reconnect the tranform, since it does not comply with the itk pipeline
+  this->m_ResampleFilter->SetTransform(transform);
+}
 
 template <int Dimensionality, class TPixel, class TInternalComputationValue>
 bool

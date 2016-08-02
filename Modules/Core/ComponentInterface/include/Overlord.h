@@ -101,7 +101,7 @@ namespace selx
     bool ConnectSinks();
     bool RunRegistrations();
     bool AfterRegistrations();
-
+    bool ReconnectTransforms();
     //TODO make const correct
     //Blueprint::ConstPointer m_Blueprint;
     BlueprintType::Pointer m_Blueprint;

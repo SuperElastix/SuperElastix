@@ -37,15 +37,15 @@ namespace selx
 
 template <int Dimensionality, class TPixel, class TInternalComputationValue>
 int ItkTransformDisplacementFilterComponent< Dimensionality, TPixel, TInternalComputationValue>
-::Set(itkImageFixedInterface<Dimensionality, TPixel>* component)
+::Set(itkImageDomainFixedInterface<Dimensionality>* component)
 {
-  auto fixedImage = component->GetItkImageFixed();
+  auto fixedImageDomain = component->GetItkImageDomainFixed();
   // connect the itk pipeline
   //this->m_DisplacementFieldFilter->SetSize(fixedImage->GetBufferedRegion().GetSize()); //should be virtual image...
-  this->m_DisplacementFieldFilter->SetSize(fixedImage->GetLargestPossibleRegion().GetSize()); //should be virtual image...
-  this->m_DisplacementFieldFilter->SetOutputOrigin(fixedImage->GetOrigin());
-  this->m_DisplacementFieldFilter->SetOutputSpacing(fixedImage->GetSpacing());
-  this->m_DisplacementFieldFilter->SetOutputDirection(fixedImage->GetDirection());
+  this->m_DisplacementFieldFilter->SetSize(fixedImageDomain->GetLargestPossibleRegion().GetSize()); //should be virtual image...
+  this->m_DisplacementFieldFilter->SetOutputOrigin(fixedImageDomain->GetOrigin());
+  this->m_DisplacementFieldFilter->SetOutputSpacing(fixedImageDomain->GetSpacing());
+  this->m_DisplacementFieldFilter->SetOutputDirection(fixedImageDomain->GetDirection());
   this->m_DisplacementFieldFilter->UpdateOutputInformation();
 
    return 0;
@@ -55,9 +55,12 @@ template <int Dimensionality, class TPixel, class TInternalComputationValue>
 int ItkTransformDisplacementFilterComponent< Dimensionality, TPixel, TInternalComputationValue>
 ::Set(itkTransformInterface<TInternalComputationValue, Dimensionality >* component)
 {
+  //Store interface for later use
+  this->m_TransformComponent = component;
+
   auto transform = component->GetItkTransform();
   // connect the itk pipeline
-  this->m_DisplacementFieldFilter->SetTransform(transform.GetPointer());
+  this->m_DisplacementFieldFilter->SetTransform(transform);
 
   return 0;
 }
@@ -72,6 +75,15 @@ ItkTransformDisplacementFilterComponent< Dimensionality, TPixel, TInternalComput
   return this->m_DisplacementFieldFilter->GetOutput();
 }
 
+
+template <int Dimensionality, class TPixel, class TInternalComputationValue>
+void ItkTransformDisplacementFilterComponent< Dimensionality, TPixel, TInternalComputationValue>
+::ReconnectTransform()
+{
+  auto transform = this->m_TransformComponent->GetItkTransform();
+  // reconnect the tranform, since it does not comply with the itk pipeline
+  this->m_DisplacementFieldFilter->SetTransform(transform);
+}
 
 template <int Dimensionality, class TPixel, class TInternalComputationValue>
 bool

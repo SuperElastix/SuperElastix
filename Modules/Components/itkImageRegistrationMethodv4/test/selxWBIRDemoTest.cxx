@@ -121,7 +121,7 @@ TEST_F(WBIRDemoTest, itkv4_SVF_ANTSCC)
   blueprint->AddComponent("Metric", { { "NameOfClass", { "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component" } } });
   blueprint->AddComponent("Optimizer", { { "NameOfClass", { "ItkGradientDescentOptimizerv4Component" } },
   { "NumberOfIterations", { "100" } },
-  { "LearningRate", { "0.001" } } });
+  { "LearningRate", { "100" } } });
   blueprint->AddComponent("Transform", { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformComponent" } } });
 
   blueprint->AddComponent("ResampleFilter", { { "NameOfClass", { "ItkResampleFilterComponent" } } });

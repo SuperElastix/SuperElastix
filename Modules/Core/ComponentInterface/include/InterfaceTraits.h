@@ -217,6 +217,16 @@ struct InterfaceName < AfterRegistrationInterface >
   }
 };
 
+template <>
+struct InterfaceName < ReconnectTransformInterface >
+{
+  static const char* Get()
+  {
+    return "ReconnectTransformInterface";
+  }
+};
+
+
 // partial specialization of InterfaceName
 // InterfaceName<T>::Get() should return the same name no matter whether T is an acceptor or provider interface.
 template<typename T1>

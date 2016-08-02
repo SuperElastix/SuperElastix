@@ -41,9 +41,10 @@ namespace selx
   class ItkTransformDisplacementFilterComponent : 
     public Implements<
     Accepting< itkTransformInterface<TInternalComputationValue, Dimensionality>,
-               itkImageFixedInterface<Dimensionality, TPixel> //TODO should be FixedImageDomainInterface, we do not require intensities
+               itkImageDomainFixedInterface<Dimensionality>
              >,
-    Providing< DisplacementFieldItkImageSourceInterface<Dimensionality, TPixel>
+    Providing< DisplacementFieldItkImageSourceInterface<Dimensionality, TPixel>,
+               ReconnectTransformInterface
              >
     >
   {
@@ -58,19 +59,18 @@ namespace selx
     typedef TPixel PixelType;
 
     // Get the type definitions from the interfaces 
-    typedef typename itkImageFixedInterface<Dimensionality, TPixel>::ItkImageType FixedImageType; 
-	  typedef typename DisplacementFieldItkImageSourceInterface<Dimensionality, TPixel>::ItkImageType DisplacementFieldImageType;
+    using itkImageDomainFixedType = typename itkImageDomainFixedInterface<Dimensionality>::ItkImageDomainType;
+    using	DisplacementFieldImageType =  typename DisplacementFieldItkImageSourceInterface<Dimensionality, TPixel>::ItkImageType;
 	
-    // TODO for now we hard code the transform to be a stationary velocity field. See Set(*MetricInterface) for implementation
-        
-	typedef itk::TransformToDisplacementFieldFilter<DisplacementFieldImageType> DisplacementFieldFilterType;
+    using DisplacementFieldFilterType = itk::TransformToDisplacementFieldFilter<DisplacementFieldImageType>;
     
     //Accepting Interfaces:
-    virtual int Set(itkImageFixedInterface<Dimensionality, TPixel>*) override;
+    virtual int Set(itkImageDomainFixedInterface<Dimensionality>*) override;
     virtual int Set(itkTransformInterface<TInternalComputationValue, Dimensionality>*) override;
         
     //Providing Interfaces:
     virtual typename DisplacementFieldImageType::Pointer GetDisplacementFieldItkImage() override;
+    virtual void ReconnectTransform() override;
 
     //BaseClass methods
     virtual bool MeetsCriterion(const ComponentBase::CriterionType &criterion) override;    
@@ -79,6 +79,7 @@ namespace selx
   private:
 
 	  typename DisplacementFieldFilterType::Pointer m_DisplacementFieldFilter;
+    itkTransformInterface<TInternalComputationValue, Dimensionality>* m_TransformComponent;
   protected:
     /* The following struct returns the string name of computation type */
     /* default implementation */

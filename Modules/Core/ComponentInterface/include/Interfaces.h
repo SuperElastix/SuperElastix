@@ -101,6 +101,7 @@ namespace selx
     typedef typename itk::Image<TPixel, Dimensionality> ItkImageType;
     virtual typename ItkImageType::Pointer GetItkImageMoving() = 0;
   };
+
   template<int Dimensionality, class TPixel>
   class DisplacementFieldItkImageSourceInterface {
     // An interface that passes the pointer of an output image
@@ -157,6 +158,13 @@ namespace selx
     virtual bool RunResolution() = 0;
   };
 
+  class ReconnectTransformInterface {
+    // A special interface: the Overlord checks components for this type of interface.
+    // This interface is for to control the execution of the network
+  public:
+    virtual void ReconnectTransform() = 0;
+  };
+  
   template<int Dimensionality, class TPixel>
   class itkMetricv4Interface {
   public:

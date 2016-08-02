@@ -208,6 +208,7 @@ void ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::RunRegistra
   auto optimizer = dynamic_cast<itk::GradientDescentOptimizerv4 *>(this->m_theItkFilter->GetModifiableOptimizer());
   //auto optimizer = dynamic_cast<itk::ObjectToObjectOptimizerBaseTemplate< InternalComputationValueType > *>(this->m_theItkFilter->GetModifiableOptimizer());
   
+  auto transform = this->m_theItkFilter->GetModifiableTransform();
 
   if (msdMetric)
   {

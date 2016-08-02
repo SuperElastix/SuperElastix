@@ -53,12 +53,14 @@ namespace selx
     typedef typename itk::ImageFileWriter<DeformationFieldImageType> DeformationFieldImageWriterType;
     typedef FileWriterDecorator<DeformationFieldImageWriterType>  DecoratedWriterType;
 
+    //Accepting Interfaces:
     virtual int Set(AcceptingDisplacementFieldInterfaceType*) override;
     virtual void SetMiniPipelineOutput(itk::DataObject::Pointer) override;
     virtual itk::DataObject::Pointer GetMiniPipelineOutput(void) override;
     virtual AnyFileWriter::Pointer GetOutputFileWriter(void) override;
     virtual itk::DataObject::Pointer GetInitializedOutput(void) override;
 
+    //Providing Interfaces:
     virtual void AfterRegistration() override;
 
     virtual bool MeetsCriterion(const ComponentBase::CriterionType &criterion) override;

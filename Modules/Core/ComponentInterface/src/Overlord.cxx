@@ -300,6 +300,35 @@ namespace selx
     }
     return true;
   }
+
+  bool Overlord::ReconnectTransforms()
+  {
+    /** Scans all Components to find those with ReconnectTransform capability and call them */
+    const CriterionType criterion = CriterionType("HasProvidingInterface", { "ReconnectTransformInterface" });
+
+    // TODO redesign ComponentBase class to accept a single criterion instead of a criteria mapping.
+    CriteriaType criteria;
+    criteria.insert(criterion);
+
+    for (auto const & componentSelector : (this->m_ComponentSelectorContainer))
+    {
+      ComponentBase::Pointer component = componentSelector.second->GetComponent();
+      if (component->MeetsCriteria(criteria)) // TODO MeetsCriterion
+      {
+        ReconnectTransformInterface* providingInterface = dynamic_cast<ReconnectTransformInterface*> (component.GetPointer());
+        if (providingInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
+        {
+          itkExceptionMacro("dynamic_cast<ReconnectTransformInterface*> fails, but based on component criterion it shouldn't")
+        }
+        // For testing purposes, all Sources are connected to an ImageWriter
+        providingInterface->ReconnectTransform();
+
+      }
+    }
+
+    return true;
+  }
+
   bool Overlord::Execute()
   {
     
@@ -314,6 +343,7 @@ namespace selx
     // TODO: see if signals-and-slots paradigm is appropriate here.
 
     this->RunRegistrations();
+    this->ReconnectTransforms();
     this->AfterRegistrations();
     //update all writers...
     

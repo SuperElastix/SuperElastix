@@ -44,7 +44,8 @@ namespace selx
                itkImageFixedInterface<Dimensionality, TPixel>, //TODO should be FixedImageDomainInterface, we do not require intensities
 			         itkImageMovingInterface<Dimensionality, TPixel> 
              >,
-    Providing< itkImageInterface<Dimensionality, TPixel>
+    Providing< itkImageInterface<Dimensionality, TPixel>,
+               ReconnectTransformInterface
              >
     >
   {
@@ -72,6 +73,7 @@ namespace selx
         
     //Providing Interfaces:
     virtual typename ResultImageType::Pointer GetItkImage() override;
+    virtual void ReconnectTransform() override;
 
     //BaseClass methods
     virtual bool MeetsCriterion(const ComponentBase::CriterionType &criterion) override;    
@@ -80,6 +82,7 @@ namespace selx
   private:
 
 	  typename ResampleFilterType::Pointer m_ResampleFilter;
+    itkTransformInterface<TInternalComputationValue, Dimensionality>* m_TransformComponent;
   protected:
     /* The following struct returns the string name of computation type */
     /* default implementation */
