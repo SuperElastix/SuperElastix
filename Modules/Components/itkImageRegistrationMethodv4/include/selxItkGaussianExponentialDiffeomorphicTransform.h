@@ -30,11 +30,10 @@ namespace selx
   template <class InternalComputationValueType, int Dimensionality>
   class ItkGaussianExponentialDiffeomorphicTransformComponent : 
     public Implements<
-    Accepting< itkImageFixedInterface<Dimensionality, double> >,
+    Accepting< itkImageDomainFixedInterface<Dimensionality> >,
     Providing< itkTransformInterface<InternalComputationValueType,Dimensionality>,
-    RunRegistrationInterface
-    >>
-    //Should be fixed domain only
+    RunRegistrationInterface>
+    >
   {
   public:
     selxNewMacro(ItkGaussianExponentialDiffeomorphicTransformComponent, ComponentBase);
@@ -43,17 +42,16 @@ namespace selx
 
     ItkGaussianExponentialDiffeomorphicTransformComponent();
     virtual ~ItkGaussianExponentialDiffeomorphicTransformComponent();
-
-    //typedef double InternalComputationValueType;
-    
-	  /**  Type of the optimizer. */
+  
+    /** Get types from interfaces */
     using TransformType = typename itkTransformInterface<InternalComputationValueType,Dimensionality>::TransformType;
     using TransformPointer = typename itkTransformInterface<InternalComputationValueType,Dimensionality>::TransformPointer;
-    
-    typedef typename itk::GaussianExponentialDiffeomorphicTransform<InternalComputationValueType, Dimensionality> GaussianExponentialDiffeomorphicTransformType;
+    using ItkImageDomainType = typename itkImageDomainFixedInterface<Dimensionality>::ItkImageDomainType;
+
+    using GaussianExponentialDiffeomorphicTransformType = typename itk::GaussianExponentialDiffeomorphicTransform<InternalComputationValueType, Dimensionality>;
     
     //Accepting Interfaces:
-    virtual int Set(itkImageFixedInterface<Dimensionality, double>*) override;
+    virtual int Set(itkImageDomainFixedInterface<Dimensionality>*) override;
 
     //Providing Interfaces:
     virtual TransformPointer GetItkTransform() override;
@@ -65,7 +63,7 @@ namespace selx
     static const char * GetDescription() { return "ItkGaussianExponentialDiffeomorphicTransform Component"; };
   private:
     typename GaussianExponentialDiffeomorphicTransformType::Pointer m_Transform;
-    typename itk::Image<double, Dimensionality>::Pointer m_FixedImage;
+    typename ItkImageDomainType::Pointer m_FixedImageDomain;
   protected:
     /* The following struct returns the string name of computation type */
     /* default implementation */

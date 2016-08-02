@@ -40,16 +40,16 @@ ItkGaussianExponentialDiffeomorphicTransformComponent< InternalComputationValueT
 
 template<class InternalComputationValueType, int Dimensionality>
 int ItkGaussianExponentialDiffeomorphicTransformComponent< InternalComputationValueType, Dimensionality>
-::Set(itkImageFixedInterface<Dimensionality, double>* component)
+::Set(itkImageDomainFixedInterface<Dimensionality>* component)
 {
-  this->m_FixedImage = component->GetItkImageFixed();
+  this->m_FixedImageDomain = component->GetItkImageDomainFixed();
 
   auto displacementField = GaussianExponentialDiffeomorphicTransformType::DisplacementFieldType::New();
   //auto zeroVector = itk::NumericTraits<GaussianExponentialDiffeomorphicTransformType::DisplacementFieldType::PixelType>::Zero();
   auto zeroVector = typename GaussianExponentialDiffeomorphicTransformType::DisplacementFieldType::PixelType(0.0);
 
-  displacementField->CopyInformation(this->m_FixedImage);
-  displacementField->SetRegions(this->m_FixedImage->GetBufferedRegion());
+  displacementField->CopyInformation(this->m_FixedImageDomain);
+  displacementField->SetRegions(this->m_FixedImageDomain->GetBufferedRegion());
   displacementField->Allocate();
   displacementField->FillBuffer(zeroVector);
 

@@ -170,7 +170,7 @@ namespace selx
         if (numberOfConnections == 0)
         {
           isAllSuccess = false;
-          std::cout << "Warning: a connection was specified, but no compatible interfaces were found.";
+          std::cout << "Warning: a connection from " << name << " to " << outgoingName << " was specified, but no compatible interfaces were found." << std::endl;
         }
       }
     }

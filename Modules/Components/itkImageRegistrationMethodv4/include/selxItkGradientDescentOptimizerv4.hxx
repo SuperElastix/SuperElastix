@@ -18,6 +18,7 @@
  *=========================================================================*/
 
 #include "selxItkGradientDescentOptimizerv4.h"
+#include <boost/lexical_cast.hpp>
 
 namespace selx
 {
@@ -77,6 +78,29 @@ ItkGradientDescentOptimizerv4Component< InternalComputationValueType>
         meetsCriteria = true;
       }
       catch (itk::ExceptionObject & err)
+      {
+        //TODO log the error message?
+        meetsCriteria = false;
+      }
+    }
+  }
+  else if (criterion.first == "LearningRate") //Supports this?
+  {
+    if (criterion.second.size() != 1)
+    {
+      meetsCriteria = false;
+      //itkExceptionMacro("The criterion Sigma may have only 1 value");
+    }
+    else
+    {
+      auto const & criterionValue = *criterion.second.begin();
+      try
+      {
+        this->m_Optimizer->SetNumberOfIterations(boost::lexical_cast<InternalComputationValueType>(criterionValue));
+        //this->m_Optimizer->SetLearningRate(std::stod(criterionValue));
+        meetsCriteria = true;
+      }
+      catch (itk::ExceptionObject & err) // TODO: should catch(const bad_lexical_cast &) too
       {
         //TODO log the error message?
         meetsCriteria = false;

@@ -33,7 +33,9 @@ namespace selx
   class ItkImageSourceFixedComponent : 
     public Implements<
     Accepting<>,
-    Providing< SourceInterface, itkImageFixedInterface<Dimensionality, TPixel > >
+    Providing< SourceInterface, 
+               itkImageFixedInterface<Dimensionality, TPixel >,
+               itkImageDomainFixedInterface<Dimensionality>>
     >
   {
   public:
@@ -45,13 +47,18 @@ namespace selx
     virtual ~ItkImageSourceFixedComponent();
 
     typedef typename itkImageFixedInterface<Dimensionality, TPixel >::ItkImageType ItkImageType;
-    
+    typedef typename itkImageDomainFixedInterface<Dimensionality>::ItkImageDomainType ItkImageDomainType;
+
     typedef typename itk::ImageFileReader<ItkImageType> ItkImageReaderType;
     typedef FileReaderDecorator<ItkImageReaderType> DecoratedReaderType;
 
+    // providing interfaces
     virtual typename ItkImageType::Pointer GetItkImageFixed() override;
     virtual void SetMiniPipelineInput(itk::DataObject::Pointer) override;
     virtual AnyFileReader::Pointer GetInputFileReader(void) override;
+
+    virtual typename ItkImageDomainType::Pointer GetItkImageDomainFixed() override;
+
 
     virtual bool MeetsCriterion(const ComponentBase::CriterionType &criterion) override;
     static const char * GetDescription() { return "ItkImageSourceFixed Component"; };

@@ -114,6 +114,15 @@ struct InterfaceName < itkImageFixedInterface <D, TPixel> >
 	}
 };
 
+template <int D>
+struct InterfaceName < itkImageDomainFixedInterface <D> >
+{
+  static const char* Get()
+  {
+    return "itkImageDomainFixedInterface";
+  }
+};
+
 template <int D, class TPixel>
 struct InterfaceName < itkImageMovingInterface <D, TPixel> >
 {
