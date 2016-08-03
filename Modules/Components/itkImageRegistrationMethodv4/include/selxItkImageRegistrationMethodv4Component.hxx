@@ -300,8 +300,6 @@ typename ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::Transfo
 ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>
 ::GetItkTransform()
 {
-
-  //return this->m_theItkFilter->GetOutput().GetPointer();
   return this->m_theItkFilter->GetModifiableTransform();
 }
 
