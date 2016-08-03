@@ -121,7 +121,7 @@ namespace selx
   ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::ItkImageRegistrationMethodv4Component()
 {
   m_theItkFilter = TheItkFilterType::New();
-  m_theItkFilter->InPlaceOff();
+  m_theItkFilter->InPlaceOn();
 
   //TODO: instantiating the filter in the constructor might be heavy for the use in component selector factory, since all components of the database are created during the selection process.
   // we could choose to keep the component light weighted (for checking criteria such as names and connections) until the settings are passed to the filter, but this requires an additional initialization step.
@@ -166,7 +166,9 @@ int ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::Set(itkTrans
 template<int Dimensionality, class TPixel>
 int ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::Set(itkMetricv4Interface<Dimensionality, TPixel>* component)
 {
-   this->m_theItkFilter->SetMetric(component->GetItkMetricv4());
+  //TODO: The optimizer must be set explicitly, since this is a work-around for a bug in itkRegistrationMethodv4. 
+  //TODO: report bug to itk: when setting a metric, the optimizer must be set explicitly as well, since default optimizer setup breaks.
+  this->m_theItkFilter->SetMetric(component->GetItkMetricv4());
 
   return 0;
 }
@@ -174,6 +176,9 @@ int ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::Set(itkMetri
 template<int Dimensionality, class TPixel>
 int ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::Set(itkOptimizerv4Interface<OptimizerInternalComputationValueType>* component)
 {
+
+  //TODO: The optimizer must be set explicitly, since this is a work-around for a bug in itkRegistrationMethodv4. 
+  //TODO: report bug to itk: when setting a metric, the optimizer must be set explicitly as well, since default optimizer setup breaks.
   this->m_theItkFilter->SetOptimizer(component->GetItkOptimizerv4());
 
   return 0;
@@ -186,23 +191,9 @@ void ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::RunRegistra
   typename FixedImageType::ConstPointer fixedImage = this->m_theItkFilter->GetFixedImage();
   typename MovingImageType::ConstPointer movingImage = this->m_theItkFilter->GetMovingImage();
 
-  // Below some hard coded options. Eventually, these should be part of new components.
-
-  //TODO: Setting the optimizer explicitly is a work around for a bug in itkv4. 
-  //TODO: report bug to itk: when setting a metric, the optimizer must be set explicitly as well, since default optimizer setup breaks.
-  //typedef itk::GradientDescentOptimizerv4       OptimizerType;
-  //OptimizerType::Pointer      optimizer = OptimizerType::New();
-  //optimizer->SetNumberOfIterations(100);
-  //optimizer->SetLearningRate(1.0);
-  
+  // Scale estimator is not used in current implementation yet
   typename ScalesEstimatorType::Pointer scalesEstimator = ScalesEstimatorType::New();
     
-  typedef itk::MeanSquaresImageToImageMetricv4<FixedImageType, MovingImageType> MSDMetricType;
-  typename MSDMetricType::Pointer msdMetric = dynamic_cast<MSDMetricType*>(this->m_theItkFilter->GetModifiableMetric());
-
-  typedef itk::ANTSNeighborhoodCorrelationImageToImageMetricv4<FixedImageType, MovingImageType> ANTSCCMetricType;
-  typename ANTSCCMetricType::Pointer nccMetric = dynamic_cast<ANTSCCMetricType*>(this->m_theItkFilter->GetModifiableMetric());
-
   ImageMetricType* theMetric = dynamic_cast<ImageMetricType*>(this->m_theItkFilter->GetModifiableMetric());;
 
   auto optimizer = dynamic_cast<itk::GradientDescentOptimizerv4 *>(this->m_theItkFilter->GetModifiableOptimizer());
@@ -210,25 +201,13 @@ void ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::RunRegistra
   
   auto transform = this->m_theItkFilter->GetModifiableTransform();
 
-  if (msdMetric)
-  {
-    //TODO: get rid of component specific checking
-    scalesEstimator->SetMetric(msdMetric);
-    optimizer->SetLearningRate(0.001);
-  }
-  else if (nccMetric)
-  {
-    //TODO: get rid of component specific checking
-    scalesEstimator->SetMetric(nccMetric);
-    optimizer->SetLearningRate(100.0);
-  }
-  else if (theMetric)
+  if (theMetric)
   {
     scalesEstimator->SetMetric(theMetric);
   }
   else
   {
-    itkExceptionMacro("Error casting to either MeanSquaresImageToImageMetricv4 or ANTSNeighborhoodCorrelationImageToImageMetricv4 or ImageMetricType failed");
+    itkExceptionMacro("Error casting to ImageMetricv4Type failed");
   }
  
 
@@ -236,9 +215,6 @@ void ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::RunRegistra
   scalesEstimator->SetTransformForward(true);
   scalesEstimator->SetSmallParameterVariation(1.0);
   
-
-  //this->m_theItkFilter->GetModifyableMetric();
-
   optimizer->SetScalesEstimator(ITK_NULLPTR);
   //optimizer->SetScalesEstimator(scalesEstimator);
   optimizer->SetDoEstimateLearningRateOnce(false); //true by default
@@ -247,6 +223,7 @@ void ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::RunRegistra
 
   this->m_theItkFilter->SetOptimizer(optimizer);
  
+  // Below some hard coded options. Eventually, these should be part of new components.
   this->m_theItkFilter->SetNumberOfLevels(3);
   
   // Shrink the virtual domain by specified factors for each level.  See documentation
@@ -268,7 +245,7 @@ void ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::RunRegistra
   this->m_theItkFilter->SetSmoothingSigmasPerLevel(smoothingSigmasPerLevel);
 
 
-  // TODO for now we hard code the transform to be a stationary velocity field.
+  // TODO for now we hard code the TransformAdaptors for stationary velocity fields.
   typedef double RealType;
   typedef itk::GaussianExponentialDiffeomorphicTransform<RealType, Dimensionality> ConstantVelocityFieldTransformType;
   typedef typename ConstantVelocityFieldTransformType::ConstantVelocityFieldType ConstantVelocityFieldType;

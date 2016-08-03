@@ -96,7 +96,7 @@ ItkGradientDescentOptimizerv4Component< InternalComputationValueType>
       auto const & criterionValue = *criterion.second.begin();
       try
       {
-        this->m_Optimizer->SetNumberOfIterations(boost::lexical_cast<InternalComputationValueType>(criterionValue));
+        this->m_Optimizer->SetLearningRate(boost::lexical_cast<InternalComputationValueType>(criterionValue));
         //this->m_Optimizer->SetLearningRate(std::stod(criterionValue));
         meetsCriteria = true;
       }
