@@ -39,6 +39,11 @@
 
 #include "DefaultComponents.h"
 
+#include "itkTestingComparisonImageFilter.h"
+#include "itkSubtractImageFilter.h"
+#include "itkVectorMagnitudeImageFilter.h"
+#include "itkStatisticsImageFilter.h"
+
 #include "selxDataManager.h"
 #include "gtest/gtest.h"
 
@@ -95,11 +100,32 @@ public:
   typedef itk::ImageFileWriter<Image2DType> ImageWriter2DType;
 
   typedef itk::Image<itk::Vector<float, 2>, 2> VectorImage2DType;
+  typedef itk::ImageFileReader<VectorImage2DType> VectorImageReader2DType;
   typedef itk::ImageFileWriter<VectorImage2DType> VectorImageWriter2DType;
 
+  typedef itk::Testing::ComparisonImageFilter<Image2DType, Image2DType> ComparisonImageFilterType;
+  // Unfortunately comparing Vector Images cannot by done by this filter.
+  // typedef itk::Testing::ComparisonImageFilter<VectorImage2DType, VectorImage2DType> ComparisonVectorImageFilterType;
+  //typedef itk::VectorImageToImageAdaptor<float, 2> VectorImageToImageAdaptorType;
+  typedef itk::SubtractImageFilter< VectorImage2DType, VectorImage2DType, VectorImage2DType> SubtractVectorImageFilterType;
+  typedef itk::VectorMagnitudeImageFilter< VectorImage2DType, Image2DType > VectorMagnitudeImageFilterType;
+  typedef itk::StatisticsImageFilter<Image2DType> StatisticsImageFilterType;
 
   virtual void SetUp() {
+    baselineImageReader = ImageReader2DType::New();
+    compareImageFilter = ComparisonImageFilterType::New();
+    compareImageFilter->SetValidInput(baselineImageReader->GetOutput());
+    compareImageFilter->SetDifferenceThreshold(0.0);
+
+    baselineVectorImageReader = VectorImageReader2DType::New();
+    subtractVectorImageFilter = SubtractVectorImageFilterType::New();
+    VectorMagnitudeImageFilterType::Pointer vectorMagnitudeImageFilter = VectorMagnitudeImageFilterType::New();
+    statisticsImageFilter = StatisticsImageFilterType::New();
+
+    subtractVectorImageFilter->SetInput1(baselineVectorImageReader->GetOutput());
     
+    vectorMagnitudeImageFilter->SetInput(subtractVectorImageFilter->GetOutput());
+    statisticsImageFilter->SetInput(vectorMagnitudeImageFilter->GetOutput());
   }
 
   virtual void TearDown() {
@@ -107,8 +133,14 @@ public:
   }
 
   BlueprintPointerType blueprint;
-  //Overlord::Pointer overlord;
   SuperElastixFilterType::Pointer superElastixFilter;
+
+  ImageReader2DType::Pointer baselineImageReader;
+  ComparisonImageFilterType::Pointer compareImageFilter;
+  VectorImageReader2DType::Pointer baselineVectorImageReader;
+  SubtractVectorImageFilterType::Pointer subtractVectorImageFilter;
+  StatisticsImageFilterType::Pointer statisticsImageFilter;
+
 };
 
 /** Experiment 2a: ITKv4 framework, stationary velocity field transform, ANTs neighborhood correlation metric */
@@ -176,18 +208,24 @@ TEST_F(WBIRDemoTest, itkv4_SVF_ANTSCC)
   ImageReader2DType::Pointer movingImageReader = ImageReader2DType::New();
   movingImageReader->SetFileName(dataManager->GetInputFile("coneB2d64.mhd"));
   
-  ImageWriter2DType::Pointer resultImageWriter = ImageWriter2DType::New();
-  resultImageWriter->SetFileName(dataManager->GetOutputFile("itkv4_SVF_ANTSCC_Image.mhd"));
+  //ImageWriter2DType::Pointer resultImageWriter = ImageWriter2DType::New();
+  //resultImageWriter->SetFileName(dataManager->GetOutputFile("itkv4_SVF_ANTSCC_Image.mhd"));
 
-  VectorImageWriter2DType::Pointer vectorImageWriter = VectorImageWriter2DType::New();
-  vectorImageWriter->SetFileName(dataManager->GetOutputFile("itkv4_SVF_ANTSCC_Displacement.mhd"));
+  //VectorImageWriter2DType::Pointer vectorImageWriter = VectorImageWriter2DType::New();
+  //vectorImageWriter->SetFileName(dataManager->GetOutputFile("itkv4_SVF_ANTSCC_Displacement.mhd"));
   
   // Connect SuperElastix in an itk pipeline
   superElastixFilter->SetInput("FixedImageSource", fixedImageReader->GetOutput());
   superElastixFilter->SetInput("MovingImageSource", movingImageReader->GetOutput());
 
-  resultImageWriter->SetInput(superElastixFilter->GetOutput<Image2DType>("ResultImageSink"));
-  vectorImageWriter->SetInput(superElastixFilter->GetOutput<VectorImage2DType>("ResultDisplacementFieldSink"));
+  //resultImageWriter->SetInput(superElastixFilter->GetOutput<Image2DType>("ResultImageSink"));
+  //vectorImageWriter->SetInput(superElastixFilter->GetOutput<VectorImage2DType>("ResultDisplacementFieldSink"));
+
+  baselineImageReader->SetFileName(dataManager->GetBaselineFile("itkv4_SVF_ANTSCC_Image.mhd"));
+  baselineVectorImageReader->SetFileName(dataManager->GetBaselineFile("itkv4_SVF_ANTSCC_Displacement.mhd"));
+
+  compareImageFilter->SetTestInput(superElastixFilter->GetOutput<Image2DType>("ResultImageSink"));
+  subtractVectorImageFilter->SetInput2(superElastixFilter->GetOutput<VectorImage2DType>("ResultDisplacementFieldSink"));
 
   EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
 
@@ -195,8 +233,14 @@ TEST_F(WBIRDemoTest, itkv4_SVF_ANTSCC)
   //superElastixFilter->Update();
 
   // Update call on the writers triggers SuperElastix to configure and execute
-  EXPECT_NO_THROW(resultImageWriter->Update());
-  EXPECT_NO_THROW(vectorImageWriter->Update());
+  //EXPECT_NO_THROW(resultImageWriter->Update());
+  //EXPECT_NO_THROW(vectorImageWriter->Update());
+
+  EXPECT_NO_THROW(compareImageFilter->Update());
+  EXPECT_NO_THROW(statisticsImageFilter->Update());
+
+  EXPECT_EQ(0, compareImageFilter->GetNumberOfPixelsWithDifferences());
+  EXPECT_LT(statisticsImageFilter->GetSumOutput()->Get(), 1e-16);
 
 }
 
@@ -266,29 +310,40 @@ TEST_F(WBIRDemoTest, itkv4_SVF_MSD)
   ImageReader2DType::Pointer movingImageReader = ImageReader2DType::New();
   movingImageReader->SetFileName(dataManager->GetInputFile("coneB2d64.mhd"));
 
-  ImageWriter2DType::Pointer resultImageWriter = ImageWriter2DType::New();
-  resultImageWriter->SetFileName(dataManager->GetOutputFile("itkv4_SVF_MSD_Image.mhd"));
+  //ImageWriter2DType::Pointer resultImageWriter = ImageWriter2DType::New();
+  //resultImageWriter->SetFileName(dataManager->GetOutputFile("itkv4_SVF_MSD_Image.mhd"));
 
-  VectorImageWriter2DType::Pointer vectorImageWriter = VectorImageWriter2DType::New();
-  vectorImageWriter->SetFileName(dataManager->GetOutputFile("itkv4_SVF_MSD_Displacement.mhd"));
+  //VectorImageWriter2DType::Pointer vectorImageWriter = VectorImageWriter2DType::New();
+  //vectorImageWriter->SetFileName(dataManager->GetOutputFile("itkv4_SVF_MSD_Displacement.mhd"));
 
   // Connect SuperElastix in an itk pipeline
   superElastixFilter->SetInput("FixedImageSource", fixedImageReader->GetOutput());
   superElastixFilter->SetInput("MovingImageSource", movingImageReader->GetOutput());
 
-  resultImageWriter->SetInput(superElastixFilter->GetOutput<Image2DType>("ResultImageSink"));
-  vectorImageWriter->SetInput(superElastixFilter->GetOutput<VectorImage2DType>("ResultDisplacementFieldSink"));
+  //resultImageWriter->SetInput(superElastixFilter->GetOutput<Image2DType>("ResultImageSink"));
+  //vectorImageWriter->SetInput(superElastixFilter->GetOutput<VectorImage2DType>("ResultDisplacementFieldSink"));
+
+  baselineImageReader->SetFileName(dataManager->GetBaselineFile("itkv4_SVF_MSD_Image.mhd"));
+  baselineVectorImageReader->SetFileName(dataManager->GetBaselineFile("itkv4_SVF_MSD_Displacement.mhd"));
+
+  compareImageFilter->SetTestInput(superElastixFilter->GetOutput<Image2DType>("ResultImageSink"));
+  subtractVectorImageFilter->SetInput2(superElastixFilter->GetOutput<VectorImage2DType>("ResultDisplacementFieldSink"));
 
   EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
-
+    
   //Optional Update call
   //superElastixFilter->Update();
 
   // Update call on the writers triggers SuperElastix to configure and execute
-  EXPECT_NO_THROW(resultImageWriter->Update());
-  EXPECT_NO_THROW(vectorImageWriter->Update());
+  //EXPECT_NO_THROW(resultImageWriter->Update());
+  //EXPECT_NO_THROW(vectorImageWriter->Update());
 
-}
+  EXPECT_NO_THROW(compareImageFilter->Update());
+  EXPECT_NO_THROW(statisticsImageFilter->Update());
+
+  EXPECT_EQ(0, compareImageFilter->GetNumberOfPixelsWithDifferences());
+  EXPECT_LT(statisticsImageFilter->GetSumOutput()->Get(), 1e-16);
+  }
 
 /** Experiment 1a: elastix framework, B-spline transform, normalized correlation metric */
 TEST_F(WBIRDemoTest, elastix_BS_NCC)
@@ -345,29 +400,44 @@ TEST_F(WBIRDemoTest, elastix_BS_NCC)
   ImageReader2DType::Pointer movingImageReader = ImageReader2DType::New();
   movingImageReader->SetFileName(dataManager->GetInputFile("coneB2d64.mhd"));
 
-  ImageWriter2DType::Pointer resultImageWriter = ImageWriter2DType::New();
-  resultImageWriter->SetFileName(dataManager->GetOutputFile("elastix_BS_NCC_Image.mhd"));
+  //ImageWriter2DType::Pointer resultImageWriter = ImageWriter2DType::New();
+  //resultImageWriter->SetFileName(dataManager->GetOutputFile("elastix_BS_NCC_Image.mhd"));
 
-  VectorImageWriter2DType::Pointer vectorImageWriter = VectorImageWriter2DType::New();
-  vectorImageWriter->SetFileName(dataManager->GetOutputFile("elastix_BS_NCC_Displacement.mhd"));
+  //VectorImageWriter2DType::Pointer vectorImageWriter = VectorImageWriter2DType::New();
+  //vectorImageWriter->SetFileName(dataManager->GetOutputFile("elastix_BS_NCC_Displacement.mhd"));
 
   // Connect SuperElastix in an itk pipeline
   superElastixFilter->SetInput("FixedImageSource", fixedImageReader->GetOutput());
   superElastixFilter->SetInput("MovingImageSource", movingImageReader->GetOutput());
 
-  resultImageWriter->SetInput(superElastixFilter->GetOutput<Image2DType>("ResultImageSink"));
-  vectorImageWriter->SetInput(superElastixFilter->GetOutput<VectorImage2DType>("ResultDisplacementFieldSink"));
+  //resultImageWriter->SetInput(superElastixFilter->GetOutput<Image2DType>("ResultImageSink"));
+  //vectorImageWriter->SetInput(superElastixFilter->GetOutput<VectorImage2DType>("ResultDisplacementFieldSink"));
+  
+  baselineImageReader->SetFileName(dataManager->GetBaselineFile("elastix_BS_NCC_Image.mhd"));
+  baselineVectorImageReader->SetFileName(dataManager->GetBaselineFile("elastix_BS_NCC_Displacement.mhd"));
 
+  compareImageFilter->SetTestInput(superElastixFilter->GetOutput<Image2DType>("ResultImageSink"));
+  //elastix component does not have an deformation output, but writes deformationfield to disk.
+  //subtractVectorImageFilter->SetInput2(superElastixFilter->GetOutput<VectorImage2DType>("ResultDisplacementFieldSink"));
+  VectorImageReader2DType::Pointer elastixDeformationFieldReader = VectorImageReader2DType::New();
+  elastixDeformationFieldReader->SetFileName("deformationField.nii");
+  subtractVectorImageFilter->SetInput2(elastixDeformationFieldReader->GetOutput());
+  
   EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
 
   //Optional Update call
   //superElastixFilter->Update();
 
   // Update call on the writers triggers SuperElastix to configure and execute
-  EXPECT_NO_THROW(resultImageWriter->Update());
+  //EXPECT_NO_THROW(resultImageWriter->Update());
   //EXPECT_NO_THROW(vectorImageWriter->Update());
 
-  CopyselxDeformationField<2, float>(dataManager->GetOutputFile("elastix_BS_NCC_Displacement.mhd"));
+  EXPECT_NO_THROW(compareImageFilter->Update());
+  EXPECT_NO_THROW(statisticsImageFilter->Update());
+
+  EXPECT_EQ(0, compareImageFilter->GetNumberOfPixelsWithDifferences());
+  EXPECT_LT(statisticsImageFilter->GetSumOutput()->Get(), 1e-16);
+
 }
 
 /** Experiment 1b: elastix framework, B-spline transform, mean squared differences metric */
@@ -425,18 +495,28 @@ TEST_F(WBIRDemoTest, elastix_BS_MSD)
   ImageReader2DType::Pointer movingImageReader = ImageReader2DType::New();
   movingImageReader->SetFileName(dataManager->GetInputFile("coneB2d64.mhd"));
 
-  ImageWriter2DType::Pointer resultImageWriter = ImageWriter2DType::New();
-  resultImageWriter->SetFileName(dataManager->GetOutputFile("elastix_BS_MSD_Image.mhd"));
+  //ImageWriter2DType::Pointer resultImageWriter = ImageWriter2DType::New();
+  //resultImageWriter->SetFileName(dataManager->GetOutputFile("elastix_BS_MSD_Image.mhd"));
 
-  VectorImageWriter2DType::Pointer vectorImageWriter = VectorImageWriter2DType::New();
-  vectorImageWriter->SetFileName(dataManager->GetOutputFile("elastix_BS_MSD_Displacement.mhd"));
+  //VectorImageWriter2DType::Pointer vectorImageWriter = VectorImageWriter2DType::New();
+  //vectorImageWriter->SetFileName(dataManager->GetOutputFile("elastix_BS_MSD_Displacement.mhd"));
 
   // Connect SuperElastix in an itk pipeline
   superElastixFilter->SetInput("FixedImageSource", fixedImageReader->GetOutput());
   superElastixFilter->SetInput("MovingImageSource", movingImageReader->GetOutput());
 
-  resultImageWriter->SetInput(superElastixFilter->GetOutput<Image2DType>("ResultImageSink"));
-  vectorImageWriter->SetInput(superElastixFilter->GetOutput<VectorImage2DType>("ResultDisplacementFieldSink"));
+  //resultImageWriter->SetInput(superElastixFilter->GetOutput<Image2DType>("ResultImageSink"));
+  //vectorImageWriter->SetInput(superElastixFilter->GetOutput<VectorImage2DType>("ResultDisplacementFieldSink"));
+
+  baselineImageReader->SetFileName(dataManager->GetBaselineFile("elastix_BS_MSD_Image.mhd"));
+  baselineVectorImageReader->SetFileName(dataManager->GetBaselineFile("elastix_BS_MSD_Displacement.mhd"));
+
+  compareImageFilter->SetTestInput(superElastixFilter->GetOutput<Image2DType>("ResultImageSink"));
+  //elastix component does not have an deformation output, but writes deformationfield to disk.
+  //subtractVectorImageFilter->SetInput2(superElastixFilter->GetOutput<VectorImage2DType>("ResultDisplacementFieldSink"));
+  VectorImageReader2DType::Pointer elastixDeformationFieldReader = VectorImageReader2DType::New();
+  elastixDeformationFieldReader->SetFileName("deformationField.nii");
+  subtractVectorImageFilter->SetInput2(elastixDeformationFieldReader->GetOutput());
 
   EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
 
@@ -444,10 +524,14 @@ TEST_F(WBIRDemoTest, elastix_BS_MSD)
   //superElastixFilter->Update();
 
   // Update call on the writers triggers SuperElastix to configure and execute
-  EXPECT_NO_THROW(resultImageWriter->Update());
+  //EXPECT_NO_THROW(resultImageWriter->Update());
   //EXPECT_NO_THROW(vectorImageWriter->Update());
-  
-  CopyselxDeformationField<2, float>(dataManager->GetOutputFile("elastix_BS_MSD_Displacement.mhd"));
+
+  EXPECT_NO_THROW(compareImageFilter->Update());
+  EXPECT_NO_THROW(statisticsImageFilter->Update());
+
+  EXPECT_EQ(0, compareImageFilter->GetNumberOfPixelsWithDifferences());
+  EXPECT_LT(statisticsImageFilter->GetSumOutput()->Get(), 1e-16);
 }
 
 } // namespace selx
