@@ -34,7 +34,7 @@ namespace selx {
 
 class OverlordTest : public ::testing::Test {
 public:
-  typedef Overlord::Pointer                 OverlordPointerType;
+  //typedef Overlord::Pointer                 OverlordPointerType;
   typedef Blueprint::Pointer                BlueprintPointerType;
   typedef Blueprint::ConstPointer           BlueprintConstPointerType;
   typedef Blueprint::ParameterMapType       ParameterMapType;
@@ -72,19 +72,20 @@ public:
     itk::ObjectFactoryBase::UnRegisterAllFactories();
   }
 
+  //std::unique_ptr<Blueprint> blueprint(new Blueprint());
   BlueprintPointerType blueprint;
-  Overlord::Pointer overlord;
+  //Overlord::Pointer overlord;
 };
 
 TEST_F( OverlordTest, Create )
 {
-  EXPECT_NO_THROW( overlord = Overlord::New() );
+  std::unique_ptr<Overlord> overlord(new Overlord());
   EXPECT_NO_THROW( overlord->SetBlueprint(blueprint) );
 }
 
 TEST_F(OverlordTest, Configure)
 {
-  overlord = Overlord::New();
+  std::unique_ptr<Overlord> overlord(new Overlord());
   overlord->SetBlueprint(blueprint);
   bool allUniqueComponents;
   EXPECT_NO_THROW(allUniqueComponents = overlord->Configure());

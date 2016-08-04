@@ -68,7 +68,7 @@ private:
   //TODO make const correct
   //Blueprint::ConstPointer m_Blueprint;
   Blueprint::Pointer m_Blueprint;
-  Overlord::Pointer m_Overlord;
+  std::unique_ptr<Overlord> m_Overlord;
 };
 
 } // namespace elx

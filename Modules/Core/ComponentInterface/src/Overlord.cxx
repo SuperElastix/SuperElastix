@@ -191,7 +191,7 @@ namespace selx
         SourceInterface* provingSourceInterface = dynamic_cast<SourceInterface*> (&(*component));
         if (provingSourceInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
         {
-          itkExceptionMacro("dynamic_cast<SourceInterface*> fails, but based on component criterion it shouldn't")
+          std::runtime_error::runtime_error("dynamic_cast<SourceInterface*> fails, but based on component criterion it shouldn't");
         }
         sourceInterfaceMap[componentSelector.first]=provingSourceInterface;
         
@@ -217,7 +217,7 @@ namespace selx
         SinkInterface* provingSinkInterface = dynamic_cast<SinkInterface*> (&(*component));
         if (provingSinkInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
         {
-          itkExceptionMacro("dynamic_cast<SinkInterface*> fails, but based on component criterion it shouldn't")
+          std::runtime_error::runtime_error("dynamic_cast<SinkInterface*> fails, but based on component criterion it shouldn't");
         }
         sinkInterfaceMap[componentSelector.first] = provingSinkInterface;
       }
@@ -277,7 +277,7 @@ namespace selx
       RunRegistrationInterface* providingRunRegistrationInterface = dynamic_cast<RunRegistrationInterface*> (&(*runRegistrationComponent));
       if (providingRunRegistrationInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
       {
-        itkExceptionMacro("dynamic_cast<RunRegistrationInterface*> fails, but based on component criterion it shouldn't")
+        std::runtime_error::runtime_error("dynamic_cast<RunRegistrationInterface*> fails, but based on component criterion it shouldn't");
       }
       // For testing purposes, all Sources are connected to an ImageWriter
       providingRunRegistrationInterface->RunRegistration();
@@ -293,7 +293,7 @@ namespace selx
       AfterRegistrationInterface* providingAfterRegistrationInterface = dynamic_cast<AfterRegistrationInterface*> (&(*afterRegistrationComponent));
       if (providingAfterRegistrationInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
       {
-        itkExceptionMacro("dynamic_cast<AfterRegistrationInterface*> fails, but based on component criterion it shouldn't")
+        std::runtime_error::runtime_error("dynamic_cast<AfterRegistrationInterface*> fails, but based on component criterion it shouldn't");
       }
       // For testing purposes, all Sources are connected to an ImageWriter
       providingAfterRegistrationInterface->AfterRegistration();
@@ -318,7 +318,7 @@ namespace selx
         ReconnectTransformInterface* providingInterface = dynamic_cast<ReconnectTransformInterface*> (component.GetPointer());
         if (providingInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
         {
-          itkExceptionMacro("dynamic_cast<ReconnectTransformInterface*> fails, but based on component criterion it shouldn't")
+          std::runtime_error::runtime_error("dynamic_cast<ReconnectTransformInterface*> fails, but based on component criterion it shouldn't");
         }
         // For testing purposes, all Sources are connected to an ImageWriter
         providingInterface->ReconnectTransform();
@@ -355,7 +355,9 @@ namespace selx
     SourceInterfaceMapType sources = this->GetSourceInterfaces();
     if (sources.count(inputName) != 1)
     {
-      itkExceptionMacro(<< "No Source component found by name:" << inputName);
+      std::stringstream msg;
+      msg << "No Source component found by name:" << inputName;
+      std::runtime_error::runtime_error(msg.str());
     }
 
     return sources[inputName]->GetInputFileReader();
@@ -366,7 +368,9 @@ namespace selx
     SinkInterfaceMapType sinks = this->GetSinkInterfaces();
     if (sinks.count(outputName) != 1)
     {
-      itkExceptionMacro(<< "No Sink component found by name:" << outputName);
+      std::stringstream msg;
+      msg << "No Sink component found by name : " << outputName;
+      std::runtime_error::runtime_error(msg.str());
     }
 
     return sinks[outputName]->GetOutputFileWriter();
@@ -377,7 +381,9 @@ namespace selx
     SinkInterfaceMapType sinks = this->GetSinkInterfaces();
     if (sinks.count(outputName) != 1)
     {
-      itkExceptionMacro(<< "No Sink component found by name:" << outputName);
+      std::stringstream msg;
+      msg << "No Sink component found by name : " << outputName;
+      std::runtime_error::runtime_error(msg.str());
     }
 
     return sinks[outputName]->GetInitializedOutput();

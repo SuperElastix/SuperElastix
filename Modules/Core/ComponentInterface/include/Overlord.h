@@ -42,11 +42,9 @@
 namespace selx
 {
 
-  class Overlord : public itk::LightProcessObject
+  class Overlord
   {
   public:
-
-    selxNewMacro(Overlord, itk::LightProcessObject);
 
     typedef ComponentBase::CriteriaType CriteriaType;
     typedef ComponentBase::CriterionType CriterionType;
@@ -68,6 +66,11 @@ namespace selx
     typedef std::map <
       std::string, SinkInterface* > SinkInterfaceMapType;
 
+
+    Overlord();
+    ~Overlord() {};
+
+
    SourceInterfaceMapType GetSourceInterfaces();
    SinkInterfaceMapType GetSinkInterfaces();
 
@@ -76,9 +79,15 @@ namespace selx
     typedef itk::VectorContainer <
       unsigned int, ComponentType::Pointer > ComponentsContainerType;
 
-    //TODO make const correct
-    //itkSetConstObjectMacro(Blueprint, Blueprint);
-    itkSetObjectMacro(Blueprint, Blueprint);
+    //void SetBlueprint(Blueprint const * blueprint){
+    //  m_Blueprint = blueprint;
+    //}
+
+    void SetBlueprint(Blueprint::Pointer blueprint){
+      m_Blueprint = blueprint;
+    }
+
+
     bool Configure();
     bool Execute();
 
@@ -86,9 +95,6 @@ namespace selx
     AnyFileWriterType::Pointer GetOutputFileWriter(const ComponentNameType&);
 
   protected:
-    
-    Overlord();
-    virtual ~Overlord() {};
   public: // temporarily from private to public during refactoring SuperElastixFilter.
     void ApplyNodeConfiguration();
     void ApplyConnectionConfiguration();
@@ -104,7 +110,8 @@ namespace selx
     bool ReconnectTransforms();
     //TODO make const correct
     //Blueprint::ConstPointer m_Blueprint;
-    BlueprintType::Pointer m_Blueprint;
+    //Blueprint const * m_Blueprint;
+    Blueprint::Pointer m_Blueprint;
     ComponentSelectorContainerType m_ComponentSelectorContainer;
     bool m_isConfigured;
     bool m_allUniqueComponents;

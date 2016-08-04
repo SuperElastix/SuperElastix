@@ -15,7 +15,7 @@ namespace selx
   SuperElastixFilter< ComponentTypeList >
 ::SuperElastixFilter( void )
 {
-  this->m_Overlord = Overlord::New();
+  this->m_Overlord = std::unique_ptr<Overlord> (new Overlord());
 
   RegisterFactoriesByTypeList<ComponentTypeList>::Register();
 
