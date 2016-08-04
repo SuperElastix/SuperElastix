@@ -59,8 +59,11 @@ namespace selx
     virtual int AcceptConnectionFrom(ComponentBase*) = 0;
 
     /** if there is any failed criterion, return false (like a short - circuit AND) */
+    //TODO deprecate:
     bool MeetsCriteria(const CriteriaType &criteria);
 
+    bool MeetsCriterionBase(const CriterionType &criterion);
+    
     virtual bool MeetsCriterion(const CriterionType &criterion) = 0;
   protected:
     virtual bool HasAcceptingInterface(const char *) = 0;

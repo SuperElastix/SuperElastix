@@ -54,6 +54,7 @@ namespace selx
     typedef ComponentSelector::Pointer ComponentSelectorPointer;
     typedef Blueprint BlueprintType;
     typedef BlueprintType::ComponentNameType ComponentNameType;
+    typedef BlueprintType::ComponentNamesType ComponentNamesType;
     typedef std::map< ComponentNameType, ComponentSelectorPointer> ComponentSelectorContainerType;
     typedef ComponentSelectorContainerType::iterator ComponentSelectorIteratorType;
 
@@ -98,11 +99,13 @@ namespace selx
   public: // temporarily from private to public during refactoring SuperElastixFilter.
     void ApplyNodeConfiguration();
     void ApplyConnectionConfiguration();
-    bool UpdateSelectors();
+    
+    //bool UpdateSelectors();
     bool ConnectComponents();
     bool FindAfterRegistration();
     bool FindRunRegistration();
   private:
+    ComponentNamesType GetNonUniqueComponentNames();
     bool ConnectSources();
     bool ConnectSinks();
     bool RunRegistrations();

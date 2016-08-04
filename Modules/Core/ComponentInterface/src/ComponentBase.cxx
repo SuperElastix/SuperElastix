@@ -23,65 +23,49 @@ namespace selx
 {
 
 
- bool ComponentBase::MeetsCriteria(const CriteriaType &criteria)
+  bool ComponentBase::MeetsCriterionBase(const CriterionType &criterion)
   {
-    bool hasUndefinedCriteria(false);
-    bool meetsCriteria(true);
-    for (CriteriaType::const_iterator it = criteria.begin(); it != criteria.cend(); ++it)
+    if (criterion.first == "NameOfClass")
     {
-      if (it->first == "NameOfClass")
+      if (criterion.second.size() != 1)
       {
-        if (it->second.size() != 1)
+        itkExceptionMacro("The criterion NameOfClass may have only 1 value");
+      }
+      return (criterion.second[0] == this->GetNameOfClass());
+    }
+
+    else if (criterion.first == "HasAcceptingInterface")
+    {
+      for (const auto & value : criterion.second)
+      {
+        if (this->HasAcceptingInterface(value.c_str()) == false)
         {
-          itkExceptionMacro("The criterion NameOfClass may have only 1 value");
-        }
-        auto temp = this->GetNameOfClass();
-        if (it->second[0] != this->GetNameOfClass())
-        {
-          meetsCriteria = false;
-          //break;
           return false; //if there is any failed criterion, return false (like a short-circuit AND)
         }
 
       }
-
-      else if (it->first == "HasAcceptingInterface")
-      {
-        ParameterValueType::const_iterator valueIt;
-        const ParameterValueType::const_iterator valueItEnd = it->second.cend();
-
-        for (valueIt = it->second.cbegin(); valueIt != valueItEnd; ++valueIt)
-        {
-          if (this->HasAcceptingInterface(valueIt->c_str()) == false)
-          {
-            meetsCriteria = false;
-            //break;
-            return false; //if there is any failed criterion, return false (like a short-circuit AND)
-          }
-        }
-
-      }
-      else if (it->first =="HasProvidingInterface")
-      {
-        ParameterValueType::const_iterator valueIt;
-        const ParameterValueType::const_iterator valueItEnd = it->second.cend();
-
-        for (valueIt = it->second.cbegin(); valueIt != valueItEnd; ++valueIt){
-          if (this->HasProvidingInterface(valueIt->c_str()) == false)
-          {
-            meetsCriteria = false;
-            //break;
-            return false; //if there is any failed criterion, return false (like a short-circuit AND)
-          }
-        }
-      }
-      else if (this->MeetsCriterion(CriterionType(it->first, it->second)) == false)
-      {
-        meetsCriteria = false;
-        return false; //if there is any failed criterion, return false (like a short-circuit AND)
-      }
+      return true;
     }
-    return meetsCriteria;
+    else if (criterion.first == "HasProvidingInterface")
+    {
+      for (const auto & value : criterion.second)
+      {
+        if (this->HasProvidingInterface(value.c_str()) == false)
+        {
+          return false; //if there is any failed criterion, return false (like a short-circuit AND)
+        }
+      }
+      return true;
+    }
+    // else pass criterion to derived Component
+  return this->MeetsCriterion(criterion);
+  }
+
+  //TODO deprecate:
+  bool ComponentBase::MeetsCriteria(const CriteriaType &criteria)
+
+  {
+    return false;
   }
 
 } // end namespace selx

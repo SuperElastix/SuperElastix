@@ -38,7 +38,7 @@ public:
   typedef std::list< itk::LightObject::Pointer > RegisteredObjectsContainerType;
   typedef ComponentBase       ComponentType;
 
-  typedef ComponentBase::CriteriaType CriteriaType;
+  //typedef ComponentBase::CriteriaType CriteriaType;
   typedef ComponentBase::CriterionType CriterionType;
   typedef ComponentBase::ParameterValueType ParameterValueType;
   //typedef std::map<std::string, std::string> CriteriaType;
@@ -95,11 +95,11 @@ TEST_F(ComponentFactoryTest, SetEmptyCriteria)
   EXPECT_NO_THROW(ComponentFactory<TransformComponent1>::RegisterOneFactory());
   EXPECT_NO_THROW(ComponentFactory<MetricComponent1>::RegisterOneFactory());
 
-  CriteriaType emptyCriteria; // = CriteriaType();
+  CriterionType emptyCriterion; // = CriterionType();
 
   ASSERT_NO_THROW(Node1 = ComponentSelector::New());
 
-  EXPECT_NO_THROW(Node1->SetCriteria(emptyCriteria));
+  EXPECT_NO_THROW(Node1->AddCriterion(emptyCriterion));
   ComponentType::Pointer Node1Component;
   EXPECT_NO_THROW(Node1Component = Node1->GetComponent());
 
@@ -112,11 +112,10 @@ TEST_F(ComponentFactoryTest, SetSufficientCriteria)
   EXPECT_NO_THROW(ComponentFactory<TransformComponent1>::RegisterOneFactory());
   EXPECT_NO_THROW(ComponentFactory<MetricComponent1>::RegisterOneFactory());
 
-  CriteriaType criteria2;
-  criteria2["ComponentInput"] = {"Transform"};
+  CriterionType criterion2 = { "ComponentInput", { "Transform" } };
   ASSERT_NO_THROW(Node2 = ComponentSelector::New());
 
-  Node2->SetCriteria(criteria2);
+  ASSERT_NO_THROW(Node2->AddCriterion(criterion2));
   ComponentType::Pointer Node2Component;
   EXPECT_NO_THROW(Node2Component = Node2->GetComponent());
 
@@ -131,18 +130,26 @@ TEST_F(ComponentFactoryTest, AddCriteria)
   EXPECT_NO_THROW(ComponentFactory<TransformComponent1>::RegisterOneFactory());
   EXPECT_NO_THROW(ComponentFactory<MetricComponent1>::RegisterOneFactory());
 
-  CriteriaType emptyCriteria;
-  CriteriaType criteria1;
-  criteria1["ComponentOutput"] = { "Transform" };
 
+  CriterionType nonSelectiveCriterion("ComponentProperty", { "SomeProperty" });
+
+  CriterionType criterion1({ "ComponentOutput", { "Transform" } });
+  
   Node1 = ComponentSelector::New();
 
-  Node1->SetCriteria(emptyCriteria);
-  EXPECT_NO_THROW(Node1->AddCriteria(criteria1));
+  EXPECT_NO_THROW(Node1->AddCriterion(nonSelectiveCriterion));
   ComponentType::Pointer Node1Component;
+
+  EXPECT_TRUE(Node1->HasMultipleComponents());
+  EXPECT_NO_THROW(Node1Component = Node1->GetComponent());
+  //Unsufficient criteria means no Component was selected."
+  EXPECT_TRUE(Node1Component.IsNull());
+
+  EXPECT_NO_THROW(Node1->AddCriterion(criterion1));
   EXPECT_NO_THROW(Node1Component = Node1->GetComponent());
 
   //Sufficient criteria means one Component was selected."
+  EXPECT_FALSE(Node1->HasMultipleComponents());
   EXPECT_FALSE(Node1Component.IsNull());
   //Based on the criteria TransformComponent1 should be selected
   EXPECT_STREQ(Node1Component->GetNameOfClass(), "TransformComponent1");
@@ -162,38 +169,34 @@ TEST_F(ComponentFactoryTest, InterfacedObjects)
   // " 6 Component objects available to the Overlord."
   EXPECT_EQ(registeredComponents.size(), 6);
 
-  CriteriaType criteria3;
-  criteria3["HasAcceptingInterface"] = { "MetricDerivativeInterface" };
+  CriterionType criterion3({ "HasAcceptingInterface", { "MetricDerivativeInterface" } });
 
   NodePointer Node3 = ComponentSelector::New();
-  Node3->SetCriteria(criteria3);
+  Node3->AddCriterion(criterion3);
   ComponentType::Pointer Node3Component;
   EXPECT_NO_THROW(Node3Component = Node3->GetComponent());
   EXPECT_STREQ(Node3Component->GetNameOfClass(), "GDOptimizer3rdPartyComponent");
 
-  CriteriaType criteria4;
-  criteria4["NameOfClass"] = { "GDOptimizer4thPartyComponent" };
+  CriterionType criterion4({ "NameOfClass", { "GDOptimizer4thPartyComponent" } });
 
   NodePointer Node4 = ComponentSelector::New();
-  Node4->SetCriteria(criteria4);
+  Node4->AddCriterion(criterion4);
   ComponentType::Pointer Node4Component;
   EXPECT_NO_THROW(Node4Component = Node4->GetComponent());
   EXPECT_STREQ(Node4Component->GetNameOfClass(), "GDOptimizer4thPartyComponent");
 
-  CriteriaType criteria5;
-  criteria5["HasProvidingInterface"] = { "MetricDerivativeInterface" };
+  CriterionType criterion5({ "HasProvidingInterface", { "MetricDerivativeInterface" } });
 
   NodePointer Node5 = ComponentSelector::New();
-  Node5->SetCriteria(criteria5);
+  Node5->AddCriterion(criterion5);
   ComponentType::Pointer Node5Component;
   EXPECT_NO_THROW(Node5Component = Node5->GetComponent());
   EXPECT_STREQ(Node5Component->GetNameOfClass(), "SSDMetric3rdPartyComponent");
 
-  CriteriaType criteria6;
-  criteria6["NameOfClass"] = { "SSDMetric4thPartyComponent" };
+  CriterionType criterion6({ "NameOfClass", { "SSDMetric4thPartyComponent" } });
 
   NodePointer Node6 = ComponentSelector::New();
-  Node6->SetCriteria(criteria6);
+  Node6->AddCriterion(criterion6);
   ComponentType::Pointer Node6Component;
   EXPECT_NO_THROW(Node6Component = Node6->GetComponent());
   EXPECT_STREQ(Node6Component->GetNameOfClass(), "SSDMetric4thPartyComponent");
@@ -213,15 +216,15 @@ TEST_F(ComponentFactoryTest, UnknownComponent)
   EXPECT_NO_THROW(ComponentFactory<SSDMetric4thPartyComponent>::RegisterOneFactory());
 
 
-  // Setup the criteria for a component that does not exist in our data base
-  CriteriaType criteria;
-  criteria["NameOfClass"] = { "DoYouHaveThisComponent?" };
+  // Setup the criterion for a component that does not exist in our data base
+  CriterionType criterion({ "NameOfClass", { "DoYouHaveThisComponent?" } });
 
   NodePointer Node = ComponentSelector::New();
-  Node->SetCriteria(criteria);
+  Node->AddCriterion(criterion);
   ComponentType::Pointer NodeComponent;
   
-  // we expect and exception here
-  EXPECT_THROW(NodeComponent = Node->GetComponent(), itk::ExceptionObject);
+  // we expect 0 components
+  EXPECT_FALSE(Node->HasMultipleComponents());
+  EXPECT_TRUE(Node->GetComponent().IsNull());
 }
 } // namespace selx

@@ -31,56 +31,60 @@ namespace selx
   {
     if (!this->m_isConfigured)
     {
-      this->m_isConfigured = true;
+      
+      std::cout << "Applying Component Criteria" << std::endl;
       this->ApplyNodeConfiguration();
-      std::cout << "Applying Component Settings" << std::endl;
-      this->m_allUniqueComponents = this->UpdateSelectors();
-      std::cout << "Based on Component Criteria unique components could " << (this->m_allUniqueComponents ? "" : "not ") << "be selected" << std::endl;
 
-      std::cout << "Applying Connection Settings" << std::endl;
+      ComponentNamesType nonUniqueComponentNames;
+      nonUniqueComponentNames = this->GetNonUniqueComponentNames();
+      std::cout << nonUniqueComponentNames.size() << " out of " << m_Blueprint->GetComponentNames().size() << " Components could not be uniquely selected" << std::endl << std::endl;
+
+      std::cout << "Applying Connection Criteria" << std::endl;
       this->ApplyConnectionConfiguration();
-      this->m_allUniqueComponents = this->UpdateSelectors();
-      std::cout << "By adding Connection Criteria unique components could " << (this->m_allUniqueComponents ? "" : "not ") << "be selected" << std::endl;
+      nonUniqueComponentNames = this->GetNonUniqueComponentNames();
+      std::cout << nonUniqueComponentNames.size() << " out of " << m_Blueprint->GetComponentNames().size() << " Components could not be uniquely selected" << std::endl << std::endl;
 
+
+      if (nonUniqueComponentNames.size() > 0)
+      {
+        this->m_allUniqueComponents = false;
+        std::cout << std::endl << "These Nodes need more criteria: " << std::endl; 
+        for (const auto & nonUniqueComponentName : nonUniqueComponentNames)
+        {
+          std::cout << nonUniqueComponentName<< std::endl;
+        }
+      }
+      else
+      {
+        this->m_allUniqueComponents = true;
+      }
       //TODO: make a while loop until stable:
-      // - propagate for each unique component the required interfaces to neighboring components
-      // - update selectors
-
-      //if (allUniqueComponents)
-      //{
-      //  isSuccess = this->ConnectComponents();
-      //}
-
-      //std::cout << "Connecting Components: " << (isSuccess? "succeeded" : "failed") << std::endl;
-
-      //return isSuccess;
+      // - for each unique component propagate the required interfaces to neighboring components as added criterion
+      
+      this->m_isConfigured = true;
     }
     return this->m_allUniqueComponents;
   }
 
-  bool Overlord::UpdateSelectors()
+  Overlord::ComponentNamesType Overlord::GetNonUniqueComponentNames()
   {
-    bool allUniqueComponents = true;
+    ComponentNamesType nonUniqueComponentNames;
     const Blueprint::ComponentNamesType componentNames = m_Blueprint->GetComponentNames();
     for (auto const & name : componentNames)
-    {
-      ComponentSelector::NumberOfComponentsType numberOfComponents = this->m_ComponentSelectorContainer[name]->UpdatePossibleComponents();
-
+    {    
+     
       // The current idea of the configuration setup is that the number of 
       // possible components at a node can only be reduced by adding criteria.
       // If a node has 0 possible components, the configuration is aborted (with an exception)
       // If all nodes have exactly 1 possible component, no more criteria are needed.
-      //
-      // Design consideration: should the exception be thrown by this->m_ComponentSelectorContainer[name]->UpdatePossibleComponents()?
-      // The (failing) criteria can be printed as well.
-      if (numberOfComponents > 1)
-      {
-        allUniqueComponents = false;
-      }
-      std::cout << "blueprint node " << name << " has selected " << numberOfComponents << " components" << std::endl;
 
+      if (this->m_ComponentSelectorContainer[name]->HasMultipleComponents()==true)
+      {
+        //std::cout << "To select a component for blueprint node " << name << " more critatia are required" << std::endl;
+        nonUniqueComponentNames.push_back(name);
+      }
     }
-    return allUniqueComponents;
+    return nonUniqueComponentNames;
   }
 
   void Overlord::ApplyNodeConfiguration()
@@ -102,16 +106,31 @@ namespace selx
     // in turn, hold 1 (or more) component.
 
     Blueprint::ComponentNamesType componentNames = this->m_Blueprint->GetComponentNames();
+    
     for (auto const & name : componentNames)
     {
+      std::cout << " Blueprint Node: " << name << std::endl;
       ComponentSelectorPointer currentComponentSelector = ComponentSelector::New();
       Blueprint::ParameterMapType currentProperty = this->m_Blueprint->GetComponent(name);
-      currentComponentSelector->SetCriteria(currentProperty);
+      for (auto const & criterion : currentProperty)
+      {
+        std::cout << "  " << criterion.first << ": " << criterion.second[0] << std::endl;
+        currentComponentSelector->AddCriterion(criterion);
+      }
+
+      if ((currentComponentSelector->HasMultipleComponents() == false) && (currentComponentSelector->GetComponent().IsNull()))
+      {
+        std::stringstream msg;
+        msg << "Too many criteria for Component " << name << std::endl;
+        std::runtime_error::runtime_error(msg.str());
+      }
+
       // insert new element
       this->m_ComponentSelectorContainer[name]=currentComponentSelector;
     }
     return;
   }
+
   void Overlord::ApplyConnectionConfiguration()
   {
     Blueprint::ComponentNamesType componentNames = this->m_Blueprint->GetComponentNames();
@@ -123,15 +142,17 @@ namespace selx
         Blueprint::ParameterMapType connectionProperties = this->m_Blueprint->GetConnection(name, outgoingName);
         if (connectionProperties.count("NameOfInterface") > 0)
         {
-          ComponentBase::CriteriaType additionalSourceCriteria;
-          additionalSourceCriteria.insert(ComponentBase::CriterionType("HasProvidingInterface", connectionProperties["NameOfInterface"]));
-
-          ComponentBase::CriteriaType additionalTargetCriteria;
-          additionalTargetCriteria.insert(ComponentBase::CriterionType("HasAcceptingInterface", connectionProperties["NameOfInterface"]));
-
-          this->m_ComponentSelectorContainer[name]->AddCriteria(additionalSourceCriteria);
-          this->m_ComponentSelectorContainer[outgoingName]->AddCriteria(additionalTargetCriteria);
+          this->m_ComponentSelectorContainer[name]->AddCriterion({ "HasProvidingInterface", connectionProperties["NameOfInterface"] });
+          this->m_ComponentSelectorContainer[outgoingName]->AddCriterion({ "HasAcceptingInterface", connectionProperties["NameOfInterface"] });
+          std::cout << " Blueprint Node: " << name << std::endl << "  HasProvidingInterface " << connectionProperties["NameOfInterface"][0] << std::endl;
+          std::cout << " Blueprint Node: " << outgoingName << std::endl << "  HasAcceptingInterface " << connectionProperties["NameOfInterface"][0] << std::endl;
         }
+      }
+      if ((this->m_ComponentSelectorContainer[name]->HasMultipleComponents() == false) && (this->m_ComponentSelectorContainer[name]->GetComponent().IsNull()))
+      {
+        std::stringstream msg;
+        msg << "Too many criteria for Component " << name << std::endl;
+        std::runtime_error::runtime_error(msg.str());
       }
     }
 

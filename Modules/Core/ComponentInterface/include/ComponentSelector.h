@@ -52,24 +52,25 @@ public:
   /** Convenient typedefs. */
   typedef ComponentBase::Pointer ComponentBasePointer;
   typedef ComponentBase::CriteriaType CriteriaType;
+  typedef ComponentBase::CriterionType CriterionType;
 
   typedef std::list< ComponentBasePointer > ComponentListType;
   typedef ComponentListType::size_type      NumberOfComponentsType;
   /** set selection criteria for possibleComponents*/
-  void Initialize();
-  void SetCriteria(const CriteriaType &criteria);
   
   /** Narrow selection criteria*/
-  void AddCriteria(const CriteriaType &criteria);
+  void AddCriterion(const CriterionType &criterion);
+ 
+  /** Check for multiple versus 1 or 0 components*/
+  bool HasMultipleComponents(void);
   
-  NumberOfComponentsType UpdatePossibleComponents(void);
-  
+  /** Return Component or Nullptr*/
   ComponentBasePointer GetComponent(void);
   
   
 protected:
-  mutable CriteriaType m_Criteria;
-  mutable ComponentListType m_PossibleComponents;
+  CriteriaType m_Criteria;
+  ComponentListType m_PossibleComponents;
   ComponentSelector();
   ~ComponentSelector();
 
