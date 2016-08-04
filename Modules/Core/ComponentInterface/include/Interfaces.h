@@ -27,6 +27,7 @@
 #include "itkProcessObject.h"
 #include "itkImageToImageFilter.h"
 #include "itkImageToImageMetricv4.h"
+#include "itkObjectToObjectOptimizerBase.h"
 
 #include "itkImage.h"
 #include "itkMesh.h"
@@ -85,6 +86,14 @@ namespace selx
     virtual typename ItkImageType::Pointer GetItkImageFixed() = 0;
   };
 
+  template<int Dimensionality>
+  class itkImageDomainFixedInterface {
+    // An interface that passes the pointer of an output image
+  public:
+    typedef typename itk::ImageBase<Dimensionality> ItkImageDomainType;
+    virtual typename ItkImageDomainType::Pointer GetItkImageDomainFixed() = 0;
+  };
+
   template<int Dimensionality, class TPixel>
   class itkImageMovingInterface {
     // An interface that passes the pointer of an output image
@@ -92,9 +101,10 @@ namespace selx
     typedef typename itk::Image<TPixel, Dimensionality> ItkImageType;
     virtual typename ItkImageType::Pointer GetItkImageMoving() = 0;
   };
+
   template<int Dimensionality, class TPixel>
   class DisplacementFieldItkImageSourceInterface {
-    // An interface that exposes that its internal filter is derived from itkImageSource
+    // An interface that passes the pointer of an output image
   public:
     typedef typename itk::Image<itk::Vector< TPixel, Dimensionality >, Dimensionality> ItkImageType;
     virtual typename ItkImageType::Pointer GetDisplacementFieldItkImage() = 0;
@@ -102,7 +112,7 @@ namespace selx
 
   template<int Dimensionality, class TPixel>
   class itkMeshInterface {
-    // An interface that passes the pointer of an output image
+    // An interface that passes the pointer of an output mesh
   public:
     virtual typename itk::Mesh<TPixel, Dimensionality>::Pointer GetItkMesh() = 0;
   };
@@ -148,6 +158,13 @@ namespace selx
     virtual bool RunResolution() = 0;
   };
 
+  class ReconnectTransformInterface {
+    // A special interface: the Overlord checks components for this type of interface.
+    // This interface is for to control the execution of the network
+  public:
+    virtual void ReconnectTransform() = 0;
+  };
+  
   template<int Dimensionality, class TPixel>
   class itkMetricv4Interface {
   public:
@@ -158,6 +175,26 @@ namespace selx
     virtual typename ImageToImageMetricv4Type::Pointer GetItkMetricv4() = 0;
   };
 
+  template<class TInternalComputationValueType>
+  class itkOptimizerv4Interface {
+  public:
+    /**  Type of the optimizer. */
+    typedef TInternalComputationValueType InternalComputationValueType;
+    typedef itk::ObjectToObjectOptimizerBaseTemplate<InternalComputationValueType>               OptimizerType;
+    typedef typename OptimizerType::Pointer                             Optimizerv4Pointer;
+    virtual Optimizerv4Pointer GetItkOptimizerv4() = 0;
+  };
+
+    template<class TInternalComputationValueType, int Dimensionality>
+  class itkTransformInterface {
+  public:
+    typedef TInternalComputationValueType InternalComputationValueType;
+    typedef typename itk::Transform<TInternalComputationValueType, Dimensionality, Dimensionality>       TransformType;
+    typedef typename TransformType::Pointer                             TransformPointer;
+
+    virtual TransformPointer GetItkTransform() = 0;
+  };
+  
   // Define the accepting interfaces as templated by the providing interface
 
   template<class InterfaceT>
@@ -216,6 +253,7 @@ protected:
 //{
 //};
 
+//TODO rename Implements to SuperElastixComponent
 template<typename AcceptingInterfaces, typename ProvidingInterfaces>
 class Implements : public AcceptingInterfaces, public ProvidingInterfaces, public ComponentBase
 {

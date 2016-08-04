@@ -34,6 +34,11 @@
 #include "selxItkImageRegistrationMethodv4Component.h"
 #include "selxItkANTSNeighborhoodCorrelationImageToImageMetricv4.h"
 #include "selxItkMeanSquaresImageToImageMetricv4.h"
+#include "selxItkGradientDescentOptimizerv4.h"
+#include "selxItkAffineTransform.h"
+#include "selxItkGaussianExponentialDiffeomorphicTransform.h"
+#include "selxItkTransformDisplacementFilter.h"
+#include "selxItkResampleFilter.h"
 #include "selxItkImageSourceFixed.h"
 #include "selxItkImageSourceMoving.h"
 
@@ -82,7 +87,14 @@ public:
     ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component<3, double>,
     ItkMeanSquaresImageToImageMetricv4Component<3, double>,
     ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component<2, float>,
-    ItkMeanSquaresImageToImageMetricv4Component < 2, float >> RegisterComponents;
+    ItkMeanSquaresImageToImageMetricv4Component < 2, float >,
+    ItkGradientDescentOptimizerv4Component<double>,
+    ItkAffineTransformComponent<double,3>,
+    ItkGaussianExponentialDiffeomorphicTransformComponent<double, 3>,
+    ItkTransformDisplacementFilterComponent<2, float, double >,
+    ItkTransformDisplacementFilterComponent<3, double, double >,
+    ItkResampleFilterComponent<2, float, double >,
+    ItkResampleFilterComponent<3, double, double >> RegisterComponents;
 	
   typedef SuperElastixFilter<RegisterComponents>          SuperElastixFilterType;
 
@@ -111,7 +123,10 @@ public:
 
 };
 
-TEST_F(RegistrationItkv4Test, ImagesOnly)
+// These test are disabled, since may not want to check each component with this much boilerplate code. 
+// We should consider moving functional tests outside the unit tests
+// Anyway, the Blueprint configuration needs to be updated
+TEST_F(RegistrationItkv4Test, DISABLED_3DImagesOnly) 
 {
   /** make example blueprint configuration */
   blueprint = Blueprint::New();
@@ -181,7 +196,10 @@ TEST_F(RegistrationItkv4Test, ImagesOnly)
     
 }
 
-TEST_F(RegistrationItkv4Test, WithANTSCCMetric)
+// These test are disabled, since may not want to check each component with this much boilerplate code. 
+// We should consider moving functional tests outside the unit tests
+// Anyway, the Blueprint configuration needs to be updated
+TEST_F(RegistrationItkv4Test, DISABLED_3DANTSCCMetric)
 {
   /** make example blueprint configuration */
   blueprint = Blueprint::New();
@@ -211,6 +229,10 @@ TEST_F(RegistrationItkv4Test, WithANTSCCMetric)
   component4Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
   blueprint->AddComponent("Metric", component4Parameters);
 
+  ParameterMapType component5Parameters;
+  component5Parameters["NameOfClass"] = { "ItkGradientDescentOptimizerv4Component" };
+  component5Parameters["NumberOfIterations"] = { "1" };
+  blueprint->AddComponent("Optimizer", component5Parameters);
 
   ParameterMapType connection1Parameters;
   connection1Parameters["NameOfInterface"] = { "itkImageFixedInterface" };
@@ -227,6 +249,11 @@ TEST_F(RegistrationItkv4Test, WithANTSCCMetric)
   ParameterMapType connection4Parameters;
   connection4Parameters["NameOfInterface"] = { "itkMetricv4Interface" };
   blueprint->AddConnection("Metric", "RegistrationMethod", connection4Parameters);
+
+  ParameterMapType connection5Parameters;
+  connection5Parameters["NameOfInterface"] = { "itkOptimizerv4Interface" };
+  blueprint->AddConnection("Optimizer", "RegistrationMethod", connection5Parameters);
+
 
   // Instantiate SuperElastix
   SuperElastixFilterType::Pointer superElastixFilter;
@@ -258,7 +285,11 @@ TEST_F(RegistrationItkv4Test, WithANTSCCMetric)
   // Update call on the writers triggers SuperElastix to configure and execute
   EXPECT_NO_THROW(resultImageWriter->Update());
 }
-TEST_F(RegistrationItkv4Test, WithMeanSquaresMetric)
+
+// These test are disabled, since may not want to check each component with this much boilerplate code. 
+// We should consider moving functional tests outside the unit tests
+// Anyway, the Blueprint configuration needs to be updated
+TEST_F(RegistrationItkv4Test, DISABLED_3DMeanSquaresMetric)
 {
   /** make example blueprint configuration */
   blueprint = Blueprint::New();
@@ -288,6 +319,10 @@ TEST_F(RegistrationItkv4Test, WithMeanSquaresMetric)
   component4Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
   blueprint->AddComponent("Metric", component4Parameters);
 
+  ParameterMapType component5Parameters;
+  component5Parameters["NameOfClass"] = { "ItkGradientDescentOptimizerv4Component" };
+  component5Parameters["NumberOfIterations"] = { "1" };
+  blueprint->AddComponent("Optimizer", component5Parameters);
 
   ParameterMapType connection1Parameters;
   connection1Parameters["NameOfInterface"] = { "itkImageFixedInterface" };
@@ -304,6 +339,10 @@ TEST_F(RegistrationItkv4Test, WithMeanSquaresMetric)
   ParameterMapType connection4Parameters;
   connection4Parameters["NameOfInterface"] = { "itkMetricv4Interface" };
   blueprint->AddConnection("Metric", "RegistrationMethod", connection4Parameters);
+
+  ParameterMapType connection5Parameters;
+  connection5Parameters["NameOfInterface"] = { "itkOptimizerv4Interface" };
+  blueprint->AddConnection("Optimizer", "RegistrationMethod", connection5Parameters);
 
   // Instantiate SuperElastix
   SuperElastixFilterType::Pointer superElastixFilter;
@@ -337,7 +376,7 @@ TEST_F(RegistrationItkv4Test, WithMeanSquaresMetric)
 
 }
 
-TEST_F(RegistrationItkv4Test, DisplacementField)
+TEST_F(RegistrationItkv4Test, FullyConfigured3d)
 {
   /** make example blueprint configuration */
   blueprint = Blueprint::New();
@@ -372,6 +411,22 @@ TEST_F(RegistrationItkv4Test, DisplacementField)
   component5Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
   blueprint->AddComponent("Metric", component5Parameters);
 
+  ParameterMapType component6Parameters;
+  component6Parameters["NameOfClass"] = { "ItkTransformDisplacementFilterComponent" };
+  component6Parameters["Dimensionality"] = { "3" }; // should be derived from the outputs
+  blueprint->AddComponent("TransformDisplacementFilter", component6Parameters);
+
+  ParameterMapType component7Parameters;
+  component7Parameters["NameOfClass"] = { "ItkGradientDescentOptimizerv4Component" };
+  component7Parameters["NumberOfIterations"] = { "1" };
+  blueprint->AddComponent("Optimizer", component7Parameters);
+
+
+  blueprint->AddComponent("ResampleFilter", { { "NameOfClass",    { "ItkResampleFilterComponent" } },
+                                              { "Dimensionality", { "3" } } });
+                                            
+  blueprint->AddComponent("Transform",      { { "NameOfClass",    { "ItkGaussianExponentialDiffeomorphicTransformComponent" } },
+                                              { "Dimensionality", { "3" } } });
 
   ParameterMapType connection1Parameters;
   connection1Parameters["NameOfInterface"] = { "itkImageFixedInterface" };
@@ -383,15 +438,24 @@ TEST_F(RegistrationItkv4Test, DisplacementField)
 
   ParameterMapType connection3Parameters;
   connection3Parameters["NameOfInterface"] = { "itkImageInterface" };
-  blueprint->AddConnection("RegistrationMethod", "ResultImageSink", connection3Parameters);
+  blueprint->AddConnection("ResampleFilter", "ResultImageSink", connection3Parameters);
 
   ParameterMapType connection4Parameters;
   connection4Parameters["NameOfInterface"] = { "DisplacementFieldItkImageSourceInterface" };
-  blueprint->AddConnection("RegistrationMethod", "ResultDisplacementFieldSink", connection4Parameters);
+  blueprint->AddConnection("TransformDisplacementFilter", "ResultDisplacementFieldSink", connection4Parameters);
 
   ParameterMapType connection5Parameters;
   connection5Parameters["NameOfInterface"] = { "itkMetricv4Interface" };
   blueprint->AddConnection("Metric", "RegistrationMethod", connection5Parameters);
+  
+  blueprint->AddConnection("FixedImageSource", "Transform", { {} });
+  blueprint->AddConnection("Transform", "RegistrationMethod", { {} }); 
+  blueprint->AddConnection("Optimizer", "RegistrationMethod", { {} });
+  blueprint->AddConnection("RegistrationMethod", "TransformDisplacementFilter", { {} });
+  blueprint->AddConnection("FixedImageSource", "TransformDisplacementFilter", { {} });
+  blueprint->AddConnection("RegistrationMethod", "ResampleFilter", { {} });
+  blueprint->AddConnection("FixedImageSource", "ResampleFilter", { {} });
+  blueprint->AddConnection("MovingImageSource", "ResampleFilter", { {} });
 
   // Instantiate SuperElastix
   SuperElastixFilterType::Pointer superElastixFilter;
@@ -428,6 +492,8 @@ TEST_F(RegistrationItkv4Test, DisplacementField)
   // Update call on the writers triggers SuperElastix to configure and execute
   EXPECT_NO_THROW(resultImageWriter->Update());
   EXPECT_NO_THROW(resultDisplacementWriter->Update());
+
+  blueprint->WriteBlueprint(dataManager->GetOutputFile("RegistrationItkv4Test_DisplacementField_network.dot"));
 
 }
 } // namespace selx

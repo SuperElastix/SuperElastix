@@ -121,25 +121,8 @@ namespace selx
   ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::ItkImageRegistrationMethodv4Component()
 {
   m_theItkFilter = TheItkFilterType::New();
-  m_resampler = ResampleFilterType::New();
-  m_DisplacementFieldFilter = DisplacementFieldFilterType::New();
-  //m_DisplacementFieldFilter->GetTransformInput()->Graft<ConstantVelocityFieldTransformType>(&(const_cast<ConstantVelocityFieldTransformType>( m_theItkFilter->GetOutput())));
-  //m_DisplacementFieldFilter->GetTransformInput()->Graft(m_theItkFilter->GetOutput());
-  
-  typename itk::DataObjectDecorator<typename ConstantVelocityFieldTransformType::Superclass::Superclass::Superclass>::Pointer decoratedDummyTransform = itk::DataObjectDecorator<typename ConstantVelocityFieldTransformType::Superclass::Superclass::Superclass>::New();
-  typename ConstantVelocityFieldTransformType::Pointer dummyTranform = ConstantVelocityFieldTransformType::New();
-  decoratedDummyTransform->Set(dummyTranform);
+  m_theItkFilter->InPlaceOn();
 
-  //decoratedTransform->Set(m_theItkFilter->GetOutput()->Get());
-  //m_DisplacementFieldFilter->SetTransformInput(const_cast< itk::DataObjectDecorator<ConstantVelocityFieldTransformType::Superclass::Superclass::Superclass>*>(decoratedTransform));
-  
-  m_DisplacementFieldFilter->SetTransformInput(decoratedDummyTransform);
-  //m_theItkFilter->GetOutput()->Graft(m_DisplacementFieldFilter->GetTransformInput());
-  //m_DisplacementFieldFilter->GetTransformInput()->Graft(decoratedTransform);
-
-  //m_DisplacementFieldFilter->SetTransformInput(const_cast< itk::DataObjectDecorator<ConstantVelocityFieldTransformType::Superclass::Superclass::Superclass>*>(m_theItkFilter->GetOutput()));
-  //m_DisplacementFieldFilter->GetTransformInput()->Graft(const_cast< itk::DataObjectDecorator<ConstantVelocityFieldTransformType>*>(m_theItkFilter->GetOutput()));
-   //m_DisplacementFieldFilter->GetOutput()->SetLargestPossibleRegion()
   //TODO: instantiating the filter in the constructor might be heavy for the use in component selector factory, since all components of the database are created during the selection process.
   // we could choose to keep the component light weighted (for checking criteria such as names and connections) until the settings are passed to the filter, but this requires an additional initialization step.
 }
@@ -157,20 +140,6 @@ int ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>
   // connect the itk pipeline
   this->m_theItkFilter->SetFixedImage(fixedImage);
 
-  //this->m_DisplacementFieldFilter->SetSize(fixedImage->GetBufferedRegion().GetSize()); //should be virtual image...
-  this->m_DisplacementFieldFilter->SetSize(fixedImage->GetLargestPossibleRegion().GetSize()); //should be virtual image...
-  this->m_DisplacementFieldFilter->SetOutputOrigin(fixedImage->GetOrigin());
-  this->m_DisplacementFieldFilter->SetOutputSpacing(fixedImage->GetSpacing());
-  this->m_DisplacementFieldFilter->SetOutputDirection(fixedImage->GetDirection());
-  this->m_DisplacementFieldFilter->UpdateOutputInformation();
-
-  //this->m_resampler->SetSize(fixedImage->GetBufferedRegion().GetSize());  //should be virtual image...
-  this->m_resampler->SetSize(fixedImage->GetLargestPossibleRegion().GetSize());  //should be virtual image...
-  this->m_resampler->SetOutputOrigin(fixedImage->GetOrigin());
-  this->m_resampler->SetOutputSpacing(fixedImage->GetSpacing());
-  this->m_resampler->SetOutputDirection(fixedImage->GetDirection());
-  this->m_resampler->SetDefaultPixelValue(0);
-
   return 0;
 }
 
@@ -181,17 +150,38 @@ int ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>
   auto movingImage = component->GetItkImageMoving();
   // connect the itk pipeline
   this->m_theItkFilter->SetMovingImage(movingImage);
-
-  this->m_resampler->SetInput(movingImage);
-  this->m_resampler->UpdateOutputInformation();
   return 0;
 }
+
+
+template<int Dimensionality, class TPixel>
+int ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::Set(itkTransformInterface<TransformInternalComputationValueType, Dimensionality>* component)
+{
+  this->m_theItkFilter->SetInitialTransform(component->GetItkTransform());
+
+  return 0;
+}
+
+
 template<int Dimensionality, class TPixel>
 int ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::Set(itkMetricv4Interface<Dimensionality, TPixel>* component)
 {
-   this->m_theItkFilter->SetMetric(component->GetItkMetricv4());
+  //TODO: The optimizer must be set explicitly, since this is a work-around for a bug in itkRegistrationMethodv4. 
+  //TODO: report bug to itk: when setting a metric, the optimizer must be set explicitly as well, since default optimizer setup breaks.
+  this->m_theItkFilter->SetMetric(component->GetItkMetricv4());
 
-  return 1;
+  return 0;
+}
+
+template<int Dimensionality, class TPixel>
+int ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::Set(itkOptimizerv4Interface<OptimizerInternalComputationValueType>* component)
+{
+
+  //TODO: The optimizer must be set explicitly, since this is a work-around for a bug in itkRegistrationMethodv4. 
+  //TODO: report bug to itk: when setting a metric, the optimizer must be set explicitly as well, since default optimizer setup breaks.
+  this->m_theItkFilter->SetOptimizer(component->GetItkOptimizerv4());
+
+  return 0;
 }
 
 template<int Dimensionality, class TPixel>
@@ -201,44 +191,23 @@ void ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::RunRegistra
   typename FixedImageType::ConstPointer fixedImage = this->m_theItkFilter->GetFixedImage();
   typename MovingImageType::ConstPointer movingImage = this->m_theItkFilter->GetMovingImage();
 
-  // Below some hard coded options. Eventually, these should be part of new components.
-
-  //TODO: Setting the optimizer explicitly is a work around for a bug in itkv4. 
-  //TODO: report bug to itk: when setting a metric, the optimizer must be set explicitly as well, since default optimizer setup breaks.
-  typedef itk::GradientDescentOptimizerv4       OptimizerType;
-  OptimizerType::Pointer      optimizer = OptimizerType::New();
-  optimizer->SetNumberOfIterations(100);
-  optimizer->SetLearningRate(1.0);
-  
+  // Scale estimator is not used in current implementation yet
   typename ScalesEstimatorType::Pointer scalesEstimator = ScalesEstimatorType::New();
     
-  typedef itk::MeanSquaresImageToImageMetricv4<FixedImageType, MovingImageType> MSDMetricType;
-  typename MSDMetricType::Pointer msdMetric = dynamic_cast<MSDMetricType*>(this->m_theItkFilter->GetModifiableMetric());
-
-  typedef itk::ANTSNeighborhoodCorrelationImageToImageMetricv4<FixedImageType, MovingImageType> ANTSCCMetricType;
-  typename ANTSCCMetricType::Pointer nccMetric = dynamic_cast<ANTSCCMetricType*>(this->m_theItkFilter->GetModifiableMetric());
-
   ImageMetricType* theMetric = dynamic_cast<ImageMetricType*>(this->m_theItkFilter->GetModifiableMetric());;
 
-  if (msdMetric)
-  {
-    //TODO: get rid of component specific checking
-    scalesEstimator->SetMetric(msdMetric);
-    optimizer->SetLearningRate(0.001);
-  }
-  else if (nccMetric)
-  {
-    //TODO: get rid of component specific checking
-    scalesEstimator->SetMetric(nccMetric);
-    optimizer->SetLearningRate(100.0);
-  }
-  else if (theMetric)
+  auto optimizer = dynamic_cast<itk::GradientDescentOptimizerv4 *>(this->m_theItkFilter->GetModifiableOptimizer());
+  //auto optimizer = dynamic_cast<itk::ObjectToObjectOptimizerBaseTemplate< InternalComputationValueType > *>(this->m_theItkFilter->GetModifiableOptimizer());
+  
+  auto transform = this->m_theItkFilter->GetModifiableTransform();
+
+  if (theMetric)
   {
     scalesEstimator->SetMetric(theMetric);
   }
   else
   {
-    itkExceptionMacro("Error casting to either MeanSquaresImageToImageMetricv4 or ANTSNeighborhoodCorrelationImageToImageMetricv4 or ImageMetricType failed");
+    itkExceptionMacro("Error casting to ImageMetricv4Type failed");
   }
  
 
@@ -246,9 +215,6 @@ void ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::RunRegistra
   scalesEstimator->SetTransformForward(true);
   scalesEstimator->SetSmallParameterVariation(1.0);
   
-
-  //this->m_theItkFilter->GetModifyableMetric();
-
   optimizer->SetScalesEstimator(ITK_NULLPTR);
   //optimizer->SetScalesEstimator(scalesEstimator);
   optimizer->SetDoEstimateLearningRateOnce(false); //true by default
@@ -256,39 +222,8 @@ void ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::RunRegistra
 
 
   this->m_theItkFilter->SetOptimizer(optimizer);
-
-  // TODO: for now we hard code the transform to be a stationary velocity field. See template declaration.
-
-  //typedef itk::CompositeTransform<RealType, Dimensionality> CompositeTransformType;
-  //typename CompositeTransformType::Pointer compositeTransform = CompositeTransformType::New();
-  
-  //typedef itk::IdentityTransform < RealType, Dimensionality> IdentityTransformType;
-  //typename IdentityTransformType::Pointer idTransform = IdentityTransformType::New();
-  //compositeTransform->AddTransform(idTransform);
-  
-
-  typedef itk::Vector<RealType, Dimensionality> VectorType;
-  VectorType zeroVector(0.0);
-  typedef itk::Image<VectorType, Dimensionality> DisplacementFieldType;
-  typedef itk::Image<VectorType, Dimensionality> ConstantVelocityFieldType;
-  typename ConstantVelocityFieldType::Pointer displacementField = ConstantVelocityFieldType::New();
-  displacementField->CopyInformation(fixedImage);
-  displacementField->SetRegions(fixedImage->GetBufferedRegion());
-  displacementField->Allocate();
-  displacementField->FillBuffer(zeroVector);
-
-  typename ConstantVelocityFieldTransformType::Pointer fieldTransform = ConstantVelocityFieldTransformType::New();
-  //fieldTransform->SetGaussianSmoothingVarianceForTheUpdateField(0.75);
-  //fieldTransform->SetGaussianSmoothingVarianceForTheConstantVelocityField(1.5);
-  fieldTransform->SetGaussianSmoothingVarianceForTheUpdateField(3.0);
-  fieldTransform->SetGaussianSmoothingVarianceForTheConstantVelocityField(6.0);
-  fieldTransform->SetConstantVelocityField(displacementField);
-  fieldTransform->SetCalculateNumberOfIntegrationStepsAutomatically(true);
-  fieldTransform->IntegrateVelocityField();
-
-  //this->m_theItkFilter->SetMovingInitialTransform(compositeTransform);
-  //this->m_theItkFilter->SetMovingInitialTransform(idTransform);
-  
+ 
+  // Below some hard coded options. Eventually, these should be part of new components.
   this->m_theItkFilter->SetNumberOfLevels(3);
   
   // Shrink the virtual domain by specified factors for each level.  See documentation
@@ -309,6 +244,11 @@ void ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::RunRegistra
   smoothingSigmasPerLevel[2] = 1;
   this->m_theItkFilter->SetSmoothingSigmasPerLevel(smoothingSigmasPerLevel);
 
+
+  // TODO for now we hard code the TransformAdaptors for stationary velocity fields.
+  typedef double RealType;
+  typedef itk::GaussianExponentialDiffeomorphicTransform<RealType, Dimensionality> ConstantVelocityFieldTransformType;
+  typedef typename ConstantVelocityFieldTransformType::ConstantVelocityFieldType ConstantVelocityFieldType;
   typedef itk::GaussianExponentialDiffeomorphicTransformParametersAdaptor<ConstantVelocityFieldTransformType> VelocityFieldTransformAdaptorType;
 
   typename TheItkFilterType::TransformParametersAdaptorsContainerType adaptors;
@@ -319,10 +259,10 @@ void ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::RunRegistra
     // domain at each level.  To speed up calculation and avoid unnecessary memory
     // usage, we could calculate these fixed parameters directly.
 
-    typedef itk::ShrinkImageFilter<ConstantVelocityFieldType, ConstantVelocityFieldType> ShrinkFilterType;
+    typedef itk::ShrinkImageFilter<FixedImageType, FixedImageType> ShrinkFilterType;
     typename ShrinkFilterType::Pointer shrinkFilter = ShrinkFilterType::New();
     shrinkFilter->SetShrinkFactors(shrinkFactorsPerLevel[level]);
-    shrinkFilter->SetInput(fieldTransform->GetConstantVelocityField());
+    shrinkFilter->SetInput(fixedImage);
     shrinkFilter->Update();
 
     typename VelocityFieldTransformAdaptorType::Pointer fieldTransformAdaptor = VelocityFieldTransformAdaptorType::New();
@@ -345,97 +285,22 @@ void ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::RunRegistra
   */
   this->m_theItkFilter->SetTransformParametersAdaptorsPerLevel(adaptors);
   
-  this->m_theItkFilter->SetInitialTransform(fieldTransform);
-  this->m_theItkFilter->InPlaceOn();
   
-  
-  typedef CommandIterationUpdate<TheItkFilterType> DisplacementFieldRegistrationCommandType;
-  typename DisplacementFieldRegistrationCommandType::Pointer displacementFieldObserver = DisplacementFieldRegistrationCommandType::New();
-  this->m_theItkFilter->AddObserver(itk::IterationEvent(), displacementFieldObserver);
+  typedef CommandIterationUpdate<TheItkFilterType> RegistrationCommandType;
+  typename RegistrationCommandType::Pointer registrationObserver = RegistrationCommandType::New();
+  this->m_theItkFilter->AddObserver(itk::IterationEvent(), registrationObserver);
   
   // perform the actual registration
   this->m_theItkFilter->Update();
 
-  // TODO get access to the inverse transform
-  //ConstantVelocityFieldTransformType::ConstPointer tranform = this->m_theItkFilter->GetTransformOutput()->Get();
-  //ConstantVelocityFieldTransformType::ConstPointer inversetranform = tranform->GetInverseTransform();
-
-  //ConstantVelocityFieldTransformType::ConstPointer tranform = this->m_theItkFilter->GetTransformOutput()->Get();
-  //ConstantVelocityFieldTransformType::Pointer inversetranform = ConstantVelocityFieldTransformType::New();
-  //typename ConstantVelocityFieldTransformType::Superclass::Pointer inversetranform = fieldTransform->GetInverseTransform();
-  
-  //Temporary solution: create new displacement field transforms
-  typedef itk::DisplacementFieldTransform<RealType, Dimensionality> DisplacementFieldTransformType;
-  typename DisplacementFieldTransformType::Pointer forwardDisplacement = DisplacementFieldTransformType::New();
-  forwardDisplacement->SetDisplacementField(fieldTransform->GetDisplacementField());
-  //forwardDisplacement->SetSize(fixedImage->GetBufferedRegion().GetSize());  //should be virtual image...
-  //forwardDisplacement->SetOutputOrigin(fixedImage->GetOrigin());
-  //forwardDisplacement->SetOutputSpacing(fixedImage->GetSpacing());
-  //forwardDisplacement->SetOutputDirection(fixedImage->GetDirection());
-
-  typename DisplacementFieldTransformType::Pointer backwardDisplacement = DisplacementFieldTransformType::New();
-  backwardDisplacement->SetDisplacementField(fieldTransform->GetDisplacementField());
-
-
-  auto inversetranform = fieldTransform->GetInverseTransform();
-  
-  //auto inversetranform = tranform->GetInverseTransform();
-  //fieldTransform->GetInverse(inversetranform);
-  //inversetranform->IntegrateVelocityField();
-  //inversetranform->IntegrateVelocityField();
-
-  //this->m_resampler->SetTransform(this->m_theItkFilter->GetTransform());
-  //this->m_resampler->SetTransform(this->m_theItkFilter->GetTransformOutput()->Get()->GetInverseTransform());
-  //this->m_resampler->SetTransform(this->m_theItkFilter->GetTransformOutput()->Get());
-  
-  //BIG TODO: the resampler is insensitive for any of these options:
-  //this->m_resampler->SetTransform(inversetranform);
-  //this->m_resampler->SetTransform(fieldTransform);
-  
-  this->m_resampler->SetTransform(forwardDisplacement);
-  
-  //this->m_resampler->SetTransform(this->m_theItkFilter->GetOutput());
-
-  
-  // TODO: is this needed?
-  //this->m_resampler->Update();
-  //this->m_DisplacementFieldFilter->SetTransformInput(this->m_theItkFilter->GetTransformOutput());
-  //this->m_DisplacementFieldFilter->SetTransformInput(this->m_theItkFilter->GetTransformOutput()->Get());
-  
-  //BIG TODO: the DisplacementFieldFilter is insensitive for any of these options:
-  //this->m_DisplacementFieldFilter->SetTransform(inversetranform);
-  //this->m_DisplacementFieldFilter->SetTransform(fieldTransform);
-
-  this->m_DisplacementFieldFilter->SetTransform(forwardDisplacement);
-
-  //this->m_DisplacementFieldFilter->SetTransform(this->m_theItkFilter->GetTransformOutput()->Get());
-  this->m_DisplacementFieldFilter->SetSize(fixedImage->GetBufferedRegion().GetSize()); //should be virtual image...
-  this->m_DisplacementFieldFilter->SetOutputOrigin(fixedImage->GetOrigin());
-  this->m_DisplacementFieldFilter->SetOutputSpacing(fixedImage->GetSpacing());
-  this->m_DisplacementFieldFilter->SetOutputDirection(fixedImage->GetDirection());
-
-  this->m_DisplacementFieldFilter->SetReferenceImage(fixedImage);
-  // TODO: is this needed?
-  this->m_DisplacementFieldFilter->Update();
-
 }
 
 template<int Dimensionality, class TPixel>
-typename ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::ResultItkImageType::Pointer 
+typename ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::TransformPointer
 ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>
-::GetItkImage()
+::GetItkTransform()
 {
-  return this->m_resampler->GetOutput();
-}
-
-
-template<int Dimensionality, class TPixel>
-typename ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>::DisplacementFieldImageType::Pointer
-ItkImageRegistrationMethodv4Component< Dimensionality, TPixel>
-::GetDisplacementFieldItkImage()
-{
-
-  return this->m_DisplacementFieldFilter->GetOutput();
+  return this->m_theItkFilter->GetModifiableTransform();
 }
 
 

@@ -29,6 +29,11 @@
 #include "selxItkImageRegistrationMethodv4Component.h"
 #include "selxItkANTSNeighborhoodCorrelationImageToImageMetricv4.h"
 #include "selxItkMeanSquaresImageToImageMetricv4.h"
+#include "selxItkGradientDescentOptimizerv4.h"
+#include "selxItkGaussianExponentialDiffeomorphicTransform.h"
+#include "selxItkTransformDisplacementFilter.h"
+#include "selxItkResampleFilter.h"
+
 #include "selxItkImageSourceFixed.h"
 #include "selxItkImageSourceMoving.h"
 
@@ -61,7 +66,24 @@ class WBIRDemoTest : public ::testing::Test {
  
 public:
   typedef Overlord::Pointer                 OverlordPointerType;
-  typedef SuperElastixFilter<TypeList<>>          SuperElastixFilterType;
+
+  /** Fill SUPERelastix' component data base by registering various components */
+  typedef TypeList < 
+    DisplacementFieldItkImageFilterSinkComponent<2, float>,
+    ItkImageSinkComponent<2, float>,
+    ItkImageSourceFixedComponent<2, float>,
+    ItkImageSourceMovingComponent<2, float>,
+    ElastixComponent<2, float>,
+    ItkImageRegistrationMethodv4Component<2, float>,
+    ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component<2, float>,
+    ItkMeanSquaresImageToImageMetricv4Component < 2, float >,
+    ItkGradientDescentOptimizerv4Component<double>,
+    ItkGaussianExponentialDiffeomorphicTransformComponent<double, 2>,
+    ItkTransformDisplacementFilterComponent<2, float, double >,
+    ItkResampleFilterComponent<2, float, double > > RegisterComponents;
+
+  typedef SuperElastixFilter<RegisterComponents>          SuperElastixFilterType;
+
   typedef Blueprint::Pointer                BlueprintPointerType;
   typedef Blueprint::ConstPointer           BlueprintConstPointerType;
   typedef Blueprint::ParameterMapType       ParameterMapType;
@@ -75,20 +97,9 @@ public:
   typedef itk::Image<itk::Vector<float, 2>, 2> VectorImage2DType;
   typedef itk::ImageFileWriter<VectorImage2DType> VectorImageWriter2DType;
 
-  /** Fill SUPERelastix' component data base by registering various components */
+
   virtual void SetUp() {
     
-    
-    ComponentFactory<DisplacementFieldItkImageFilterSinkComponent<2, float>>::RegisterOneFactory(); 
-    ComponentFactory<ItkImageSourceFixedComponent<2, float>>::RegisterOneFactory();
-    ComponentFactory<ItkImageSourceMovingComponent<2, float>>::RegisterOneFactory();
-    ComponentFactory<ItkSmoothingRecursiveGaussianImageFilterComponent<2, float>>::RegisterOneFactory();
-    ComponentFactory<ItkImageRegistrationMethodv4Component<2, float>>::RegisterOneFactory();
-    ComponentFactory<ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component<2, float>>::RegisterOneFactory();
-    ComponentFactory<ItkMeanSquaresImageToImageMetricv4Component<2, float>>::RegisterOneFactory();
-    ComponentFactory<ElastixComponent<2, float>>::RegisterOneFactory();
-    ComponentFactory<ItkImageSinkComponent<2, float>>::RegisterOneFactory();
-
   }
 
   virtual void TearDown() {
@@ -106,63 +117,57 @@ TEST_F(WBIRDemoTest, itkv4_SVF_ANTSCC)
   /** make example blueprint configuration */
   blueprint = Blueprint::New();
 
-  ParameterMapType component0Parameters;
-  component0Parameters["NameOfClass"] = { "ItkImageRegistrationMethodv4Component" };
-  blueprint->AddComponent("RegistrationMethod", component0Parameters);
+  blueprint->AddComponent("RegistrationMethod", { { "NameOfClass", { "ItkImageRegistrationMethodv4Component" } } });
+  blueprint->AddComponent("Metric", { { "NameOfClass", { "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component" } } });
+  blueprint->AddComponent("Optimizer", { { "NameOfClass", { "ItkGradientDescentOptimizerv4Component" } },
+  { "NumberOfIterations", { "100" } },
+  { "LearningRate", { "100" } } });
+  blueprint->AddComponent("Transform", { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformComponent" } } });
 
-  ParameterMapType component1Parameters;
-  component1Parameters["NameOfClass"] = { "ItkImageSourceFixedComponent" };
-  blueprint->AddComponent("FixedImageSource", component1Parameters);
+  blueprint->AddComponent("ResampleFilter", { { "NameOfClass", { "ItkResampleFilterComponent" } } });
+  blueprint->AddComponent("TransformDisplacementFilter", { { "NameOfClass", { "ItkTransformDisplacementFilterComponent" } } });
 
-  ParameterMapType component2Parameters;
-  component2Parameters["NameOfClass"] = { "ItkImageSourceMovingComponent" };
-  blueprint->AddComponent("MovingImageSource", component2Parameters);
+  blueprint->AddComponent("FixedImageSource", { { "NameOfClass", { "ItkImageSourceFixedComponent" } } });
+  blueprint->AddComponent("MovingImageSource", { { "NameOfClass", { "ItkImageSourceMovingComponent" } } });
+  blueprint->AddComponent("ResultImageSink", { { "NameOfClass", { "ItkImageSinkComponent" } } });
+  blueprint->AddComponent("ResultDisplacementFieldSink", { { "NameOfClass", { "DisplacementFieldItkImageFilterSinkComponent" } } });
 
-  ParameterMapType component3Parameters;
-  component3Parameters["NameOfClass"] = { "ItkImageSinkComponent" };
-  blueprint->AddComponent("ResultImageSink", component3Parameters);
-
-  ParameterMapType component4Parameters;
-  component4Parameters["NameOfClass"] = { "DisplacementFieldItkImageFilterSinkComponent" };
-  blueprint->AddComponent("ResultDisplacementFieldSink", component4Parameters);
-
-  ParameterMapType component5Parameters;
-  component5Parameters["NameOfClass"] = { "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component" };
-  blueprint->AddComponent("Metric", component5Parameters);
-
-
-  ParameterMapType connection1Parameters;
   //optionally, tie properties to connection to avoid ambiguities
-  //connection1Parameters["NameOfInterface"] = { "itkImageFixedInterface" };
-  blueprint->AddConnection("FixedImageSource", "RegistrationMethod", connection1Parameters);
+  //blueprint->AddConnection("FixedImageSource", "RegistrationMethod", { { "NameOfInterface", { "itkImageFixedInterface" } } });
+  blueprint->AddConnection("FixedImageSource", "RegistrationMethod", { {} });
 
-  ParameterMapType connection2Parameters;
   //optionally, tie properties to connection to avoid ambiguities
-  //connection2Parameters["NameOfInterface"] = { "itkImageMovingInterface" };
-  blueprint->AddConnection("MovingImageSource", "RegistrationMethod", connection2Parameters);
+  //blueprint->AddConnection("MovingImageSource", "RegistrationMethod", { { "NameOfInterface", { "itkImageMovingInterface" } } });
+  blueprint->AddConnection("MovingImageSource", "RegistrationMethod", { {} });
 
-  ParameterMapType connection3Parameters;
   //optionally, tie properties to connection to avoid ambiguities
-  //connection3Parameters["NameOfInterface"] = { "itkImageSourceInterface" };
-  blueprint->AddConnection("RegistrationMethod", "ResultImageSink", connection3Parameters);
+  //blueprint->AddConnection("RegistrationMethod", "ResultImageSink", { { "NameOfInterface", { "itkImageSourceInterface" } } });
+  blueprint->AddConnection("ResampleFilter", "ResultImageSink", { {} });
 
-  ParameterMapType connection4Parameters;
   //optionally, tie properties to connection to avoid ambiguities
-  //connection4Parameters["NameOfInterface"] = { "DisplacementFieldItkImageSourceInterface" };
-  blueprint->AddConnection("RegistrationMethod", "ResultDisplacementFieldSink", connection4Parameters);
+  //blueprint->AddConnection("RegistrationMethod", "ResultDisplacementFieldSink", { { "NameOfInterface", { "DisplacementFieldItkImageSourceInterface" } } });
+  blueprint->AddConnection("TransformDisplacementFilter", "ResultDisplacementFieldSink", { {} });
 
-  ParameterMapType connection5Parameters;
   //optionally, tie properties to connection to avoid ambiguities
-  //connection5Parameters["NameOfInterface"] = { "itkMetricv4Interface" };
-  blueprint->AddConnection("Metric", "RegistrationMethod", connection5Parameters);
+  //blueprint->AddConnection("Metric", "RegistrationMethod", { { "NameOfInterface", { "itkMetricv4Interface" } } });
+  blueprint->AddConnection("Metric", "RegistrationMethod", { {} });
 
-  blueprint->WriteBlueprint("itkv4_SVF_ANTSCC.dot");
-
-  // Instantiate SuperElastix
-  EXPECT_NO_THROW(superElastixFilter = SuperElastixFilterType::New());
+  blueprint->AddConnection("FixedImageSource", "Transform", { {} });
+  blueprint->AddConnection("Transform", "RegistrationMethod", { {} });
+  blueprint->AddConnection("Optimizer", "RegistrationMethod", { {} });
+  blueprint->AddConnection("RegistrationMethod", "TransformDisplacementFilter", { {} });
+  blueprint->AddConnection("FixedImageSource", "TransformDisplacementFilter", { {} });
+  blueprint->AddConnection("RegistrationMethod", "ResampleFilter", { {} });
+  blueprint->AddConnection("FixedImageSource", "ResampleFilter", { {} });
+  blueprint->AddConnection("MovingImageSource", "ResampleFilter", { {} });
 
   // Data manager provides the paths to the input and output data for unit tests
   DataManagerType::Pointer dataManager = DataManagerType::New();
+
+  blueprint->WriteBlueprint(dataManager->GetOutputFile("itkv4_SVF_ANTSCC.dot"));
+
+  // Instantiate SuperElastix
+  EXPECT_NO_THROW(superElastixFilter = SuperElastixFilterType::New());
 
   // Set up the readers and writers
   ImageReader2DType::Pointer fixedImageReader = ImageReader2DType::New();
@@ -201,64 +206,59 @@ TEST_F(WBIRDemoTest, itkv4_SVF_MSD)
   /** make example blueprint configuration */
   blueprint = Blueprint::New();
 
-  ParameterMapType component0Parameters;
-  component0Parameters["NameOfClass"] = { "ItkImageRegistrationMethodv4Component" };
-  blueprint->AddComponent("RegistrationMethod", component0Parameters);
+  blueprint->AddComponent("RegistrationMethod", { { "NameOfClass", { "ItkImageRegistrationMethodv4Component" } } });
+  blueprint->AddComponent("Metric", { { "NameOfClass", { "ItkMeanSquaresImageToImageMetricv4Component" } } });
+  blueprint->AddComponent("Optimizer", { { "NameOfClass", { "ItkGradientDescentOptimizerv4Component" } },
+                                         { "NumberOfIterations", { "100" } },
+                                         { "LearningRate", { "0.001" } } });
+  blueprint->AddComponent("Transform", { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformComponent" } } });
 
-  ParameterMapType component1Parameters;
-  component1Parameters["NameOfClass"] = { "ItkImageSourceFixedComponent" };
-  blueprint->AddComponent("FixedImageSource", component1Parameters);
+  blueprint->AddComponent("ResampleFilter", { { "NameOfClass", { "ItkResampleFilterComponent" } } });
+  blueprint->AddComponent("TransformDisplacementFilter", { { "NameOfClass", { "ItkTransformDisplacementFilterComponent" } } });
 
-  ParameterMapType component2Parameters;
-  component2Parameters["NameOfClass"] = { "ItkImageSourceMovingComponent" };
-  blueprint->AddComponent("MovingImageSource", component2Parameters);
+  blueprint->AddComponent("FixedImageSource", { { "NameOfClass", { "ItkImageSourceFixedComponent" } } });
+  blueprint->AddComponent("MovingImageSource", { { "NameOfClass", { "ItkImageSourceMovingComponent" } } });
+  blueprint->AddComponent("ResultImageSink", { { "NameOfClass", { "ItkImageSinkComponent" } } });
+  blueprint->AddComponent("ResultDisplacementFieldSink", { { "NameOfClass", { "DisplacementFieldItkImageFilterSinkComponent" } } });
 
-  ParameterMapType component3Parameters;
-  component3Parameters["NameOfClass"] = { "ItkImageSinkComponent" };
-  blueprint->AddComponent("ResultImageSink", component3Parameters);
-
-  ParameterMapType component4Parameters;
-  component4Parameters["NameOfClass"] = { "DisplacementFieldItkImageFilterSinkComponent" };
-  blueprint->AddComponent("ResultDisplacementFieldSink", component4Parameters);
-
-  ParameterMapType component5Parameters;
-  component5Parameters["NameOfClass"] = { "ItkMeanSquaresImageToImageMetricv4Component" };
-  blueprint->AddComponent("Metric", component5Parameters);
-
-
-  ParameterMapType connection1Parameters;
   //optionally, tie properties to connection to avoid ambiguities
-  //connection1Parameters["NameOfInterface"] = { "itkImageFixedInterface" };
-  blueprint->AddConnection("FixedImageSource", "RegistrationMethod", connection1Parameters);
+  //blueprint->AddConnection("FixedImageSource", "RegistrationMethod", { { "NameOfInterface", { "itkImageFixedInterface" } } });
+  blueprint->AddConnection("FixedImageSource", "RegistrationMethod", { {} });
 
-  ParameterMapType connection2Parameters;
   //optionally, tie properties to connection to avoid ambiguities
-  //connection2Parameters["NameOfInterface"] = { "itkImageMovingInterface" };
-  blueprint->AddConnection("MovingImageSource", "RegistrationMethod", connection2Parameters);
+  //blueprint->AddConnection("MovingImageSource", "RegistrationMethod", { { "NameOfInterface", { "itkImageMovingInterface" } } });
+  blueprint->AddConnection("MovingImageSource", "RegistrationMethod", { {} });
 
-  ParameterMapType connection3Parameters;
   //optionally, tie properties to connection to avoid ambiguities
-  //connection3Parameters["NameOfInterface"] = { "itkImageSourceInterface" };
-  blueprint->AddConnection("RegistrationMethod", "ResultImageSink", connection3Parameters);
+  //blueprint->AddConnection("RegistrationMethod", "ResultImageSink", { { "NameOfInterface", { "itkImageSourceInterface" } } });
+  blueprint->AddConnection("ResampleFilter", "ResultImageSink", { {} });
 
-  ParameterMapType connection4Parameters;
   //optionally, tie properties to connection to avoid ambiguities
-  //connection4Parameters["NameOfInterface"] = { "DisplacementFieldItkImageSourceInterface" };
-  blueprint->AddConnection("RegistrationMethod", "ResultDisplacementFieldSink", connection4Parameters);
+  //blueprint->AddConnection("RegistrationMethod", "ResultDisplacementFieldSink", { { "NameOfInterface", { "DisplacementFieldItkImageSourceInterface" } } });
+  blueprint->AddConnection("TransformDisplacementFilter", "ResultDisplacementFieldSink", { {} });
 
-  ParameterMapType connection5Parameters;
   //optionally, tie properties to connection to avoid ambiguities
-  //connection5Parameters["NameOfInterface"] = { "itkMetricv4Interface" };
-  blueprint->AddConnection("Metric", "RegistrationMethod", connection5Parameters);
+  //blueprint->AddConnection("Metric", "RegistrationMethod", { { "NameOfInterface", { "itkMetricv4Interface" } } });
+  blueprint->AddConnection("Metric", "RegistrationMethod", { {} });
 
-  blueprint->WriteBlueprint("itkv4_SVF_MSD.dot");
-
-  // Instantiate SuperElastix
-  EXPECT_NO_THROW(superElastixFilter = SuperElastixFilterType::New());
+  blueprint->AddConnection("FixedImageSource", "Transform", { {} });
+  blueprint->AddConnection("Transform", "RegistrationMethod", { {} });
+  blueprint->AddConnection("Optimizer", "RegistrationMethod", { {} });
+  blueprint->AddConnection("RegistrationMethod", "TransformDisplacementFilter", { {} });
+  blueprint->AddConnection("FixedImageSource", "TransformDisplacementFilter", { {} });
+  blueprint->AddConnection("RegistrationMethod", "ResampleFilter", { {} });
+  blueprint->AddConnection("FixedImageSource", "ResampleFilter", { {} });
+  blueprint->AddConnection("MovingImageSource", "ResampleFilter", { {} });
 
   // Data manager provides the paths to the input and output data for unit tests
   DataManagerType::Pointer dataManager = DataManagerType::New();
 
+  blueprint->WriteBlueprint(dataManager->GetOutputFile("itkv4_SVF_MSD.dot"));
+
+  // Instantiate SuperElastix
+  EXPECT_NO_THROW(superElastixFilter = SuperElastixFilterType::New());
+
+  
   // Set up the readers and writers
   ImageReader2DType::Pointer fixedImageReader = ImageReader2DType::New();
   fixedImageReader->SetFileName(dataManager->GetInputFile("coneA2d64.mhd"));

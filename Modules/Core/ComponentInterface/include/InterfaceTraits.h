@@ -114,6 +114,15 @@ struct InterfaceName < itkImageFixedInterface <D, TPixel> >
 	}
 };
 
+template <int D>
+struct InterfaceName < itkImageDomainFixedInterface <D> >
+{
+  static const char* Get()
+  {
+    return "itkImageDomainFixedInterface";
+  }
+};
+
 template <int D, class TPixel>
 struct InterfaceName < itkImageMovingInterface <D, TPixel> >
 {
@@ -171,6 +180,25 @@ struct InterfaceName < itkMetricv4Interface <D, TPixel> >
   }
 };
 
+template <class InternalComputationValueType>
+struct InterfaceName < itkOptimizerv4Interface <InternalComputationValueType> >
+{
+  static const char* Get()
+  {
+    return "itkOptimizerv4Interface";
+  }
+};
+
+template <class InternalComputationValueType, int D>
+struct InterfaceName < itkTransformInterface <InternalComputationValueType, D> >
+{
+  static const char* Get()
+  {
+    return "itkTransformInterface";
+  }
+};
+
+
 template <>
 struct InterfaceName < RunRegistrationInterface >
 {
@@ -188,6 +216,16 @@ struct InterfaceName < AfterRegistrationInterface >
     return "AfterRegistrationInterface";
   }
 };
+
+template <>
+struct InterfaceName < ReconnectTransformInterface >
+{
+  static const char* Get()
+  {
+    return "ReconnectTransformInterface";
+  }
+};
+
 
 // partial specialization of InterfaceName
 // InterfaceName<T>::Get() should return the same name no matter whether T is an acceptor or provider interface.

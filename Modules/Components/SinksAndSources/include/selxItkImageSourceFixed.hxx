@@ -66,6 +66,18 @@ namespace selx
   }
 
   template<int Dimensionality, class TPixel>
+  typename ItkImageSourceFixedComponent< Dimensionality, TPixel>::ItkImageDomainType::Pointer
+    ItkImageSourceFixedComponent< Dimensionality, TPixel>
+    ::GetItkImageDomainFixed()
+  {
+    if (this->m_Image == nullptr)
+    {
+      itkExceptionMacro("SourceComponent needs to be initialized by SetMiniPipelineInput()");
+    }
+    return this->m_Image.GetPointer();
+  }
+
+  template<int Dimensionality, class TPixel>
   bool 
   ItkImageSourceFixedComponent< Dimensionality, TPixel>
   ::MeetsCriterion(const ComponentBase::CriterionType &criterion)

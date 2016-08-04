@@ -17,8 +17,8 @@
  *
  *=========================================================================*/
 
-#ifndef selxItkImageRegistrationMethodv4Component_h
-#define selxItkImageRegistrationMethodv4Component_h
+#ifndef selxItkTransformDisplacementFilter_h
+#define selxItkTransformDisplacementFilter_h
 
 #include "ComponentBase.h"
 #include "Interfaces.h"
@@ -37,60 +37,49 @@
 
 namespace selx
 {
-  template <int Dimensionality, class TPixel>
-  class ItkImageRegistrationMethodv4Component : 
+  template <int Dimensionality, class TPixel, class TInternalComputationValue>
+  class ItkTransformDisplacementFilterComponent : 
     public Implements<
-    Accepting< itkImageFixedInterface<Dimensionality, TPixel>, 
-               itkImageMovingInterface<Dimensionality, TPixel>,
-               itkTransformInterface<double, Dimensionality>,
-               itkMetricv4Interface<Dimensionality, TPixel>,
-               itkOptimizerv4Interface<double>
+    Accepting< itkTransformInterface<TInternalComputationValue, Dimensionality>,
+               itkImageDomainFixedInterface<Dimensionality>
              >,
-    Providing< itkTransformInterface<double, Dimensionality>,
-               RunRegistrationInterface
+    Providing< DisplacementFieldItkImageSourceInterface<Dimensionality, TPixel>,
+               ReconnectTransformInterface
              >
     >
   {
   public:
-    selxNewMacro(ItkImageRegistrationMethodv4Component, ComponentBase);
+    selxNewMacro(ItkTransformDisplacementFilterComponent, ComponentBase);
 
     //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
 
-    ItkImageRegistrationMethodv4Component();
-    virtual ~ItkImageRegistrationMethodv4Component();
+    ItkTransformDisplacementFilterComponent();
+    virtual ~ItkTransformDisplacementFilterComponent();
 
     typedef TPixel PixelType;
-    
-    // Get the type definitions from the interfaces 
-    typedef typename itkImageFixedInterface<Dimensionality, TPixel>::ItkImageType FixedImageType;
-    typedef typename itkImageMovingInterface<Dimensionality, TPixel>::ItkImageType MovingImageType;
-    typedef typename itkTransformInterface<double, Dimensionality>::TransformType TransformType;
-    typedef typename itkTransformInterface<double, Dimensionality>::TransformPointer TransformPointer;
 
-    typedef typename itkOptimizerv4Interface<double>::InternalComputationValueType OptimizerInternalComputationValueType; //should be from class template
-    typedef typename itkTransformInterface<double, Dimensionality>::InternalComputationValueType TransformInternalComputationValueType; //should be from class template
-    
-    typedef itk::ImageRegistrationMethodv4<FixedImageType, MovingImageType> TheItkFilterType;
-    typedef typename TheItkFilterType::ImageMetricType ImageMetricType;
-    typedef itk::RegistrationParameterScalesFromPhysicalShift<ImageMetricType> ScalesEstimatorType;
+    // Get the type definitions from the interfaces 
+    using itkImageDomainFixedType = typename itkImageDomainFixedInterface<Dimensionality>::ItkImageDomainType;
+    using	DisplacementFieldImageType =  typename DisplacementFieldItkImageSourceInterface<Dimensionality, TPixel>::ItkImageType;
+	
+    using DisplacementFieldFilterType = itk::TransformToDisplacementFieldFilter<DisplacementFieldImageType>;
     
     //Accepting Interfaces:
-    virtual int Set(itkImageFixedInterface<Dimensionality, TPixel>*) override;
-    virtual int Set(itkImageMovingInterface<Dimensionality, TPixel>*) override;
-    virtual int Set(itkTransformInterface<TransformInternalComputationValueType, Dimensionality>*) override;
-    virtual int Set(itkMetricv4Interface<Dimensionality, TPixel>*) override;
-    virtual int Set(itkOptimizerv4Interface<OptimizerInternalComputationValueType>*) override;
-    
+    virtual int Set(itkImageDomainFixedInterface<Dimensionality>*) override;
+    virtual int Set(itkTransformInterface<TInternalComputationValue, Dimensionality>*) override;
+        
     //Providing Interfaces:
-    virtual TransformPointer GetItkTransform() override;
-    virtual void RunRegistration() override;
+    virtual typename DisplacementFieldImageType::Pointer GetDisplacementFieldItkImage() override;
+    virtual void ReconnectTransform() override;
 
     //BaseClass methods
     virtual bool MeetsCriterion(const ComponentBase::CriterionType &criterion) override;    
-    //static const char * GetName() { return "ItkImageRegistrationMethodv4"; } ;
-    static const char * GetDescription() { return "ItkImageRegistrationMethodv4 Component"; };
+    //static const char * GetName() { return "ItkTransformDisplacement"; } ;
+    static const char * GetDescription() { return "ItkTransformDisplacement Component"; };
   private:
-    typename TheItkFilterType::Pointer m_theItkFilter;
+
+	  typename DisplacementFieldFilterType::Pointer m_DisplacementFieldFilter;
+    itkTransformInterface<TInternalComputationValue, Dimensionality>* m_TransformComponent;
   protected:
     /* The following struct returns the string name of computation type */
     /* default implementation */
@@ -115,14 +104,14 @@ namespace selx
 
   /*
   template <int Dimensionality>
-  class ItkImageRegistrationMethodv4Component < Dimensionality, double >
+  class ItkTransformDisplacementComponent < Dimensionality, double >
   {
     static inline const std::string GetPixelTypeNameString();
   };
 
   template <int Dimensionality>
   inline const std::string
-    ItkImageRegistrationMethodv4Component<Dimensionality, double>
+    ItkTransformDisplacementComponent<Dimensionality, double>
     ::GetPixelTypeNameString()
   {
     return std::string("double");
@@ -131,7 +120,7 @@ namespace selx
 
   template <>
   inline const std::string
-    ItkImageRegistrationMethodv4Component<2, float>
+    ItkTransformDisplacementFilterComponent<2, float, double>
     ::GetPixelTypeNameString()
   {
     return std::string("float");
@@ -140,7 +129,7 @@ namespace selx
 
   template <>
   inline const std::string
-    ItkImageRegistrationMethodv4Component<2, double>
+    ItkTransformDisplacementFilterComponent<2, double, double>
     ::GetPixelTypeNameString()
   {
     return std::string("double");
@@ -148,7 +137,7 @@ namespace selx
 
   template <>
   inline const std::string
-    ItkImageRegistrationMethodv4Component<3, float>
+    ItkTransformDisplacementFilterComponent<3, float, double>
     ::GetPixelTypeNameString()
   {
     return std::string("float");
@@ -156,14 +145,14 @@ namespace selx
 
   template <>
   inline const std::string
-    ItkImageRegistrationMethodv4Component<3, double>
+    ItkTransformDisplacementFilterComponent<3, double, double>
     ::GetPixelTypeNameString()
   {
     return std::string("double");
   }
   template <>
   inline const std::string
-    ItkImageRegistrationMethodv4Component<2, float>
+    ItkTransformDisplacementFilterComponent<2, float, double>
     ::GetTypeNameString()
   {
     return std::string("2_float");
@@ -171,7 +160,7 @@ namespace selx
 
   template <>
   inline const std::string
-    ItkImageRegistrationMethodv4Component<2, double>
+    ItkTransformDisplacementFilterComponent<2, double, double>
     ::GetTypeNameString()
   {
     return std::string("2_double");
@@ -179,7 +168,7 @@ namespace selx
 
   template <>
   inline const std::string
-    ItkImageRegistrationMethodv4Component<3,float>
+    ItkTransformDisplacementFilterComponent<3, float, double>
     ::GetTypeNameString()
   {
     return std::string("3_float");
@@ -187,13 +176,13 @@ namespace selx
   
   template <>
   inline const std::string
-    ItkImageRegistrationMethodv4Component<3,double>
+    ItkTransformDisplacementFilterComponent<3, double, double>
     ::GetTypeNameString()
   {
     return std::string("3_double");
   }
 } //end namespace selx
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "selxItkImageRegistrationMethodv4Component.hxx"
+#include "selxItkTransformDisplacementFilter.hxx"
 #endif
 #endif // #define GDOptimizer3rdPartyComponent_h
