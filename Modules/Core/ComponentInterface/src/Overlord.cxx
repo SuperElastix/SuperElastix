@@ -18,6 +18,7 @@
  *=========================================================================*/
 
 #include "Overlord.h"
+#include "selxKeys.h"
 
 namespace selx
 {
@@ -138,10 +139,11 @@ namespace selx
         Blueprint::ParameterMapType connectionProperties = this->m_Blueprint->GetConnection(name, outgoingName);
         if (connectionProperties.count("NameOfInterface") > 0)
         {
-          this->m_ComponentSelectorContainer[name]->AddCriterion({ "HasProvidingInterface", connectionProperties["NameOfInterface"] });
-          this->m_ComponentSelectorContainer[outgoingName]->AddCriterion({ "HasAcceptingInterface", connectionProperties["NameOfInterface"] });
-          std::cout << " Blueprint Node: " << name << std::endl << "  HasProvidingInterface " << connectionProperties["NameOfInterface"][0] << std::endl;
-          std::cout << " Blueprint Node: " << outgoingName << std::endl << "  HasAcceptingInterface " << connectionProperties["NameOfInterface"][0] << std::endl;
+          
+          this->m_ComponentSelectorContainer[name]->AddCriterion({ keys::HasProvidingInterface, connectionProperties[keys::NameOfInterface] });
+          this->m_ComponentSelectorContainer[outgoingName]->AddCriterion({ keys::HasAcceptingInterface, connectionProperties[keys::NameOfInterface] });
+          std::cout << " Blueprint Node: " << name << std::endl << "  HasProvidingInterface " << connectionProperties[keys::NameOfInterface][0] << std::endl;
+          std::cout << " Blueprint Node: " << outgoingName << std::endl << "  HasAcceptingInterface " << connectionProperties[keys::NameOfInterface][0] << std::endl;
         }
       }
       if ((this->m_ComponentSelectorContainer[name]->HasMultipleComponents() == false) && (this->m_ComponentSelectorContainer[name]->GetComponent().IsNull()))
@@ -170,10 +172,10 @@ namespace selx
 
         Blueprint::ParameterMapType connectionProperties = this->m_Blueprint->GetConnection(name, outgoingName);
         int numberOfConnections = 0;
-        if (connectionProperties.count("NameOfInterface") > 0)
+        if (connectionProperties.count(keys::NameOfInterface) > 0)
         {
           // connect only via interfaces provided by user configuration
-          for (auto const & interfaceName : connectionProperties["NameOfInterface"])
+          for (auto const & interfaceName : connectionProperties[keys::NameOfInterface])
           {
             numberOfConnections += (targetComponent->AcceptConnectionFrom(interfaceName.c_str(), sourceComponent) == ComponentBase::interfaceStatus::success ? 1: 0);
           }
@@ -201,7 +203,7 @@ namespace selx
     for (const auto & componentSelector : this->m_ComponentSelectorContainer)
     {
       ComponentBase::Pointer component = componentSelector.second->GetComponent();
-      if (component->MeetsCriterionBase({ "HasProvidingInterface", { "SourceInterface" } })) 
+      if (component->MeetsCriterionBase({ keys::HasProvidingInterface, { keys::SourceInterface } }))
       {
         SourceInterface* provingSourceInterface = dynamic_cast<SourceInterface*> (component.GetPointer());
         if (provingSourceInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
@@ -223,7 +225,7 @@ namespace selx
     for (auto const & componentSelector : this->m_ComponentSelectorContainer)
     {
       ComponentBase::Pointer component = componentSelector.second->GetComponent();
-      if (component->MeetsCriterionBase({ "HasProvidingInterface", { "SinkInterface" } }))
+      if (component->MeetsCriterionBase({ keys::HasProvidingInterface, { keys::SinkInterface } }))
       {
         SinkInterface* provingSinkInterface = dynamic_cast<SinkInterface*> (component.GetPointer());
         if (provingSinkInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
@@ -239,7 +241,7 @@ namespace selx
   void Overlord::FindRunRegistration()
   {
     /** Scans all Components to find those with FindRunRegistration capability and store them in m_RunRegistrationComponents list */
-    const CriterionType runRegistrationCriterion = CriterionType("HasProvidingInterface", { "RunRegistrationInterface" });
+    const CriterionType runRegistrationCriterion = CriterionType(keys::HasProvidingInterface, { "RunRegistrationInterface" });
 
     for (auto const & componentSelector : this->m_ComponentSelectorContainer)
     {
@@ -254,7 +256,7 @@ namespace selx
   void Overlord::FindAfterRegistration()
   {
     /** Scans all Components to find those with FindAfterRegistration capability and store them in m_AfterRegistrationComponents list */
-    const CriterionType afterRegistrationCriterion = CriterionType("HasProvidingInterface", { "AfterRegistrationInterface" });
+    const CriterionType afterRegistrationCriterion = CriterionType(keys::HasProvidingInterface, { "AfterRegistrationInterface" });
 
     for (auto const & componentSelector : this->m_ComponentSelectorContainer)
     {
@@ -301,7 +303,7 @@ namespace selx
   void Overlord::ReconnectTransforms()
   {
     /** Scans all Components to find those with ReconnectTransform capability and call them */
-    const CriterionType criterion = CriterionType("HasProvidingInterface", { "ReconnectTransformInterface" });
+    const CriterionType criterion = CriterionType(keys::HasProvidingInterface, { "ReconnectTransformInterface" });
 
     for (auto const & componentSelector : this->m_ComponentSelectorContainer)
     {
