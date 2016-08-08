@@ -90,7 +90,8 @@ namespace selx
 
 
     bool Configure();
-    bool Execute();
+    bool ConnectComponents();
+    void Execute();
 
     AnyFileReaderType::Pointer GetInputFileReader(const ComponentNameType&);
     AnyFileWriterType::Pointer GetOutputFileWriter(const ComponentNameType&);
@@ -99,18 +100,17 @@ namespace selx
   public: // temporarily from private to public during refactoring SuperElastixFilter.
     void ApplyNodeConfiguration();
     void ApplyConnectionConfiguration();
-    
-    //bool UpdateSelectors();
-    bool ConnectComponents();
-    bool FindAfterRegistration();
-    bool FindRunRegistration();
+
   private:
+    //bool UpdateSelectors();
+    void FindAfterRegistration();
+    void FindRunRegistration();
     ComponentNamesType GetNonUniqueComponentNames();
-    bool ConnectSources();
-    bool ConnectSinks();
-    bool RunRegistrations();
-    bool AfterRegistrations();
-    bool ReconnectTransforms();
+    void ConnectSources();
+    void ConnectSinks();
+    void RunRegistrations();
+    void AfterRegistrations();
+    void ReconnectTransforms();
     //TODO make const correct
     //Blueprint::ConstPointer m_Blueprint;
     //Blueprint const * m_Blueprint;

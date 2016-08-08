@@ -69,6 +69,9 @@ private:
   //Blueprint::ConstPointer m_Blueprint;
   Blueprint::Pointer m_Blueprint;
   std::unique_ptr<Overlord> m_Overlord;
+  bool m_InputConnectionModified;
+  bool m_OutputConnectionModified;
+  bool m_BlueprintConnectionModified;
 };
 
 } // namespace elx

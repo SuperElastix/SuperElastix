@@ -240,7 +240,7 @@ namespace selx
     return sinkInterfaceMap;
   }
 
-    bool Overlord::FindRunRegistration()
+  void Overlord::FindRunRegistration()
   {
     /** Scans all Components to find those with Sourcing capability and store them in SourceComponents list */
     const CriterionType runRegistrationCriterion = CriterionType("HasProvidingInterface", { "RunRegistrationInterface" });
@@ -253,11 +253,9 @@ namespace selx
         this->m_RunRegistrationComponents->push_back(component);
       }
     }
-
-    return true;
   }
 
-  bool Overlord::FindAfterRegistration()
+  void Overlord::FindAfterRegistration()
   {
     /** Scans all Components to find those with Sourcing capability and store them in SourceComponents list */
     const CriterionType afterRegistrationCriterion = CriterionType("HasProvidingInterface", { "AfterRegistrationInterface" });
@@ -270,13 +268,11 @@ namespace selx
         this->m_AfterRegistrationComponents->push_back(component);
       }
     }
-
-    return true;
   }
 
   
 
-  bool Overlord::RunRegistrations()
+  void Overlord::RunRegistrations()
   {
 
     for (auto const & runRegistrationComponent : *(this->m_RunRegistrationComponents)) // auto&& preferred?
@@ -289,10 +285,9 @@ namespace selx
       // For testing purposes, all Sources are connected to an ImageWriter
       providingRunRegistrationInterface->RunRegistration();
     }
-    return true;
   }
 
-  bool Overlord::AfterRegistrations()
+  void Overlord::AfterRegistrations()
   {
 
     for (auto const & afterRegistrationComponent : *(this->m_AfterRegistrationComponents)) // auto&& preferred?
@@ -305,10 +300,9 @@ namespace selx
       // For testing purposes, all Sources are connected to an ImageWriter
       providingAfterRegistrationInterface->AfterRegistration();
     }
-    return true;
   }
 
-  bool Overlord::ReconnectTransforms()
+  void Overlord::ReconnectTransforms()
   {
     /** Scans all Components to find those with ReconnectTransform capability and call them */
     const CriterionType criterion = CriterionType("HasProvidingInterface", { "ReconnectTransformInterface" });
@@ -328,11 +322,9 @@ namespace selx
 
       }
     }
-
-    return true;
   }
 
-  bool Overlord::Execute()
+  void Overlord::Execute()
   {
     
     // TODO make one "update button" for the overlord
@@ -350,7 +342,6 @@ namespace selx
     this->AfterRegistrations();
     //update all writers...
     
-    return true;
   }
 
   AnyFileReader::Pointer Overlord::GetInputFileReader(const Overlord::ComponentNameType& inputName)
