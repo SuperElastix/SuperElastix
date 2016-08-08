@@ -126,7 +126,7 @@ namespace selx
       }
 
       // insert new element
-      this->m_ComponentSelectorContainer[name]=currentComponentSelector;
+      this->m_ComponentSelectorContainer[name] = currentComponentSelector;
     }
     return;
   }
@@ -207,7 +207,7 @@ namespace selx
       ComponentBase::Pointer component = componentSelector.second->GetComponent();
       if (component->MeetsCriterionBase({ "HasProvidingInterface", { "SourceInterface" } })) 
       {
-        SourceInterface* provingSourceInterface = dynamic_cast<SourceInterface*> (&(*component));
+        SourceInterface* provingSourceInterface = dynamic_cast<SourceInterface*> (component.GetPointer());
         if (provingSourceInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
         {
           std::runtime_error::runtime_error("dynamic_cast<SourceInterface*> fails, but based on component criterion it shouldn't");
@@ -229,7 +229,7 @@ namespace selx
       ComponentBase::Pointer component = componentSelector.second->GetComponent();
       if (component->MeetsCriterionBase({ "HasProvidingInterface", { "SinkInterface" } }))
       {
-        SinkInterface* provingSinkInterface = dynamic_cast<SinkInterface*> (&(*component));
+        SinkInterface* provingSinkInterface = dynamic_cast<SinkInterface*> (component.GetPointer());
         if (provingSinkInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
         {
           std::runtime_error::runtime_error("dynamic_cast<SinkInterface*> fails, but based on component criterion it shouldn't");
@@ -281,7 +281,7 @@ namespace selx
 
     for (auto const & runRegistrationComponent : *(this->m_RunRegistrationComponents)) // auto&& preferred?
     {
-      RunRegistrationInterface* providingRunRegistrationInterface = dynamic_cast<RunRegistrationInterface*> (&(*runRegistrationComponent));
+      RunRegistrationInterface* providingRunRegistrationInterface = dynamic_cast<RunRegistrationInterface*> (runRegistrationComponent.GetPointer());
       if (providingRunRegistrationInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
       {
         std::runtime_error::runtime_error("dynamic_cast<RunRegistrationInterface*> fails, but based on component criterion it shouldn't");
@@ -297,7 +297,7 @@ namespace selx
 
     for (auto const & afterRegistrationComponent : *(this->m_AfterRegistrationComponents)) // auto&& preferred?
     {
-      AfterRegistrationInterface* providingAfterRegistrationInterface = dynamic_cast<AfterRegistrationInterface*> (&(*afterRegistrationComponent));
+      AfterRegistrationInterface* providingAfterRegistrationInterface = dynamic_cast<AfterRegistrationInterface*> (afterRegistrationComponent.GetPointer());
       if (providingAfterRegistrationInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
       {
         std::runtime_error::runtime_error("dynamic_cast<AfterRegistrationInterface*> fails, but based on component criterion it shouldn't");
