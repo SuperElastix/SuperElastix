@@ -46,83 +46,88 @@ namespace selx
   {
   public:
 
-    typedef ComponentBase::CriteriaType CriteriaType;
-    typedef ComponentBase::CriterionType CriterionType;
-    typedef ComponentBase::ParameterValueType ParameterValueType;
 
-    typedef ComponentBase       ComponentType;
-    typedef ComponentSelector::Pointer ComponentSelectorPointer;
-    typedef Blueprint BlueprintType;
-    typedef BlueprintType::ComponentNameType ComponentNameType;
-    typedef BlueprintType::ComponentNamesType ComponentNamesType;
-    typedef std::map< ComponentNameType, ComponentSelectorPointer> ComponentSelectorContainerType;
-    typedef ComponentSelectorContainerType::iterator ComponentSelectorIteratorType;
-
-    typedef AnyFileReader AnyFileReaderType;
-    typedef AnyFileWriter AnyFileWriterType;
-
+    typedef Blueprint::ComponentNameType ComponentNameType;
     typedef std::map <
       std::string, SourceInterface* > SourceInterfaceMapType;
-
     typedef std::map <
       std::string, SinkInterface* > SinkInterfaceMapType;
 
-
     Overlord();
     ~Overlord() {};
-
-
-   SourceInterfaceMapType GetSourceInterfaces();
-   SinkInterfaceMapType GetSinkInterfaces();
-
-   SinkInterface::DataObjectPointer GetInitializedOutput(const Overlord::ComponentNameType&);
-
-    typedef itk::VectorContainer <
-      unsigned int, ComponentType::Pointer > ComponentsContainerType;
 
     //void SetBlueprint(Blueprint const * blueprint){
     //  m_Blueprint = blueprint;
     //}
 
     void SetBlueprint(Blueprint::Pointer blueprint){
+      //Overlord should be constructed with a blueprint.
       m_Blueprint = blueprint;
     }
 
-
+    /** Read configuration at the blueprints nodes and edges and return true if all components could be uniquely selected*/
     bool Configure();
+
+    /** if all components are uniquely selected, they can be connected */
     bool ConnectComponents();
+
+    /** Run the (registration) algorithm */
     void Execute();
 
-    AnyFileReaderType::Pointer GetInputFileReader(const ComponentNameType&);
-    AnyFileWriterType::Pointer GetOutputFileWriter(const ComponentNameType&);
+    SourceInterfaceMapType GetSourceInterfaces();
+    SinkInterfaceMapType GetSinkInterfaces();
+
+    AnyFileReader::Pointer GetInputFileReader(const ComponentNameType&);
+    AnyFileWriter::Pointer GetOutputFileWriter(const ComponentNameType&);
+
+    SinkInterface::DataObjectPointer GetInitializedOutput(const Overlord::ComponentNameType&);
 
   protected:
-  public: // temporarily from private to public during refactoring SuperElastixFilter.
-    void ApplyNodeConfiguration();
-    void ApplyConnectionConfiguration();
 
   private:
-    //bool UpdateSelectors();
-    void FindAfterRegistration();
-    void FindRunRegistration();
+
+    typedef ComponentBase::CriteriaType CriteriaType;
+    typedef ComponentBase::CriterionType CriterionType;
+    typedef ComponentBase::ParameterValueType ParameterValueType;
+
+    typedef ComponentSelector::Pointer ComponentSelectorPointer;
+    
+    typedef Blueprint::ComponentNamesType ComponentNamesType;
+    typedef std::map< ComponentNameType, ComponentSelectorPointer> ComponentSelectorContainerType;
+    typedef ComponentSelectorContainerType::iterator ComponentSelectorIteratorType;
+
+    /** Read configuration at the blueprints nodes and try to find instantiated components */
+    void ApplyNodeConfiguration();
+
+    /** Read configuration at the blueprints edges and try to find instantiated components */
+    void ApplyConnectionConfiguration();
+
+    /** See which components need more configuration criteria */
     ComponentNamesType GetNonUniqueComponentNames();
-    void ConnectSources();
-    void ConnectSinks();
-    void RunRegistrations();
-    void AfterRegistrations();
-    void ReconnectTransforms();
+
+
     //TODO make const correct
+    //Overlord should be constructed with a blueprint.
     //Blueprint::ConstPointer m_Blueprint;
     //Blueprint const * m_Blueprint;
     Blueprint::Pointer m_Blueprint;
+
+    // A selector for each node, that each can hold multiple instantiated components. Ultimately is should be 1 component each.
     ComponentSelectorContainerType m_ComponentSelectorContainer;
     bool m_isConfigured;
-    bool m_allUniqueComponents;
-    
+
+    /** Flow handling: todo move to a controller component */
+    void FindAfterRegistration();
+    void FindRunRegistration();
+    void RunRegistrations();
+    void AfterRegistrations();
+    void ReconnectTransforms();
+
+    typedef itk::VectorContainer <
+      unsigned int, ComponentBase::Pointer > ComponentsContainerType;
+
     ComponentsContainerType::Pointer m_RunRegistrationComponents;
     ComponentsContainerType::Pointer m_AfterRegistrationComponents;
-    
-
 
   };
 

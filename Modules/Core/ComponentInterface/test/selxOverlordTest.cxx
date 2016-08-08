@@ -92,4 +92,14 @@ TEST_F(OverlordTest, Configure)
   EXPECT_TRUE(allUniqueComponents);
 }
 
+TEST_F(OverlordTest, Connect)
+{
+  std::unique_ptr<Overlord> overlord(new Overlord());
+  overlord->SetBlueprint(blueprint);
+  EXPECT_NO_THROW(bool allUniqueComponents = overlord->Configure());
+  bool success;
+  EXPECT_NO_THROW(success = overlord->ConnectComponents());
+}
+
+
 } // namespace selx

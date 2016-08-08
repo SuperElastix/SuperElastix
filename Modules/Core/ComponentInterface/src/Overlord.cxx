@@ -21,7 +21,7 @@
 
 namespace selx
 {
-  Overlord::Overlord() : m_isConfigured(false), m_allUniqueComponents(false)
+  Overlord::Overlord() : m_isConfigured(false)
   {
     this->m_RunRegistrationComponents = ComponentsContainerType::New();
     this->m_AfterRegistrationComponents = ComponentsContainerType::New();   
@@ -29,14 +29,17 @@ namespace selx
 
   bool Overlord::Configure()
   {
+    //TODO: make a while loop until stable:
+    // - for each unique component propagate the required interfaces to neighboring components as added criterion   
+    
+    
     if (!this->m_isConfigured)
     {
-      
+
       std::cout << "Applying Component Criteria" << std::endl;
       this->ApplyNodeConfiguration();
 
-      ComponentNamesType nonUniqueComponentNames;
-      nonUniqueComponentNames = this->GetNonUniqueComponentNames();
+      auto nonUniqueComponentNames = this->GetNonUniqueComponentNames();
       std::cout << nonUniqueComponentNames.size() << " out of " << m_Blueprint->GetComponentNames().size() << " Components could not be uniquely selected" << std::endl << std::endl;
 
       std::cout << "Applying Connection Criteria" << std::endl;
@@ -44,26 +47,19 @@ namespace selx
       nonUniqueComponentNames = this->GetNonUniqueComponentNames();
       std::cout << nonUniqueComponentNames.size() << " out of " << m_Blueprint->GetComponentNames().size() << " Components could not be uniquely selected" << std::endl << std::endl;
 
-
-      if (nonUniqueComponentNames.size() > 0)
-      {
-        this->m_allUniqueComponents = false;
-        std::cout << std::endl << "These Nodes need more criteria: " << std::endl; 
-        for (const auto & nonUniqueComponentName : nonUniqueComponentNames)
-        {
-          std::cout << nonUniqueComponentName<< std::endl;
-        }
-      }
-      else
-      {
-        this->m_allUniqueComponents = true;
-      }
-      //TODO: make a while loop until stable:
-      // - for each unique component propagate the required interfaces to neighboring components as added criterion
-      
       this->m_isConfigured = true;
     }
-    return this->m_allUniqueComponents;
+    auto nonUniqueComponentNames = this->GetNonUniqueComponentNames();
+    if (nonUniqueComponentNames.size() > 0)
+    {
+      std::cout << std::endl << "These Nodes need more criteria: " << std::endl; 
+      for (const auto & nonUniqueComponentName : nonUniqueComponentNames)
+      {
+        std::cout << nonUniqueComponentName<< std::endl;
+      }
+      return false;
+    }
+    return true;
   }
 
   Overlord::ComponentNamesType Overlord::GetNonUniqueComponentNames()
@@ -202,7 +198,7 @@ namespace selx
     /** Scans all Components to find those with Sourcing capability and store them in SourceComponents list */
     
     SourceInterfaceMapType sourceInterfaceMap;
-    for (const auto & componentSelector : (this->m_ComponentSelectorContainer))
+    for (const auto & componentSelector : this->m_ComponentSelectorContainer)
     {
       ComponentBase::Pointer component = componentSelector.second->GetComponent();
       if (component->MeetsCriterionBase({ "HasProvidingInterface", { "SourceInterface" } })) 
@@ -224,7 +220,7 @@ namespace selx
     /** Scans all Components to find those with Sinking capability and store them in SinkComponents list */
    
     SinkInterfaceMapType sinkInterfaceMap;
-    for (auto const & componentSelector : (this->m_ComponentSelectorContainer))
+    for (auto const & componentSelector : this->m_ComponentSelectorContainer)
     {
       ComponentBase::Pointer component = componentSelector.second->GetComponent();
       if (component->MeetsCriterionBase({ "HasProvidingInterface", { "SinkInterface" } }))
@@ -242,10 +238,10 @@ namespace selx
 
   void Overlord::FindRunRegistration()
   {
-    /** Scans all Components to find those with Sourcing capability and store them in SourceComponents list */
+    /** Scans all Components to find those with FindRunRegistration capability and store them in m_RunRegistrationComponents list */
     const CriterionType runRegistrationCriterion = CriterionType("HasProvidingInterface", { "RunRegistrationInterface" });
 
-    for (auto const & componentSelector : (this->m_ComponentSelectorContainer))
+    for (auto const & componentSelector : this->m_ComponentSelectorContainer)
     {
       ComponentBase::Pointer component = componentSelector.second->GetComponent();
       if (component->MeetsCriterionBase(runRegistrationCriterion))
@@ -257,10 +253,10 @@ namespace selx
 
   void Overlord::FindAfterRegistration()
   {
-    /** Scans all Components to find those with Sourcing capability and store them in SourceComponents list */
+    /** Scans all Components to find those with FindAfterRegistration capability and store them in m_AfterRegistrationComponents list */
     const CriterionType afterRegistrationCriterion = CriterionType("HasProvidingInterface", { "AfterRegistrationInterface" });
 
-    for (auto const & componentSelector : (this->m_ComponentSelectorContainer))
+    for (auto const & componentSelector : this->m_ComponentSelectorContainer)
     {
       ComponentBase::Pointer component = componentSelector.second->GetComponent();
       if (component->MeetsCriterionBase(afterRegistrationCriterion))
@@ -307,7 +303,7 @@ namespace selx
     /** Scans all Components to find those with ReconnectTransform capability and call them */
     const CriterionType criterion = CriterionType("HasProvidingInterface", { "ReconnectTransformInterface" });
 
-    for (auto const & componentSelector : (this->m_ComponentSelectorContainer))
+    for (auto const & componentSelector : this->m_ComponentSelectorContainer)
     {
       ComponentBase::Pointer component = componentSelector.second->GetComponent();
       if (component->MeetsCriterionBase(criterion))
