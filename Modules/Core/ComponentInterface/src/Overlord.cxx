@@ -201,13 +201,11 @@ namespace selx
   {
     /** Scans all Components to find those with Sourcing capability and store them in SourceComponents list */
     
-    const CriteriaType sourceCriteria = { { "HasProvidingInterface", { "SourceInterface" } } };
     SourceInterfaceMapType sourceInterfaceMap;
-    // TODO redesign ComponentBase class to accept a single criterion instead of a criteria mapping.
     for (const auto & componentSelector : (this->m_ComponentSelectorContainer))
     {
       ComponentBase::Pointer component = componentSelector.second->GetComponent();
-      if (component->MeetsCriteria(sourceCriteria)) // TODO MeetsCriterion
+      if (component->MeetsCriterionBase({ "HasProvidingInterface", { "SourceInterface" } })) 
       {
         SourceInterface* provingSourceInterface = dynamic_cast<SourceInterface*> (&(*component));
         if (provingSourceInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
@@ -224,16 +222,12 @@ namespace selx
   Overlord::SinkInterfaceMapType Overlord::GetSinkInterfaces()
   {
     /** Scans all Components to find those with Sinking capability and store them in SinkComponents list */
-    // BIG TODO SinkInterface2 -> SinkInterface
-    // TODO redesign ComponentBase class to accept a single criterion instead of a criteria mapping.
-    const CriteriaType sinkCriteria = { { "HasProvidingInterface", { "SinkInterface" } } };
-    
+   
     SinkInterfaceMapType sinkInterfaceMap;
-
     for (auto const & componentSelector : (this->m_ComponentSelectorContainer))
     {
       ComponentBase::Pointer component = componentSelector.second->GetComponent();
-      if (component->MeetsCriteria(sinkCriteria))  // TODO MeetsCriterion
+      if (component->MeetsCriterionBase({ "HasProvidingInterface", { "SinkInterface" } }))
       {
         SinkInterface* provingSinkInterface = dynamic_cast<SinkInterface*> (&(*component));
         if (provingSinkInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
@@ -251,14 +245,10 @@ namespace selx
     /** Scans all Components to find those with Sourcing capability and store them in SourceComponents list */
     const CriterionType runRegistrationCriterion = CriterionType("HasProvidingInterface", { "RunRegistrationInterface" });
 
-    // TODO redesign ComponentBase class to accept a single criterion instead of a criteria mapping.
-    CriteriaType runRegistrationCriteria;
-    runRegistrationCriteria.insert(runRegistrationCriterion);
-
     for (auto const & componentSelector : (this->m_ComponentSelectorContainer))
     {
       ComponentBase::Pointer component = componentSelector.second->GetComponent();
-      if (component->MeetsCriteria(runRegistrationCriteria)) // TODO MeetsCriterion
+      if (component->MeetsCriterionBase(runRegistrationCriterion))
       {
         this->m_RunRegistrationComponents->push_back(component);
       }
@@ -272,14 +262,10 @@ namespace selx
     /** Scans all Components to find those with Sourcing capability and store them in SourceComponents list */
     const CriterionType afterRegistrationCriterion = CriterionType("HasProvidingInterface", { "AfterRegistrationInterface" });
 
-    // TODO redesign ComponentBase class to accept a single criterion instead of a criteria mapping.
-    CriteriaType afterRegistrationCriteria;
-    afterRegistrationCriteria.insert(afterRegistrationCriterion);
-
     for (auto const & componentSelector : (this->m_ComponentSelectorContainer))
     {
       ComponentBase::Pointer component = componentSelector.second->GetComponent();
-      if (component->MeetsCriteria(afterRegistrationCriteria)) // TODO MeetsCriterion
+      if (component->MeetsCriterionBase(afterRegistrationCriterion))
       {
         this->m_AfterRegistrationComponents->push_back(component);
       }
@@ -327,14 +313,10 @@ namespace selx
     /** Scans all Components to find those with ReconnectTransform capability and call them */
     const CriterionType criterion = CriterionType("HasProvidingInterface", { "ReconnectTransformInterface" });
 
-    // TODO redesign ComponentBase class to accept a single criterion instead of a criteria mapping.
-    CriteriaType criteria;
-    criteria.insert(criterion);
-
     for (auto const & componentSelector : (this->m_ComponentSelectorContainer))
     {
       ComponentBase::Pointer component = componentSelector.second->GetComponent();
-      if (component->MeetsCriteria(criteria)) // TODO MeetsCriterion
+      if (component->MeetsCriterionBase(criterion))
       {
         ReconnectTransformInterface* providingInterface = dynamic_cast<ReconnectTransformInterface*> (component.GetPointer());
         if (providingInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful

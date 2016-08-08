@@ -60,13 +60,6 @@ namespace selx
     // else pass criterion to derived Component
   return this->MeetsCriterion(criterion);
   }
-
-  //TODO deprecate:
-  bool ComponentBase::MeetsCriteria(const CriteriaType &criteria)
-
-  {
-    return false;
-  }
-
+ 
 } // end namespace selx
 
