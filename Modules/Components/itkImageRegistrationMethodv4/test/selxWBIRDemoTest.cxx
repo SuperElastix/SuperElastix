@@ -70,8 +70,6 @@ namespace selx {
 class WBIRDemoTest : public ::testing::Test {
  
 public:
-  typedef Overlord::Pointer                 OverlordPointerType;
-
   /** Fill SUPERelastix' component data base by registering various components */
   typedef TypeList < 
     DisplacementFieldItkImageFilterSinkComponent<2, float>,

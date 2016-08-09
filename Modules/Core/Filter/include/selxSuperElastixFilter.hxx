@@ -13,9 +13,9 @@ namespace selx
 
   template< typename ComponentTypeList >
   SuperElastixFilter< ComponentTypeList >
-::SuperElastixFilter( void )
+    ::SuperElastixFilter(void) : m_InputConnectionModified(true), m_OutputConnectionModified(true), m_BlueprintConnectionModified(true)
 {
-  this->m_Overlord = Overlord::New();
+  this->m_Overlord = std::unique_ptr<Overlord> (new Overlord());
 
   RegisterFactoriesByTypeList<ComponentTypeList>::Register();
 
@@ -39,19 +39,48 @@ SuperElastixFilter< ComponentTypeList >
   * Override the ProcessObject default implementation, since outputs may be different types and
   * therefore the output information must come from the sink components.
   */
-  this->m_Overlord->SetBlueprint(this->m_Blueprint);
-  bool allUniqueComponents = this->m_Overlord->Configure();
-  
-  Overlord::SourceInterfaceMapType sources = this->m_Overlord->GetSourceInterfaces();
-  for (const auto & nameAndInterface : sources)
+
+  // TODO this method should be revised together with overlord->Configure(). A functionality 
+  // that is foreseen in which the user may provide a minimalistic configuration (blueprint) 
+  // and that other criteria to select a component may be derived from neighboring components.
+  // E.g. we could implement source nodes that provides ImageReaders of multiple dimensions. 
+  // At connecting these reader, the dimensionality is known from the data and the source 
+  // component can pass the dimensionality as an additional criterion to the component selectors 
+  // downstream. By (re-)configuring these, unique components may be selected and their requirements 
+  // are passed further down stream. 
+  // Eventually configuration boils down to a while loop that repeatedly tries to narrow down 
+  // the component selectors until no more unique components can be found.
+
+  bool allUniqueComponents = true;
+  if (this->m_BlueprintConnectionModified == true)
   {
-    nameAndInterface.second->SetMiniPipelineInput(this->GetInput(nameAndInterface.first));
+    this->m_Overlord->SetBlueprint(this->m_Blueprint);
+    allUniqueComponents = this->m_Overlord->Configure();
+    
   }
 
-  Overlord::SinkInterfaceMapType sinks = this->m_Overlord->GetSinkInterfaces();
-  for (const auto & nameAndInterface : sinks)
+  if ((m_InputConnectionModified == true) || (this->m_BlueprintConnectionModified == true))
   {
-    nameAndInterface.second->SetMiniPipelineOutput(this->GetOutput(nameAndInterface.first));
+    Overlord::SourceInterfaceMapType sources = this->m_Overlord->GetSourceInterfaces();
+    for (const auto & nameAndInterface : sources)
+    {
+      nameAndInterface.second->SetMiniPipelineInput(this->GetInput(nameAndInterface.first));
+    }
+  }
+
+  if ((m_OutputConnectionModified == true) || (this->m_BlueprintConnectionModified == true))
+  {
+
+    Overlord::SinkInterfaceMapType sinks = this->m_Overlord->GetSinkInterfaces();
+    for (const auto & nameAndInterface : sinks)
+    {
+      nameAndInterface.second->SetMiniPipelineOutput(this->GetOutput(nameAndInterface.first));
+    } 
+  }
+
+  if (allUniqueComponents == false) // by setting inputs and outputs, settings could be derived to uniquely select the other components 
+  {
+    allUniqueComponents = this->m_Overlord->Configure();
   }
 
   bool isSuccess(false);
@@ -62,12 +91,20 @@ SuperElastixFilter< ComponentTypeList >
   }
   std::cout << "Connecting Components: " << (isSuccess ? "succeeded" : "failed") << std::endl;
 
-  for (const auto & nameAndInterface : sinks)
+  
+  if ((m_OutputConnectionModified == true) || (this->m_BlueprintConnectionModified == true))
   {
-    nameAndInterface.second->GetMiniPipelineOutput()->UpdateOutputInformation();
-    this->GetOutput(nameAndInterface.first)->Graft(nameAndInterface.second->GetMiniPipelineOutput());
+    Overlord::SinkInterfaceMapType sinks = this->m_Overlord->GetSinkInterfaces();
+      for (const auto & nameAndInterface : sinks)
+      {
+        nameAndInterface.second->GetMiniPipelineOutput()->UpdateOutputInformation();
+        this->GetOutput(nameAndInterface.first)->Graft(nameAndInterface.second->GetMiniPipelineOutput());
+      }
   }
 
+  this->m_BlueprintConnectionModified = false;
+  this->m_InputConnectionModified = false;
+  this->m_OutputConnectionModified = false;
 }
 
 /**
@@ -132,7 +169,7 @@ SuperElastixFilter< ComponentTypeList >
 ::SetInput(const DataObjectIdentifierType& inputName, itk::DataObject* input)
 {
   Superclass::SetInput(inputName, input);
-  //this->Modified();
+  this->m_InputConnectionModified = true;
 }
 
 template< typename ComponentTypeList >
@@ -141,22 +178,26 @@ SuperElastixFilter< ComponentTypeList >
 ::GetOutput(const DataObjectIdentifierType& outputName)
 {
   OutputDataType* output = Superclass::GetOutput(outputName);
-  if (output != nullptr)
+  if (output != nullptr) // if an output already exists, return it
   {
     return output;
   }
-  else
+  else  // otherwise ask the sink component to initialize an output of the right type (the sink knows what type that is). 
   {
 
-    if (!this->m_Blueprint)
+    if (!this->m_Blueprint) // to ask the sink it must be configured by a blueprint.
     {
       itkExceptionMacro(<< "Setting a Blueprint is required first.")
     }
+    
+    
     this->m_Overlord->SetBlueprint(this->m_Blueprint);
     this->m_Overlord->Configure();
+    this->m_BlueprintConnectionModified = false;
 
     typename OutputDataType::Pointer newOutput = this->m_Overlord->GetInitializedOutput(outputName);
-
+    this->m_OutputConnectionModified = true;
+    
     Superclass::SetOutput(outputName, newOutput);
 
     return newOutput;
@@ -174,20 +215,8 @@ SuperElastixFilter< ComponentTypeList >
   typename ReturnType::Pointer newOutput = ReturnType::New();
   
   Superclass::SetOutput(outputName, newOutput);
-
-  //DataObject* baseOutputData = Superclass::GetOutput(outputName);
-  //ReturnType* outputData = dynamic_cast<ReturnType*>(baseOutputData);
-  //if (!outputData)
-  //{
-	//      // pointer could not be cast back down
-  //  itkExceptionMacro( << "selx::SuperElastixFilter::GetOutput<T>(""" 
-  //                     << outputName << """) cannot cast "
-  //                     << typeid( baseOutputData ).name() << " to "
-  //                     << typeid( ReturnType * ).name() );
-	//				   
-  //  itkExceptionMacro("OutputData """ << outputName << """ is not of the required type");
-  //}
-  //return outputData;
+  
+  this->m_OutputConnectionModified = true;
   return newOutput;
 }
 

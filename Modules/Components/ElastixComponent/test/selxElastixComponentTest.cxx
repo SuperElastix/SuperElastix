@@ -64,7 +64,6 @@ public:
   }
 
   BlueprintPointerType blueprint;
-  Overlord::Pointer overlord;
 };
 
 TEST_F(ElastixComponentTest, ImagesOnly)

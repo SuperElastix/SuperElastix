@@ -45,7 +45,6 @@ namespace selx {
 
   class itkImageFilterTest : public ::testing::Test {
 public:
-  typedef Overlord::Pointer                 OverlordPointerType;
   typedef Blueprint::Pointer                BlueprintPointerType;
   typedef Blueprint::ConstPointer           BlueprintConstPointerType;
   typedef Blueprint::ParameterMapType       ParameterMapType;
@@ -116,7 +115,7 @@ public:
   }
 
   BlueprintPointerType blueprint;
-  Overlord::Pointer overlord;
+
 };
 
   TEST_F(itkImageFilterTest, Run)

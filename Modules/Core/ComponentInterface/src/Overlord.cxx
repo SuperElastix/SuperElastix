@@ -18,10 +18,11 @@
  *=========================================================================*/
 
 #include "Overlord.h"
+#include "selxKeys.h"
 
 namespace selx
 {
-  Overlord::Overlord() : m_isConfigured(false), m_allUniqueComponents(false)
+  Overlord::Overlord() : m_isConfigured(false)
   {
     this->m_RunRegistrationComponents = ComponentsContainerType::New();
     this->m_AfterRegistrationComponents = ComponentsContainerType::New();   
@@ -29,58 +30,58 @@ namespace selx
 
   bool Overlord::Configure()
   {
+    //TODO: make a while loop until stable:
+    // - for each unique component propagate the required interfaces to neighboring components as added criterion   
+    
+    
     if (!this->m_isConfigured)
     {
-      this->m_isConfigured = true;
+
+      std::cout << "Applying Component Criteria" << std::endl;
       this->ApplyNodeConfiguration();
-      std::cout << "Applying Component Settings" << std::endl;
-      this->m_allUniqueComponents = this->UpdateSelectors();
-      std::cout << "Based on Component Criteria unique components could " << (this->m_allUniqueComponents ? "" : "not ") << "be selected" << std::endl;
 
-      std::cout << "Applying Connection Settings" << std::endl;
+      auto nonUniqueComponentNames = this->GetNonUniqueComponentNames();
+      std::cout << nonUniqueComponentNames.size() << " out of " << m_Blueprint->GetComponentNames().size() << " Components could not be uniquely selected" << std::endl << std::endl;
+
+      std::cout << "Applying Connection Criteria" << std::endl;
       this->ApplyConnectionConfiguration();
-      this->m_allUniqueComponents = this->UpdateSelectors();
-      std::cout << "By adding Connection Criteria unique components could " << (this->m_allUniqueComponents ? "" : "not ") << "be selected" << std::endl;
+      nonUniqueComponentNames = this->GetNonUniqueComponentNames();
+      std::cout << nonUniqueComponentNames.size() << " out of " << m_Blueprint->GetComponentNames().size() << " Components could not be uniquely selected" << std::endl << std::endl;
 
-      //TODO: make a while loop until stable:
-      // - propagate for each unique component the required interfaces to neighboring components
-      // - update selectors
-
-      //if (allUniqueComponents)
-      //{
-      //  isSuccess = this->ConnectComponents();
-      //}
-
-      //std::cout << "Connecting Components: " << (isSuccess? "succeeded" : "failed") << std::endl;
-
-      //return isSuccess;
+      this->m_isConfigured = true;
     }
-    return this->m_allUniqueComponents;
+    auto nonUniqueComponentNames = this->GetNonUniqueComponentNames();
+    if (nonUniqueComponentNames.size() > 0)
+    {
+      std::cout << std::endl << "These Nodes need more criteria: " << std::endl; 
+      for (const auto & nonUniqueComponentName : nonUniqueComponentNames)
+      {
+        std::cout << nonUniqueComponentName<< std::endl;
+      }
+      return false;
+    }
+    return true;
   }
 
-  bool Overlord::UpdateSelectors()
+  Overlord::ComponentNamesType Overlord::GetNonUniqueComponentNames()
   {
-    bool allUniqueComponents = true;
+    ComponentNamesType nonUniqueComponentNames;
     const Blueprint::ComponentNamesType componentNames = m_Blueprint->GetComponentNames();
     for (auto const & name : componentNames)
-    {
-      ComponentSelector::NumberOfComponentsType numberOfComponents = this->m_ComponentSelectorContainer[name]->UpdatePossibleComponents();
-
+    {    
+     
       // The current idea of the configuration setup is that the number of 
       // possible components at a node can only be reduced by adding criteria.
       // If a node has 0 possible components, the configuration is aborted (with an exception)
       // If all nodes have exactly 1 possible component, no more criteria are needed.
-      //
-      // Design consideration: should the exception be thrown by this->m_ComponentSelectorContainer[name]->UpdatePossibleComponents()?
-      // The (failing) criteria can be printed as well.
-      if (numberOfComponents > 1)
-      {
-        allUniqueComponents = false;
-      }
-      std::cout << "blueprint node " << name << " has selected " << numberOfComponents << " components" << std::endl;
 
+      if (this->m_ComponentSelectorContainer[name]->HasMultipleComponents()==true)
+      {
+        //std::cout << "To select a component for blueprint node " << name << " more critatia are required" << std::endl;
+        nonUniqueComponentNames.push_back(name);
+      }
     }
-    return allUniqueComponents;
+    return nonUniqueComponentNames;
   }
 
   void Overlord::ApplyNodeConfiguration()
@@ -102,16 +103,31 @@ namespace selx
     // in turn, hold 1 (or more) component.
 
     Blueprint::ComponentNamesType componentNames = this->m_Blueprint->GetComponentNames();
+    
     for (auto const & name : componentNames)
     {
+      std::cout << " Blueprint Node: " << name << std::endl;
       ComponentSelectorPointer currentComponentSelector = ComponentSelector::New();
       Blueprint::ParameterMapType currentProperty = this->m_Blueprint->GetComponent(name);
-      currentComponentSelector->SetCriteria(currentProperty);
+      for (auto const & criterion : currentProperty)
+      {
+        std::cout << "  " << criterion.first << ": " << criterion.second[0] << std::endl;
+        currentComponentSelector->AddCriterion(criterion);
+      }
+
+      if ((currentComponentSelector->HasMultipleComponents() == false) && (currentComponentSelector->GetComponent().IsNull()))
+      {
+        std::stringstream msg;
+        msg << "Too many criteria for Component " << name << std::endl;
+        std::runtime_error::runtime_error(msg.str());
+      }
+
       // insert new element
-      this->m_ComponentSelectorContainer[name]=currentComponentSelector;
+      this->m_ComponentSelectorContainer[name] = currentComponentSelector;
     }
     return;
   }
+
   void Overlord::ApplyConnectionConfiguration()
   {
     Blueprint::ComponentNamesType componentNames = this->m_Blueprint->GetComponentNames();
@@ -123,15 +139,18 @@ namespace selx
         Blueprint::ParameterMapType connectionProperties = this->m_Blueprint->GetConnection(name, outgoingName);
         if (connectionProperties.count("NameOfInterface") > 0)
         {
-          ComponentBase::CriteriaType additionalSourceCriteria;
-          additionalSourceCriteria.insert(ComponentBase::CriterionType("HasProvidingInterface", connectionProperties["NameOfInterface"]));
-
-          ComponentBase::CriteriaType additionalTargetCriteria;
-          additionalTargetCriteria.insert(ComponentBase::CriterionType("HasAcceptingInterface", connectionProperties["NameOfInterface"]));
-
-          this->m_ComponentSelectorContainer[name]->AddCriteria(additionalSourceCriteria);
-          this->m_ComponentSelectorContainer[outgoingName]->AddCriteria(additionalTargetCriteria);
+          
+          this->m_ComponentSelectorContainer[name]->AddCriterion({ keys::HasProvidingInterface, connectionProperties[keys::NameOfInterface] });
+          this->m_ComponentSelectorContainer[outgoingName]->AddCriterion({ keys::HasAcceptingInterface, connectionProperties[keys::NameOfInterface] });
+          std::cout << " Blueprint Node: " << name << std::endl << "  HasProvidingInterface " << connectionProperties[keys::NameOfInterface][0] << std::endl;
+          std::cout << " Blueprint Node: " << outgoingName << std::endl << "  HasAcceptingInterface " << connectionProperties[keys::NameOfInterface][0] << std::endl;
         }
+      }
+      if ((this->m_ComponentSelectorContainer[name]->HasMultipleComponents() == false) && (this->m_ComponentSelectorContainer[name]->GetComponent().IsNull()))
+      {
+        std::stringstream msg;
+        msg << "Too many criteria for Component " << name << std::endl;
+        std::runtime_error::runtime_error(msg.str());
       }
     }
 
@@ -153,10 +172,10 @@ namespace selx
 
         Blueprint::ParameterMapType connectionProperties = this->m_Blueprint->GetConnection(name, outgoingName);
         int numberOfConnections = 0;
-        if (connectionProperties.count("NameOfInterface") > 0)
+        if (connectionProperties.count(keys::NameOfInterface) > 0)
         {
           // connect only via interfaces provided by user configuration
-          for (auto const & interfaceName : connectionProperties["NameOfInterface"])
+          for (auto const & interfaceName : connectionProperties[keys::NameOfInterface])
           {
             numberOfConnections += (targetComponent->AcceptConnectionFrom(interfaceName.c_str(), sourceComponent) == ComponentBase::interfaceStatus::success ? 1: 0);
           }
@@ -180,18 +199,16 @@ namespace selx
   {
     /** Scans all Components to find those with Sourcing capability and store them in SourceComponents list */
     
-    const CriteriaType sourceCriteria = { { "HasProvidingInterface", { "SourceInterface" } } };
     SourceInterfaceMapType sourceInterfaceMap;
-    // TODO redesign ComponentBase class to accept a single criterion instead of a criteria mapping.
-    for (const auto & componentSelector : (this->m_ComponentSelectorContainer))
+    for (const auto & componentSelector : this->m_ComponentSelectorContainer)
     {
       ComponentBase::Pointer component = componentSelector.second->GetComponent();
-      if (component->MeetsCriteria(sourceCriteria)) // TODO MeetsCriterion
+      if (component->MeetsCriterionBase({ keys::HasProvidingInterface, { keys::SourceInterface } }))
       {
-        SourceInterface* provingSourceInterface = dynamic_cast<SourceInterface*> (&(*component));
+        SourceInterface* provingSourceInterface = dynamic_cast<SourceInterface*> (component.GetPointer());
         if (provingSourceInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
         {
-          itkExceptionMacro("dynamic_cast<SourceInterface*> fails, but based on component criterion it shouldn't")
+          std::runtime_error::runtime_error("dynamic_cast<SourceInterface*> fails, but based on component criterion it shouldn't");
         }
         sourceInterfaceMap[componentSelector.first]=provingSourceInterface;
         
@@ -203,21 +220,17 @@ namespace selx
   Overlord::SinkInterfaceMapType Overlord::GetSinkInterfaces()
   {
     /** Scans all Components to find those with Sinking capability and store them in SinkComponents list */
-    // BIG TODO SinkInterface2 -> SinkInterface
-    // TODO redesign ComponentBase class to accept a single criterion instead of a criteria mapping.
-    const CriteriaType sinkCriteria = { { "HasProvidingInterface", { "SinkInterface" } } };
-    
+   
     SinkInterfaceMapType sinkInterfaceMap;
-
-    for (auto const & componentSelector : (this->m_ComponentSelectorContainer))
+    for (auto const & componentSelector : this->m_ComponentSelectorContainer)
     {
       ComponentBase::Pointer component = componentSelector.second->GetComponent();
-      if (component->MeetsCriteria(sinkCriteria))  // TODO MeetsCriterion
+      if (component->MeetsCriterionBase({ keys::HasProvidingInterface, { keys::SinkInterface } }))
       {
-        SinkInterface* provingSinkInterface = dynamic_cast<SinkInterface*> (&(*component));
+        SinkInterface* provingSinkInterface = dynamic_cast<SinkInterface*> (component.GetPointer());
         if (provingSinkInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
         {
-          itkExceptionMacro("dynamic_cast<SinkInterface*> fails, but based on component criterion it shouldn't")
+          std::runtime_error::runtime_error("dynamic_cast<SinkInterface*> fails, but based on component criterion it shouldn't");
         }
         sinkInterfaceMap[componentSelector.first] = provingSinkInterface;
       }
@@ -225,111 +238,91 @@ namespace selx
     return sinkInterfaceMap;
   }
 
-    bool Overlord::FindRunRegistration()
+  void Overlord::FindRunRegistration()
   {
-    /** Scans all Components to find those with Sourcing capability and store them in SourceComponents list */
-    const CriterionType runRegistrationCriterion = CriterionType("HasProvidingInterface", { "RunRegistrationInterface" });
+    /** Scans all Components to find those with FindRunRegistration capability and store them in m_RunRegistrationComponents list */
+    const CriterionType runRegistrationCriterion = CriterionType(keys::HasProvidingInterface, { "RunRegistrationInterface" });
 
-    // TODO redesign ComponentBase class to accept a single criterion instead of a criteria mapping.
-    CriteriaType runRegistrationCriteria;
-    runRegistrationCriteria.insert(runRegistrationCriterion);
-
-    for (auto const & componentSelector : (this->m_ComponentSelectorContainer))
+    for (auto const & componentSelector : this->m_ComponentSelectorContainer)
     {
       ComponentBase::Pointer component = componentSelector.second->GetComponent();
-      if (component->MeetsCriteria(runRegistrationCriteria)) // TODO MeetsCriterion
+      if (component->MeetsCriterionBase(runRegistrationCriterion))
       {
         this->m_RunRegistrationComponents->push_back(component);
       }
     }
-
-    return true;
   }
 
-  bool Overlord::FindAfterRegistration()
+  void Overlord::FindAfterRegistration()
   {
-    /** Scans all Components to find those with Sourcing capability and store them in SourceComponents list */
-    const CriterionType afterRegistrationCriterion = CriterionType("HasProvidingInterface", { "AfterRegistrationInterface" });
+    /** Scans all Components to find those with FindAfterRegistration capability and store them in m_AfterRegistrationComponents list */
+    const CriterionType afterRegistrationCriterion = CriterionType(keys::HasProvidingInterface, { "AfterRegistrationInterface" });
 
-    // TODO redesign ComponentBase class to accept a single criterion instead of a criteria mapping.
-    CriteriaType afterRegistrationCriteria;
-    afterRegistrationCriteria.insert(afterRegistrationCriterion);
-
-    for (auto const & componentSelector : (this->m_ComponentSelectorContainer))
+    for (auto const & componentSelector : this->m_ComponentSelectorContainer)
     {
       ComponentBase::Pointer component = componentSelector.second->GetComponent();
-      if (component->MeetsCriteria(afterRegistrationCriteria)) // TODO MeetsCriterion
+      if (component->MeetsCriterionBase(afterRegistrationCriterion))
       {
         this->m_AfterRegistrationComponents->push_back(component);
       }
     }
-
-    return true;
   }
 
   
 
-  bool Overlord::RunRegistrations()
+  void Overlord::RunRegistrations()
   {
 
     for (auto const & runRegistrationComponent : *(this->m_RunRegistrationComponents)) // auto&& preferred?
     {
-      RunRegistrationInterface* providingRunRegistrationInterface = dynamic_cast<RunRegistrationInterface*> (&(*runRegistrationComponent));
+      RunRegistrationInterface* providingRunRegistrationInterface = dynamic_cast<RunRegistrationInterface*> (runRegistrationComponent.GetPointer());
       if (providingRunRegistrationInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
       {
-        itkExceptionMacro("dynamic_cast<RunRegistrationInterface*> fails, but based on component criterion it shouldn't")
+        std::runtime_error::runtime_error("dynamic_cast<RunRegistrationInterface*> fails, but based on component criterion it shouldn't");
       }
       // For testing purposes, all Sources are connected to an ImageWriter
       providingRunRegistrationInterface->RunRegistration();
     }
-    return true;
   }
 
-  bool Overlord::AfterRegistrations()
+  void Overlord::AfterRegistrations()
   {
 
     for (auto const & afterRegistrationComponent : *(this->m_AfterRegistrationComponents)) // auto&& preferred?
     {
-      AfterRegistrationInterface* providingAfterRegistrationInterface = dynamic_cast<AfterRegistrationInterface*> (&(*afterRegistrationComponent));
+      AfterRegistrationInterface* providingAfterRegistrationInterface = dynamic_cast<AfterRegistrationInterface*> (afterRegistrationComponent.GetPointer());
       if (providingAfterRegistrationInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
       {
-        itkExceptionMacro("dynamic_cast<AfterRegistrationInterface*> fails, but based on component criterion it shouldn't")
+        std::runtime_error::runtime_error("dynamic_cast<AfterRegistrationInterface*> fails, but based on component criterion it shouldn't");
       }
       // For testing purposes, all Sources are connected to an ImageWriter
       providingAfterRegistrationInterface->AfterRegistration();
     }
-    return true;
   }
 
-  bool Overlord::ReconnectTransforms()
+  void Overlord::ReconnectTransforms()
   {
     /** Scans all Components to find those with ReconnectTransform capability and call them */
-    const CriterionType criterion = CriterionType("HasProvidingInterface", { "ReconnectTransformInterface" });
+    const CriterionType criterion = CriterionType(keys::HasProvidingInterface, { "ReconnectTransformInterface" });
 
-    // TODO redesign ComponentBase class to accept a single criterion instead of a criteria mapping.
-    CriteriaType criteria;
-    criteria.insert(criterion);
-
-    for (auto const & componentSelector : (this->m_ComponentSelectorContainer))
+    for (auto const & componentSelector : this->m_ComponentSelectorContainer)
     {
       ComponentBase::Pointer component = componentSelector.second->GetComponent();
-      if (component->MeetsCriteria(criteria)) // TODO MeetsCriterion
+      if (component->MeetsCriterionBase(criterion))
       {
         ReconnectTransformInterface* providingInterface = dynamic_cast<ReconnectTransformInterface*> (component.GetPointer());
         if (providingInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
         {
-          itkExceptionMacro("dynamic_cast<ReconnectTransformInterface*> fails, but based on component criterion it shouldn't")
+          std::runtime_error::runtime_error("dynamic_cast<ReconnectTransformInterface*> fails, but based on component criterion it shouldn't");
         }
         // For testing purposes, all Sources are connected to an ImageWriter
         providingInterface->ReconnectTransform();
 
       }
     }
-
-    return true;
   }
 
-  bool Overlord::Execute()
+  void Overlord::Execute()
   {
     
     // TODO make one "update button" for the overlord
@@ -347,7 +340,6 @@ namespace selx
     this->AfterRegistrations();
     //update all writers...
     
-    return true;
   }
 
   AnyFileReader::Pointer Overlord::GetInputFileReader(const Overlord::ComponentNameType& inputName)
@@ -355,7 +347,9 @@ namespace selx
     SourceInterfaceMapType sources = this->GetSourceInterfaces();
     if (sources.count(inputName) != 1)
     {
-      itkExceptionMacro(<< "No Source component found by name:" << inputName);
+      std::stringstream msg;
+      msg << "No Source component found by name:" << inputName;
+      std::runtime_error::runtime_error(msg.str());
     }
 
     return sources[inputName]->GetInputFileReader();
@@ -366,7 +360,9 @@ namespace selx
     SinkInterfaceMapType sinks = this->GetSinkInterfaces();
     if (sinks.count(outputName) != 1)
     {
-      itkExceptionMacro(<< "No Sink component found by name:" << outputName);
+      std::stringstream msg;
+      msg << "No Sink component found by name : " << outputName;
+      std::runtime_error::runtime_error(msg.str());
     }
 
     return sinks[outputName]->GetOutputFileWriter();
@@ -377,7 +373,9 @@ namespace selx
     SinkInterfaceMapType sinks = this->GetSinkInterfaces();
     if (sinks.count(outputName) != 1)
     {
-      itkExceptionMacro(<< "No Sink component found by name:" << outputName);
+      std::stringstream msg;
+      msg << "No Sink component found by name : " << outputName;
+      std::runtime_error::runtime_error(msg.str());
     }
 
     return sinks[outputName]->GetInitializedOutput();
