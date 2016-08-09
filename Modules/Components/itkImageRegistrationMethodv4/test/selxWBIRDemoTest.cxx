@@ -382,6 +382,8 @@ TEST_F(WBIRDemoTest, elastix_BS_NCC)
   component3Parameters["NameOfClass"] = { "ItkImageSinkComponent" };
   blueprint->AddComponent("ResultImageSink", component3Parameters);
 
+  blueprint->AddComponent("Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } });
+
   ParameterMapType connection1Parameters;
   //optionally, tie properties to connection to avoid ambiguities
   //connection1Parameters["NameOfInterface"] = { "itkImageFixedInterface" };
@@ -396,6 +398,12 @@ TEST_F(WBIRDemoTest, elastix_BS_NCC)
   //optionally, tie properties to connection to avoid ambiguities
   //connection3Parameters["NameOfInterface"] = { "GetItkImageInterface" };
   blueprint->AddConnection("RegistrationMethod", "ResultImageSink", connection3Parameters);
+
+  blueprint->AddConnection("RegistrationMethod", "Controller", { {} }); //RunRegistrationInterface 
+  //blueprint->AddConnection("Transformix", "Controller", { {} }); //ReconnectTransformInterface 
+  blueprint->AddConnection("ResultImageSink", "Controller", { {} }); //AfterRegistrationInterface
+  //blueprint->AddConnection("ResultDisplacementFieldSink", "Controller", { {} }); //AfterRegistrationInterface
+
 
   blueprint->WriteBlueprint("elastix_BS_NCC.dot");
 
@@ -477,6 +485,8 @@ TEST_F(WBIRDemoTest, elastix_BS_MSD)
   component3Parameters["NameOfClass"] = { "ItkImageSinkComponent" };
   blueprint->AddComponent("ResultImageSink", component3Parameters);
 
+  blueprint->AddComponent("Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } });
+
   ParameterMapType connection1Parameters;
   //optionally, tie properties to connection to avoid ambiguities
   //connection1Parameters["NameOfInterface"] = { "itkImageFixedInterface" };
@@ -491,6 +501,11 @@ TEST_F(WBIRDemoTest, elastix_BS_MSD)
   //optionally, tie properties to connection to avoid ambiguities
   //connection3Parameters["NameOfInterface"] = { "GetItkImageInterface" };
   blueprint->AddConnection("RegistrationMethod", "ResultImageSink", connection3Parameters);
+
+  blueprint->AddConnection("RegistrationMethod", "Controller", { {} }); //RunRegistrationInterface 
+  //blueprint->AddConnection("Transformix", "Controller", { {} }); //ReconnectTransformInterface 
+  blueprint->AddConnection("ResultImageSink", "Controller", { {} }); //AfterRegistrationInterface
+  //blueprint->AddConnection("ResultDisplacementFieldSink", "Controller", { {} }); //AfterRegistrationInterface
 
   blueprint->WriteBlueprint("elastix_BS_MSD.dot");
 
