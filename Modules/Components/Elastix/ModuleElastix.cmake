@@ -17,7 +17,7 @@
 #
 #=========================================================================
 
-set( MODULE ModuleElastixComponent )
+set( MODULE ModuleElastix )
 
 # If OpenMP is supported by this machine, elastix will be compiled with
 # OpenMP flags, and we need to add them here as well
@@ -63,6 +63,8 @@ set( ${MODULE}_TESTS
 # Module source files
 set( ${MODULE}_SOURCE_FILES
   ${${MODULE}_SOURCE_DIR}/src/selxElastixComponent.cxx 
+  ${${MODULE}_SOURCE_DIR}/src/selxMonolithicElastix.cxx 
+  ${${MODULE}_SOURCE_DIR}/src/selxMonolithicTransformix.cxx 
   )
 
 # Compile library

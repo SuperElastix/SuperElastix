@@ -35,6 +35,8 @@
 #include "selxAnyFileReader.h"
 #include "selxAnyFileWriter.h"
 
+#include "elxElastixFilter.h"
+
 namespace selx
 {
   // Define the providing interfaces abstractly
@@ -189,7 +191,7 @@ namespace selx
     virtual Optimizerv4Pointer GetItkOptimizerv4() = 0;
   };
 
-    template<class TInternalComputationValueType, int Dimensionality>
+  template<class TInternalComputationValueType, int Dimensionality>
   class itkTransformInterface {
   public:
     typedef TInternalComputationValueType InternalComputationValueType;
@@ -198,6 +200,14 @@ namespace selx
 
     virtual TransformPointer GetItkTransform() = 0;
   };
+
+  template<typename TFixedImage, typename TMovingImage>
+  class elastixTransformParameterObjectInterface {
+  public:
+    typedef typename elastix::ElastixFilter<TFixedImage, TMovingImage>::ParameterObjectType elastixTransformParameterObject;
+    virtual elastixTransformParameterObject* GetTransformParameterObject() = 0;
+  };
+
   
   // Define the accepting interfaces as templated by the providing interface
 

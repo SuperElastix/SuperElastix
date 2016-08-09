@@ -198,6 +198,15 @@ struct InterfaceName < itkTransformInterface <InternalComputationValueType, D> >
   }
 };
 
+template <class F, class M>
+struct InterfaceName < elastixTransformParameterObjectInterface <F, M> >
+{
+  static const char* Get()
+  {
+    return "elastixTransformParameterObjectInterface";
+  }
+};
+
 template <>
 struct InterfaceName < RegistrationControllerStartInterface >
 {
