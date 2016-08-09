@@ -48,13 +48,6 @@ namespace selx
     return 0;
   }
 
-  //template<int Dimensionality, class TPixel>
-  //int ItkImageSinkComponent< Dimensionality, TPixel>::Set(GetItkImageInterface<Dimensionality, TPixel>* other)
-  //{
-  //  this->m_ProvidingGetItkImageInterface = other;
-  //  return 0;
-  //}
-
   template<int Dimensionality, class TPixel>
   void ItkImageSinkComponent< Dimensionality, TPixel>::AfterRegistration()
   {

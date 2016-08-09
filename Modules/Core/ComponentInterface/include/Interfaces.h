@@ -137,30 +137,34 @@ namespace selx
     virtual DataObjectPointer GetInitializedOutput(void) = 0;
   };
 
-  class RunRegistrationInterface {
+  class RegistrationControllerStartInterface {
     // A special interface: the Overlord checks components for this type of interface.
-    // This interface is for to control the execution of the network
+    // This interface is to control the execution of the network
+  public:
+    virtual void RegistrationControllerStart() = 0;
+  };
+
+
+  class RunRegistrationInterface {
+    // This interface is to control the execution of the network
   public:
     virtual void RunRegistration() = 0;
   };
   
   class AfterRegistrationInterface {
-    // A special interface: the Overlord checks components for this type of interface.
-    // This interface is for to control the execution of the network
+    // This interface is to control the execution of the network
   public:
     virtual void AfterRegistration() = 0;
   };
 
   class RunResolutionInterface {
-    // A special interface: the Overlord checks components for this type of interface.
-    // This interface is for to control the execution of the network
+    // This interface is to control the execution of the network
   public:
     virtual bool RunResolution() = 0;
   };
 
   class ReconnectTransformInterface {
-    // A special interface: the Overlord checks components for this type of interface.
-    // This interface is for to control the execution of the network
+    // This interface is to control the execution of the network
   public:
     virtual void ReconnectTransform() = 0;
   };

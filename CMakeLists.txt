@@ -93,6 +93,7 @@ selxmodule_enable( ModuleSinksAndSources )
 selxmodule_enable( ModuleItkSmoothingRecursiveGaussianImageFilter )
 selxmodule_enable( ModuleItkImageRegistrationMethodv4 )
 selxmodule_enable( ModuleElastixComponent )
+selxmodule_enable( ModuleController )
 #selxmodule_enable( ModuleCommandLine )
 include(${CMAKE_SOURCE_DIR}/Modules/CommandLine/CommandLine.cmake)
 # TODO: Build tests depending on enabled modules

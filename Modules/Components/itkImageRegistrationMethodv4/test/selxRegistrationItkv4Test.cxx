@@ -42,6 +42,8 @@
 #include "selxItkImageSourceFixed.h"
 #include "selxItkImageSourceMoving.h"
 
+#include "selxRegistrationController.h"
+
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 
@@ -94,7 +96,8 @@ public:
     ItkTransformDisplacementFilterComponent<2, float, double >,
     ItkTransformDisplacementFilterComponent<3, double, double >,
     ItkResampleFilterComponent<2, float, double >,
-    ItkResampleFilterComponent<3, double, double >> RegisterComponents;
+    ItkResampleFilterComponent<3, double, double >,
+    RegistrationControllerComponent<>> RegisterComponents;
 	
   typedef SuperElastixFilter<RegisterComponents>          SuperElastixFilterType;
 

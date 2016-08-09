@@ -198,6 +198,14 @@ struct InterfaceName < itkTransformInterface <InternalComputationValueType, D> >
   }
 };
 
+template <>
+struct InterfaceName < RegistrationControllerStartInterface >
+{
+  static const char* Get()
+  {
+    return "RegistrationControllerStartInterface";
+  }
+};
 
 template <>
 struct InterfaceName < RunRegistrationInterface >
