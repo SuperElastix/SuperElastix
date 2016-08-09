@@ -326,8 +326,8 @@ namespace selx
   {
     
     // TODO make one "update button" for the overlord
-    this->FindRunRegistration();
-    this->FindAfterRegistration();
+    //this->FindRunRegistration();
+    //this->FindAfterRegistration();
 
     // RunRegistrations is a simple execution model
     // E.g.if the components are true itk Process Object, the don't need an 'Update' call. 
@@ -335,11 +335,28 @@ namespace selx
     // If components need RunIterations() or RunResolution() we can explicitly 'Update' them here and control the flow.
     // TODO: see if signals-and-slots paradigm is appropriate here.
 
-    this->RunRegistrations();
-    this->ReconnectTransforms();
-    this->AfterRegistrations();
+    //this->RunRegistrations();
+    //this->ReconnectTransforms();
+    //this->AfterRegistrations();
     //update all writers...
     
+    /** Scans all Components to find those with RegistrationControllerStart capability and call them */
+    const CriterionType criterion = CriterionType(keys::HasProvidingInterface, { keys::RegistrationControllerStartInterface });
+
+    for (auto const & componentSelector : this->m_ComponentSelectorContainer)
+    {
+      ComponentBase::Pointer component = componentSelector.second->GetComponent();
+      if (component->MeetsCriterionBase(criterion))
+      {
+        RegistrationControllerStartInterface* providingInterface = dynamic_cast<RegistrationControllerStartInterface*> (component.GetPointer());
+        if (providingInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
+        {
+          std::runtime_error::runtime_error("dynamic_cast<RegistrationControllerStartInterface*> fails, but based on component criterion it shouldn't");
+        }
+        providingInterface->RegistrationControllerStart();
+      }
+    }
+
   }
 
   AnyFileReader::Pointer Overlord::GetInputFileReader(const Overlord::ComponentNameType& inputName)

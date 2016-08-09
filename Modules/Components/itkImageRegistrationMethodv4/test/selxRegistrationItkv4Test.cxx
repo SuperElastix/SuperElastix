@@ -431,6 +431,8 @@ TEST_F(RegistrationItkv4Test, FullyConfigured3d)
   blueprint->AddComponent("Transform",      { { "NameOfClass",    { "ItkGaussianExponentialDiffeomorphicTransformComponent" } },
                                               { "Dimensionality", { "3" } } });
 
+  blueprint->AddComponent("Controller", { { "NameOfClass", { "RegistrationControllerComponent"} } });
+  
   ParameterMapType connection1Parameters;
   connection1Parameters["NameOfInterface"] = { "itkImageFixedInterface" };
   blueprint->AddConnection("FixedImageSource", "RegistrationMethod", connection1Parameters);
@@ -459,6 +461,12 @@ TEST_F(RegistrationItkv4Test, FullyConfigured3d)
   blueprint->AddConnection("RegistrationMethod", "ResampleFilter", { {} });
   blueprint->AddConnection("FixedImageSource", "ResampleFilter", { {} });
   blueprint->AddConnection("MovingImageSource", "ResampleFilter", { {} });
+  
+  blueprint->AddConnection("RegistrationMethod", "Controller", { {} }); //RunRegistrationInterface 
+  blueprint->AddConnection("ResampleFilter", "Controller", { {} }); //ReconnectTransformInterface 
+  blueprint->AddConnection("TransformDisplacementFilter", "Controller", { {} }); //ReconnectTransformInterface 
+  blueprint->AddConnection("ResultImageSink", "Controller", { {} }); //AfterRegistrationInterface
+  blueprint->AddConnection("ResultDisplacementFieldSink", "Controller", { {} }); //AfterRegistrationInterface
 
   // Instantiate SuperElastix
   SuperElastixFilterType::Pointer superElastixFilter;

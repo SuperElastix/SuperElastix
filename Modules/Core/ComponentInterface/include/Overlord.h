@@ -53,6 +53,9 @@ namespace selx
     typedef std::map <
       std::string, SinkInterface* > SinkInterfaceMapType;
 
+    typedef std::map <
+      std::string, RegistrationControllerStartInterface* > RegistrationControllerStartInterfaceMapType;
+
     Overlord();
     ~Overlord() {};
 
@@ -125,6 +128,8 @@ namespace selx
 
     typedef itk::VectorContainer <
       unsigned int, ComponentBase::Pointer > ComponentsContainerType;
+
+    RegistrationControllerStartInterfaceMapType m_RegistrationControllerStartInterfaces;
 
     ComponentsContainerType::Pointer m_RunRegistrationComponents;
     ComponentsContainerType::Pointer m_AfterRegistrationComponents;

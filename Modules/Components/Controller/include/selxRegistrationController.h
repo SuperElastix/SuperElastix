@@ -54,9 +54,9 @@ namespace selx
     virtual bool MeetsCriterion(const ComponentBase::CriterionType &criterion) override;
     static const char * GetDescription() { return "RegistrationController Component"; };
   private:
-	  RunRegistrationInterface* m_RunRegistrationInterface;
-	  ReconnectTransformInterface* m_ReconnectTransformInterface;
-	  AfterRegistrationInterface* m_AfterRegistrationInterface;
+	  std::set<RunRegistrationInterface*> m_RunRegistrationInterfaces;
+    std::set<ReconnectTransformInterface*> m_ReconnectTransformInterfaces;
+    std::set<AfterRegistrationInterface*> m_AfterRegistrationInterfaces;
 
     protected:
   };

@@ -33,6 +33,6 @@ namespace selx
     const char * const HasAcceptingInterface = "HasAcceptingInterface"; // Checks component (base class) if the interface is present 
     const char * const SourceInterface = "SourceInterface"; // Special interface that connects to the outside of the SuperElastixFilter 
     const char * const SinkInterface = "SinkInterface"; // Special interface that connects to the outside of the SuperElastixFilter 
-    
+    const char * const RegistrationControllerStartInterface = "RegistrationControllerStartInterface";  //Special interface by which all algorithms are started
   }
 }

@@ -22,8 +22,7 @@
 namespace selx
 {
   template<bool dummy>
-  RegistrationControllerComponent< dummy>::RegistrationControllerComponent() :
-    m_RunRegistrationInterface(nullptr), m_ReconnectTransformInterface(nullptr), m_AfterRegistrationInterface(nullptr)
+  RegistrationControllerComponent< dummy>::RegistrationControllerComponent()
   {
   }
 
@@ -35,30 +34,39 @@ namespace selx
   template<bool dummy>
   int RegistrationControllerComponent< dummy>::Set(RunRegistrationInterface* other)
   {
-    this->m_RunRegistrationInterface = other;
+    this->m_RunRegistrationInterfaces.insert(other);
     return 0;
   }
 
   template<bool dummy>
   int RegistrationControllerComponent< dummy>::Set(ReconnectTransformInterface* other)
   {
-    this->m_ReconnectTransformInterface = other;
+    this->m_ReconnectTransformInterfaces.insert(other);
     return 0;
   }
 
   template<bool dummy>
   int RegistrationControllerComponent< dummy>::Set(AfterRegistrationInterface* other)
   {
-    this->m_AfterRegistrationInterface = other;
+    this->m_AfterRegistrationInterfaces.insert(other);
     return 0;
   }
 
   template<bool dummy>
   void RegistrationControllerComponent< dummy>::RegistrationControllerStart()
   {
-    this->m_RunRegistrationInterface->RunRegistration();
-    this->m_ReconnectTransformInterface->ReconnectTransform();
-    this->m_AfterRegistrationInterface->AfterRegistration();
+    for (auto && runRegistrationInterface : this->m_RunRegistrationInterfaces)
+    {
+      runRegistrationInterface->RunRegistration();
+    }
+    for (auto && reconnectTransformInterface : this->m_ReconnectTransformInterfaces)
+    {
+      reconnectTransformInterface->ReconnectTransform();
+    }
+    for (auto && afterRegistrationInterface : this->m_AfterRegistrationInterfaces)
+    {
+      afterRegistrationInterface->AfterRegistration();
+    }
   }
 
   template<bool dummy>
