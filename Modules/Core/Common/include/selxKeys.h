@@ -17,13 +17,12 @@
  *
  *=========================================================================*/
 
-
-/** Helper definitions for cstring key values to avoid typos*/
+/** Helper definitions for common cstring key values to avoid typos*/
 
 // In SuperElastix we use cstring keys to communicate between components. The 
 // advantage is that user defined cstring-based configurations can directly talk to the core.
 // In the core we could type these names directly as literal cstrings, but this is sensitive to typos.
-// By these definitions tools such as visual assist will auto-complete when typing keys::InterFa...
+// By these definitions tools such as visual assist will auto-complete when typing keys::HasP...
 
 namespace selx
 {
