@@ -33,7 +33,7 @@
 #include "selxItkGaussianExponentialDiffeomorphicTransform.h"
 #include "selxItkTransformDisplacementFilter.h"
 #include "selxItkResampleFilter.h"
-
+#include "selxRegistrationController.h"
 #include "selxItkImageSourceFixed.h"
 #include "selxItkImageSourceMoving.h"
 
@@ -83,7 +83,8 @@ public:
     ItkGradientDescentOptimizerv4Component<double>,
     ItkGaussianExponentialDiffeomorphicTransformComponent<double, 2>,
     ItkTransformDisplacementFilterComponent<2, float, double >,
-    ItkResampleFilterComponent<2, float, double > > RegisterComponents;
+    ItkResampleFilterComponent<2, float, double >,
+    RegistrationControllerComponent< > > RegisterComponents;
 
   typedef SuperElastixFilter<RegisterComponents>          SuperElastixFilterType;
 
@@ -102,7 +103,7 @@ public:
   typedef itk::ImageFileWriter<VectorImage2DType> VectorImageWriter2DType;
 
   typedef itk::Testing::ComparisonImageFilter<Image2DType, Image2DType> ComparisonImageFilterType;
-  // Unfortunately comparing Vector Images cannot by done by this filter.
+  // Unfortunately comparing Vector Images cannot by done by this filter, therefore we define our own comparison pipeline. 
   // typedef itk::Testing::ComparisonImageFilter<VectorImage2DType, VectorImage2DType> ComparisonVectorImageFilterType;
   //typedef itk::VectorImageToImageAdaptor<float, 2> VectorImageToImageAdaptorType;
   typedef itk::SubtractImageFilter< VectorImage2DType, VectorImage2DType, VectorImage2DType> SubtractVectorImageFilterType;
@@ -161,6 +162,7 @@ TEST_F(WBIRDemoTest, itkv4_SVF_ANTSCC)
   blueprint->AddComponent("MovingImageSource", { { "NameOfClass", { "ItkImageSourceMovingComponent" } } });
   blueprint->AddComponent("ResultImageSink", { { "NameOfClass", { "ItkImageSinkComponent" } } });
   blueprint->AddComponent("ResultDisplacementFieldSink", { { "NameOfClass", { "DisplacementFieldItkImageFilterSinkComponent" } } });
+  blueprint->AddComponent("Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } });
 
   //optionally, tie properties to connection to avoid ambiguities
   //blueprint->AddConnection("FixedImageSource", "RegistrationMethod", { { "NameOfInterface", { "itkImageFixedInterface" } } });
@@ -191,6 +193,11 @@ TEST_F(WBIRDemoTest, itkv4_SVF_ANTSCC)
   blueprint->AddConnection("FixedImageSource", "ResampleFilter", { {} });
   blueprint->AddConnection("MovingImageSource", "ResampleFilter", { {} });
 
+  blueprint->AddConnection("RegistrationMethod", "Controller", { {} }); //RunRegistrationInterface 
+  blueprint->AddConnection("ResampleFilter", "Controller", { {} }); //ReconnectTransformInterface 
+  blueprint->AddConnection("TransformDisplacementFilter", "Controller", { {} }); //ReconnectTransformInterface 
+  blueprint->AddConnection("ResultImageSink", "Controller", { {} }); //AfterRegistrationInterface
+  blueprint->AddConnection("ResultDisplacementFieldSink", "Controller", { {} }); //AfterRegistrationInterface
   // Data manager provides the paths to the input and output data for unit tests
   DataManagerType::Pointer dataManager = DataManagerType::New();
 
@@ -262,6 +269,7 @@ TEST_F(WBIRDemoTest, itkv4_SVF_MSD)
   blueprint->AddComponent("MovingImageSource", { { "NameOfClass", { "ItkImageSourceMovingComponent" } } });
   blueprint->AddComponent("ResultImageSink", { { "NameOfClass", { "ItkImageSinkComponent" } } });
   blueprint->AddComponent("ResultDisplacementFieldSink", { { "NameOfClass", { "DisplacementFieldItkImageFilterSinkComponent" } } });
+  blueprint->AddComponent("Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } });
 
   //optionally, tie properties to connection to avoid ambiguities
   //blueprint->AddConnection("FixedImageSource", "RegistrationMethod", { { "NameOfInterface", { "itkImageFixedInterface" } } });
@@ -291,6 +299,12 @@ TEST_F(WBIRDemoTest, itkv4_SVF_MSD)
   blueprint->AddConnection("RegistrationMethod", "ResampleFilter", { {} });
   blueprint->AddConnection("FixedImageSource", "ResampleFilter", { {} });
   blueprint->AddConnection("MovingImageSource", "ResampleFilter", { {} });
+
+  blueprint->AddConnection("RegistrationMethod", "Controller", { {} }); //RunRegistrationInterface 
+  blueprint->AddConnection("ResampleFilter", "Controller", { {} }); //ReconnectTransformInterface 
+  blueprint->AddConnection("TransformDisplacementFilter", "Controller", { {} }); //ReconnectTransformInterface 
+  blueprint->AddConnection("ResultImageSink", "Controller", { {} }); //AfterRegistrationInterface
+  blueprint->AddConnection("ResultDisplacementFieldSink", "Controller", { {} }); //AfterRegistrationInterface
 
   // Data manager provides the paths to the input and output data for unit tests
   DataManagerType::Pointer dataManager = DataManagerType::New();
