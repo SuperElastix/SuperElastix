@@ -26,7 +26,6 @@ namespace selx
   {
     m_transformixFilter = TransformixFilterType::New();
 
-    elxParameterObjectPointer elxParameterObject = elxParameterObjectType::New();
 
     m_transformixFilter->ComputeDeformationFieldOn();
     m_transformixFilter->LogToConsoleOn();
@@ -34,6 +33,9 @@ namespace selx
     m_transformixFilter->SetOutputDirectory(".");
 
     //TODO m_elastixFilter returns a nullptr GetTransformParameterObject instead of a valid object. However, we need this object to satisfy the input conditions of m_transformixFilter
+    elxParameterObjectPointer elxParameterObject = elxParameterObjectType::New();
+    typename elxParameterObjectType::ParameterMapType defaultParameters = elxParameterObject->GetDefaultParameterMap("rigid");
+    elxParameterObject->SetParameterMap(defaultParameters);
     //m_transformixFilter->SetTransformParameterObject(m_elastixFilter->GetTransformParameterObject());
     m_transformixFilter->SetTransformParameterObject(elxParameterObject); // supply a dummy object
 
@@ -71,8 +73,9 @@ namespace selx
 
     auto transformParameterObject = component->GetTransformParameterObject();
     // connect the itk pipeline
-    this->m_transformixFilter->SetTransformParameterObject(transformParameterObject);
-    // store the interface for the ReconnectTransform call
+    // Due to the fact that elastixfilter returns a Null object we cannot use it as a pipeline
+    //this->m_transformixFilter->SetTransformParameterObject(transformParameterObject);
+    // Therefore store the interface for the ReconnectTransform call
     this->m_TransformParameterObjectInterface = component;
     return 0;
   }
@@ -92,7 +95,6 @@ namespace selx
   {
     // TODO currently, the pipeline with elastix and tranformix can only be created after the update of elastix
     this->m_transformixFilter->SetTransformParameterObject(this->m_TransformParameterObjectInterface->GetTransformParameterObject());
-    //this->m_transformixFilter->Update();
   }
 
 

@@ -24,6 +24,9 @@
 #include "selxItkImageSource.h"
 
 #include "selxElastixComponent.h"
+#include "selxMonolithicElastix.h"
+#include "selxMonolithicTransformix.h"
+
 #include "selxItkImageSink.h"
 
 #include "selxItkImageRegistrationMethodv4Component.h"
@@ -52,20 +55,6 @@
 
 namespace selx {
 
-/** Temporary helper function to handle elastix deformation field output */
-  template < int Dimensionality, typename PixelType> void CopyselxDeformationField(const std::string filename)
-  {
-    typedef itk::ImageFileReader<itk::Image<itk::Vector<PixelType, Dimensionality>, Dimensionality>> ReaderType;
-    typedef itk::ImageFileWriter<itk::Image<itk::Vector<PixelType, Dimensionality>, Dimensionality>> WriterType;
-
-    typename ReaderType::Pointer reader = ReaderType::New();
-    reader->SetFileName("deformationField.nii");
-    typename WriterType::Pointer writer = WriterType::New();
-    writer->SetFileName(filename);
-    writer->SetInput(reader->GetOutput());
-    writer->Update();
-  };
-
 /** A demo for our WBIR paper written as a Unit Test in the Google Test Framework */
 class WBIRDemoTest : public ::testing::Test {
  
@@ -77,6 +66,8 @@ public:
     ItkImageSourceFixedComponent<2, float>,
     ItkImageSourceMovingComponent<2, float>,
     ElastixComponent<2, float>,
+    MonolithicElastixComponent<2, float>,
+    MonolithicTransformixComponent<2, float>,
     ItkImageRegistrationMethodv4Component<2, float>,
     ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component<2, float>,
     ItkMeanSquaresImageToImageMetricv4Component < 2, float >,
@@ -360,50 +351,42 @@ TEST_F(WBIRDemoTest, itkv4_SVF_MSD)
 /** Experiment 1a: elastix framework, B-spline transform, normalized correlation metric */
 TEST_F(WBIRDemoTest, elastix_BS_NCC)
 {
-  /** make example blueprint configuration */
+  /** make blueprint configuration */
   blueprint = Blueprint::New();
 
-  ParameterMapType component0Parameters;
-  component0Parameters["NameOfClass"] = { "ElastixComponent" };
-  //component0Parameters["RegistrationPreset"] = { "rigid" };
-  component0Parameters["Transform"] = { "BSplineTransform" }; 
-  component0Parameters["Metric"] = { "AdvancedNormalizedCorrelation" };
-  blueprint->AddComponent("RegistrationMethod", component0Parameters);
+  blueprint->AddComponent("RegistrationMethod", { { "NameOfClass", { "MonolithicElastixComponent" } },
+  { "Transform", { "BSplineTransform" } }, { "Metric", { "AdvancedNormalizedCorrelation" } } });
 
-  ParameterMapType component1Parameters;
-  component1Parameters["NameOfClass"] = { "ItkImageSourceFixedComponent" };
-  blueprint->AddComponent("FixedImageSource", component1Parameters);
+  blueprint->AddComponent("TransformDisplacementField", { { "NameOfClass", { "MonolithicTransformixComponent" } } });
 
-  ParameterMapType component2Parameters;
-  component2Parameters["NameOfClass"] = { "ItkImageSourceMovingComponent" };
-  blueprint->AddComponent("MovingImageSource", component2Parameters);
+  blueprint->AddComponent("FixedImageSource", { { "NameOfClass", { "ItkImageSourceFixedComponent" } } });
 
-  ParameterMapType component3Parameters;
-  component3Parameters["NameOfClass"] = { "ItkImageSinkComponent" };
-  blueprint->AddComponent("ResultImageSink", component3Parameters);
+  blueprint->AddComponent("MovingImageSource", { { "NameOfClass", { "ItkImageSourceMovingComponent" } } });
+
+  blueprint->AddComponent("ResultImageSink", { { "NameOfClass", { "ItkImageSinkComponent" } } });
 
   blueprint->AddComponent("Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } });
 
-  ParameterMapType connection1Parameters;
+
   //optionally, tie properties to connection to avoid ambiguities
-  //connection1Parameters["NameOfInterface"] = { "itkImageFixedInterface" };
-  blueprint->AddConnection("FixedImageSource", "RegistrationMethod", connection1Parameters);
+  blueprint->AddConnection("FixedImageSource", "RegistrationMethod", { {} }); // {{"NameOfInterface", { "itkImageFixedInterface" }}};
 
-  ParameterMapType connection2Parameters;
   //optionally, tie properties to connection to avoid ambiguities
-  //connection2Parameters["NameOfInterface"] = { "itkImageMovingInterface" };
-  blueprint->AddConnection("MovingImageSource", "RegistrationMethod", connection2Parameters);
+  blueprint->AddConnection("MovingImageSource", "RegistrationMethod", { {} }); // {{"NameOfInterface", { "itkImageMovingInterface" }}};
+  
+  blueprint->AddConnection("RegistrationMethod", "TransformDisplacementField", { {} }); // { { "NameOfInterface", { "elastixTransformParameterObjectInterface" } } } ;
 
-  ParameterMapType connection3Parameters;
-  //optionally, tie properties to connection to avoid ambiguities
-  //connection3Parameters["NameOfInterface"] = { "GetItkImageInterface" };
-  blueprint->AddConnection("RegistrationMethod", "ResultImageSink", connection3Parameters);
+  blueprint->AddConnection("FixedImageSource", "TransformDisplacementField", { {} }); // { { "NameOfInterface", { "itkImageDomainFixedInterface" } } } ;
 
-  blueprint->AddConnection("RegistrationMethod", "Controller", { {} }); //RunRegistrationInterface 
-  //blueprint->AddConnection("Transformix", "Controller", { {} }); //ReconnectTransformInterface 
-  blueprint->AddConnection("ResultImageSink", "Controller", { {} }); //AfterRegistrationInterface
-  //blueprint->AddConnection("ResultDisplacementFieldSink", "Controller", { {} }); //AfterRegistrationInterface
+  blueprint->AddConnection("MovingImageSource", "TransformDisplacementField", { {} }); // { { "NameOfInterface", { "itkImageMovingInterface" } } };
 
+  blueprint->AddConnection("TransformDisplacementField", "ResultImageSink", { {} }); // { { "NameOfInterface", { "itkImageInterface" } } } ;
+
+  blueprint->AddConnection("RegistrationMethod", "Controller", { {} }); // { { "NameOfInterface", { "RunRegistrationInterface" } } } ;
+
+  blueprint->AddConnection("TransformDisplacementField", "Controller", { {} }); // { { "NameOfInterface", { "ReconnectTransformInterface" } } } ;
+
+  blueprint->AddConnection("ResultImageSink", "Controller", { {} }); // { { "NameOfInterface", { "AfterRegistrationInterface" } } } ;
 
   blueprint->WriteBlueprint("elastix_BS_NCC.dot");
 
@@ -463,49 +446,42 @@ TEST_F(WBIRDemoTest, elastix_BS_NCC)
 /** Experiment 1b: elastix framework, B-spline transform, mean squared differences metric */
 TEST_F(WBIRDemoTest, elastix_BS_MSD)
 {
-  /** make example blueprint configuration */
+  /** make blueprint configuration */
   blueprint = Blueprint::New();
 
-  ParameterMapType component0Parameters;
-  component0Parameters["NameOfClass"] = { "ElastixComponent" };
-  //component0Parameters["RegistrationPreset"] = { "rigid" };
-  component0Parameters["Transform"] = { "BSplineTransform" };
-  component0Parameters["Metric"] = { "AdvancedMeanSquares" };
-  blueprint->AddComponent("RegistrationMethod", component0Parameters);
+  blueprint->AddComponent("RegistrationMethod", { { "NameOfClass", { "MonolithicElastixComponent" } },
+  { "Transform", { "BSplineTransform" } }, { "Metric", { "AdvancedMeanSquares" } } });
 
-  ParameterMapType component1Parameters;
-  component1Parameters["NameOfClass"] = { "ItkImageSourceFixedComponent" };
-  blueprint->AddComponent("FixedImageSource", component1Parameters);
+  blueprint->AddComponent("TransformDisplacementField", { { "NameOfClass", { "MonolithicTransformixComponent" } } });
 
-  ParameterMapType component2Parameters;
-  component2Parameters["NameOfClass"] = { "ItkImageSourceMovingComponent" };
-  blueprint->AddComponent("MovingImageSource", component2Parameters);
+  blueprint->AddComponent("FixedImageSource", { { "NameOfClass", { "ItkImageSourceFixedComponent" } } });
 
-  ParameterMapType component3Parameters;
-  component3Parameters["NameOfClass"] = { "ItkImageSinkComponent" };
-  blueprint->AddComponent("ResultImageSink", component3Parameters);
+  blueprint->AddComponent("MovingImageSource", { { "NameOfClass", { "ItkImageSourceMovingComponent" } } });
+
+  blueprint->AddComponent("ResultImageSink", { { "NameOfClass", { "ItkImageSinkComponent" } } });
 
   blueprint->AddComponent("Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } });
 
-  ParameterMapType connection1Parameters;
-  //optionally, tie properties to connection to avoid ambiguities
-  //connection1Parameters["NameOfInterface"] = { "itkImageFixedInterface" };
-  blueprint->AddConnection("FixedImageSource", "RegistrationMethod", connection1Parameters);
 
-  ParameterMapType connection2Parameters;
   //optionally, tie properties to connection to avoid ambiguities
-  //connection2Parameters["NameOfInterface"] = { "itkImageMovingInterface" };
-  blueprint->AddConnection("MovingImageSource", "RegistrationMethod", connection2Parameters);
+  blueprint->AddConnection("FixedImageSource", "RegistrationMethod", { {} }); // {{"NameOfInterface", { "itkImageFixedInterface" }}};
 
-  ParameterMapType connection3Parameters;
   //optionally, tie properties to connection to avoid ambiguities
-  //connection3Parameters["NameOfInterface"] = { "GetItkImageInterface" };
-  blueprint->AddConnection("RegistrationMethod", "ResultImageSink", connection3Parameters);
+  blueprint->AddConnection("MovingImageSource", "RegistrationMethod", { {} }); // {{"NameOfInterface", { "itkImageMovingInterface" }}};
 
-  blueprint->AddConnection("RegistrationMethod", "Controller", { {} }); //RunRegistrationInterface 
-  //blueprint->AddConnection("Transformix", "Controller", { {} }); //ReconnectTransformInterface 
-  blueprint->AddConnection("ResultImageSink", "Controller", { {} }); //AfterRegistrationInterface
-  //blueprint->AddConnection("ResultDisplacementFieldSink", "Controller", { {} }); //AfterRegistrationInterface
+  blueprint->AddConnection("RegistrationMethod", "TransformDisplacementField", { {} }); // { { "NameOfInterface", { "elastixTransformParameterObjectInterface" } } } ;
+
+  blueprint->AddConnection("FixedImageSource", "TransformDisplacementField", { {} }); // { { "NameOfInterface", { "itkImageDomainFixedInterface" } } } ;
+
+  blueprint->AddConnection("MovingImageSource", "TransformDisplacementField", { {} }); // { { "NameOfInterface", { "itkImageMovingInterface" } } };
+
+  blueprint->AddConnection("TransformDisplacementField", "ResultImageSink", { {} }); // { { "NameOfInterface", { "itkImageInterface" } } } ;
+
+  blueprint->AddConnection("RegistrationMethod", "Controller", { {} }); // { { "NameOfInterface", { "RunRegistrationInterface" } } } ;
+
+  blueprint->AddConnection("TransformDisplacementField", "Controller", { {} }); // { { "NameOfInterface", { "ReconnectTransformInterface" } } } ;
+
+  blueprint->AddConnection("ResultImageSink", "Controller", { {} }); // { { "NameOfInterface", { "AfterRegistrationInterface" } } } ;
 
   blueprint->WriteBlueprint("elastix_BS_MSD.dot");
 

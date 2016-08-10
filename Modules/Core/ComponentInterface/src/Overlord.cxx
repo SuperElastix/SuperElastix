@@ -119,7 +119,7 @@ namespace selx
       {
         std::stringstream msg;
         msg << "Too many criteria for Component " << name << std::endl;
-        std::runtime_error::runtime_error(msg.str());
+        throw std::runtime_error::runtime_error(msg.str());
       }
 
       // insert new element
@@ -150,7 +150,7 @@ namespace selx
       {
         std::stringstream msg;
         msg << "Too many criteria for Component " << name << std::endl;
-        std::runtime_error::runtime_error(msg.str());
+        throw std::runtime_error::runtime_error(msg.str());
       }
     }
 
@@ -208,7 +208,7 @@ namespace selx
         SourceInterface* provingSourceInterface = dynamic_cast<SourceInterface*> (component.GetPointer());
         if (provingSourceInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
         {
-          std::runtime_error::runtime_error("dynamic_cast<SourceInterface*> fails, but based on component criterion it shouldn't");
+          throw std::runtime_error::runtime_error("dynamic_cast<SourceInterface*> fails, but based on component criterion it shouldn't");
         }
         sourceInterfaceMap[componentSelector.first]=provingSourceInterface;
         
@@ -230,7 +230,7 @@ namespace selx
         SinkInterface* provingSinkInterface = dynamic_cast<SinkInterface*> (component.GetPointer());
         if (provingSinkInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
         {
-          std::runtime_error::runtime_error("dynamic_cast<SinkInterface*> fails, but based on component criterion it shouldn't");
+          throw std::runtime_error::runtime_error("dynamic_cast<SinkInterface*> fails, but based on component criterion it shouldn't");
         }
         sinkInterfaceMap[componentSelector.first] = provingSinkInterface;
       }
@@ -278,7 +278,7 @@ namespace selx
       RunRegistrationInterface* providingRunRegistrationInterface = dynamic_cast<RunRegistrationInterface*> (runRegistrationComponent.GetPointer());
       if (providingRunRegistrationInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
       {
-        std::runtime_error::runtime_error("dynamic_cast<RunRegistrationInterface*> fails, but based on component criterion it shouldn't");
+        throw std::runtime_error::runtime_error("dynamic_cast<RunRegistrationInterface*> fails, but based on component criterion it shouldn't");
       }
       // For testing purposes, all Sources are connected to an ImageWriter
       providingRunRegistrationInterface->RunRegistration();
@@ -293,7 +293,7 @@ namespace selx
       AfterRegistrationInterface* providingAfterRegistrationInterface = dynamic_cast<AfterRegistrationInterface*> (afterRegistrationComponent.GetPointer());
       if (providingAfterRegistrationInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
       {
-        std::runtime_error::runtime_error("dynamic_cast<AfterRegistrationInterface*> fails, but based on component criterion it shouldn't");
+        throw std::runtime_error::runtime_error("dynamic_cast<AfterRegistrationInterface*> fails, but based on component criterion it shouldn't");
       }
       // For testing purposes, all Sources are connected to an ImageWriter
       providingAfterRegistrationInterface->AfterRegistration();
@@ -313,7 +313,7 @@ namespace selx
         ReconnectTransformInterface* providingInterface = dynamic_cast<ReconnectTransformInterface*> (component.GetPointer());
         if (providingInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
         {
-          std::runtime_error::runtime_error("dynamic_cast<ReconnectTransformInterface*> fails, but based on component criterion it shouldn't");
+          throw std::runtime_error::runtime_error("dynamic_cast<ReconnectTransformInterface*> fails, but based on component criterion it shouldn't");
         }
         // For testing purposes, all Sources are connected to an ImageWriter
         providingInterface->ReconnectTransform();
@@ -351,7 +351,7 @@ namespace selx
         RegistrationControllerStartInterface* providingInterface = dynamic_cast<RegistrationControllerStartInterface*> (component.GetPointer());
         if (providingInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
         {
-          std::runtime_error::runtime_error("dynamic_cast<RegistrationControllerStartInterface*> fails, but based on component criterion it shouldn't");
+          throw std::runtime_error::runtime_error("dynamic_cast<RegistrationControllerStartInterface*> fails, but based on component criterion it shouldn't");
         }
         providingInterface->RegistrationControllerStart();
       }
@@ -366,7 +366,7 @@ namespace selx
     {
       std::stringstream msg;
       msg << "No Source component found by name:" << inputName;
-      std::runtime_error::runtime_error(msg.str());
+      throw std::runtime_error::runtime_error(msg.str());
     }
 
     return sources[inputName]->GetInputFileReader();
@@ -379,7 +379,7 @@ namespace selx
     {
       std::stringstream msg;
       msg << "No Sink component found by name : " << outputName;
-      std::runtime_error::runtime_error(msg.str());
+      throw std::runtime_error::runtime_error(msg.str());
     }
 
     return sinks[outputName]->GetOutputFileWriter();
@@ -392,7 +392,7 @@ namespace selx
     {
       std::stringstream msg;
       msg << "No Sink component found by name : " << outputName;
-      std::runtime_error::runtime_error(msg.str());
+      throw std::runtime_error::runtime_error(msg.str());
     }
 
     return sinks[outputName]->GetInitializedOutput();
