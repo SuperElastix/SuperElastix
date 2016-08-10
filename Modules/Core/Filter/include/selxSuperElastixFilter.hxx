@@ -41,8 +41,8 @@ SuperElastixFilter< ComponentTypeList >
   */
 
   // TODO this method should be revised together with overlord->Configure(). A functionality 
-  // that is foreseen in which the user may provide a minimalistic configuration (blueprint) 
-  // and that other criteria to select a component may be derived from neighboring components.
+  // is foreseen in which the user may provide a minimalistic configuration (blueprint) and in
+  // which other criteria to select a component are derived from neighboring components.
   // E.g. we could implement source nodes that provides ImageReaders of multiple dimensions. 
   // At connecting these reader, the dimensionality is known from the data and the source 
   // component can pass the dimensionality as an additional criterion to the component selectors 
@@ -97,6 +97,8 @@ SuperElastixFilter< ComponentTypeList >
     Overlord::SinkInterfaceMapType sinks = this->m_Overlord->GetSinkInterfaces();
       for (const auto & nameAndInterface : sinks)
       {
+        // TODO this Update seems needed, but I would expect that UpdateOutputInformation should be enough
+        //nameAndInterface.second->GetMiniPipelineOutput()->Update();
         nameAndInterface.second->GetMiniPipelineOutput()->UpdateOutputInformation();
         this->GetOutput(nameAndInterface.first)->Graft(nameAndInterface.second->GetMiniPipelineOutput());
       }
@@ -116,12 +118,15 @@ void
 SuperElastixFilter< ComponentTypeList >
 ::GenerateData(void)
 {
-
-  this->m_Overlord->Execute(); // calls updates of sink filters
+  // This calls controller components that take over the control flow if the itk pipeline is broken. 
+  this->m_Overlord->Execute(); 
 
   Overlord::SinkInterfaceMapType sinks = this->m_Overlord->GetSinkInterfaces();
   for (const auto & nameAndInterface : sinks)
   {
+    // Here we force all output to be updated. 
+    // TODO: it might be desirable to leave parts of the mini pipeline 'outdated' for memory/speed reasons and only update if requested downsteam.
+    nameAndInterface.second->GetMiniPipelineOutput()->Update();
     this->GetOutput(nameAndInterface.first)->Graft(nameAndInterface.second->GetMiniPipelineOutput());
   }
 
@@ -210,6 +215,16 @@ ReturnType*
 SuperElastixFilter< ComponentTypeList >
 ::GetOutput(const DataObjectIdentifierType& outputName)
 {
+  OutputDataType* output = Superclass::GetOutput(outputName);
+  if (output != nullptr) // if an output already exists, return it
+  {
+    ReturnType* returnOutput = dynamic_cast<ReturnType*>(output);
+    if (returnOutput != nullptr) // if it is of the same type as requested before
+    {
+      return returnOutput;
+    }
+    itkExceptionMacro(<< "Output """ << outputName << """ was requested before, but the ReturnTypes do not match")
+  }
   // Purposely not checking the outputName, but just create the requested&named data object in the filter. 
   // When connecting the Sinks the selxFilter names and data types are checked.
   typename ReturnType::Pointer newOutput = ReturnType::New();

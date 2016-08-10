@@ -34,6 +34,12 @@ namespace selx
     Providing < RegistrationControllerStartInterface >
     >
   {
+    // RegistrationControllerComponent is a work-around for broken itk-pipelines.
+    // Both the elastix and itkv4 require to connect their transforms *after* execution of the registration.
+    // This controller explicitly performs these steps
+    // TODO: see if signals-and-slots paradigm is appropriate here.
+
+
   public:
     selxNewMacro(RegistrationControllerComponent, ComponentBase);
 

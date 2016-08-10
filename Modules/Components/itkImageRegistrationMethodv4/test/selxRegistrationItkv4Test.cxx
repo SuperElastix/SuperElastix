@@ -503,6 +503,8 @@ TEST_F(RegistrationItkv4Test, FullyConfigured3d)
   // Update call on the writers triggers SuperElastix to configure and execute
   EXPECT_NO_THROW(resultImageWriter->Update());
   EXPECT_NO_THROW(resultDisplacementWriter->Update());
+  
+  
 
   blueprint->WriteBlueprint(dataManager->GetOutputFile("RegistrationItkv4Test_DisplacementField_network.dot"));
 

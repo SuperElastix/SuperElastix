@@ -204,18 +204,18 @@ TEST_F(WBIRDemoTest, itkv4_SVF_ANTSCC)
   ImageReader2DType::Pointer movingImageReader = ImageReader2DType::New();
   movingImageReader->SetFileName(dataManager->GetInputFile("coneB2d64.mhd"));
   
-  //ImageWriter2DType::Pointer resultImageWriter = ImageWriter2DType::New();
-  //resultImageWriter->SetFileName(dataManager->GetOutputFile("itkv4_SVF_ANTSCC_Image.mhd"));
+  ImageWriter2DType::Pointer resultImageWriter = ImageWriter2DType::New();
+  resultImageWriter->SetFileName(dataManager->GetOutputFile("itkv4_SVF_ANTSCC_Image.mhd"));
 
-  //VectorImageWriter2DType::Pointer vectorImageWriter = VectorImageWriter2DType::New();
-  //vectorImageWriter->SetFileName(dataManager->GetOutputFile("itkv4_SVF_ANTSCC_Displacement.mhd"));
+  VectorImageWriter2DType::Pointer vectorImageWriter = VectorImageWriter2DType::New();
+  vectorImageWriter->SetFileName(dataManager->GetOutputFile("itkv4_SVF_ANTSCC_Displacement.mhd"));
   
   // Connect SuperElastix in an itk pipeline
   superElastixFilter->SetInput("FixedImageSource", fixedImageReader->GetOutput());
   superElastixFilter->SetInput("MovingImageSource", movingImageReader->GetOutput());
 
-  //resultImageWriter->SetInput(superElastixFilter->GetOutput<Image2DType>("ResultImageSink"));
-  //vectorImageWriter->SetInput(superElastixFilter->GetOutput<VectorImage2DType>("ResultDisplacementFieldSink"));
+  resultImageWriter->SetInput(superElastixFilter->GetOutput<Image2DType>("ResultImageSink"));
+  vectorImageWriter->SetInput(superElastixFilter->GetOutput<VectorImage2DType>("ResultDisplacementFieldSink"));
 
   baselineImageReader->SetFileName(dataManager->GetBaselineFile("itkv4_SVF_ANTSCC_Image.mhd"));
   baselineVectorImageReader->SetFileName(dataManager->GetBaselineFile("itkv4_SVF_ANTSCC_Displacement.mhd"));
@@ -229,8 +229,8 @@ TEST_F(WBIRDemoTest, itkv4_SVF_ANTSCC)
   //superElastixFilter->Update();
 
   // Update call on the writers triggers SuperElastix to configure and execute
-  //EXPECT_NO_THROW(resultImageWriter->Update());
-  //EXPECT_NO_THROW(vectorImageWriter->Update());
+  EXPECT_NO_THROW(resultImageWriter->Update());
+  EXPECT_NO_THROW(vectorImageWriter->Update());
 
   EXPECT_NO_THROW(compareImageFilter->Update());
   EXPECT_NO_THROW(statisticsImageFilter->Update());
@@ -313,18 +313,18 @@ TEST_F(WBIRDemoTest, itkv4_SVF_MSD)
   ImageReader2DType::Pointer movingImageReader = ImageReader2DType::New();
   movingImageReader->SetFileName(dataManager->GetInputFile("coneB2d64.mhd"));
 
-  //ImageWriter2DType::Pointer resultImageWriter = ImageWriter2DType::New();
-  //resultImageWriter->SetFileName(dataManager->GetOutputFile("itkv4_SVF_MSD_Image.mhd"));
+  ImageWriter2DType::Pointer resultImageWriter = ImageWriter2DType::New();
+  resultImageWriter->SetFileName(dataManager->GetOutputFile("itkv4_SVF_MSD_Image.mhd"));
 
-  //VectorImageWriter2DType::Pointer vectorImageWriter = VectorImageWriter2DType::New();
-  //vectorImageWriter->SetFileName(dataManager->GetOutputFile("itkv4_SVF_MSD_Displacement.mhd"));
+  VectorImageWriter2DType::Pointer vectorImageWriter = VectorImageWriter2DType::New();
+  vectorImageWriter->SetFileName(dataManager->GetOutputFile("itkv4_SVF_MSD_Displacement.mhd"));
 
   // Connect SuperElastix in an itk pipeline
   superElastixFilter->SetInput("FixedImageSource", fixedImageReader->GetOutput());
   superElastixFilter->SetInput("MovingImageSource", movingImageReader->GetOutput());
 
-  //resultImageWriter->SetInput(superElastixFilter->GetOutput<Image2DType>("ResultImageSink"));
-  //vectorImageWriter->SetInput(superElastixFilter->GetOutput<VectorImage2DType>("ResultDisplacementFieldSink"));
+  resultImageWriter->SetInput(superElastixFilter->GetOutput<Image2DType>("ResultImageSink"));
+  vectorImageWriter->SetInput(superElastixFilter->GetOutput<VectorImage2DType>("ResultDisplacementFieldSink"));
 
   baselineImageReader->SetFileName(dataManager->GetBaselineFile("itkv4_SVF_MSD_Image.mhd"));
   baselineVectorImageReader->SetFileName(dataManager->GetBaselineFile("itkv4_SVF_MSD_Displacement.mhd"));
@@ -338,8 +338,8 @@ TEST_F(WBIRDemoTest, itkv4_SVF_MSD)
   //superElastixFilter->Update();
 
   // Update call on the writers triggers SuperElastix to configure and execute
-  //EXPECT_NO_THROW(resultImageWriter->Update());
-  //EXPECT_NO_THROW(vectorImageWriter->Update());
+  EXPECT_NO_THROW(resultImageWriter->Update());
+  EXPECT_NO_THROW(vectorImageWriter->Update());
 
   EXPECT_NO_THROW(compareImageFilter->Update());
   EXPECT_NO_THROW(statisticsImageFilter->Update());
@@ -403,11 +403,11 @@ TEST_F(WBIRDemoTest, elastix_BS_NCC)
   ImageReader2DType::Pointer movingImageReader = ImageReader2DType::New();
   movingImageReader->SetFileName(dataManager->GetInputFile("coneB2d64.mhd"));
 
-  //ImageWriter2DType::Pointer resultImageWriter = ImageWriter2DType::New();
-  //resultImageWriter->SetFileName(dataManager->GetOutputFile("elastix_BS_NCC_Image.mhd"));
+  ImageWriter2DType::Pointer resultImageWriter = ImageWriter2DType::New();
+  resultImageWriter->SetFileName(dataManager->GetOutputFile("elastix_BS_NCC_Image.mhd"));
 
-  //VectorImageWriter2DType::Pointer vectorImageWriter = VectorImageWriter2DType::New();
-  //vectorImageWriter->SetFileName(dataManager->GetOutputFile("elastix_BS_NCC_Displacement.mhd"));
+  VectorImageWriter2DType::Pointer vectorImageWriter = VectorImageWriter2DType::New();
+  vectorImageWriter->SetFileName(dataManager->GetOutputFile("elastix_BS_NCC_Displacement.mhd"));
 
   // Connect SuperElastix in an itk pipeline
   superElastixFilter->SetInput("FixedImageSource", fixedImageReader->GetOutput());
@@ -498,18 +498,18 @@ TEST_F(WBIRDemoTest, elastix_BS_MSD)
   ImageReader2DType::Pointer movingImageReader = ImageReader2DType::New();
   movingImageReader->SetFileName(dataManager->GetInputFile("coneB2d64.mhd"));
 
-  //ImageWriter2DType::Pointer resultImageWriter = ImageWriter2DType::New();
-  //resultImageWriter->SetFileName(dataManager->GetOutputFile("elastix_BS_MSD_Image.mhd"));
+  ImageWriter2DType::Pointer resultImageWriter = ImageWriter2DType::New();
+  resultImageWriter->SetFileName(dataManager->GetOutputFile("elastix_BS_MSD_Image.mhd"));
 
-  //VectorImageWriter2DType::Pointer vectorImageWriter = VectorImageWriter2DType::New();
-  //vectorImageWriter->SetFileName(dataManager->GetOutputFile("elastix_BS_MSD_Displacement.mhd"));
+  VectorImageWriter2DType::Pointer vectorImageWriter = VectorImageWriter2DType::New();
+  vectorImageWriter->SetFileName(dataManager->GetOutputFile("elastix_BS_MSD_Displacement.mhd"));
 
   // Connect SuperElastix in an itk pipeline
   superElastixFilter->SetInput("FixedImageSource", fixedImageReader->GetOutput());
   superElastixFilter->SetInput("MovingImageSource", movingImageReader->GetOutput());
 
-  //resultImageWriter->SetInput(superElastixFilter->GetOutput<Image2DType>("ResultImageSink"));
-  //vectorImageWriter->SetInput(superElastixFilter->GetOutput<VectorImage2DType>("ResultDisplacementFieldSink"));
+  resultImageWriter->SetInput(superElastixFilter->GetOutput<Image2DType>("ResultImageSink"));
+  vectorImageWriter->SetInput(superElastixFilter->GetOutput<VectorImage2DType>("ResultDisplacementFieldSink"));
 
   baselineImageReader->SetFileName(dataManager->GetBaselineFile("elastix_BS_MSD_Image.mhd"));
   baselineVectorImageReader->SetFileName(dataManager->GetBaselineFile("elastix_BS_MSD_Displacement.mhd"));

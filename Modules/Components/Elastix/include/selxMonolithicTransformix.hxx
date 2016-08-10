@@ -18,6 +18,7 @@
  *=========================================================================*/
 
 #include "selxMonolithicTransformix.h"
+#include <string> 
 
 namespace selx
 {
@@ -33,11 +34,11 @@ namespace selx
     m_transformixFilter->SetOutputDirectory(".");
 
     //TODO m_elastixFilter returns a nullptr GetTransformParameterObject instead of a valid object. However, we need this object to satisfy the input conditions of m_transformixFilter
-    elxParameterObjectPointer elxParameterObject = elxParameterObjectType::New();
-    typename elxParameterObjectType::ParameterMapType defaultParameters = elxParameterObject->GetDefaultParameterMap("rigid");
-    elxParameterObject->SetParameterMap(defaultParameters);
+    elxParameterObjectPointer trxParameterObject = elxParameterObjectType::New();
+    //typename elxParameterObjectType::ParameterMapType defaultParameters = elxParameterObject->GetDefaultParameterMap("rigid");
+    //elxParameterObject->SetParameterMap(defaultParameters);
     //m_transformixFilter->SetTransformParameterObject(m_elastixFilter->GetTransformParameterObject());
-    m_transformixFilter->SetTransformParameterObject(elxParameterObject); // supply a dummy object
+    m_transformixFilter->SetTransformParameterObject(trxParameterObject); // supply a dummy object
 
     //TODO: instantiating the filter in the constructor might be heavy for the use in component selector factory, since all components of the database are created during the selection process.
     // we could choose to keep the component light weighted (for checking criteria such as names and connections) until the settings are passed to the filter, but this requires an additional initialization step.
@@ -51,9 +52,51 @@ namespace selx
   template<int Dimensionality, class TPixel>
   int MonolithicTransformixComponent< Dimensionality, TPixel>::Set(itkImageDomainFixedInterface<Dimensionality>* component)
   {
-    auto fixedImageDomain = component->GetItkImageDomainFixed();
+    // TODO: this is not finished and tested.  Make this component use the provided domain
     // Currently, the fixed image domain is part of the transformParameter map, which will be set by elastix.
-    // TODO:  make this component use the provided domain
+    
+    auto fixedImageDomain = component->GetItkImageDomainFixed();
+
+
+    auto size = fixedImageDomain->GetLargestPossibleRegion().GetSize();
+    TransformixFilterType::ParameterValueVectorType sizeParameters;
+
+    auto spacing = fixedImageDomain->GetSpacing();
+    TransformixFilterType::ParameterValueVectorType spacingParameters;
+
+    auto index = fixedImageDomain->GetLargestPossibleRegion().GetIndex();
+    TransformixFilterType::ParameterValueVectorType indexParameters;
+
+    auto origin = fixedImageDomain->GetOrigin();
+    TransformixFilterType::ParameterValueVectorType originParameters;
+    
+    //auto direction = fixedImageDomain->GetDirectionCosines();
+    //TransformixFilterType::ParameterValueVectorType DirectionParameters;
+
+    for (int d = 0; d < Dimensionality; ++d)
+    {
+      sizeParameters.push_back(std::to_string(size[d]));
+      spacingParameters.push_back(std::to_string(spacing[d]));
+      indexParameters.push_back(std::to_string(index[d]));
+      originParameters.push_back(std::to_string(origin[d]));
+    }
+
+
+    elxParameterObjectPointer trxParameterObject = elxParameterObjectType::New(); 
+    TransformixFilterType::ParameterMapType trxParameterMap = {
+      { "FixedImageDimension", { std::to_string(Dimensionality) } },
+      { "MovingImageDimension", { std::to_string(Dimensionality) } },
+      { "FixedInternalImagePixelType", { "float" } },
+      { "MovingInternalImagePixelType", { "float" } },
+      { "Size", sizeParameters },
+      { "Index", indexParameters },
+      { "Spacing", spacingParameters },
+      { "Origin", originParameters },
+      //{ "Direction", { "1", "0", "0", "1" } },
+      { "UseDirectionCosines", { "true" } } };
+    trxParameterObject->SetParameterMap(trxParameterMap);
+    this->m_transformixFilter->SetTransformParameterObject(trxParameterObject);
+
     
     return 0;
   }

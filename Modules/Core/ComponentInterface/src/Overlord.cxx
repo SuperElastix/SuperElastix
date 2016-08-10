@@ -324,22 +324,7 @@ namespace selx
 
   void Overlord::Execute()
   {
-    
-    // TODO make one "update button" for the overlord
-    //this->FindRunRegistration();
-    //this->FindAfterRegistration();
-
-    // RunRegistrations is a simple execution model
-    // E.g.if the components are true itk Process Object, the don't need an 'Update' call. 
-    // The container of RunRegistrationsInterfaces will therefore be empty, since they will not be added if they don't expose this interface.
-    // If components need RunIterations() or RunResolution() we can explicitly 'Update' them here and control the flow.
-    // TODO: see if signals-and-slots paradigm is appropriate here.
-
-    //this->RunRegistrations();
-    //this->ReconnectTransforms();
-    //this->AfterRegistrations();
-    //update all writers...
-    
+       
     /** Scans all Components to find those with RegistrationControllerStart capability and call them */
     const CriterionType criterion = CriterionType(keys::HasProvidingInterface, { keys::RegistrationControllerStartInterface });
 

@@ -25,12 +25,14 @@
 #include "selxItkImageSource.h"
 #include "selxItkMeshSink.h"
 #include "selxItkMeshSource.h"
+#include "selxRegistrationController.h"
 
 #include "itkImage.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 #include "itkDisplacementFieldTransform.h"
 #include "itkComposeDisplacementFieldsImageFilter.h"
+
 
 #include "itkCompositeTransform.h"
 #include "itkVector.h"
@@ -86,7 +88,8 @@ namespace selx {
     ComponentFactory<ItkImageSinkComponent<3, double>>::RegisterOneFactory();
     ComponentFactory<ItkImageSourceComponent<3, double>>::RegisterOneFactory();
     ComponentFactory<ItkSmoothingRecursiveGaussianImageFilterComponent<3, double>>::RegisterOneFactory();
-
+    ComponentFactory<RegistrationControllerComponent<>>::RegisterOneFactory();
+    
     SuperElastixFilterType::Pointer mySuperElastix;
     
     Blueprint::Pointer blueprint = Blueprint::New();
@@ -94,8 +97,8 @@ namespace selx {
     blueprint->AddComponent("InputImage", { { "NameOfClass", { "ItkImageSourceComponent" } } });
     blueprint->AddComponent("ImageFilter", { { "NameOfClass", { "ItkSmoothingRecursiveGaussianImageFilterComponent" } } });
     blueprint->AddComponent("OutputImage", { { "NameOfClass", { "ItkImageSinkComponent" } } });
-    blueprint->AddConnection("InputImage", "ImageFilter", Blueprint::ParameterMapType()); // 
-    blueprint->AddConnection("ImageFilter", "OutputImage", Blueprint::ParameterMapType());
+    blueprint->AddConnection("InputImage", "ImageFilter", { {} }); // 
+    blueprint->AddConnection("ImageFilter", "OutputImage", { {} });
 
     EXPECT_NO_THROW(mySuperElastix = SuperElastixFilterType::New());
     mySuperElastix->SetBlueprint(blueprint);
