@@ -35,7 +35,7 @@ namespace selx
   class ItkImageSinkComponent :
     public Implements <
     Accepting< itkImageInterface<Dimensionality, TPixel> >,
-    Providing < SinkInterface, AfterRegistrationInterface >
+    Providing < SinkInterface >
     >
   {
   public:
@@ -58,7 +58,6 @@ namespace selx
     virtual AnyFileWriter::Pointer GetOutputFileWriter(void) override;
     virtual itk::DataObject::Pointer GetInitializedOutput(void) override;
 
-    virtual void AfterRegistration() override;
 
     virtual bool MeetsCriterion(const ComponentBase::CriterionType &criterion) override;
     static const char * GetDescription() { return "ItkImageSink Component"; };

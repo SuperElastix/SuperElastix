@@ -34,7 +34,7 @@ namespace selx
   class DisplacementFieldItkImageFilterSinkComponent :
     public Implements <
     Accepting< DisplacementFieldItkImageSourceInterface<Dimensionality, TPixel> >,
-    Providing < SinkInterface, AfterRegistrationInterface >
+    Providing < SinkInterface >
     >
   {
   public:
@@ -55,19 +55,17 @@ namespace selx
 
     //Accepting Interfaces:
     virtual int Set(AcceptingDisplacementFieldInterfaceType*) override;
+    
+    //Providing Interfaces:
     virtual void SetMiniPipelineOutput(itk::DataObject::Pointer) override;
     virtual itk::DataObject::Pointer GetMiniPipelineOutput(void) override;
     virtual AnyFileWriter::Pointer GetOutputFileWriter(void) override;
     virtual itk::DataObject::Pointer GetInitializedOutput(void) override;
 
-    //Providing Interfaces:
-    virtual void AfterRegistration() override;
-
     virtual bool MeetsCriterion(const ComponentBase::CriterionType &criterion) override;
     static const char * GetDescription() { return "DisplacementFieldItkImageFilterSink Component"; };
+
   private:
-    //itk::ProcessObject::Pointer m_Sink;
-    //typename itk::ImageFileWriter<itk::Image<itk::Vector<TPixel,Dimensionality>, Dimensionality>>::Pointer m_SinkWriter;
     typename DeformationFieldImageType::Pointer m_MiniPipelineOutputImage;
     typename DeformationFieldImageType::Pointer m_OverlordOutputImage;
     

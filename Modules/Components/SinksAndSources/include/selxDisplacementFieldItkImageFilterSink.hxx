@@ -49,12 +49,6 @@ namespace selx
 
 
   template<int Dimensionality, class TPixel>
-  void DisplacementFieldItkImageFilterSinkComponent< Dimensionality, TPixel>::AfterRegistration()
-  {
-    this->m_MiniPipelineOutputImage->Update();
-  }
-
-  template<int Dimensionality, class TPixel>
   typename AnyFileWriter::Pointer DisplacementFieldItkImageFilterSinkComponent< Dimensionality, TPixel>::GetOutputFileWriter()
   {
     // Instanstiate an image file writer, decorated such that it can be implicitly cast to an AnyFileWriterType
