@@ -24,8 +24,6 @@ namespace selx
 {
   Overlord::Overlord() : m_isConfigured(false)
   {
-    this->m_RunRegistrationComponents = ComponentsContainerType::New();
-    this->m_AfterRegistrationComponents = ComponentsContainerType::New();   
   }
 
   bool Overlord::Configure()
@@ -237,91 +235,7 @@ namespace selx
     }
     return sinkInterfaceMap;
   }
-
-  void Overlord::FindRunRegistration()
-  {
-    /** Scans all Components to find those with FindRunRegistration capability and store them in m_RunRegistrationComponents list */
-    const CriterionType runRegistrationCriterion = CriterionType(keys::HasProvidingInterface, { "RunRegistrationInterface" });
-
-    for (auto const & componentSelector : this->m_ComponentSelectorContainer)
-    {
-      ComponentBase::Pointer component = componentSelector.second->GetComponent();
-      if (component->MeetsCriterionBase(runRegistrationCriterion))
-      {
-        this->m_RunRegistrationComponents->push_back(component);
-      }
-    }
-  }
-
-  void Overlord::FindAfterRegistration()
-  {
-    /** Scans all Components to find those with FindAfterRegistration capability and store them in m_AfterRegistrationComponents list */
-    const CriterionType afterRegistrationCriterion = CriterionType(keys::HasProvidingInterface, { "AfterRegistrationInterface" });
-
-    for (auto const & componentSelector : this->m_ComponentSelectorContainer)
-    {
-      ComponentBase::Pointer component = componentSelector.second->GetComponent();
-      if (component->MeetsCriterionBase(afterRegistrationCriterion))
-      {
-        this->m_AfterRegistrationComponents->push_back(component);
-      }
-    }
-  }
-
   
-
-  void Overlord::RunRegistrations()
-  {
-
-    for (auto const & runRegistrationComponent : *(this->m_RunRegistrationComponents)) // auto&& preferred?
-    {
-      RunRegistrationInterface* providingRunRegistrationInterface = dynamic_cast<RunRegistrationInterface*> (runRegistrationComponent.GetPointer());
-      if (providingRunRegistrationInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
-      {
-        throw std::runtime_error::runtime_error("dynamic_cast<RunRegistrationInterface*> fails, but based on component criterion it shouldn't");
-      }
-      // For testing purposes, all Sources are connected to an ImageWriter
-      providingRunRegistrationInterface->RunRegistration();
-    }
-  }
-
-  void Overlord::AfterRegistrations()
-  {
-
-    for (auto const & afterRegistrationComponent : *(this->m_AfterRegistrationComponents)) // auto&& preferred?
-    {
-      AfterRegistrationInterface* providingAfterRegistrationInterface = dynamic_cast<AfterRegistrationInterface*> (afterRegistrationComponent.GetPointer());
-      if (providingAfterRegistrationInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
-      {
-        throw std::runtime_error::runtime_error("dynamic_cast<AfterRegistrationInterface*> fails, but based on component criterion it shouldn't");
-      }
-      // For testing purposes, all Sources are connected to an ImageWriter
-      providingAfterRegistrationInterface->AfterRegistration();
-    }
-  }
-
-  void Overlord::ReconnectTransforms()
-  {
-    /** Scans all Components to find those with ReconnectTransform capability and call them */
-    const CriterionType criterion = CriterionType(keys::HasProvidingInterface, { "ReconnectTransformInterface" });
-
-    for (auto const & componentSelector : this->m_ComponentSelectorContainer)
-    {
-      ComponentBase::Pointer component = componentSelector.second->GetComponent();
-      if (component->MeetsCriterionBase(criterion))
-      {
-        ReconnectTransformInterface* providingInterface = dynamic_cast<ReconnectTransformInterface*> (component.GetPointer());
-        if (providingInterface == nullptr) // is actually a double-check for sanity: based on criterion cast should be successful
-        {
-          throw std::runtime_error::runtime_error("dynamic_cast<ReconnectTransformInterface*> fails, but based on component criterion it shouldn't");
-        }
-        // For testing purposes, all Sources are connected to an ImageWriter
-        providingInterface->ReconnectTransform();
-
-      }
-    }
-  }
-
   void Overlord::Execute()
   {
        

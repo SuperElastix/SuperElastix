@@ -119,20 +119,7 @@ namespace selx
     ComponentSelectorContainerType m_ComponentSelectorContainer;
     bool m_isConfigured;
 
-    /** Flow handling: todo move to a controller component */
-    void FindAfterRegistration();
-    void FindRunRegistration();
-    void RunRegistrations();
-    void AfterRegistrations();
-    void ReconnectTransforms();
 
-    typedef itk::VectorContainer <
-      unsigned int, ComponentBase::Pointer > ComponentsContainerType;
-
-    RegistrationControllerStartInterfaceMapType m_RegistrationControllerStartInterfaces;
-
-    ComponentsContainerType::Pointer m_RunRegistrationComponents;
-    ComponentsContainerType::Pointer m_AfterRegistrationComponents;
 
   };
 
