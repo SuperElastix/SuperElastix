@@ -114,7 +114,7 @@ namespace selx
   int MonolithicTransformixComponent< Dimensionality, TPixel>::Set(elastixTransformParameterObjectInterfaceType* component)
   {
 
-    auto transformParameterObject = component->GetTransformParameterObject();
+    //auto transformParameterObject = component->GetTransformParameterObject();
     // connect the itk pipeline
     // Due to the fact that elastixfilter returns a Null object we cannot use it as a pipeline
     //this->m_transformixFilter->SetTransformParameterObject(transformParameterObject);
