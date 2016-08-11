@@ -13,7 +13,7 @@ namespace selx
 
   template< typename ComponentTypeList >
   SuperElastixFilter< ComponentTypeList >
-    ::SuperElastixFilter(void) : m_InputConnectionModified(true), m_OutputConnectionModified(true), m_BlueprintConnectionModified(true)
+    ::SuperElastixFilter(void) : m_InputConnectionModified(true), m_OutputConnectionModified(true), m_BlueprintConnectionModified(true), m_IsConnected(false)
 {
   this->m_Overlord = std::unique_ptr<Overlord> (new Overlord());
 
@@ -61,21 +61,59 @@ SuperElastixFilter< ComponentTypeList >
 
   if ((m_InputConnectionModified == true) || (this->m_BlueprintConnectionModified == true))
   {
+    auto usedInputs = this->GetInputNames();
     Overlord::SourceInterfaceMapType sources = this->m_Overlord->GetSourceInterfaces();
     for (const auto & nameAndInterface : sources)
     {
+      auto foundIndex = std::find(usedInputs.begin(), usedInputs.end(), nameAndInterface.first);
+
+      if (foundIndex == usedInputs.end())
+      {
+        // or should we catch and rethrow nameAndInterface.second->SetMiniPipelineInput(this->GetInput(nameAndInterface.first)); ? 
+        itkExceptionMacro(<< "SuperElastixFilter requires the input """ << nameAndInterface.first << """ for the Source Component with that name" )
+      }
+
       nameAndInterface.second->SetMiniPipelineInput(this->GetInput(nameAndInterface.first));
+      usedInputs.erase(foundIndex);
+    }
+    if (usedInputs.size() > 0)
+    {
+      std::stringstream msg;
+      msg << "These inputs are connected, but not used by any Source Component: " << std::endl;
+      for (auto & unusedInput : usedInputs)
+      {
+        msg << unusedInput << std::endl;
+      }
+      itkExceptionMacro( << msg.str())
     }
   }
 
   if ((m_OutputConnectionModified == true) || (this->m_BlueprintConnectionModified == true))
   {
-
+    auto usedOutputs = this->GetOutputNames();
     Overlord::SinkInterfaceMapType sinks = this->m_Overlord->GetSinkInterfaces();
     for (const auto & nameAndInterface : sinks)
     {
+      auto foundIndex = std::find(usedOutputs.begin(), usedOutputs.end(), nameAndInterface.first);
+
+      if (foundIndex == usedOutputs.end())
+      {
+        // or should we catch and rethrow nameAndInterface.second->SetMiniPipelineOutput(this->GetOutput(nameAndInterface.first)); ? 
+        itkExceptionMacro(<< "SuperElastixFilter requires the output """ << nameAndInterface.first << """ for the Sink Component with that name")
+      }
       nameAndInterface.second->SetMiniPipelineOutput(this->GetOutput(nameAndInterface.first));
+      usedOutputs.erase(foundIndex);
     } 
+    if (usedOutputs.size() > 0)
+    {
+      std::stringstream msg;
+      msg << "These outputs are connected, but not used by any Sink Component: " << std::endl;
+      for (auto & unusedOutput : usedOutputs)
+      {
+        msg << unusedOutput << std::endl;
+      }
+      itkExceptionMacro(<< msg.str())
+    }
   }
 
   if (allUniqueComponents == false) // by setting inputs and outputs, settings could be derived to uniquely select the other components 
@@ -85,9 +123,10 @@ SuperElastixFilter< ComponentTypeList >
 
   bool isSuccess(false);
 
-  if (allUniqueComponents)
+  if (allUniqueComponents && !this->m_IsConnected)
   {
     isSuccess = this->m_Overlord->ConnectComponents();
+    this->m_IsConnected = true;
   }
   std::cout << "Connecting Components: " << (isSuccess ? "succeeded" : "failed") << std::endl;
 
@@ -97,9 +136,9 @@ SuperElastixFilter< ComponentTypeList >
     Overlord::SinkInterfaceMapType sinks = this->m_Overlord->GetSinkInterfaces();
       for (const auto & nameAndInterface : sinks)
       {
-        // TODO this Update seems needed, but I would expect that UpdateOutputInformation should be enough
-        //nameAndInterface.second->GetMiniPipelineOutput()->Update();
+        // Update information: ask the mini pipeline what the size of the data will be
         nameAndInterface.second->GetMiniPipelineOutput()->UpdateOutputInformation();
+        // Put the information into the Filter's output Objects by grafting
         this->GetOutput(nameAndInterface.first)->Graft(nameAndInterface.second->GetMiniPipelineOutput());
       }
   }

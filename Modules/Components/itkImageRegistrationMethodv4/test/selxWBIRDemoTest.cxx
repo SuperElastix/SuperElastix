@@ -413,7 +413,8 @@ TEST_F(WBIRDemoTest, elastix_BS_NCC)
   superElastixFilter->SetInput("FixedImageSource", fixedImageReader->GetOutput());
   superElastixFilter->SetInput("MovingImageSource", movingImageReader->GetOutput());
 
-  //resultImageWriter->SetInput(superElastixFilter->GetOutput<Image2DType>("ResultImageSink"));
+  resultImageWriter->SetInput(superElastixFilter->GetOutput<Image2DType>("ResultImageSink"));
+  //elastix component does not have an deformation output, but writes deformationfield to disk.
   //vectorImageWriter->SetInput(superElastixFilter->GetOutput<VectorImage2DType>("ResultDisplacementFieldSink"));
   
   baselineImageReader->SetFileName(dataManager->GetBaselineFile("elastix_BS_NCC_Image.mhd"));
@@ -432,7 +433,7 @@ TEST_F(WBIRDemoTest, elastix_BS_NCC)
   //superElastixFilter->Update();
 
   // Update call on the writers triggers SuperElastix to configure and execute
-  //EXPECT_NO_THROW(resultImageWriter->Update());
+  EXPECT_NO_THROW(resultImageWriter->Update());
   //EXPECT_NO_THROW(vectorImageWriter->Update());
 
   EXPECT_NO_THROW(compareImageFilter->Update());
@@ -509,7 +510,8 @@ TEST_F(WBIRDemoTest, elastix_BS_MSD)
   superElastixFilter->SetInput("MovingImageSource", movingImageReader->GetOutput());
 
   resultImageWriter->SetInput(superElastixFilter->GetOutput<Image2DType>("ResultImageSink"));
-  vectorImageWriter->SetInput(superElastixFilter->GetOutput<VectorImage2DType>("ResultDisplacementFieldSink"));
+  //elastix component does not have an deformation output, but writes deformationfield to disk.
+  //vectorImageWriter->SetInput(superElastixFilter->GetOutput<VectorImage2DType>("ResultDisplacementFieldSink"));
 
   baselineImageReader->SetFileName(dataManager->GetBaselineFile("elastix_BS_MSD_Image.mhd"));
   baselineVectorImageReader->SetFileName(dataManager->GetBaselineFile("elastix_BS_MSD_Displacement.mhd"));
@@ -527,7 +529,7 @@ TEST_F(WBIRDemoTest, elastix_BS_MSD)
   //superElastixFilter->Update();
 
   // Update call on the writers triggers SuperElastix to configure and execute
-  //EXPECT_NO_THROW(resultImageWriter->Update());
+  EXPECT_NO_THROW(resultImageWriter->Update());
   //EXPECT_NO_THROW(vectorImageWriter->Update());
 
   EXPECT_NO_THROW(compareImageFilter->Update());
