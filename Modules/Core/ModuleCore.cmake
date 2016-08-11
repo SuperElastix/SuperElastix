@@ -55,9 +55,9 @@ set( ${MODULE}_TESTS
 # Module source files
 set( ${MODULE}_SOURCE_FILES
   ${${MODULE}_SOURCE_DIR}/Blueprints/src/selxBlueprint.cxx
-  ${${MODULE}_SOURCE_DIR}/ComponentInterface/src/ComponentBase.cxx
-  ${${MODULE}_SOURCE_DIR}/ComponentInterface/src/Overlord.cxx
-  ${${MODULE}_SOURCE_DIR}/ComponentInterface/src/ComponentSelector.cxx
+  ${${MODULE}_SOURCE_DIR}/ComponentInterface/src/selxComponentBase.cxx
+  ${${MODULE}_SOURCE_DIR}/ComponentInterface/src/selxOverlord.cxx
+  ${${MODULE}_SOURCE_DIR}/ComponentInterface/src/selxComponentSelector.cxx
   ${${MODULE}_SOURCE_DIR}/ConfigurationReader/src/selxConfigurationReader.cxx
   ${${MODULE}_SOURCE_DIR}/Filter/src/selxSuperElastixFilter.cxx
 )

@@ -3,7 +3,7 @@
 
 #include "itkProcessObject.h"
 #include "selxBlueprint.h"
-#include "Overlord.h"
+#include "selxOverlord.h"
 #include "selxAnyFileReader.h"
 #include "selxAnyFileWriter.h"
 

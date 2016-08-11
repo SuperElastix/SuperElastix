@@ -20,8 +20,8 @@
 #ifndef selxItkMeshSink_h
 #define selxItkMeshSink_h
 
-#include "ComponentBase.h"
-#include "Interfaces.h"
+#include "selxComponentBase.h"
+#include "selxInterfaces.h"
 #include <string.h>
 #include "selxMacro.h"
 #include "itkMeshFileWriter.h"

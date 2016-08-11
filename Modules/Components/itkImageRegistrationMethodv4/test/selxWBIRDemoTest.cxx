@@ -40,7 +40,7 @@
 #include "selxItkImageSourceFixed.h"
 #include "selxItkImageSourceMoving.h"
 
-#include "DefaultComponents.h"
+#include "selxDefaultComponents.h"
 
 #include "itkTestingComparisonImageFilter.h"
 #include "itkSubtractImageFilter.h"

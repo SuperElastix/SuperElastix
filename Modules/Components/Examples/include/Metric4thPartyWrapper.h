@@ -21,7 +21,7 @@
 #define Metric4thPartyWrapper_h
 
 #include "Example4thPartyCode.h"
-#include "Interfaces.hxx"
+#include "selxInterfaces.hxx"
 namespace selx
 {
 // An Optimizer4thParty expects that Metric4thParty will be set as input. All accepted interfaces by the Optimizer4thPartyCompoment will be delegated to the Metric4thPartyWrapper object.

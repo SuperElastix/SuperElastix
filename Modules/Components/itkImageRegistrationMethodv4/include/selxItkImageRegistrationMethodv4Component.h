@@ -20,8 +20,8 @@
 #ifndef selxItkImageRegistrationMethodv4Component_h
 #define selxItkImageRegistrationMethodv4Component_h
 
-#include "ComponentBase.h"
-#include "Interfaces.h"
+#include "selxComponentBase.h"
+#include "selxInterfaces.h"
 #include "itkImageRegistrationMethodv4.h"
 #include "itkGradientDescentOptimizerv4.h"
 #include "itkImageSource.h"

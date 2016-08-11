@@ -20,8 +20,8 @@
 #ifndef itkTransformComponent1_h
 #define itkTransformComponent1_h
 
-#include "Interfaces.h"
-#include "ComponentBase.h"
+#include "selxInterfaces.h"
+#include "selxComponentBase.h"
 
 namespace selx
 {

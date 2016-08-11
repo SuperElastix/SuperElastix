@@ -20,7 +20,7 @@
 #ifndef Interfaces_hxx
 #define Interfaces_hxx
 
-#include "InterfaceTraits.h"
+#include "selxInterfaceTraits.h"
 namespace selx
 {
 template<class InterfaceT>

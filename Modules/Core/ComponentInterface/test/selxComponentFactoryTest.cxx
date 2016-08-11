@@ -25,7 +25,7 @@
 #include "MetricComponent1.h"
 //#include "itkMetricComponent1Factory.h"
 
-#include "ComponentFactory.h"
+#include "selxComponentFactory.h"
 #include "GDOptimizer3rdPartyComponent.h"
 #include "GDOptimizer4thPartyComponent.h"
 #include "SSDMetric3rdPartyComponent.h"

@@ -19,8 +19,8 @@
 #ifndef ComponentFactory_h
 #define ComponentFactory_h
 
-#include "ComponentSelector.h"
-#include "ComponentBase.h"
+#include "selxComponentSelector.h"
+#include "selxComponentBase.h"
 
 namespace selx
 {
@@ -69,6 +69,6 @@ private:
 
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "ComponentFactory.hxx"
+#include "selxComponentFactory.hxx"
 #endif
 #endif

@@ -16,7 +16,7 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#include "ComponentFactory.h"
+#include "selxComponentFactory.h"
 //#include "itkMetricComponent1.h"
 #include "itkVersion.h"
 //#include "ComponentTraits.h"

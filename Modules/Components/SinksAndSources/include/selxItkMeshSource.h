@@ -20,8 +20,8 @@
 #ifndef selxItkMeshSource_h
 #define selxItkMeshSource_h
 
-#include "ComponentBase.h"
-#include "Interfaces.h"
+#include "selxComponentBase.h"
+#include "selxInterfaces.h"
 #include <string.h>
 #include "selxMacro.h"
 #include "itkMeshFileReader.h"

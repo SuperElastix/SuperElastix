@@ -17,7 +17,7 @@
  *
  *=========================================================================*/
 
-#include "ComponentBase.h"
+#include "selxComponentBase.h"
 
 namespace selx
 {

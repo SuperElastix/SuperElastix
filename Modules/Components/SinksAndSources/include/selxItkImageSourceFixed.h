@@ -20,8 +20,8 @@
 #ifndef selxItkImageSourceFixed_h
 #define selxItkImageSourceFixed_h
 
-#include "ComponentBase.h"
-#include "Interfaces.h"
+#include "selxComponentBase.h"
+#include "selxInterfaces.h"
 #include <string.h>
 #include "selxMacro.h"
 #include "itkImageFileReader.h"

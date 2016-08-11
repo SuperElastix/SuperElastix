@@ -19,7 +19,7 @@
 //#ifndef ComponentSelector_hxx
 //#define ComponentSelector_hxx
 
-#include "ComponentSelector.h"
+#include "selxComponentSelector.h"
 
 namespace selx
 {

@@ -20,8 +20,8 @@
 #ifndef SSDMetric4thPartyComponent_h
 #define SSDMetric4thPartyComponent_h
 
-#include "ComponentBase.h"
-#include "Interfaces.hxx"
+#include "selxComponentBase.h"
+#include "selxInterfaces.hxx"
 #include "Example4thPartyCode.h"
 
 namespace selx

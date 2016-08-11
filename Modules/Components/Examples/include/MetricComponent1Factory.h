@@ -19,8 +19,8 @@
 #ifndef itkMetricComponent1Factory_h
 #define itkMetricComponent1Factory_h
 
-#include "ComponentSelector.h"
-#include "ComponentBase.h"
+#include "selxComponentSelector.h"
+#include "selxComponentBase.h"
 
 namespace selx
 {

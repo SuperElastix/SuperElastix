@@ -20,8 +20,8 @@
 #ifndef selxItkGradientDescentOptimizerv4Component_h
 #define selxItkGradientDescentOptimizerv4Component_h
 
-#include "ComponentBase.h"
-#include "Interfaces.h"
+#include "selxComponentBase.h"
+#include "selxInterfaces.h"
 #include "itkGradientDescentOptimizerv4.h"
 #include <string.h>
 #include "selxMacro.h"

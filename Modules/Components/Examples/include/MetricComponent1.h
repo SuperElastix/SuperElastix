@@ -20,8 +20,8 @@
 #ifndef itkMetricComponent1_h
 #define itkMetricComponent1_h
 
-#include "ComponentBase.h"
-#include "Interfaces.h"
+#include "selxComponentBase.h"
+#include "selxInterfaces.h"
 
 namespace selx
 {

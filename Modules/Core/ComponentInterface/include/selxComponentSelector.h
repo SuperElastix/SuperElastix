@@ -20,7 +20,7 @@
 #define ComponentSelector_h
 
 #include "itkObjectFactory.h"
-#include "ComponentBase.h"
+#include "selxComponentBase.h"
 
 //#pragma once
 

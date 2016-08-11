@@ -20,8 +20,8 @@
 #ifndef selxItkImageSink_h
 #define selxItkImageSink_h
 
-#include "ComponentBase.h"
-#include "Interfaces.h"
+#include "selxComponentBase.h"
+#include "selxInterfaces.h"
 #include <string.h>
 #include "selxMacro.h"
 #include "itkImageFileWriter.h"

@@ -17,7 +17,7 @@
  *
  *=========================================================================*/
 
-#include "Overlord.h"
+#include "selxOverlord.h"
 
 //#include "ComponentFactory.h"
 #include "TransformComponent1.h"

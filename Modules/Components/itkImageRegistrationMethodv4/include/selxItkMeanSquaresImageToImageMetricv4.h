@@ -20,8 +20,8 @@
 #ifndef selxItkMeanSquaresImageToImageMetricv4Component_h
 #define selxItkMeanSquaresImageToImageMetricv4Component_h
 
-#include "ComponentBase.h"
-#include "Interfaces.h"
+#include "selxComponentBase.h"
+#include "selxInterfaces.h"
 #include "itkMeanSquaresImageToImageMetricv4.h"
 #include <string.h>
 #include "selxMacro.h"

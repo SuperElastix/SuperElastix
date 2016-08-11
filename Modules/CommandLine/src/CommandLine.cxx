@@ -23,7 +23,7 @@
 #include "selxAnyFileReader.h"
 #include "selxAnyFileWriter.h"
 
-#include "DefaultComponents.h"
+#include "selxDefaultComponents.h"
 
 #include <boost/algorithm/string.hpp>
 

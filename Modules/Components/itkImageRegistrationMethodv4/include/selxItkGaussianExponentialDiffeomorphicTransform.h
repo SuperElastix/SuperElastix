@@ -20,8 +20,8 @@
 #ifndef selxItkGaussianExponentialDiffeomorphicTransformComponent_h
 #define selxItkGaussianExponentialDiffeomorphicTransformComponent_h
 
-#include "ComponentBase.h"
-#include "Interfaces.h"
+#include "selxComponentBase.h"
+#include "selxInterfaces.h"
 #include "itkGaussianExponentialDiffeomorphicTransform.h"
 #include <string.h>
 #include "selxMacro.h"

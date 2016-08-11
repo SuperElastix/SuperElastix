@@ -41,7 +41,7 @@
 #include "itkMeshFileReader.h"
 #include "itkMeshFileWriter.h"
 
-#include "DefaultComponents.h"
+#include "selxDefaultComponents.h"
 #include "selxDataManager.h"
 #include "gtest/gtest.h"
 

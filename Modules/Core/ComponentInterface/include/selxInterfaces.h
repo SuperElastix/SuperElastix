@@ -20,7 +20,7 @@
 #ifndef Interfaces_h
 #define Interfaces_h
 
-#include "ComponentBase.h"
+#include "selxComponentBase.h"
 #include <typeinfo>
 #include <string>
 
@@ -285,7 +285,7 @@ protected:
 } // end namespace selx
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "Interfaces.hxx"
+#include "selxInterfaces.hxx"
 #endif
 
 #endif // #define Interfaces_h

@@ -20,8 +20,8 @@
 #ifndef selxMonolithicElastixComponent_h
 #define selxMonolithicElastixComponent_h
 
-#include "ComponentBase.h"
-#include "Interfaces.h"
+#include "selxComponentBase.h"
+#include "selxInterfaces.h"
 #include "itkImageSource.h"
 
 #include "elxElastixFilter.h"

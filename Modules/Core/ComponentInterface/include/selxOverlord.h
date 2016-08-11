@@ -37,8 +37,8 @@
 
 #include "selxMacro.h"
 #include "selxBlueprint.h"
-#include "ComponentFactory.h"
-#include "Interfaces.h"
+#include "selxComponentFactory.h"
+#include "selxInterfaces.h"
 namespace selx
 {
 
