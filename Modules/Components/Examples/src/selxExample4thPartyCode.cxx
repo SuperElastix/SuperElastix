@@ -17,18 +17,28 @@
  *
  *=========================================================================*/
 
-#include "Metric4thPartyWrapper.h"
-
-namespace selx
+#include "selxExample4thPartyCode.h"
+namespace Example4thParty
 {
-void Metric4thPartyWrapper::SetMetricValueComponent(MetricValueInterface* metricValueComponent)
+GDOptimizer4thParty::GDOptimizer4thParty()
 {
-  this->metricval = metricValueComponent;
+  this->theMetric = nullptr;
 }
-
-int Metric4thPartyWrapper::GetCost()
+GDOptimizer4thParty::~GDOptimizer4thParty()
 {
-  return this->metricval->GetValue();
 }
-
-} // end namespace selx
+int GDOptimizer4thParty::SetMetric(Metric4thPartyBase* metric)
+{
+  this->theMetric = metric;
+  return 0;
+}
+int GDOptimizer4thParty::DoOptimization()
+{
+  if (this->theMetric != nullptr)
+  {
+    std::cout << "GDOptimizer4thParty->DoOptimization():" << std::endl;
+    std::cout << "  theMetric->GetCost():" << theMetric->GetCost() << std::endl;
+  }
+  return 0;
+}
+} // end namespace Example4thParty

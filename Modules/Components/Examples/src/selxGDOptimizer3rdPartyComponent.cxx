@@ -17,26 +17,40 @@
  *
  *=========================================================================*/
 
-#include "SSDMetric4thPartyComponent.h"
+#include "selxGDOptimizer3rdPartyComponent.h"
+
 namespace selx
 {
-
-SSDMetric4thPartyComponent::SSDMetric4thPartyComponent()
+GDOptimizer3rdPartyComponent::GDOptimizer3rdPartyComponent()
 {
-  this->theImplementation = new Example4thParty::SSDMetric4thParty();
+  this->theImplementation = new Example3rdParty::GDOptimizer3rdParty();
+  this->MetricObject = new Metric3rdPartyWrapper();
 }
-SSDMetric4thPartyComponent::~SSDMetric4thPartyComponent()
+GDOptimizer3rdPartyComponent::~GDOptimizer3rdPartyComponent()
 {
   delete this->theImplementation;
+  delete this->MetricObject;
 }
 
-int SSDMetric4thPartyComponent::GetValue()
+
+int GDOptimizer3rdPartyComponent::Set(MetricValueInterface* component)
 {
-  return this->theImplementation->GetCost(); // translate method name
-};
+  this->MetricObject->SetMetricValueComponent(component);
+  return 0;
+}
+int GDOptimizer3rdPartyComponent::Set(MetricDerivativeInterface* component)
+{
+  this->MetricObject->SetMetricDerivativeComponent(component);
+  return 0;
+}
+int GDOptimizer3rdPartyComponent::Update()
+{
+  this->theImplementation->SetMetric(this->MetricObject);
+  return this->theImplementation->Optimize(); // 3rd party specific call
+}
 
 bool
-SSDMetric4thPartyComponent
+GDOptimizer3rdPartyComponent
 ::MeetsCriterion(const CriterionType &criterion)
 {
   bool hasUndefinedCriteria(false);
@@ -54,4 +68,5 @@ SSDMetric4thPartyComponent
   }
   return meetsCriteria;
 }
+
 } //end namespace selx

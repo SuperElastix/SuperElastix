@@ -17,28 +17,20 @@
  *
  *=========================================================================*/
 
-#include "Example4thPartyCode.h"
-namespace Example4thParty
+#ifndef Metric4thPartyWrapper_h
+#define Metric4thPartyWrapper_h
+
+#include "selxExample4thPartyCode.h"
+#include "selxInterfaces.hxx"
+namespace selx
 {
-GDOptimizer4thParty::GDOptimizer4thParty()
-{
-  this->theMetric = nullptr;
-}
-GDOptimizer4thParty::~GDOptimizer4thParty()
-{
-}
-int GDOptimizer4thParty::SetMetric(Metric4thPartyBase* metric)
-{
-  this->theMetric = metric;
-  return 0;
-}
-int GDOptimizer4thParty::DoOptimization()
-{
-  if (this->theMetric != nullptr)
-  {
-    std::cout << "GDOptimizer4thParty->DoOptimization():" << std::endl;
-    std::cout << "  theMetric->GetCost():" << theMetric->GetCost() << std::endl;
-  }
-  return 0;
-}
-} // end namespace Example4thParty
+// An Optimizer4thParty expects that Metric4thParty will be set as input. All accepted interfaces by the Optimizer4thPartyCompoment will be delegated to the Metric4thPartyWrapper object.
+  class Metric4thPartyWrapper : public Example4thParty::Metric4thPartyBase  {
+public:
+  void SetMetricValueComponent(MetricValueInterface*);
+  virtual int GetCost();
+private:
+  MetricValueInterface* metricval;
+};
+} // end namespace selx
+#endif // #define Metric3rdPartyWrapper_h

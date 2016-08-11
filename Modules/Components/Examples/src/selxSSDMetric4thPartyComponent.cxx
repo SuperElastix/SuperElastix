@@ -17,30 +17,26 @@
  *
  *=========================================================================*/
 
-#include "SSDMetric3rdPartyComponent.h"
+#include "selxSSDMetric4thPartyComponent.h"
 namespace selx
 {
-SSDMetric3rdPartyComponent::SSDMetric3rdPartyComponent()
+
+SSDMetric4thPartyComponent::SSDMetric4thPartyComponent()
 {
-  this->theImplementation = new Example3rdParty::SSDMetric3rdParty();
+  this->theImplementation = new Example4thParty::SSDMetric4thParty();
 }
-SSDMetric3rdPartyComponent::~SSDMetric3rdPartyComponent()
+SSDMetric4thPartyComponent::~SSDMetric4thPartyComponent()
 {
-  delete this->theImplementation; 
+  delete this->theImplementation;
 }
 
-int SSDMetric3rdPartyComponent::GetDerivative()
+int SSDMetric4thPartyComponent::GetValue()
 {
-  return this->theImplementation->GetDerivative();
-};
-
-int SSDMetric3rdPartyComponent::GetValue()
-{
-  return this->theImplementation->GetValue();
+  return this->theImplementation->GetCost(); // translate method name
 };
 
 bool
-SSDMetric3rdPartyComponent
+SSDMetric4thPartyComponent
 ::MeetsCriterion(const CriterionType &criterion)
 {
   bool hasUndefinedCriteria(false);
@@ -58,5 +54,4 @@ SSDMetric3rdPartyComponent
   }
   return meetsCriteria;
 }
-
 } //end namespace selx

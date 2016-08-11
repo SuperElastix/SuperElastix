@@ -17,25 +17,25 @@
  *
  *=========================================================================*/
 
-#ifndef SSDMetric4thPartyComponent_h
-#define SSDMetric4thPartyComponent_h
+#ifndef SSDMetric3rdPartyComponent_h
+#define SSDMetric3rdPartyComponent_h
 
 #include "selxComponentBase.h"
 #include "selxInterfaces.hxx"
-#include "Example4thPartyCode.h"
+#include "selxExample3rdPartyCode.h"
 
 namespace selx
 {
-  // SSDMetric4thPartyComponent provides only a value and not a derivative
-  class SSDMetric4thPartyComponent : 
+  // SSDMetric3rdPartyComponent provides a value and a derivative
+  class SSDMetric3rdPartyComponent : 
     public Implements<
     Accepting<>,
-    Providing< MetricValueInterface>
+    Providing< MetricDerivativeInterface, MetricValueInterface>
     >
   {
   public:
     /** Standard class typedefs. */
-    typedef SSDMetric4thPartyComponent                        Self;
+    typedef SSDMetric3rdPartyComponent                        Self;
     typedef ComponentBase Superclass;
     typedef itk::SmartPointer< Self >             Pointer;
     typedef itk::SmartPointer< const Self >       ConstPointer;
@@ -44,17 +44,17 @@ namespace selx
     itkNewMacro(Self);
 
     /** Run-time type information (and related methods). */
-    itkTypeMacro(SSDMetric4thPartyComponent, Superclass);
+    itkTypeMacro(SSDMetric3rdPartyComponent, Superclass);
 
-    SSDMetric4thPartyComponent();
-    virtual ~SSDMetric4thPartyComponent();
-    Example4thParty::SSDMetric4thParty* theImplementation;
+    SSDMetric3rdPartyComponent();
+    virtual ~SSDMetric3rdPartyComponent();
+    Example3rdParty::SSDMetric3rdParty* theImplementation;
     virtual int GetValue() override;
-    virtual bool MeetsCriterion(const CriterionType &criterion) override;
+    virtual int GetDerivative() override;
     //virtual bool MeetsCriteria(const CriteriaType &criteria);
-    //static const char * GetName(){ return "SSDMetric4thPartyComponent"; };
-    static const char * GetDescription(){ return "SSD Metric 4th Party Component"; };
-    
+    virtual bool MeetsCriterion(const CriterionType &criterion) override;
+    static const char * GetName(){ return "SSDMetric3rdPartyComponent"; }
+    static const char * GetDescription(){ return "SSD Metric 3rd Party Component"; };
   };
 } //end namespace selx
-#endif // #define SSDMetric4thPartyComponent_h
+#endif // #define SSDMetric3rdPartyComponent_h

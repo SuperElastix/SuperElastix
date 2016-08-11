@@ -17,10 +17,10 @@
  *
  *=========================================================================*/
 
-#include "SSDMetric3rdPartyComponent.h"
-#include "GDOptimizer3rdPartyComponent.h"
-#include "SSDMetric4thPartyComponent.h"
-#include "GDOptimizer4thPartyComponent.h"
+#include "selxSSDMetric3rdPartyComponent.h"
+#include "selxGDOptimizer3rdPartyComponent.h"
+#include "selxSSDMetric4thPartyComponent.h"
+#include "selxGDOptimizer4thPartyComponent.h"
 
 #include "gtest/gtest.h"
 

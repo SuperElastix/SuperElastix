@@ -19,7 +19,7 @@
 #ifndef MetricComponent1_hxx
 #define MetricComponent1_hxx
 
-#include "MetricComponent1.h"
+#include "selxMetricComponent1.h"
 
 namespace selx
 {

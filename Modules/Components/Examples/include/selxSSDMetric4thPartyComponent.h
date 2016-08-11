@@ -17,27 +17,25 @@
  *
  *=========================================================================*/
 
-#ifndef GDOptimizer3rdPartyComponent_h
-#define GDOptimizer3rdPartyComponent_h
+#ifndef SSDMetric4thPartyComponent_h
+#define SSDMetric4thPartyComponent_h
 
 #include "selxComponentBase.h"
-#include "selxInterfaces.h"
-#include "Example3rdPartyCode.h"
-#include "Metric3rdPartyWrapper.h"
-#include <string.h>
+#include "selxInterfaces.hxx"
+#include "selxExample4thPartyCode.h"
 
 namespace selx
 {
-
-  class GDOptimizer3rdPartyComponent : 
+  // SSDMetric4thPartyComponent provides only a value and not a derivative
+  class SSDMetric4thPartyComponent : 
     public Implements<
-      Accepting< MetricValueInterface, MetricDerivativeInterface >,
-      Providing< OptimizerUpdateInterface>
+    Accepting<>,
+    Providing< MetricValueInterface>
     >
   {
   public:
     /** Standard class typedefs. */
-    typedef GDOptimizer3rdPartyComponent                        Self;
+    typedef SSDMetric4thPartyComponent                        Self;
     typedef ComponentBase Superclass;
     typedef itk::SmartPointer< Self >             Pointer;
     typedef itk::SmartPointer< const Self >       ConstPointer;
@@ -46,22 +44,17 @@ namespace selx
     itkNewMacro(Self);
 
     /** Run-time type information (and related methods). */
-    itkTypeMacro(GDOptimizer3rdPartyComponent, Superclass);
+    itkTypeMacro(SSDMetric4thPartyComponent, Superclass);
 
-
-    GDOptimizer3rdPartyComponent();
-    virtual ~GDOptimizer3rdPartyComponent();
-    Example3rdParty::GDOptimizer3rdParty* theImplementation;
-    Metric3rdPartyWrapper* MetricObject;
-    //virtual int ConnectFrom(const char *, ComponentBase*);
-    virtual int Set(MetricValueInterface*) override;
-    virtual int Set(MetricDerivativeInterface*) override;
-    virtual int Update() override;
-    //virtual bool MeetsCriteria(const CriteriaType &criteria);
+    SSDMetric4thPartyComponent();
+    virtual ~SSDMetric4thPartyComponent();
+    Example4thParty::SSDMetric4thParty* theImplementation;
+    virtual int GetValue() override;
     virtual bool MeetsCriterion(const CriterionType &criterion) override;
+    //virtual bool MeetsCriteria(const CriteriaType &criteria);
+    //static const char * GetName(){ return "SSDMetric4thPartyComponent"; };
+    static const char * GetDescription(){ return "SSD Metric 4th Party Component"; };
     
-    //static const char * GetName() { return "GDOptimizer3rdPartyComponent"; } ;
-    static const char * GetDescription() { return "GD Optimizer 3rd Party Component"; };
   };
 } //end namespace selx
-#endif // #define GDOptimizer3rdPartyComponent_h
+#endif // #define SSDMetric4thPartyComponent_h

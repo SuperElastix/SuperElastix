@@ -20,7 +20,7 @@
 #ifndef ComponentTraits_h
 #define ComponentTraits_h
 
-#include "GDOptimizer3rdPartyComponent.h"
+#include "selxGDOptimizer3rdPartyComponent.h"
 
 namespace selx
 {

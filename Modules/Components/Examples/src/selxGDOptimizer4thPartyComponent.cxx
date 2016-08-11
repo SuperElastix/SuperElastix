@@ -17,40 +17,37 @@
  *
  *=========================================================================*/
 
-#include "GDOptimizer3rdPartyComponent.h"
+#include "selxGDOptimizer4thPartyComponent.h"
 
 namespace selx
 {
-GDOptimizer3rdPartyComponent::GDOptimizer3rdPartyComponent()
+
+GDOptimizer4thPartyComponent::GDOptimizer4thPartyComponent()
 {
-  this->theImplementation = new Example3rdParty::GDOptimizer3rdParty();
-  this->MetricObject = new Metric3rdPartyWrapper();
+  this->theImplementation = new Example4thParty::GDOptimizer4thParty();
+  this->MetricObject = new Metric4thPartyWrapper();
 }
-GDOptimizer3rdPartyComponent::~GDOptimizer3rdPartyComponent()
+
+GDOptimizer4thPartyComponent::~GDOptimizer4thPartyComponent()
 {
   delete this->theImplementation;
   delete this->MetricObject;
 }
 
-
-int GDOptimizer3rdPartyComponent::Set(MetricValueInterface* component)
+int GDOptimizer4thPartyComponent::Set(MetricValueInterface* component)
 {
   this->MetricObject->SetMetricValueComponent(component);
   return 0;
 }
-int GDOptimizer3rdPartyComponent::Set(MetricDerivativeInterface* component)
-{
-  this->MetricObject->SetMetricDerivativeComponent(component);
-  return 0;
-}
-int GDOptimizer3rdPartyComponent::Update()
+
+int GDOptimizer4thPartyComponent::Update()
 {
   this->theImplementation->SetMetric(this->MetricObject);
-  return this->theImplementation->Optimize(); // 3rd party specific call
+  return this->theImplementation->DoOptimization(); // 4th party specific call
 }
 
 bool
-GDOptimizer3rdPartyComponent
+GDOptimizer4thPartyComponent
 ::MeetsCriterion(const CriterionType &criterion)
 {
   bool hasUndefinedCriteria(false);

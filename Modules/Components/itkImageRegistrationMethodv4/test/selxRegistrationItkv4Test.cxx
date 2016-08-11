@@ -19,12 +19,12 @@
 
 #include "selxSuperElastixFilter.h"
 
-#include "TransformComponent1.h"
-#include "MetricComponent1.h"
-#include "GDOptimizer3rdPartyComponent.h"
-#include "GDOptimizer4thPartyComponent.h"
-#include "SSDMetric3rdPartyComponent.h"
-#include "SSDMetric4thPartyComponent.h"
+#include "selxTransformComponent1.h"
+#include "selxMetricComponent1.h"
+#include "selxGDOptimizer3rdPartyComponent.h"
+#include "selxGDOptimizer4thPartyComponent.h"
+#include "selxSSDMetric3rdPartyComponent.h"
+#include "selxSSDMetric4thPartyComponent.h"
 
 #include "selxItkSmoothingRecursiveGaussianImageFilterComponent.h"
 #include "selxDisplacementFieldItkImageFilterSink.h"

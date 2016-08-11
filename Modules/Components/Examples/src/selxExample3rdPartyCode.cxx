@@ -17,23 +17,29 @@
  *
  *=========================================================================*/
 
-#ifndef Metric3rdPartyWrapper_h
-#define Metric3rdPartyWrapper_h
-
-#include "Example3rdPartyCode.h"
-#include "selxInterfaces.hxx"
-namespace selx
+#include "selxExample3rdPartyCode.h"
+namespace Example3rdParty
 {
-// An Optimizer3rdParty expects that Metric3rdParty will be set as input. All accepted interfaces by the Optimizer3rdPartyCompoment will be delegated to the Metric3rdPartyWrapper object.
-  class Metric3rdPartyWrapper : public Example3rdParty::Metric3rdPartyBase  {
-public:
-  void SetMetricValueComponent(MetricValueInterface*);
-  void SetMetricDerivativeComponent(MetricDerivativeInterface*);
-  virtual int GetValue();
-  virtual int GetDerivative();
-private:
-  MetricValueInterface* metricval;
-  MetricDerivativeInterface* metricderiv;
-};
-} // end namespace selx
-#endif // #define Metric3rdPartyWrapper_h
+GDOptimizer3rdParty::GDOptimizer3rdParty()
+{
+  this->theMetric = nullptr;
+}
+GDOptimizer3rdParty::~GDOptimizer3rdParty()
+{
+}
+int GDOptimizer3rdParty::SetMetric(Metric3rdPartyBase* metric)
+{
+  this->theMetric = metric;
+  return 0;
+}
+int GDOptimizer3rdParty::Optimize()
+{
+  if (this->theMetric != nullptr)
+  {
+    std::cout << "GDOptimizer3rdParty->Optimize():" << std::endl;
+    std::cout << "  theMetric->GetValue():" << theMetric->GetValue() << std::endl;
+    std::cout << "  theMetric->GetDerivative():" << theMetric->GetDerivative() << std::endl;
+  }
+  return 0;
+}
+} // end namespace Example3rdParty

@@ -17,7 +17,7 @@
  *
  *=========================================================================*/
 
-#include "Metric3rdPartyWrapper.h"
+#include "selxMetric3rdPartyWrapper.h"
 
 namespace selx
 {

@@ -19,17 +19,17 @@
 
 #include "gtest/gtest.h"
 
-#include "TransformComponent1.h"
+#include "selxTransformComponent1.h"
 //#include "itkTransformComponent1Factory.h"
 
-#include "MetricComponent1.h"
+#include "selxMetricComponent1.h"
 //#include "itkMetricComponent1Factory.h"
 
 #include "selxComponentFactory.h"
-#include "GDOptimizer3rdPartyComponent.h"
-#include "GDOptimizer4thPartyComponent.h"
-#include "SSDMetric3rdPartyComponent.h"
-#include "SSDMetric4thPartyComponent.h"
+#include "selxGDOptimizer3rdPartyComponent.h"
+#include "selxGDOptimizer4thPartyComponent.h"
+#include "selxSSDMetric3rdPartyComponent.h"
+#include "selxSSDMetric4thPartyComponent.h"
 
 namespace selx{
 

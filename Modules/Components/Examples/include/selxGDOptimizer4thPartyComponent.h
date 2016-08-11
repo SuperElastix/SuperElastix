@@ -17,25 +17,27 @@
  *
  *=========================================================================*/
 
-#ifndef SSDMetric3rdPartyComponent_h
-#define SSDMetric3rdPartyComponent_h
+#ifndef GDOptimizer4thPartyComponent_h
+#define GDOptimizer4thPartyComponent_h
 
 #include "selxComponentBase.h"
 #include "selxInterfaces.hxx"
-#include "Example3rdPartyCode.h"
+#include "selxExample4thPartyCode.h"
+#include "selxMetric4thPartyWrapper.h"
 
 namespace selx
 {
-  // SSDMetric3rdPartyComponent provides a value and a derivative
-  class SSDMetric3rdPartyComponent : 
-    public Implements<
-    Accepting<>,
-    Providing< MetricDerivativeInterface, MetricValueInterface>
+  // wrapping into components: 
+  class GDOptimizer4thPartyComponent : 
+    public Implements <
+    Accepting< MetricValueInterface >,
+    Providing < OptimizerUpdateInterface, ConflictinUpdateInterface >
     >
+
   {
   public:
     /** Standard class typedefs. */
-    typedef SSDMetric3rdPartyComponent                        Self;
+    typedef GDOptimizer4thPartyComponent                        Self;
     typedef ComponentBase Superclass;
     typedef itk::SmartPointer< Self >             Pointer;
     typedef itk::SmartPointer< const Self >       ConstPointer;
@@ -44,17 +46,24 @@ namespace selx
     itkNewMacro(Self);
 
     /** Run-time type information (and related methods). */
-    itkTypeMacro(SSDMetric3rdPartyComponent, Superclass);
+    itkTypeMacro(GDOptimizer4thPartyComponent, Superclass);
 
-    SSDMetric3rdPartyComponent();
-    virtual ~SSDMetric3rdPartyComponent();
-    Example3rdParty::SSDMetric3rdParty* theImplementation;
-    virtual int GetValue() override;
-    virtual int GetDerivative() override;
+    GDOptimizer4thPartyComponent();
+    virtual ~GDOptimizer4thPartyComponent();
+    Example4thParty::GDOptimizer4thParty* theImplementation;
+    Metric4thPartyWrapper* MetricObject;
+    //virtual int ConnectFrom(const char *, ComponentBase*);
+    virtual int Set(MetricValueInterface*) override;
+    virtual int Update() override;
+
+    //template <class ConflictinUpdateInterface> virtual int Update() { return 5; };
+    // "error" : member function templates cannot be virtual
+    virtual int Update(ConflictinUpdateInterface*) override { return 5; };
     //virtual bool MeetsCriteria(const CriteriaType &criteria);
     virtual bool MeetsCriterion(const CriterionType &criterion) override;
-    static const char * GetName(){ return "SSDMetric3rdPartyComponent"; }
-    static const char * GetDescription(){ return "SSD Metric 3rd Party Component"; };
+    //static const char * GetName(){ return "GDOptimizer4thPartyComponent"; };
+    static const char * GetDescription(){ return "GD Optimizer 4th Party Component"; };
   };
+
 } //end namespace selx
-#endif // #define SSDMetric3rdPartyComponent_h
+#endif // #define GDOptimizer4thPartyComponent_h

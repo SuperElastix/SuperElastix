@@ -19,7 +19,7 @@
 #ifndef TransformComponent1_hxx
 #define TransformComponent1_hxx
 
-#include "TransformComponent1.h"
+#include "selxTransformComponent1.h"
 
 namespace selx
 {

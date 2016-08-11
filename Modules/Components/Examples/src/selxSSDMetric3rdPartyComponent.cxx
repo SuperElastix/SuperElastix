@@ -17,37 +17,30 @@
  *
  *=========================================================================*/
 
-#include "GDOptimizer4thPartyComponent.h"
-
+#include "selxSSDMetric3rdPartyComponent.h"
 namespace selx
 {
-
-GDOptimizer4thPartyComponent::GDOptimizer4thPartyComponent()
+SSDMetric3rdPartyComponent::SSDMetric3rdPartyComponent()
 {
-  this->theImplementation = new Example4thParty::GDOptimizer4thParty();
-  this->MetricObject = new Metric4thPartyWrapper();
+  this->theImplementation = new Example3rdParty::SSDMetric3rdParty();
+}
+SSDMetric3rdPartyComponent::~SSDMetric3rdPartyComponent()
+{
+  delete this->theImplementation; 
 }
 
-GDOptimizer4thPartyComponent::~GDOptimizer4thPartyComponent()
+int SSDMetric3rdPartyComponent::GetDerivative()
 {
-  delete this->theImplementation;
-  delete this->MetricObject;
-}
+  return this->theImplementation->GetDerivative();
+};
 
-int GDOptimizer4thPartyComponent::Set(MetricValueInterface* component)
+int SSDMetric3rdPartyComponent::GetValue()
 {
-  this->MetricObject->SetMetricValueComponent(component);
-  return 0;
-}
-
-int GDOptimizer4thPartyComponent::Update()
-{
-  this->theImplementation->SetMetric(this->MetricObject);
-  return this->theImplementation->DoOptimization(); // 4th party specific call
-}
+  return this->theImplementation->GetValue();
+};
 
 bool
-GDOptimizer4thPartyComponent
+SSDMetric3rdPartyComponent
 ::MeetsCriterion(const CriterionType &criterion)
 {
   bool hasUndefinedCriteria(false);
