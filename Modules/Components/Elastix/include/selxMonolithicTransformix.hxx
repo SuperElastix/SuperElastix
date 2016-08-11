@@ -59,16 +59,16 @@ namespace selx
 
 
     auto size = fixedImageDomain->GetLargestPossibleRegion().GetSize();
-    TransformixFilterType::ParameterValueVectorType sizeParameters;
+    typename TransformixFilterType::ParameterValueVectorType sizeParameters;
 
     auto spacing = fixedImageDomain->GetSpacing();
-    TransformixFilterType::ParameterValueVectorType spacingParameters;
+    typename TransformixFilterType::ParameterValueVectorType spacingParameters;
 
     auto index = fixedImageDomain->GetLargestPossibleRegion().GetIndex();
-    TransformixFilterType::ParameterValueVectorType indexParameters;
+    typename TransformixFilterType::ParameterValueVectorType indexParameters;
 
     auto origin = fixedImageDomain->GetOrigin();
-    TransformixFilterType::ParameterValueVectorType originParameters;
+    typename TransformixFilterType::ParameterValueVectorType originParameters;
     
     //auto direction = fixedImageDomain->GetDirectionCosines();
     //TransformixFilterType::ParameterValueVectorType DirectionParameters;
@@ -83,7 +83,7 @@ namespace selx
 
 
     elxParameterObjectPointer trxParameterObject = elxParameterObjectType::New(); 
-    TransformixFilterType::ParameterMapType trxParameterMap = {
+    typename TransformixFilterType::ParameterMapType trxParameterMap = {
       { "FixedImageDimension", { std::to_string(Dimensionality) } },
       { "MovingImageDimension", { std::to_string(Dimensionality) } },
       { "FixedInternalImagePixelType", { "float" } },

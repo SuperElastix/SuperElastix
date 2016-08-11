@@ -70,7 +70,7 @@ namespace selx
     typedef elastix::ParameterObject elxParameterObjectType;
     typedef elxParameterObjectType::Pointer elxParameterObjectPointer;
     
-    typedef typename elastixTransformParameterObjectInterface::elastixTransformParameterObject elastixTransformParameterObject;
+    typedef typename elastixTransformParameterObjectInterface<itk::Image<TPixel, Dimensionality>, itk::Image<TPixel, Dimensionality>>::elastixTransformParameterObject elastixTransformParameterObject;
     
     // Accepting Interfaces:
     virtual int Set(itkImageFixedInterface<Dimensionality, TPixel>*) override;
