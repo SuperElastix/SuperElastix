@@ -20,7 +20,7 @@
 #ifndef selxMonolithicTransformixComponent_h
 #define selxMonolithicTransformixComponent_h
 
-#include "selxComponentBase.h"
+#include "selxSuperElastixComponent.h"
 #include "selxInterfaces.h"
 #include "itkImageSource.h"
 

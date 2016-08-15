@@ -20,7 +20,7 @@
 #ifndef selxItkImageRegistrationMethodv4Component_h
 #define selxItkImageRegistrationMethodv4Component_h
 
-#include "selxComponentBase.h"
+#include "selxSuperElastixComponent.h"
 #include "selxInterfaces.h"
 #include "itkImageRegistrationMethodv4.h"
 #include "itkGradientDescentOptimizerv4.h"

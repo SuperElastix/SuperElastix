@@ -17,8 +17,8 @@
  *
  *=========================================================================*/
 
-#ifndef Interfaces_hxx
-#define Interfaces_hxx
+#ifndef selxSuperElastixComponent_hxx
+#define selxSuperElastixComponent_hxx
 
 #include "selxInterfaceTraits.h"
 namespace selx
@@ -101,6 +101,7 @@ int Accepting<FirstInterface, RestInterfaces... >::ConnectFromImpl(ComponentBase
 template<typename FirstInterface, typename ... RestInterfaces>
 bool Accepting<FirstInterface, RestInterfaces... >::HasInterface(const char* interfacename)
 {
+  //TODO: check on interface template arguments as well
   if (InterfaceName<InterfaceAcceptor<FirstInterface>>::Get() == std::string(interfacename))
   {
     return true;
@@ -111,6 +112,7 @@ bool Accepting<FirstInterface, RestInterfaces... >::HasInterface(const char* int
 template<typename FirstInterface, typename ... RestInterfaces>
 bool Providing<FirstInterface, RestInterfaces... >::HasInterface(const char* interfacename)
 {
+  //TODO: check on interface template arguments as well
   if (InterfaceName<FirstInterface>::Get() == std::string( interfacename))
   {
     return true;
@@ -121,4 +123,4 @@ bool Providing<FirstInterface, RestInterfaces... >::HasInterface(const char* int
 } // end namespace selx
 
 
-#endif // #define Interfaces_hxx
+#endif // #define selxSuperElastixComponent_hxx

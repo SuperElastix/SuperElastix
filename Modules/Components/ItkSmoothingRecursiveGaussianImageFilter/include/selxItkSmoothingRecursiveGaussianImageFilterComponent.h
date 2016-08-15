@@ -20,7 +20,7 @@
 #ifndef selxItkSmoothingRecursiveGaussianImageFilterComponent_h
 #define selxItkSmoothingRecursiveGaussianImageFilterComponent_h
 
-#include "selxComponentBase.h"
+#include "selxSuperElastixComponent.h"
 #include "selxInterfaces.h"
 #include "itkSmoothingRecursiveGaussianImageFilter.h"
 #include "itkImageSource.h"

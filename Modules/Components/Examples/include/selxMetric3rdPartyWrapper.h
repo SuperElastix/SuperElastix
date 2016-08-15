@@ -21,7 +21,7 @@
 #define Metric3rdPartyWrapper_h
 
 #include "selxExample3rdPartyCode.h"
-#include "selxInterfaces.hxx"
+#include "selxInterfaces.h"
 namespace selx
 {
 // An Optimizer3rdParty expects that Metric3rdParty will be set as input. All accepted interfaces by the Optimizer3rdPartyCompoment will be delegated to the Metric3rdPartyWrapper object.

@@ -20,7 +20,7 @@
 #ifndef GDOptimizer3rdPartyComponent_h
 #define GDOptimizer3rdPartyComponent_h
 
-#include "selxComponentBase.h"
+#include "selxSuperElastixComponent.h"
 #include "selxInterfaces.h"
 #include "selxExample3rdPartyCode.h"
 #include "selxMetric3rdPartyWrapper.h"

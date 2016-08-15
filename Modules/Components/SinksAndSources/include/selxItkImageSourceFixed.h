@@ -20,7 +20,7 @@
 #ifndef selxItkImageSourceFixed_h
 #define selxItkImageSourceFixed_h
 
-#include "selxComponentBase.h"
+#include "selxSuperElastixComponent.h"
 #include "selxInterfaces.h"
 #include <string.h>
 #include "selxMacro.h"

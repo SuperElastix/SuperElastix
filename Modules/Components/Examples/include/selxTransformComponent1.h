@@ -20,8 +20,9 @@
 #ifndef itkTransformComponent1_h
 #define itkTransformComponent1_h
 
+#include "selxSuperElastixComponent.h"
 #include "selxInterfaces.h"
-#include "selxComponentBase.h"
+#include "selxMacro.h"
 
 namespace selx
 {
@@ -39,6 +40,7 @@ public:
   typedef itk::SmartPointer< const Self >       ConstPointer;
 
   /** New macro for creation of through the object factory. */
+  //selxNewMacro(Self, ComponentBase);
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */

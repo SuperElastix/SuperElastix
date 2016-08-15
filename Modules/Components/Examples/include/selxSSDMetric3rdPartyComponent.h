@@ -20,8 +20,8 @@
 #ifndef SSDMetric3rdPartyComponent_h
 #define SSDMetric3rdPartyComponent_h
 
-#include "selxComponentBase.h"
-#include "selxInterfaces.hxx"
+#include "selxSuperElastixComponent.h"
+#include "selxInterfaces.h"
 #include "selxExample3rdPartyCode.h"
 
 namespace selx

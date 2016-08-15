@@ -20,8 +20,8 @@
 #ifndef GDOptimizer4thPartyComponent_h
 #define GDOptimizer4thPartyComponent_h
 
-#include "selxComponentBase.h"
-#include "selxInterfaces.hxx"
+#include "selxSuperElastixComponent.h"
+#include "selxInterfaces.h"
 #include "selxExample4thPartyCode.h"
 #include "selxMetric4thPartyWrapper.h"
 

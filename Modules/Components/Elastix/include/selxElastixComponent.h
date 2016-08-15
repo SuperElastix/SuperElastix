@@ -20,7 +20,7 @@
 #ifndef selxElastixComponent_h
 #define selxElastixComponent_h
 
-#include "selxComponentBase.h"
+#include "selxSuperElastixComponent.h"
 #include "selxInterfaces.h"
 #include "itkImageSource.h"
 

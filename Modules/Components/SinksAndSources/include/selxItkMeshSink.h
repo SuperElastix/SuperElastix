@@ -20,7 +20,7 @@
 #ifndef selxItkMeshSink_h
 #define selxItkMeshSink_h
 
-#include "selxComponentBase.h"
+#include "selxSuperElastixComponent.h"
 #include "selxInterfaces.h"
 #include <string.h>
 #include "selxMacro.h"

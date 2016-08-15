@@ -20,7 +20,7 @@
 #ifndef selxItkImageSink_h
 #define selxItkImageSink_h
 
-#include "selxComponentBase.h"
+#include "selxSuperElastixComponent.h"
 #include "selxInterfaces.h"
 #include <string.h>
 #include "selxMacro.h"

@@ -21,7 +21,8 @@
 #define SSDMetric4thPartyComponent_h
 
 #include "selxComponentBase.h"
-#include "selxInterfaces.hxx"
+#include "selxInterfaces.h"
+#include "selxSuperElastixComponent.h"
 #include "selxExample4thPartyCode.h"
 
 namespace selx
