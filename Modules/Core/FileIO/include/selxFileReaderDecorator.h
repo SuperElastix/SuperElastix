@@ -1,3 +1,23 @@
+/*=========================================================================
+*
+*  Copyright Leiden University Medical Center, Erasmus University Medical
+*  Center and contributors
+*
+*  Licensed under the Apache License, Version 2.0 (the "License");
+*  you may not use this file except in compliance with the License.
+*  You may obtain a copy of the License at
+*
+*        http://www.apache.org/licenses/LICENSE-2.0.txt
+*
+*  Unless required by applicable law or agreed to in writing, software
+*  distributed under the License is distributed on an "AS IS" BASIS,
+*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+*  See the License for the specific language governing permissions and
+*  limitations under the License.
+*
+*=========================================================================*/
+
+
 #ifndef selxFileReaderDecorator_h
 #define selxFileReaderDecorator_h
 
@@ -36,27 +56,20 @@ public:
 
   virtual void SetFileName(const std::string) ITK_OVERRIDE;
 
-  /** SetInput accepts any input data as long as it is derived from itk::DataObject */
-  //void SetInput(const DataObjectIdentifierType&, InputDataType*) ITK_OVERRIDE;
-  
-  /** Non type-specific GetOutput */
+  /** The AnyFileReader has a non type-specific, but derived from OutputDataType, GetOutput */
   virtual OutputDataType * GetOutput() ITK_OVERRIDE;
 
   virtual void Update(void) ITK_OVERRIDE;
 
-  /** GetOutput tries dynamic cast to required output type */
-  //template<typename ReturnType>
-  //ReturnType* GetOutput(const DataObjectIdentifierType&);
   FileReaderDecorator();
   ~FileReaderDecorator();
 protected:
-
-
 
   //virtual void GenerateData(void) ITK_OVERRIDE;
   //virtual void GenerateOutputInformation(void) ITK_OVERRIDE;
   
 private:
+  // the actual itk reader instantiation
   ReaderPointer m_Reader;
 };
 
