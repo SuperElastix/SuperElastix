@@ -33,7 +33,7 @@ file(GLOB COMMANDLINE_HEADER_FILES "${COMMANDLINE_SOURCE_DIR}/*/include/*.*")
 
 # Module source files
 set( COMMANDLINE_SOURCE_FILES
-  ${COMMANDLINE_SOURCE_DIR}/src/CommandLine.cxx
+  ${COMMANDLINE_SOURCE_DIR}/src/selxCommandLine.cxx
 )
 
 message(STATUS "BOOST_LIBRARYDIR: ${BOOST_LIBRARYDIR}")
