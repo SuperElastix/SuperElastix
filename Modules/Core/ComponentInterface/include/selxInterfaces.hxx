@@ -39,25 +39,25 @@ int InterfaceAcceptor<InterfaceT>::Connect(ComponentBase* providerComponent){
 }
 //////////////////////////////////////////////////////////////////////////
 template<typename AcceptingInterfaces, typename ProvidingInterfaces>
-ComponentBase::interfaceStatus Implements<AcceptingInterfaces, ProvidingInterfaces>::AcceptConnectionFrom(const char * interfacename, ComponentBase* other)
+ComponentBase::interfaceStatus SuperElastixComponent<AcceptingInterfaces, ProvidingInterfaces>::AcceptConnectionFrom(const char * interfacename, ComponentBase* other)
 {
   return AcceptingInterfaces::ConnectFromImpl(interfacename, other);
 }
 
 template<typename AcceptingInterfaces, typename ProvidingInterfaces>
-int Implements<AcceptingInterfaces, ProvidingInterfaces>::AcceptConnectionFrom(ComponentBase* other)
+int SuperElastixComponent<AcceptingInterfaces, ProvidingInterfaces>::AcceptConnectionFrom(ComponentBase* other)
 {
   return AcceptingInterfaces::ConnectFromImpl(other);
 }
 
 template<typename AcceptingInterfaces, typename ProvidingInterfaces>
-bool Implements<AcceptingInterfaces, ProvidingInterfaces>::HasAcceptingInterface(const char * interfacename)
+bool SuperElastixComponent<AcceptingInterfaces, ProvidingInterfaces>::HasAcceptingInterface(const char * interfacename)
 {
   return AcceptingInterfaces::HasInterface(interfacename);
 }
 
 template<typename AcceptingInterfaces, typename ProvidingInterfaces>
-bool Implements<AcceptingInterfaces, ProvidingInterfaces>::HasProvidingInterface(const char * interfacename)
+bool SuperElastixComponent<AcceptingInterfaces, ProvidingInterfaces>::HasProvidingInterface(const char * interfacename)
 {
   return ProvidingInterfaces::HasInterface(interfacename);
 }

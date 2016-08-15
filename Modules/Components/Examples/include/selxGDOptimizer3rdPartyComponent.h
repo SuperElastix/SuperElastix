@@ -30,7 +30,7 @@ namespace selx
 {
 
   class GDOptimizer3rdPartyComponent : 
-    public Implements<
+    public SuperElastixComponent<
       Accepting< MetricValueInterface, MetricDerivativeInterface >,
       Providing< OptimizerUpdateInterface>
     >

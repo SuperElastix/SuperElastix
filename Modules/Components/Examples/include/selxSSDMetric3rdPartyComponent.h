@@ -28,7 +28,7 @@ namespace selx
 {
   // SSDMetric3rdPartyComponent provides a value and a derivative
   class SSDMetric3rdPartyComponent : 
-    public Implements<
+    public SuperElastixComponent<
     Accepting<>,
     Providing< MetricDerivativeInterface, MetricValueInterface>
     >

@@ -29,7 +29,7 @@ namespace selx
 {
   template <class InternalComputationValueType>
   class ItkGradientDescentOptimizerv4Component : 
-    public Implements<
+    public SuperElastixComponent<
     Accepting< >,
     Providing< itkOptimizerv4Interface<InternalComputationValueType>>
     >

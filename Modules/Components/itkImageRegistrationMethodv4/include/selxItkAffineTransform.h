@@ -29,7 +29,7 @@ namespace selx
 {
   template <class InternalComputationValueType, int Dimensionality>
   class ItkAffineTransformComponent : 
-    public Implements<
+    public SuperElastixComponent<
     Accepting< >,
     Providing< itkTransformInterface<InternalComputationValueType,Dimensionality>>
     >

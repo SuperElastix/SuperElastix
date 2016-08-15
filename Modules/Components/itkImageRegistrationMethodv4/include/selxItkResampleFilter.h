@@ -39,7 +39,7 @@ namespace selx
 {
   template <int Dimensionality, class TPixel, class TInternalComputationValue>
   class ItkResampleFilterComponent : 
-    public Implements<
+    public SuperElastixComponent<
     Accepting< itkTransformInterface<TInternalComputationValue, Dimensionality>,
                itkImageFixedInterface<Dimensionality, TPixel>, //TODO should be FixedImageDomainInterface, we do not require intensities
 			         itkImageMovingInterface<Dimensionality, TPixel> 

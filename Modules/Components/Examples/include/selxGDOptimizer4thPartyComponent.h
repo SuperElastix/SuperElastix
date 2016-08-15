@@ -29,7 +29,7 @@ namespace selx
 {
   // wrapping into components: 
   class GDOptimizer4thPartyComponent : 
-    public Implements <
+    public SuperElastixComponent <
     Accepting< MetricValueInterface >,
     Providing < OptimizerUpdateInterface, ConflictinUpdateInterface >
     >

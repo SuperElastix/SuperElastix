@@ -26,7 +26,7 @@
 namespace selx
 {
 class TransformComponent1 : 
-  public Implements <
+  public SuperElastixComponent <
   Accepting< >,
   Providing < TransformedImageInterface >
   >

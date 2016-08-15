@@ -29,7 +29,7 @@ namespace selx
 {
   template <int Dimensionality, class TPixel>
   class ItkMeanSquaresImageToImageMetricv4Component : 
-    public Implements<
+    public SuperElastixComponent<
     Accepting< >,
     Providing< itkMetricv4Interface<Dimensionality, TPixel>>
     >

@@ -30,7 +30,7 @@ namespace selx
 {
   template <int Dimensionality, class TPixel>
   class ItkSmoothingRecursiveGaussianImageFilterComponent : 
-    public Implements<
+    public SuperElastixComponent<
     Accepting< itkImageInterface<Dimensionality, TPixel> >,
     Providing< itkImageInterface<Dimensionality, TPixel> >
     >

@@ -39,7 +39,7 @@ namespace selx
 {
   template <int Dimensionality, class TPixel>
   class ItkImageRegistrationMethodv4Component : 
-    public Implements<
+    public SuperElastixComponent<
     Accepting< itkImageFixedInterface<Dimensionality, TPixel>, 
                itkImageMovingInterface<Dimensionality, TPixel>,
                itkTransformInterface<double, Dimensionality>,

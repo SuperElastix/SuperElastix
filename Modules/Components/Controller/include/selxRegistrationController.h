@@ -29,7 +29,7 @@ namespace selx
 {
   template<bool dummy = true>
   class RegistrationControllerComponent :
-    public Implements <
+    public SuperElastixComponent <
     Accepting< RunRegistrationInterface, ReconnectTransformInterface, AfterRegistrationInterface >,
     Providing < RegistrationControllerStartInterface >
     >

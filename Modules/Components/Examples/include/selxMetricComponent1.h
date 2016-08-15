@@ -26,7 +26,7 @@
 namespace selx
 {
 class MetricComponent1 : 
-  public Implements <
+  public SuperElastixComponent <
   Accepting< TransformedImageInterface>,
   Providing < MetricValueInterface >
   >

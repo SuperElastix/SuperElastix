@@ -29,7 +29,7 @@ namespace selx
 {
   template <class InternalComputationValueType, int Dimensionality>
   class ItkGaussianExponentialDiffeomorphicTransformComponent : 
-    public Implements<
+    public SuperElastixComponent<
     Accepting< itkImageDomainFixedInterface<Dimensionality> >,
     Providing< itkTransformInterface<InternalComputationValueType,Dimensionality>,
     RunRegistrationInterface>

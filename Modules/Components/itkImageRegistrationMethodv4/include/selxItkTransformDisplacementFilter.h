@@ -39,7 +39,7 @@ namespace selx
 {
   template <int Dimensionality, class TPixel, class TInternalComputationValue>
   class ItkTransformDisplacementFilterComponent : 
-    public Implements<
+    public SuperElastixComponent<
     Accepting< itkTransformInterface<TInternalComputationValue, Dimensionality>,
                itkImageDomainFixedInterface<Dimensionality>
              >,

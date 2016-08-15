@@ -34,7 +34,7 @@ namespace selx
 {
   template <int Dimensionality, class TPixel>
   class MonolithicTransformixComponent : 
-    public Implements<
+    public SuperElastixComponent<
       Accepting< 
         itkImageDomainFixedInterface<Dimensionality>,
         itkImageMovingInterface<Dimensionality, TPixel>,

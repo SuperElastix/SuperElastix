@@ -31,7 +31,7 @@ namespace selx
 {
   template<int Dimensionality, class TPixel>
   class ItkImageSourceFixedComponent : 
-    public Implements<
+    public SuperElastixComponent<
     Accepting<>,
     Providing< SourceInterface, 
                itkImageFixedInterface<Dimensionality, TPixel >,
