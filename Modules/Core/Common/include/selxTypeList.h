@@ -1,6 +1,6 @@
 
-#ifndef selxMeta_h
-#define selxMeta_h
+#ifndef selxTypeList_h
+#define selxTypeList_h
 
 namespace selx
 {
@@ -13,4 +13,4 @@ namespace selx
     using type = TypeList<Ts..., Us...>;
   };
 }
-#endif // selxMeta_h
+#endif // selxTypeList_h
