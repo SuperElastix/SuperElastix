@@ -42,7 +42,7 @@ namespace selx
     public SuperElastixComponent<
     Accepting< itkImageFixedInterface<Dimensionality, TPixel>, 
                itkImageMovingInterface<Dimensionality, TPixel>,
-               itkMetricv4Interface<Dimensionality, TPixel>,
+               itkMetricv4Interface<Dimensionality, TPixel>
              >,
     Providing< itkTransformInterface<double, Dimensionality>,
                RunRegistrationInterface

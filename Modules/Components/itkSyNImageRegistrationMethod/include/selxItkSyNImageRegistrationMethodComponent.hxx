@@ -18,102 +18,17 @@
  *=========================================================================*/
 
 #include "selxItkSyNImageRegistrationMethodComponent.h"
+#include "selxItkImageRegistrationMethodv4Component.h"
 
+
+#include "itkDisplacementFieldTransformParametersAdaptor.h"
 //TODO: get rid of these
 #include "itkGradientDescentOptimizerv4.h"
 
+
 namespace selx
 {
-  template<typename TFilter>
-  class CommandIterationUpdate : public itk::Command
-  {
-  public:
-    typedef CommandIterationUpdate   Self;
-    typedef itk::Command             Superclass;
-    typedef itk::SmartPointer<Self>  Pointer;
-    itkNewMacro(Self);
-
-    typedef itk::GradientDescentOptimizerv4    OptimizerType;
-    typedef   const OptimizerType *   OptimizerPointer;
-
-  protected:
-    CommandIterationUpdate() {};
-
-  public:
-
-    virtual void Execute(itk::Object *caller, const itk::EventObject & event) ITK_OVERRIDE
-    {
-      Execute((const itk::Object *) caller, event);
-    }
-
-      virtual void Execute(const itk::Object * object, const itk::EventObject & event) ITK_OVERRIDE
-    {
-      const TFilter * filter = static_cast< const TFilter * >(object);
-      if (typeid(event) == typeid(itk::MultiResolutionIterationEvent))
-      {
-
-        unsigned int currentLevel = filter->GetCurrentLevel();
-        typename TFilter::ShrinkFactorsPerDimensionContainerType shrinkFactors = filter->GetShrinkFactorsPerDimension(currentLevel);
-        typename TFilter::SmoothingSigmasArrayType smoothingSigmas = filter->GetSmoothingSigmasPerLevel();
-        typename TFilter::TransformParametersAdaptorsContainerType adaptors = filter->GetTransformParametersAdaptorsPerLevel();
-
-        const itk::ObjectToObjectOptimizerBase * optimizerBase = filter->GetOptimizer();
-        typedef itk::GradientDescentOptimizerv4 GradientDescentOptimizerv4Type;
-        typename GradientDescentOptimizerv4Type::ConstPointer optimizer = dynamic_cast<const GradientDescentOptimizerv4Type *>(optimizerBase);
-        if (!optimizer)
-        {
-          itkGenericExceptionMacro("Error dynamic_cast failed");
-        }
-        typename GradientDescentOptimizerv4Type::DerivativeType gradient = optimizer->GetGradient();
-
-        /* orig
-        std::cout << "  Current level = " << currentLevel << std::endl;
-        std::cout << "    shrink factor = " << shrinkFactors[currentLevel] << std::endl;
-        std::cout << "    smoothing sigma = " << smoothingSigmas[currentLevel] << std::endl;
-        std::cout << "    required fixed parameters = " << adaptors[currentLevel]->GetRequiredFixedParameters() << std::endl;
-        */
-
-        //debug:
-        std::cout << "  CL Current level:           " << currentLevel << std::endl;
-        std::cout << "   SF Shrink factor:          " << shrinkFactors << std::endl;
-        std::cout << "   SS Smoothing sigma:        " << smoothingSigmas[currentLevel] << std::endl;
-        std::cout << "   RFP Required fixed params: " << adaptors[currentLevel]->GetRequiredFixedParameters() << std::endl;
-        std::cout << "   LR Final learning rate:    " << optimizer->GetLearningRate() << std::endl;
-        std::cout << "   FM Final metric value:     " << optimizer->GetCurrentMetricValue() << std::endl;
-        std::cout << "   SC Optimizer scales:       " << optimizer->GetScales() << std::endl;
-        std::cout << "   FG Final metric gradient (sample of values): ";
-        if (gradient.GetSize() < 10)
-        {
-          std::cout << gradient;
-        }
-        else
-        {
-          for (itk::SizeValueType i = 0; i < gradient.GetSize(); i += (gradient.GetSize() / 16))
-          {
-            std::cout << gradient[i] << " ";
-          }
-        }
-        std::cout << std::endl;
-
-      }
-      else if (!(itk::IterationEvent().CheckEvent(&event)))
-      {
-        return;
-      }
-      else
-      {
-        OptimizerPointer optimizer = static_cast<OptimizerPointer>(object);
-        std::cout << optimizer->GetCurrentIteration() << ": " ;
-        std::cout << optimizer->GetCurrentMetricValue() << std::endl;
-        //std::cout << optimizer->GetInfinityNormOfProjectedGradient() << std::endl;
-      }
-    }
-
-
-  };
-
-
-
+ 
   template<int Dimensionality, class TPixel>
   ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel>::ItkSyNImageRegistrationMethodComponent()
 {
@@ -175,6 +90,30 @@ void ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel>::RunRegistr
   auto optimizer = dynamic_cast<itk::GradientDescentOptimizerv4 *>(this->m_theItkFilter->GetModifiableOptimizer());
   //auto optimizer = dynamic_cast<itk::ObjectToObjectOptimizerBaseTemplate< InternalComputationValueType > *>(this->m_theItkFilter->GetModifiableOptimizer());
   
+  typedef itk::Vector<TransformInternalComputationValueType, Dimensionality> VectorType;
+  VectorType zeroVector(0.0);
+
+  typedef itk::Image<VectorType, Dimensionality> DisplacementFieldType;
+  typename DisplacementFieldType::Pointer displacementField = DisplacementFieldType::New();
+  displacementField->CopyInformation(fixedImage);
+  displacementField->SetRegions(fixedImage->GetBufferedRegion());
+  displacementField->Allocate();
+  displacementField->FillBuffer(zeroVector);
+
+  typename DisplacementFieldType::Pointer inverseDisplacementField = DisplacementFieldType::New();
+  inverseDisplacementField->CopyInformation(fixedImage);
+  inverseDisplacementField->SetRegions(fixedImage->GetBufferedRegion());
+  inverseDisplacementField->Allocate();
+  inverseDisplacementField->FillBuffer(zeroVector);
+
+  typedef typename TheItkFilterType::OutputTransformType OutputTransformType;
+  typename OutputTransformType::Pointer outputTransform = OutputTransformType::New();
+  outputTransform->SetDisplacementField(displacementField);
+  outputTransform->SetInverseDisplacementField(inverseDisplacementField);
+
+  this->m_theItkFilter->SetInitialTransform(outputTransform);
+  this->m_theItkFilter->InPlaceOn();
+
   auto transform = this->m_theItkFilter->GetModifiableTransform();
 
   if (theMetric)
@@ -197,8 +136,10 @@ void ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel>::RunRegistr
   optimizer->SetDoEstimateLearningRateAtEachIteration(false);
 
 
-  this->m_theItkFilter->SetOptimizer(optimizer);
- 
+  //this->m_theItkFilter->SetOptimizer(optimizer);
+
+
+
   // Below some hard coded options. Eventually, these should be part of new components.
   this->m_theItkFilter->SetNumberOfLevels(3);
   
@@ -221,11 +162,10 @@ void ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel>::RunRegistr
   this->m_theItkFilter->SetSmoothingSigmasPerLevel(smoothingSigmasPerLevel);
 
 
-  // TODO for now we hard code the TransformAdaptors for stationary velocity fields.
-  typedef double RealType;
-  typedef itk::GaussianExponentialDiffeomorphicTransform<RealType, Dimensionality> ConstantVelocityFieldTransformType;
-  typedef typename ConstantVelocityFieldTransformType::ConstantVelocityFieldType ConstantVelocityFieldType;
-  typedef itk::GaussianExponentialDiffeomorphicTransformParametersAdaptor<ConstantVelocityFieldTransformType> VelocityFieldTransformAdaptorType;
+  // TODO for now we hard code the TransformAdaptors for DisplacementFieldTransform.
+
+  typedef itk::DisplacementFieldTransformParametersAdaptor<OutputTransformType> DisplacementFieldTransformAdaptorType;
+  
 
   typename TheItkFilterType::TransformParametersAdaptorsContainerType adaptors;
   
@@ -241,7 +181,7 @@ void ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel>::RunRegistr
     shrinkFilter->SetInput(fixedImage);
     shrinkFilter->Update();
 
-    typename VelocityFieldTransformAdaptorType::Pointer fieldTransformAdaptor = VelocityFieldTransformAdaptorType::New();
+    typename DisplacementFieldTransformAdaptorType::Pointer fieldTransformAdaptor = DisplacementFieldTransformAdaptorType::New();
     fieldTransformAdaptor->SetRequiredSpacing(shrinkFilter->GetOutput()->GetSpacing());
     fieldTransformAdaptor->SetRequiredSize(shrinkFilter->GetOutput()->GetBufferedRegion().GetSize());
     fieldTransformAdaptor->SetRequiredDirection(shrinkFilter->GetOutput()->GetDirection());

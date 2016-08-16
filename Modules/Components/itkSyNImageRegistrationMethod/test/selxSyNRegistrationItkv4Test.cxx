@@ -108,6 +108,9 @@ public:
   typedef itk::ImageFileReader<Image3DType> ImageReader3DType;
   typedef itk::ImageFileWriter<Image3DType> ImageWriter3DType;
 
+  typedef itk::Image<itk::Vector<float, 2>, 2> DisplacementImage2DType;
+  typedef itk::ImageFileWriter<DisplacementImage2DType> DisplacementImageWriter2DType;
+
   typedef itk::Image<itk::Vector<double,3>, 3> DisplacementImage3DType;
   typedef itk::ImageFileWriter<DisplacementImage3DType> DisplacementImageWriter3DType;
 
@@ -131,7 +134,7 @@ TEST_F(SyNRegistrationItkv4Test, FullyConfigured3d)
   blueprint = Blueprint::New();
 
   ParameterMapType component0Parameters;
-  component0Parameters["NameOfClass"] = { "ItkImageRegistrationMethodv4Component" };
+  component0Parameters["NameOfClass"] = { "ItkSyNImageRegistrationMethodComponent" };
   component0Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
   blueprint->AddComponent("RegistrationMethod", component0Parameters);
 
@@ -160,6 +163,10 @@ TEST_F(SyNRegistrationItkv4Test, FullyConfigured3d)
   component5Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
   blueprint->AddComponent("Metric", component5Parameters);
 
+  ParameterMapType component6Parameters;
+  component6Parameters["NameOfClass"] = { "ItkTransformDisplacementFilterComponent" };
+  component6Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
+  blueprint->AddComponent("TransformDisplacementFilter", component6Parameters);
 
   blueprint->AddComponent("ResampleFilter", { { "NameOfClass",    { "ItkResampleFilterComponent" } },
                                               { "Dimensionality", { "3" } } });
@@ -187,7 +194,6 @@ TEST_F(SyNRegistrationItkv4Test, FullyConfigured3d)
   connection5Parameters["NameOfInterface"] = { "itkMetricv4Interface" };
   blueprint->AddConnection("Metric", "RegistrationMethod", connection5Parameters);
   
-  blueprint->AddConnection("FixedImageSource", "Transform", { {} });
   blueprint->AddConnection("RegistrationMethod", "TransformDisplacementFilter", { {} });
   blueprint->AddConnection("FixedImageSource", "TransformDisplacementFilter", { {} });
   blueprint->AddConnection("RegistrationMethod", "ResampleFilter", { {} });
@@ -235,11 +241,123 @@ TEST_F(SyNRegistrationItkv4Test, FullyConfigured3d)
   // Update call on the writers triggers SuperElastix to configure and execute
   EXPECT_NO_THROW(resultImageWriter->Update());
   EXPECT_NO_THROW(resultDisplacementWriter->Update());
-  
-  
 
   blueprint->WriteBlueprint(dataManager->GetOutputFile("SyNRegistrationItkv4Test_DisplacementField_network.dot"));
+}
+TEST_F(SyNRegistrationItkv4Test, WBIRDemo)
+{
+  /** make example blueprint configuration */
+  blueprint = Blueprint::New();
 
+  ParameterMapType component0Parameters;
+  component0Parameters["NameOfClass"] = { "ItkSyNImageRegistrationMethodComponent" };
+  component0Parameters["Dimensionality"] = { "2" }; // should be derived from the inputs
+  blueprint->AddComponent("RegistrationMethod", component0Parameters);
+
+  ParameterMapType component1Parameters;
+  component1Parameters["NameOfClass"] = { "ItkImageSourceFixedComponent" };
+  component1Parameters["Dimensionality"] = { "2" }; // should be derived from the inputs
+  blueprint->AddComponent("FixedImageSource", component1Parameters);
+
+  ParameterMapType component2Parameters;
+  component2Parameters["NameOfClass"] = { "ItkImageSourceMovingComponent" };
+  component2Parameters["Dimensionality"] = { "2" }; // should be derived from the inputs
+  blueprint->AddComponent("MovingImageSource", component2Parameters);
+
+  ParameterMapType component3Parameters;
+  component3Parameters["NameOfClass"] = { "ItkImageSinkComponent" };
+  component3Parameters["Dimensionality"] = { "2" }; // should be derived from the outputs
+  blueprint->AddComponent("ResultImageSink", component3Parameters);
+
+  ParameterMapType component4Parameters;
+  component4Parameters["NameOfClass"] = { "DisplacementFieldItkImageFilterSinkComponent" };
+  component4Parameters["Dimensionality"] = { "2" }; // should be derived from the outputs
+  blueprint->AddComponent("ResultDisplacementFieldSink", component4Parameters);
+
+  ParameterMapType component5Parameters;
+  component5Parameters["NameOfClass"] = { "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component" };
+  component5Parameters["Dimensionality"] = { "2" }; // should be derived from the inputs
+  blueprint->AddComponent("Metric", component5Parameters);
+
+  ParameterMapType component6Parameters;
+  component6Parameters["NameOfClass"] = { "ItkTransformDisplacementFilterComponent" };
+  component6Parameters["Dimensionality"] = { "2" }; // should be derived from the inputs
+  blueprint->AddComponent("TransformDisplacementFilter", component6Parameters);
+
+  blueprint->AddComponent("ResampleFilter", { { "NameOfClass", { "ItkResampleFilterComponent" } },
+  { "Dimensionality", { "2" } } });
+
+
+  blueprint->AddComponent("Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } });
+
+  ParameterMapType connection1Parameters;
+  connection1Parameters["NameOfInterface"] = { "itkImageFixedInterface" };
+  blueprint->AddConnection("FixedImageSource", "RegistrationMethod", connection1Parameters);
+
+  ParameterMapType connection2Parameters;
+  connection2Parameters["NameOfInterface"] = { "itkImageMovingInterface" };
+  blueprint->AddConnection("MovingImageSource", "RegistrationMethod", connection2Parameters);
+
+  ParameterMapType connection3Parameters;
+  connection3Parameters["NameOfInterface"] = { "itkImageInterface" };
+  blueprint->AddConnection("ResampleFilter", "ResultImageSink", connection3Parameters);
+
+  ParameterMapType connection4Parameters;
+  connection4Parameters["NameOfInterface"] = { "DisplacementFieldItkImageSourceInterface" };
+  blueprint->AddConnection("TransformDisplacementFilter", "ResultDisplacementFieldSink", connection4Parameters);
+
+  ParameterMapType connection5Parameters;
+  connection5Parameters["NameOfInterface"] = { "itkMetricv4Interface" };
+  blueprint->AddConnection("Metric", "RegistrationMethod", connection5Parameters);
+
+  blueprint->AddConnection("RegistrationMethod", "TransformDisplacementFilter", { {} });
+  blueprint->AddConnection("FixedImageSource", "TransformDisplacementFilter", { {} });
+  blueprint->AddConnection("RegistrationMethod", "ResampleFilter", { {} });
+  blueprint->AddConnection("FixedImageSource", "ResampleFilter", { {} });
+  blueprint->AddConnection("MovingImageSource", "ResampleFilter", { {} });
+
+  blueprint->AddConnection("RegistrationMethod", "Controller", { {} }); //RunRegistrationInterface 
+  blueprint->AddConnection("ResampleFilter", "Controller", { {} }); //ReconnectTransformInterface 
+  blueprint->AddConnection("TransformDisplacementFilter", "Controller", { {} }); //ReconnectTransformInterface 
+  blueprint->AddConnection("ResultImageSink", "Controller", { {} }); //AfterRegistrationInterface
+  blueprint->AddConnection("ResultDisplacementFieldSink", "Controller", { {} }); //AfterRegistrationInterface
+  
+  // Data manager provides the paths to the input and output data for unit tests
+  DataManagerType::Pointer dataManager = DataManagerType::New();
+
+  blueprint->WriteBlueprint(dataManager->GetOutputFile("SyN_ANTSCC.dot"));
+
+  // Instantiate SuperElastix
+  SuperElastixFilterType::Pointer superElastixFilter;
+  EXPECT_NO_THROW(superElastixFilter = SuperElastixFilterType::New());
+
+  // Set up the readers and writers
+  ImageReader2DType::Pointer fixedImageReader = ImageReader2DType::New();
+  fixedImageReader->SetFileName(dataManager->GetInputFile("coneA2d64.mhd"));
+
+  ImageReader2DType::Pointer movingImageReader = ImageReader2DType::New();
+  movingImageReader->SetFileName(dataManager->GetInputFile("coneB2d64.mhd"));
+
+  ImageWriter2DType::Pointer resultImageWriter = ImageWriter2DType::New();
+  resultImageWriter->SetFileName(dataManager->GetOutputFile("SyN_ANTSCC_Image.mhd"));
+
+  DisplacementImageWriter2DType::Pointer resultDisplacementWriter = DisplacementImageWriter2DType::New();
+  resultDisplacementWriter->SetFileName(dataManager->GetOutputFile("SyN_ANTSCC_Displacement.mhd"));
+
+  // Connect SuperElastix in an itk pipeline
+  superElastixFilter->SetInput("FixedImageSource", fixedImageReader->GetOutput());
+  superElastixFilter->SetInput("MovingImageSource", movingImageReader->GetOutput());
+  resultImageWriter->SetInput(superElastixFilter->GetOutput<Image2DType>("ResultImageSink"));
+  resultDisplacementWriter->SetInput(superElastixFilter->GetOutput<DisplacementImage2DType>("ResultDisplacementFieldSink"));
+
+  EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
+
+  //Optional Update call
+  //superElastixFilter->Update();
+
+  // Update call on the writers triggers SuperElastix to configure and execute
+  EXPECT_NO_THROW(resultImageWriter->Update());
+  EXPECT_NO_THROW(resultDisplacementWriter->Update());
 }
 } // namespace selx
 

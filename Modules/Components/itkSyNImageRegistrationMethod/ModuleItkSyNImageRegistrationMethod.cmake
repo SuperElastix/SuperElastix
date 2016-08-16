@@ -39,6 +39,7 @@ set( ${MODULE}_TESTS
 
 # Module source files
 set( ${MODULE}_SOURCE_FILES
+  ${${MODULE}_SOURCE_DIR}/src/selxItkSyNImageRegistrationMethodComponent.cxx 
   )
 
 # Compile library

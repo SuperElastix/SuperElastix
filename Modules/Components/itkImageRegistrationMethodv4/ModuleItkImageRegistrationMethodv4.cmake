@@ -40,7 +40,7 @@ set( ${MODULE}_TESTS
 
 # Module source files
 set( ${MODULE}_SOURCE_FILES
-  ${${MODULE}_SOURCE_DIR}/src/selxItkImageRegistrationMethodv4.cxx 
+  ${${MODULE}_SOURCE_DIR}/src/selxItkImageRegistrationMethodv4Component.cxx 
   )
 
 # Compile library
