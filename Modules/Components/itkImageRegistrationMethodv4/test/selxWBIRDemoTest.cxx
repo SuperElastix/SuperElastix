@@ -389,13 +389,13 @@ TEST_F( WBIRDemoTest, elastix_BS_NCC )
 
   blueprint->AddConnection( "ResultImageSink", "Controller", { {} } ); // { { "NameOfInterface", { "AfterRegistrationInterface" } } } ;
 
-  blueprint->WriteBlueprint( "elastix_BS_NCC.dot" );
+  // Data manager provides the paths to the input and output data for unit tests
+  DataManagerType::Pointer dataManager = DataManagerType::New();
+
+  blueprint->WriteBlueprint(dataManager->GetOutputFile("elastix_BS_NCC.dot"));
 
   // Instantiate SuperElastix
   EXPECT_NO_THROW( superElastixFilter = SuperElastixFilterType::New() );
-
-  // Data manager provides the paths to the input and output data for unit tests
-  DataManagerType::Pointer dataManager = DataManagerType::New();
 
   // Set up the readers and writers
   ImageReader2DType::Pointer fixedImageReader = ImageReader2DType::New();
@@ -483,13 +483,13 @@ TEST_F( WBIRDemoTest, elastix_BS_MSD )
 
   blueprint->AddConnection( "ResultImageSink", "Controller", { {} } ); // { { "NameOfInterface", { "AfterRegistrationInterface" } } } ;
 
-  blueprint->WriteBlueprint( "elastix_BS_MSD.dot" );
+  // Data manager provides the paths to the input and output data for unit tests
+  DataManagerType::Pointer dataManager = DataManagerType::New();
+
+  blueprint->WriteBlueprint(dataManager->GetOutputFile("elastix_BS_MSD.dot"));
 
   // Instantiate SuperElastix
   EXPECT_NO_THROW( superElastixFilter = SuperElastixFilterType::New() );
-
-  // Data manager provides the paths to the input and output data for unit tests
-  DataManagerType::Pointer dataManager = DataManagerType::New();
 
   // Set up the readers and writers
   ImageReader2DType::Pointer fixedImageReader = ImageReader2DType::New();

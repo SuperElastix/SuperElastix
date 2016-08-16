@@ -17,7 +17,7 @@
 #
 #=========================================================================
 
-set( MODULE ModuleItkImageRegistrationMethodv4 )
+set( MODULE ModuleItkSyNImageRegistrationMethod )
 
 # Export include files
 set( ${MODULE}_INCLUDE_DIRS
@@ -34,13 +34,12 @@ set( ${MODULE}_LIBRARIES
 
 # Export tests
 set( ${MODULE}_TESTS 
-  ${${MODULE}_SOURCE_DIR}/test/selxRegistrationItkv4Test.cxx
-  ${${MODULE}_SOURCE_DIR}/test/selxWBIRDemoTest.cxx
+  ${${MODULE}_SOURCE_DIR}/test/selxSyNRegistrationItkv4Test.cxx
 )
 
 # Module source files
 set( ${MODULE}_SOURCE_FILES
-  ${${MODULE}_SOURCE_DIR}/src/selxItkImageRegistrationMethodv4Component.cxx 
+  ${${MODULE}_SOURCE_DIR}/src/selxItkSyNImageRegistrationMethodComponent.cxx 
   )
 
 # Compile library

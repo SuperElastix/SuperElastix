@@ -152,6 +152,13 @@ Overlord::ApplyConnectionConfiguration()
         std::cout << " Blueprint Node: " << outgoingName << std::endl << "  HasAcceptingInterface "
                   << connectionProperties[ keys::NameOfInterface ][ 0 ] << std::endl;
       }
+      if( ( this->m_ComponentSelectorContainer[ outgoingName ]->HasMultipleComponents() == false )
+        && ( this->m_ComponentSelectorContainer[ outgoingName ]->GetComponent().IsNull() ) )
+      {
+        std::stringstream msg;
+        msg << "Too many criteria for Component " << outgoingName << std::endl;
+        throw std::runtime_error( msg.str() );
+      }
     }
     if( ( this->m_ComponentSelectorContainer[ name ]->HasMultipleComponents() == false )
       && ( this->m_ComponentSelectorContainer[ name ]->GetComponent().IsNull() ) )
