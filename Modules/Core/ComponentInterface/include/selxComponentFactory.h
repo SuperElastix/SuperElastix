@@ -1,6 +1,6 @@
 /*=========================================================================
  *
- *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,12 +28,13 @@ namespace selx
  * \brief Create instances of MetaImageIO objects using an object factory.
  * \ingroup ITKIOMeta
  */
-  template <class ComponentT>
-  class ComponentFactory : public itk::ObjectFactoryBase
+template< class ComponentT >
+class ComponentFactory : public itk::ObjectFactoryBase
 {
 public:
+
   /** Standard class typedefs. */
-  typedef ComponentFactory         Self;
+  typedef ComponentFactory                Self;
   typedef itk::ObjectFactoryBase          Superclass;
   typedef itk::SmartPointer< Self >       Pointer;
   typedef itk::SmartPointer< const Self > ConstPointer;
@@ -44,29 +45,31 @@ public:
   virtual const char * GetDescription() const ITK_OVERRIDE;
 
   /** Method for class instantiation. */
-  itkFactorylessNewMacro(Self);
+  itkFactorylessNewMacro( Self );
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(ComponentFactory, ObjectFactoryBase);
+  itkTypeMacro( ComponentFactory, ObjectFactoryBase );
 
   /** Register one factory of this type  */
   static void RegisterOneFactory()
   {
     Pointer thisFactory = Self::New();
 
-    ObjectFactoryBase::RegisterFactory(thisFactory);
+    ObjectFactoryBase::RegisterFactory( thisFactory );
   }
 
+
 protected:
+
   ComponentFactory();
-  ~ComponentFactory() {};
+  ~ComponentFactory() {}
 
 private:
-  ComponentFactory(const Self &); //purposely not implemented
-  void operator=(const Self &);     //purposely not implemented
+
+  ComponentFactory( const Self & ); //purposely not implemented
+  void operator=( const Self & );   //purposely not implemented
 };
 } // end namespace selx
-
 
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "selxComponentFactory.hxx"

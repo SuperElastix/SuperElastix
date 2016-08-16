@@ -1,6 +1,6 @@
 /*=========================================================================
  *
- *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,30 +34,30 @@
 #include <vector>
 #include <map>
 
-namespace selx {
-
+namespace selx
+{
 class ConfigurationReader
 {
 public:
 
-  typedef Blueprint::ParameterKeyType                                ParameterKeyType;
-  typedef Blueprint::ParameterValueType                              ParameterValueType;
-  typedef Blueprint::ParameterMapType                                ParameterMapType;
-  typedef Blueprint::Pointer                                         BlueprintPointerType;
+  typedef Blueprint::ParameterKeyType   ParameterKeyType;
+  typedef Blueprint::ParameterValueType ParameterValueType;
+  typedef Blueprint::ParameterMapType   ParameterMapType;
+  typedef Blueprint::Pointer            BlueprintPointerType;
 
-  static BlueprintPointerType FromXML(const std::string &filename);
-  static BlueprintPointerType FromJson(const std::string &filename);
-  
+  static BlueprintPointerType FromXML( const std::string & filename );
+
+  static BlueprintPointerType FromJson( const std::string & filename );
+
 private:
 
-  typedef boost::property_tree::ptree PropertyTreeType;
-  typedef const boost::property_tree::ptree& ComponentOrConnectionTreeType;
-  
-  static ParameterValueType VectorizeValues(ComponentOrConnectionTreeType componentOrConnectionTree);
-  static BlueprintPointerType FromPropertyTree(const PropertyTreeType &);
+  typedef boost::property_tree::ptree         PropertyTreeType;
+  typedef const boost::property_tree::ptree & ComponentOrConnectionTreeType;
 
+  static ParameterValueType VectorizeValues( ComponentOrConnectionTreeType componentOrConnectionTree );
+
+  static BlueprintPointerType FromPropertyTree( const PropertyTreeType & );
 };
-
 }
 
 #endif // #define ConfigurationReader_h

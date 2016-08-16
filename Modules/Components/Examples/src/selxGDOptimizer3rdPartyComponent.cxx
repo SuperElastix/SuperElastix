@@ -1,6 +1,6 @@
 /*=========================================================================
  *
- *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,8 +24,10 @@ namespace selx
 GDOptimizer3rdPartyComponent::GDOptimizer3rdPartyComponent()
 {
   this->theImplementation = new Example3rdParty::GDOptimizer3rdParty();
-  this->MetricObject = new Metric3rdPartyWrapper();
+  this->MetricObject      = new Metric3rdPartyWrapper();
 }
+
+
 GDOptimizer3rdPartyComponent::~GDOptimizer3rdPartyComponent()
 {
   delete this->theImplementation;
@@ -33,34 +35,42 @@ GDOptimizer3rdPartyComponent::~GDOptimizer3rdPartyComponent()
 }
 
 
-int GDOptimizer3rdPartyComponent::Set(MetricValueInterface* component)
+int
+GDOptimizer3rdPartyComponent::Set( MetricValueInterface * component )
 {
-  this->MetricObject->SetMetricValueComponent(component);
+  this->MetricObject->SetMetricValueComponent( component );
   return 0;
 }
-int GDOptimizer3rdPartyComponent::Set(MetricDerivativeInterface* component)
+
+
+int
+GDOptimizer3rdPartyComponent::Set( MetricDerivativeInterface * component )
 {
-  this->MetricObject->SetMetricDerivativeComponent(component);
+  this->MetricObject->SetMetricDerivativeComponent( component );
   return 0;
 }
-int GDOptimizer3rdPartyComponent::Update()
+
+
+int
+GDOptimizer3rdPartyComponent::Update()
 {
-  this->theImplementation->SetMetric(this->MetricObject);
+  this->theImplementation->SetMetric( this->MetricObject );
   return this->theImplementation->Optimize(); // 3rd party specific call
 }
 
+
 bool
 GDOptimizer3rdPartyComponent
-::MeetsCriterion(const CriterionType &criterion)
+::MeetsCriterion( const CriterionType & criterion )
 {
-  bool hasUndefinedCriteria(false);
-  bool meetsCriteria(false);
-  if (criterion.first == "ComponentProperty")
+  bool hasUndefinedCriteria( false );
+  bool meetsCriteria( false );
+  if( criterion.first == "ComponentProperty" )
   {
     meetsCriteria = true;
-    for (auto const & criterionValue : criterion.second) // auto&& preferred?
+    for( auto const & criterionValue : criterion.second ) // auto&& preferred?
     {
-      if (criterionValue != "SomeProperty")  // e.g. "GradientDescent", "SupportsSparseSamples
+      if( criterionValue != "SomeProperty" )  // e.g. "GradientDescent", "SupportsSparseSamples
       {
         meetsCriteria = false;
       }
@@ -68,5 +78,4 @@ GDOptimizer3rdPartyComponent
   }
   return meetsCriteria;
 }
-
 } //end namespace selx

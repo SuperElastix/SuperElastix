@@ -1,6 +1,6 @@
 /*=========================================================================
  *
- *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,12 +21,12 @@
 
 namespace selx
 {
-
 GDOptimizer4thPartyComponent::GDOptimizer4thPartyComponent()
 {
   this->theImplementation = new Example4thParty::GDOptimizer4thParty();
-  this->MetricObject = new Metric4thPartyWrapper();
+  this->MetricObject      = new Metric4thPartyWrapper();
 }
+
 
 GDOptimizer4thPartyComponent::~GDOptimizer4thPartyComponent()
 {
@@ -34,30 +34,35 @@ GDOptimizer4thPartyComponent::~GDOptimizer4thPartyComponent()
   delete this->MetricObject;
 }
 
-int GDOptimizer4thPartyComponent::Set(MetricValueInterface* component)
+
+int
+GDOptimizer4thPartyComponent::Set( MetricValueInterface * component )
 {
-  this->MetricObject->SetMetricValueComponent(component);
+  this->MetricObject->SetMetricValueComponent( component );
   return 0;
 }
 
-int GDOptimizer4thPartyComponent::Update()
+
+int
+GDOptimizer4thPartyComponent::Update()
 {
-  this->theImplementation->SetMetric(this->MetricObject);
+  this->theImplementation->SetMetric( this->MetricObject );
   return this->theImplementation->DoOptimization(); // 4th party specific call
 }
 
+
 bool
 GDOptimizer4thPartyComponent
-::MeetsCriterion(const CriterionType &criterion)
+::MeetsCriterion( const CriterionType & criterion )
 {
-  bool hasUndefinedCriteria(false);
-  bool meetsCriteria(false);
-  if (criterion.first == "ComponentProperty")
+  bool hasUndefinedCriteria( false );
+  bool meetsCriteria( false );
+  if( criterion.first == "ComponentProperty" )
   {
     meetsCriteria = true;
-    for (auto const & criterionValue : criterion.second) // auto&& preferred?
+    for( auto const & criterionValue : criterion.second ) // auto&& preferred?
     {
-      if (criterionValue != "SomeProperty")  // e.g. "GradientDescent", "SupportsSparseSamples
+      if( criterionValue != "SomeProperty" )  // e.g. "GradientDescent", "SupportsSparseSamples
       {
         meetsCriteria = false;
       }
@@ -65,5 +70,4 @@ GDOptimizer4thPartyComponent
   }
   return meetsCriteria;
 }
-
 } //end namespace selx

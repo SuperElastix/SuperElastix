@@ -1,6 +1,6 @@
 /*=========================================================================
  *
- *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,45 +26,49 @@
 
 namespace selx
 {
-class TransformComponent1 : 
-  public SuperElastixComponent <
+class TransformComponent1 :
+  public SuperElastixComponent<
   Accepting< >,
-  Providing < TransformedImageInterface >
+  Providing< TransformedImageInterface >
   >
 {
 public:
+
   /** Standard class typedefs. */
-  typedef TransformComponent1                        Self;
-  typedef ComponentBase Superclass;
-  typedef itk::SmartPointer< Self >             Pointer;
-  typedef itk::SmartPointer< const Self >       ConstPointer;
+  typedef TransformComponent1             Self;
+  typedef ComponentBase                   Superclass;
+  typedef itk::SmartPointer< Self >       Pointer;
+  typedef itk::SmartPointer< const Self > ConstPointer;
 
   /** New macro for creation of through the object factory. */
   //selxNewMacro(Self, ComponentBase);
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(TransformComponent1, ComponentBase);
+  itkTypeMacro( TransformComponent1, ComponentBase );
 
-  typedef Superclass::CriteriaType CriteriaType;
+  typedef Superclass::CriteriaType  CriteriaType;
   typedef Superclass::CriterionType CriterionType;
 
-  virtual int GetTransformedImage() override{ return 0; };
-  virtual bool MeetsCriterion(const CriterionType &criterion) override;
-  static const char * GetDescription(){ return "Example Transform Component 1"; };
+  virtual int GetTransformedImage() override { return 0; }
+  virtual bool MeetsCriterion( const CriterionType & criterion ) override;
+
+  static const char * GetDescription(){ return "Example Transform Component 1"; }
 
 protected:
+
   TransformComponent1();
   virtual ~TransformComponent1()
   {
   }
 
+
 private:
-  TransformComponent1(const Self &);      // purposely not implemented
-  void operator=(const Self &); // purposely not implemented
+
+  TransformComponent1( const Self & ); // purposely not implemented
+  void operator=( const Self & );      // purposely not implemented
 
   //virtual bool MeetsCriteria(const CriteriaType&);
-  
 };
 } // end namespace selx
 

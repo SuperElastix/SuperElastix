@@ -1,6 +1,6 @@
 /*=========================================================================
  *
- *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,46 +34,48 @@
 
 namespace selx
 {
+class ComponentBase : public itk::LightObject
+{
+public:
 
-  class ComponentBase : public itk::LightObject
-  {
-  public:
-    /** Standard class typedefs */
-    typedef ComponentBase   Self;
-    typedef itk::LightObject        Superclass;
-    typedef itk::SmartPointer< Self >      Pointer;
+  /** Standard class typedefs */
+  typedef ComponentBase             Self;
+  typedef itk::LightObject          Superclass;
+  typedef itk::SmartPointer< Self > Pointer;
 
-    /** Run-time type information (and related methods). */
-    itkTypeMacro(ComponentBase, Superclass);
+  /** Run-time type information (and related methods). */
+  itkTypeMacro( ComponentBase, Superclass );
 
-    typedef std::string                                                ParameterKeyType;
-    typedef std::vector< std::string >                                 ParameterValueType;
-    //typedef std::map< ParameterKeyType, ParameterValueType >           ParameterMapType;
-    //TODO choose uniform naming for Typedefs
-    typedef std::map<ParameterKeyType, ParameterValueType> CriteriaType;
-    typedef std::pair<ParameterKeyType, ParameterValueType> CriterionType;
+  typedef std::string                ParameterKeyType;
+  typedef std::vector< std::string > ParameterValueType;
+  //typedef std::map< ParameterKeyType, ParameterValueType >           ParameterMapType;
+  //TODO choose uniform naming for Typedefs
+  typedef std::map< ParameterKeyType, ParameterValueType >  CriteriaType;
+  typedef std::pair< ParameterKeyType, ParameterValueType > CriterionType;
 
-    enum interfaceStatus { success, noaccepter, noprovider };
+  enum interfaceStatus { success, noaccepter, noprovider };
 
-    virtual interfaceStatus AcceptConnectionFrom(const char *, ComponentBase*) = 0;
-    virtual int AcceptConnectionFrom(ComponentBase*) = 0;
+  virtual interfaceStatus AcceptConnectionFrom( const char *, ComponentBase * ) = 0;
 
-    /** if there is any failed criterion, return false (like a short - circuit AND) */
-    //TODO deprecate:
-    bool MeetsCriteria(const CriteriaType &criteria);
+  virtual int AcceptConnectionFrom( ComponentBase * ) = 0;
 
-    bool MeetsCriterionBase(const CriterionType &criterion);
-    
-    virtual bool MeetsCriterion(const CriterionType &criterion) = 0;
-  protected:
-    virtual bool HasAcceptingInterface(const char *) = 0;
-    virtual bool HasProvidingInterface(const char *) = 0;
-    ComponentBase() {};
-    virtual ~ComponentBase() {};
+  /** if there is any failed criterion, return false (like a short - circuit AND) */
+  //TODO deprecate:
+  bool MeetsCriteria( const CriteriaType & criteria );
 
-  };
+  bool MeetsCriterionBase( const CriterionType & criterion );
 
+  virtual bool MeetsCriterion( const CriterionType & criterion ) = 0;
+
+protected:
+
+  virtual bool HasAcceptingInterface( const char * ) = 0;
+
+  virtual bool HasProvidingInterface( const char * ) = 0;
+
+  ComponentBase() {}
+  virtual ~ComponentBase() {}
+};
 } // end namespace selx
-
 
 #endif // ComponentBase_h

@@ -1,6 +1,6 @@
 /*=========================================================================
  *
- *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,35 +26,38 @@
 
 namespace selx
 {
-class MetricComponent1 : 
-  public SuperElastixComponent <
-  Accepting< TransformedImageInterface>,
-  Providing < MetricValueInterface >
+class MetricComponent1 :
+  public SuperElastixComponent<
+  Accepting< TransformedImageInterface >,
+  Providing< MetricValueInterface >
   >
 {
 public:
+
   /** Standard class typedefs. */
-  typedef MetricComponent1                        Self;
-  typedef ComponentBase Superclass;
-  typedef itk::SmartPointer< Self >             Pointer;
-  typedef itk::SmartPointer< const Self >       ConstPointer;
+  typedef MetricComponent1                Self;
+  typedef ComponentBase                   Superclass;
+  typedef itk::SmartPointer< Self >       Pointer;
+  typedef itk::SmartPointer< const Self > ConstPointer;
 
   /** New macro for creation of through the object factory. */
   //selxNewMacro(Self, ComponentBase);
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(MetricComponent1, ComponentBase);
-  
-  typedef Superclass::CriteriaType CriteriaType;
+  itkTypeMacro( MetricComponent1, ComponentBase );
+
+  typedef Superclass::CriteriaType  CriteriaType;
   typedef Superclass::CriterionType CriterionType;
 
-  virtual int Set(TransformedImageInterface *) override;
+  virtual int Set( TransformedImageInterface * ) override;
+
   virtual int GetValue() override { return 0; }
 
   //std::string GetComponentTypeAsString() const;
   //static const char * GetName(){ return "MetricComponent1"; };
-  static const char * GetDescription(){ return "Example Metric Component 1"; };
+  static const char * GetDescription(){ return "Example Metric Component 1"; }
+
 protected:
 
   MetricComponent1();
@@ -62,13 +65,15 @@ protected:
   {
   }
 
+
 private:
-  MetricComponent1(const Self &);      // purposely not implemented
-  void operator=(const Self &); // purposely not implemented
 
-  virtual bool MeetsCriterion(const CriterionType &criterion);
+  MetricComponent1( const Self & ); // purposely not implemented
+  void operator=( const Self & );   // purposely not implemented
+
+  virtual bool MeetsCriterion( const CriterionType & criterion );
+
   //virtual bool MeetsCriteria(const CriteriaType&);
-
 };
 } // end namespace selx
 

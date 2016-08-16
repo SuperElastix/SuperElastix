@@ -1,6 +1,6 @@
 /*=========================================================================
  *
- *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,27 +23,32 @@
 #include <typeinfo>
 namespace selx
 {
-
-template<class ComponentT> 
-ComponentFactory<ComponentT>::ComponentFactory()
+template< class ComponentT >
+ComponentFactory< ComponentT >::ComponentFactory()
 {
   this->RegisterOverride( "ComponentBase",
-                          typeid(ComponentT).name(), //(&ComponentT)->GetNameOfClass(), // 
-                          ComponentT::GetDescription(),
-                          1,
-                          itk::CreateObjectFunction< ComponentT >::New());
+    typeid( ComponentT ).name(),                     //(&ComponentT)->GetNameOfClass(), //
+    ComponentT::GetDescription(),
+    1,
+    itk::CreateObjectFunction< ComponentT >::New() );
 }
-template<class ComponentT>
-const char * ComponentFactory<ComponentT>::GetITKSourceVersion() const
+
+
+template< class ComponentT >
+const char *
+ComponentFactory< ComponentT >::GetITKSourceVersion() const
 {
   return ITK_SOURCE_VERSION;
 }
 
-template<class ComponentT>
-const char * ComponentFactory<ComponentT>::GetDescription() const
+
+template< class ComponentT >
+const char *
+ComponentFactory< ComponentT >::GetDescription() const
 {
   return ComponentT::GetDescription(); //TODO should this be the description of the factory instead of the component?
 }
+
 
 // Undocumented API used to register during static initialization.
 // DO NOT CALL DIRECTLY.

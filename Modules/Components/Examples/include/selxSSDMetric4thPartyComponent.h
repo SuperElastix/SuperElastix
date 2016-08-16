@@ -1,6 +1,6 @@
 /*=========================================================================
  *
- *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,35 +27,37 @@
 
 namespace selx
 {
-  // SSDMetric4thPartyComponent provides only a value and not a derivative
-  class SSDMetric4thPartyComponent : 
-    public SuperElastixComponent<
-    Accepting<>,
-    Providing< MetricValueInterface>
-    >
-  {
-  public:
-    /** Standard class typedefs. */
-    typedef SSDMetric4thPartyComponent                        Self;
-    typedef ComponentBase Superclass;
-    typedef itk::SmartPointer< Self >             Pointer;
-    typedef itk::SmartPointer< const Self >       ConstPointer;
+// SSDMetric4thPartyComponent provides only a value and not a derivative
+class SSDMetric4thPartyComponent :
+  public SuperElastixComponent<
+  Accepting< >,
+  Providing< MetricValueInterface >
+  >
+{
+public:
 
-    /** New macro for creation of through the object factory. */
-    itkNewMacro(Self);
+  /** Standard class typedefs. */
+  typedef SSDMetric4thPartyComponent      Self;
+  typedef ComponentBase                   Superclass;
+  typedef itk::SmartPointer< Self >       Pointer;
+  typedef itk::SmartPointer< const Self > ConstPointer;
 
-    /** Run-time type information (and related methods). */
-    itkTypeMacro(SSDMetric4thPartyComponent, Superclass);
+  /** New macro for creation of through the object factory. */
+  itkNewMacro( Self );
 
-    SSDMetric4thPartyComponent();
-    virtual ~SSDMetric4thPartyComponent();
-    Example4thParty::SSDMetric4thParty* theImplementation;
-    virtual int GetValue() override;
-    virtual bool MeetsCriterion(const CriterionType &criterion) override;
-    //virtual bool MeetsCriteria(const CriteriaType &criteria);
-    //static const char * GetName(){ return "SSDMetric4thPartyComponent"; };
-    static const char * GetDescription(){ return "SSD Metric 4th Party Component"; };
-    
-  };
+  /** Run-time type information (and related methods). */
+  itkTypeMacro( SSDMetric4thPartyComponent, Superclass );
+
+  SSDMetric4thPartyComponent();
+  virtual ~SSDMetric4thPartyComponent();
+  Example4thParty::SSDMetric4thParty * theImplementation;
+  virtual int GetValue() override;
+
+  virtual bool MeetsCriterion( const CriterionType & criterion ) override;
+
+  //virtual bool MeetsCriteria(const CriteriaType &criteria);
+  //static const char * GetName(){ return "SSDMetric4thPartyComponent"; };
+  static const char * GetDescription(){ return "SSD Metric 4th Party Component"; }
+};
 } //end namespace selx
 #endif // #define SSDMetric4thPartyComponent_h

@@ -1,6 +1,6 @@
 /*=========================================================================
  *
- *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,12 +25,17 @@
 namespace selx
 {
 // An Optimizer4thParty expects that Metric4thParty will be set as input. All accepted interfaces by the Optimizer4thPartyCompoment will be delegated to the Metric4thPartyWrapper object.
-  class Metric4thPartyWrapper : public Example4thParty::Metric4thPartyBase  {
+class Metric4thPartyWrapper : public Example4thParty::Metric4thPartyBase
+{
 public:
-  void SetMetricValueComponent(MetricValueInterface*);
+
+  void SetMetricValueComponent( MetricValueInterface * );
+
   virtual int GetCost();
+
 private:
-  MetricValueInterface* metricval;
+
+  MetricValueInterface * metricval;
 };
 } // end namespace selx
 #endif // #define Metric3rdPartyWrapper_h

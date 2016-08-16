@@ -1,6 +1,6 @@
 /*=========================================================================
  *
- *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,20 +19,20 @@
 
 /** Helper definitions for common cstring key values to avoid typos*/
 
-// In SuperElastix we use cstring keys to communicate between components. The 
+// In SuperElastix we use cstring keys to communicate between components. The
 // advantage is that user defined cstring-based configurations can directly talk to the core.
 // In the core we could type these names directly as literal cstrings, but this is sensitive to typos.
 // By these definitions tools such as visual assist will auto-complete when typing keys::HasP...
 
 namespace selx
 {
-  namespace keys
-  {
-    const char * const NameOfInterface = "NameOfInterface"; // Each Interface has a sting name 
-    const char * const HasProvidingInterface = "HasProvidingInterface"; // Checks component (base class) if the interface is present
-    const char * const HasAcceptingInterface = "HasAcceptingInterface"; // Checks component (base class) if the interface is present 
-    const char * const SourceInterface = "SourceInterface"; // Special interface that connects to the outside of the SuperElastixFilter 
-    const char * const SinkInterface = "SinkInterface"; // Special interface that connects to the outside of the SuperElastixFilter 
-    const char * const RegistrationControllerStartInterface = "RegistrationControllerStartInterface";  //Special interface by which all algorithms are started
-  }
+namespace keys
+{
+const char * const NameOfInterface                      = "NameOfInterface";                      // Each Interface has a sting name
+const char * const HasProvidingInterface                = "HasProvidingInterface";                // Checks component (base class) if the interface is present
+const char * const HasAcceptingInterface                = "HasAcceptingInterface";                // Checks component (base class) if the interface is present
+const char * const SourceInterface                      = "SourceInterface";                      // Special interface that connects to the outside of the SuperElastixFilter
+const char * const SinkInterface                        = "SinkInterface";                        // Special interface that connects to the outside of the SuperElastixFilter
+const char * const RegistrationControllerStartInterface = "RegistrationControllerStartInterface"; //Special interface by which all algorithms are started
+}
 }

@@ -1,6 +1,6 @@
 /*=========================================================================
  *
- *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,44 +26,47 @@ namespace selx
 MetricComponent1::MetricComponent1()
 {
 }
-int MetricComponent1::Set(TransformedImageInterface* providingInterface)
+
+
+int
+MetricComponent1::Set( TransformedImageInterface * providingInterface )
 {
   return 0;
 }
 
-  bool
-    MetricComponent1
-    ::MeetsCriterion(const CriterionType &criterion)
-  {
-    bool hasUndefinedCriteria(false);
-    bool meetsCriteria(false);
-    if (criterion.first == "ComponentProperty")
-    {
-      meetsCriteria = true;
-      for (auto const & criterionValue : criterion.second) // auto&& preferred?
-      {
-        if (criterionValue != "SomeProperty")  // e.g. "GradientDescent", "SupportsSparseSamples
-        {
-          meetsCriteria = false;
-          return false;
-        }
-      }
-    }
-    if (criterion.first == "ComponentInput")
-    {
-      meetsCriteria = true;
-      for (auto const & criterionValue : criterion.second) // auto&& preferred?
-      {
-        if (criterionValue != "Transform")  // e.g. "GradientDescent", "SupportsSparseSamples
-        {
-          meetsCriteria = false;
-          return false;
-        }
-      }
-    }
-    return meetsCriteria;
-  }
 
+bool
+MetricComponent1
+::MeetsCriterion( const CriterionType & criterion )
+{
+  bool hasUndefinedCriteria( false );
+  bool meetsCriteria( false );
+  if( criterion.first == "ComponentProperty" )
+  {
+    meetsCriteria = true;
+    for( auto const & criterionValue : criterion.second )  // auto&& preferred?
+    {
+      if( criterionValue != "SomeProperty" )   // e.g. "GradientDescent", "SupportsSparseSamples
+      {
+        meetsCriteria = false;
+        return false;
+      }
+    }
+  }
+  if( criterion.first == "ComponentInput" )
+  {
+    meetsCriteria = true;
+    for( auto const & criterionValue : criterion.second )  // auto&& preferred?
+    {
+      if( criterionValue != "Transform" )   // e.g. "GradientDescent", "SupportsSparseSamples
+      {
+        meetsCriteria = false;
+        return false;
+      }
+    }
+  }
+  return meetsCriteria;
+}
 } // end namespace selx
 
 #endif

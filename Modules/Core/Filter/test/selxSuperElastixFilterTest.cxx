@@ -17,7 +17,6 @@
 *
 *=========================================================================*/
 
-
 #include "selxSuperElastixFilter.h"
 
 #include "selxItkSmoothingRecursiveGaussianImageFilterComponent.h"
@@ -33,7 +32,6 @@
 #include "itkDisplacementFieldTransform.h"
 #include "itkComposeDisplacementFieldsImageFilter.h"
 
-
 #include "itkCompositeTransform.h"
 #include "itkVector.h"
 #include "itkPoint.h"
@@ -45,202 +43,199 @@
 #include "selxDataManager.h"
 #include "gtest/gtest.h"
 
-namespace selx {
+namespace selx
+{
+class SuperElastixFilterTest : public ::testing::Test
+{
+public:
 
-  class SuperElastixFilterTest : public ::testing::Test {
-  public:
-    typedef itk::Image<float, 2> Image2DType;
-    typedef itk::ImageFileReader<Image2DType> ImageReader2DType;
-    typedef itk::ImageFileWriter<Image2DType> ImageWriter2DType;
+  typedef itk::Image< float, 2 >              Image2DType;
+  typedef itk::ImageFileReader< Image2DType > ImageReader2DType;
+  typedef itk::ImageFileWriter< Image2DType > ImageWriter2DType;
 
-    typedef itk::Image<double, 3> Image3DType;
-    typedef itk::ImageFileReader<Image3DType> ImageReader3DType;
-    typedef itk::ImageFileWriter<Image3DType> ImageWriter3DType;
+  typedef itk::Image< double, 3 >             Image3DType;
+  typedef itk::ImageFileReader< Image3DType > ImageReader3DType;
+  typedef itk::ImageFileWriter< Image3DType > ImageWriter3DType;
 
-    /** Fill SUPERelastix' component data base by registering various components */
-    typedef TypeList <
-      ItkImageSinkComponent<3, double>,
-      ItkImageSourceComponent<3, double>,
-      ItkSmoothingRecursiveGaussianImageFilterComponent<3, double>,
-      ItkMeshSinkComponent<2, float>,
-      ItkMeshSourceComponent<2, float> > RegisterComponents;
+  /** Fill SUPERelastix' component data base by registering various components */
+  typedef TypeList<
+    ItkImageSinkComponent< 3, double >,
+    ItkImageSourceComponent< 3, double >,
+    ItkSmoothingRecursiveGaussianImageFilterComponent< 3, double >,
+    ItkMeshSinkComponent< 2, float >,
+    ItkMeshSourceComponent< 2, float >> RegisterComponents;
 
-    typedef SuperElastixFilter<RegisterComponents>          SuperElastixFilterType;
-    
-    typedef itk::Mesh<float, 2> MeshType;
-    typedef itk::MeshFileReader<MeshType> MeshReaderType;
-    typedef itk::MeshFileWriter<MeshType> MeshWriterType;
+  typedef SuperElastixFilter< RegisterComponents > SuperElastixFilterType;
 
-    typedef DataManager DataManagerType;
-    virtual void SetUp() {
+  typedef itk::Mesh< float, 2 >           MeshType;
+  typedef itk::MeshFileReader< MeshType > MeshReaderType;
+  typedef itk::MeshFileWriter< MeshType > MeshWriterType;
 
-    }
-
-    virtual void TearDown() {
-      itk::ObjectFactoryBase::UnRegisterAllFactories();
-    }
-
-  };
-
-  TEST_F(SuperElastixFilterTest, ImageOnly)
+  typedef DataManager DataManagerType;
+  virtual void SetUp()
   {
-    DataManagerType::Pointer dataManager = DataManagerType::New();
-
-    ImageReader3DType::Pointer imageReader3D = ImageReader3DType::New();
-    ImageWriter3DType::Pointer imageWriter3D = ImageWriter3DType::New();
-    
-    imageReader3D->SetFileName(dataManager->GetInputFile("sphereA3d.mhd"));
-    imageWriter3D->SetFileName(dataManager->GetOutputFile("SuperElastixFilterTest_sphereA3d.mhd"));
-   
-    Blueprint::Pointer blueprint = Blueprint::New();
-   
-    blueprint->AddComponent("InputImage", { { "NameOfClass", { "ItkImageSourceComponent" } } });
-    blueprint->AddComponent("ImageFilter", { { "NameOfClass", { "ItkSmoothingRecursiveGaussianImageFilterComponent" } } });
-    blueprint->AddComponent("OutputImage", { { "NameOfClass", { "ItkImageSinkComponent" } } });
-    blueprint->AddConnection("InputImage", "ImageFilter", { {} }); // 
-    blueprint->AddConnection("ImageFilter", "OutputImage", { {} });
-
-    SuperElastixFilterType::Pointer mySuperElastix;
-    EXPECT_NO_THROW(mySuperElastix = SuperElastixFilterType::New());
-    mySuperElastix->SetBlueprint(blueprint);
-
-    mySuperElastix->SetInput("InputImage", imageReader3D->GetOutput());
-    imageWriter3D->SetInput(mySuperElastix->GetOutput<Image3DType>("OutputImage"));
-    
-    EXPECT_NO_THROW(imageWriter3D->Update());
   }
-  TEST_F(SuperElastixFilterTest, ImageAndMesh)
+
+
+  virtual void TearDown()
   {
-    DataManagerType::Pointer dataManager = DataManagerType::New();
-
-    ImageReader3DType::Pointer imageReader3D = ImageReader3DType::New();
-    ImageWriter3DType::Pointer imageWriter3D = ImageWriter3DType::New();
-
-    imageReader3D->SetFileName(dataManager->GetInputFile("sphereA3d.mhd"));
-    imageWriter3D->SetFileName(dataManager->GetOutputFile("SuperElastixFilterTest_sphereA3d.mhd"));
-
-    MeshReaderType::Pointer meshReader = MeshReaderType::New();
-    MeshWriterType::Pointer meshWriter = MeshWriterType::New();
-
-    meshReader->SetFileName(dataManager->GetInputFile("2dSquare.vtk"));
-    meshWriter->SetFileName(dataManager->GetOutputFile("SuperElastixFilterTest_2dSquare.vtk"));
-
-    Blueprint::Pointer blueprint = Blueprint::New();
-
-    blueprint->AddComponent("InputImage", { { "NameOfClass", { "ItkImageSourceComponent" } } });
-    blueprint->AddComponent("ImageFilter", { { "NameOfClass", { "ItkSmoothingRecursiveGaussianImageFilterComponent" } } });
-    blueprint->AddComponent("OutputImage", { { "NameOfClass", { "ItkImageSinkComponent" } } });
-    blueprint->AddConnection("InputImage", "ImageFilter", Blueprint::ParameterMapType()); // 
-    blueprint->AddConnection("ImageFilter", "OutputImage", Blueprint::ParameterMapType());
-
-
-    blueprint->AddComponent("InputMesh", { { "NameOfClass", { "ItkMeshSourceComponent" } } });
-    blueprint->AddComponent("OutputMesh", { { "NameOfClass", { "ItkMeshSinkComponent" } } });
-    blueprint->AddConnection("InputMesh", "OutputMesh", Blueprint::ParameterMapType());
-
-    SuperElastixFilterType::Pointer mySuperElastix;
-    EXPECT_NO_THROW(mySuperElastix = SuperElastixFilterType::New());
-    mySuperElastix->SetBlueprint(blueprint);
-
-    mySuperElastix->SetInput("InputMesh", meshReader->GetOutput());  
-    meshWriter->SetInput(mySuperElastix->GetOutput<MeshType>("OutputMesh"));
-
-    mySuperElastix->SetInput("InputImage", imageReader3D->GetOutput());
-    imageWriter3D->SetInput(mySuperElastix->GetOutput<Image3DType>("OutputImage"));
-
-    //mySuperElastix->Update();
-
-    EXPECT_NO_THROW(meshWriter->Update());
-    EXPECT_NO_THROW(imageWriter3D->Update());
+    itk::ObjectFactoryBase::UnRegisterAllFactories();
   }
-  TEST_F(SuperElastixFilterTest, TooManyInputs)
-  {
-    DataManagerType::Pointer dataManager = DataManagerType::New();
+};
 
-    ImageReader3DType::Pointer imageReader3D_A = ImageReader3DType::New();
-    ImageReader3DType::Pointer imageReader3D_B = ImageReader3DType::New();
+TEST_F( SuperElastixFilterTest, ImageOnly )
+{
+  DataManagerType::Pointer dataManager = DataManagerType::New();
 
-    imageReader3D_A->SetFileName(dataManager->GetInputFile("sphereA3d.mhd"));
-    imageReader3D_B->SetFileName(dataManager->GetInputFile("sphereA3d.mhd"));
+  ImageReader3DType::Pointer imageReader3D = ImageReader3DType::New();
+  ImageWriter3DType::Pointer imageWriter3D = ImageWriter3DType::New();
 
-    Blueprint::Pointer blueprint = Blueprint::New();
+  imageReader3D->SetFileName( dataManager->GetInputFile( "sphereA3d.mhd" ) );
+  imageWriter3D->SetFileName( dataManager->GetOutputFile( "SuperElastixFilterTest_sphereA3d.mhd" ) );
 
-    blueprint->AddComponent("Source_A", { { "NameOfClass", { "ItkImageSourceComponent" } } });
+  Blueprint::Pointer blueprint = Blueprint::New();
 
-    SuperElastixFilterType::Pointer mySuperElastix;
-    EXPECT_NO_THROW(mySuperElastix = SuperElastixFilterType::New());
-    mySuperElastix->SetBlueprint(blueprint);
+  blueprint->AddComponent( "InputImage", { { "NameOfClass", { "ItkImageSourceComponent" } } } );
+  blueprint->AddComponent( "ImageFilter", { { "NameOfClass", { "ItkSmoothingRecursiveGaussianImageFilterComponent" } } } );
+  blueprint->AddComponent( "OutputImage", { { "NameOfClass", { "ItkImageSinkComponent" } } } );
+  blueprint->AddConnection( "InputImage", "ImageFilter", { {} } ); //
+  blueprint->AddConnection( "ImageFilter", "OutputImage", { {} } );
 
-    mySuperElastix->SetInput("Source_A", imageReader3D_A->GetOutput());
-    mySuperElastix->SetInput("Source_B", imageReader3D_B->GetOutput());
+  SuperElastixFilterType::Pointer mySuperElastix;
+  EXPECT_NO_THROW( mySuperElastix = SuperElastixFilterType::New() );
+  mySuperElastix->SetBlueprint( blueprint );
 
-    EXPECT_THROW(mySuperElastix->Update(), itk::ExceptionObject);
+  mySuperElastix->SetInput( "InputImage", imageReader3D->GetOutput() );
+  imageWriter3D->SetInput( mySuperElastix->GetOutput< Image3DType >( "OutputImage" ) );
 
-  }
-  TEST_F(SuperElastixFilterTest, TooManySources)
-  {
-    DataManagerType::Pointer dataManager = DataManagerType::New();
+  EXPECT_NO_THROW( imageWriter3D->Update() );
+}
+TEST_F( SuperElastixFilterTest, ImageAndMesh )
+{
+  DataManagerType::Pointer dataManager = DataManagerType::New();
 
-    ImageReader3DType::Pointer imageReader3D_A = ImageReader3DType::New();
+  ImageReader3DType::Pointer imageReader3D = ImageReader3DType::New();
+  ImageWriter3DType::Pointer imageWriter3D = ImageWriter3DType::New();
 
-    imageReader3D_A->SetFileName(dataManager->GetInputFile("sphereA3d.mhd"));
+  imageReader3D->SetFileName( dataManager->GetInputFile( "sphereA3d.mhd" ) );
+  imageWriter3D->SetFileName( dataManager->GetOutputFile( "SuperElastixFilterTest_sphereA3d.mhd" ) );
 
-    Blueprint::Pointer blueprint = Blueprint::New();
+  MeshReaderType::Pointer meshReader = MeshReaderType::New();
+  MeshWriterType::Pointer meshWriter = MeshWriterType::New();
 
-    blueprint->AddComponent("Source_A", { { "NameOfClass", { "ItkImageSourceComponent" } } });
-    blueprint->AddComponent("Source_B", { { "NameOfClass", { "ItkImageSourceComponent" } } });
-    SuperElastixFilterType::Pointer mySuperElastix;
-    EXPECT_NO_THROW(mySuperElastix = SuperElastixFilterType::New());
-    mySuperElastix->SetBlueprint(blueprint);
+  meshReader->SetFileName( dataManager->GetInputFile( "2dSquare.vtk" ) );
+  meshWriter->SetFileName( dataManager->GetOutputFile( "SuperElastixFilterTest_2dSquare.vtk" ) );
 
-    mySuperElastix->SetInput("Source_A", imageReader3D_A->GetOutput());
+  Blueprint::Pointer blueprint = Blueprint::New();
 
-    EXPECT_THROW(mySuperElastix->Update(), itk::ExceptionObject);
+  blueprint->AddComponent( "InputImage", { { "NameOfClass", { "ItkImageSourceComponent" } } } );
+  blueprint->AddComponent( "ImageFilter", { { "NameOfClass", { "ItkSmoothingRecursiveGaussianImageFilterComponent" } } } );
+  blueprint->AddComponent( "OutputImage", { { "NameOfClass", { "ItkImageSinkComponent" } } } );
+  blueprint->AddConnection( "InputImage", "ImageFilter", Blueprint::ParameterMapType() ); //
+  blueprint->AddConnection( "ImageFilter", "OutputImage", Blueprint::ParameterMapType() );
 
-  }
-  TEST_F(SuperElastixFilterTest, TooManyOutputs)
-  {
-    DataManagerType::Pointer dataManager = DataManagerType::New();
+  blueprint->AddComponent( "InputMesh", { { "NameOfClass", { "ItkMeshSourceComponent" } } } );
+  blueprint->AddComponent( "OutputMesh", { { "NameOfClass", { "ItkMeshSinkComponent" } } } );
+  blueprint->AddConnection( "InputMesh", "OutputMesh", Blueprint::ParameterMapType() );
 
-    ImageWriter3DType::Pointer imageWriter3D_A = ImageWriter3DType::New();
-    ImageWriter3DType::Pointer imageWriter3D_B = ImageWriter3DType::New();
-    imageWriter3D_A->SetFileName(dataManager->GetOutputFile("SuperElastixFilterTest_TooManyOutputs.mhd"));
-    imageWriter3D_B->SetFileName(dataManager->GetOutputFile("SuperElastixFilterTest_TooManyOutputs.mhd"));
+  SuperElastixFilterType::Pointer mySuperElastix;
+  EXPECT_NO_THROW( mySuperElastix = SuperElastixFilterType::New() );
+  mySuperElastix->SetBlueprint( blueprint );
 
-    Blueprint::Pointer blueprint = Blueprint::New();
+  mySuperElastix->SetInput( "InputMesh", meshReader->GetOutput() );
+  meshWriter->SetInput( mySuperElastix->GetOutput< MeshType >( "OutputMesh" ) );
 
-    blueprint->AddComponent("Sink_A", { { "NameOfClass", { "ItkImageSinkComponent" } } });
+  mySuperElastix->SetInput( "InputImage", imageReader3D->GetOutput() );
+  imageWriter3D->SetInput( mySuperElastix->GetOutput< Image3DType >( "OutputImage" ) );
 
-    SuperElastixFilterType::Pointer mySuperElastix;
-    EXPECT_NO_THROW(mySuperElastix = SuperElastixFilterType::New());
-    mySuperElastix->SetBlueprint(blueprint);
+  //mySuperElastix->Update();
 
-    imageWriter3D_A->SetInput(mySuperElastix->GetOutput<Image3DType>("Sink_A"));
-    imageWriter3D_B->SetInput(mySuperElastix->GetOutput<Image3DType>("Sink_B"));
-    
+  EXPECT_NO_THROW( meshWriter->Update() );
+  EXPECT_NO_THROW( imageWriter3D->Update() );
+}
+TEST_F( SuperElastixFilterTest, TooManyInputs )
+{
+  DataManagerType::Pointer dataManager = DataManagerType::New();
 
-    EXPECT_THROW(imageWriter3D_B->Update(), itk::ExceptionObject);
+  ImageReader3DType::Pointer imageReader3D_A = ImageReader3DType::New();
+  ImageReader3DType::Pointer imageReader3D_B = ImageReader3DType::New();
 
-  }
-  TEST_F(SuperElastixFilterTest, TooManySinks)
-  {
-    DataManagerType::Pointer dataManager = DataManagerType::New();
+  imageReader3D_A->SetFileName( dataManager->GetInputFile( "sphereA3d.mhd" ) );
+  imageReader3D_B->SetFileName( dataManager->GetInputFile( "sphereA3d.mhd" ) );
 
-    ImageWriter3DType::Pointer imageWriter3D_A = ImageWriter3DType::New();
-    imageWriter3D_A->SetFileName(dataManager->GetOutputFile("SuperElastixFilterTest_TooManyOutputs.mhd"));
+  Blueprint::Pointer blueprint = Blueprint::New();
 
-    Blueprint::Pointer blueprint = Blueprint::New();
+  blueprint->AddComponent( "Source_A", { { "NameOfClass", { "ItkImageSourceComponent" } } } );
 
-    blueprint->AddComponent("Sink_A", { { "NameOfClass", { "ItkImageSinkComponent" } } });
-    blueprint->AddComponent("Sink_B", { { "NameOfClass", { "ItkImageSinkComponent" } } });
+  SuperElastixFilterType::Pointer mySuperElastix;
+  EXPECT_NO_THROW( mySuperElastix = SuperElastixFilterType::New() );
+  mySuperElastix->SetBlueprint( blueprint );
 
-    SuperElastixFilterType::Pointer mySuperElastix;
-    EXPECT_NO_THROW(mySuperElastix = SuperElastixFilterType::New());
-    mySuperElastix->SetBlueprint(blueprint);
+  mySuperElastix->SetInput( "Source_A", imageReader3D_A->GetOutput() );
+  mySuperElastix->SetInput( "Source_B", imageReader3D_B->GetOutput() );
 
-    imageWriter3D_A->SetInput(mySuperElastix->GetOutput<Image3DType>("Sink_A"));
+  EXPECT_THROW( mySuperElastix->Update(), itk::ExceptionObject );
+}
+TEST_F( SuperElastixFilterTest, TooManySources )
+{
+  DataManagerType::Pointer dataManager = DataManagerType::New();
 
-    EXPECT_THROW(imageWriter3D_A->Update(), itk::ExceptionObject);
+  ImageReader3DType::Pointer imageReader3D_A = ImageReader3DType::New();
 
-  }
+  imageReader3D_A->SetFileName( dataManager->GetInputFile( "sphereA3d.mhd" ) );
+
+  Blueprint::Pointer blueprint = Blueprint::New();
+
+  blueprint->AddComponent( "Source_A", { { "NameOfClass", { "ItkImageSourceComponent" } } } );
+  blueprint->AddComponent( "Source_B", { { "NameOfClass", { "ItkImageSourceComponent" } } } );
+  SuperElastixFilterType::Pointer mySuperElastix;
+  EXPECT_NO_THROW( mySuperElastix = SuperElastixFilterType::New() );
+  mySuperElastix->SetBlueprint( blueprint );
+
+  mySuperElastix->SetInput( "Source_A", imageReader3D_A->GetOutput() );
+
+  EXPECT_THROW( mySuperElastix->Update(), itk::ExceptionObject );
+}
+TEST_F( SuperElastixFilterTest, TooManyOutputs )
+{
+  DataManagerType::Pointer dataManager = DataManagerType::New();
+
+  ImageWriter3DType::Pointer imageWriter3D_A = ImageWriter3DType::New();
+  ImageWriter3DType::Pointer imageWriter3D_B = ImageWriter3DType::New();
+  imageWriter3D_A->SetFileName( dataManager->GetOutputFile( "SuperElastixFilterTest_TooManyOutputs.mhd" ) );
+  imageWriter3D_B->SetFileName( dataManager->GetOutputFile( "SuperElastixFilterTest_TooManyOutputs.mhd" ) );
+
+  Blueprint::Pointer blueprint = Blueprint::New();
+
+  blueprint->AddComponent( "Sink_A", { { "NameOfClass", { "ItkImageSinkComponent" } } } );
+
+  SuperElastixFilterType::Pointer mySuperElastix;
+  EXPECT_NO_THROW( mySuperElastix = SuperElastixFilterType::New() );
+  mySuperElastix->SetBlueprint( blueprint );
+
+  imageWriter3D_A->SetInput( mySuperElastix->GetOutput< Image3DType >( "Sink_A" ) );
+  imageWriter3D_B->SetInput( mySuperElastix->GetOutput< Image3DType >( "Sink_B" ) );
+
+  EXPECT_THROW( imageWriter3D_B->Update(), itk::ExceptionObject );
+}
+TEST_F( SuperElastixFilterTest, TooManySinks )
+{
+  DataManagerType::Pointer dataManager = DataManagerType::New();
+
+  ImageWriter3DType::Pointer imageWriter3D_A = ImageWriter3DType::New();
+  imageWriter3D_A->SetFileName( dataManager->GetOutputFile( "SuperElastixFilterTest_TooManyOutputs.mhd" ) );
+
+  Blueprint::Pointer blueprint = Blueprint::New();
+
+  blueprint->AddComponent( "Sink_A", { { "NameOfClass", { "ItkImageSinkComponent" } } } );
+  blueprint->AddComponent( "Sink_B", { { "NameOfClass", { "ItkImageSinkComponent" } } } );
+
+  SuperElastixFilterType::Pointer mySuperElastix;
+  EXPECT_NO_THROW( mySuperElastix = SuperElastixFilterType::New() );
+  mySuperElastix->SetBlueprint( blueprint );
+
+  imageWriter3D_A->SetInput( mySuperElastix->GetOutput< Image3DType >( "Sink_A" ) );
+
+  EXPECT_THROW( imageWriter3D_A->Update(), itk::ExceptionObject );
+}
 }

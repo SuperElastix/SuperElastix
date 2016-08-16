@@ -1,6 +1,6 @@
 /*=========================================================================
  *
- *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,46 +27,49 @@
 
 namespace selx
 {
-  template<bool dummy = true>
-  class RegistrationControllerComponent :
-    public SuperElastixComponent <
-    Accepting< RunRegistrationInterface, ReconnectTransformInterface, AfterRegistrationInterface >,
-    Providing < RegistrationControllerStartInterface >
-    >
-  {
-    // RegistrationControllerComponent is a work-around for broken itk-pipelines.
-    // Both the elastix and itkv4 require to connect their transforms *after* execution of the registration.
-    // This controller explicitly performs these steps
-    // TODO: see if signals-and-slots paradigm is appropriate here.
+template< bool dummy = true >
+class RegistrationControllerComponent :
+  public SuperElastixComponent<
+  Accepting< RunRegistrationInterface, ReconnectTransformInterface, AfterRegistrationInterface >,
+  Providing< RegistrationControllerStartInterface >
+  >
+{
+  // RegistrationControllerComponent is a work-around for broken itk-pipelines.
+  // Both the elastix and itkv4 require to connect their transforms *after* execution of the registration.
+  // This controller explicitly performs these steps
+  // TODO: see if signals-and-slots paradigm is appropriate here.
 
+public:
 
-  public:
-    selxNewMacro(RegistrationControllerComponent, ComponentBase);
+  selxNewMacro( RegistrationControllerComponent, ComponentBase );
 
-    //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
+  //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
 
-    RegistrationControllerComponent();
-    virtual ~RegistrationControllerComponent();
+  RegistrationControllerComponent();
+  virtual ~RegistrationControllerComponent();
 
-    
-	// Accepting Interfaces:
-    virtual int Set(RunRegistrationInterface*) override;
-	  virtual int Set(ReconnectTransformInterface*) override;
-    virtual int Set(AfterRegistrationInterface*) override;
+  // Accepting Interfaces:
+  virtual int Set( RunRegistrationInterface * ) override;
 
-	// Providing Interfaces:
-    virtual void RegistrationControllerStart(void) override;
+  virtual int Set( ReconnectTransformInterface * ) override;
 
-    virtual bool MeetsCriterion(const ComponentBase::CriterionType &criterion) override;
-    static const char * GetDescription() { return "RegistrationController Component"; };
-  private:
-	  std::set<RunRegistrationInterface*> m_RunRegistrationInterfaces;
-    std::set<ReconnectTransformInterface*> m_ReconnectTransformInterfaces;
-    std::set<AfterRegistrationInterface*> m_AfterRegistrationInterfaces;
+  virtual int Set( AfterRegistrationInterface * ) override;
 
-    protected:
-  };
+  // Providing Interfaces:
+  virtual void RegistrationControllerStart( void ) override;
 
+  virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
+
+  static const char * GetDescription() { return "RegistrationController Component"; }
+
+private:
+
+  std::set< RunRegistrationInterface * >    m_RunRegistrationInterfaces;
+  std::set< ReconnectTransformInterface * > m_ReconnectTransformInterfaces;
+  std::set< AfterRegistrationInterface * >  m_AfterRegistrationInterfaces;
+
+protected:
+};
 } //end namespace selx
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "selxRegistrationController.hxx"

@@ -1,6 +1,6 @@
 /*=========================================================================
  *
- *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,9 +28,10 @@ namespace selx
  * \brief Create instances of MetaImageIO objects using an object factory.
  * \ingroup ITKIOMeta
  */
-  class MetricComponent1Factory :public itk::ObjectFactoryBase
+class MetricComponent1Factory : public itk::ObjectFactoryBase
 {
 public:
+
   /** Standard class typedefs. */
   typedef MetricComponent1Factory         Self;
   typedef itk::ObjectFactoryBase          Superclass;
@@ -43,29 +44,31 @@ public:
   virtual const char * GetDescription() const ITK_OVERRIDE;
 
   /** Method for class instantiation. */
-  itkFactorylessNewMacro(Self);
+  itkFactorylessNewMacro( Self );
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(MetricComponent1Factory, ObjectFactoryBase);
+  itkTypeMacro( MetricComponent1Factory, ObjectFactoryBase );
 
   /** Register one factory of this type  */
   static void RegisterOneFactory()
   {
     MetricComponent1Factory::Pointer MetricComponent1Factory = MetricComponent1Factory::New();
 
-    ObjectFactoryBase::RegisterFactory(MetricComponent1Factory);
+    ObjectFactoryBase::RegisterFactory( MetricComponent1Factory );
   }
 
+
 protected:
+
   MetricComponent1Factory();
-  ~MetricComponent1Factory() {};
+  ~MetricComponent1Factory() {}
 
 private:
-  MetricComponent1Factory(const Self &); //purposely not implemented
-  void operator=(const Self &);     //purposely not implemented
+
+  MetricComponent1Factory( const Self & ); //purposely not implemented
+  void operator=( const Self & );          //purposely not implemented
 };
 } // end namespace selx
-
 
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "itkMetricComponent1Factory.hxx"

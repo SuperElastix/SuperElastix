@@ -14,15 +14,14 @@
 
 namespace selx
 {
-
 template< typename ComponentTypeList >
 class SuperElastixFilter : public itk::ProcessObject
 {
 public:
 
   /** Standard ITK typedefs. */
-  typedef SuperElastixFilter                   Self;
-  typedef itk::ProcessObject Superclass;
+  typedef SuperElastixFilter              Self;
+  typedef itk::ProcessObject              Superclass;
   typedef itk::SmartPointer< Self >       Pointer;
   typedef itk::SmartPointer< const Self > ConstPointer;
 
@@ -30,7 +29,7 @@ public:
   itkNewMacro( Self );
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(Self, itk::ProcessObject);
+  itkTypeMacro( Self, itk::ProcessObject );
   typedef itk::DataObject InputDataType;
   typedef itk::DataObject OutputDataType;
   typedef itk::DataObject DataObject;
@@ -40,41 +39,43 @@ public:
 
   //TODO make const correct
   //itkSetConstObjectMacro(Blueprint,Blueprint)
-  itkSetObjectMacro(Blueprint, Blueprint);
-  
-  typename AnyFileReaderType::Pointer GetInputFileReader(const DataObjectIdentifierType&);
-  typename AnyFileWriterType::Pointer GetOutputFileWriter(const DataObjectIdentifierType&);
+  itkSetObjectMacro( Blueprint, Blueprint );
+
+  typename AnyFileReaderType::Pointer GetInputFileReader( const DataObjectIdentifierType & );
+
+  typename AnyFileWriterType::Pointer GetOutputFileWriter( const DataObjectIdentifierType & );
 
   /** SetInput accepts any input data as long as it is derived from itk::DataObject */
-  void SetInput(const DataObjectIdentifierType&, InputDataType*);
-  
+  void SetInput( const DataObjectIdentifierType &, InputDataType * );
+
   /** Non type-specific GetOutput */
-  OutputDataType * GetOutput(const DataObjectIdentifierType&);
+  OutputDataType * GetOutput( const DataObjectIdentifierType & );
 
   /** GetOutput tries dynamic cast to required output type */
-  template<typename ReturnType>
-  ReturnType* GetOutput(const DataObjectIdentifierType&);
+  template< typename ReturnType >
+  ReturnType * GetOutput( const DataObjectIdentifierType & );
 
-  void Update(void) ITK_OVERRIDE;
+  void Update( void ) ITK_OVERRIDE;
+
 protected:
 
-  SuperElastixFilter(void);
+  SuperElastixFilter( void );
 
-  virtual void GenerateOutputInformation(void) ITK_OVERRIDE;
-  virtual void GenerateData(void) ITK_OVERRIDE;
+  virtual void GenerateOutputInformation( void ) ITK_OVERRIDE;
 
+  virtual void GenerateData( void ) ITK_OVERRIDE;
 
 private:
+
   //TODO make const correct
   //Blueprint::ConstPointer m_Blueprint;
-  Blueprint::Pointer m_Blueprint;
-  std::unique_ptr<Overlord> m_Overlord;
-  bool m_InputConnectionModified;
-  bool m_OutputConnectionModified;
-  bool m_BlueprintConnectionModified;
-  bool m_IsConnected;
+  Blueprint::Pointer          m_Blueprint;
+  std::unique_ptr< Overlord > m_Overlord;
+  bool                        m_InputConnectionModified;
+  bool                        m_OutputConnectionModified;
+  bool                        m_BlueprintConnectionModified;
+  bool                        m_IsConnected;
 };
-
 } // namespace elx
 
 #ifndef ITK_MANUAL_INSTANTIATION

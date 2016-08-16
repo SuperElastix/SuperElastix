@@ -1,6 +1,6 @@
 /*=========================================================================
  *
- *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,14 +21,16 @@
 
 namespace selx
 {
-void Metric4thPartyWrapper::SetMetricValueComponent(MetricValueInterface* metricValueComponent)
+void
+Metric4thPartyWrapper::SetMetricValueComponent( MetricValueInterface * metricValueComponent )
 {
   this->metricval = metricValueComponent;
 }
 
-int Metric4thPartyWrapper::GetCost()
+
+int
+Metric4thPartyWrapper::GetCost()
 {
   return this->metricval->GetValue();
 }
-
 } // end namespace selx

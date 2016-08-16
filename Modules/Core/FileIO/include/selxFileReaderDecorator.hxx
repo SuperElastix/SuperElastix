@@ -22,7 +22,6 @@
 
 namespace selx
 {
-
 /**
  * ********************* Constructor *********************
  */
@@ -33,6 +32,7 @@ FileReaderDecorator< TReader >
 {
   m_Reader = ReaderType::New();
 } // end Constructor
+
 
 /**
 * ********************* Destructor *********************
@@ -48,14 +48,15 @@ FileReaderDecorator< TReader >
 template< typename TReader >
 void
 FileReaderDecorator< TReader >
-::SetFileName(const std::string _arg)
+::SetFileName( const std::string _arg )
 {
-  return m_Reader->SetFileName(_arg);
+  return m_Reader->SetFileName( _arg );
 }
 
+
 template< typename TReader >
-typename FileReaderDecorator< TReader >::OutputDataType*
-FileReaderDecorator< TReader >
+typename FileReaderDecorator< TReader >::OutputDataType
+* FileReaderDecorator< TReader >
 ::GetOutput()
 {
   //implicit cast from ImageType<>* to OutputDataType*.
@@ -69,7 +70,6 @@ FileReaderDecorator< TReader >
 {
   return m_Reader->Update();
 }
-
 } // namespace elx
 
 #endif // selxProcessObject_hxx

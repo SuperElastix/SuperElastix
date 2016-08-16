@@ -13,14 +13,13 @@
 
 namespace selx
 {
-
-  using DefaultComponents = selx::TypeList < DisplacementFieldItkImageFilterSinkComponent<2, float>,
-    ItkImageSourceFixedComponent<2, float>,
-    ItkImageSourceMovingComponent<2, float>,
-    ItkSmoothingRecursiveGaussianImageFilterComponent<2, float>,
-    ItkImageRegistrationMethodv4Component<2, float>,
-    ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component<2, float>,
-    ItkMeanSquaresImageToImageMetricv4Component<2, float>,
-    ElastixComponent<2, float>,
-    ItkImageSinkComponent < 2, float >> ;
+using DefaultComponents = selx::TypeList< DisplacementFieldItkImageFilterSinkComponent< 2, float >,
+  ItkImageSourceFixedComponent< 2, float >,
+  ItkImageSourceMovingComponent< 2, float >,
+  ItkSmoothingRecursiveGaussianImageFilterComponent< 2, float >,
+  ItkImageRegistrationMethodv4Component< 2, float >,
+  ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< 2, float >,
+  ItkMeanSquaresImageToImageMetricv4Component< 2, float >,
+  ElastixComponent< 2, float >,
+  ItkImageSinkComponent< 2, float >>;
 }

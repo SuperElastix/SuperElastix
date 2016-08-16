@@ -1,6 +1,6 @@
 /*=========================================================================
  *
- *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,79 +21,84 @@
 
 namespace selx
 {
-  template<int Dimensionality, class TPixel>
-  ItkSmoothingRecursiveGaussianImageFilterComponent< Dimensionality, TPixel>::ItkSmoothingRecursiveGaussianImageFilterComponent()
+template< int Dimensionality, class TPixel >
+ItkSmoothingRecursiveGaussianImageFilterComponent< Dimensionality, TPixel >::ItkSmoothingRecursiveGaussianImageFilterComponent()
 {
   m_theItkFilter = TheItkFilterType::New();
 }
-template<int Dimensionality, class TPixel>
-ItkSmoothingRecursiveGaussianImageFilterComponent< Dimensionality, TPixel>::~ItkSmoothingRecursiveGaussianImageFilterComponent()
+
+
+template< int Dimensionality, class TPixel >
+ItkSmoothingRecursiveGaussianImageFilterComponent< Dimensionality, TPixel >::~ItkSmoothingRecursiveGaussianImageFilterComponent()
 {
 }
 
-template<int Dimensionality, class TPixel>
-int ItkSmoothingRecursiveGaussianImageFilterComponent< Dimensionality, TPixel>
-::Set(itkImageInterface<Dimensionality, TPixel>* component)
+
+template< int Dimensionality, class TPixel >
+int
+ItkSmoothingRecursiveGaussianImageFilterComponent< Dimensionality, TPixel >
+::Set( itkImageInterface< Dimensionality, TPixel > * component )
 {
   auto image = component->GetItkImage();
   // connect the itk pipeline
-  this->m_theItkFilter->SetInput(image);
+  this->m_theItkFilter->SetInput( image );
   return 0;
 }
 
-//ItkImageSourceType::Pointer 
-template<int Dimensionality, class TPixel>
-typename ItkSmoothingRecursiveGaussianImageFilterComponent< Dimensionality, TPixel>::ItkImagePointer 
-ItkSmoothingRecursiveGaussianImageFilterComponent< Dimensionality, TPixel>
+
+//ItkImageSourceType::Pointer
+template< int Dimensionality, class TPixel >
+typename ItkSmoothingRecursiveGaussianImageFilterComponent< Dimensionality, TPixel >::ItkImagePointer
+ItkSmoothingRecursiveGaussianImageFilterComponent< Dimensionality, TPixel >
 ::GetItkImage()
 {
   return m_theItkFilter->GetOutput();
 }
-template<int Dimensionality, class TPixel>
+
+
+template< int Dimensionality, class TPixel >
 bool
-ItkSmoothingRecursiveGaussianImageFilterComponent< Dimensionality, TPixel>
-::MeetsCriterion(const ComponentBase::CriterionType &criterion)
+ItkSmoothingRecursiveGaussianImageFilterComponent< Dimensionality, TPixel >
+::MeetsCriterion( const ComponentBase::CriterionType & criterion )
 {
-  bool hasUndefinedCriteria(false);
-  bool meetsCriteria(false);
-  if (criterion.first == "ComponentProperty")
+  bool hasUndefinedCriteria( false );
+  bool meetsCriteria( false );
+  if( criterion.first == "ComponentProperty" )
   {
     meetsCriteria = true;
-    for (auto const & criterionValue : criterion.second) // auto&& preferred?
+    for( auto const & criterionValue : criterion.second ) // auto&& preferred?
     {
-      if (criterionValue != "SomeProperty")  // e.g. "GradientDescent", "SupportsSparseSamples
+      if( criterionValue != "SomeProperty" )  // e.g. "GradientDescent", "SupportsSparseSamples
       {
         meetsCriteria = false;
       }
     }
   }
-  else if (criterion.first == "Dimensionality") //Supports this?
+  else if( criterion.first == "Dimensionality" ) //Supports this?
   {
     meetsCriteria = true;
-    for (auto const & criterionValue : criterion.second) // auto&& preferred?
+    for( auto const & criterionValue : criterion.second ) // auto&& preferred?
     {
-      if (std::stoi(criterionValue) != Dimensionality)
+      if( std::stoi( criterionValue ) != Dimensionality )
       {
         meetsCriteria = false;
       }
     }
-
   }
-  else if (criterion.first == "PixelType") //Supports this?
+  else if( criterion.first == "PixelType" ) //Supports this?
   {
     meetsCriteria = true;
-    for (auto const & criterionValue : criterion.second) // auto&& preferred?
+    for( auto const & criterionValue : criterion.second ) // auto&& preferred?
     {
-      if (criterionValue != Self::GetPixelTypeNameString())
+      if( criterionValue != Self::GetPixelTypeNameString() )
       {
         meetsCriteria = false;
       }
     }
-
   }
-  else if (criterion.first == "Sigma") //Supports this?
+  else if( criterion.first == "Sigma" ) //Supports this?
   {
-    if (criterion.second.size() != 1)
+    if( criterion.second.size() != 1 )
     {
       meetsCriteria = false;
       //itkExceptionMacro("The criterion Sigma may have only 1 value");
@@ -103,10 +108,10 @@ ItkSmoothingRecursiveGaussianImageFilterComponent< Dimensionality, TPixel>
       auto const & criterionValue = *criterion.second.begin();
       try
       {
-        this->m_theItkFilter->SetSigma(std::stod(criterionValue));
+        this->m_theItkFilter->SetSigma( std::stod( criterionValue ) );
         meetsCriteria = true;
       }
-      catch (itk::ExceptionObject & err)
+      catch( itk::ExceptionObject & err )
       {
         //TODO log the error message?
         meetsCriteria = false;
@@ -115,5 +120,4 @@ ItkSmoothingRecursiveGaussianImageFilterComponent< Dimensionality, TPixel>
   }
   return meetsCriteria;
 }
-
 } //end namespace selx

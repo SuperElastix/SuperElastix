@@ -1,6 +1,6 @@
 /*=========================================================================
  *
- *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,15 +22,15 @@
 
 namespace selx
 {
-
 MetricComponent1Factory::MetricComponent1Factory()
 {
   this->RegisterOverride( "ComponentBase",
-                          "itkMetricComponent1",
-                          "Metric Component 1",
-                          1,
-                          itk::CreateObjectFunction< MetricComponent1 >::New()); //float 
+    "itkMetricComponent1",
+    "Metric Component 1",
+    1,
+    itk::CreateObjectFunction< MetricComponent1 >::New() );                      //float
 }
+
 
 const char *
 MetricComponent1Factory::GetITKSourceVersion() const
@@ -38,11 +38,13 @@ MetricComponent1Factory::GetITKSourceVersion() const
   return ITK_SOURCE_VERSION;
 }
 
+
 const char *
 MetricComponent1Factory::GetDescription() const
 {
   return "Test module 1 for Metrics";
 }
+
 
 // Undocumented API used to register during static initialization.
 // DO NOT CALL DIRECTLY.

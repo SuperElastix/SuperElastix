@@ -1,6 +1,6 @@
 /*=========================================================================
  *
- *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,41 +27,46 @@
 #include "selxMacro.h"
 namespace selx
 {
-  template <class InternalComputationValueType, int Dimensionality>
-  class ItkAffineTransformComponent : 
-    public SuperElastixComponent<
-    Accepting< >,
-    Providing< itkTransformInterface<InternalComputationValueType,Dimensionality>>
-    >
-  {
-  public:
-    selxNewMacro(ItkAffineTransformComponent, ComponentBase);
+template< class InternalComputationValueType, int Dimensionality >
+class ItkAffineTransformComponent :
+  public SuperElastixComponent<
+  Accepting< >,
+  Providing< itkTransformInterface< InternalComputationValueType, Dimensionality >>
+  >
+{
+public:
 
-    //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
+  selxNewMacro( ItkAffineTransformComponent, ComponentBase );
 
-    ItkAffineTransformComponent();
-    virtual ~ItkAffineTransformComponent();
+  //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
 
-    //typedef double InternalComputationValueType;
-    
-	  /**  Type of the optimizer. */
-    using TransformType = typename itkTransformInterface<InternalComputationValueType,Dimensionality>::TransformType;
-    using TransformPointer = typename itkTransformInterface<InternalComputationValueType,Dimensionality>::TransformPointer;
-    
-    typedef typename itk::AffineTransform<InternalComputationValueType, Dimensionality> AffineTransformType;
+  ItkAffineTransformComponent();
+  virtual ~ItkAffineTransformComponent();
 
-    virtual TransformPointer GetItkTransform() override;
+  //typedef double InternalComputationValueType;
 
-    virtual bool MeetsCriterion(const ComponentBase::CriterionType &criterion) override;    
-    //static const char * GetName() { return "ItkAffineTransform"; } ;
-    static const char * GetDescription() { return "ItkAffineTransform Component"; };
-  private:
-    typename AffineTransformType::Pointer m_Transform;
-  protected:
-    /* The following struct returns the string name of computation type */
-    /* default implementation */
-  };
+  /**  Type of the optimizer. */
+  using TransformType    = typename itkTransformInterface< InternalComputationValueType, Dimensionality >::TransformType;
+  using TransformPointer = typename itkTransformInterface< InternalComputationValueType, Dimensionality >::TransformPointer;
 
+  typedef typename itk::AffineTransform< InternalComputationValueType, Dimensionality > AffineTransformType;
+
+  virtual TransformPointer GetItkTransform() override;
+
+  virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
+
+  //static const char * GetName() { return "ItkAffineTransform"; } ;
+  static const char * GetDescription() { return "ItkAffineTransform Component"; }
+
+private:
+
+  typename AffineTransformType::Pointer m_Transform;
+
+protected:
+
+  /* The following struct returns the string name of computation type */
+  /* default implementation */
+};
 } //end namespace selx
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "selxItkAffineTransform.hxx"

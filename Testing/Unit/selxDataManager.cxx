@@ -1,6 +1,6 @@
 /*=========================================================================
  *
- *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,11 +25,12 @@
 
 const std::string
 DataManager
-::GetInputFile( const std::string filename ) const 
+::GetInputFile( const std::string filename ) const
 {
   const std::string path = this->GetInputDirectory() + this->GetFolderSeparator() + filename;
   return path;
 }
+
 
 const std::string
 DataManager
@@ -39,6 +40,7 @@ DataManager
   return path;
 }
 
+
 const std::string
 DataManager
 ::GetBaselineFile( const std::string filename ) const
@@ -47,11 +49,14 @@ DataManager
   return path;
 }
 
+
 const std::string
 DataManager
-::GetConfigurationFile(const std::string filename) const
+::GetConfigurationFile( const std::string filename ) const
 {
   const std::string path = this->GetConfigurationDirectory() + this->GetFolderSeparator() + filename;
   return path;
 }
+
+
 #endif // __DataManager_cxx

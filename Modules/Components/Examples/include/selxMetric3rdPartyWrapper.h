@@ -1,6 +1,6 @@
 /*=========================================================================
  *
- *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,15 +25,22 @@
 namespace selx
 {
 // An Optimizer3rdParty expects that Metric3rdParty will be set as input. All accepted interfaces by the Optimizer3rdPartyCompoment will be delegated to the Metric3rdPartyWrapper object.
-  class Metric3rdPartyWrapper : public Example3rdParty::Metric3rdPartyBase  {
+class Metric3rdPartyWrapper : public Example3rdParty::Metric3rdPartyBase
+{
 public:
-  void SetMetricValueComponent(MetricValueInterface*);
-  void SetMetricDerivativeComponent(MetricDerivativeInterface*);
+
+  void SetMetricValueComponent( MetricValueInterface * );
+
+  void SetMetricDerivativeComponent( MetricDerivativeInterface * );
+
   virtual int GetValue();
+
   virtual int GetDerivative();
+
 private:
-  MetricValueInterface* metricval;
-  MetricDerivativeInterface* metricderiv;
+
+  MetricValueInterface *      metricval;
+  MetricDerivativeInterface * metricderiv;
 };
 } // end namespace selx
 #endif // #define Metric3rdPartyWrapper_h

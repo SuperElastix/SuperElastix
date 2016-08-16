@@ -1,6 +1,6 @@
 /*=========================================================================
  *
- *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,40 +28,42 @@
 
 namespace selx
 {
+class GDOptimizer3rdPartyComponent :
+  public SuperElastixComponent<
+  Accepting< MetricValueInterface, MetricDerivativeInterface >,
+  Providing< OptimizerUpdateInterface >
+  >
+{
+public:
 
-  class GDOptimizer3rdPartyComponent : 
-    public SuperElastixComponent<
-      Accepting< MetricValueInterface, MetricDerivativeInterface >,
-      Providing< OptimizerUpdateInterface>
-    >
-  {
-  public:
-    /** Standard class typedefs. */
-    typedef GDOptimizer3rdPartyComponent                        Self;
-    typedef ComponentBase Superclass;
-    typedef itk::SmartPointer< Self >             Pointer;
-    typedef itk::SmartPointer< const Self >       ConstPointer;
+  /** Standard class typedefs. */
+  typedef GDOptimizer3rdPartyComponent    Self;
+  typedef ComponentBase                   Superclass;
+  typedef itk::SmartPointer< Self >       Pointer;
+  typedef itk::SmartPointer< const Self > ConstPointer;
 
-    /** New macro for creation of through the object factory. */
-    itkNewMacro(Self);
+  /** New macro for creation of through the object factory. */
+  itkNewMacro( Self );
 
-    /** Run-time type information (and related methods). */
-    itkTypeMacro(GDOptimizer3rdPartyComponent, Superclass);
+  /** Run-time type information (and related methods). */
+  itkTypeMacro( GDOptimizer3rdPartyComponent, Superclass );
 
+  GDOptimizer3rdPartyComponent();
+  virtual ~GDOptimizer3rdPartyComponent();
+  Example3rdParty::GDOptimizer3rdParty * theImplementation;
+  Metric3rdPartyWrapper *                MetricObject;
+  //virtual int ConnectFrom(const char *, ComponentBase*);
+  virtual int Set( MetricValueInterface * ) override;
 
-    GDOptimizer3rdPartyComponent();
-    virtual ~GDOptimizer3rdPartyComponent();
-    Example3rdParty::GDOptimizer3rdParty* theImplementation;
-    Metric3rdPartyWrapper* MetricObject;
-    //virtual int ConnectFrom(const char *, ComponentBase*);
-    virtual int Set(MetricValueInterface*) override;
-    virtual int Set(MetricDerivativeInterface*) override;
-    virtual int Update() override;
-    //virtual bool MeetsCriteria(const CriteriaType &criteria);
-    virtual bool MeetsCriterion(const CriterionType &criterion) override;
-    
-    //static const char * GetName() { return "GDOptimizer3rdPartyComponent"; } ;
-    static const char * GetDescription() { return "GD Optimizer 3rd Party Component"; };
-  };
+  virtual int Set( MetricDerivativeInterface * ) override;
+
+  virtual int Update() override;
+
+  //virtual bool MeetsCriteria(const CriteriaType &criteria);
+  virtual bool MeetsCriterion( const CriterionType & criterion ) override;
+
+  //static const char * GetName() { return "GDOptimizer3rdPartyComponent"; } ;
+  static const char * GetDescription() { return "GD Optimizer 3rd Party Component"; }
+};
 } //end namespace selx
 #endif // #define GDOptimizer3rdPartyComponent_h

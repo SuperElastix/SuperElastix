@@ -22,59 +22,60 @@
 
 namespace selx
 {
-
 /**
  * ********************* Constructor *********************
  */
 
-  template< typename TWriter, typename FileWriterDecoratorTraits >
-  FileWriterDecorator< TWriter, FileWriterDecoratorTraits>
+template< typename TWriter, typename FileWriterDecoratorTraits >
+FileWriterDecorator< TWriter, FileWriterDecoratorTraits >
 ::FileWriterDecorator()
 {
   m_Writer = WriterType::New();
 } // end Constructor
 
+
 /**
 * ********************* Destructor *********************
 */
 
-  template< typename TWriter, typename FileWriterDecoratorTraits>
-  FileWriterDecorator< TWriter, FileWriterDecoratorTraits>
+template< typename TWriter, typename FileWriterDecoratorTraits >
+FileWriterDecorator< TWriter, FileWriterDecoratorTraits >
 ::~FileWriterDecorator()
 {
 } // end Destructor
 
 
-  template< typename TWriter, typename FileWriterDecoratorTraits>
+template< typename TWriter, typename FileWriterDecoratorTraits >
 void
-FileWriterDecorator< TWriter, FileWriterDecoratorTraits>
-::SetFileName(const std::string _arg)
+FileWriterDecorator< TWriter, FileWriterDecoratorTraits >
+::SetFileName( const std::string _arg )
 {
-  return m_Writer->SetFileName(_arg);
+  return m_Writer->SetFileName( _arg );
 }
 
-template< typename TWriter, typename FileWriterDecoratorTraits>
+
+template< typename TWriter, typename FileWriterDecoratorTraits >
 void
-FileWriterDecorator< TWriter, FileWriterDecoratorTraits>
-::SetInput(const InputDataType* input)
+FileWriterDecorator< TWriter, FileWriterDecoratorTraits >
+::SetInput( const InputDataType * input )
 {
-  typename DerivedInputDataType::ConstPointer derivedData = dynamic_cast<const DerivedInputDataType*>(input);	
-  if (derivedData==nullptr)
+  typename DerivedInputDataType::ConstPointer derivedData = dynamic_cast< const DerivedInputDataType * >( input );
+  if( derivedData == nullptr )
   {
-      itkExceptionMacro("The AnyFileWriter redirects to a FileWriterDecorator with a WriterType not compatible with the input data");
+    itkExceptionMacro( "The AnyFileWriter redirects to a FileWriterDecorator with a WriterType not compatible with the input data" );
   }
 
-  return m_Writer->SetInput(derivedData);
+  return m_Writer->SetInput( derivedData );
 }
 
-template< typename TWriter, typename FileWriterDecoratorTraits>
+
+template< typename TWriter, typename FileWriterDecoratorTraits >
 void
-FileWriterDecorator< TWriter, FileWriterDecoratorTraits>
+FileWriterDecorator< TWriter, FileWriterDecoratorTraits >
 ::Update()
 {
   return m_Writer->Update();
 }
-
 } // namespace elx
 
 #endif // selxProcessObject_hxx

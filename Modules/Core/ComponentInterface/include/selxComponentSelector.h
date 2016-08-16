@@ -1,6 +1,6 @@
 /*=========================================================================
  *
- *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,53 +30,54 @@ namespace selx
  * \brief Create instances of MetaImageIO objects using an object factory.
  * \ingroup ITKIOMeta
  */
-class ComponentSelector:public itk::Object
+class ComponentSelector : public itk::Object
 {
 public:
+
   /** Standard class typedefs. */
-  typedef ComponentSelector         Self;
-  typedef Object          Superclass;
+  typedef ComponentSelector               Self;
+  typedef Object                          Superclass;
   typedef itk::SmartPointer< Self >       Pointer;
   typedef itk::SmartPointer< const Self > ConstPointer;
-
 
   /** Class methods used to interface with the registered factories. */
   //virtual const char * GetITKSourceVersion() const { return ITK_SOURCE_VERSION; }
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(ComponentSelector, Object);
+  itkTypeMacro( ComponentSelector, Object );
 
   /** New macro for creation of through the object factory. */
-  itkNewMacro(Self);
-  
+  itkNewMacro( Self );
+
   /** Convenient typedefs. */
-  typedef ComponentBase::Pointer ComponentBasePointer;
-  typedef ComponentBase::CriteriaType CriteriaType;
+  typedef ComponentBase::Pointer       ComponentBasePointer;
+  typedef ComponentBase::CriteriaType  CriteriaType;
   typedef ComponentBase::CriterionType CriterionType;
 
   typedef std::list< ComponentBasePointer > ComponentListType;
   typedef ComponentListType::size_type      NumberOfComponentsType;
   /** set selection criteria for possibleComponents*/
-  
+
   /** Narrow selection criteria*/
-  void AddCriterion(const CriterionType &criterion);
- 
+  void AddCriterion( const CriterionType & criterion );
+
   /** Check for multiple versus 1 or 0 components*/
-  bool HasMultipleComponents(void);
-  
+  bool HasMultipleComponents( void );
+
   /** Return Component or Nullptr*/
-  ComponentBasePointer GetComponent(void);
-  
-  
+  ComponentBasePointer GetComponent( void );
+
 protected:
-  CriteriaType m_Criteria;
+
+  CriteriaType      m_Criteria;
   ComponentListType m_PossibleComponents;
   ComponentSelector();
   ~ComponentSelector();
 
 private:
-  ComponentSelector(const Self &); //purposely not implemented
-  void operator=(const Self &);     //purposely not implemented
+
+  ComponentSelector( const Self & ); //purposely not implemented
+  void operator=( const Self & );    //purposely not implemented
 };
 } // end namespace selx
 

@@ -1,6 +1,6 @@
 /*=========================================================================
  *
- *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,13 +24,16 @@
 
 using namespace selx;
 
-class ConfigurationReaderTest : public ::testing::Test {
+class ConfigurationReaderTest : public ::testing::Test
+{
 public:
+
   typedef DataManager DataManagerType;
-  
+
   DataManagerType::Pointer dataManager;
-  
-  virtual void SetUp() {
+
+  virtual void SetUp()
+  {
     this->dataManager = DataManagerType::New();
   }
 };
@@ -39,16 +42,14 @@ TEST_F( ConfigurationReaderTest, ReadXML )
 {
   ConfigurationReader::BlueprintPointerType blueprint;
 
-  EXPECT_NO_THROW(blueprint = ConfigurationReader::FromXML(this->dataManager->GetConfigurationFile("itkv4_SVF_ANTsCC.xml")));
-  blueprint->WriteBlueprint(this->dataManager->GetOutputFile("configurationReaderTest_itkv4_SVF_ANTsCC.xml.dot"));
-	
+  EXPECT_NO_THROW( blueprint = ConfigurationReader::FromXML( this->dataManager->GetConfigurationFile( "itkv4_SVF_ANTsCC.xml" ) ) );
+  blueprint->WriteBlueprint( this->dataManager->GetOutputFile( "configurationReaderTest_itkv4_SVF_ANTsCC.xml.dot" ) );
 }
 
-TEST_F(ConfigurationReaderTest, ReadJson)
+TEST_F( ConfigurationReaderTest, ReadJson )
 {
   ConfigurationReader::BlueprintPointerType blueprint;
 
-  EXPECT_NO_THROW(blueprint = ConfigurationReader::FromJson(this->dataManager->GetConfigurationFile("itkv4_SVF_ANTsCC.json")));
-  blueprint->WriteBlueprint(this->dataManager->GetOutputFile("configurationReaderTest_itkv4_SVF_ANTsCC.json.dot"));
-
+  EXPECT_NO_THROW( blueprint = ConfigurationReader::FromJson( this->dataManager->GetConfigurationFile( "itkv4_SVF_ANTsCC.json" ) ) );
+  blueprint->WriteBlueprint( this->dataManager->GetOutputFile( "configurationReaderTest_itkv4_SVF_ANTsCC.json.dot" ) );
 }

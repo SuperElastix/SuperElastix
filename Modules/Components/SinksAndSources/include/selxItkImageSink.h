@@ -1,6 +1,6 @@
 /*=========================================================================
  *
- *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,95 +31,101 @@
 
 namespace selx
 {
-  template<int Dimensionality, class TPixel>
-  class ItkImageSinkComponent :
-    public SuperElastixComponent <
-    Accepting< itkImageInterface<Dimensionality, TPixel> >,
-    Providing < SinkInterface >
-    >
+template< int Dimensionality, class TPixel >
+class ItkImageSinkComponent :
+  public SuperElastixComponent<
+  Accepting< itkImageInterface< Dimensionality, TPixel >>,
+  Providing< SinkInterface >
+  >
+{
+public:
+
+  selxNewMacro( ItkImageSinkComponent, ComponentBase );
+
+  //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
+
+  ItkImageSinkComponent();
+  virtual ~ItkImageSinkComponent();
+
+  typedef itkImageInterface< Dimensionality, TPixel >        AcceptingImageInterfaceType;
+  typedef typename AcceptingImageInterfaceType::ItkImageType ItkImageType;
+  typedef typename ItkImageType::Pointer                     ItkImagePointer;
+  typedef typename itk::ImageFileWriter< ItkImageType >      ItkImageWriterType;
+  typedef FileWriterDecorator< ItkImageWriterType >          DecoratedWriterType;
+
+  virtual int Set( AcceptingImageInterfaceType * ) override;
+
+  virtual void SetMiniPipelineOutput( itk::DataObject::Pointer ) override;
+  virtual itk::DataObject::Pointer GetMiniPipelineOutput( void ) override;
+
+  virtual AnyFileWriter::Pointer GetOutputFileWriter( void ) override;
+
+  virtual itk::DataObject::Pointer GetInitializedOutput( void ) override;
+
+  virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
+
+  static const char * GetDescription() { return "ItkImageSink Component"; }
+
+private:
+
+  typename ItkImageType::Pointer m_MiniPipelineOutputImage;
+  typename ItkImageType::Pointer m_OverlordOutputImage;
+
+protected:
+
+  /* The following struct returns the string name of computation type */
+  /* default implementation */
+
+  static inline const std::string GetTypeNameString()
   {
-  public:
-    selxNewMacro(ItkImageSinkComponent, ComponentBase);
-
-    //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
-
-    ItkImageSinkComponent();
-    virtual ~ItkImageSinkComponent();
-
-    typedef itkImageInterface<Dimensionality, TPixel> AcceptingImageInterfaceType;
-    typedef typename AcceptingImageInterfaceType::ItkImageType ItkImageType;
-    typedef typename ItkImageType::Pointer ItkImagePointer;
-    typedef typename itk::ImageFileWriter<ItkImageType> ItkImageWriterType;
-    typedef FileWriterDecorator<ItkImageWriterType>  DecoratedWriterType;
-
-    virtual int Set(AcceptingImageInterfaceType*) override;
-    virtual void SetMiniPipelineOutput(itk::DataObject::Pointer) override;
-    virtual itk::DataObject::Pointer GetMiniPipelineOutput(void) override;
-    virtual AnyFileWriter::Pointer GetOutputFileWriter(void) override;
-    virtual itk::DataObject::Pointer GetInitializedOutput(void) override;
-
-
-    virtual bool MeetsCriterion(const ComponentBase::CriterionType &criterion) override;
-    static const char * GetDescription() { return "ItkImageSink Component"; };
-  private:
-    typename ItkImageType::Pointer m_MiniPipelineOutputImage;
-    typename ItkImageType::Pointer m_OverlordOutputImage;
-
-    protected:
-    /* The following struct returns the string name of computation type */
-    /* default implementation */
-
-    static inline const std::string GetTypeNameString()
-    {
-      itkGenericExceptionMacro(<< "Unknown ScalarType" << typeid(TPixel).name());
-      // TODO: provide the user instructions how to enable the compilation of the component with the required template types (if desired)
-      // We might define an exception object that can communicate various error messages: for simple user, for developer user, etc
-    }
-
-    static inline const std::string GetPixelTypeNameString()
-    {
-      itkGenericExceptionMacro(<< "Unknown PixelType" << typeid(TPixel).name());
-      // TODO: provide the user instructions how to enable the compilation of the component with the required template types (if desired)
-      // We might define an exception object that can communicate various error messages: for simple user, for developer user, etc
-    }
-
-  };
-
-
-
-  template <>
-  inline const std::string
-    ItkImageSinkComponent<2, float>
-    ::GetPixelTypeNameString()
-  {
-    return std::string("float");
+    itkGenericExceptionMacro( << "Unknown ScalarType" << typeid( TPixel ).name() );
+    // TODO: provide the user instructions how to enable the compilation of the component with the required template types (if desired)
+    // We might define an exception object that can communicate various error messages: for simple user, for developer user, etc
   }
 
 
-  template <>
-  inline const std::string
-    ItkImageSinkComponent<2, double>
-    ::GetPixelTypeNameString()
+  static inline const std::string GetPixelTypeNameString()
   {
-    return std::string("double");
+    itkGenericExceptionMacro( << "Unknown PixelType" << typeid( TPixel ).name() );
+    // TODO: provide the user instructions how to enable the compilation of the component with the required template types (if desired)
+    // We might define an exception object that can communicate various error messages: for simple user, for developer user, etc
   }
+};
 
-  template <>
-  inline const std::string
-    ItkImageSinkComponent<3, float>
-    ::GetPixelTypeNameString()
-  {
-    return std::string("float");
-  }
+template< >
+inline const std::string
+ItkImageSinkComponent< 2, float >
+::GetPixelTypeNameString()
+{
+  return std::string( "float" );
+}
 
-  template <>
-  inline const std::string
-    ItkImageSinkComponent<3, double>
-    ::GetPixelTypeNameString()
-  {
-    return std::string("double");
-  }
 
+template< >
+inline const std::string
+ItkImageSinkComponent< 2, double >
+::GetPixelTypeNameString()
+{
+  return std::string( "double" );
+}
+
+
+template< >
+inline const std::string
+ItkImageSinkComponent< 3, float >
+::GetPixelTypeNameString()
+{
+  return std::string( "float" );
+}
+
+
+template< >
+inline const std::string
+ItkImageSinkComponent< 3, double >
+::GetPixelTypeNameString()
+{
+  return std::string( "double" );
+}
 } //end namespace selx
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "selxItkImageSink.hxx"

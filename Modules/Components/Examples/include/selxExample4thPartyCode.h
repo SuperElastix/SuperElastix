@@ -1,6 +1,6 @@
 /*=========================================================================
  *
- *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,35 +24,46 @@
 
 namespace Example4thParty
 {
-	
-// test case: there are two (slightly) incompatible codebases (i.e. 3rd party and 4th party!), each with an optimizer object and a metric object. 
+// test case: there are two (slightly) incompatible codebases (i.e. 3rd party and 4th party!), each with an optimizer object and a metric object.
 // goal: make SuperEelastix components from all objects and define a handshake that checks if connections can be made.
 
 /*************** below: example implementations of 3rd and 4th party code base (assume we cannot change that) *********************/
 
-class Metric4thPartyBase{
+class Metric4thPartyBase
+{
 public:
+
   virtual int GetCost() = 0; // with different naming convention than 3rd party
 };
 
-class Optimizer4thPartyBase{
+class Optimizer4thPartyBase
+{
 public:
-  virtual int SetMetric(Metric4thPartyBase*) = 0;
+
+  virtual int SetMetric( Metric4thPartyBase * ) = 0;
+
   virtual int DoOptimization() = 0; // with different naming convention than 3rd party
+
 protected:
-  Metric4thPartyBase* theMetric;
+
+  Metric4thPartyBase * theMetric;
 };
 
-class SSDMetric4thParty : public Metric4thPartyBase {
+class SSDMetric4thParty : public Metric4thPartyBase
+{
 public:
-  virtual int GetCost() { return 3; };
+
+  virtual int GetCost() { return 3; }
 };
 
-class GDOptimizer4thParty : public Optimizer4thPartyBase {
+class GDOptimizer4thParty : public Optimizer4thPartyBase
+{
 public:
+
   GDOptimizer4thParty();
   ~GDOptimizer4thParty();
-  virtual int SetMetric(Metric4thPartyBase*);
+  virtual int SetMetric( Metric4thPartyBase * );
+
   virtual int DoOptimization();
 };
 } // end namespave Example4thParty

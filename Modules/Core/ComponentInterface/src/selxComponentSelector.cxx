@@ -1,6 +1,6 @@
 /*=========================================================================
  *
- *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,41 +23,47 @@
 
 namespace selx
 {
-
 ComponentSelector::ComponentSelector()
-  {
-    std::list< itk::LightObject::Pointer >     allobjects =
-      itk::ObjectFactoryBase::CreateAllInstance("ComponentBase");
+{
+  std::list< itk::LightObject::Pointer > allobjects
+    = itk::ObjectFactoryBase::CreateAllInstance( "ComponentBase" );
 
-    for (std::list< itk::LightObject::Pointer >::iterator i = allobjects.begin();
-      i != allobjects.end(); ++i)
+  for( std::list< itk::LightObject::Pointer >::iterator i = allobjects.begin();
+    i != allobjects.end(); ++i )
+  {
+    ComponentBase * io
+      = dynamic_cast< ComponentBase * >( i->GetPointer() );
+    if( io )
     {
-      ComponentBase *io =
-        dynamic_cast<ComponentBase *>(i->GetPointer());
-      if (io)
-      {
-        this->m_PossibleComponents.push_back(io);
-      }
+      this->m_PossibleComponents.push_back( io );
     }
   }
-ComponentSelector::~ComponentSelector()
-  {
-  }
-
-void ComponentSelector::AddCriterion(const CriterionType &criterion)
-{
-  this->m_PossibleComponents.remove_if([&](ComponentBasePointer component){ return !component->MeetsCriterionBase(criterion); });
 }
 
 
-ComponentSelector::ComponentBasePointer ComponentSelector::GetComponent()
+ComponentSelector::~ComponentSelector()
+{
+}
+
+
+void
+ComponentSelector::AddCriterion( const CriterionType & criterion )
+{
+  this->m_PossibleComponents.remove_if([ & ]( ComponentBasePointer component ){
+      return !component->MeetsCriterionBase( criterion );
+    } );
+}
+
+
+ComponentSelector::ComponentBasePointer
+ComponentSelector::GetComponent()
 {
   //TODO check if Modified
   //this->UpdatePossibleComponents();
 
-  if (this->m_PossibleComponents.size() == 1)
+  if( this->m_PossibleComponents.size() == 1 )
   {
-    return *(this->m_PossibleComponents.begin());
+    return *( this->m_PossibleComponents.begin() );
   }
   else
   {
@@ -65,11 +71,12 @@ ComponentSelector::ComponentBasePointer ComponentSelector::GetComponent()
   }
 }
 
-bool ComponentSelector::HasMultipleComponents()
-{
-  return (this->m_PossibleComponents.size() > 1);
-}
 
+bool
+ComponentSelector::HasMultipleComponents()
+{
+  return ( this->m_PossibleComponents.size() > 1 );
+}
 } // end namespace selx
 
 //#endif

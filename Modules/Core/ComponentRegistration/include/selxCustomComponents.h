@@ -1,5 +1,5 @@
 #include "selxTypeList.h"
 namespace selx
 {
-  using CustomComponents = TypeList<>;
+using CustomComponents = TypeList< >;
 }

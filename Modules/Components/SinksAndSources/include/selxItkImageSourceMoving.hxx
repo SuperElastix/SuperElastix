@@ -1,6 +1,6 @@
 /*=========================================================================
  *
- *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,93 +21,96 @@
 
 namespace selx
 {
-  template<int Dimensionality, class TPixel>
-  ItkImageSourceMovingComponent< Dimensionality, TPixel>
-    ::ItkImageSourceMovingComponent() : m_Image(nullptr)
-  {
-  }
+template< int Dimensionality, class TPixel >
+ItkImageSourceMovingComponent< Dimensionality, TPixel >
+::ItkImageSourceMovingComponent() : m_Image( nullptr )
+{
+}
 
-  template<int Dimensionality, class TPixel>
-  ItkImageSourceMovingComponent< Dimensionality, TPixel>
-  ::~ItkImageSourceMovingComponent()
-  {
-  }
 
-  template<int Dimensionality, class TPixel>
-  typename ItkImageSourceMovingComponent< Dimensionality, TPixel>::ItkImageType::Pointer 
-  ItkImageSourceMovingComponent< Dimensionality, TPixel>
-  ::GetItkImageMoving()
+template< int Dimensionality, class TPixel >
+ItkImageSourceMovingComponent< Dimensionality, TPixel >
+::~ItkImageSourceMovingComponent()
+{
+}
+
+
+template< int Dimensionality, class TPixel >
+typename ItkImageSourceMovingComponent< Dimensionality, TPixel >::ItkImageType::Pointer
+ItkImageSourceMovingComponent< Dimensionality, TPixel >
+::GetItkImageMoving()
+{
+  if( this->m_Image == nullptr )
   {
-    if (this->m_Image == nullptr)
+    itkExceptionMacro( "SourceComponent needs to be initialized by SetMiniPipelineInput()" );
+  }
+  return this->m_Image;
+}
+
+
+template< int Dimensionality, class TPixel >
+void
+ItkImageSourceMovingComponent< Dimensionality, TPixel >
+::SetMiniPipelineInput( itk::DataObject::Pointer object )
+{
+  this->m_Image = dynamic_cast< ItkImageType * >( object.GetPointer() );
+  if( this->m_Image == nullptr )
+  {
+    itkExceptionMacro( "DataObject passed by the Overlord is not of the right ImageType or not at all an ImageType" );
+  }
+  return;
+}
+
+
+template< int Dimensionality, class TPixel >
+typename AnyFileReader::Pointer
+ItkImageSourceMovingComponent< Dimensionality, TPixel >::GetInputFileReader()
+{
+  // Instanstiate an image file reader, decorated such that it can be implicitly cast to an AnyFileReaderType
+  return DecoratedReaderType::New().GetPointer();
+}
+
+
+template< int Dimensionality, class TPixel >
+bool
+ItkImageSourceMovingComponent< Dimensionality, TPixel >
+::MeetsCriterion( const ComponentBase::CriterionType & criterion )
+{
+  bool hasUndefinedCriteria( false );
+  bool meetsCriteria( false );
+  if( criterion.first == "ComponentProperty" )
+  {
+    meetsCriteria = true;
+    for( auto const & criterionValue : criterion.second )  // auto&& preferred?
     {
-      itkExceptionMacro("SourceComponent needs to be initialized by SetMiniPipelineInput()");
-    }
-    return this->m_Image;
-  }
-
-  template<int Dimensionality, class TPixel>
-  void 
-  ItkImageSourceMovingComponent< Dimensionality, TPixel>
-  ::SetMiniPipelineInput(itk::DataObject::Pointer object)
-  {
-    this->m_Image = dynamic_cast<ItkImageType*>(object.GetPointer());
-    if (this->m_Image == nullptr)
-    {
-      itkExceptionMacro("DataObject passed by the Overlord is not of the right ImageType or not at all an ImageType");
-    }
-    return;
-  }
-
-  template<int Dimensionality, class TPixel>
-  typename AnyFileReader::Pointer ItkImageSourceMovingComponent< Dimensionality, TPixel>::GetInputFileReader()
-  {
-    // Instanstiate an image file reader, decorated such that it can be implicitly cast to an AnyFileReaderType
-    return DecoratedReaderType::New().GetPointer();
-  }
-
-  template<int Dimensionality, class TPixel>
-  bool 
-  ItkImageSourceMovingComponent< Dimensionality, TPixel>
-  ::MeetsCriterion(const ComponentBase::CriterionType &criterion)
-  {
-    bool hasUndefinedCriteria(false);
-    bool meetsCriteria(false);
-    if (criterion.first == "ComponentProperty")
-    {
-      meetsCriteria = true;
-      for (auto const & criterionValue : criterion.second) // auto&& preferred?
+      if( criterionValue != "SomeProperty" )   // e.g. "GradientDescent", "SupportsSparseSamples
       {
-        if (criterionValue != "SomeProperty")  // e.g. "GradientDescent", "SupportsSparseSamples
-        {
-          meetsCriteria = false;
-        }
+        meetsCriteria = false;
       }
     }
-    else if (criterion.first == "Dimensionality") //Supports this?
-    {
-      meetsCriteria = true;
-      for (auto const & criterionValue : criterion.second) // auto&& preferred?
-      {
-        if (std::stoi(criterionValue) != Dimensionality)
-        {
-          meetsCriteria = false;
-        }
-      }
-
-    }
-    else if (criterion.first == "PixelType") //Supports this?
-    {
-      meetsCriteria = true;
-      for (auto const & criterionValue : criterion.second) // auto&& preferred?
-      {
-        if (criterionValue != Self::GetPixelTypeNameString())
-        {
-          meetsCriteria = false;
-        }
-      }
-
-    }
-    return meetsCriteria;
   }
-
+  else if( criterion.first == "Dimensionality" )  //Supports this?
+  {
+    meetsCriteria = true;
+    for( auto const & criterionValue : criterion.second )  // auto&& preferred?
+    {
+      if( std::stoi( criterionValue ) != Dimensionality )
+      {
+        meetsCriteria = false;
+      }
+    }
+  }
+  else if( criterion.first == "PixelType" )  //Supports this?
+  {
+    meetsCriteria = true;
+    for( auto const & criterionValue : criterion.second )  // auto&& preferred?
+    {
+      if( criterionValue != Self::GetPixelTypeNameString() )
+      {
+        meetsCriteria = false;
+      }
+    }
+  }
+  return meetsCriteria;
+}
 } //end namespace selx

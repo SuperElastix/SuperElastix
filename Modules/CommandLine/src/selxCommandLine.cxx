@@ -1,6 +1,6 @@
 /*=========================================================================
  *
- *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -42,141 +42,142 @@ namespace po = boost::program_options;
 using namespace std;
 using namespace selx;
 
-template<class T>
-ostream& operator<<(ostream& os, const vector<T>& v)
+template< class T >
+ostream &
+operator<<( ostream & os, const vector< T > & v )
 {
-  copy(v.begin(), v.end(), ostream_iterator<T>(os, " "));
+  copy( v.begin(), v.end(), ostream_iterator< T >( os, " " ) );
   return os;
 }
 
 
-
-
-int main(int ac, char* av[])
+int
+main( int ac, char * av[] )
 {
-  try {
-   
-
+  try
+  {
     typedef vector< string > split_vector_type;
 
-    SuperElastixFilter<DefaultComponents>::Pointer superElastixFilter = SuperElastixFilter<DefaultComponents>::New();
-    
+    SuperElastixFilter< DefaultComponents >::Pointer superElastixFilter = SuperElastixFilter< DefaultComponents >::New();
 
-    fs::path configurationPath;
-    vector<string> inputPairs;
-    vector<string> outputPairs;
+    fs::path         configurationPath;
+    vector< string > inputPairs;
+    vector< string > outputPairs;
 
     // Store the reader so that they will not be destroyed before the pipeline is executed.
-    vector<AnyFileReader::Pointer> fileReaders;
+    vector< AnyFileReader::Pointer > fileReaders;
     // Store the writers for the update call
     //vector<ImageWriter2DType::Pointer> fileWriters;
-    vector<AnyFileWriter::Pointer> fileWriters;
+    vector< AnyFileWriter::Pointer > fileWriters;
 
-    po::options_description desc("Allowed options");
+    po::options_description desc( "Allowed options" );
     desc.add_options()
-      ("help", "produce help message")
-      ("conf", po::value<fs::path>(&configurationPath)->required(), "Configuration file")
-      ("in", po::value<vector<string>>(&inputPairs)->multitoken(), "Input data: images, labels, meshes, etc. Usage <name>=<path>")
-      ("out", po::value<vector<string>>(&outputPairs)->multitoken(), "Output data: images, labels, meshes, etc. Usage <name>=<path>")
-      ("graphout", po::value<fs::path>(), "Output Graphviz dot file")
-      ;
+      ( "help", "produce help message" )
+      ( "conf", po::value< fs::path >( &configurationPath )->required(), "Configuration file" )
+      ( "in", po::value< vector< string >>( &inputPairs )->multitoken(), "Input data: images, labels, meshes, etc. Usage <name>=<path>" )
+      ( "out", po::value< vector< string >>( &outputPairs )->multitoken(), "Output data: images, labels, meshes, etc. Usage <name>=<path>" )
+      ( "graphout", po::value< fs::path >(), "Output Graphviz dot file" )
+    ;
 
     po::variables_map vm;
-    po::store(po::parse_command_line(ac, av, desc), vm);
-    po::notify(vm);
+    po::store( po::parse_command_line( ac, av, desc ), vm );
+    po::notify( vm );
 
-    if (vm.count("help")) {
+    if( vm.count( "help" ) )
+    {
       cout << desc << "\n";
       return 0;
     }
 
     Blueprint::Pointer blueprint;
-    if (configurationPath.extension() == ".xml")
+    if( configurationPath.extension() == ".xml" )
     {
       // TODO: open file here and pass a stream to the ConfigurationReader
-      blueprint = ConfigurationReader::FromXML(configurationPath.string());
+      blueprint = ConfigurationReader::FromXML( configurationPath.string() );
     }
-    else if (configurationPath.extension() == ".json")
+    else if( configurationPath.extension() == ".json" )
     {
       // TODO: open file here and pass a stream to the ConfigurationReader
-      blueprint = ConfigurationReader::FromJson(configurationPath.string());
+      blueprint = ConfigurationReader::FromJson( configurationPath.string() );
     }
-    else {
-      throw invalid_argument("Configuration file requires extension .xml or .json");
-    }
-
-    if (vm.count("graphout"))
+    else
     {
-      blueprint->WriteBlueprint(vm["graphout"].as<fs::path>().string());
+      throw invalid_argument( "Configuration file requires extension .xml or .json" );
     }
 
-    superElastixFilter->SetBlueprint(blueprint);
+    if( vm.count( "graphout" ) )
+    {
+      blueprint->WriteBlueprint( vm[ "graphout" ].as< fs::path >().string() );
+    }
 
-    if (vm.count("in")) {
+    superElastixFilter->SetBlueprint( blueprint );
+
+    if( vm.count( "in" ) )
+    {
       cout << "Number of input data: " << inputPairs.size() << "\n";
       int index = 0;
-      for (const auto & inputPair : inputPairs)
+      for( const auto & inputPair : inputPairs )
       {
         split_vector_type nameAndPath;
-        boost::split(nameAndPath, inputPair, boost::is_any_of("="));  // NameAndPath == { "name","path" }
-        const string & name = nameAndPath[0];
-        const string & path = nameAndPath[1];
+        boost::split( nameAndPath, inputPair, boost::is_any_of( "=" ) );  // NameAndPath == { "name","path" }
+        const string & name = nameAndPath[ 0 ];
+        const string & path = nameAndPath[ 1 ];
 
         cout << " " << index << " " << name << " : " << path << "\n";
         ++index;
 
-        // since we do not know which reader type we should instantiate for input "name", 
+        // since we do not know which reader type we should instantiate for input "name",
         // we ask SuperElastix for a reader that matches the type of the source component "name"
 
-        AnyFileReader::Pointer reader = superElastixFilter->GetInputFileReader(name);        
-        reader->SetFileName(path);
-        superElastixFilter->SetInput(name, reader->GetOutput());
-        fileReaders.push_back(reader);
+        AnyFileReader::Pointer reader = superElastixFilter->GetInputFileReader( name );
+        reader->SetFileName( path );
+        superElastixFilter->SetInput( name, reader->GetOutput() );
+        fileReaders.push_back( reader );
       }
     }
 
-    if (vm.count("out")) {
+    if( vm.count( "out" ) )
+    {
       cout << "Number of output data: " << outputPairs.size() << "\n";
       int index = 0;
-      for (const auto & outputPair : outputPairs)
+      for( const auto & outputPair : outputPairs )
       {
         split_vector_type nameAndPath;
-        boost::split(nameAndPath, outputPair, boost::is_any_of("="));  // NameAndPath == { "name","path" }
-        const string & name = nameAndPath[0];
-        const string & path = nameAndPath[1];
+        boost::split( nameAndPath, outputPair, boost::is_any_of( "=" ) );  // NameAndPath == { "name","path" }
+        const string & name = nameAndPath[ 0 ];
+        const string & path = nameAndPath[ 1 ];
 
         cout << " " << index << " " << name << " : " << path << "\n";
         ++index;
 
-        // since we do not know which writer type we should instantiate for output "name", 
+        // since we do not know which writer type we should instantiate for output "name",
         // we ask SuperElastix for a writer that matches the type of the sink component "name"
-        AnyFileWriter::Pointer writer = superElastixFilter->GetOutputFileWriter(name);
-        
+        AnyFileWriter::Pointer writer = superElastixFilter->GetOutputFileWriter( name );
+
         //ImageWriter2DType::Pointer writer = ImageWriter2DType::New();
-        writer->SetFileName(path);
+        writer->SetFileName( path );
         //writer->SetInput(superElastixFilter->GetOutput<Image2DType>(name));
-        writer->SetInput(superElastixFilter->GetOutput(name));
-        fileWriters.push_back(writer);
+        writer->SetInput( superElastixFilter->GetOutput( name ) );
+        fileWriters.push_back( writer );
       }
     }
-    
+
     /* Execute SuperElastix by updating the writers */
 
-    for (auto & writer : fileWriters)
+    for( auto & writer : fileWriters )
     {
       writer->Update();
     }
-
-
   }
-  catch (exception& e) {
+  catch( exception & e )
+  {
     cerr << "error: " << e.what() << "\n";
     return 1;
   }
-  catch (...) {
+  catch( ... )
+  {
     cerr << "Exception of unknown type!\n";
   }
-
 
   return 0;
 }

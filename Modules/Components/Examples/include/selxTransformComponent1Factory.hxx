@@ -1,6 +1,6 @@
 /*=========================================================================
  *
- *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,14 +22,13 @@
 
 namespace selx
 {
-
 TransformComponent1Factory::TransformComponent1Factory()
 {
   this->RegisterOverride( "ComponentBase",
-                          "itkTransformComponent1",
-                          "Transform Component 1",
-                          1,
-                          itk::CreateObjectFunction< TransformComponent1 >::New()); //float 
+    "itkTransformComponent1",
+    "Transform Component 1",
+    1,
+    itk::CreateObjectFunction< TransformComponent1 >::New() );                      //float
 }
 
 
@@ -39,11 +38,13 @@ TransformComponent1Factory::GetITKSourceVersion() const
   return ITK_SOURCE_VERSION;
 }
 
+
 const char *
 TransformComponent1Factory::GetDescription() const
 {
   return "Test module 1 for transforms";
 }
+
 
 // Undocumented API used to register during static initialization.
 // DO NOT CALL DIRECTLY.

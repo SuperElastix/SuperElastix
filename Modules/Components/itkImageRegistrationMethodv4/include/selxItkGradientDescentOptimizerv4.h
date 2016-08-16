@@ -1,6 +1,6 @@
 /*=========================================================================
  *
- *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,41 +27,44 @@
 #include "selxMacro.h"
 namespace selx
 {
-  template <class InternalComputationValueType>
-  class ItkGradientDescentOptimizerv4Component : 
-    public SuperElastixComponent<
-    Accepting< >,
-    Providing< itkOptimizerv4Interface<InternalComputationValueType>>
-    >
-  {
-  public:
-    selxNewMacro(ItkGradientDescentOptimizerv4Component, ComponentBase);
+template< class InternalComputationValueType >
+class ItkGradientDescentOptimizerv4Component :
+  public SuperElastixComponent<
+  Accepting< >,
+  Providing< itkOptimizerv4Interface< InternalComputationValueType >>
+  >
+{
+public:
 
-    //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
+  selxNewMacro( ItkGradientDescentOptimizerv4Component, ComponentBase );
 
-    ItkGradientDescentOptimizerv4Component();
-    virtual ~ItkGradientDescentOptimizerv4Component();
+  //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
 
-       
-	  /**  Type of the optimizer. */
-    typedef typename itk::ObjectToObjectOptimizerBaseTemplate<InternalComputationValueType>               OptimizerType;
-    typedef typename OptimizerType::Pointer                             Optimizerv4Pointer;
+  ItkGradientDescentOptimizerv4Component();
+  virtual ~ItkGradientDescentOptimizerv4Component();
 
-    
-    typedef typename itk::GradientDescentOptimizerv4Template<InternalComputationValueType> GradientDescentOptimizerv4Type;
+  /**  Type of the optimizer. */
+  typedef typename itk::ObjectToObjectOptimizerBaseTemplate< InternalComputationValueType > OptimizerType;
+  typedef typename OptimizerType::Pointer                                                   Optimizerv4Pointer;
 
-    virtual Optimizerv4Pointer GetItkOptimizerv4() override;
+  typedef typename itk::GradientDescentOptimizerv4Template< InternalComputationValueType > GradientDescentOptimizerv4Type;
 
-    virtual bool MeetsCriterion(const ComponentBase::CriterionType &criterion) override;    
-    //static const char * GetName() { return "ItkGradientDescentOptimizerv4"; } ;
-    static const char * GetDescription() { return "ItkGradientDescentOptimizerv4 Component"; };
-  private:
-    typename GradientDescentOptimizerv4Type::Pointer m_Optimizer;
-  protected:
-    /* The following struct returns the string name of computation type */
-    /* default implementation */
-  };
+  virtual Optimizerv4Pointer GetItkOptimizerv4() override;
 
+  virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
+
+  //static const char * GetName() { return "ItkGradientDescentOptimizerv4"; } ;
+  static const char * GetDescription() { return "ItkGradientDescentOptimizerv4 Component"; }
+
+private:
+
+  typename GradientDescentOptimizerv4Type::Pointer m_Optimizer;
+
+protected:
+
+  /* The following struct returns the string name of computation type */
+  /* default implementation */
+};
 } //end namespace selx
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "selxItkGradientDescentOptimizerv4.hxx"

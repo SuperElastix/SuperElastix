@@ -1,6 +1,6 @@
 /*=========================================================================
  *
- *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,17 +24,25 @@ GDOptimizer3rdParty::GDOptimizer3rdParty()
 {
   this->theMetric = nullptr;
 }
+
+
 GDOptimizer3rdParty::~GDOptimizer3rdParty()
 {
 }
-int GDOptimizer3rdParty::SetMetric(Metric3rdPartyBase* metric)
+
+
+int
+GDOptimizer3rdParty::SetMetric( Metric3rdPartyBase * metric )
 {
   this->theMetric = metric;
   return 0;
 }
-int GDOptimizer3rdParty::Optimize()
+
+
+int
+GDOptimizer3rdParty::Optimize()
 {
-  if (this->theMetric != nullptr)
+  if( this->theMetric != nullptr )
   {
     std::cout << "GDOptimizer3rdParty->Optimize():" << std::endl;
     std::cout << "  theMetric->GetValue():" << theMetric->GetValue() << std::endl;

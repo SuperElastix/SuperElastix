@@ -1,6 +1,6 @@
 /*=========================================================================
  *
- *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,160 +32,177 @@
 #include "selxMacro.h"
 namespace selx
 {
-  template <int Dimensionality, class TPixel>
-  class MonolithicElastixComponent : 
-    public SuperElastixComponent<
-      Accepting< 
-        itkImageFixedInterface<Dimensionality, TPixel>,
-        itkImageMovingInterface<Dimensionality, TPixel>
-      >,
-      Providing<
-        elastixTransformParameterObjectInterface<itk::Image<TPixel, Dimensionality>, itk::Image<TPixel, Dimensionality>>,
-        itkImageInterface<Dimensionality, TPixel>, 
-        RunRegistrationInterface
-      >
-    >
+template< int Dimensionality, class TPixel >
+class MonolithicElastixComponent :
+  public SuperElastixComponent<
+  Accepting<
+  itkImageFixedInterface< Dimensionality, TPixel >,
+  itkImageMovingInterface< Dimensionality, TPixel >
+  >,
+  Providing<
+  elastixTransformParameterObjectInterface< itk::Image< TPixel, Dimensionality >, itk::Image< TPixel, Dimensionality >>,
+  itkImageInterface< Dimensionality, TPixel >,
+  RunRegistrationInterface
+  >
+  >
+{
+public:
+
+  selxNewMacro( MonolithicElastixComponent, ComponentBase );
+
+  //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
+
+  MonolithicElastixComponent();
+  virtual ~MonolithicElastixComponent();
+
+  typedef typename ComponentBase::CriterionType CriterionType;
+  typedef TPixel                                PixelType;
+
+  // the in and output image type of the component are chosen to be the same
+  typedef itk::Image< PixelType, Dimensionality > ConnectionImageType;
+
+  // fixed and moving image types are all the same, these aliases can be used to be explicit.
+  typedef itk::Image< PixelType, Dimensionality > FixedImageType;
+  typedef itk::Image< PixelType, Dimensionality > MovingImageType;
+
+  typedef typename ConnectionImageType::Pointer ItkImagePointer;
+
+  typedef elastix::ElastixFilter< FixedImageType, MovingImageType > ElastixFilterType;
+  typedef elastix::ParameterObject                                  elxParameterObjectType;
+  typedef elxParameterObjectType::Pointer                           elxParameterObjectPointer;
+
+  typedef typename elastixTransformParameterObjectInterface< itk::Image< TPixel, Dimensionality >,
+    itk::Image< TPixel, Dimensionality >>::elastixTransformParameterObject elastixTransformParameterObject;
+
+  // Accepting Interfaces:
+  virtual int Set( itkImageFixedInterface< Dimensionality, TPixel > * ) override;
+
+  virtual int Set( itkImageMovingInterface< Dimensionality, TPixel > * ) override;
+
+  // Providing Interfaces:
+  virtual elastixTransformParameterObject * GetTransformParameterObject() override;
+
+  virtual ItkImagePointer GetItkImage() override;
+
+  virtual void RunRegistration() override;
+
+  virtual bool MeetsCriterion( const CriterionType & criterion ) override;
+
+  static const char * GetDescription() { return "MonolithicElastix Component"; }
+
+private:
+
+  typename ElastixFilterType::Pointer m_elastixFilter;
+
+protected:
+
+  /* The following struct returns the string name of computation type */
+  /* default implementation */
+
+  static inline const std::string GetTypeNameString()
   {
-  public:
-    selxNewMacro(MonolithicElastixComponent, ComponentBase);
-
-    //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
-
-    MonolithicElastixComponent();
-    virtual ~MonolithicElastixComponent();
-    
-    typedef typename ComponentBase::CriterionType CriterionType;
-    typedef TPixel PixelType;
-
-    // the in and output image type of the component are chosen to be the same 
-    typedef itk::Image<PixelType, Dimensionality> ConnectionImageType;
-
-    // fixed and moving image types are all the same, these aliases can be used to be explicit. 
-    typedef itk::Image<PixelType, Dimensionality> FixedImageType;
-    typedef itk::Image<PixelType, Dimensionality> MovingImageType;
-
-    typedef typename ConnectionImageType::Pointer ItkImagePointer;
-
-    typedef elastix::ElastixFilter< FixedImageType, MovingImageType > ElastixFilterType;
-    typedef elastix::ParameterObject elxParameterObjectType;
-    typedef elxParameterObjectType::Pointer elxParameterObjectPointer;
-    
-    typedef typename elastixTransformParameterObjectInterface<itk::Image<TPixel, Dimensionality>, itk::Image<TPixel, Dimensionality>>::elastixTransformParameterObject elastixTransformParameterObject;
-    
-    // Accepting Interfaces:
-    virtual int Set(itkImageFixedInterface<Dimensionality, TPixel>*) override;
-    virtual int Set(itkImageMovingInterface<Dimensionality, TPixel>*) override;
-    
-    // Providing Interfaces:
-    virtual elastixTransformParameterObject* GetTransformParameterObject() override;
-    virtual ItkImagePointer GetItkImage() override;
-    virtual void RunRegistration() override;
-
-    virtual bool MeetsCriterion(const CriterionType &criterion) override;
-    static const char * GetDescription() { return "MonolithicElastix Component"; };
-  private:
-    typename ElastixFilterType::Pointer m_elastixFilter;
-  protected:
-    /* The following struct returns the string name of computation type */
-    /* default implementation */
-
-    static inline const std::string GetTypeNameString()
-    {
-      itkGenericExceptionMacro(<< "Unknown ScalarType" << typeid(TPixel).name());
-      // TODO: provide the user instructions how to enable the compilation of the component with the required template types (if desired)
-      // We might define an exception object that can communicate various error messages: for simple user, for developer user, etc
-    }
-
-    static inline const std::string GetPixelTypeNameString()
-    {
-      itkGenericExceptionMacro(<< "Unknown PixelType" << typeid(TPixel).name());
-      // TODO: provide the user instructions how to enable the compilation of the component with the required template types (if desired)
-      // We might define an exception object that can communicate various error messages: for simple user, for developer user, etc
-    }
-
-  };
-
-  // unfortunately partial specialization of member functions is not allowed, without partially specializing the entire class.
-
-  /*
-  template <int Dimensionality>
-  class MonolithicElastixComponent < Dimensionality, double >
-  {
-    static inline const std::string GetPixelTypeNameString();
-  };
-
-  template <int Dimensionality>
-  inline const std::string
-    MonolithicElastixComponent<Dimensionality, double>
-    ::GetPixelTypeNameString()
-  {
-    return std::string("double");
-  }
-  */
-
-  template <>
-  inline const std::string
-    MonolithicElastixComponent<2, float>
-    ::GetPixelTypeNameString()
-  {
-    return std::string("float");
+    itkGenericExceptionMacro( << "Unknown ScalarType" << typeid( TPixel ).name() );
+    // TODO: provide the user instructions how to enable the compilation of the component with the required template types (if desired)
+    // We might define an exception object that can communicate various error messages: for simple user, for developer user, etc
   }
 
 
-  template <>
-  inline const std::string
-    MonolithicElastixComponent<2, double>
-    ::GetPixelTypeNameString()
+  static inline const std::string GetPixelTypeNameString()
   {
-    return std::string("double");
+    itkGenericExceptionMacro( << "Unknown PixelType" << typeid( TPixel ).name() );
+    // TODO: provide the user instructions how to enable the compilation of the component with the required template types (if desired)
+    // We might define an exception object that can communicate various error messages: for simple user, for developer user, etc
   }
+};
 
-  template <>
-  inline const std::string
-    MonolithicElastixComponent<3, float>
-    ::GetPixelTypeNameString()
-  {
-    return std::string("float");
-  }
+// unfortunately partial specialization of member functions is not allowed, without partially specializing the entire class.
 
-  template <>
-  inline const std::string
-    MonolithicElastixComponent<3, double>
-    ::GetPixelTypeNameString()
-  {
-    return std::string("double");
-  }
-  template <>
-  inline const std::string
-    MonolithicElastixComponent<2, float>
-    ::GetTypeNameString()
-  {
-    return std::string("2_float");
-  }
+/*
+template <int Dimensionality>
+class MonolithicElastixComponent < Dimensionality, double >
+{
+  static inline const std::string GetPixelTypeNameString();
+};
 
-  template <>
-  inline const std::string
-    MonolithicElastixComponent<2, double>
-    ::GetTypeNameString()
-  {
-    return std::string("2_double");
-  }
+template <int Dimensionality>
+inline const std::string
+  MonolithicElastixComponent<Dimensionality, double>
+  ::GetPixelTypeNameString()
+{
+  return std::string("double");
+}
+*/
 
-  template <>
-  inline const std::string
-    MonolithicElastixComponent<3,float>
-    ::GetTypeNameString()
-  {
-    return std::string("3_float");
-  }
-  
-  template <>
-  inline const std::string
-    MonolithicElastixComponent<3,double>
-    ::GetTypeNameString()
-  {
-    return std::string("3_double");
-  }
+template< >
+inline const std::string
+MonolithicElastixComponent< 2, float >
+::GetPixelTypeNameString()
+{
+  return std::string( "float" );
+}
+
+
+template< >
+inline const std::string
+MonolithicElastixComponent< 2, double >
+::GetPixelTypeNameString()
+{
+  return std::string( "double" );
+}
+
+
+template< >
+inline const std::string
+MonolithicElastixComponent< 3, float >
+::GetPixelTypeNameString()
+{
+  return std::string( "float" );
+}
+
+
+template< >
+inline const std::string
+MonolithicElastixComponent< 3, double >
+::GetPixelTypeNameString()
+{
+  return std::string( "double" );
+}
+
+
+template< >
+inline const std::string
+MonolithicElastixComponent< 2, float >
+::GetTypeNameString()
+{
+  return std::string( "2_float" );
+}
+
+
+template< >
+inline const std::string
+MonolithicElastixComponent< 2, double >
+::GetTypeNameString()
+{
+  return std::string( "2_double" );
+}
+
+
+template< >
+inline const std::string
+MonolithicElastixComponent< 3, float >
+::GetTypeNameString()
+{
+  return std::string( "3_float" );
+}
+
+
+template< >
+inline const std::string
+MonolithicElastixComponent< 3, double >
+::GetTypeNameString()
+{
+  return std::string( "3_double" );
+}
 } //end namespace selx
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "selxMonolithicElastix.hxx"
