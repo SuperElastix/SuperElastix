@@ -1,7 +1,7 @@
 {
     "Component": {
         "Name": "RegistrationMethod",
-        "NameOfClass": "ElastixComponent",
+        "NameOfClass": "MonolithicElastixComponent",
         "Dimensionality": "2",
 		"Transform": "BSplineTransform",
         "Metric": "AdvancedMeanSquares" 
@@ -21,7 +21,15 @@
         "NameOfClass": "ItkImageSinkComponent",
         "Dimensionality": "2"
     },
-
+    "Component": {
+        "Name": "TransformDisplacementField",
+        "NameOfClass": "MonolithicTransformixComponent",
+        "Dimensionality": "2"
+    },
+	"Component": {
+        "Name": "Controller",
+        "NameOfClass": "RegistrationControllerComponent"
+    },
     "Connection": {
         "Out": "FixedImage",
         "In": "RegistrationMethod",
@@ -32,8 +40,34 @@
         "In": "RegistrationMethod",
         "NameOfInterface": "itkImageMovingInterface"
     },
+	"Connection": {
+        "Out": "FixedImage",
+        "In": "TransformDisplacementField",
+        "NameOfInterface": "itkImageDomainFixedInterface"
+    },
+	"Connection": {
+        "Out": "MovingImage",
+        "In": "TransformDisplacementField",
+        "NameOfInterface": "itkImageMovingInterface"
+    },
     "Connection": {
         "Out": "RegistrationMethod",
-        "In": "ResultImage"
+        "In": "TransformDisplacementField",
+		"NameOfInterface": "elastixTransformParameterObjectInterface"
+    },
+    "Connection": {
+        "Out": "TransformDisplacementField",
+        "In": "ResultImage",
+		"NameOfInterface": "itkImageInterface"
+    },
+    "Connection": {
+        "Out": "RegistrationMethod",
+        "In": "Controller",
+		"NameOfInterface": "RunRegistrationInterface"
+    },
+    "Connection": {
+        "Out": "TransformDisplacementField",
+        "In": "Controller",
+		"NameOfInterface": "ReconnectTransformInterface"
     }
 }

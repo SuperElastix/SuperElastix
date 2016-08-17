@@ -23,22 +23,38 @@
 #include "selxDisplacementFieldItkImageFilterSink.h"
 #include "selxItkImageSource.h"
 #include "selxElastixComponent.h"
+#include "selxMonolithicElastix.h"
+#include "selxMonolithicTransformix.h"
 #include "selxItkImageSink.h"
 #include "selxItkImageRegistrationMethodv4Component.h"
 #include "selxItkANTSNeighborhoodCorrelationImageToImageMetricv4.h"
 #include "selxItkMeanSquaresImageToImageMetricv4.h"
+#include "selxItkGradientDescentOptimizerv4.h"
+#include "selxItkGaussianExponentialDiffeomorphicTransform.h"
+#include "selxItkTransformDisplacementFilter.h"
+#include "selxItkResampleFilter.h"
+#include "selxRegistrationController.h"
 #include "selxItkImageSourceFixed.h"
 #include "selxItkImageSourceMoving.h"
 
 namespace selx
 {
-using DefaultComponents = selx::TypeList< DisplacementFieldItkImageFilterSinkComponent< 2, float >,
+using DefaultComponents = selx::TypeList< 
+  DisplacementFieldItkImageFilterSinkComponent< 2, float >,
+  ItkImageSinkComponent< 2, float >,
   ItkImageSourceFixedComponent< 2, float >,
   ItkImageSourceMovingComponent< 2, float >,
-  ItkSmoothingRecursiveGaussianImageFilterComponent< 2, float >,
+  ElastixComponent< 2, float >,
+  MonolithicElastixComponent< 2, float >,
+  MonolithicTransformixComponent< 2, float >,
   ItkImageRegistrationMethodv4Component< 2, float >,
   ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< 2, float >,
   ItkMeanSquaresImageToImageMetricv4Component< 2, float >,
-  ElastixComponent< 2, float >,
-  ItkImageSinkComponent< 2, float >>;
+  ItkGradientDescentOptimizerv4Component< double >,
+  ItkGaussianExponentialDiffeomorphicTransformComponent< double, 2 >,
+  ItkTransformDisplacementFilterComponent< 2, float, double >,
+  ItkResampleFilterComponent< 2, float, double >,
+  RegistrationControllerComponent < >,
+  ItkSmoothingRecursiveGaussianImageFilterComponent< 2, float >
+  >;
 }

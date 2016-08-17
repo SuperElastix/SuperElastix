@@ -39,7 +39,7 @@ template< int Dimensionality, class TPixel, class TInternalComputationValue >
 class ItkResampleFilterComponent :
   public SuperElastixComponent<
   Accepting< itkTransformInterface< TInternalComputationValue, Dimensionality >,
-  itkImageFixedInterface< Dimensionality, TPixel >,            //TODO should be FixedImageDomainInterface, we do not require intensities
+  itkImageDomainFixedInterface< Dimensionality >,
   itkImageMovingInterface< Dimensionality, TPixel >
   >,
   Providing< itkImageInterface< Dimensionality, TPixel >,
@@ -59,14 +59,14 @@ public:
   typedef TPixel PixelType;
 
   // Get the type definitions from the interfaces
-  typedef typename itkImageFixedInterface< Dimensionality, TPixel >::ItkImageType  FixedImageType;
+  typedef typename itkImageDomainFixedInterface< Dimensionality>::ItkImageDomainType  FixedImageDomainType;
   typedef typename itkImageMovingInterface< Dimensionality, TPixel >::ItkImageType MovingImageType;
   typedef typename itkImageInterface< Dimensionality, TPixel >::ItkImageType       ResultImageType;
 
   typedef itk::ResampleImageFilter< MovingImageType, ResultImageType > ResampleFilterType;
 
   //Accepting Interfaces:
-  virtual int Set( itkImageFixedInterface< Dimensionality, TPixel > * ) override;
+  virtual int Set( itkImageDomainFixedInterface< Dimensionality> * ) override;
 
   virtual int Set( itkImageMovingInterface< Dimensionality, TPixel > * ) override;
 
