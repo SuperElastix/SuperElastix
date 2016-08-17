@@ -119,3 +119,32 @@ option( SUPERELASTIX_BUILD_DOXYGEN "Enable building Doxygen documentation." OFF 
 mark_as_advanced( SUPERELASTIX_BUILD_READTHEDOCS )
 option( SUPERELASTIX_BUILD_READTHEDOCS "Enable building readthedocs.org documentation." OFF )
 
+
+# ---------------------------------------------------------------------
+# Install
+# When building the "INSTALL" project of SuperElastix these files are installed
+
+# Copy the SuperElastix executable
+install(TARGETS "SuperElastix"
+  RUNTIME DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/installed"
+)
+
+# Copy some of the configuration files
+install(FILES "${SUPERELASTIX_UNITTEST_CONFIGURATION_DATA_DIR}/itkv4_SVF_ANTsCC.json" 
+  "${SUPERELASTIX_UNITTEST_CONFIGURATION_DATA_DIR}/itkv4_SVF_MSD.json"
+  "${SUPERELASTIX_UNITTEST_CONFIGURATION_DATA_DIR}/elastix_Bspline_NC.json"
+  "${SUPERELASTIX_UNITTEST_CONFIGURATION_DATA_DIR}/elastix_Bspline_MSD.json"
+  DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/installed/Configuration"
+)
+
+# Copy some of the input data files
+#TODO: data files are only present if SUPERELASTIX_BUILD_TESTING is enabled
+install(FILES "${SUPERELASTIX_UNITTEST_INPUT_DATA_DIR}/coneA2d64.mhd"
+  "${SUPERELASTIX_UNITTEST_INPUT_DATA_DIR}/coneA2d64.raw"
+  "${SUPERELASTIX_UNITTEST_INPUT_DATA_DIR}/coneB2d64.mhd"
+  "${SUPERELASTIX_UNITTEST_INPUT_DATA_DIR}/coneB2d64.raw"
+  DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/installed/Data"
+)
+
+# Copy the demo scripts
+install(DIRECTORY "${CMAKE_SOURCE_DIR}/Install/" DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/installed" FILE_PERMISSIONS OWNER_EXECUTE)
