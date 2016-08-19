@@ -110,7 +110,7 @@ if( ${SUPERELASTIX_BUILD_TESTING} )
   add_subdirectory( Testing )
 endif()
 
-# ---------------------------------------------------------------------
+# -----------------------------------------------------------brkdwn----------
 # Build Documentation
 
 mark_as_advanced( SUPERELASTIX_BUILD_DOXYGEN )
@@ -138,13 +138,35 @@ install(FILES "${SUPERELASTIX_UNITTEST_CONFIGURATION_DATA_DIR}/itkv4_SVF_ANTsCC.
 )
 
 # Copy some of the input data files
-#TODO: data files are only present if SUPERELASTIX_BUILD_TESTING is enabled
-install(FILES "${SUPERELASTIX_UNITTEST_INPUT_DATA_DIR}/coneA2d64.mhd"
-  "${SUPERELASTIX_UNITTEST_INPUT_DATA_DIR}/coneA2d64.raw"
-  "${SUPERELASTIX_UNITTEST_INPUT_DATA_DIR}/coneB2d64.mhd"
-  "${SUPERELASTIX_UNITTEST_INPUT_DATA_DIR}/coneB2d64.raw"
+
+#TODO: normal copy installing does not work
+#get_filename_component(ABS_INPUT_DIR ${SUPERELASTIX_UNITTEST_INPUT_DATA_DIR} REALPATH)
+#install(FILES "${ABS_INPUT_DIR}/coneA2d64.mhd"
+#  "${ABS_INPUT_DIR}/coneA2d64.raw"
+#  "${ABS_INPUT_DIR}/coneB2d64.mhd"
+#  "${ABS_INPUT_DIR}/coneB2d64.raw"
+#  DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/installed/Data/"
+#)
+
+#TODO: data files are only present if SUPERELASTIX_BUILD_TESTING is enabled.
+# copying these files should therefor be also via the ExternalData commands
+
+# temporarilly solved by hard coding a copy based on the hashed files
+set(EXTERNALDATA_OBJECT_DIR "${CMAKE_BINARY_DIR}/ExternalData/Objects/MD5")
+
+install(FILES "${EXTERNALDATA_OBJECT_DIR}/10aa9442cc6a1fd518da83cedbfcbdd3" 
   DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/installed/Data/"
-)
+  RENAME "coneA2d64.mhd")
+install(FILES "${EXTERNALDATA_OBJECT_DIR}/2d0ff0e14af2155659429d6f137f209e" 
+  DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/installed/Data/"
+  RENAME "coneA2d64.raw")
+install(FILES "${EXTERNALDATA_OBJECT_DIR}/7c358ebe7f53f01a4fe23ee953fa45d4" 
+  DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/installed/Data/"
+  RENAME "coneB2d64.mhd")
+install(FILES "${EXTERNALDATA_OBJECT_DIR}/deb92a27f201be258dedf66b632a2571" 
+  DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/installed/Data/"
+  RENAME "coneB2d64.raw")
+  
 
 # Copy the demo scripts
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/Install/" DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/installed" FILE_PERMISSIONS OWNER_EXECUTE OWNER_READ OWNER_WRITE GROUP_EXECUTE GROUP_READ GROUP_WRITE )
