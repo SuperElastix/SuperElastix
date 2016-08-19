@@ -27,6 +27,7 @@
 #include "itkImageToImageFilter.h"
 #include "itkImageToImageMetricv4.h"
 #include "itkObjectToObjectOptimizerBase.h"
+#include "itkTransformParametersAdaptorBase.h"
 
 #include "itkImage.h"
 #include "itkMesh.h"
@@ -254,6 +255,18 @@ public:
   typedef typename TransformType::Pointer                                                          TransformPointer;
 
   virtual TransformPointer GetItkTransform() = 0;
+};
+
+template< class TitkTransformType >
+class itkTransformParametersAdaptorInterface
+{
+public:
+
+  typedef TitkTransformType                                                            TransformType;
+  typedef typename itk::TransformParametersAdaptorBase< TransformType > TransformParametersAdaptorType;
+  typedef typename TransformParametersAdaptorType::Pointer                                                          TransformParametersAdaptorPointer;
+
+  virtual TransformParametersAdaptorPointer GetItkTransformParametersAdaptor() = 0;
 };
 
 template< typename TFixedImage, typename TMovingImage >

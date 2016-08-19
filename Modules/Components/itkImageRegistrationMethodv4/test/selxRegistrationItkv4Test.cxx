@@ -37,6 +37,7 @@
 #include "selxItkGradientDescentOptimizerv4.h"
 #include "selxItkAffineTransform.h"
 #include "selxItkGaussianExponentialDiffeomorphicTransform.h"
+#include "selxItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent.h"
 #include "selxItkTransformDisplacementFilter.h"
 #include "selxItkResampleFilter.h"
 #include "selxItkImageSourceFixed.h"
@@ -95,6 +96,7 @@ public:
     ItkGradientDescentOptimizerv4Component< double >,
     ItkAffineTransformComponent< double, 3 >,
     ItkGaussianExponentialDiffeomorphicTransformComponent< double, 3 >,
+    ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent<double,3>,
     ItkTransformDisplacementFilterComponent< 2, float, double >,
     ItkTransformDisplacementFilterComponent< 3, double, double >,
     ItkResampleFilterComponent< 2, float, double >,
