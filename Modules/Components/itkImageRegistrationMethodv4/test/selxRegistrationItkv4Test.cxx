@@ -429,7 +429,11 @@ TEST_F( RegistrationItkv4Test, FullyConfigured3d )
 
   blueprint->AddComponent( "Transform",      { { "NameOfClass",    { "ItkGaussianExponentialDiffeomorphicTransformComponent" } },
                                                { "Dimensionality", { "3" } } } );
-
+  
+  blueprint->AddComponent("TransformResolutionAdaptor", { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent" } },
+                                                          { "Dimensionality", { "3" } }, 
+                                                          { "ShrinkFactorsPerLevel", { "4", "2", "1" } } });
+    
   blueprint->AddComponent( "Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } } );
 
   ParameterMapType connection1Parameters;
