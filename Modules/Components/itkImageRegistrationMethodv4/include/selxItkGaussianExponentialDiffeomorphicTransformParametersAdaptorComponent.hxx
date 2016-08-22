@@ -25,10 +25,6 @@ namespace selx
 template< int Dimensionality, class TransformInternalComputationValueType >
 ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent< Dimensionality, TransformInternalComputationValueType >::ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent()
 {
-  m_theItkFilter = TheItkFilterType::New();
-
-  //TODO: instantiating the filter in the constructor might be heavy for the use in component selector factory, since all components of the database are created during the selection process.
-  // we could choose to keep the component light weighted (for checking criteria such as names and connections) until the settings are passed to the filter, but this requires an additional initialization step.
 }
 
 
@@ -41,72 +37,48 @@ ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent< Dimensio
 template< int Dimensionality, class TransformInternalComputationValueType >
 int
 ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent< Dimensionality, TransformInternalComputationValueType >
-::Set( itkImageDomainFixedInterface< Dimensionality, TransformInternalComputationValueType > * component )
+::Set( itkImageDomainFixedInterface< Dimensionality > * component )
 {
   auto fixedImageDomain = component->GetItkImageDomainFixed();
-  // connect the itk pipeline
-  this->m_theItkFilter->SetFixedImage(fixedImageDomain);
 
-  return 0;
-}
-
-
-
-  // TODO for now we hard code the TransformAdaptors for stationary velocity fields.
-  typedef double                                                                                                RealType;
-  typedef itk::GaussianExponentialDiffeomorphicTransform< RealType, Dimensionality >                            ConstantVelocityFieldTransformType;
-  typedef typename ConstantVelocityFieldTransformType::ConstantVelocityFieldType                                ConstantVelocityFieldType;
-  typedef itk::GaussianExponentialDiffeomorphicTransformParametersAdaptor< ConstantVelocityFieldTransformType > VelocityFieldTransformAdaptorType;
-
-  typename TheItkFilterType::TransformParametersAdaptorsContainerType adaptors;
-
-  for( unsigned int level = 0; level < shrinkFactorsPerLevel.Size(); level++ )
+  for (unsigned int level = 0; level < m_shrinkFactorsPerLevel.Size(); level++)
   {
     // We use the shrink image filter to calculate the fixed parameters of the virtual
     // domain at each level.  To speed up calculation and avoid unnecessary memory
     // usage, we could calculate these fixed parameters directly.
 
+
+    typedef itk::Image<TransformInternalComputationValueType, Dimensionality > FixedImageType;
+    
+    FixedImageType::Pointer fixedImage = FixedImageType::New();
+    fixedImage->CopyInformation(fixedImageDomain);
+    fixedImage->Allocate();
+
     typedef itk::ShrinkImageFilter< FixedImageType, FixedImageType > ShrinkFilterType;
     typename ShrinkFilterType::Pointer shrinkFilter = ShrinkFilterType::New();
-    shrinkFilter->SetShrinkFactors( shrinkFactorsPerLevel[ level ] );
-    shrinkFilter->SetInput( fixedImage );
+    shrinkFilter->SetShrinkFactors(m_shrinkFactorsPerLevel[level]);
+    shrinkFilter->SetInput(fixedImage);
     shrinkFilter->Update();
 
-    typename VelocityFieldTransformAdaptorType::Pointer fieldTransformAdaptor = VelocityFieldTransformAdaptorType::New();
-    fieldTransformAdaptor->SetRequiredSpacing( shrinkFilter->GetOutput()->GetSpacing() );
-    fieldTransformAdaptor->SetRequiredSize( shrinkFilter->GetOutput()->GetBufferedRegion().GetSize() );
-    fieldTransformAdaptor->SetRequiredDirection( shrinkFilter->GetOutput()->GetDirection() );
-    fieldTransformAdaptor->SetRequiredOrigin( shrinkFilter->GetOutput()->GetOrigin() );
+    typename TransformParametersAdaptorType::Pointer transformAdaptor = TransformParametersAdaptorType::New();
+    transformAdaptor->SetRequiredSpacing(shrinkFilter->GetOutput()->GetSpacing());
+    transformAdaptor->SetRequiredSize(shrinkFilter->GetOutput()->GetBufferedRegion().GetSize());
+    transformAdaptor->SetRequiredDirection(shrinkFilter->GetOutput()->GetDirection());
+    transformAdaptor->SetRequiredOrigin(shrinkFilter->GetOutput()->GetOrigin());
 
-    adaptors.push_back( fieldTransformAdaptor.GetPointer() );
+    m_adaptors.push_back(transformAdaptor.GetPointer());
   }
 
-  /*
-  typename VelocityFieldTransformAdaptorType::Pointer fieldTransformAdaptor = VelocityFieldTransformAdaptorType::New();
-  fieldTransformAdaptor->SetRequiredSpacing(fixedImage->GetSpacing());
-  fieldTransformAdaptor->SetRequiredSize(fixedImage->GetBufferedRegion().GetSize());
-  fieldTransformAdaptor->SetRequiredDirection(fixedImage->GetDirection());
-  fieldTransformAdaptor->SetRequiredOrigin(fixedImage->GetOrigin());
-
-  adaptors.push_back(fieldTransformAdaptor.GetPointer());
-  */
-  this->m_theItkFilter->SetTransformParametersAdaptorsPerLevel( adaptors );
-
-  typedef CommandIterationUpdate< TheItkFilterType > RegistrationCommandType;
-  typename RegistrationCommandType::Pointer registrationObserver = RegistrationCommandType::New();
-  this->m_theItkFilter->AddObserver( itk::IterationEvent(), registrationObserver );
-
-  // perform the actual registration
-  this->m_theItkFilter->Update();
+  return 0;
 }
 
 
 template< int Dimensionality, class TransformInternalComputationValueType >
-typename ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent< Dimensionality, TransformInternalComputationValueType >::TransformPointer
+typename ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent<Dimensionality, TransformInternalComputationValueType >::TransformParametersAdaptorsContainerType
 ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent< Dimensionality, TransformInternalComputationValueType >
-::GetItkTransform()
+::GetItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainer()
 {
-  return this->m_theItkFilter->GetModifiableTransform();
+  return this->m_adaptors;
 }
 
 
@@ -139,17 +111,20 @@ ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent< Dimensio
       }
     }
   }
-  else if( criterion.first == "PixelType" ) //Supports this?
+  else if (criterion.first == "ShrinkFactorsPerLevel") //Supports this?
   {
     meetsCriteria = true;
-    for( auto const & criterionValue : criterion.second ) // auto&& preferred?
+
+    const int NumberOfResolutions = criterion.second.size(); // maybe check with criterion "NumberOfResolutions"?
+    m_shrinkFactorsPerLevel.SetSize(NumberOfResolutions);
+
+    unsigned int resolutionIndex = 0;
+    for (auto const & criterionValue : criterion.second) // auto&& preferred?
     {
-      if( criterionValue != Self::GetPixelTypeNameString() )
-      {
-        meetsCriteria = false;
-      }
+      m_shrinkFactorsPerLevel[resolutionIndex] = std::stoi(criterionValue);
     }
   }
+
   return meetsCriteria;
 }
 } //end namespace selx

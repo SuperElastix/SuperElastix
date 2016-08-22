@@ -32,6 +32,7 @@
 #include "itkComposeDisplacementFieldsImageFilter.h"
 #include "itkGaussianExponentialDiffeomorphicTransform.h"
 #include "itkGaussianExponentialDiffeomorphicTransformParametersAdaptor.h"
+#include "itkArray.h"
 
 namespace selx
 {
@@ -40,7 +41,7 @@ class ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent :
   public SuperElastixComponent<
   Accepting< itkImageDomainFixedInterface< Dimensionality >
   >,
-  Providing< itkTransformParametersAdaptorInterface< itk::GaussianExponentialDiffeomorphicTransform< TransformInternalComputationValueType, Dimensionality> >
+  Providing< itkGaussianExponentialDiffeomorphicTransformParametersAdaptorInterface< TransformInternalComputationValueType, Dimensionality> 
   >
   >
 {
@@ -53,21 +54,25 @@ public:
   ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent();
   virtual ~ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent();
 
-  typedef TPixel PixelType;
-
   // Get the type definitions from the interfaces
   typedef typename itkImageDomainFixedInterface< Dimensionality >::ItkImageDomainType    FixedImageDomainType;
-  typedef itk::GaussianExponentialDiffeomorphicTransform< TransformInternalComputationValueType, Dimensionality> TransformType;
+  //typedef itk::GaussianExponentialDiffeomorphicTransform< TransformInternalComputationValueType, Dimensionality> TransformType;
   
-  typedef itk::ImageRegistrationMethodv4< FixedImageType, MovingImageType >    TheItkFilterType;
-  typedef typename TheItkFilterType::ImageMetricType                           ImageMetricType;
-  typedef itk::RegistrationParameterScalesFromPhysicalShift< ImageMetricType > ScalesEstimatorType;
+  // BaseTransformType acts as a container of the types: TParametersValueType, NInputDimensions, NOutputDimensions
+  typedef itk::Transform< TransformInternalComputationValueType, Dimensionality, Dimensionality > BaseTransformType;
+
+  using itkGaussianExponentialDiffeomorphicTransformParametersAdaptorInterfaceType = itkGaussianExponentialDiffeomorphicTransformParametersAdaptorInterface< TransformInternalComputationValueType, Dimensionality >;
+  using TransformParametersAdaptorType = typename itkGaussianExponentialDiffeomorphicTransformParametersAdaptorInterfaceType::TransformParametersAdaptorType;;
+  using TransformParametersAdaptorsContainerType = typename itkGaussianExponentialDiffeomorphicTransformParametersAdaptorInterfaceType::TransformParametersAdaptorsContainerType;
+  
+  typedef itk::Array<itk::SizeValueType>                                        ShrinkFactorsArrayType;
+  typedef itk::Array<TransformInternalComputationValueType>                                             SmoothingSigmasArrayType;
 
   //Accepting Interfaces:
   virtual int Set( itkImageDomainFixedInterface< Dimensionality > * ) override;
   
   //Providing Interfaces:
-  virtual itkTransformParametersAdaptorInterface< TransformType >::itkTransformParametersAdaptorPointer GetItkTransformParametersAdaptor() override;
+  virtual typename TransformParametersAdaptorsContainerType GetItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainer() override;
 
   //BaseClass methods
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
@@ -76,8 +81,15 @@ public:
   static const char * GetDescription() { return "ItkImageRegistrationMethodv4 Component"; }
 
 private:
+  typename TransformParametersAdaptorsContainerType m_adaptors;
 
-  typename TheItkFilterType::Pointer m_theItkFilter;
+  // Shrink the virtual domain by specified factors for each level.  See documentation
+  // for the itkShrinkImageFilter for more detailed behavior.
+
+  ShrinkFactorsArrayType m_shrinkFactorsPerLevel;
+  // Smooth by specified gaussian sigmas for each level.  These values are specified in
+  // physical units.
+  SmoothingSigmasArrayType m_smoothingSigmasPerLevel;
 
 protected:
 
@@ -86,108 +98,12 @@ protected:
 
   static inline const std::string GetTypeNameString()
   {
-    itkGenericExceptionMacro( << "Unknown ScalarType" << typeid( TPixel ).name() );
-    // TODO: provide the user instructions how to enable the compilation of the component with the required template types (if desired)
-    // We might define an exception object that can communicate various error messages: for simple user, for developer user, etc
-  }
-
-
-  static inline const std::string GetPixelTypeNameString()
-  {
-    itkGenericExceptionMacro( << "Unknown PixelType" << typeid( TPixel ).name() );
+    itkGenericExceptionMacro(<< "Unknown ScalarType" << typeid(TransformInternalComputationValueType).name());
     // TODO: provide the user instructions how to enable the compilation of the component with the required template types (if desired)
     // We might define an exception object that can communicate various error messages: for simple user, for developer user, etc
   }
 };
 
-// unfortunately partial specialization of member functions is not allowed, without partially specializing the entire class.
-
-/*
-template <int Dimensionality>
-class ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent < Dimensionality, double >
-{
-  static inline const std::string GetPixelTypeNameString();
-};
-
-template <int Dimensionality>
-inline const std::string
-  ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent<Dimensionality, double>
-  ::GetPixelTypeNameString()
-{
-  return std::string("double");
-}
-*/
-
-template< >
-inline const std::string
-ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent< 2, float >
-::GetPixelTypeNameString()
-{
-  return std::string( "float" );
-}
-
-
-template< >
-inline const std::string
-ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent< 2, double >
-::GetPixelTypeNameString()
-{
-  return std::string( "double" );
-}
-
-
-template< >
-inline const std::string
-ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent< 3, float >
-::GetPixelTypeNameString()
-{
-  return std::string( "float" );
-}
-
-
-template< >
-inline const std::string
-ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent< 3, double >
-::GetPixelTypeNameString()
-{
-  return std::string( "double" );
-}
-
-
-template< >
-inline const std::string
-ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent< 2, float >
-::GetTypeNameString()
-{
-  return std::string( "2_float" );
-}
-
-
-template< >
-inline const std::string
-ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent< 2, double >
-::GetTypeNameString()
-{
-  return std::string( "2_double" );
-}
-
-
-template< >
-inline const std::string
-ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent< 3, float >
-::GetTypeNameString()
-{
-  return std::string( "3_float" );
-}
-
-
-template< >
-inline const std::string
-ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent< 3, double >
-::GetTypeNameString()
-{
-  return std::string( "3_double" );
-}
 } //end namespace selx
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "selxItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent.hxx"

@@ -96,7 +96,7 @@ public:
     ItkGradientDescentOptimizerv4Component< double >,
     ItkAffineTransformComponent< double, 3 >,
     ItkGaussianExponentialDiffeomorphicTransformComponent< double, 3 >,
-    ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent<double,3>,
+    ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent<3, double>,
     ItkTransformDisplacementFilterComponent< 2, float, double >,
     ItkTransformDisplacementFilterComponent< 3, double, double >,
     ItkResampleFilterComponent< 2, float, double >,

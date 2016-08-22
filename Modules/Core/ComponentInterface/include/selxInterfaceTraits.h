@@ -239,6 +239,16 @@ struct InterfaceName< ReconnectTransformInterface >
   }
 };
 
+template< class InternalComputationValueType, int D >
+struct InterfaceName< itkGaussianExponentialDiffeomorphicTransformParametersAdaptorInterface< InternalComputationValueType, D > >
+{
+  static const char * Get()
+  {
+    return "itkGaussianExponentialDiffeomorphicTransformParametersAdaptorInterface";
+  }
+};
+
+
 // partial specialization of InterfaceName
 // InterfaceName<T>::Get() should return the same name no matter whether T is an acceptor or provider interface.
 template< typename T1 >
