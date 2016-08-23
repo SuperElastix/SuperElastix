@@ -63,6 +63,17 @@ ItkAffineTransformComponent< InternalComputationValueType, Dimensionality >
       }
     }
   }
+  else if (criterion.first == "Dimensionality") //Supports this?
+  {
+    meetsCriteria = true;
+    for (auto const & criterionValue : criterion.second) // auto&& preferred?
+    {
+      if (std::stoi(criterionValue) != Dimensionality)
+      {
+        meetsCriteria = false;
+      }
+    }
+  }
   return meetsCriteria;
 }
 } //end namespace selx

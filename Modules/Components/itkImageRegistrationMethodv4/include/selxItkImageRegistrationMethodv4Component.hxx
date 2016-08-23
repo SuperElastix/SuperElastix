@@ -82,7 +82,7 @@ public:
       std::cout << "  CL Current level:           " << currentLevel << std::endl;
       std::cout << "   SF Shrink factor:          " << shrinkFactors << std::endl;
       std::cout << "   SS Smoothing sigma:        " << smoothingSigmas[ currentLevel ] << std::endl;
-      std::cout << "   RFP Required fixed params: " << adaptors[ currentLevel ]->GetRequiredFixedParameters() << std::endl;
+      //std::cout << "   RFP Required fixed params: " << adaptors[ currentLevel ]->GetRequiredFixedParameters() << std::endl;
       std::cout << "   LR Final learning rate:    " << optimizer->GetLearningRate() << std::endl;
       std::cout << "   FM Final metric value:     " << optimizer->GetCurrentMetricValue() << std::endl;
       std::cout << "   SC Optimizer scales:       " << optimizer->GetScales() << std::endl;
@@ -115,7 +115,7 @@ public:
 };
 
 template< int Dimensionality, class TPixel >
-ItkImageRegistrationMethodv4Component< Dimensionality, TPixel >::ItkImageRegistrationMethodv4Component()
+ItkImageRegistrationMethodv4Component< Dimensionality, TPixel >::ItkImageRegistrationMethodv4Component() : m_TransformAdaptorsContainerInterface(nullptr)
 {
   m_theItkFilter = TheItkFilterType::New();
   m_theItkFilter->InPlaceOn();
@@ -237,8 +237,10 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel >::RunRegistration
 
   this->m_theItkFilter->SetOptimizer( optimizer );
 
-  this->m_theItkFilter->SetTransformParametersAdaptorsPerLevel(this->m_TransformAdaptorsContainerInterface->GetItkTransformParametersAdaptorsContainer());
-
+  if (this->m_TransformAdaptorsContainerInterface != nullptr)
+  {
+    this->m_theItkFilter->SetTransformParametersAdaptorsPerLevel(this->m_TransformAdaptorsContainerInterface->GetItkTransformParametersAdaptorsContainer());
+  }
 
   typedef CommandIterationUpdate< TheItkFilterType > RegistrationCommandType;
   typename RegistrationCommandType::Pointer registrationObserver = RegistrationCommandType::New();
