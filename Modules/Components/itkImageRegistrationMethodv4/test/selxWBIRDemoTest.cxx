@@ -145,7 +145,9 @@ TEST_F( WBIRDemoTest, itkv4_SVF_ANTSCC )
   /** make example blueprint configuration */
   blueprint = Blueprint::New();
   blueprint->AddComponent("RegistrationMethod", { { "NameOfClass", { "ItkImageRegistrationMethodv4Component" } },
-                                                  { "ShrinkFactorsPerLevel", { "4", "2", "1" } } });
+                                                  { "NumberOfLevels", { "3" } },
+                                                  { "ShrinkFactorsPerLevel", { "4", "2", "1" } },
+                                                  { "SmoothingSigmasPerLevel", { "4", "2", "1" } } });
 
   blueprint->AddComponent( "Metric", { { "NameOfClass", { "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component" } } } );
   blueprint->AddComponent( "Optimizer", { { "NameOfClass", { "ItkGradientDescentOptimizerv4Component" } },
@@ -256,12 +258,17 @@ TEST_F( WBIRDemoTest, itkv4_SVF_MSD )
   /** make example blueprint configuration */
   blueprint = Blueprint::New();
 
-  blueprint->AddComponent( "RegistrationMethod", { { "NameOfClass", { "ItkImageRegistrationMethodv4Component" } } } );
+  blueprint->AddComponent("RegistrationMethod", { { "NameOfClass", { "ItkImageRegistrationMethodv4Component" } },
+                                                  { "NumberOfLevels", { "3" } },
+                                                  { "ShrinkFactorsPerLevel", { "4", "2", "1" } },
+                                                  { "SmoothingSigmasPerLevel", { "4", "2", "1" } } });
   blueprint->AddComponent( "Metric", { { "NameOfClass", { "ItkMeanSquaresImageToImageMetricv4Component" } } } );
   blueprint->AddComponent( "Optimizer", { { "NameOfClass", { "ItkGradientDescentOptimizerv4Component" } },
                                           { "NumberOfIterations", { "100" } },
                                           { "LearningRate", { "0.001" } } } );
   blueprint->AddComponent( "Transform", { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformComponent" } } } );
+  blueprint->AddComponent("TransformResolutionAdaptor", { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent" } },
+                                                          { "ShrinkFactorsPerLevel", { "4", "2", "1" } } });
 
   blueprint->AddComponent( "ResampleFilter", { { "NameOfClass", { "ItkResampleFilterComponent" } } } );
   blueprint->AddComponent( "TransformDisplacementFilter", { { "NameOfClass", { "ItkTransformDisplacementFilterComponent" } } } );
@@ -294,6 +301,8 @@ TEST_F( WBIRDemoTest, itkv4_SVF_MSD )
 
   blueprint->AddConnection( "FixedImageSource", "Transform", { {} } );
   blueprint->AddConnection( "Transform", "RegistrationMethod", { {} } );
+  blueprint->AddConnection("FixedImageSource", "TransformResolutionAdaptor", { {} });
+  blueprint->AddConnection("TransformResolutionAdaptor", "RegistrationMethod", { {} });
   blueprint->AddConnection( "Optimizer", "RegistrationMethod", { {} } );
   blueprint->AddConnection( "RegistrationMethod", "TransformDisplacementFilter", { {} } );
   blueprint->AddConnection( "FixedImageSource", "TransformDisplacementFilter", { {} } );
@@ -304,8 +313,7 @@ TEST_F( WBIRDemoTest, itkv4_SVF_MSD )
   blueprint->AddConnection( "RegistrationMethod", "Controller", { {} } );          //RunRegistrationInterface
   blueprint->AddConnection( "ResampleFilter", "Controller", { {} } );              //ReconnectTransformInterface
   blueprint->AddConnection( "TransformDisplacementFilter", "Controller", { {} } ); //ReconnectTransformInterface
-  blueprint->AddConnection( "ResultImageSink", "Controller", { {} } );             //AfterRegistrationInterface
-  blueprint->AddConnection( "ResultDisplacementFieldSink", "Controller", { {} } ); //AfterRegistrationInterface
+
 
   // Data manager provides the paths to the input and output data for unit tests
   DataManagerType::Pointer dataManager = DataManagerType::New();

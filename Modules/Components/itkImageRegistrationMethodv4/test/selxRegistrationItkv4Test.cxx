@@ -386,7 +386,8 @@ TEST_F( RegistrationItkv4Test, FullyConfigured3d )
 
   blueprint->AddComponent("RegistrationMethod", { { "NameOfClass", { "ItkImageRegistrationMethodv4Component" } },
                                                           { "Dimensionality", { "3" } },
-                                                          { "ShrinkFactorsPerLevel", { "4", "2", "1" } } });
+                                                          { "NumberOfLevels", { "2" } },
+                                                          { "ShrinkFactorsPerLevel", { "2", "1" } } });
 
   ParameterMapType component1Parameters;
   component1Parameters[ "NameOfClass" ]    = { "ItkImageSourceFixedComponent" };
@@ -431,7 +432,7 @@ TEST_F( RegistrationItkv4Test, FullyConfigured3d )
   
   blueprint->AddComponent("TransformResolutionAdaptor", { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent" } },
                                                           { "Dimensionality", { "3" } }, 
-                                                          { "ShrinkFactorsPerLevel", { "4", "2", "1" } } });
+                                                          { "ShrinkFactorsPerLevel", { "2", "1" } } });
     
   blueprint->AddComponent( "Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } } );
 

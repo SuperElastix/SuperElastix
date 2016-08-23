@@ -238,18 +238,6 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel >::RunRegistration
 
   this->m_theItkFilter->SetOptimizer( optimizer );
 
-  // Below some hard coded options. Eventually, these should be part of new components.
-  this->m_theItkFilter->SetNumberOfLevels( 3 );
-  
-  // Smooth by specified gaussian sigmas for each level.  These values are specified in
-  // physical units.
-  typename TheItkFilterType::SmoothingSigmasArrayType smoothingSigmasPerLevel;
-  smoothingSigmasPerLevel.SetSize( 3 );
-  smoothingSigmasPerLevel[ 0 ] = 4;
-  smoothingSigmasPerLevel[ 1 ] = 2;
-  smoothingSigmasPerLevel[ 2 ] = 1;
-  this->m_theItkFilter->SetSmoothingSigmasPerLevel( smoothingSigmasPerLevel );
-
   this->m_theItkFilter->SetTransformParametersAdaptorsPerLevel(this->m_TransformAdaptorInterface->GetItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainer());
 
 
