@@ -114,7 +114,21 @@ Overlord::ApplyNodeConfiguration()
     Blueprint::ParameterMapType currentProperty          = this->m_Blueprint->GetComponent( name );
     for( auto const & criterion : currentProperty )
     {
-      std::cout << "  " << criterion.first << ": " << criterion.second[ 0 ] << std::endl;
+      std::cout << "  " << criterion.first << ": ";
+      if (criterion.second.size() > 1)
+      {
+        std::cout << "[ ";
+        for (auto const element : criterion.second)
+        {
+          std::cout << element << " ";
+        }
+        std::cout << "]";
+      }
+      else
+      {
+        std::cout << criterion.second[0];
+      }
+      std::cout << std::endl;
       currentComponentSelector->AddCriterion( criterion );
     }
 

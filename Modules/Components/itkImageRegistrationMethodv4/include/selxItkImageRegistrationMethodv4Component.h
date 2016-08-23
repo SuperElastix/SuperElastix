@@ -60,15 +60,18 @@ public:
   virtual ~ItkImageRegistrationMethodv4Component();
 
   typedef TPixel PixelType;
+  using TransformInternalComputationValueType = double; //should be in class template
 
   // Get the type definitions from the interfaces
+
+  typedef typename itkOptimizerv4Interface< TransformInternalComputationValueType >::InternalComputationValueType               OptimizerInternalComputationValueType; //should be from class template
+
   typedef typename itkImageFixedInterface< Dimensionality, TPixel >::ItkImageType    FixedImageType;
   typedef typename itkImageMovingInterface< Dimensionality, TPixel >::ItkImageType   MovingImageType;
-  typedef typename itkTransformInterface< double, Dimensionality >::TransformType    TransformType;
-  typedef typename itkTransformInterface< double, Dimensionality >::TransformPointer TransformPointer;
+  typedef typename itkTransformInterface< TransformInternalComputationValueType, Dimensionality >::TransformType    TransformType;
+  typedef typename itkTransformInterface< TransformInternalComputationValueType, Dimensionality >::TransformPointer TransformPointer;
 
-  typedef typename itkOptimizerv4Interface< double >::InternalComputationValueType               OptimizerInternalComputationValueType; //should be from class template
-  typedef typename itkTransformInterface< double, Dimensionality >::InternalComputationValueType TransformInternalComputationValueType; //should be from class template
+  using TransformParametersAdaptorInterfaceType = itkGaussianExponentialDiffeomorphicTransformParametersAdaptorInterface< TransformInternalComputationValueType, Dimensionality>;
 
   typedef itk::ImageRegistrationMethodv4< FixedImageType, MovingImageType >    TheItkFilterType;
   typedef typename TheItkFilterType::ImageMetricType                           ImageMetricType;
@@ -81,7 +84,7 @@ public:
 
   virtual int Set( itkTransformInterface< TransformInternalComputationValueType, Dimensionality > * ) override;
 
-  virtual int Set( itkGaussianExponentialDiffeomorphicTransformParametersAdaptorInterface< TransformInternalComputationValueType, Dimensionality> *) override;
+  virtual int Set(TransformParametersAdaptorInterfaceType *) override;
   
   virtual int Set( itkMetricv4Interface< Dimensionality, TPixel > * ) override;
 
@@ -101,7 +104,11 @@ public:
 private:
 
   typename TheItkFilterType::Pointer m_theItkFilter;
-
+  
+  // The settings SmoothingSigmas and ShrinkFactors imply NumberOfLevels, if the user 
+  // provides inconsistent numbers we should detect that and report about it. 
+  std::string m_NumberOfLevelsLastSetBy;
+  TransformParametersAdaptorInterfaceType* m_TransformAdaptorInterface;
 protected:
 
   /* The following struct returns the string name of computation type */
