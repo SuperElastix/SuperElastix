@@ -76,7 +76,7 @@ ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent< Dimensio
 template< int Dimensionality, class TransformInternalComputationValueType >
 typename ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent<Dimensionality, TransformInternalComputationValueType >::TransformParametersAdaptorsContainerType
 ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent< Dimensionality, TransformInternalComputationValueType >
-::GetItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainer()
+::GetItkTransformParametersAdaptorsContainer()
 {
   return this->m_adaptors;
 }

@@ -30,8 +30,6 @@
 #include "selxMacro.h"
 
 #include "itkComposeDisplacementFieldsImageFilter.h"
-#include "itkGaussianExponentialDiffeomorphicTransform.h"
-#include "itkGaussianExponentialDiffeomorphicTransformParametersAdaptor.h"
 
 namespace selx
 {
@@ -41,7 +39,7 @@ class ItkImageRegistrationMethodv4Component :
   Accepting< itkImageFixedInterface< Dimensionality, TPixel >,
   itkImageMovingInterface< Dimensionality, TPixel >,
   itkTransformInterface< double, Dimensionality >,
-  itkGaussianExponentialDiffeomorphicTransformParametersAdaptorInterface< double, Dimensionality>,
+  itkTransformParametersAdaptorInterface< double, Dimensionality>,
   itkMetricv4Interface< Dimensionality, TPixel >,
   itkOptimizerv4Interface< double >
   >,
@@ -71,7 +69,7 @@ public:
   typedef typename itkTransformInterface< TransformInternalComputationValueType, Dimensionality >::TransformType    TransformType;
   typedef typename itkTransformInterface< TransformInternalComputationValueType, Dimensionality >::TransformPointer TransformPointer;
 
-  using TransformParametersAdaptorInterfaceType = itkGaussianExponentialDiffeomorphicTransformParametersAdaptorInterface< TransformInternalComputationValueType, Dimensionality>;
+  using TransformParametersAdaptorInterfaceType = itkTransformParametersAdaptorInterface< TransformInternalComputationValueType, Dimensionality>;
 
   typedef itk::ImageRegistrationMethodv4< FixedImageType, MovingImageType >    TheItkFilterType;
   typedef typename TheItkFilterType::ImageMetricType                           ImageMetricType;
@@ -84,7 +82,7 @@ public:
 
   virtual int Set( itkTransformInterface< TransformInternalComputationValueType, Dimensionality > * ) override;
 
-  virtual int Set(TransformParametersAdaptorInterfaceType *) override;
+  virtual int Set( TransformParametersAdaptorInterfaceType *) override;
   
   virtual int Set( itkMetricv4Interface< Dimensionality, TPixel > * ) override;
 

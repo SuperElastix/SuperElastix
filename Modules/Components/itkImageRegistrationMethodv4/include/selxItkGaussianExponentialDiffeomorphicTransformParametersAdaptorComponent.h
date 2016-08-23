@@ -41,7 +41,7 @@ class ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent :
   public SuperElastixComponent<
   Accepting< itkImageDomainFixedInterface< Dimensionality >
   >,
-  Providing< itkGaussianExponentialDiffeomorphicTransformParametersAdaptorInterface< TransformInternalComputationValueType, Dimensionality> 
+  Providing< itkTransformParametersAdaptorInterface< TransformInternalComputationValueType, Dimensionality>
   >
   >
 {
@@ -56,14 +56,14 @@ public:
 
   // Get the type definitions from the interfaces
   typedef typename itkImageDomainFixedInterface< Dimensionality >::ItkImageDomainType    FixedImageDomainType;
-  //typedef itk::GaussianExponentialDiffeomorphicTransform< TransformInternalComputationValueType, Dimensionality> TransformType;
+ 
+  using itkTransformParametersAdaptorInterfaceType = itkTransformParametersAdaptorInterface< TransformInternalComputationValueType, Dimensionality >;
+  using TransformParametersAdaptorsContainerType = typename itkTransformParametersAdaptorInterfaceType::TransformParametersAdaptorsContainerType;
   
-  // BaseTransformType acts as a container of the types: TParametersValueType, NInputDimensions, NOutputDimensions
-  typedef itk::Transform< TransformInternalComputationValueType, Dimensionality, Dimensionality > BaseTransformType;
-
-  using itkGaussianExponentialDiffeomorphicTransformParametersAdaptorInterfaceType = itkGaussianExponentialDiffeomorphicTransformParametersAdaptorInterface< TransformInternalComputationValueType, Dimensionality >;
-  using TransformParametersAdaptorType = typename itkGaussianExponentialDiffeomorphicTransformParametersAdaptorInterfaceType::TransformParametersAdaptorType;;
-  using TransformParametersAdaptorsContainerType = typename itkGaussianExponentialDiffeomorphicTransformParametersAdaptorInterfaceType::TransformParametersAdaptorsContainerType;
+  
+  // Since the itkTransformParametersAdaptorInterface is only defined by BaseType Adaptors and Transforms, we cannot use the ItkTransformParametersAdaptorInterfaceType::TransformParametersAdaptorBaseType;
+  // Specific to this componenent is the full definition of TransformParametersAdaptorType being GaussianExponentialDiffeomorphic
+  using TransformParametersAdaptorType = itk::GaussianExponentialDiffeomorphicTransformParametersAdaptor< itk::GaussianExponentialDiffeomorphicTransform<TransformInternalComputationValueType, Dimensionality> >;
   
   typedef itk::Array<itk::SizeValueType>                                        ShrinkFactorsArrayType;
   typedef itk::Array<TransformInternalComputationValueType>                                             SmoothingSigmasArrayType;
@@ -72,7 +72,7 @@ public:
   virtual int Set( itkImageDomainFixedInterface< Dimensionality > * ) override;
   
   //Providing Interfaces:
-  virtual typename TransformParametersAdaptorsContainerType GetItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainer() override;
+  virtual typename TransformParametersAdaptorsContainerType GetItkTransformParametersAdaptorsContainer() override;
 
   //BaseClass methods
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;

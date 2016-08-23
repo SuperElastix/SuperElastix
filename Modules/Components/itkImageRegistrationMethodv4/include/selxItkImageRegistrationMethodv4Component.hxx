@@ -168,8 +168,7 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel >::Set( itkTransfo
 
 template< int Dimensionality, class TPixel >
 int
-ItkImageRegistrationMethodv4Component< Dimensionality, TPixel >::Set(itkGaussianExponentialDiffeomorphicTransformParametersAdaptorInterface< TransformInternalComputationValueType,
-Dimensionality > * component)
+ItkImageRegistrationMethodv4Component< Dimensionality, TPixel >::Set( TransformParametersAdaptorInterfaceType * component)
 {
   // store the interface to the ParametersAdaptorsContainer since during the setup of the connections the TransformParametersAdaptorComponent might not be fully connected and thus does not have the adaptors ready.
   this->m_TransformAdaptorInterface = component;
@@ -238,7 +237,7 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel >::RunRegistration
 
   this->m_theItkFilter->SetOptimizer( optimizer );
 
-  this->m_theItkFilter->SetTransformParametersAdaptorsPerLevel(this->m_TransformAdaptorInterface->GetItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainer());
+  this->m_theItkFilter->SetTransformParametersAdaptorsPerLevel(this->m_TransformAdaptorInterface->GetItkTransformParametersAdaptorsContainer());
 
 
   typedef CommandIterationUpdate< TheItkFilterType > RegistrationCommandType;

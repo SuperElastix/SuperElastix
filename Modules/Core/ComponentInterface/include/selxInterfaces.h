@@ -259,16 +259,16 @@ public:
   virtual TransformPointer GetItkTransform() = 0;
 };
 
-template< class TitkTransformType >
+template<class TransformInternalComputationValueType, int Dimensionality >
 class itkTransformParametersAdaptorInterface
 {
 public:
+  // TransformBaseType acts as a container of the types: TParametersValueType, NInputDimensions, NOutputDimensions
+  using TransformBaseType = itk::Transform< TransformInternalComputationValueType, Dimensionality, Dimensionality >;
+  using TransformParametersAdaptorBaseType = itk::TransformParametersAdaptorBase<TransformBaseType>;
+  using TransformParametersAdaptorsContainerType = std::vector<typename TransformParametersAdaptorBaseType::Pointer>;
 
-  typedef TitkTransformType                                                            TransformType;
-  typedef typename itk::TransformParametersAdaptorBase< TransformType > TransformParametersAdaptorType;
-  typedef typename TransformParametersAdaptorType::Pointer                                                          TransformParametersAdaptorPointer;
-
-  virtual TransformParametersAdaptorPointer GetItkTransformParametersAdaptor() = 0;
+  virtual TransformParametersAdaptorsContainerType GetItkTransformParametersAdaptorsContainer() = 0;
 };
 
 template< class TransformInternalComputationValueType, int Dimensionality >
