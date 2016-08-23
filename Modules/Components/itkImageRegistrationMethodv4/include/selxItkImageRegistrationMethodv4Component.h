@@ -41,6 +41,7 @@ class ItkImageRegistrationMethodv4Component :
   Accepting< itkImageFixedInterface< Dimensionality, TPixel >,
   itkImageMovingInterface< Dimensionality, TPixel >,
   itkTransformInterface< double, Dimensionality >,
+  itkGaussianExponentialDiffeomorphicTransformParametersAdaptorInterface< double, Dimensionality>,
   itkMetricv4Interface< Dimensionality, TPixel >,
   itkOptimizerv4Interface< double >
   >,
@@ -80,6 +81,8 @@ public:
 
   virtual int Set( itkTransformInterface< TransformInternalComputationValueType, Dimensionality > * ) override;
 
+  virtual int Set( itkGaussianExponentialDiffeomorphicTransformParametersAdaptorInterface< TransformInternalComputationValueType, Dimensionality> *) override;
+  
   virtual int Set( itkMetricv4Interface< Dimensionality, TPixel > * ) override;
 
   virtual int Set( itkOptimizerv4Interface< OptimizerInternalComputationValueType > * ) override;

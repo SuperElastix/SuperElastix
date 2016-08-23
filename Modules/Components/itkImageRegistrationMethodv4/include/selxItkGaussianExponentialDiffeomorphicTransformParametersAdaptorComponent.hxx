@@ -66,7 +66,7 @@ ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent< Dimensio
     transformAdaptor->SetRequiredDirection(shrinkFilter->GetOutput()->GetDirection());
     transformAdaptor->SetRequiredOrigin(shrinkFilter->GetOutput()->GetOrigin());
 
-    m_adaptors.push_back(transformAdaptor.GetPointer());
+    m_adaptors.push_back(transformAdaptor.GetPointer()); // Implicit cast back to TransformParametersAdaptorBase<itk::Transform<...>>
   }
 
   return 0;
@@ -121,7 +121,8 @@ ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent< Dimensio
     unsigned int resolutionIndex = 0;
     for (auto const & criterionValue : criterion.second) // auto&& preferred?
     {
-      m_shrinkFactorsPerLevel[resolutionIndex] = std::stoi(criterionValue);
+      m_shrinkFactorsPerLevel[resolutionIndex] = std::stoi(criterionValue); 
+      ++resolutionIndex;
     }
   }
 

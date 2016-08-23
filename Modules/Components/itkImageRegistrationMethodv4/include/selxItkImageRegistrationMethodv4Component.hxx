@@ -166,6 +166,18 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel >::Set( itkTransfo
   return 0;
 }
 
+template< int Dimensionality, class TPixel >
+int
+ItkImageRegistrationMethodv4Component< Dimensionality, TPixel >::Set(itkGaussianExponentialDiffeomorphicTransformParametersAdaptorInterface< TransformInternalComputationValueType,
+Dimensionality > * component)
+{
+  auto adaptors = component->GetItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainer();
+  //TODO check number of resolutions?
+  this->m_theItkFilter->SetTransformParametersAdaptorsPerLevel(adaptors);
+
+  return 0;
+}
+
 
 template< int Dimensionality, class TPixel >
 int

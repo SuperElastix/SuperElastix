@@ -276,12 +276,17 @@ class itkGaussianExponentialDiffeomorphicTransformParametersAdaptorInterface
 {
 public:
   
-  // Cannot use BaseTransformType
-  //typedef itk::Transform< TransformInternalComputationValueType, Dimensionality, Dimensionality >                   BaseTransformType;
+  
+  using TransformBaseType = itk::Transform< TransformInternalComputationValueType, Dimensionality, Dimensionality >;
+  using TransformParametersAdaptorBaseType = itk::TransformParametersAdaptorBase<TransformBaseType>;
+
   using GaussianExponentialDiffeomorphicTransformType = itk::GaussianExponentialDiffeomorphicTransform< TransformInternalComputationValueType, Dimensionality >;
+
   using TransformParametersAdaptorType = itk::GaussianExponentialDiffeomorphicTransformParametersAdaptor< GaussianExponentialDiffeomorphicTransformType >;
   using TransformParametersAdaptorPointer = typename TransformParametersAdaptorType::Pointer;
-  using TransformParametersAdaptorsContainerType = std::vector<TransformParametersAdaptorPointer>;
+  //using TransformParametersAdaptorsContainerType = std::vector<TransformParametersAdaptorPointer>;
+  using TransformParametersAdaptorsContainerType = std::vector<typename TransformParametersAdaptorBaseType::Pointer>;
+  
   //using TransformParametersAdaptorsContainerType = typename TransformParametersAdaptorType::TransformParametersAdaptorsContainerType;
   
 
