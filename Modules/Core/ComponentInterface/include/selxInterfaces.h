@@ -260,7 +260,7 @@ public:
 };
 
 template<class TransformInternalComputationValueType, int Dimensionality >
-class itkTransformParametersAdaptorInterface
+class itkTransformParametersAdaptorsContainerInterface
 {
 public:
   // TransformBaseType acts as a container of the types: TParametersValueType, NInputDimensions, NOutputDimensions
@@ -272,7 +272,7 @@ public:
 };
 
 template< class TransformInternalComputationValueType, int Dimensionality >
-class itkGaussianExponentialDiffeomorphicTransformParametersAdaptorInterface
+class itkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerInterface
 {
 public:
   

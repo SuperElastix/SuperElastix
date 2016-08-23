@@ -241,20 +241,20 @@ struct InterfaceName< ReconnectTransformInterface >
 
 
 template< class InternalComputationValueType, int D >
-struct InterfaceName< itkTransformParametersAdaptorInterface< InternalComputationValueType, D > >
+struct InterfaceName< itkTransformParametersAdaptorsContainerInterface< InternalComputationValueType, D > >
 {
   static const char * Get()
   {
-    return "itkTransformParametersAdaptorInterface";
+    return "itkTransformParametersAdaptorsContainerInterface";
   }
 };
 
 template< class InternalComputationValueType, int D >
-struct InterfaceName< itkGaussianExponentialDiffeomorphicTransformParametersAdaptorInterface< InternalComputationValueType, D > >
+struct InterfaceName< itkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerInterface< InternalComputationValueType, D > >
 {
   static const char * Get()
   {
-    return "itkGaussianExponentialDiffeomorphicTransformParametersAdaptorInterface";
+    return "itkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerInterface";
   }
 };
 

@@ -37,7 +37,7 @@
 #include "selxItkGradientDescentOptimizerv4.h"
 #include "selxItkAffineTransform.h"
 #include "selxItkGaussianExponentialDiffeomorphicTransform.h"
-#include "selxItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent.h"
+#include "selxItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent.h"
 #include "selxItkTransformDisplacementFilter.h"
 #include "selxItkResampleFilter.h"
 #include "selxItkImageSourceFixed.h"
@@ -96,7 +96,7 @@ public:
     ItkGradientDescentOptimizerv4Component< double >,
     ItkAffineTransformComponent< double, 3 >,
     ItkGaussianExponentialDiffeomorphicTransformComponent< double, 3 >,
-    ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent<3, double>,
+    ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent<3, double>,
     ItkTransformDisplacementFilterComponent< 2, float, double >,
     ItkTransformDisplacementFilterComponent< 3, double, double >,
     ItkResampleFilterComponent< 2, float, double >,
@@ -430,7 +430,7 @@ TEST_F( RegistrationItkv4Test, FullyConfigured3d )
   blueprint->AddComponent( "Transform",      { { "NameOfClass",    { "ItkGaussianExponentialDiffeomorphicTransformComponent" } },
                                                { "Dimensionality", { "3" } } } );
   
-  blueprint->AddComponent("TransformResolutionAdaptor", { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent" } },
+  blueprint->AddComponent("TransformResolutionAdaptor", { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent" } },
                                                           { "Dimensionality", { "3" } }, 
                                                           { "ShrinkFactorsPerLevel", { "2", "1" } } });
     

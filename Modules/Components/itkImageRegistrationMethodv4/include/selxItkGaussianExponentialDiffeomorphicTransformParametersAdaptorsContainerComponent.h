@@ -17,8 +17,8 @@
  *
  *=========================================================================*/
 
-#ifndef selxItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent_h
-#define selxItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent_h
+#ifndef selxItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent_h
+#define selxItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent_h
 
 #include "selxSuperElastixComponent.h"
 #include "selxInterfaces.h"
@@ -37,31 +37,31 @@
 namespace selx
 {
 template< int Dimensionality, class TransformInternalComputationValueType >
-class ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent :
+class ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent :
   public SuperElastixComponent<
   Accepting< itkImageDomainFixedInterface< Dimensionality >
   >,
-  Providing< itkTransformParametersAdaptorInterface< TransformInternalComputationValueType, Dimensionality>
+  Providing< itkTransformParametersAdaptorsContainerInterface< TransformInternalComputationValueType, Dimensionality>
   >
   >
 {
 public:
 
-  selxNewMacro( ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent, ComponentBase );
+  selxNewMacro( ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent, ComponentBase );
 
   //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
 
-  ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent();
-  virtual ~ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent();
+  ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent();
+  virtual ~ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent();
 
   // Get the type definitions from the interfaces
   typedef typename itkImageDomainFixedInterface< Dimensionality >::ItkImageDomainType    FixedImageDomainType;
  
-  using itkTransformParametersAdaptorInterfaceType = itkTransformParametersAdaptorInterface< TransformInternalComputationValueType, Dimensionality >;
-  using TransformParametersAdaptorsContainerType = typename itkTransformParametersAdaptorInterfaceType::TransformParametersAdaptorsContainerType;
+  using itkTransformParametersAdaptorsContainerInterfaceType = itkTransformParametersAdaptorsContainerInterface< TransformInternalComputationValueType, Dimensionality >;
+  using TransformParametersAdaptorsContainerType = typename itkTransformParametersAdaptorsContainerInterfaceType::TransformParametersAdaptorsContainerType;
   
   
-  // Since the itkTransformParametersAdaptorInterface is only defined by BaseType Adaptors and Transforms, we cannot use the ItkTransformParametersAdaptorInterfaceType::TransformParametersAdaptorBaseType;
+  // Since the itkTransformParametersAdaptorsContainerInterface is only defined by BaseType Adaptors and Transforms, we cannot use the ItkTransformParametersAdaptorsContainerInterfaceType::TransformParametersAdaptorBaseType;
   // Specific to this componenent is the full definition of TransformParametersAdaptorType being GaussianExponentialDiffeomorphic
   using TransformParametersAdaptorType = itk::GaussianExponentialDiffeomorphicTransformParametersAdaptor< itk::GaussianExponentialDiffeomorphicTransform<TransformInternalComputationValueType, Dimensionality> >;
   
@@ -106,6 +106,6 @@ protected:
 
 } //end namespace selx
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "selxItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent.hxx"
+#include "selxItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent.hxx"
 #endif
 #endif // #define GDOptimizer3rdPartyComponent_h

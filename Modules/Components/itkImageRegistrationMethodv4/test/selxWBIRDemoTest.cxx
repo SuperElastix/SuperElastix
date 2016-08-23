@@ -34,7 +34,7 @@
 #include "selxItkMeanSquaresImageToImageMetricv4.h"
 #include "selxItkGradientDescentOptimizerv4.h"
 #include "selxItkGaussianExponentialDiffeomorphicTransform.h"
-#include "selxItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent.h"
+#include "selxItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent.h"
 #include "selxItkTransformDisplacementFilter.h"
 #include "selxItkResampleFilter.h"
 #include "selxRegistrationController.h"
@@ -75,7 +75,7 @@ public:
     ItkMeanSquaresImageToImageMetricv4Component< 2, float >,
     ItkGradientDescentOptimizerv4Component< double >,
     ItkGaussianExponentialDiffeomorphicTransformComponent< double, 2 >,
-    ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent< 2, double >,
+    ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent< 2, double >,
     ItkTransformDisplacementFilterComponent< 2, float, double >,
     ItkResampleFilterComponent< 2, float, double >,
     RegistrationControllerComponent< >> RegisterComponents;
@@ -155,7 +155,7 @@ TEST_F( WBIRDemoTest, itkv4_SVF_ANTSCC )
                                           { "LearningRate", { "100" } } } );
   blueprint->AddComponent( "Transform", { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformComponent" } } } );
 
-  blueprint->AddComponent("TransformResolutionAdaptor", { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent" } },
+  blueprint->AddComponent("TransformResolutionAdaptor", { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent" } },
                                                           { "ShrinkFactorsPerLevel", { "4", "2", "1" } } });
 
   blueprint->AddComponent( "ResampleFilter", { { "NameOfClass", { "ItkResampleFilterComponent" } } } );
@@ -267,7 +267,7 @@ TEST_F( WBIRDemoTest, itkv4_SVF_MSD )
                                           { "NumberOfIterations", { "100" } },
                                           { "LearningRate", { "0.001" } } } );
   blueprint->AddComponent( "Transform", { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformComponent" } } } );
-  blueprint->AddComponent("TransformResolutionAdaptor", { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent" } },
+  blueprint->AddComponent("TransformResolutionAdaptor", { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent" } },
                                                           { "ShrinkFactorsPerLevel", { "4", "2", "1" } } });
 
   blueprint->AddComponent( "ResampleFilter", { { "NameOfClass", { "ItkResampleFilterComponent" } } } );

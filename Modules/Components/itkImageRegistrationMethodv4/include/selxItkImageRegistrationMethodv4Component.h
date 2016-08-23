@@ -39,7 +39,7 @@ class ItkImageRegistrationMethodv4Component :
   Accepting< itkImageFixedInterface< Dimensionality, TPixel >,
   itkImageMovingInterface< Dimensionality, TPixel >,
   itkTransformInterface< double, Dimensionality >,
-  itkTransformParametersAdaptorInterface< double, Dimensionality>,
+  itkTransformParametersAdaptorsContainerInterface< double, Dimensionality>,
   itkMetricv4Interface< Dimensionality, TPixel >,
   itkOptimizerv4Interface< double >
   >,
@@ -69,7 +69,7 @@ public:
   typedef typename itkTransformInterface< TransformInternalComputationValueType, Dimensionality >::TransformType    TransformType;
   typedef typename itkTransformInterface< TransformInternalComputationValueType, Dimensionality >::TransformPointer TransformPointer;
 
-  using TransformParametersAdaptorInterfaceType = itkTransformParametersAdaptorInterface< TransformInternalComputationValueType, Dimensionality>;
+  using TransformParametersAdaptorsContainerInterfaceType = itkTransformParametersAdaptorsContainerInterface< TransformInternalComputationValueType, Dimensionality>;
 
   typedef itk::ImageRegistrationMethodv4< FixedImageType, MovingImageType >    TheItkFilterType;
   typedef typename TheItkFilterType::ImageMetricType                           ImageMetricType;
@@ -82,7 +82,7 @@ public:
 
   virtual int Set( itkTransformInterface< TransformInternalComputationValueType, Dimensionality > * ) override;
 
-  virtual int Set( TransformParametersAdaptorInterfaceType *) override;
+  virtual int Set( TransformParametersAdaptorsContainerInterfaceType *) override;
   
   virtual int Set( itkMetricv4Interface< Dimensionality, TPixel > * ) override;
 
@@ -106,7 +106,7 @@ private:
   // The settings SmoothingSigmas and ShrinkFactors imply NumberOfLevels, if the user 
   // provides inconsistent numbers we should detect that and report about it. 
   std::string m_NumberOfLevelsLastSetBy;
-  TransformParametersAdaptorInterfaceType* m_TransformAdaptorInterface;
+  TransformParametersAdaptorsContainerInterfaceType* m_TransformAdaptorsContainerInterface;
 protected:
 
   /* The following struct returns the string name of computation type */
