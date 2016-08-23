@@ -384,10 +384,9 @@ TEST_F( RegistrationItkv4Test, FullyConfigured3d )
   /** make example blueprint configuration */
   blueprint = Blueprint::New();
 
-  ParameterMapType component0Parameters;
-  component0Parameters[ "NameOfClass" ]    = { "ItkImageRegistrationMethodv4Component" };
-  component0Parameters[ "Dimensionality" ] = { "3" }; // should be derived from the inputs
-  blueprint->AddComponent( "RegistrationMethod", component0Parameters );
+  blueprint->AddComponent("RegistrationMethod", { { "NameOfClass", { "ItkImageRegistrationMethodv4Component" } },
+                                                          { "Dimensionality", { "3" } },
+                                                          { "ShrinkFactorsPerLevel", { "4", "2", "1" } } });
 
   ParameterMapType component1Parameters;
   component1Parameters[ "NameOfClass" ]    = { "ItkImageSourceFixedComponent" };
@@ -458,6 +457,9 @@ TEST_F( RegistrationItkv4Test, FullyConfigured3d )
 
   blueprint->AddConnection( "FixedImageSource", "Transform", { {} } );
   blueprint->AddConnection( "Transform", "RegistrationMethod", { {} } );
+  
+  blueprint->AddConnection( "FixedImageSource", "TransformResolutionAdaptor", { {} });
+  blueprint->AddConnection( "TransformResolutionAdaptor", "RegistrationMethod", { {} }); 
   blueprint->AddConnection( "Optimizer", "RegistrationMethod", { {} } );
   blueprint->AddConnection( "RegistrationMethod", "TransformDisplacementFilter", { {} } );
   blueprint->AddConnection( "FixedImageSource", "TransformDisplacementFilter", { {} } );
@@ -468,8 +470,6 @@ TEST_F( RegistrationItkv4Test, FullyConfigured3d )
   blueprint->AddConnection( "RegistrationMethod", "Controller", { {} } );          //RunRegistrationInterface
   blueprint->AddConnection( "ResampleFilter", "Controller", { {} } );              //ReconnectTransformInterface
   blueprint->AddConnection( "TransformDisplacementFilter", "Controller", { {} } ); //ReconnectTransformInterface
-  blueprint->AddConnection( "ResultImageSink", "Controller", { {} } );             //AfterRegistrationInterface
-  blueprint->AddConnection( "ResultDisplacementFieldSink", "Controller", { {} } ); //AfterRegistrationInterface
 
   // Instantiate SuperElastix
   SuperElastixFilterType::Pointer superElastixFilter;
