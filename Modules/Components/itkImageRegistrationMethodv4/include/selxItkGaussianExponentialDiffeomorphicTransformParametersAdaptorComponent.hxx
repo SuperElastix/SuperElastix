@@ -52,17 +52,17 @@ ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorComponent< Dimensio
     
     FixedImageType::Pointer fixedImage = FixedImageType::New();
     fixedImage->CopyInformation(fixedImageDomain);
-    fixedImage->Allocate();
+    //fixedImage->Allocate();
 
     typedef itk::ShrinkImageFilter< FixedImageType, FixedImageType > ShrinkFilterType;
     typename ShrinkFilterType::Pointer shrinkFilter = ShrinkFilterType::New();
     shrinkFilter->SetShrinkFactors(m_shrinkFactorsPerLevel[level]);
     shrinkFilter->SetInput(fixedImage);
-    shrinkFilter->Update();
+    shrinkFilter->UpdateOutputInformation();
 
     typename TransformParametersAdaptorType::Pointer transformAdaptor = TransformParametersAdaptorType::New();
     transformAdaptor->SetRequiredSpacing(shrinkFilter->GetOutput()->GetSpacing());
-    transformAdaptor->SetRequiredSize(shrinkFilter->GetOutput()->GetBufferedRegion().GetSize());
+    transformAdaptor->SetRequiredSize(shrinkFilter->GetOutput()->GetLargestPossibleRegion().GetSize());
     transformAdaptor->SetRequiredDirection(shrinkFilter->GetOutput()->GetDirection());
     transformAdaptor->SetRequiredOrigin(shrinkFilter->GetOutput()->GetOrigin());
 
