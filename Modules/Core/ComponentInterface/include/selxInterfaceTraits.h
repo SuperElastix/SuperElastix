@@ -30,6 +30,11 @@
 
 namespace selx
 {
+  // helper to display type name in static assert error message (required, at least for VC++ 2013)
+  template <typename T>
+  struct StaticErrorMessageRevealT { enum { False = false }; };
+  
+
 // Traits to get printable interface name
 
 // In our toolbox for each InterfaceType it is required to implement InterfaceName<InterfaceType>::Get()
@@ -37,16 +42,7 @@ namespace selx
 template< typename T >
 struct InterfaceName
 {
-  struct PLEASE_IMPLEMENT_INTERFACENAME_GET_FOR_THIS_TYPE;
-  //TODO message produced by BOOST_MPL_ASSERT_MSG is not yet very clear
-  BOOST_MPL_ASSERT_MSG( false, PLEASE_IMPLEMENT_INTERFACENAME_GET_FOR_THIS_TYPE, ( T ) );
-  static const char * Get()
-  {
-    //static_assert(false, "Please implement a template specialization for the appropriate InterfaceName");
-    // Exception should never happen since build should fail due to static assert of BOOST_MPL_ASSERT_MSG.
-    itkGenericExceptionMacro( "Please implement a template specialization for the appropriate InterfaceName" );
-    return typeid( T ).name();
-  }
+  static_assert(StaticErrorMessageRevealT<T>::False, "Please Implement InterfaceName<InterfaceType> for this InterfaceType");
 };
 
 // The specializations for each type of Interface supported by the toolbox
@@ -259,12 +255,12 @@ struct InterfaceName< itkGaussianExponentialDiffeomorphicTransformParametersAdap
 
 // partial specialization of InterfaceName
 // InterfaceName<T>::Get() should return the same name no matter whether T is an acceptor or provider interface.
-template< typename T1 >
-struct InterfaceName< InterfaceAcceptor< T1 >>
+template< typename InterfaceType >
+struct InterfaceName< InterfaceAcceptor< InterfaceType >>
 {
   static const char * Get()
   {
-    return InterfaceName< T1 >::Get();
+    return InterfaceName< InterfaceType >::Get();
   }
 };
 } // end namespace selx
