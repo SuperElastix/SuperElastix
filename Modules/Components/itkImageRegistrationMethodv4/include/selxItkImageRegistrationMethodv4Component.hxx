@@ -87,7 +87,7 @@ public:
       std::cout << "   FM Final metric value:     " << optimizer->GetCurrentMetricValue() << std::endl;
       std::cout << "   SC Optimizer scales:       " << optimizer->GetScales() << std::endl;
       std::cout << "   FG Final metric gradient (sample of values): ";
-      if( gradient.GetSize() < 10 )
+      if( gradient.GetSize() < 16 )
       {
         std::cout << gradient;
       }

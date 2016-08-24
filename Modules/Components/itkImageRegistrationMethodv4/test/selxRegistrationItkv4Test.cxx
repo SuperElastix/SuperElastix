@@ -550,7 +550,7 @@ TEST_F(RegistrationItkv4Test, FullyConfigured3dAffine)
 
   ParameterMapType component7Parameters;
   component7Parameters["NameOfClass"] = { "ItkGradientDescentOptimizerv4Component" };
-  component7Parameters["NumberOfIterations"] = { "1" };
+  component7Parameters["NumberOfIterations"] = { "10" };
   blueprint->AddComponent("Optimizer", component7Parameters);
 
   blueprint->AddComponent("ResampleFilter", { { "NameOfClass", { "ItkResampleFilterComponent" } },
