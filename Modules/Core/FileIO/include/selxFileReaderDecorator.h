@@ -17,7 +17,6 @@
 *
 *=========================================================================*/
 
-
 #ifndef selxFileReaderDecorator_h
 #define selxFileReaderDecorator_h
 
@@ -62,12 +61,14 @@ public:
 
   FileReaderDecorator();
   ~FileReaderDecorator();
+
 protected:
 
   //virtual void GenerateData(void) ITK_OVERRIDE;
   //virtual void GenerateOutputInformation(void) ITK_OVERRIDE;
 
 private:
+
   // the actual itk reader instantiation
   ReaderPointer m_Reader;
 };

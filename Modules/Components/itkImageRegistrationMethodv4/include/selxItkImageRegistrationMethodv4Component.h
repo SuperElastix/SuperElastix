@@ -39,7 +39,7 @@ class ItkImageRegistrationMethodv4Component :
   Accepting< itkImageFixedInterface< Dimensionality, TPixel >,
   itkImageMovingInterface< Dimensionality, TPixel >,
   itkTransformInterface< double, Dimensionality >,
-  itkTransformParametersAdaptorsContainerInterface< double, Dimensionality>,
+  itkTransformParametersAdaptorsContainerInterface< double, Dimensionality >,
   itkMetricv4Interface< Dimensionality, TPixel >,
   itkOptimizerv4Interface< double >
   >,
@@ -62,14 +62,16 @@ public:
 
   // Get the type definitions from the interfaces
 
-  typedef typename itkOptimizerv4Interface< TransformInternalComputationValueType >::InternalComputationValueType               OptimizerInternalComputationValueType; //should be from class template
+  typedef typename itkOptimizerv4Interface< TransformInternalComputationValueType >::InternalComputationValueType
+    OptimizerInternalComputationValueType;                                                                                                                             //should be from class template
 
-  typedef typename itkImageFixedInterface< Dimensionality, TPixel >::ItkImageType    FixedImageType;
-  typedef typename itkImageMovingInterface< Dimensionality, TPixel >::ItkImageType   MovingImageType;
+  typedef typename itkImageFixedInterface< Dimensionality, TPixel >::ItkImageType                                   FixedImageType;
+  typedef typename itkImageMovingInterface< Dimensionality, TPixel >::ItkImageType                                  MovingImageType;
   typedef typename itkTransformInterface< TransformInternalComputationValueType, Dimensionality >::TransformType    TransformType;
   typedef typename itkTransformInterface< TransformInternalComputationValueType, Dimensionality >::TransformPointer TransformPointer;
 
-  using TransformParametersAdaptorsContainerInterfaceType = itkTransformParametersAdaptorsContainerInterface< TransformInternalComputationValueType, Dimensionality>;
+  using TransformParametersAdaptorsContainerInterfaceType
+      = itkTransformParametersAdaptorsContainerInterface< TransformInternalComputationValueType, Dimensionality >;
 
   typedef itk::ImageRegistrationMethodv4< FixedImageType, MovingImageType >    TheItkFilterType;
   typedef typename TheItkFilterType::ImageMetricType                           ImageMetricType;
@@ -82,8 +84,8 @@ public:
 
   virtual int Set( itkTransformInterface< TransformInternalComputationValueType, Dimensionality > * ) override;
 
-  virtual int Set( TransformParametersAdaptorsContainerInterfaceType *) override;
-  
+  virtual int Set( TransformParametersAdaptorsContainerInterfaceType * ) override;
+
   virtual int Set( itkMetricv4Interface< Dimensionality, TPixel > * ) override;
 
   virtual int Set( itkOptimizerv4Interface< OptimizerInternalComputationValueType > * ) override;
@@ -102,11 +104,12 @@ public:
 private:
 
   typename TheItkFilterType::Pointer m_theItkFilter;
-  
-  // The settings SmoothingSigmas and ShrinkFactors imply NumberOfLevels, if the user 
-  // provides inconsistent numbers we should detect that and report about it. 
-  std::string m_NumberOfLevelsLastSetBy;
-  TransformParametersAdaptorsContainerInterfaceType* m_TransformAdaptorsContainerInterface;
+
+  // The settings SmoothingSigmas and ShrinkFactors imply NumberOfLevels, if the user
+  // provides inconsistent numbers we should detect that and report about it.
+  std::string                                         m_NumberOfLevelsLastSetBy;
+  TransformParametersAdaptorsContainerInterfaceType * m_TransformAdaptorsContainerInterface;
+
 protected:
 
   /* The following struct returns the string name of computation type */

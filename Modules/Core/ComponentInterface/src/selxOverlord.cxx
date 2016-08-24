@@ -115,10 +115,10 @@ Overlord::ApplyNodeConfiguration()
     for( auto const & criterion : currentProperty )
     {
       std::cout << "  " << criterion.first << ": ";
-      if (criterion.second.size() > 1)
+      if( criterion.second.size() > 1 )
       {
         std::cout << "[ ";
-        for (auto const element : criterion.second)
+        for( auto const element : criterion.second )
         {
           std::cout << element << " ";
         }
@@ -126,7 +126,7 @@ Overlord::ApplyNodeConfiguration()
       }
       else
       {
-        std::cout << criterion.second[0];
+        std::cout << criterion.second[ 0 ];
       }
       std::cout << std::endl;
       currentComponentSelector->AddCriterion( criterion );

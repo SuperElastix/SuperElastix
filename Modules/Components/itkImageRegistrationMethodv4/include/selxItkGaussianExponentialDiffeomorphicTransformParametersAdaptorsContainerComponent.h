@@ -41,7 +41,7 @@ class ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerCom
   public SuperElastixComponent<
   Accepting< itkImageDomainFixedInterface< Dimensionality >
   >,
-  Providing< itkTransformParametersAdaptorsContainerInterface< TransformInternalComputationValueType, Dimensionality>
+  Providing< itkTransformParametersAdaptorsContainerInterface< TransformInternalComputationValueType, Dimensionality >
   >
   >
 {
@@ -55,22 +55,25 @@ public:
   virtual ~ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent();
 
   // Get the type definitions from the interfaces
-  typedef typename itkImageDomainFixedInterface< Dimensionality >::ItkImageDomainType    FixedImageDomainType;
- 
-  using itkTransformParametersAdaptorsContainerInterfaceType = itkTransformParametersAdaptorsContainerInterface< TransformInternalComputationValueType, Dimensionality >;
-  using TransformParametersAdaptorsContainerType = typename itkTransformParametersAdaptorsContainerInterfaceType::TransformParametersAdaptorsContainerType;
-  
-  
+  typedef typename itkImageDomainFixedInterface< Dimensionality >::ItkImageDomainType FixedImageDomainType;
+
+  using itkTransformParametersAdaptorsContainerInterfaceType
+      = itkTransformParametersAdaptorsContainerInterface< TransformInternalComputationValueType, Dimensionality >;
+  using TransformParametersAdaptorsContainerType
+      = typename itkTransformParametersAdaptorsContainerInterfaceType::TransformParametersAdaptorsContainerType;
+
   // Since the itkTransformParametersAdaptorsContainerInterface is only defined by BaseType Adaptors and Transforms, we cannot use the ItkTransformParametersAdaptorsContainerInterfaceType::TransformParametersAdaptorBaseType;
   // Specific to this componenent is the full definition of TransformParametersAdaptorType being GaussianExponentialDiffeomorphic
-  using TransformParametersAdaptorType = itk::GaussianExponentialDiffeomorphicTransformParametersAdaptor< itk::GaussianExponentialDiffeomorphicTransform<TransformInternalComputationValueType, Dimensionality> >;
-  
-  typedef itk::Array<itk::SizeValueType>                                        ShrinkFactorsArrayType;
-  typedef itk::Array<TransformInternalComputationValueType>                                             SmoothingSigmasArrayType;
+  using TransformParametersAdaptorType
+      = itk::GaussianExponentialDiffeomorphicTransformParametersAdaptor< itk::GaussianExponentialDiffeomorphicTransform<
+    TransformInternalComputationValueType, Dimensionality >>;
+
+  typedef itk::Array< itk::SizeValueType >                    ShrinkFactorsArrayType;
+  typedef itk::Array< TransformInternalComputationValueType > SmoothingSigmasArrayType;
 
   //Accepting Interfaces:
   virtual int Set( itkImageDomainFixedInterface< Dimensionality > * ) override;
-  
+
   //Providing Interfaces:
   virtual typename TransformParametersAdaptorsContainerType GetItkTransformParametersAdaptorsContainer() override;
 
@@ -81,6 +84,7 @@ public:
   static const char * GetDescription() { return "ItkImageRegistrationMethodv4 Component"; }
 
 private:
+
   typename TransformParametersAdaptorsContainerType m_adaptors;
 
   // Shrink the virtual domain by specified factors for each level.  See documentation
@@ -98,12 +102,11 @@ protected:
 
   static inline const std::string GetTypeNameString()
   {
-    itkGenericExceptionMacro(<< "Unknown ScalarType" << typeid(TransformInternalComputationValueType).name());
+    itkGenericExceptionMacro( << "Unknown ScalarType" << typeid( TransformInternalComputationValueType ).name() );
     // TODO: provide the user instructions how to enable the compilation of the component with the required template types (if desired)
     // We might define an exception object that can communicate various error messages: for simple user, for developer user, etc
   }
 };
-
 } //end namespace selx
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "selxItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent.hxx"

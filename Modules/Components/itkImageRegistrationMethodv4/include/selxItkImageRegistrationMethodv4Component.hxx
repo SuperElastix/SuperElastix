@@ -115,7 +115,8 @@ public:
 };
 
 template< int Dimensionality, class TPixel >
-ItkImageRegistrationMethodv4Component< Dimensionality, TPixel >::ItkImageRegistrationMethodv4Component() : m_TransformAdaptorsContainerInterface(nullptr)
+ItkImageRegistrationMethodv4Component< Dimensionality, TPixel >::ItkImageRegistrationMethodv4Component() : m_TransformAdaptorsContainerInterface(
+    nullptr )
 {
   m_theItkFilter = TheItkFilterType::New();
   m_theItkFilter->InPlaceOn();
@@ -166,9 +167,10 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel >::Set( itkTransfo
   return 0;
 }
 
+
 template< int Dimensionality, class TPixel >
 int
-ItkImageRegistrationMethodv4Component< Dimensionality, TPixel >::Set(TransformParametersAdaptorsContainerInterfaceType * component)
+ItkImageRegistrationMethodv4Component< Dimensionality, TPixel >::Set( TransformParametersAdaptorsContainerInterfaceType * component )
 {
   // store the interface to the ParametersAdaptorsContainer since during the setup of the connections the TransformParametersAdaptorComponent might not be fully connected and thus does not have the adaptors ready.
   this->m_TransformAdaptorsContainerInterface = component;
@@ -237,9 +239,10 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel >::RunRegistration
 
   this->m_theItkFilter->SetOptimizer( optimizer );
 
-  if (this->m_TransformAdaptorsContainerInterface != nullptr)
+  if( this->m_TransformAdaptorsContainerInterface != nullptr )
   {
-    this->m_theItkFilter->SetTransformParametersAdaptorsPerLevel(this->m_TransformAdaptorsContainerInterface->GetItkTransformParametersAdaptorsContainer());
+    this->m_theItkFilter->SetTransformParametersAdaptorsPerLevel(
+       this->m_TransformAdaptorsContainerInterface->GetItkTransformParametersAdaptorsContainer() );
   }
 
   typedef CommandIterationUpdate< TheItkFilterType > RegistrationCommandType;
@@ -300,20 +303,20 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel >
       }
     }
   }
-  else if (criterion.first == "NumberOfLevels") //Supports this?
+  else if( criterion.first == "NumberOfLevels" ) //Supports this?
   {
     meetsCriteria = true;
-    if (criterion.second.size() == 1)
+    if( criterion.second.size() == 1 )
     {
-      if (this->m_NumberOfLevelsLastSetBy == "") // check if some other settings set the NumberOfLevels
+      if( this->m_NumberOfLevelsLastSetBy == "" ) // check if some other settings set the NumberOfLevels
       {
         // try catch?
-        this->m_theItkFilter->SetNumberOfLevels(std::stoi(criterion.second[0]));
+        this->m_theItkFilter->SetNumberOfLevels( std::stoi( criterion.second[ 0 ] ) );
         this->m_NumberOfLevelsLastSetBy = criterion.first;
       }
       else
       {
-        if (this->m_theItkFilter->GetNumberOfLevels() != std::stoi(criterion.second[0]))
+        if( this->m_theItkFilter->GetNumberOfLevels() != std::stoi( criterion.second[ 0 ] ) )
         {
           // TODO log error?
           std::cout << "A conflicting NumberOfLevels was set by " << this->m_NumberOfLevelsLastSetBy << std::endl;
@@ -329,80 +332,79 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel >
       meetsCriteria = false;
       return meetsCriteria;
     }
-    
   }
-  else if (criterion.first == "ShrinkFactorsPerLevel") //Supports this?
+  else if( criterion.first == "ShrinkFactorsPerLevel" ) //Supports this?
   {
     meetsCriteria = true;
 
     const int impliedNumberOfResolutions = criterion.second.size();
 
-    if (this->m_NumberOfLevelsLastSetBy == "") // check if some other settings set the NumberOfLevels
+    if( this->m_NumberOfLevelsLastSetBy == "" ) // check if some other settings set the NumberOfLevels
     {
       // try catch?
-      this->m_theItkFilter->SetNumberOfLevels(impliedNumberOfResolutions);
+      this->m_theItkFilter->SetNumberOfLevels( impliedNumberOfResolutions );
       this->m_NumberOfLevelsLastSetBy = criterion.first;
     }
     else
     {
-      if (this->m_theItkFilter->GetNumberOfLevels() != impliedNumberOfResolutions)
+      if( this->m_theItkFilter->GetNumberOfLevels() != impliedNumberOfResolutions )
       {
         // TODO log error?
         std::cout << "A conflicting NumberOfLevels was set by " << this->m_NumberOfLevelsLastSetBy << std::endl;
         meetsCriteria = false;
-        return meetsCriteria;;
+        return meetsCriteria;
       }
     }
 
-    itk::Array<itk::SizeValueType>  shrinkFactorsPerLevel;
-    shrinkFactorsPerLevel.SetSize(impliedNumberOfResolutions);
+    itk::Array< itk::SizeValueType > shrinkFactorsPerLevel;
+    shrinkFactorsPerLevel.SetSize( impliedNumberOfResolutions );
 
     unsigned int resolutionIndex = 0;
-    for (auto const & criterionValue : criterion.second) // auto&& preferred?
+    for( auto const & criterionValue : criterion.second ) // auto&& preferred?
     {
-      shrinkFactorsPerLevel[resolutionIndex] = std::stoi(criterionValue);
+      shrinkFactorsPerLevel[ resolutionIndex ] = std::stoi( criterionValue );
       ++resolutionIndex;
     }
     // try catch?
-    this->m_theItkFilter->SetShrinkFactorsPerLevel(shrinkFactorsPerLevel);
+    this->m_theItkFilter->SetShrinkFactorsPerLevel( shrinkFactorsPerLevel );
   }
-  else if (criterion.first == "SmoothingSigmasPerLevel") //Supports this?
+  else if( criterion.first == "SmoothingSigmasPerLevel" ) //Supports this?
   {
     meetsCriteria = true;
 
     const int impliedNumberOfResolutions = criterion.second.size();
 
-    if (this->m_NumberOfLevelsLastSetBy == "") // check if some other settings set the NumberOfLevels
+    if( this->m_NumberOfLevelsLastSetBy == "" ) // check if some other settings set the NumberOfLevels
     {
       // try catch?
-      this->m_theItkFilter->SetNumberOfLevels(impliedNumberOfResolutions);
+      this->m_theItkFilter->SetNumberOfLevels( impliedNumberOfResolutions );
       this->m_NumberOfLevelsLastSetBy = criterion.first;
     }
     else
     {
-      if (this->m_theItkFilter->GetNumberOfLevels() != impliedNumberOfResolutions)
+      if( this->m_theItkFilter->GetNumberOfLevels() != impliedNumberOfResolutions )
       {
         // TODO log error?
         std::cout << "A conflicting NumberOfLevels was set by " << this->m_NumberOfLevelsLastSetBy << std::endl;
         meetsCriteria = false;
-        return meetsCriteria;;
+        return meetsCriteria;
       }
     }
 
-    itk::Array<TransformInternalComputationValueType>  smoothingSigmasPerLevel;
+    itk::Array< TransformInternalComputationValueType > smoothingSigmasPerLevel;
 
-    smoothingSigmasPerLevel.SetSize(impliedNumberOfResolutions);
+    smoothingSigmasPerLevel.SetSize( impliedNumberOfResolutions );
 
     unsigned int resolutionIndex = 0;
-    for (auto const & criterionValue : criterion.second) // auto&& preferred?
+    for( auto const & criterionValue : criterion.second ) // auto&& preferred?
     {
-      smoothingSigmasPerLevel[resolutionIndex] = std::stoi(criterionValue);
+      smoothingSigmasPerLevel[ resolutionIndex ] = std::stoi( criterionValue );
       ++resolutionIndex;
     }
     // try catch?
     // Smooth by specified gaussian sigmas for each level.  These values are specified in
     // physical units.
-    this->m_theItkFilter->SetSmoothingSigmasPerLevel(smoothingSigmasPerLevel);
+    this->m_theItkFilter->SetSmoothingSigmasPerLevel( smoothingSigmasPerLevel );
   }
 
   return meetsCriteria;

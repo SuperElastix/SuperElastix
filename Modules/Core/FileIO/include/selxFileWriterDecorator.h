@@ -17,7 +17,6 @@
 *
 *=========================================================================*/
 
-
 #ifndef selxFileWriterDecorator_h
 #define selxFileWriterDecorator_h
 
@@ -75,6 +74,7 @@ protected:
   //virtual void GenerateOutputInformation(void) ITK_OVERRIDE;
 
 private:
+
   // the actual itk writer instantiation
   WriterPointer m_Writer;
 };

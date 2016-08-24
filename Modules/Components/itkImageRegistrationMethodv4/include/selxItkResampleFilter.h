@@ -59,14 +59,14 @@ public:
   typedef TPixel PixelType;
 
   // Get the type definitions from the interfaces
-  typedef typename itkImageDomainFixedInterface< Dimensionality>::ItkImageDomainType  FixedImageDomainType;
-  typedef typename itkImageMovingInterface< Dimensionality, TPixel >::ItkImageType MovingImageType;
-  typedef typename itkImageInterface< Dimensionality, TPixel >::ItkImageType       ResultImageType;
+  typedef typename itkImageDomainFixedInterface< Dimensionality >::ItkImageDomainType FixedImageDomainType;
+  typedef typename itkImageMovingInterface< Dimensionality, TPixel >::ItkImageType    MovingImageType;
+  typedef typename itkImageInterface< Dimensionality, TPixel >::ItkImageType          ResultImageType;
 
   typedef itk::ResampleImageFilter< MovingImageType, ResultImageType > ResampleFilterType;
 
   //Accepting Interfaces:
-  virtual int Set( itkImageDomainFixedInterface< Dimensionality> * ) override;
+  virtual int Set( itkImageDomainFixedInterface< Dimensionality > * ) override;
 
   virtual int Set( itkImageMovingInterface< Dimensionality, TPixel > * ) override;
 

@@ -96,7 +96,7 @@ public:
     ItkGradientDescentOptimizerv4Component< double >,
     ItkAffineTransformComponent< double, 3 >,
     ItkGaussianExponentialDiffeomorphicTransformComponent< double, 3 >,
-    ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent<3, double>,
+    ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent< 3, double >,
     ItkTransformDisplacementFilterComponent< 2, float, double >,
     ItkTransformDisplacementFilterComponent< 3, double, double >,
     ItkResampleFilterComponent< 2, float, double >,
@@ -384,10 +384,10 @@ TEST_F( RegistrationItkv4Test, FullyConfigured3d )
   /** make example blueprint configuration */
   blueprint = Blueprint::New();
 
-  blueprint->AddComponent("RegistrationMethod", { { "NameOfClass", { "ItkImageRegistrationMethodv4Component" } },
-                                                          { "Dimensionality", { "3" } },
-                                                          { "NumberOfLevels", { "2" } },
-                                                          { "ShrinkFactorsPerLevel", { "2", "1" } } });
+  blueprint->AddComponent( "RegistrationMethod", { { "NameOfClass", { "ItkImageRegistrationMethodv4Component" } },
+                                                   { "Dimensionality", { "3" } },
+                                                   { "NumberOfLevels", { "2" } },
+                                                   { "ShrinkFactorsPerLevel", { "2", "1" } } } );
 
   ParameterMapType component1Parameters;
   component1Parameters[ "NameOfClass" ]    = { "ItkImageSourceFixedComponent" };
@@ -429,11 +429,11 @@ TEST_F( RegistrationItkv4Test, FullyConfigured3d )
 
   blueprint->AddComponent( "Transform",      { { "NameOfClass",    { "ItkGaussianExponentialDiffeomorphicTransformComponent" } },
                                                { "Dimensionality", { "3" } } } );
-  
-  blueprint->AddComponent("TransformResolutionAdaptor", { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent" } },
-                                                          { "Dimensionality", { "3" } }, 
-                                                          { "ShrinkFactorsPerLevel", { "2", "1" } } });
-    
+
+  blueprint->AddComponent( "TransformResolutionAdaptor", { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent" } },
+                                                           { "Dimensionality", { "3" } },
+                                                           { "ShrinkFactorsPerLevel", { "2", "1" } } } );
+
   blueprint->AddComponent( "Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } } );
 
   ParameterMapType connection1Parameters;
@@ -458,9 +458,9 @@ TEST_F( RegistrationItkv4Test, FullyConfigured3d )
 
   blueprint->AddConnection( "FixedImageSource", "Transform", { {} } );
   blueprint->AddConnection( "Transform", "RegistrationMethod", { {} } );
-  
-  blueprint->AddConnection( "FixedImageSource", "TransformResolutionAdaptor", { {} });
-  blueprint->AddConnection( "TransformResolutionAdaptor", "RegistrationMethod", { {} }); 
+
+  blueprint->AddConnection( "FixedImageSource", "TransformResolutionAdaptor", { {} } );
+  blueprint->AddConnection( "TransformResolutionAdaptor", "RegistrationMethod", { {} } );
   blueprint->AddConnection( "Optimizer", "RegistrationMethod", { {} } );
   blueprint->AddConnection( "RegistrationMethod", "TransformDisplacementFilter", { {} } );
   blueprint->AddConnection( "FixedImageSource", "TransformDisplacementFilter", { {} } );
@@ -509,127 +509,127 @@ TEST_F( RegistrationItkv4Test, FullyConfigured3d )
 
   blueprint->WriteBlueprint( dataManager->GetOutputFile( "RegistrationItkv4Test_DisplacementField_network.dot" ) );
 }
-TEST_F(RegistrationItkv4Test, FullyConfigured3dAffine)
+TEST_F( RegistrationItkv4Test, FullyConfigured3dAffine )
 {
   /** make example blueprint configuration */
   blueprint = Blueprint::New();
 
-  blueprint->AddComponent("RegistrationMethod", { { "NameOfClass", { "ItkImageRegistrationMethodv4Component" } },
-  { "Dimensionality", { "3" } },
-  { "NumberOfLevels", { "2" } } });
+  blueprint->AddComponent( "RegistrationMethod", { { "NameOfClass", { "ItkImageRegistrationMethodv4Component" } },
+                                                   { "Dimensionality", { "3" } },
+                                                   { "NumberOfLevels", { "2" } } } );
 
   ParameterMapType component1Parameters;
-  component1Parameters["NameOfClass"] = { "ItkImageSourceFixedComponent" };
-  component1Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
-  blueprint->AddComponent("FixedImageSource", component1Parameters);
+  component1Parameters[ "NameOfClass" ]    = { "ItkImageSourceFixedComponent" };
+  component1Parameters[ "Dimensionality" ] = { "3" }; // should be derived from the inputs
+  blueprint->AddComponent( "FixedImageSource", component1Parameters );
 
   ParameterMapType component2Parameters;
-  component2Parameters["NameOfClass"] = { "ItkImageSourceMovingComponent" };
-  component2Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
-  blueprint->AddComponent("MovingImageSource", component2Parameters);
+  component2Parameters[ "NameOfClass" ]    = { "ItkImageSourceMovingComponent" };
+  component2Parameters[ "Dimensionality" ] = { "3" }; // should be derived from the inputs
+  blueprint->AddComponent( "MovingImageSource", component2Parameters );
 
   ParameterMapType component3Parameters;
-  component3Parameters["NameOfClass"] = { "ItkImageSinkComponent" };
-  component3Parameters["Dimensionality"] = { "3" }; // should be derived from the outputs
-  blueprint->AddComponent("ResultImageSink", component3Parameters);
+  component3Parameters[ "NameOfClass" ]    = { "ItkImageSinkComponent" };
+  component3Parameters[ "Dimensionality" ] = { "3" }; // should be derived from the outputs
+  blueprint->AddComponent( "ResultImageSink", component3Parameters );
 
   ParameterMapType component4Parameters;
-  component4Parameters["NameOfClass"] = { "DisplacementFieldItkImageFilterSinkComponent" };
-  component4Parameters["Dimensionality"] = { "3" }; // should be derived from the outputs
-  blueprint->AddComponent("ResultDisplacementFieldSink", component4Parameters);
+  component4Parameters[ "NameOfClass" ]    = { "DisplacementFieldItkImageFilterSinkComponent" };
+  component4Parameters[ "Dimensionality" ] = { "3" }; // should be derived from the outputs
+  blueprint->AddComponent( "ResultDisplacementFieldSink", component4Parameters );
 
   ParameterMapType component5Parameters;
-  component5Parameters["NameOfClass"] = { "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component" };
-  component5Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
-  blueprint->AddComponent("Metric", component5Parameters);
+  component5Parameters[ "NameOfClass" ]    = { "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component" };
+  component5Parameters[ "Dimensionality" ] = { "3" }; // should be derived from the inputs
+  blueprint->AddComponent( "Metric", component5Parameters );
 
   ParameterMapType component6Parameters;
-  component6Parameters["NameOfClass"] = { "ItkTransformDisplacementFilterComponent" };
-  component6Parameters["Dimensionality"] = { "3" }; // should be derived from the outputs
-  blueprint->AddComponent("TransformDisplacementFilter", component6Parameters);
+  component6Parameters[ "NameOfClass" ]    = { "ItkTransformDisplacementFilterComponent" };
+  component6Parameters[ "Dimensionality" ] = { "3" }; // should be derived from the outputs
+  blueprint->AddComponent( "TransformDisplacementFilter", component6Parameters );
 
   ParameterMapType component7Parameters;
-  component7Parameters["NameOfClass"] = { "ItkGradientDescentOptimizerv4Component" };
-  component7Parameters["NumberOfIterations"] = { "10" };
-  blueprint->AddComponent("Optimizer", component7Parameters);
+  component7Parameters[ "NameOfClass" ]        = { "ItkGradientDescentOptimizerv4Component" };
+  component7Parameters[ "NumberOfIterations" ] = { "10" };
+  blueprint->AddComponent( "Optimizer", component7Parameters );
 
-  blueprint->AddComponent("ResampleFilter", { { "NameOfClass", { "ItkResampleFilterComponent" } },
-  { "Dimensionality", { "3" } } });
+  blueprint->AddComponent( "ResampleFilter", { { "NameOfClass", { "ItkResampleFilterComponent" } },
+                                               { "Dimensionality", { "3" } } } );
 
-  blueprint->AddComponent("Transform", { { "NameOfClass", { "ItkAffineTransformComponent" } },
-  { "Dimensionality", { "3" } } });
+  blueprint->AddComponent( "Transform", { { "NameOfClass", { "ItkAffineTransformComponent" } },
+                                          { "Dimensionality", { "3" } } } );
 
-  blueprint->AddComponent("Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } });
+  blueprint->AddComponent( "Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } } );
 
   ParameterMapType connection1Parameters;
-  connection1Parameters["NameOfInterface"] = { "itkImageFixedInterface" };
-  blueprint->AddConnection("FixedImageSource", "RegistrationMethod", connection1Parameters);
+  connection1Parameters[ "NameOfInterface" ] = { "itkImageFixedInterface" };
+  blueprint->AddConnection( "FixedImageSource", "RegistrationMethod", connection1Parameters );
 
   ParameterMapType connection2Parameters;
-  connection2Parameters["NameOfInterface"] = { "itkImageMovingInterface" };
-  blueprint->AddConnection("MovingImageSource", "RegistrationMethod", connection2Parameters);
+  connection2Parameters[ "NameOfInterface" ] = { "itkImageMovingInterface" };
+  blueprint->AddConnection( "MovingImageSource", "RegistrationMethod", connection2Parameters );
 
   ParameterMapType connection3Parameters;
-  connection3Parameters["NameOfInterface"] = { "itkImageInterface" };
-  blueprint->AddConnection("ResampleFilter", "ResultImageSink", connection3Parameters);
+  connection3Parameters[ "NameOfInterface" ] = { "itkImageInterface" };
+  blueprint->AddConnection( "ResampleFilter", "ResultImageSink", connection3Parameters );
 
   ParameterMapType connection4Parameters;
-  connection4Parameters["NameOfInterface"] = { "DisplacementFieldItkImageSourceInterface" };
-  blueprint->AddConnection("TransformDisplacementFilter", "ResultDisplacementFieldSink", connection4Parameters);
+  connection4Parameters[ "NameOfInterface" ] = { "DisplacementFieldItkImageSourceInterface" };
+  blueprint->AddConnection( "TransformDisplacementFilter", "ResultDisplacementFieldSink", connection4Parameters );
 
   ParameterMapType connection5Parameters;
-  connection5Parameters["NameOfInterface"] = { "itkMetricv4Interface" };
-  blueprint->AddConnection("Metric", "RegistrationMethod", connection5Parameters);
+  connection5Parameters[ "NameOfInterface" ] = { "itkMetricv4Interface" };
+  blueprint->AddConnection( "Metric", "RegistrationMethod", connection5Parameters );
 
-  blueprint->AddConnection("FixedImageSource", "Transform", { {} });
-  blueprint->AddConnection("Transform", "RegistrationMethod", { {} });
+  blueprint->AddConnection( "FixedImageSource", "Transform", { {} } );
+  blueprint->AddConnection( "Transform", "RegistrationMethod", { {} } );
 
-  blueprint->AddConnection("Optimizer", "RegistrationMethod", { {} });
-  blueprint->AddConnection("RegistrationMethod", "TransformDisplacementFilter", { {} });
-  blueprint->AddConnection("FixedImageSource", "TransformDisplacementFilter", { {} });
-  blueprint->AddConnection("RegistrationMethod", "ResampleFilter", { {} });
-  blueprint->AddConnection("FixedImageSource", "ResampleFilter", { {} });
-  blueprint->AddConnection("MovingImageSource", "ResampleFilter", { {} });
+  blueprint->AddConnection( "Optimizer", "RegistrationMethod", { {} } );
+  blueprint->AddConnection( "RegistrationMethod", "TransformDisplacementFilter", { {} } );
+  blueprint->AddConnection( "FixedImageSource", "TransformDisplacementFilter", { {} } );
+  blueprint->AddConnection( "RegistrationMethod", "ResampleFilter", { {} } );
+  blueprint->AddConnection( "FixedImageSource", "ResampleFilter", { {} } );
+  blueprint->AddConnection( "MovingImageSource", "ResampleFilter", { {} } );
 
-  blueprint->AddConnection("RegistrationMethod", "Controller", { {} });          //RunRegistrationInterface
-  blueprint->AddConnection("ResampleFilter", "Controller", { {} });              //ReconnectTransformInterface
-  blueprint->AddConnection("TransformDisplacementFilter", "Controller", { {} }); //ReconnectTransformInterface
+  blueprint->AddConnection( "RegistrationMethod", "Controller", { {} } );          //RunRegistrationInterface
+  blueprint->AddConnection( "ResampleFilter", "Controller", { {} } );              //ReconnectTransformInterface
+  blueprint->AddConnection( "TransformDisplacementFilter", "Controller", { {} } ); //ReconnectTransformInterface
 
   // Instantiate SuperElastix
   SuperElastixFilterType::Pointer superElastixFilter;
-  EXPECT_NO_THROW(superElastixFilter = SuperElastixFilterType::New());
+  EXPECT_NO_THROW( superElastixFilter = SuperElastixFilterType::New() );
 
   // Data manager provides the paths to the input and output data for unit tests
   DataManagerType::Pointer dataManager = DataManagerType::New();
 
   // Set up the readers and writers
   ImageReader3DType::Pointer fixedImageReader = ImageReader3DType::New();
-  fixedImageReader->SetFileName(dataManager->GetInputFile("sphereA3d.mhd"));
+  fixedImageReader->SetFileName( dataManager->GetInputFile( "sphereA3d.mhd" ) );
 
   ImageReader3DType::Pointer movingImageReader = ImageReader3DType::New();
-  movingImageReader->SetFileName(dataManager->GetInputFile("sphereB3d.mhd"));
+  movingImageReader->SetFileName( dataManager->GetInputFile( "sphereB3d.mhd" ) );
 
   ImageWriter3DType::Pointer resultImageWriter = ImageWriter3DType::New();
-  resultImageWriter->SetFileName(dataManager->GetOutputFile("RegistrationItkv4Test_DisplacementField_image.mhd"));
+  resultImageWriter->SetFileName( dataManager->GetOutputFile( "RegistrationItkv4Test_DisplacementField_image.mhd" ) );
 
   DisplacementImageWriter3DType::Pointer resultDisplacementWriter = DisplacementImageWriter3DType::New();
-  resultDisplacementWriter->SetFileName(dataManager->GetOutputFile("RegistrationItkv4Test_DisplacementField_displacement.mhd"));
+  resultDisplacementWriter->SetFileName( dataManager->GetOutputFile( "RegistrationItkv4Test_DisplacementField_displacement.mhd" ) );
 
   // Connect SuperElastix in an itk pipeline
-  superElastixFilter->SetInput("FixedImageSource", fixedImageReader->GetOutput());
-  superElastixFilter->SetInput("MovingImageSource", movingImageReader->GetOutput());
-  resultImageWriter->SetInput(superElastixFilter->GetOutput< Image3DType >("ResultImageSink"));
-  resultDisplacementWriter->SetInput(superElastixFilter->GetOutput< DisplacementImage3DType >("ResultDisplacementFieldSink"));
+  superElastixFilter->SetInput( "FixedImageSource", fixedImageReader->GetOutput() );
+  superElastixFilter->SetInput( "MovingImageSource", movingImageReader->GetOutput() );
+  resultImageWriter->SetInput( superElastixFilter->GetOutput< Image3DType >( "ResultImageSink" ) );
+  resultDisplacementWriter->SetInput( superElastixFilter->GetOutput< DisplacementImage3DType >( "ResultDisplacementFieldSink" ) );
 
-  EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
+  EXPECT_NO_THROW( superElastixFilter->SetBlueprint( blueprint ) );
 
   //Optional Update call
   //superElastixFilter->Update();
 
   // Update call on the writers triggers SuperElastix to configure and execute
-  EXPECT_NO_THROW(resultImageWriter->Update());
-  EXPECT_NO_THROW(resultDisplacementWriter->Update());
+  EXPECT_NO_THROW( resultImageWriter->Update() );
+  EXPECT_NO_THROW( resultDisplacementWriter->Update() );
 
-  blueprint->WriteBlueprint(dataManager->GetOutputFile("RegistrationItkv4Test_DisplacementField_network.dot"));
+  blueprint->WriteBlueprint( dataManager->GetOutputFile( "RegistrationItkv4Test_DisplacementField_network.dot" ) );
 }
 } // namespace selx

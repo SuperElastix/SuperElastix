@@ -39,7 +39,7 @@
 
 namespace selx
 {
-using DefaultComponents = selx::TypeList< 
+using DefaultComponents = selx::TypeList<
   DisplacementFieldItkImageFilterSinkComponent< 2, float >,
   ItkImageSinkComponent< 2, float >,
   ItkImageSourceFixedComponent< 2, float >,
@@ -54,7 +54,7 @@ using DefaultComponents = selx::TypeList<
   ItkGaussianExponentialDiffeomorphicTransformComponent< double, 2 >,
   ItkTransformDisplacementFilterComponent< 2, float, double >,
   ItkResampleFilterComponent< 2, float, double >,
-  RegistrationControllerComponent < >,
+  RegistrationControllerComponent< >,
   ItkSmoothingRecursiveGaussianImageFilterComponent< 2, float >
   >;
 }

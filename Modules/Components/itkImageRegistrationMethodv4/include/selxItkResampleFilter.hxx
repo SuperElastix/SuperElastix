@@ -45,10 +45,10 @@ ItkResampleFilterComponent< Dimensionality, TPixel, TInternalComputationValue >
   // connect the itk pipeline
 
   //this->m_ResampleFilter->SetSize(fixedImage->GetBufferedRegion().GetSize());  //should be virtual image...
-  this->m_ResampleFilter->SetSize( fixedImageDomain->GetLargestPossibleRegion().GetSize());  //should be virtual image...
-  this->m_ResampleFilter->SetOutputOrigin( fixedImageDomain->GetOrigin());
-  this->m_ResampleFilter->SetOutputSpacing( fixedImageDomain->GetSpacing());
-  this->m_ResampleFilter->SetOutputDirection( fixedImageDomain->GetDirection());
+  this->m_ResampleFilter->SetSize( fixedImageDomain->GetLargestPossibleRegion().GetSize() );  //should be virtual image...
+  this->m_ResampleFilter->SetOutputOrigin( fixedImageDomain->GetOrigin() );
+  this->m_ResampleFilter->SetOutputSpacing( fixedImageDomain->GetSpacing() );
+  this->m_ResampleFilter->SetOutputDirection( fixedImageDomain->GetDirection() );
   this->m_ResampleFilter->SetDefaultPixelValue( 0 );
   return 0;
 }

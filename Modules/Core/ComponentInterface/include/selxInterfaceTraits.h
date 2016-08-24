@@ -239,9 +239,8 @@ struct InterfaceName< ReconnectTransformInterface >
   }
 };
 
-
 template< class InternalComputationValueType, int D >
-struct InterfaceName< itkTransformParametersAdaptorsContainerInterface< InternalComputationValueType, D > >
+struct InterfaceName< itkTransformParametersAdaptorsContainerInterface< InternalComputationValueType, D >>
 {
   static const char * Get()
   {
@@ -250,14 +249,13 @@ struct InterfaceName< itkTransformParametersAdaptorsContainerInterface< Internal
 };
 
 template< class InternalComputationValueType, int D >
-struct InterfaceName< itkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerInterface< InternalComputationValueType, D > >
+struct InterfaceName< itkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerInterface< InternalComputationValueType, D >>
 {
   static const char * Get()
   {
     return "itkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerInterface";
   }
 };
-
 
 // partial specialization of InterfaceName
 // InterfaceName<T>::Get() should return the same name no matter whether T is an acceptor or provider interface.
