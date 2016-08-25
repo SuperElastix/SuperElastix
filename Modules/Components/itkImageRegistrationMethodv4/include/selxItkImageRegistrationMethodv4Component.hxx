@@ -241,8 +241,9 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel >::RunRegistration
 
   if( this->m_TransformAdaptorsContainerInterface != nullptr )
   {
-    this->m_theItkFilter->SetTransformParametersAdaptorsPerLevel(
-       this->m_TransformAdaptorsContainerInterface->GetItkTransformParametersAdaptorsContainer() );
+    auto adaptors = this->m_TransformAdaptorsContainerInterface->GetItkTransformParametersAdaptorsContainer();
+    this->m_theItkFilter->SetTransformParametersAdaptorsPerLevel( adaptors 
+        );
   }
 
   typedef CommandIterationUpdate< TheItkFilterType > RegistrationCommandType;
