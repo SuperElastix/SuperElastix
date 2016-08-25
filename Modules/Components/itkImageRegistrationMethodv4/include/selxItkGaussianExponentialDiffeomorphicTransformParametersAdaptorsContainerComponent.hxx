@@ -50,7 +50,7 @@ ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent
 
     typedef itk::Image< TransformInternalComputationValueType, Dimensionality > FixedImageType;
 
-    FixedImageType::Pointer fixedImage = FixedImageType::New();
+    typename FixedImageType::Pointer fixedImage = FixedImageType::New();
     fixedImage->CopyInformation( fixedImageDomain );
     //fixedImage->Allocate();
 

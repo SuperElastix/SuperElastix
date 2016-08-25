@@ -75,7 +75,7 @@ public:
   virtual int Set( itkImageDomainFixedInterface< Dimensionality > * ) override;
 
   //Providing Interfaces:
-  virtual typename TransformParametersAdaptorsContainerType GetItkTransformParametersAdaptorsContainer() override;
+  virtual TransformParametersAdaptorsContainerType GetItkTransformParametersAdaptorsContainer() override;
 
   //BaseClass methods
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
@@ -85,7 +85,7 @@ public:
 
 private:
 
-  typename TransformParametersAdaptorsContainerType m_adaptors;
+  TransformParametersAdaptorsContainerType m_adaptors;
 
   // Shrink the virtual domain by specified factors for each level.  See documentation
   // for the itkShrinkImageFilter for more detailed behavior.
