@@ -23,9 +23,6 @@
 //TODO: note, maybe this functionality shouldn't be called a Trait, since we use a method ::Get(). Is Policy a better name?
 
 #include "selxInterfaces.h"
-#include "itkMacro.h"
-//#include <boost/static_assert.hpp>
-#include <boost/mpl/assert.hpp>
 //#include <type_traits>
 
 namespace selx
