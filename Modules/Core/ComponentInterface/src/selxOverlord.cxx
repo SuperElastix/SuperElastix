@@ -20,8 +20,17 @@
 #include "selxOverlord.h"
 #include "selxKeys.h"
 
+//todo remove
+#include "selxInterfaces.h"
+#include "selxSuperElastixComponent.h"
+
 namespace selx
 {
+  //todo remove
+  auto && properties1 = Properties < itkImageFixedInterface< 3, float >>::Get();
+  auto && properties2 = Properties < itkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerInterface< double, 2 >>::Get();
+  
+  
 Overlord::Overlord() : m_isConfigured( false )
 {
 }

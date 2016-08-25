@@ -260,6 +260,37 @@ struct InterfaceName< InterfaceAcceptor< InterfaceType >>
     return InterfaceName< InterfaceType >::Get();
   }
 };
-} // end namespace selx
 
+//************experimental**********
+
+template< typename T >
+struct Properties
+{
+  //static_assert(StaticErrorMessageRevealT<T>::False, "Please Implement InterfaceProperties<InterfaceType> for this InterfaceType");
+  static const std::map<std::string, std::string> Get()
+  {
+    return{ { "Name", InterfaceName< T >::Get() } };
+  }
+};
+
+// The specializations for each type of Interface supported by the toolbox
+
+template< int D, class TPixel >
+struct Properties< itkImageFixedInterface< D, TPixel >>
+{
+  static const std::map<std::string, std::string> Get()
+  {
+    return{ { "Name", InterfaceName< itkImageFixedInterface< D, TPixel> >::Get() }, { "Dimensionality", "3" }, { "PixelType", "float" } };
+  }
+};
+
+template< >
+struct Properties< MetricValueInterface >
+{
+  static const std::map<std::string, std::string> Get()
+  {
+    return{ { "Name", "MetricValueInterface" } };
+  }
+};
+} // end namespace selx
 #endif // #define InterfaceTraits_h
