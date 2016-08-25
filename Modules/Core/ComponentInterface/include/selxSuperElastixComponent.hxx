@@ -72,6 +72,23 @@ SuperElastixComponent< AcceptingInterfaces, ProvidingInterfaces >::HasProvidingI
   return ProvidingInterfaces::HasInterface( interfacename );
 }
 
+template< typename AcceptingInterfaces, typename ProvidingInterfaces >
+unsigned int
+SuperElastixComponent< AcceptingInterfaces, ProvidingInterfaces >::CountAcceptingInterfaces(const ComponentBase::InterfaceCriteriaType interfaceCriteria)
+{
+  //return AcceptingInterfaces::HasInterface(interfacename);
+  return CountInterfaces< AcceptingInterfaces >::Count(interfaceCriteria);
+}
+
+
+template< typename AcceptingInterfaces, typename ProvidingInterfaces >
+unsigned int
+SuperElastixComponent< AcceptingInterfaces, ProvidingInterfaces >::CountProvidingInterfaces(const ComponentBase::InterfaceCriteriaType interfaceCriteria)
+{
+  //return ProvidingInterfaces::HasInterface(interfacename);
+  return CountInterfaces< ProvidingInterfaces>::Count(interfaceCriteria);
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 template< typename FirstInterface, typename ... RestInterfaces >
@@ -118,7 +135,9 @@ bool
 Accepting< FirstInterface, RestInterfaces ... >::HasInterface( const char * interfacename )
 {
   //TODO: check on interface template arguments as well
-  if( InterfaceName< InterfaceAcceptor< FirstInterface >>::Get() == std::string( interfacename ) )
+  auto interfaceProperies = Properties< FirstInterface >::Get();
+
+  if (interfaceProperies["Name"] == std::string(interfacename))
   {
     return true;
   }
@@ -131,12 +150,34 @@ bool
 Providing< FirstInterface, RestInterfaces ... >::HasInterface( const char * interfacename )
 {
   //TODO: check on interface template arguments as well
-  if( InterfaceName< FirstInterface >::Get() == std::string( interfacename ) )
+  auto interfaceProperies = Properties< FirstInterface >::Get();
+
+  if (interfaceProperies["Name"] == std::string(interfacename))
   {
     return true;
   }
   return Providing< RestInterfaces ... >::HasInterface( interfacename );
 }
+
+template <typename FirstInterface, typename ... RestInterfaces>
+unsigned int CountInterfaces<FirstInterface, RestInterfaces ...>::Count(const ComponentBase::InterfaceCriteriaType interfaceCriteria)
+{
+  auto interfaceProperies = Properties< FirstInterface >::Get();
+  for (const auto keyAndValue : interfaceCriteria)
+  {
+    auto && key = keyAndValue.first;
+    auto && value = keyAndValue.second;
+    if (interfaceProperies.count(key) != 1 || interfaceProperies[key].compare(value)!=0 )
+    {
+      // as soon as any of the criteria fails we break the loop and test the RestInterfaces
+      return CountInterfaces< RestInterfaces ... >::Count(interfaceCriteria);
+    }
+  }
+  // if all criteria are met for this Interface we add 1 to the count and continue with the RestInterfaces
+  return 1 + CountInterfaces< RestInterfaces ... >::Count(interfaceCriteria);
+};
+
+
 } // end namespace selx
 
 #endif // #define selxSuperElastixComponent_hxx

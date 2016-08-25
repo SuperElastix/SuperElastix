@@ -53,6 +53,8 @@ public:
   typedef std::map< ParameterKeyType, ParameterValueType >  CriteriaType;
   typedef std::pair< ParameterKeyType, ParameterValueType > CriterionType;
 
+  typedef std::map< std::string, std::string >  InterfaceCriteriaType;
+
   enum interfaceStatus { success, noaccepter, noprovider };
 
   virtual interfaceStatus AcceptConnectionFrom( const char *, ComponentBase * ) = 0;
@@ -72,6 +74,11 @@ protected:
   virtual bool HasAcceptingInterface( const char * ) = 0;
 
   virtual bool HasProvidingInterface( const char * ) = 0;
+
+  //experimental:
+  virtual unsigned int CountAcceptingInterfaces(const InterfaceCriteriaType) = 0;
+
+  virtual unsigned int CountProvidingInterfaces(const InterfaceCriteriaType) = 0;
 
   ComponentBase() {}
   virtual ~ComponentBase() {}

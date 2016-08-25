@@ -93,6 +93,20 @@ protected:
 //{
 //};
 
+// helper class for SuperElastixComponent::CountAcceptingInterfaces and SuperElastixComponent::CountProvidingInterfaces to loop over a set of interfaces
+
+template <typename ... RestInterfaces>
+struct CountInterfaces
+{
+  static unsigned int Count(const ComponentBase::InterfaceCriteriaType) { return 0 };
+};
+
+template < typename FirstInterface, typename ... RestInterfaces>
+struct CountInterfaces< FirstInterface, RestInterfaces ... >
+{
+  static unsigned int Count(const ComponentBase::InterfaceCriteriaType);
+};
+
 template< typename AcceptingInterfaces, typename ProvidingInterfaces >
 class SuperElastixComponent : public AcceptingInterfaces, public ProvidingInterfaces, public ComponentBase
 {
@@ -107,6 +121,11 @@ protected:
   virtual bool HasAcceptingInterface( const char * );
 
   virtual bool HasProvidingInterface( const char * );
+
+  //experimental
+  virtual unsigned int CountAcceptingInterfaces(const ComponentBase::InterfaceCriteriaType);
+  virtual unsigned int CountProvidingInterfaces(const ComponentBase::InterfaceCriteriaType);
+  
 };
 } // end namespace selx
 
