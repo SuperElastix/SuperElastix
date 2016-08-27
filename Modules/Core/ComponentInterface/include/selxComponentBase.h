@@ -76,9 +76,9 @@ protected:
   virtual bool HasProvidingInterface( const char * ) = 0;
 
   //experimental:
-  virtual unsigned int CountAcceptingInterfaces(const InterfaceCriteriaType) = 0;
+  //virtual unsigned int CountAcceptingInterfaces(const InterfaceCriteriaType) = 0;
 
-  virtual unsigned int CountProvidingInterfaces(const InterfaceCriteriaType) = 0;
+  //virtual unsigned int CountProvidingInterfaces(const InterfaceCriteriaType) = 0;
 
   ComponentBase() {}
   virtual ~ComponentBase() {}

@@ -49,7 +49,7 @@ template< typename ... RestInterfaces >
 class Accepting
 {
 public:
-
+  static unsigned int CountMeetsCriteria(const ComponentBase::InterfaceCriteriaType) { return 0; }
   ComponentBase::interfaceStatus ConnectFromImpl( const char *, ComponentBase * ) { return ComponentBase::interfaceStatus::noaccepter; } //no interface called interfacename ;
   int ConnectFromImpl( ComponentBase * ) { return 0; }                                                                                   //Empty RestInterfaces does 0 successful connects ;
 
@@ -62,7 +62,7 @@ template< typename FirstInterface, typename ... RestInterfaces >
 class Accepting< FirstInterface, RestInterfaces ... > : public InterfaceAcceptor< FirstInterface >, public Accepting< RestInterfaces ... >
 {
 public:
-
+  static unsigned int CountMeetsCriteria(const ComponentBase::InterfaceCriteriaType);
   ComponentBase::interfaceStatus ConnectFromImpl( const char *, ComponentBase * );
 
   int ConnectFromImpl( ComponentBase * );
@@ -75,6 +75,8 @@ protected:
 template< typename ... RestInterfaces >
 class Providing
 {
+public:
+  static unsigned int CountMeetsCriteria(const ComponentBase::InterfaceCriteriaType) { return 0; }
 protected:
 
   bool HasInterface( const char * ) { return false; }
@@ -83,6 +85,8 @@ protected:
 template< typename FirstInterface, typename ... RestInterfaces >
 class Providing< FirstInterface, RestInterfaces ... > : public FirstInterface, public Providing< RestInterfaces ... >
 {
+public:
+  static unsigned int CountMeetsCriteria(const ComponentBase::InterfaceCriteriaType);
 protected:
 
   bool HasInterface( const char * );
@@ -95,23 +99,29 @@ protected:
 
 // helper class for SuperElastixComponent::CountAcceptingInterfaces and SuperElastixComponent::CountProvidingInterfaces to loop over a set of interfaces
 
-template <typename ... RestInterfaces>
-struct CountInterfaces
+template <typename ... Interfaces>
+struct Count;
+
+template <>
+struct Count<>
 {
-  static unsigned int Count(const ComponentBase::InterfaceCriteriaType) { return 0 };
+  static unsigned int MeetsCriteria(const ComponentBase::InterfaceCriteriaType) { return 0; };
 };
 
 template < typename FirstInterface, typename ... RestInterfaces>
-struct CountInterfaces< FirstInterface, RestInterfaces ... >
+struct Count< FirstInterface, RestInterfaces ... >
 {
-  static unsigned int Count(const ComponentBase::InterfaceCriteriaType);
+  static unsigned int MeetsCriteria(const ComponentBase::InterfaceCriteriaType);
 };
 
 template< typename AcceptingInterfaces, typename ProvidingInterfaces >
 class SuperElastixComponent : public AcceptingInterfaces, public ProvidingInterfaces, public ComponentBase
 {
 public:
-
+  
+  using AcceptingInterfacesTypeList = AcceptingInterfaces;
+  using ProvidingInterfacesTypeList = ProvidingInterfaces;
+  
   virtual interfaceStatus AcceptConnectionFrom( const char *, ComponentBase * );
 
   virtual int AcceptConnectionFrom( ComponentBase * );
@@ -123,8 +133,9 @@ protected:
   virtual bool HasProvidingInterface( const char * );
 
   //experimental
-  virtual unsigned int CountAcceptingInterfaces(const ComponentBase::InterfaceCriteriaType);
-  virtual unsigned int CountProvidingInterfaces(const ComponentBase::InterfaceCriteriaType);
+  //SuperElastixComponentType::AcceptingInterfacesTypeList::CountMeetsCriteria(InterfaceCriteriaType);
+  //virtual unsigned int CountAcceptingInterfaces(const ComponentBase::InterfaceCriteriaType);
+  //virtual unsigned int CountProvidingInterfaces(const ComponentBase::InterfaceCriteriaType);
   
 };
 } // end namespace selx

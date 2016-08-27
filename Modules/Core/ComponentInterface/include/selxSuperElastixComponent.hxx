@@ -72,23 +72,6 @@ SuperElastixComponent< AcceptingInterfaces, ProvidingInterfaces >::HasProvidingI
   return ProvidingInterfaces::HasInterface( interfacename );
 }
 
-template< typename AcceptingInterfaces, typename ProvidingInterfaces >
-unsigned int
-SuperElastixComponent< AcceptingInterfaces, ProvidingInterfaces >::CountAcceptingInterfaces(const ComponentBase::InterfaceCriteriaType interfaceCriteria)
-{
-  //return AcceptingInterfaces::HasInterface(interfacename);
-  return CountInterfaces< AcceptingInterfaces >::Count(interfaceCriteria);
-}
-
-
-template< typename AcceptingInterfaces, typename ProvidingInterfaces >
-unsigned int
-SuperElastixComponent< AcceptingInterfaces, ProvidingInterfaces >::CountProvidingInterfaces(const ComponentBase::InterfaceCriteriaType interfaceCriteria)
-{
-  //return ProvidingInterfaces::HasInterface(interfacename);
-  return CountInterfaces< ProvidingInterfaces>::Count(interfaceCriteria);
-}
-
 
 //////////////////////////////////////////////////////////////////////////
 template< typename FirstInterface, typename ... RestInterfaces >
@@ -159,8 +142,25 @@ Providing< FirstInterface, RestInterfaces ... >::HasInterface( const char * inte
   return Providing< RestInterfaces ... >::HasInterface( interfacename );
 }
 
+
+
+template< typename FirstInterface, typename ... RestInterfaces >
+unsigned int
+Accepting< FirstInterface, RestInterfaces ... >::CountMeetsCriteria(const ComponentBase::InterfaceCriteriaType interfaceCriteria)
+{
+  return Count<FirstInterface, RestInterfaces ... >::MeetsCriteria(interfaceCriteria);
+}
+
+template< typename FirstInterface, typename ... RestInterfaces >
+unsigned int
+Providing< FirstInterface, RestInterfaces ... >::CountMeetsCriteria(const ComponentBase::InterfaceCriteriaType interfaceCriteria)
+{
+  return Count<FirstInterface, RestInterfaces ... >::MeetsCriteria(interfaceCriteria);
+}
+
+
 template <typename FirstInterface, typename ... RestInterfaces>
-unsigned int CountInterfaces<FirstInterface, RestInterfaces ...>::Count(const ComponentBase::InterfaceCriteriaType interfaceCriteria)
+unsigned int Count<FirstInterface, RestInterfaces ...>::MeetsCriteria(const ComponentBase::InterfaceCriteriaType interfaceCriteria)
 {
   auto interfaceProperies = Properties< FirstInterface >::Get();
   for (const auto keyAndValue : interfaceCriteria)
@@ -170,11 +170,11 @@ unsigned int CountInterfaces<FirstInterface, RestInterfaces ...>::Count(const Co
     if (interfaceProperies.count(key) != 1 || interfaceProperies[key].compare(value)!=0 )
     {
       // as soon as any of the criteria fails we break the loop and test the RestInterfaces
-      return CountInterfaces< RestInterfaces ... >::Count(interfaceCriteria);
+      return Count< RestInterfaces ... >::MeetsCriteria(interfaceCriteria);
     }
   }
   // if all criteria are met for this Interface we add 1 to the count and continue with the RestInterfaces
-  return 1 + CountInterfaces< RestInterfaces ... >::Count(interfaceCriteria);
+  return 1 + Count< RestInterfaces ... >::MeetsCriteria(interfaceCriteria);
 };
 
 
