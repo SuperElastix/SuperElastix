@@ -40,6 +40,8 @@ public:
   // Connect tries to connect this accepting interface with all interfaces of the provider component.
   int Connect( ComponentBase * );
 
+  bool CanAcceptConnectionFrom(ComponentBase *);
+
 private:
 
   bool isSet;
@@ -51,6 +53,7 @@ class Accepting
 public:
   static unsigned int CountMeetsCriteria(const ComponentBase::InterfaceCriteriaType) { return 0; }
   ComponentBase::interfaceStatus ConnectFromImpl( const char *, ComponentBase * ) { return ComponentBase::interfaceStatus::noaccepter; } //no interface called interfacename ;
+  ComponentBase::interfaceStatus CanAcceptConnectionFrom(ComponentBase* other, const ComponentBase::InterfaceCriteriaType interfaceCriteria) { return ComponentBase::interfaceStatus::noaccepter; }
   int ConnectFromImpl( ComponentBase * ) { return 0; }                                                                                   //Empty RestInterfaces does 0 successful connects ;
 
 protected:
@@ -64,7 +67,7 @@ class Accepting< FirstInterface, RestInterfaces ... > : public InterfaceAcceptor
 public:
   static unsigned int CountMeetsCriteria(const ComponentBase::InterfaceCriteriaType);
   ComponentBase::interfaceStatus ConnectFromImpl( const char *, ComponentBase * );
-
+  ComponentBase::interfaceStatus CanAcceptConnectionFrom(ComponentBase* other, const ComponentBase::InterfaceCriteriaType interfaceCriteria);
   int ConnectFromImpl( ComponentBase * );
 
 protected:
@@ -133,6 +136,7 @@ protected:
   virtual bool HasProvidingInterface( const char * );
 
   //experimental
+  virtual interfaceStatus CanAcceptConnectionFrom(ComponentBase* other, const InterfaceCriteriaType interfaceCriteria) override;
   //SuperElastixComponentType::AcceptingInterfacesTypeList::CountMeetsCriteria(InterfaceCriteriaType);
   //virtual unsigned int CountAcceptingInterfaces(const ComponentBase::InterfaceCriteriaType);
   //virtual unsigned int CountProvidingInterfaces(const ComponentBase::InterfaceCriteriaType);

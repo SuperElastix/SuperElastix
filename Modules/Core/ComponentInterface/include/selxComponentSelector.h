@@ -53,6 +53,7 @@ public:
   typedef ComponentBase::Pointer       ComponentBasePointer;
   typedef ComponentBase::CriteriaType  CriteriaType;
   typedef ComponentBase::CriterionType CriterionType;
+  typedef ComponentBase::InterfaceCriteriaType  InterfaceCriteriaType;
 
   typedef std::list< ComponentBasePointer > ComponentListType;
   typedef ComponentListType::size_type      NumberOfComponentsType;
@@ -63,6 +64,8 @@ public:
 
   /** Check for multiple versus 1 or 0 components*/
   bool HasMultipleComponents( void );
+
+  unsigned int CountCompatibleInterfaces(ComponentBasePointer other);
 
   /** Return Component or Nullptr*/
   ComponentBasePointer GetComponent( void );

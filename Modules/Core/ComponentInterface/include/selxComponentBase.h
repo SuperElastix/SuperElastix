@@ -55,7 +55,7 @@ public:
 
   typedef std::map< std::string, std::string >  InterfaceCriteriaType;
 
-  enum interfaceStatus { success, noaccepter, noprovider };
+  enum interfaceStatus { success, noaccepter, noprovider, multiple };
 
   virtual interfaceStatus AcceptConnectionFrom( const char *, ComponentBase * ) = 0;
 
@@ -69,6 +69,7 @@ public:
 
   virtual bool MeetsCriterion( const CriterionType & criterion ) = 0;
 
+  virtual interfaceStatus CanAcceptConnectionFrom(ComponentBase*, const InterfaceCriteriaType) = 0;
 protected:
 
   virtual bool HasAcceptingInterface( const char * ) = 0;

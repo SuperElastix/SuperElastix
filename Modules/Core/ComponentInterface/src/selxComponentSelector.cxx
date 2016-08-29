@@ -54,6 +54,13 @@ ComponentSelector::AddCriterion( const CriterionType & criterion )
     } );
 }
 
+//Require CompatibleInterfaces
+unsigned int ComponentSelector::CountCompatibleInterfaces(ComponentBasePointer other)
+{
+  this->m_PossibleComponents.remove_if([&](ComponentBasePointer component){
+    return !component->CanAcceptConnectionFrom(other);
+  });
+}
 
 ComponentSelector::ComponentBasePointer
 ComponentSelector::GetComponent()

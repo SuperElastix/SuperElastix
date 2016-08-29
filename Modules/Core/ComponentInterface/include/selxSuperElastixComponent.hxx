@@ -39,6 +39,13 @@ InterfaceAcceptor< InterfaceT >::Connect( ComponentBase * providerComponent )
   return 1;
 }
 
+template< class InterfaceT >
+bool
+InterfaceAcceptor< InterfaceT >::CanAcceptConnectionFrom(ComponentBase * providerComponent)
+{
+  InterfaceT * providerInterface = dynamic_cast< InterfaceT * >(providerComponent);
+  return bool(providerInterface);
+}
 
 //////////////////////////////////////////////////////////////////////////
 template< typename AcceptingInterfaces, typename ProvidingInterfaces >
@@ -72,6 +79,13 @@ SuperElastixComponent< AcceptingInterfaces, ProvidingInterfaces >::HasProvidingI
   return ProvidingInterfaces::HasInterface( interfacename );
 }
 
+template< typename AcceptingInterfaces, typename ProvidingInterfaces >
+ComponentBase::interfaceStatus
+SuperElastixComponent< AcceptingInterfaces, ProvidingInterfaces >
+::CanAcceptConnectionFrom(ComponentBase* other, const InterfaceCriteriaType interfaceCriteria)
+{
+  return AcceptingInterfaces::CanAcceptConnectionFrom(other, interfaceCriteria);
+}
 
 //////////////////////////////////////////////////////////////////////////
 template< typename FirstInterface, typename ... RestInterfaces >
@@ -127,6 +141,86 @@ Accepting< FirstInterface, RestInterfaces ... >::HasInterface( const char * inte
   return Accepting< RestInterfaces ... >::HasInterface( interfacename );
 }
 
+template< typename FirstInterface, typename ... RestInterfaces >
+ComponentBase::interfaceStatus
+Accepting< FirstInterface, RestInterfaces ... >::CanAcceptConnectionFrom(ComponentBase* other, const ComponentBase::InterfaceCriteriaType interfaceCriteria)
+{
+
+  ComponentBase::interfaceStatus restInterfacesStatus = Accepting< RestInterfaces ... >::CanAcceptConnectionFrom(other, interfaceCriteria);
+  // if multiple interfaces were a succes we do not have to check any further interfaces.
+  if (restInterfacesStatus == ComponentBase::interfaceStatus::multiple)
+  {
+    return ComponentBase::interfaceStatus::multiple;
+  }
+  // if a previous interface was a success, we can have either succes or multiple (successes)
+  else if (restInterfacesStatus == ComponentBase::interfaceStatus::success)
+  {
+    unsigned int interfaceMeetsCriteria = Count<FirstInterface>::MeetsCriteria(interfaceCriteria);
+    if (interfaceMeetsCriteria == 0) // ComponentBase::interfaceStatus::noacceptor;
+    {
+      return ComponentBase::interfaceStatus::success;
+    }
+    else
+    {
+      InterfaceAcceptor< FirstInterface > * acceptIF = (this);
+      if (acceptIF->CanAcceptConnectionFrom(other))
+      {
+        return ComponentBase::interfaceStatus::multiple;
+      }
+      else // ComponentBase::interfaceStatus::noprovider
+      {
+        return ComponentBase::interfaceStatus::success;
+      }
+    }
+  }
+  // if a previous interface was noprovider, we can have either succes or noprovider (we know that there was at least 1 acceptor)
+  else if (restInterfacesStatus == ComponentBase::interfaceStatus::noprovider)
+  {
+    unsigned int interfaceMeetsCriteria = Count<FirstInterface>::MeetsCriteria(interfaceCriteria);
+    if (interfaceMeetsCriteria == 0) // ComponentBase::interfaceStatus::noacceptor;
+    {
+      return ComponentBase::interfaceStatus::noprovider;
+    }
+    else
+    {
+      InterfaceAcceptor< FirstInterface > * acceptIF = (this);
+      if (acceptIF->CanAcceptConnectionFrom(other))
+      {
+        return ComponentBase::interfaceStatus::success;
+      }
+      else // ComponentBase::interfaceStatus::noprovider
+      {
+        return ComponentBase::interfaceStatus::noprovider;
+      }
+    }
+  }
+  // if a previous interface was noacceptor, we can have noaccepter, succes or noprovider
+  else if (restInterfacesStatus == ComponentBase::interfaceStatus::noaccepter)
+  {
+    unsigned int interfaceMeetsCriteria = Count<FirstInterface>::MeetsCriteria(interfaceCriteria);
+    if (interfaceMeetsCriteria == 0) // ComponentBase::interfaceStatus::noacceptor;
+    {
+      return ComponentBase::interfaceStatus::noaccepter;
+    }
+    else
+    {
+      InterfaceAcceptor< FirstInterface > * acceptIF = (this);
+      if (acceptIF->CanAcceptConnectionFrom(other))
+      {
+        return ComponentBase::interfaceStatus::success;
+      }
+      else // ComponentBase::interfaceStatus::noprovider
+      {
+        return ComponentBase::interfaceStatus::noprovider;
+      }
+    }
+  }
+}
+
+
+  
+
+
 
 template< typename FirstInterface, typename ... RestInterfaces >
 bool
@@ -176,7 +270,6 @@ unsigned int Count<FirstInterface, RestInterfaces ...>::MeetsCriteria(const Comp
   // if all criteria are met for this Interface we add 1 to the count and continue with the RestInterfaces
   return 1 + Count< RestInterfaces ... >::MeetsCriteria(interfaceCriteria);
 };
-
 
 } // end namespace selx
 
