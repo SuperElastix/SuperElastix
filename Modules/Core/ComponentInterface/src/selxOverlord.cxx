@@ -161,6 +161,13 @@ Overlord::ApplyConnectionConfiguration()
     {
       //TODO check direction upstream/downstream input/output source/target
       Blueprint::ParameterMapType connectionProperties = this->m_Blueprint->GetConnection( name, outgoingName );
+      
+      //TODO 
+      ComponentBase::InterfaceCriteriaType interfaceCriteria;
+      std::for_each(connectionProperties.begin(), connectionProperties.end(), [interfaceCriteria](Blueprint::ParameterMapType::value_type kv) mutable { interfaceCriteria[kv.first] = kv.second[0]; });
+
+      this->m_ComponentSelectorContainer[name]->AddProvidingInterfaceCriteria(interfaceCriteria);
+
       if( connectionProperties.count( "NameOfInterface" ) > 0 )
       {
         this->m_ComponentSelectorContainer[ name ]->AddCriterion( { keys::HasProvidingInterface, connectionProperties[ keys::NameOfInterface ] } );

@@ -54,6 +54,22 @@ ComponentSelector::AddCriterion( const CriterionType & criterion )
     } );
 }
 
+void
+ComponentSelector::AddAcceptingInterfaceCriteria(const InterfaceCriteriaType & interfaceCriteria)
+{
+  this->m_PossibleComponents.remove_if([&](ComponentBasePointer component){
+    return 0==component->CountAcceptingInterfaces(interfaceCriteria);
+  });
+}
+
+void
+ComponentSelector::AddProvidingInterfaceCriteria(const InterfaceCriteriaType & interfaceCriteria)
+{
+  this->m_PossibleComponents.remove_if([&](ComponentBasePointer component){
+    return 0 == component->CountProvidingInterfaces(interfaceCriteria);
+  });
+}
+
 //Require CompatibleInterfaces
 unsigned int ComponentSelector::CountCompatibleInterfaces(ComponentBasePointer other)
 {
