@@ -137,9 +137,9 @@ protected:
 
   //experimental
   virtual interfaceStatus CanAcceptConnectionFrom(ComponentBase* other, const InterfaceCriteriaType interfaceCriteria) override;
-  //SuperElastixComponentType::AcceptingInterfacesTypeList::CountMeetsCriteria(InterfaceCriteriaType);
-  //virtual unsigned int CountAcceptingInterfaces(const ComponentBase::InterfaceCriteriaType);
-  //virtual unsigned int CountProvidingInterfaces(const ComponentBase::InterfaceCriteriaType);
+  //
+  virtual unsigned int CountAcceptingInterfaces(const ComponentBase::InterfaceCriteriaType){ return AcceptingInterfaces::CountMeetsCriteria(InterfaceCriteriaType); };
+  virtual unsigned int CountProvidingInterfaces(const ComponentBase::InterfaceCriteriaType){ return ProvidingInterfaces::CountMeetsCriteria(InterfaceCriteriaType); };
   
 };
 } // end namespace selx

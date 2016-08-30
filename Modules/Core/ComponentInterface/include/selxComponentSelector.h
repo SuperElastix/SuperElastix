@@ -62,6 +62,9 @@ public:
   /** Narrow selection criteria*/
   void AddCriterion( const CriterionType & criterion );
 
+  void AddAcceptingInterfaceCriteria(const InterfaceCriteriaType & interfaceCriteria);
+  void AddProvidingInterfaceCriteria(const InterfaceCriteriaType & interfaceCriteria);
+
   /** Check for multiple versus 1 or 0 components*/
   bool HasMultipleComponents( void );
 
