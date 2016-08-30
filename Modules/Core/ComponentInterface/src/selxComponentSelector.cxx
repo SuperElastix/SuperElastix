@@ -70,12 +70,13 @@ ComponentSelector::AddProvidingInterfaceCriteria(const InterfaceCriteriaType & i
   });
 }
 
-//Require CompatibleInterfaces
-unsigned int ComponentSelector::CountCompatibleInterfaces(ComponentBasePointer other)
+// CompatibleInterfaces
+unsigned int ComponentSelector::RequireAcceptInterfaceFrom(ComponentBasePointer other, const InterfaceCriteriaType & interfaceCriteria)
 {
-  this->m_PossibleComponents.remove_if([&](ComponentBasePointer component){
-    return !component->CanAcceptConnectionFrom(other);
+  this->m_PossibleComponents.remove_if([&](ComponentBasePointer component){auto status = component->CanAcceptConnectionFrom(other, interfaceCriteria);
+    return status == ComponentBase::interfaceStatus::noaccepter || status == ComponentBase::interfaceStatus::noprovider;
   });
+  return 0;
 }
 
 ComponentSelector::ComponentBasePointer

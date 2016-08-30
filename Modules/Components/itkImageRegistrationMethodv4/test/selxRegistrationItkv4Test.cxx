@@ -581,7 +581,7 @@ TEST_F( RegistrationItkv4Test, FullyConfigured3dAffine )
   connection5Parameters[ "NameOfInterface" ] = { "itkMetricv4Interface" };
   blueprint->AddConnection( "Metric", "RegistrationMethod", connection5Parameters );
 
-  blueprint->AddConnection( "FixedImageSource", "Transform", { {} } );
+  //blueprint->AddConnection( "FixedImageSource", "Transform", { {} } );
   blueprint->AddConnection( "Transform", "RegistrationMethod", { {} } );
 
   blueprint->AddConnection( "Optimizer", "RegistrationMethod", { {} } );

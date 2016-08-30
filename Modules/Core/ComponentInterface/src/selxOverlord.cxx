@@ -159,30 +159,26 @@ Overlord::ApplyConnectionConfiguration()
   {
     for( auto const & outgoingName : this->m_Blueprint->GetOutputNames( name ) )
     {
-      //TODO check direction upstream/downstream input/output source/target
       Blueprint::ParameterMapType connectionProperties = this->m_Blueprint->GetConnection( name, outgoingName );
-      
-      //TODO 
+
+      //TODO:
+      //1: this lambda function converts the blueprint properties: map<string,vector<string>> to interfacecriteria: map<string,string>, consider redesign.
+      //2: connection blueprint->addConnection("myfirstnode","mysecondnode",{{}}) creates connectionProperties {"",[]} which is not an empty map.
       ComponentBase::InterfaceCriteriaType interfaceCriteria;
-      std::for_each(connectionProperties.begin(), connectionProperties.end(), [interfaceCriteria](Blueprint::ParameterMapType::value_type kv) mutable { interfaceCriteria[kv.first] = kv.second[0]; });
+      std::for_each(connectionProperties.begin(), connectionProperties.end(), [interfaceCriteria](Blueprint::ParameterMapType::value_type kv) mutable { if (kv.second.size() > 0) interfaceCriteria[kv.first] = kv.second[0]; });
 
       this->m_ComponentSelectorContainer[name]->AddProvidingInterfaceCriteria(interfaceCriteria);
+      this->m_ComponentSelectorContainer[outgoingName]->AddAcceptingInterfaceCriteria(interfaceCriteria);
 
-      if( connectionProperties.count( "NameOfInterface" ) > 0 )
-      {
-        this->m_ComponentSelectorContainer[ name ]->AddCriterion( { keys::HasProvidingInterface, connectionProperties[ keys::NameOfInterface ] } );
-        this->m_ComponentSelectorContainer[ outgoingName ]->AddCriterion( { keys::HasAcceptingInterface,
-                                                                            connectionProperties[ keys::NameOfInterface ] } );
-        std::cout << " Blueprint Node: " << name << std::endl << "  HasProvidingInterface " << connectionProperties[ keys::NameOfInterface ][ 0 ]
-                  << std::endl;
-        std::cout << " Blueprint Node: " << outgoingName << std::endl << "  HasAcceptingInterface "
-                  << connectionProperties[ keys::NameOfInterface ][ 0 ] << std::endl;
-      }
+      std::cout << " Blueprint Connection: " << name << " -> " << outgoingName << std::endl;
+      std::for_each(interfaceCriteria.begin(), interfaceCriteria.end(), [](ComponentBase::InterfaceCriteriaType::value_type kv) mutable { std::cout << "  { " << kv.first << ": " << kv.second << " }\n"; });
+     
+
       if( ( this->m_ComponentSelectorContainer[ outgoingName ]->HasMultipleComponents() == false )
         && ( this->m_ComponentSelectorContainer[ outgoingName ]->GetComponent().IsNull() ) )
       {
         std::stringstream msg;
-        msg << "Too many criteria for Component " << outgoingName << std::endl;
+        msg << outgoingName << " does not accept a connection of given criteria" << std::endl;
         throw std::runtime_error( msg.str() );
       }
     }
@@ -190,7 +186,7 @@ Overlord::ApplyConnectionConfiguration()
       && ( this->m_ComponentSelectorContainer[ name ]->GetComponent().IsNull() ) )
     {
       std::stringstream msg;
-      msg << "Too many criteria for Component " << name << std::endl;
+      msg << name << " does not provide a connection of given criteria" << std::endl;
       throw std::runtime_error( msg.str() );
     }
   }
@@ -253,7 +249,8 @@ Overlord::GetSourceInterfaces()
   for( const auto & componentSelector : this->m_ComponentSelectorContainer )
   {
     ComponentBase::Pointer component = componentSelector.second->GetComponent();
-    if( component->MeetsCriterionBase( { keys::HasProvidingInterface, { keys::SourceInterface } } ) )
+    
+    if (component->CountProvidingInterfaces({ { keys::NameOfInterface, keys::SourceInterface } }) == 1)
     {
       SourceInterface * provingSourceInterface = dynamic_cast< SourceInterface * >( component.GetPointer() );
       if( provingSourceInterface == nullptr )  // is actually a double-check for sanity: based on criterion cast should be successful
@@ -276,7 +273,7 @@ Overlord::GetSinkInterfaces()
   for( auto const & componentSelector : this->m_ComponentSelectorContainer )
   {
     ComponentBase::Pointer component = componentSelector.second->GetComponent();
-    if( component->MeetsCriterionBase( { keys::HasProvidingInterface, { keys::SinkInterface } } ) )
+    if (component->CountProvidingInterfaces({ { keys::NameOfInterface, keys::SinkInterface } }) == 1)
     {
       SinkInterface * provingSinkInterface = dynamic_cast< SinkInterface * >( component.GetPointer() );
       if( provingSinkInterface == nullptr )  // is actually a double-check for sanity: based on criterion cast should be successful

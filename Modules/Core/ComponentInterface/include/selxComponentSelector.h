@@ -68,7 +68,7 @@ public:
   /** Check for multiple versus 1 or 0 components*/
   bool HasMultipleComponents( void );
 
-  unsigned int CountCompatibleInterfaces(ComponentBasePointer other);
+  unsigned int RequireAcceptInterfaceFrom(ComponentBasePointer other, const InterfaceCriteriaType & interfaceCriteria);
 
   /** Return Component or Nullptr*/
   ComponentBasePointer GetComponent( void );

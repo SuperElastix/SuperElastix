@@ -147,12 +147,12 @@ Accepting< FirstInterface, RestInterfaces ... >::CanAcceptConnectionFrom(Compone
 {
 
   ComponentBase::interfaceStatus restInterfacesStatus = Accepting< RestInterfaces ... >::CanAcceptConnectionFrom(other, interfaceCriteria);
-  // if multiple interfaces were a succes we do not have to check any further interfaces.
+  // if multiple interfaces were a success we do not have to check any further interfaces.
   if (restInterfacesStatus == ComponentBase::interfaceStatus::multiple)
   {
     return ComponentBase::interfaceStatus::multiple;
   }
-  // if a previous interface was a success, we can have either succes or multiple (successes)
+  // if a previous interface was a success, we can have either success or multiple (successes)
   else if (restInterfacesStatus == ComponentBase::interfaceStatus::success)
   {
     unsigned int interfaceMeetsCriteria = Count<FirstInterface>::MeetsCriteria(interfaceCriteria);
@@ -173,7 +173,7 @@ Accepting< FirstInterface, RestInterfaces ... >::CanAcceptConnectionFrom(Compone
       }
     }
   }
-  // if a previous interface was noprovider, we can have either succes or noprovider (we know that there was at least 1 acceptor)
+  // if a previous interface was noprovider, we can have either success or noprovider (we know that there was at least 1 acceptor)
   else if (restInterfacesStatus == ComponentBase::interfaceStatus::noprovider)
   {
     unsigned int interfaceMeetsCriteria = Count<FirstInterface>::MeetsCriteria(interfaceCriteria);
@@ -194,7 +194,7 @@ Accepting< FirstInterface, RestInterfaces ... >::CanAcceptConnectionFrom(Compone
       }
     }
   }
-  // if a previous interface was noacceptor, we can have noaccepter, succes or noprovider
+  // if a previous interface was noaccepter, we can have noaccepter, success or noprovider
   else if (restInterfacesStatus == ComponentBase::interfaceStatus::noaccepter)
   {
     unsigned int interfaceMeetsCriteria = Count<FirstInterface>::MeetsCriteria(interfaceCriteria);
@@ -215,6 +215,8 @@ Accepting< FirstInterface, RestInterfaces ... >::CanAcceptConnectionFrom(Compone
       }
     }
   }
+  // never reached
+  return ComponentBase::interfaceStatus::noaccepter;
 }
 
 

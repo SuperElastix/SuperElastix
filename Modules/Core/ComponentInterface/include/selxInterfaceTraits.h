@@ -269,7 +269,7 @@ struct Properties
   //static_assert(StaticErrorMessageRevealT<T>::False, "Please Implement InterfaceProperties<InterfaceType> for this InterfaceType");
   static const std::map<std::string, std::string> Get()
   {
-    return{ { "Name", InterfaceName< T >::Get() } };
+    return{ { "NameOfInterface", InterfaceName< T >::Get() } };
   }
 };
 
@@ -280,7 +280,7 @@ struct Properties< itkImageFixedInterface< D, TPixel >>
 {
   static const std::map<std::string, std::string> Get()
   {
-    return{ { "Name", InterfaceName< itkImageFixedInterface< D, TPixel> >::Get() }, { "Dimensionality", "3" }, { "PixelType", "float" } };
+    return{ { "NameOfInterface", InterfaceName< itkImageFixedInterface< D, TPixel> >::Get() }, { "Dimensionality", "3" }, { "PixelType", "float" } };
   }
 };
 
@@ -289,7 +289,7 @@ struct Properties< MetricValueInterface >
 {
   static const std::map<std::string, std::string> Get()
   {
-    return{ { "Name", "MetricValueInterface" } };
+    return{ { "NameOfInterface", "MetricValueInterface" } };
   }
 };
 } // end namespace selx

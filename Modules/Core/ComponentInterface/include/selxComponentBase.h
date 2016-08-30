@@ -62,25 +62,22 @@ public:
   virtual int AcceptConnectionFrom( ComponentBase * ) = 0;
 
   /** if there is any failed criterion, return false (like a short - circuit AND) */
-  //TODO deprecate:
-  bool MeetsCriteria( const CriteriaType & criteria );
-
   bool MeetsCriterionBase( const CriterionType & criterion );
 
   virtual bool MeetsCriterion( const CriterionType & criterion ) = 0;
 
   virtual interfaceStatus CanAcceptConnectionFrom(ComponentBase*, const InterfaceCriteriaType) = 0;
-protected:
-
-  virtual bool HasAcceptingInterface( const char * ) = 0;
-
-  virtual bool HasProvidingInterface( const char * ) = 0;
 
   //experimental:
   virtual unsigned int CountAcceptingInterfaces(const InterfaceCriteriaType) = 0;
 
   virtual unsigned int CountProvidingInterfaces(const InterfaceCriteriaType) = 0;
+protected:
 
+  virtual bool HasAcceptingInterface( const char * ) = 0;
+
+  virtual bool HasProvidingInterface( const char * ) = 0;
+  
   ComponentBase() {}
   virtual ~ComponentBase() {}
 };
