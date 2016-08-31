@@ -87,13 +87,6 @@ SuperElastixComponent< AcceptingInterfaces, ProvidingInterfaces >
   return AcceptingInterfaces::CanAcceptConnectionFrom(other, interfaceCriteria);
 }
 
-template< typename AcceptingInterfaces, typename ProvidingInterfaces >
-InterfaceStatus
-SuperElastixComponent< AcceptingInterfaces, ProvidingInterfaces >
-::CanProvideConnectionTo(ComponentBase* other, const InterfaceCriteriaType interfaceCriteria)
-{
-  return ProvidingInterfaces::CanProvideConnectionTo(other, interfaceCriteria);
-}
 //////////////////////////////////////////////////////////////////////////
 template< typename FirstInterface, typename ... RestInterfaces >
 InterfaceStatus
@@ -187,11 +180,6 @@ Accepting< FirstInterface, RestInterfaces ... >::CanAcceptConnectionFrom(Compone
   // never reached
   return InterfaceStatus::noaccepter;
 }
-
-
-  
-
-
 
 template< typename FirstInterface, typename ... RestInterfaces >
 bool

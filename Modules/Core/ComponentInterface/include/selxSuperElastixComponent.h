@@ -88,7 +88,6 @@ class Providing<>
 {
 public:
   static unsigned int CountMeetsCriteria(const ComponentBase::InterfaceCriteriaType) { return 0; }
-  InterfaceStatus CanProvideConnectionTo(ComponentBase* other, const ComponentBase::InterfaceCriteriaType interfaceCriteria) { return InterfaceStatus::noprovider; };
 protected:
 
   bool HasInterface( const char * ) { return false; }
@@ -99,7 +98,6 @@ class Providing< FirstInterface, RestInterfaces ... > : public FirstInterface, p
 {
 public:
   static unsigned int CountMeetsCriteria(const ComponentBase::InterfaceCriteriaType);
-  InterfaceStatus CanProvideConnectionTo(ComponentBase* other, const ComponentBase::InterfaceCriteriaType interfaceCriteria);
 protected:
 
   bool HasInterface( const char * );

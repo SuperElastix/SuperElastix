@@ -80,7 +80,7 @@ unsigned int ComponentSelector::RequireAcceptingInterfaceFrom(ComponentBasePoint
 }
 unsigned int ComponentSelector::RequireProvidingInterfaceTo(ComponentBasePointer other, const InterfaceCriteriaType & interfaceCriteria)
 {
-  this->m_PossibleComponents.remove_if([&](ComponentBasePointer component){auto status = component->CanProvideConnectionTo(other, interfaceCriteria);
+  this->m_PossibleComponents.remove_if([&](ComponentBasePointer component){auto status = other->CanAcceptConnectionFrom(component, interfaceCriteria);
   return status == InterfaceStatus::noaccepter || status == InterfaceStatus::noprovider;
   });
   return 0;
