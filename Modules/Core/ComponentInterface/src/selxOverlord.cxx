@@ -121,7 +121,7 @@ Overlord::ApplyNodeConfiguration()
     {
       currentComponentSelector->AddCriterion( criterion );
       
-      std::cout << currentComponentSelector->NumberOfComponents() << "  " << criterion.first << ": ";
+      std::cout << "  " << currentComponentSelector->NumberOfComponents() << "  " << criterion.first << ": ";
       if( criterion.second.size() > 1 )
       {
         std::cout << "[ ";
@@ -172,9 +172,9 @@ Overlord::ApplyConnectionConfiguration()
       this->m_ComponentSelectorContainer[name]->AddProvidingInterfaceCriteria(interfaceCriteria);
       this->m_ComponentSelectorContainer[outgoingName]->AddAcceptingInterfaceCriteria(interfaceCriteria);
 
-      std::cout << "Has Interface: " << std::endl;
-      std::cout << this->m_ComponentSelectorContainer[name]->NumberOfComponents() <<  name << ": Providing" << std::endl;
-      std::cout << this->m_ComponentSelectorContainer[outgoingName]->NumberOfComponents() <<  outgoingName << ": Accepting" << std::endl;
+      std::cout << " Has Interface: " << std::endl;
+      std::cout << "  " << this->m_ComponentSelectorContainer[name]->NumberOfComponents() << ' ' <<  name << ": Providing" << std::endl;
+      std::cout << "  " << this->m_ComponentSelectorContainer[outgoingName]->NumberOfComponents() << ' ' << outgoingName << ": Accepting" << std::endl;
       
       std::for_each(interfaceCriteria.begin(), interfaceCriteria.end(), [](ComponentBase::InterfaceCriteriaType::value_type kv) mutable { std::cout << "  { " << kv.first << ": " << kv.second << " }\n"; });
      
@@ -295,12 +295,10 @@ void
 Overlord::Execute()
 {
   /** Scans all Components to find those with RegistrationControllerStart capability and call them */
-  const CriterionType criterion = CriterionType( keys::HasProvidingInterface, { keys::RegistrationControllerStartInterface } );
-
   for( auto const & componentSelector : this->m_ComponentSelectorContainer )
   {
     ComponentBase::Pointer component = componentSelector.second->GetComponent();
-    if( component->MeetsCriterionBase( criterion ) )
+    if (component->CountProvidingInterfaces({ { keys::NameOfInterface, keys::RegistrationControllerStartInterface } }) == 1)
     {
       RegistrationControllerStartInterface * providingInterface = dynamic_cast< RegistrationControllerStartInterface * >( component.GetPointer() );
       if( providingInterface == nullptr )  // is actually a double-check for sanity: based on criterion cast should be successful

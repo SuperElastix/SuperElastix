@@ -174,14 +174,14 @@ TEST_F( ComponentFactoryTest, InterfacedObjects )
 
   
   NodePointer Node3 = ComponentSelector::New();
-  Node3->AddAcceptingInterfaceCriteria( { "NameOfInterface", "MetricDerivativeInterface" } );
+  Node3->AddAcceptingInterfaceCriteria({ { "NameOfInterface", "MetricDerivativeInterface" } });
    
   ComponentType::Pointer Node3Component;
   EXPECT_NO_THROW( Node3Component = Node3->GetComponent() );
   EXPECT_STREQ( Node3Component->GetNameOfClass(), "GDOptimizer3rdPartyComponent" );
 
   NodePointer Node4 = ComponentSelector::New();
-  Node4->AddProvidingInterfaceCriteria( { "NameOfInterface", "MetricDerivativeInterface" } );
+  Node4->AddProvidingInterfaceCriteria({ { "NameOfInterface", "MetricDerivativeInterface" } });
   ComponentType::Pointer Node4Component;
   EXPECT_NO_THROW( Node4Component = Node4->GetComponent() );
   EXPECT_STREQ( Node4Component->GetNameOfClass(), "SSDMetric3rdPartyComponent" );
