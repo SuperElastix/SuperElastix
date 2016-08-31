@@ -172,37 +172,19 @@ TEST_F( ComponentFactoryTest, InterfacedObjects )
   // " 6 Component objects available to the Overlord."
   EXPECT_EQ( registeredComponents.size(), 6 );
 
-  CriterionType criterion3( { "HasAcceptingInterface", { "MetricDerivativeInterface" } } );
-
+  
   NodePointer Node3 = ComponentSelector::New();
-  Node3->AddCriterion( criterion3 );
+  Node3->AddAcceptingInterfaceCriteria( { "NameOfInterface", "MetricDerivativeInterface" } );
+   
   ComponentType::Pointer Node3Component;
   EXPECT_NO_THROW( Node3Component = Node3->GetComponent() );
   EXPECT_STREQ( Node3Component->GetNameOfClass(), "GDOptimizer3rdPartyComponent" );
 
-  CriterionType criterion4( { "NameOfClass", { "GDOptimizer4thPartyComponent" } } );
-
   NodePointer Node4 = ComponentSelector::New();
-  Node4->AddCriterion( criterion4 );
+  Node4->AddProvidingInterfaceCriteria( { "NameOfInterface", "MetricDerivativeInterface" } );
   ComponentType::Pointer Node4Component;
   EXPECT_NO_THROW( Node4Component = Node4->GetComponent() );
-  EXPECT_STREQ( Node4Component->GetNameOfClass(), "GDOptimizer4thPartyComponent" );
-
-  CriterionType criterion5( { "HasProvidingInterface", { "MetricDerivativeInterface" } } );
-
-  NodePointer Node5 = ComponentSelector::New();
-  Node5->AddCriterion( criterion5 );
-  ComponentType::Pointer Node5Component;
-  EXPECT_NO_THROW( Node5Component = Node5->GetComponent() );
-  EXPECT_STREQ( Node5Component->GetNameOfClass(), "SSDMetric3rdPartyComponent" );
-
-  CriterionType criterion6( { "NameOfClass", { "SSDMetric4thPartyComponent" } } );
-
-  NodePointer Node6 = ComponentSelector::New();
-  Node6->AddCriterion( criterion6 );
-  ComponentType::Pointer Node6Component;
-  EXPECT_NO_THROW( Node6Component = Node6->GetComponent() );
-  EXPECT_STREQ( Node6Component->GetNameOfClass(), "SSDMetric4thPartyComponent" );
+  EXPECT_STREQ( Node4Component->GetNameOfClass(), "SSDMetric3rdPartyComponent" );
 }
 
 TEST_F( ComponentFactoryTest, UnknownComponent )
