@@ -54,43 +54,66 @@ Overlord::Configure()
               << " Components could not be uniquely selected" << std::endl << std::endl;
 
     
+    bool anySelectionNarrowed(true);
 
-    for (auto const & name : nonUniqueComponentNames)
-    {
-      // check all components that accept from component "name"
-      for (auto const & outgoingName : this->m_Blueprint->GetOutputNames(name)) 
+    while (anySelectionNarrowed){
+      anySelectionNarrowed = false;
+      for (auto const & name : nonUniqueComponentNames)
       {
-        // if the accepting component is also not uniquely selected, we do not try to check all valid combinations, since this would make the handshake logic too complicated
-        if (std::find(nonUniqueComponentNames.begin(), nonUniqueComponentNames.end(), outgoingName) != nonUniqueComponentNames.end())
+        // check all components that accept from component "name"
+        for (auto const & outgoingName : this->m_Blueprint->GetOutputNames(name)) 
         {
-          Blueprint::ParameterMapType connectionProperties = this->m_Blueprint->GetConnection(name, outgoingName);
-          ComponentBase::InterfaceCriteriaType interfaceCriteria;
-          //TODO:
-          //1: this lambda function converts the blueprint properties: map<string,vector<string>> to interfacecriteria: map<string,string>, consider redesign.
-          //2: connection blueprint->addConnection("myfirstnode","mysecondnode",{{}}) creates connectionProperties {"",[]} which is not an empty map.
-          std::for_each(connectionProperties.begin(), connectionProperties.end(), [interfaceCriteria](Blueprint::ParameterMapType::value_type kv) mutable { if (kv.second.size() > 0) interfaceCriteria[kv.first] = kv.second[0]; });
+          // if the accepting component is also not uniquely selected, we do not try to check all valid combinations, since this would make the handshake logic too complicated
+          if (std::find(nonUniqueComponentNames.begin(), nonUniqueComponentNames.end(), outgoingName) == nonUniqueComponentNames.end())
+          {
 
-          auto outgoingComponent = this->m_ComponentSelectorContainer[outgoingName]->GetComponent();
-          this->m_ComponentSelectorContainer[name]->RequireProvidingInterfaceTo(outgoingComponent, interfaceCriteria);
+            Blueprint::ParameterMapType connectionProperties = this->m_Blueprint->GetConnection(name, outgoingName);
+            ComponentBase::InterfaceCriteriaType interfaceCriteria;
+            //TODO:
+            //1: this lambda function converts the blueprint properties: map<string,vector<string>> to interfacecriteria: map<string,string>, consider redesign.
+            //2: connection blueprint->addConnection("myfirstnode","mysecondnode",{{}}) creates connectionProperties {"",[]} which is not an empty map.
+            std::for_each(connectionProperties.begin(), connectionProperties.end(), [interfaceCriteria](Blueprint::ParameterMapType::value_type kv) mutable { if (kv.second.size() > 0) interfaceCriteria[kv.first] = kv.second[0]; });
+
+            auto outgoingComponent = this->m_ComponentSelectorContainer[outgoingName]->GetComponent();
+            const unsigned int beforeCriteria = this->m_ComponentSelectorContainer[name]->NumberOfComponents();
+            this->m_ComponentSelectorContainer[name]->RequireProvidingInterfaceTo(outgoingComponent, interfaceCriteria);
+            const unsigned int afterCriteria = this->m_ComponentSelectorContainer[name]->NumberOfComponents();
+
+            std::cout << afterCriteria << " " << name << " components can Provide to " << outgoingName << std::endl;
+
+            if (beforeCriteria > afterCriteria)
+            {
+              anySelectionNarrowed = true;
+            }
+          }
         }
-      }
-      // check all components that provide to component "name"
-      for (auto const & incomingName : this->m_Blueprint->GetInputNames(name))
-      {
-        // if the providing component is also not uniquely selected, we do not try to check all valid combinations, since this would make the handshake logic too complicated
-        if (std::find(nonUniqueComponentNames.begin(), nonUniqueComponentNames.end(), incomingName) != nonUniqueComponentNames.end())
+        // check all components that provide to component "name"
+        for (auto const & incomingName : this->m_Blueprint->GetInputNames(name))
         {
-          Blueprint::ParameterMapType connectionProperties = this->m_Blueprint->GetConnection(incomingName, name);
-          ComponentBase::InterfaceCriteriaType interfaceCriteria;
-          //TODO:
-          //1: this lambda function converts the blueprint properties: map<string,vector<string>> to interfacecriteria: map<string,string>, consider redesign.
-          //2: connection blueprint->addConnection("myfirstnode","mysecondnode",{{}}) creates connectionProperties {"",[]} which is not an empty map.
-          std::for_each(connectionProperties.begin(), connectionProperties.end(), [interfaceCriteria](Blueprint::ParameterMapType::value_type kv) mutable { if (kv.second.size() > 0) interfaceCriteria[kv.first] = kv.second[0]; });
+          // if the providing component is also not uniquely selected, we do not try to check all valid combinations, since this would make the handshake logic too complicated
+          if (std::find(nonUniqueComponentNames.begin(), nonUniqueComponentNames.end(), incomingName) == nonUniqueComponentNames.end())
+          {
+            //std::cout << "Check which " << name << " component can Accept from " << incomingName << std::endl;
+            Blueprint::ParameterMapType connectionProperties = this->m_Blueprint->GetConnection(incomingName, name);
+            ComponentBase::InterfaceCriteriaType interfaceCriteria;
+            //TODO:
+            //1: this lambda function converts the blueprint properties: map<string,vector<string>> to interfacecriteria: map<string,string>, consider redesign.
+            //2: connection blueprint->addConnection("myfirstnode","mysecondnode",{{}}) creates connectionProperties {"",[]} which is not an empty map.
+            std::for_each(connectionProperties.begin(), connectionProperties.end(), [interfaceCriteria](Blueprint::ParameterMapType::value_type kv) mutable { if (kv.second.size() > 0) interfaceCriteria[kv.first] = kv.second[0]; });
 
-          auto incomingComponent = this->m_ComponentSelectorContainer[incomingName]->GetComponent();
-          this->m_ComponentSelectorContainer[name]->RequireAcceptingInterfaceFrom(incomingComponent, interfaceCriteria);
+            auto incomingComponent = this->m_ComponentSelectorContainer[incomingName]->GetComponent();
+            
+            const unsigned int beforeCriteria = this->m_ComponentSelectorContainer[name]->NumberOfComponents();
+            this->m_ComponentSelectorContainer[name]->RequireAcceptingInterfaceFrom(incomingComponent, interfaceCriteria);
+            const unsigned int afterCriteria = this->m_ComponentSelectorContainer[name]->NumberOfComponents();
+            std::cout << afterCriteria << " " << name << " components can Accept from " << incomingName << std::endl;
+
+            if (beforeCriteria > afterCriteria)
+            {
+              anySelectionNarrowed = true;
+            }
+          }
         }
-
       }
     }
     this->m_isConfigured = true;
@@ -101,7 +124,7 @@ Overlord::Configure()
     std::cout << std::endl << "These Nodes need more criteria: " << std::endl;
     for( const auto & nonUniqueComponentName : nonUniqueComponentNames )
     {
-      std::cout << nonUniqueComponentName << std::endl;
+      std::cout << this->m_ComponentSelectorContainer[nonUniqueComponentName]->NumberOfComponents() << "  " << nonUniqueComponentName << std::endl;
     }
     return false;
   }
