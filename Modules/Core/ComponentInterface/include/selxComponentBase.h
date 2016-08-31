@@ -65,7 +65,7 @@ public:
   virtual bool MeetsCriterion( const CriterionType & criterion ) = 0;
 
   virtual InterfaceStatus CanAcceptConnectionFrom(ComponentBase*, const InterfaceCriteriaType) = 0;
-  virtual InterfaceStatus CanProvideConnectionTo(ComponentBase*, const InterfaceCriteriaType) = 0;
+  //virtual InterfaceStatus CanProvideConnectionTo(ComponentBase*, const InterfaceCriteriaType) = 0;
 
   //experimental:
   virtual unsigned int CountAcceptingInterfaces(const InterfaceCriteriaType) = 0;

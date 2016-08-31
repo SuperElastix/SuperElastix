@@ -37,7 +37,6 @@
 #include "selxAnyFileReader.h"
 #include "selxAnyFileWriter.h"
 
-#include "selxInterfaceStatus.h"
 #include "elxElastixFilter.h"
 
 namespace selx

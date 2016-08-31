@@ -145,7 +145,7 @@ protected:
 
   //experimental
   virtual InterfaceStatus CanAcceptConnectionFrom(ComponentBase* other, const InterfaceCriteriaType interfaceCriteria) override;
-  virtual InterfaceStatus CanProvideConnectionTo(ComponentBase* other, const InterfaceCriteriaType interfaceCriteria) override;
+  //virtual InterfaceStatus CanProvideConnectionTo(ComponentBase* other, const InterfaceCriteriaType interfaceCriteria) override;
   //
   virtual unsigned int CountAcceptingInterfaces(const ComponentBase::InterfaceCriteriaType interfaceCriteria){ return AcceptingInterfaces::CountMeetsCriteria(interfaceCriteria); };
   virtual unsigned int CountProvidingInterfaces(const ComponentBase::InterfaceCriteriaType interfaceCriteria){ return ProvidingInterfaces::CountMeetsCriteria(interfaceCriteria); };
