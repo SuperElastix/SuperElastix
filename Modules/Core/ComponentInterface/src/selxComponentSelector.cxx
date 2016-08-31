@@ -101,6 +101,12 @@ ComponentSelector::HasMultipleComponents()
 {
   return ( this->m_PossibleComponents.size() > 1 );
 }
+
+unsigned int
+ComponentSelector::NumberOfComponents()
+{
+  return  this->m_PossibleComponents.size();
+}
 } // end namespace selx
 
 //#endif

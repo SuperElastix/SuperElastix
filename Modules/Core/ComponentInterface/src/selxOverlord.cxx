@@ -81,7 +81,7 @@ Overlord::GetNonUniqueComponentNames()
     // If a node has 0 possible components, the configuration is aborted (with an exception)
     // If all nodes have exactly 1 possible component, no more criteria are needed.
 
-    if( this->m_ComponentSelectorContainer[ name ]->HasMultipleComponents() == true )
+    if( this->m_ComponentSelectorContainer[ name ]->NumberOfComponents() > 1 )
     {
       //std::cout << "To select a component for blueprint node " << name << " more critatia are required" << std::endl;
       nonUniqueComponentNames.push_back( name );
@@ -119,7 +119,9 @@ Overlord::ApplyNodeConfiguration()
     Blueprint::ParameterMapType currentProperty          = this->m_Blueprint->GetComponent( name );
     for( auto const & criterion : currentProperty )
     {
-      std::cout << "  " << criterion.first << ": ";
+      currentComponentSelector->AddCriterion( criterion );
+      
+      std::cout << currentComponentSelector->NumberOfComponents() << "  " << criterion.first << ": ";
       if( criterion.second.size() > 1 )
       {
         std::cout << "[ ";
@@ -134,10 +136,10 @@ Overlord::ApplyNodeConfiguration()
         std::cout << criterion.second[ 0 ];
       }
       std::cout << std::endl;
-      currentComponentSelector->AddCriterion( criterion );
+      
     }
 
-    if( ( currentComponentSelector->HasMultipleComponents() == false ) && ( currentComponentSelector->GetComponent().IsNull() ) )
+    if( currentComponentSelector->NumberOfComponents() == 0 )
     {
       std::stringstream msg;
       msg << "Too many criteria for Component " << name << std::endl;
@@ -170,24 +172,26 @@ Overlord::ApplyConnectionConfiguration()
       this->m_ComponentSelectorContainer[name]->AddProvidingInterfaceCriteria(interfaceCriteria);
       this->m_ComponentSelectorContainer[outgoingName]->AddAcceptingInterfaceCriteria(interfaceCriteria);
 
-      std::cout << " Blueprint Connection: " << name << " -> " << outgoingName << std::endl;
+      std::cout << "Has Interface: " << std::endl;
+      std::cout << this->m_ComponentSelectorContainer[name]->NumberOfComponents() <<  name << ": Providing" << std::endl;
+      std::cout << this->m_ComponentSelectorContainer[outgoingName]->NumberOfComponents() <<  outgoingName << ": Accepting" << std::endl;
+      
       std::for_each(interfaceCriteria.begin(), interfaceCriteria.end(), [](ComponentBase::InterfaceCriteriaType::value_type kv) mutable { std::cout << "  { " << kv.first << ": " << kv.second << " }\n"; });
      
 
-      if( ( this->m_ComponentSelectorContainer[ outgoingName ]->HasMultipleComponents() == false )
-        && ( this->m_ComponentSelectorContainer[ outgoingName ]->GetComponent().IsNull() ) )
+      if( this->m_ComponentSelectorContainer[ outgoingName ]->NumberOfComponents() == 0 )
       {
         std::stringstream msg;
         msg << outgoingName << " does not accept a connection of given criteria" << std::endl;
         throw std::runtime_error( msg.str() );
       }
-    }
-    if( ( this->m_ComponentSelectorContainer[ name ]->HasMultipleComponents() == false )
-      && ( this->m_ComponentSelectorContainer[ name ]->GetComponent().IsNull() ) )
-    {
-      std::stringstream msg;
-      msg << name << " does not provide a connection of given criteria" << std::endl;
-      throw std::runtime_error( msg.str() );
+      if ( this->m_ComponentSelectorContainer[ name ]->NumberOfComponents() == 0 )
+      {
+	std::stringstream msg;
+	msg << name << " does not provide a connection of given criteria" << std::endl;
+	throw std::runtime_error( msg.str() );
+      }
+
     }
   }
 
