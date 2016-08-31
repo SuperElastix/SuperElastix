@@ -47,18 +47,23 @@ private:
   bool isSet;
 };
 
-template< typename ... RestInterfaces >
-class Accepting
+
+template <typename ... Interfaces>
+class Accepting;
+
+template <>
+class Accepting<>
 {
 public:
   static unsigned int CountMeetsCriteria(const ComponentBase::InterfaceCriteriaType) { return 0; }
-  ComponentBase::interfaceStatus ConnectFromImpl( const char *, ComponentBase * ) { return ComponentBase::interfaceStatus::noaccepter; } //no interface called interfacename ;
-  ComponentBase::interfaceStatus CanAcceptConnectionFrom(ComponentBase* other, const ComponentBase::InterfaceCriteriaType interfaceCriteria) { return ComponentBase::interfaceStatus::noaccepter; }
-  int ConnectFromImpl( ComponentBase * ) { return 0; }                                                                                   //Empty RestInterfaces does 0 successful connects ;
+  InterfaceStatus ConnectFromImpl(const char *, ComponentBase *) { return InterfaceStatus::noaccepter; } //no interface called interfacename ;
+  InterfaceStatus CanAcceptConnectionFrom(ComponentBase* other, const ComponentBase::InterfaceCriteriaType interfaceCriteria) { return InterfaceStatus::noaccepter; }
+  int ConnectFromImpl(ComponentBase *) { return 0; }                                                                                   //Empty RestInterfaces does 0 successful connects ;
 
 protected:
 
-  bool HasInterface( const char * ) { return false; }
+  bool HasInterface(const char *) { return false; }
+
 };
 
 template< typename FirstInterface, typename ... RestInterfaces >
@@ -66,8 +71,8 @@ class Accepting< FirstInterface, RestInterfaces ... > : public InterfaceAcceptor
 {
 public:
   static unsigned int CountMeetsCriteria(const ComponentBase::InterfaceCriteriaType);
-  ComponentBase::interfaceStatus ConnectFromImpl( const char *, ComponentBase * );
-  ComponentBase::interfaceStatus CanAcceptConnectionFrom(ComponentBase* other, const ComponentBase::InterfaceCriteriaType interfaceCriteria);
+  InterfaceStatus ConnectFromImpl(const char *, ComponentBase *);
+  InterfaceStatus CanAcceptConnectionFrom(ComponentBase* other, const ComponentBase::InterfaceCriteriaType interfaceCriteria);
   int ConnectFromImpl( ComponentBase * );
 
 protected:
@@ -75,11 +80,15 @@ protected:
   bool HasInterface( const char * );
 };
 
-template< typename ... RestInterfaces >
-class Providing
+template <typename ... Interfaces>
+class Providing;
+
+template< >
+class Providing<>
 {
 public:
   static unsigned int CountMeetsCriteria(const ComponentBase::InterfaceCriteriaType) { return 0; }
+  InterfaceStatus CanProvideConnectionTo(ComponentBase* other, const ComponentBase::InterfaceCriteriaType interfaceCriteria) { return InterfaceStatus::noprovider; };
 protected:
 
   bool HasInterface( const char * ) { return false; }
@@ -90,6 +99,7 @@ class Providing< FirstInterface, RestInterfaces ... > : public FirstInterface, p
 {
 public:
   static unsigned int CountMeetsCriteria(const ComponentBase::InterfaceCriteriaType);
+  InterfaceStatus CanProvideConnectionTo(ComponentBase* other, const ComponentBase::InterfaceCriteriaType interfaceCriteria);
 protected:
 
   bool HasInterface( const char * );
@@ -125,7 +135,7 @@ public:
   using AcceptingInterfacesTypeList = AcceptingInterfaces;
   using ProvidingInterfacesTypeList = ProvidingInterfaces;
   
-  virtual interfaceStatus AcceptConnectionFrom( const char *, ComponentBase * );
+  virtual InterfaceStatus AcceptConnectionFrom( const char *, ComponentBase * );
 
   virtual int AcceptConnectionFrom( ComponentBase * );
 
@@ -136,7 +146,8 @@ protected:
   virtual bool HasProvidingInterface( const char * );
 
   //experimental
-  virtual interfaceStatus CanAcceptConnectionFrom(ComponentBase* other, const InterfaceCriteriaType interfaceCriteria) override;
+  virtual InterfaceStatus CanAcceptConnectionFrom(ComponentBase* other, const InterfaceCriteriaType interfaceCriteria) override;
+  virtual InterfaceStatus CanProvideConnectionTo(ComponentBase* other, const InterfaceCriteriaType interfaceCriteria) override;
   //
   virtual unsigned int CountAcceptingInterfaces(const ComponentBase::InterfaceCriteriaType interfaceCriteria){ return AcceptingInterfaces::CountMeetsCriteria(interfaceCriteria); };
   virtual unsigned int CountProvidingInterfaces(const ComponentBase::InterfaceCriteriaType interfaceCriteria){ return ProvidingInterfaces::CountMeetsCriteria(interfaceCriteria); };

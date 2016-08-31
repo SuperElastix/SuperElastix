@@ -23,7 +23,7 @@
 #include "itkLightObject.h"
 #include "itkObjectFactory.h"
 #include "itkMacro.h"
-
+#include "selxInterfaceStatus.h"
 //#include "itkComponentBase.h"
 #include <list>
 #include <iostream>
@@ -55,9 +55,7 @@ public:
 
   typedef std::map< std::string, std::string >  InterfaceCriteriaType;
 
-  enum interfaceStatus { success, noaccepter, noprovider, multiple };
-
-  virtual interfaceStatus AcceptConnectionFrom( const char *, ComponentBase * ) = 0;
+  virtual InterfaceStatus AcceptConnectionFrom( const char *, ComponentBase * ) = 0;
 
   virtual int AcceptConnectionFrom( ComponentBase * ) = 0;
 
@@ -66,7 +64,8 @@ public:
 
   virtual bool MeetsCriterion( const CriterionType & criterion ) = 0;
 
-  virtual interfaceStatus CanAcceptConnectionFrom(ComponentBase*, const InterfaceCriteriaType) = 0;
+  virtual InterfaceStatus CanAcceptConnectionFrom(ComponentBase*, const InterfaceCriteriaType) = 0;
+  virtual InterfaceStatus CanProvideConnectionTo(ComponentBase*, const InterfaceCriteriaType) = 0;
 
   //experimental:
   virtual unsigned int CountAcceptingInterfaces(const InterfaceCriteriaType) = 0;

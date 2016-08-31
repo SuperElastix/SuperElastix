@@ -92,27 +92,27 @@ TEST_F( InterfaceTest, DynamicCast )
 
 TEST_F( InterfaceTest, ConnectByName )
 {
-  ComponentBase::interfaceStatus IFstatus;
+  InterfaceStatus IFstatus;
   EXPECT_NO_THROW( IFstatus = optimizer3p->AcceptConnectionFrom( "MetricValueInterface", metric3p ) );
-  EXPECT_EQ( IFstatus, ComponentBase::interfaceStatus::success );
+  EXPECT_EQ( IFstatus, InterfaceStatus::success );
 
   EXPECT_NO_THROW( IFstatus = optimizer3p->AcceptConnectionFrom( "MetricValueInterface", metric4p ) );
-  EXPECT_EQ( IFstatus, ComponentBase::interfaceStatus::success );
+  EXPECT_EQ( IFstatus, InterfaceStatus::success );
 
   EXPECT_NO_THROW( IFstatus = optimizer4p->AcceptConnectionFrom( "MetricValueInterface", metric3p ) );
-  EXPECT_EQ( IFstatus, ComponentBase::interfaceStatus::success );
+  EXPECT_EQ( IFstatus, InterfaceStatus::success );
 
   EXPECT_NO_THROW( IFstatus = optimizer4p->AcceptConnectionFrom( "MetricValueInterface", metric4p ) );
-  EXPECT_EQ( IFstatus, ComponentBase::interfaceStatus::success );
+  EXPECT_EQ( IFstatus, InterfaceStatus::success );
 
   EXPECT_NO_THROW( IFstatus = optimizer3p->AcceptConnectionFrom( "MetricDerivativeInterface", metric3p ) );
-  EXPECT_EQ( IFstatus, ComponentBase::interfaceStatus::success );
+  EXPECT_EQ( IFstatus, InterfaceStatus::success );
 
   EXPECT_NO_THROW( IFstatus = optimizer3p->AcceptConnectionFrom( "MetricDerivativeInterface", metric4p ) );
-  EXPECT_EQ( IFstatus, ComponentBase::interfaceStatus::noprovider );
+  EXPECT_EQ( IFstatus, InterfaceStatus::noprovider );
 
   EXPECT_NO_THROW( IFstatus = optimizer4p->AcceptConnectionFrom( "MetricDerivativeInterface", metric3p ) );
-  EXPECT_EQ( IFstatus, ComponentBase::interfaceStatus::noaccepter );
+  EXPECT_EQ( IFstatus, InterfaceStatus::noaccepter );
 }
 
 TEST_F( InterfaceTest, ConnectAll )

@@ -71,14 +71,20 @@ ComponentSelector::AddProvidingInterfaceCriteria(const InterfaceCriteriaType & i
 }
 
 // CompatibleInterfaces
-unsigned int ComponentSelector::RequireAcceptInterfaceFrom(ComponentBasePointer other, const InterfaceCriteriaType & interfaceCriteria)
+unsigned int ComponentSelector::RequireAcceptingInterfaceFrom(ComponentBasePointer other, const InterfaceCriteriaType & interfaceCriteria)
 {
   this->m_PossibleComponents.remove_if([&](ComponentBasePointer component){auto status = component->CanAcceptConnectionFrom(other, interfaceCriteria);
-    return status == ComponentBase::interfaceStatus::noaccepter || status == ComponentBase::interfaceStatus::noprovider;
+  return status == InterfaceStatus::noaccepter || status == InterfaceStatus::noprovider;
   });
   return 0;
 }
-
+unsigned int ComponentSelector::RequireProvidingInterfaceTo(ComponentBasePointer other, const InterfaceCriteriaType & interfaceCriteria)
+{
+  this->m_PossibleComponents.remove_if([&](ComponentBasePointer component){auto status = component->CanProvideConnectionTo(other, interfaceCriteria);
+  return status == InterfaceStatus::noaccepter || status == InterfaceStatus::noprovider;
+  });
+  return 0;
+}
 ComponentSelector::ComponentBasePointer
 ComponentSelector::GetComponent()
 {

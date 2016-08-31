@@ -49,7 +49,7 @@ InterfaceAcceptor< InterfaceT >::CanAcceptConnectionFrom(ComponentBase * provide
 
 //////////////////////////////////////////////////////////////////////////
 template< typename AcceptingInterfaces, typename ProvidingInterfaces >
-ComponentBase::interfaceStatus
+InterfaceStatus
 SuperElastixComponent< AcceptingInterfaces, ProvidingInterfaces >::AcceptConnectionFrom( const char * interfacename, ComponentBase * other )
 {
   return AcceptingInterfaces::ConnectFromImpl( interfacename, other );
@@ -80,16 +80,23 @@ SuperElastixComponent< AcceptingInterfaces, ProvidingInterfaces >::HasProvidingI
 }
 
 template< typename AcceptingInterfaces, typename ProvidingInterfaces >
-ComponentBase::interfaceStatus
+InterfaceStatus
 SuperElastixComponent< AcceptingInterfaces, ProvidingInterfaces >
 ::CanAcceptConnectionFrom(ComponentBase* other, const InterfaceCriteriaType interfaceCriteria)
 {
   return AcceptingInterfaces::CanAcceptConnectionFrom(other, interfaceCriteria);
 }
 
+template< typename AcceptingInterfaces, typename ProvidingInterfaces >
+InterfaceStatus
+SuperElastixComponent< AcceptingInterfaces, ProvidingInterfaces >
+::CanProvideConnectionTo(ComponentBase* other, const InterfaceCriteriaType interfaceCriteria)
+{
+  return ProvidingInterfaces::CanProvideConnectionTo(other, interfaceCriteria);
+}
 //////////////////////////////////////////////////////////////////////////
 template< typename FirstInterface, typename ... RestInterfaces >
-ComponentBase::interfaceStatus
+InterfaceStatus
 Accepting< FirstInterface, RestInterfaces ... >::ConnectFromImpl( const char * interfacename, ComponentBase * other )
 {
   // does our component have an accepting interface called interfacename?
@@ -102,12 +109,12 @@ Accepting< FirstInterface, RestInterfaces ... >::ConnectFromImpl( const char * i
     if( 1 == acceptIF->Connect( other ) )
     {
       //success. By terminating this function, we assume only one interface listens to interfacename and that one connection with the other component can be made by this name
-      return ComponentBase::interfaceStatus::success;
+      return InterfaceStatus::success;
     }
     else
     {
       // interfacename was found, but other component doesn't match
-      return ComponentBase::interfaceStatus::noprovider;
+      return InterfaceStatus::noprovider;
     }
   }
   return Accepting< RestInterfaces ... >::ConnectFromImpl( interfacename, other );
@@ -142,81 +149,43 @@ Accepting< FirstInterface, RestInterfaces ... >::HasInterface( const char * inte
 }
 
 template< typename FirstInterface, typename ... RestInterfaces >
-ComponentBase::interfaceStatus
+InterfaceStatus
 Accepting< FirstInterface, RestInterfaces ... >::CanAcceptConnectionFrom(ComponentBase* other, const ComponentBase::InterfaceCriteriaType interfaceCriteria)
 {
 
-  ComponentBase::interfaceStatus restInterfacesStatus = Accepting< RestInterfaces ... >::CanAcceptConnectionFrom(other, interfaceCriteria);
+  InterfaceStatus restInterfacesStatus = Accepting< RestInterfaces ... >::CanAcceptConnectionFrom(other, interfaceCriteria);
   // if multiple interfaces were a success we do not have to check any further interfaces.
-  if (restInterfacesStatus == ComponentBase::interfaceStatus::multiple)
+  if (restInterfacesStatus == InterfaceStatus::multiple)
   {
-    return ComponentBase::interfaceStatus::multiple;
+    return InterfaceStatus::multiple;
   }
-  // if a previous interface was a success, we can have either success or multiple (successes)
-  else if (restInterfacesStatus == ComponentBase::interfaceStatus::success)
+  // We use the FirstInterface only (of each recursion level), thus the count can be 0 or 1
+  unsigned int interfaceMeetsCriteria = Count<FirstInterface>::MeetsCriteria(interfaceCriteria);
+  if (interfaceMeetsCriteria == 0) // InterfaceStatus::noaccepter;
   {
-    unsigned int interfaceMeetsCriteria = Count<FirstInterface>::MeetsCriteria(interfaceCriteria);
-    if (interfaceMeetsCriteria == 0) // ComponentBase::interfaceStatus::noacceptor;
-    {
-      return ComponentBase::interfaceStatus::success;
-    }
-    else
-    {
-      InterfaceAcceptor< FirstInterface > * acceptIF = (this);
-      if (acceptIF->CanAcceptConnectionFrom(other))
-      {
-        return ComponentBase::interfaceStatus::multiple;
-      }
-      else // ComponentBase::interfaceStatus::noprovider
-      {
-        return ComponentBase::interfaceStatus::success;
-      }
-    }
+    // no new success, keep the status of previous recursion
+    return restInterfacesStatus;
   }
-  // if a previous interface was noprovider, we can have either success or noprovider (we know that there was at least 1 acceptor)
-  else if (restInterfacesStatus == ComponentBase::interfaceStatus::noprovider)
+  else // This "FirstInterface" of the component is an acceptor interface that fulfills the criteria
   {
-    unsigned int interfaceMeetsCriteria = Count<FirstInterface>::MeetsCriteria(interfaceCriteria);
-    if (interfaceMeetsCriteria == 0) // ComponentBase::interfaceStatus::noacceptor;
+    InterfaceAcceptor< FirstInterface > * acceptIF = (this);
+    if (acceptIF->CanAcceptConnectionFrom(other))
     {
-      return ComponentBase::interfaceStatus::noprovider;
+      // if a previous interface was a success, we can have either success or multiple (successes)
+      if (restInterfacesStatus == InterfaceStatus::success)
+        return InterfaceStatus::multiple;
+      return InterfaceStatus::success;
     }
-    else
+    else // InterfaceStatus::noprovider
     {
-      InterfaceAcceptor< FirstInterface > * acceptIF = (this);
-      if (acceptIF->CanAcceptConnectionFrom(other))
-      {
-        return ComponentBase::interfaceStatus::success;
-      }
-      else // ComponentBase::interfaceStatus::noprovider
-      {
-        return ComponentBase::interfaceStatus::noprovider;
-      }
-    }
-  }
-  // if a previous interface was noaccepter, we can have noaccepter, success or noprovider
-  else if (restInterfacesStatus == ComponentBase::interfaceStatus::noaccepter)
-  {
-    unsigned int interfaceMeetsCriteria = Count<FirstInterface>::MeetsCriteria(interfaceCriteria);
-    if (interfaceMeetsCriteria == 0) // ComponentBase::interfaceStatus::noacceptor;
-    {
-      return ComponentBase::interfaceStatus::noaccepter;
-    }
-    else
-    {
-      InterfaceAcceptor< FirstInterface > * acceptIF = (this);
-      if (acceptIF->CanAcceptConnectionFrom(other))
-      {
-        return ComponentBase::interfaceStatus::success;
-      }
-      else // ComponentBase::interfaceStatus::noprovider
-      {
-        return ComponentBase::interfaceStatus::noprovider;
-      }
+      // The found acceptor interface is not identical to a providing interface of the other component
+      if (restInterfacesStatus == InterfaceStatus::noaccepter)
+        return InterfaceStatus::noprovider;
+      return restInterfacesStatus;
     }
   }
   // never reached
-  return ComponentBase::interfaceStatus::noaccepter;
+  return InterfaceStatus::noaccepter;
 }
 
 

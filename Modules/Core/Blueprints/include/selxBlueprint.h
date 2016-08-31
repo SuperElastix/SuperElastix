@@ -61,7 +61,7 @@ public:
   typedef boost::labeled_graph< boost::adjacency_list<
     boost::vecS,
     boost::vecS,
-    boost::directedS,
+    boost::bidirectionalS,
     ComponentPropertyType,
     ConnectionPropertyType
     >,
@@ -121,8 +121,10 @@ public:
   bool ConnectionExists( ComponentNameType upstream, ComponentNameType downstream ) const;
 
   // Returns a vector of the Component names at the outgoing direction
-  // TODO: should this be an iterator over the names?
   ComponentNamesType GetOutputNames( const ComponentNameType name ) const;
+
+  // Returns a vector of the Component names at the incoming direction
+  ComponentNamesType GetInputNames(const ComponentNameType name) const;
 
   void WriteBlueprint( const std::string filename );
 

@@ -282,6 +282,21 @@ Blueprint
   return container;
 }
 
+Blueprint::ComponentNamesType
+Blueprint
+::GetInputNames(const ComponentNameType name) const
+{
+  ComponentNamesType    container;
+  //auto vertex = this->m_Graph.vertex(name);
+  //boost::in_edges(vertex, this->m_Graph);
+  InputIteratorPairType inputIteratorPair = boost::in_edges(this->m_Graph.vertex(name), this->m_Graph);
+  for (auto it = inputIteratorPair.first; it != inputIteratorPair.second; ++it)
+  {
+    container.push_back(this->m_Graph.graph()[it->m_source].name);
+  }
+
+  return container;
+}
 
 Blueprint::ConnectionIndexType
 Blueprint
