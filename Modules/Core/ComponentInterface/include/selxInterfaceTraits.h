@@ -23,15 +23,12 @@
 //TODO: note, maybe this functionality shouldn't be called a Trait, since we use a method ::Get(). Is Policy a better name?
 
 #include "selxInterfaces.h"
+#include "selxStaticErrorMessageRevealT.h"
+#include "selxPodString.h"
 //#include <type_traits>
 
 namespace selx
 {
-  // helper to display type name in static assert error message (required, at least for VC++ 2013)
-  template <typename T>
-  struct StaticErrorMessageRevealT { enum { False = false }; };
-  
-
 // Traits to get printable interface name
 
 // In our toolbox for each InterfaceType it is required to implement InterfaceName<InterfaceType>::Get()
@@ -280,16 +277,17 @@ struct Properties< itkImageFixedInterface< D, TPixel >>
 {
   static const std::map<std::string, std::string> Get()
   {
-    return{ { "NameOfInterface", InterfaceName< itkImageFixedInterface< D, TPixel> >::Get() }, { "Dimensionality", "3" }, { "PixelType", "float" } };
+    return{ { "NameOfInterface", "itkImageFixedInterface" }, { "Dimensionality", std::to_string(D) }, { "PixelType", PodString<TPixel>::Get() } };
   }
 };
 
-template< >
-struct Properties< MetricValueInterface >
+
+template< class C>
+struct Properties< itkOptimizerv4Interface< C > >
 {
   static const std::map<std::string, std::string> Get()
   {
-    return{ { "NameOfInterface", "MetricValueInterface" } };
+    return{ { "NameOfInterface", "itkOptimizerv4Interface" }, { "InternalComputationValueType", PodString<C>::Get() } };
   }
 };
 } // end namespace selx

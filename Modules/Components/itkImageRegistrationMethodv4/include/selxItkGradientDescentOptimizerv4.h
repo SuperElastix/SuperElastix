@@ -25,6 +25,8 @@
 #include "itkGradientDescentOptimizerv4.h"
 #include <string.h>
 #include "selxMacro.h"
+
+
 namespace selx
 {
 template< class InternalComputationValueType >

@@ -58,6 +58,7 @@ Overlord::Configure()
 
     while (anySelectionNarrowed){
       anySelectionNarrowed = false;
+      nonUniqueComponentNames = this->GetNonUniqueComponentNames();
       for (auto const & name : nonUniqueComponentNames)
       {
         // check all components that accept from component "name"
@@ -99,7 +100,7 @@ Overlord::Configure()
             //TODO:
             //1: this lambda function converts the blueprint properties: map<string,vector<string>> to interfacecriteria: map<string,string>, consider redesign.
             //2: connection blueprint->addConnection("myfirstnode","mysecondnode",{{}}) creates connectionProperties {"",[]} which is not an empty map.
-            std::for_each(connectionProperties.begin(), connectionProperties.end(), [interfaceCriteria](Blueprint::ParameterMapType::value_type kv) mutable { if (kv.second.size() > 0) interfaceCriteria[kv.first] = kv.second[0]; });
+            std::for_each(connectionProperties.begin(), connectionProperties.end(), [&interfaceCriteria](Blueprint::ParameterMapType::value_type kv) mutable { if (kv.second.size() > 0) interfaceCriteria[kv.first] = kv.second[0]; });
 
             auto incomingComponent = this->m_ComponentSelectorContainer[incomingName]->GetComponent();
             
@@ -224,13 +225,13 @@ Overlord::ApplyConnectionConfiguration()
   {
     for( auto const & outgoingName : this->m_Blueprint->GetOutputNames( name ) )
     {
-      Blueprint::ParameterMapType connectionProperties = this->m_Blueprint->GetConnection( name, outgoingName );
+      Blueprint::ParameterMapType connectionProperties = this->m_Blueprint->GetConnection(name, outgoingName);
 
       //TODO:
       //1: this lambda function converts the blueprint properties: map<string,vector<string>> to interfacecriteria: map<string,string>, consider redesign.
       //2: connection blueprint->addConnection("myfirstnode","mysecondnode",{{}}) creates connectionProperties {"",[]} which is not an empty map.
       ComponentBase::InterfaceCriteriaType interfaceCriteria;
-      std::for_each(connectionProperties.begin(), connectionProperties.end(), [interfaceCriteria](Blueprint::ParameterMapType::value_type kv) mutable { if (kv.second.size() > 0) interfaceCriteria[kv.first] = kv.second[0]; });
+      std::for_each(connectionProperties.begin(), connectionProperties.end(), [&interfaceCriteria](Blueprint::ParameterMapType::value_type kv) mutable { if (kv.second.size() > 0) interfaceCriteria[kv.first] = kv.second[0]; });
 
       this->m_ComponentSelectorContainer[name]->AddProvidingInterfaceCriteria(interfaceCriteria);
       this->m_ComponentSelectorContainer[outgoingName]->AddAcceptingInterfaceCriteria(interfaceCriteria);

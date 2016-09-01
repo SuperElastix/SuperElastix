@@ -19,6 +19,7 @@
 
 #include "selxItkGradientDescentOptimizerv4.h"
 #include <boost/lexical_cast.hpp>
+#include "selxPodString.h"
 
 namespace selx
 {
@@ -55,12 +56,12 @@ ItkGradientDescentOptimizerv4Component< InternalComputationValueType >
 {
   bool hasUndefinedCriteria( false );
   bool meetsCriteria( false );
-  if( criterion.first == "ComponentProperty" )
+  if( criterion.first == "InternalComputationValueType" )
   {
     meetsCriteria = true;
     for( auto const & criterionValue : criterion.second ) // auto&& preferred?
     {
-      if( criterionValue != "SomeProperty" )  // e.g. "GradientDescent", "SupportsSparseSamples
+      if (criterionValue != PodString<InternalComputationValueType>::Get())  // e.g. "GradientDescent", "SupportsSparseSamples
       {
         meetsCriteria = false;
       }

@@ -151,10 +151,10 @@ TEST_F(OverlordTest, DeduceComponentsFromConnections)
   { "Dimensionality", { "3" } },
   { "PixelType", { "float" } } });
 
-  ParameterMapType component2Parameters;
-  component2Parameters["NameOfClass"] = { "ItkImageSourceMovingComponent" };
-  component2Parameters["Dimensionality"] = { "3" }; // should be derived from the inputs
-  blueprint->AddComponent("MovingImageSource", component2Parameters);
+  blueprint->AddComponent("MovingImageSource", { { "NameOfClass", { "ItkImageSourceMovingComponent" } },
+  { "Dimensionality", { "3" } },
+  { "PixelType", { "float" } } });
+
 
   ParameterMapType component3Parameters;
   component3Parameters["NameOfClass"] = { "ItkImageSinkComponent" };
@@ -217,7 +217,7 @@ TEST_F(OverlordTest, DeduceComponentsFromConnections)
 
   blueprint->AddConnection("FixedImageSource", "TransformResolutionAdaptor", { {} });
   blueprint->AddConnection("TransformResolutionAdaptor", "RegistrationMethod", { {} });
-  blueprint->AddConnection("Optimizer", "RegistrationMethod", { {} });
+  blueprint->AddConnection("Optimizer", "RegistrationMethod", { { "InternalComputationValueType", {"double"} } });
   blueprint->AddConnection("RegistrationMethod", "TransformDisplacementFilter", { {} });
   blueprint->AddConnection("FixedImageSource", "TransformDisplacementFilter", { {} });
   blueprint->AddConnection("RegistrationMethod", "ResampleFilter", { {} });
