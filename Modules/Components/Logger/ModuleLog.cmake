@@ -42,6 +42,11 @@ set( ${MODULE}_SOURCE_FILES
   ${${MODULE}_SOURCE_DIR}/src/selxLogComponent.cxx 
 )
 
+
+set(Boost_USE_STATIC_LIBS ON) 
+set(Boost_USE_MULTITHREADED ON)  
+set(BOOST_LIBRARYDIR ${BOOST_ROOT}/stage/lib)
+
 find_package(Boost COMPONENTS log REQUIRED) 
 
 # Compile library

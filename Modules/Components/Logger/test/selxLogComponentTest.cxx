@@ -19,8 +19,12 @@
 
 #include "selxLogComponent.h"
 
+#include "gtest/gtest.h"
+
+using namespace selx;
+
  TEST( selxLogComponent, Initialization )
 {
-  LogComponent logger = LogComponent::New();
+  LogComponent::Pointer logger = LogComponent::New();
   EXPECT_TRUE( true );
 }
