@@ -36,6 +36,8 @@
 
 #include "elxElastixFilter.h"
 
+#include "boost/log/trivial.hpp"
+
 namespace selx
 {
 // Define the providing interfaces abstractly
@@ -78,6 +80,12 @@ public:
   //TODO solution: http://stackoverflow.com/questions/2004820/inherit-interfaces-which-share-a-method-name
   //TODO better?: http://stackoverflow.com/questions/18398409/c-inherit-from-multiple-base-classes-with-the-same-virtual-function-name
   virtual int Update( ConflictinUpdateInterface * ) = 0;
+};
+
+class LogInterface
+{
+public:
+  virtual std::stringstream Log( boost::log::trivial::severity_level severity_level ) = 0;
 };
 
 template< int Dimensionality, class TPixel >
