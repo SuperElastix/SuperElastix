@@ -41,13 +41,30 @@ class LogComponent :
 {
 public:
 
-  selxNewMacro( LogComponent, ComponentBase );
+  //@kasper: somehow the selxNewMacro does not work. The itkNewMacro, however works. Something to figure out why...
+  //selxNewMacro( LogComponent, ComponentBase );
+
+  /** Standard class typedefs. */
+  typedef LogComponent                Self;
+  typedef ComponentBase                   Superclass;
+  typedef itk::SmartPointer< Self >       Pointer;
+  typedef itk::SmartPointer< const Self > ConstPointer;
+
+  /** New macro for creation of through the object factory. */
+  //selxNewMacro(Self, ComponentBase);
+  itkNewMacro(Self);
+
+  /** Run-time type information (and related methods). */
+  itkTypeMacro(LogComponent, ComponentBase);
 
   LogComponent();
-  ~LogComponent();
+  virtual ~LogComponent(){};
 
   virtual std::stringstream Log( boost::log::trivial::severity_level severity_level ) override;
 
+  virtual bool MeetsCriterion(const CriterionType & criterion) override;
+
+  static const char * GetDescription() { return "Log Component"; }
 private:
   
   boost::log::trivial::severity_level m_LogLevel;

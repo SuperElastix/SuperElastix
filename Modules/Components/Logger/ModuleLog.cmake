@@ -42,6 +42,8 @@ set( ${MODULE}_SOURCE_FILES
   ${${MODULE}_SOURCE_DIR}/src/selxLogComponent.cxx 
 )
 
+find_package(Boost COMPONENTS log REQUIRED) 
+
 # Compile library
 add_library( ${MODULE} STATIC "${${MODULE}_SOURCE_FILES}" ${${MODULE}_HEADER_FILES})
-target_link_libraries( ${MODULE} ${SUPERELASTIX_LIBRARIES} )
+target_link_libraries( ${MODULE} ${SUPERELASTIX_LIBRARIES} ${Boost_LIBRARIES} )

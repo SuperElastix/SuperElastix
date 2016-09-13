@@ -21,6 +21,7 @@
 #define selxLogComponent_cxx
 
 #include "selxLogComponent.h"
+#include "selxMacro.h"
 
 namespace selx
 {
@@ -35,7 +36,8 @@ std::stringstream
 LogComponent
 ::Log( boost::log::trivial::severity_level severity_level )
 {
-  return BOOST_LOG_TRIVIAL( ::boost::log::keywords::severity = severity_level );
+  //return BOOST_LOG_TRIVIAL( ::boost::log::keywords::severity = severity_level );
+  return std::stringstream();
 }
 
 bool
