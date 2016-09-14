@@ -59,7 +59,7 @@ class Accepting<>
 {
 public:
   static unsigned int CountMeetsCriteria(const ComponentBase::InterfaceCriteriaType) { return 0; }
-  InterfaceStatus ConnectFromImpl(const char *, ComponentBase *) { return InterfaceStatus::noaccepter; } //no interface called interfacename ;
+  int ConnectFromImpl(ComponentBase* other, const ComponentBase::InterfaceCriteriaType interfaceCriteria) { return 0; } //no interface called interfacename ;
   InterfaceStatus CanAcceptConnectionFrom(ComponentBase* other, const ComponentBase::InterfaceCriteriaType interfaceCriteria) { return InterfaceStatus::noaccepter; }
   int ConnectFromImpl(ComponentBase *) { return 0; }                                                                                   //Empty RestInterfaces does 0 successful connects ;
 
@@ -73,7 +73,7 @@ class Accepting< FirstInterface, RestInterfaces ... > : public InterfaceAcceptor
 {
 public:
   static unsigned int CountMeetsCriteria(const ComponentBase::InterfaceCriteriaType);
-  InterfaceStatus ConnectFromImpl(const char *, ComponentBase *);
+  int ConnectFromImpl(ComponentBase* other, const ComponentBase::InterfaceCriteriaType interfaceCriteria);
   InterfaceStatus CanAcceptConnectionFrom(ComponentBase* other, const ComponentBase::InterfaceCriteriaType interfaceCriteria);
   int ConnectFromImpl( ComponentBase * );
 
@@ -130,8 +130,7 @@ public:
   using AcceptingInterfacesTypeList = AcceptingInterfaces;
   using ProvidingInterfacesTypeList = ProvidingInterfaces;
   
-  // todo replace interfacename with interfaceCriteria
-  virtual InterfaceStatus AcceptConnectionFrom( const char *, ComponentBase * );
+  virtual int AcceptConnectionFrom(ComponentBase * other, const InterfaceCriteriaType interfaceCriteria);
 
   virtual int AcceptConnectionFrom( ComponentBase * );
 

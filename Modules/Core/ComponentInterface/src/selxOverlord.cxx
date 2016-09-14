@@ -282,22 +282,17 @@ Overlord::ConnectComponents()
       ComponentBase::Pointer targetComponent = this->m_ComponentSelectorContainer[ outgoingName ]->GetComponent();
 
       Blueprint::ParameterMapType connectionProperties = this->m_Blueprint->GetConnection( name, outgoingName );
-      int                         numberOfConnections  = 0;
-      if( connectionProperties.count( keys::NameOfInterface ) > 0 )
-      {
-        // connect only via interfaces provided by user configuration
-        for( auto const & interfaceName : connectionProperties[ keys::NameOfInterface ] )
-        {
-          numberOfConnections
-            += ( targetComponent->AcceptConnectionFrom( interfaceName.c_str(),
-            sourceComponent) == InterfaceStatus::success ? 1 : 0);
-        }
-      }
-      else
-      {
-        // connect via all possible interfaces
-        numberOfConnections = targetComponent->AcceptConnectionFrom( sourceComponent );
-      }
+      ComponentBase::InterfaceCriteriaType interfaceCriteria;
+      std::for_each(connectionProperties.begin(), connectionProperties.end(), [&interfaceCriteria](Blueprint::ParameterMapType::value_type kv) mutable { if (kv.second.size() > 0) interfaceCriteria[kv.first] = kv.second[0]; });
+
+
+      int numberOfConnections = targetComponent->AcceptConnectionFrom(sourceComponent, interfaceCriteria);
+      
+      //todo cleanup: if interfaceCriteria is empty we could call      
+      // numberOfConnections = targetComponent->AcceptConnectionFrom( sourceComponent );
+      // to connect via all possible interfaces, but the effect is equal to calling AcceptConnectionFrom 
+      // with empty interfaceCriteria except for speed and clarity ?
+
 
       if( numberOfConnections == 0 )
       {

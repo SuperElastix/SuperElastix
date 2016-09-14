@@ -55,7 +55,7 @@ public:
 
   typedef std::map< std::string, std::string >  InterfaceCriteriaType;
 
-  virtual InterfaceStatus AcceptConnectionFrom( const char *, ComponentBase * ) = 0;
+  virtual int AcceptConnectionFrom(ComponentBase*, const InterfaceCriteriaType) = 0;
 
   virtual int AcceptConnectionFrom( ComponentBase * ) = 0;
 

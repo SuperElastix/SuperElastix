@@ -49,10 +49,10 @@ InterfaceAcceptor< InterfaceT >::CanAcceptConnectionFrom(ComponentBase * provide
 
 //////////////////////////////////////////////////////////////////////////
 template< typename AcceptingInterfaces, typename ProvidingInterfaces >
-InterfaceStatus
-SuperElastixComponent< AcceptingInterfaces, ProvidingInterfaces >::AcceptConnectionFrom( const char * interfacename, ComponentBase * other )
+int
+SuperElastixComponent< AcceptingInterfaces, ProvidingInterfaces >::AcceptConnectionFrom(ComponentBase * other, const InterfaceCriteriaType interfaceCriteria)
 {
-  return AcceptingInterfaces::ConnectFromImpl( interfacename, other );
+  return AcceptingInterfaces::ConnectFromImpl(other, interfaceCriteria);
 }
 
 
@@ -73,28 +73,21 @@ SuperElastixComponent< AcceptingInterfaces, ProvidingInterfaces >
 
 //////////////////////////////////////////////////////////////////////////
 template< typename FirstInterface, typename ... RestInterfaces >
-InterfaceStatus
-Accepting< FirstInterface, RestInterfaces ... >::ConnectFromImpl( const char * interfacename, ComponentBase * other )
+int
+Accepting< FirstInterface, RestInterfaces ... >::ConnectFromImpl(ComponentBase * other, const ComponentBase::InterfaceCriteriaType interfaceCriteria)
 {
-  // does our component have an accepting interface called interfacename?
-  if( InterfaceName< InterfaceAcceptor< FirstInterface >>::Get() == std::string( interfacename ) )
+  // Does our component have an accepting interface sufficing the right criteria (e.g interfaceName)?
+  if (Count<FirstInterface>::MeetsCriteria(interfaceCriteria) == 1)   // We use the FirstInterface only (of each recursion level), thus the count can be 0 or 1
   {
     // cast always succeeds since we know via the template arguments of the component which InterfaceAcceptors its base classes are.
     InterfaceAcceptor< FirstInterface > * acceptIF = this;
-
-    // See if the other component has the right interface and try to connect them
-    if( 1 == acceptIF->Connect( other ) )
-    {
-      //success. By terminating this function, we assume only one interface listens to interfacename and that one connection with the other component can be made by this name
-      return InterfaceStatus::success;
-    }
-    else
-    {
-      // interfacename was found, but other component doesn't match
-      return InterfaceStatus::noprovider;
-    }
+    // Make the connection to the other component by this interface and add the number of successes.
+    return acceptIF->Connect(other) + Accepting< RestInterfaces ... >::ConnectFromImpl(other, interfaceCriteria);
   }
-  return Accepting< RestInterfaces ... >::ConnectFromImpl( interfacename, other );
+  else
+  {
+    return Accepting< RestInterfaces ... >::ConnectFromImpl(other, interfaceCriteria);
+  }
 }
 
 
