@@ -127,7 +127,6 @@ TEST_F(OverlordTest, DeduceComponentsFromConnections)
     ItkMeanSquaresImageToImageMetricv4Component< 3, double >,
     ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< 3, float >,
     ItkMeanSquaresImageToImageMetricv4Component< 3, float >,
-    ItkGradientDescentOptimizerv4Component< double >,
     ItkAffineTransformComponent< double, 3 >,
     ItkGaussianExponentialDiffeomorphicTransformComponent< double, 3 >,
     ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent< 3, double >,

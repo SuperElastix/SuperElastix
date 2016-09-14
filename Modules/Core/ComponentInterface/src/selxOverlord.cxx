@@ -40,20 +40,20 @@ Overlord::Configure()
 
   if( !this->m_isConfigured )
   {
-    std::cout << "Applying Component Criteria" << std::endl;
+    std::cout << "===== Applying Component Criteria =====" << std::endl;
     this->ApplyNodeConfiguration();
 
     auto nonUniqueComponentNames = this->GetNonUniqueComponentNames();
     std::cout << nonUniqueComponentNames.size() << " out of " << m_Blueprint->GetComponentNames().size()
               << " Components could not be uniquely selected" << std::endl << std::endl;
 
-    std::cout << "Applying Connection Criteria" << std::endl;
+    std::cout << "===== Applying Connection Criteria =====" << std::endl;
     this->ApplyConnectionConfiguration();
     nonUniqueComponentNames = this->GetNonUniqueComponentNames();
     std::cout << nonUniqueComponentNames.size() << " out of " << m_Blueprint->GetComponentNames().size()
               << " Components could not be uniquely selected" << std::endl << std::endl;
 
-    
+    std::cout << "===== Performing Handshakes between unique and non-unique Components =====" << std::endl;
     bool anySelectionNarrowed(true);
 
     while (anySelectionNarrowed){
@@ -120,6 +120,10 @@ Overlord::Configure()
     this->m_isConfigured = true;
   }
   auto nonUniqueComponentNames = this->GetNonUniqueComponentNames();
+  
+  std::cout << nonUniqueComponentNames.size() << " out of " << m_Blueprint->GetComponentNames().size()
+    << " Components could not be uniquely selected" << std::endl << std::endl;
+
   if( nonUniqueComponentNames.size() > 0 )
   {
     std::cout << std::endl << "These Nodes need more criteria: " << std::endl;
@@ -237,11 +241,10 @@ Overlord::ApplyConnectionConfiguration()
       this->m_ComponentSelectorContainer[outgoingName]->AddAcceptingInterfaceCriteria(interfaceCriteria);
 
       std::cout << " Has Interface: " << std::endl;
+      std::for_each(interfaceCriteria.begin(), interfaceCriteria.end(), [](ComponentBase::InterfaceCriteriaType::value_type kv) mutable { std::cout << "  { " << kv.first << ": " << kv.second << " }\n"; });
       std::cout << "  " << this->m_ComponentSelectorContainer[name]->NumberOfComponents() << ' ' <<  name << ": Providing" << std::endl;
       std::cout << "  " << this->m_ComponentSelectorContainer[outgoingName]->NumberOfComponents() << ' ' << outgoingName << ": Accepting" << std::endl;
-      
-      std::for_each(interfaceCriteria.begin(), interfaceCriteria.end(), [](ComponentBase::InterfaceCriteriaType::value_type kv) mutable { std::cout << "  { " << kv.first << ": " << kv.second << " }\n"; });
-     
+
 
       if( this->m_ComponentSelectorContainer[ outgoingName ]->NumberOfComponents() == 0 )
       {
