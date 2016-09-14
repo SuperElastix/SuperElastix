@@ -133,20 +133,15 @@ public:
   using AcceptingInterfacesTypeList = AcceptingInterfaces;
   using ProvidingInterfacesTypeList = ProvidingInterfaces;
   
+  // todo replace interfacename with interfaceCriteria
   virtual InterfaceStatus AcceptConnectionFrom( const char *, ComponentBase * );
 
   virtual int AcceptConnectionFrom( ComponentBase * );
 
 protected:
 
-  virtual bool HasAcceptingInterface( const char * );
-
-  virtual bool HasProvidingInterface( const char * );
-
-  //experimental
   virtual InterfaceStatus CanAcceptConnectionFrom(ComponentBase* other, const InterfaceCriteriaType interfaceCriteria) override;
-  //virtual InterfaceStatus CanProvideConnectionTo(ComponentBase* other, const InterfaceCriteriaType interfaceCriteria) override;
-  //
+
   virtual unsigned int CountAcceptingInterfaces(const ComponentBase::InterfaceCriteriaType interfaceCriteria){ return AcceptingInterfaces::CountMeetsCriteria(interfaceCriteria); };
   virtual unsigned int CountProvidingInterfaces(const ComponentBase::InterfaceCriteriaType interfaceCriteria){ return ProvidingInterfaces::CountMeetsCriteria(interfaceCriteria); };
   

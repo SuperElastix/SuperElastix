@@ -63,22 +63,6 @@ SuperElastixComponent< AcceptingInterfaces, ProvidingInterfaces >::AcceptConnect
   return AcceptingInterfaces::ConnectFromImpl( other );
 }
 
-
-template< typename AcceptingInterfaces, typename ProvidingInterfaces >
-bool
-SuperElastixComponent< AcceptingInterfaces, ProvidingInterfaces >::HasAcceptingInterface( const char * interfacename )
-{
-  return AcceptingInterfaces::HasInterface( interfacename );
-}
-
-
-template< typename AcceptingInterfaces, typename ProvidingInterfaces >
-bool
-SuperElastixComponent< AcceptingInterfaces, ProvidingInterfaces >::HasProvidingInterface( const char * interfacename )
-{
-  return ProvidingInterfaces::HasInterface( interfacename );
-}
-
 template< typename AcceptingInterfaces, typename ProvidingInterfaces >
 InterfaceStatus
 SuperElastixComponent< AcceptingInterfaces, ProvidingInterfaces >

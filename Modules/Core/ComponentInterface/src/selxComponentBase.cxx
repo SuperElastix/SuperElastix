@@ -33,28 +33,6 @@ ComponentBase::MeetsCriterionBase( const CriterionType & criterion )
     return ( criterion.second[ 0 ] == this->GetNameOfClass() );
   }
 
-  else if( criterion.first == "HasAcceptingInterface" )
-  {
-    for( const auto & value : criterion.second )
-    {
-      if( this->HasAcceptingInterface( value.c_str() ) == false )
-      {
-        return false;   //if there is any failed criterion, return false (like a short-circuit AND)
-      }
-    }
-    return true;
-  }
-  else if( criterion.first == "HasProvidingInterface" )
-  {
-    for( const auto & value : criterion.second )
-    {
-      if( this->HasProvidingInterface( value.c_str() ) == false )
-      {
-        return false;   //if there is any failed criterion, return false (like a short-circuit AND)
-      }
-    }
-    return true;
-  }
   // else pass criterion to derived Component
   return this->MeetsCriterion( criterion );
 }
