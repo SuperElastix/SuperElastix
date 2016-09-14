@@ -112,20 +112,6 @@ Accepting< FirstInterface, RestInterfaces ... >::ConnectFromImpl( ComponentBase 
 
 
 template< typename FirstInterface, typename ... RestInterfaces >
-bool
-Accepting< FirstInterface, RestInterfaces ... >::HasInterface( const char * interfacename )
-{
-  //TODO: check on interface template arguments as well
-  auto interfaceProperies = Properties< FirstInterface >::Get();
-
-  if (interfaceProperies["Name"] == std::string(interfacename))
-  {
-    return true;
-  }
-  return Accepting< RestInterfaces ... >::HasInterface( interfacename );
-}
-
-template< typename FirstInterface, typename ... RestInterfaces >
 InterfaceStatus
 Accepting< FirstInterface, RestInterfaces ... >::CanAcceptConnectionFrom(ComponentBase* other, const ComponentBase::InterfaceCriteriaType interfaceCriteria)
 {
@@ -164,21 +150,6 @@ Accepting< FirstInterface, RestInterfaces ... >::CanAcceptConnectionFrom(Compone
   // never reached
   return InterfaceStatus::noaccepter;
 }
-
-template< typename FirstInterface, typename ... RestInterfaces >
-bool
-Providing< FirstInterface, RestInterfaces ... >::HasInterface( const char * interfacename )
-{
-  //TODO: check on interface template arguments as well
-  auto interfaceProperies = Properties< FirstInterface >::Get();
-
-  if (interfaceProperies["Name"] == std::string(interfacename))
-  {
-    return true;
-  }
-  return Providing< RestInterfaces ... >::HasInterface( interfacename );
-}
-
 
 
 template< typename FirstInterface, typename ... RestInterfaces >

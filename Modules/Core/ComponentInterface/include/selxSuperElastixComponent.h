@@ -26,8 +26,11 @@
 
 namespace selx
 {
-// Define the accepting interfaces as templated by the providing interface
 
+// All SuperElastix Components inherit from their interfaces classes. The interface classes as defined in 
+// "selxInterfaces.h" are by default Providing. The InterfaceAcceptor class turns a Providing interface
+// into an Accepting interface. For a SuperElastixComponent this differentiation is done by grouping the 
+// interfaces either in Providing<Interfaces...> or in Accepting<Interfaces...>
 template< class InterfaceT >
 class InterfaceAcceptor
 {
@@ -62,7 +65,6 @@ public:
 
 protected:
 
-  bool HasInterface(const char *) { return false; }
 
 };
 
@@ -77,7 +79,6 @@ public:
 
 protected:
 
-  bool HasInterface( const char * );
 };
 
 template <typename ... Interfaces>
@@ -89,8 +90,6 @@ class Providing<>
 public:
   static unsigned int CountMeetsCriteria(const ComponentBase::InterfaceCriteriaType) { return 0; }
 protected:
-
-  bool HasInterface( const char * ) { return false; }
 };
 
 template< typename FirstInterface, typename ... RestInterfaces >
@@ -99,8 +98,6 @@ class Providing< FirstInterface, RestInterfaces ... > : public FirstInterface, p
 public:
   static unsigned int CountMeetsCriteria(const ComponentBase::InterfaceCriteriaType);
 protected:
-
-  bool HasInterface( const char * );
 };
 
 //template<typename... Interfaces>
