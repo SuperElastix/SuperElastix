@@ -96,7 +96,7 @@ struct InterfaceName< TransformedImageInterface >
 
 // InterfaceName<T>::Get() should return "itkImageSourceInterface" no matter over which arguments itkImageSourceInterface is templated
 template< int D, class TPixel >
-struct InterfaceName< itkImageInterface< D, TPixel >>
+struct InterfaceName< itkImageInterface< D, TPixel > >
 {
   static const char * Get()
   {
@@ -105,7 +105,7 @@ struct InterfaceName< itkImageInterface< D, TPixel >>
 };
 
 template< int D, class TPixel >
-struct InterfaceName< itkImageFixedInterface< D, TPixel >>
+struct InterfaceName< itkImageFixedInterface< D, TPixel > >
 {
   static const char * Get()
   {
@@ -114,7 +114,7 @@ struct InterfaceName< itkImageFixedInterface< D, TPixel >>
 };
 
 template< int D >
-struct InterfaceName< itkImageDomainFixedInterface< D >>
+struct InterfaceName< itkImageDomainFixedInterface< D > >
 {
   static const char * Get()
   {
@@ -123,7 +123,7 @@ struct InterfaceName< itkImageDomainFixedInterface< D >>
 };
 
 template< int D, class TPixel >
-struct InterfaceName< itkImageMovingInterface< D, TPixel >>
+struct InterfaceName< itkImageMovingInterface< D, TPixel > >
 {
   static const char * Get()
   {
@@ -132,7 +132,7 @@ struct InterfaceName< itkImageMovingInterface< D, TPixel >>
 };
 
 template< int D, class TPixel >
-struct InterfaceName< DisplacementFieldItkImageSourceInterface< D, TPixel >>
+struct InterfaceName< DisplacementFieldItkImageSourceInterface< D, TPixel > >
 {
   static const char * Get()
   {
@@ -141,7 +141,7 @@ struct InterfaceName< DisplacementFieldItkImageSourceInterface< D, TPixel >>
 };
 
 template< int D, class TPixel >
-struct InterfaceName< itkMeshInterface< D, TPixel >>
+struct InterfaceName< itkMeshInterface< D, TPixel > >
 {
   static const char * Get()
   {
@@ -168,7 +168,7 @@ struct InterfaceName< SinkInterface >
 };
 
 template< int D, class TPixel >
-struct InterfaceName< itkMetricv4Interface< D, TPixel >>
+struct InterfaceName< itkMetricv4Interface< D, TPixel > >
 {
   static const char * Get()
   {
@@ -177,7 +177,7 @@ struct InterfaceName< itkMetricv4Interface< D, TPixel >>
 };
 
 template< class InternalComputationValueType >
-struct InterfaceName< itkOptimizerv4Interface< InternalComputationValueType >>
+struct InterfaceName< itkOptimizerv4Interface< InternalComputationValueType > >
 {
   static const char * Get()
   {
@@ -186,7 +186,7 @@ struct InterfaceName< itkOptimizerv4Interface< InternalComputationValueType >>
 };
 
 template< class InternalComputationValueType, int D >
-struct InterfaceName< itkTransformInterface< InternalComputationValueType, D >>
+struct InterfaceName< itkTransformInterface< InternalComputationValueType, D > >
 {
   static const char * Get()
   {
@@ -195,7 +195,7 @@ struct InterfaceName< itkTransformInterface< InternalComputationValueType, D >>
 };
 
 template< class F, class M >
-struct InterfaceName< elastixTransformParameterObjectInterface< F, M >>
+struct InterfaceName< elastixTransformParameterObjectInterface< F, M > >
 {
   static const char * Get()
   {
@@ -252,7 +252,7 @@ struct InterfaceName< LogInterface >
 // partial specialization of InterfaceName
 // InterfaceName<T>::Get() should return the same name no matter whether T is an acceptor or provider interface.
 template< typename T1 >
-struct InterfaceName< InterfaceAcceptor< T1 >>
+struct InterfaceName< InterfaceAcceptor< T1 > >
 {
   static const char * Get()
   {

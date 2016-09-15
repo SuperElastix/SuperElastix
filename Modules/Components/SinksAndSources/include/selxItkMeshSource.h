@@ -34,7 +34,7 @@ template< int Dimensionality, class TPixel >
 class ItkMeshSourceComponent :
   public SuperElastixComponent<
   Accepting< >,
-  Providing< SourceInterface, itkMeshInterface< Dimensionality, TPixel >>
+  Providing< SourceInterface, itkMeshInterface< Dimensionality, TPixel > >
   >
 {
 public:

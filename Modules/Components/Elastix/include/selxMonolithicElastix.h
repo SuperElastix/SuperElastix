@@ -40,7 +40,7 @@ class MonolithicElastixComponent :
   itkImageMovingInterface< Dimensionality, TPixel >
   >,
   Providing<
-  elastixTransformParameterObjectInterface< itk::Image< TPixel, Dimensionality >, itk::Image< TPixel, Dimensionality >>,
+  elastixTransformParameterObjectInterface< itk::Image< TPixel, Dimensionality >, itk::Image< TPixel, Dimensionality > >,
   itkImageInterface< Dimensionality, TPixel >,
   RunRegistrationInterface
   >
@@ -72,7 +72,7 @@ public:
   typedef elxParameterObjectType::Pointer                           elxParameterObjectPointer;
 
   typedef typename elastixTransformParameterObjectInterface< itk::Image< TPixel, Dimensionality >,
-    itk::Image< TPixel, Dimensionality >>::elastixTransformParameterObject elastixTransformParameterObject;
+    itk::Image< TPixel, Dimensionality > >::elastixTransformParameterObject elastixTransformParameterObject;
 
   // Accepting Interfaces:
   virtual int Set( itkImageFixedInterface< Dimensionality, TPixel > * ) override;

@@ -33,7 +33,7 @@ namespace selx
 template< int Dimensionality, class TPixel >
 class DisplacementFieldItkImageFilterSinkComponent :
   public SuperElastixComponent<
-  Accepting< DisplacementFieldItkImageSourceInterface< Dimensionality, TPixel >>,
+  Accepting< DisplacementFieldItkImageSourceInterface< Dimensionality, TPixel > >,
   Providing< SinkInterface >
   >
 {

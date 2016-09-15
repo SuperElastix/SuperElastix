@@ -31,8 +31,8 @@ namespace selx
 template< int Dimensionality, class TPixel >
 class ItkSmoothingRecursiveGaussianImageFilterComponent :
   public SuperElastixComponent<
-  Accepting< itkImageInterface< Dimensionality, TPixel >>,
-  Providing< itkImageInterface< Dimensionality, TPixel >>
+  Accepting< itkImageInterface< Dimensionality, TPixel > >,
+  Providing< itkImageInterface< Dimensionality, TPixel > >
   >
 {
 public:
@@ -46,7 +46,7 @@ public:
 
   typedef TPixel PixelType;
   typedef itk::SmoothingRecursiveGaussianImageFilter< itk::Image< PixelType, Dimensionality >,
-    itk::Image< PixelType, Dimensionality >> TheItkFilterType;
+    itk::Image< PixelType, Dimensionality > > TheItkFilterType;
   typedef itk::Image< PixelType, Dimensionality > ItkImageType;
   typedef typename ItkImageType::Pointer
     ItkImagePointer;

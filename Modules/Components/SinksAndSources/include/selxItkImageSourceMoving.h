@@ -33,7 +33,7 @@ template< int Dimensionality, class TPixel >
 class ItkImageSourceMovingComponent :
   public SuperElastixComponent<
   Accepting< >,
-  Providing< SourceInterface, itkImageMovingInterface< Dimensionality, TPixel >>
+  Providing< SourceInterface, itkImageMovingInterface< Dimensionality, TPixel > >
   >
 {
 public:

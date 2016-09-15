@@ -58,7 +58,7 @@ public:
     ItkImageSourceMovingComponent< 2, float >,
     ItkImageSourceFixedComponent< 3, double >,
     ItkImageSourceMovingComponent< 3, double >,
-    RegistrationControllerComponent< >> RegisterComponents;
+    RegistrationControllerComponent< > > RegisterComponents;
 
   typedef SuperElastixFilter< RegisterComponents > SuperElastixFilterType;
 

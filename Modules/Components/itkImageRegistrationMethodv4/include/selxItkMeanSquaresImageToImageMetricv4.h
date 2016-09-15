@@ -31,7 +31,7 @@ template< int Dimensionality, class TPixel >
 class ItkMeanSquaresImageToImageMetricv4Component :
   public SuperElastixComponent<
   Accepting< >,
-  Providing< itkMetricv4Interface< Dimensionality, TPixel >>
+  Providing< itkMetricv4Interface< Dimensionality, TPixel > >
   >
 {
 public:

@@ -79,7 +79,7 @@ ComponentBase::interfaceStatus
 Accepting< FirstInterface, RestInterfaces ... >::ConnectFromImpl( const char * interfacename, ComponentBase * other )
 {
   // does our component have an accepting interface called interfacename?
-  if( InterfaceName< InterfaceAcceptor< FirstInterface >>::Get() == std::string( interfacename ) )
+  if( InterfaceName< InterfaceAcceptor< FirstInterface > >::Get() == std::string( interfacename ) )
   {
     // cast always succeeds since we know via the template arguments of the component which InterfaceAcceptors its base classes are.
     InterfaceAcceptor< FirstInterface > * acceptIF = this;
@@ -118,7 +118,7 @@ bool
 Accepting< FirstInterface, RestInterfaces ... >::HasInterface( const char * interfacename )
 {
   //TODO: check on interface template arguments as well
-  if( InterfaceName< InterfaceAcceptor< FirstInterface >>::Get() == std::string( interfacename ) )
+  if( InterfaceName< InterfaceAcceptor< FirstInterface > >::Get() == std::string( interfacename ) )
   {
     return true;
   }

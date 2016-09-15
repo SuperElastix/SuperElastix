@@ -38,7 +38,7 @@ class MonolithicTransformixComponent :
   Accepting<
   itkImageDomainFixedInterface< Dimensionality >,
   itkImageMovingInterface< Dimensionality, TPixel >,
-  elastixTransformParameterObjectInterface< itk::Image< TPixel, Dimensionality >, itk::Image< TPixel, Dimensionality >>
+  elastixTransformParameterObjectInterface< itk::Image< TPixel, Dimensionality >, itk::Image< TPixel, Dimensionality > >
   >,
   Providing<
   itkImageInterface< Dimensionality, TPixel >,
@@ -68,7 +68,7 @@ public:
   typedef elastix::TransformixFilter< MovingImageType > TransformixFilterType;
 
   typedef elastixTransformParameterObjectInterface< itk::Image< TPixel, Dimensionality >,
-    itk::Image< TPixel, Dimensionality >> elastixTransformParameterObjectInterfaceType;
+    itk::Image< TPixel, Dimensionality > > elastixTransformParameterObjectInterfaceType;
   // Accepting Interfaces:
   virtual int Set( itkImageDomainFixedInterface< Dimensionality > * ) override;
 
