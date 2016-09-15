@@ -36,20 +36,13 @@ set( COMMANDLINE_SOURCE_FILES
   ${COMMANDLINE_SOURCE_DIR}/src/selxCommandLine.cxx
 )
 
-message(STATUS "BOOST_LIBRARYDIR: ${BOOST_LIBRARYDIR}")
-message(STATUS "BOOST_ROOT: ${BOOST_ROOT}")
-
 set(Boost_USE_STATIC_LIBS ON) 
 set(Boost_USE_MULTITHREADED ON)  
 #set(Boost_USE_STATIC_RUNTIME OFF)
 
 set(BOOST_LIBRARYDIR ${BOOST_ROOT}/stage/lib)
-message(STATUS "BOOST_LIBRARYDIR: ${BOOST_LIBRARYDIR}")
-
 find_package(Boost COMPONENTS program_options system filesystem REQUIRED) 
-#find_package(Boost REQUIRED) 
 
-include_directories( ${COMMANDLINE_INCLUDE_DIRS} )
 # Compile executable
 add_executable( SuperElastix ${COMMANDLINE_SOURCE_FILES} ${COMMANDLINE_HEADER_FILES} )
 target_link_libraries( SuperElastix ${SUPERELASTIX_LIBRARIES} ${Boost_LIBRARIES})

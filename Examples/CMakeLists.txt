@@ -22,6 +22,9 @@ project(SuperElastixExamples)
 
 if( NOT CMAKE_PROJECT_NAME STREQUAL "SuperElastix" )
   # Examples are build as an external project, need to import dependencies
+
+  set(CMAKE_CXX_STANDARD 11)
+  
   find_package( SuperElastix )
   include( ${SUPERELASTIX_USE_FILE} )
 

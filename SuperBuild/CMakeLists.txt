@@ -56,7 +56,6 @@ endif()
 # Do not build dashboard by default
 option( SUPERELASTIX_BUILD_DASHBOARD "Enable building dashboard." OFF )
 
-
 # ---------------------------------------------------------------------
 # Build ITK
 
