@@ -125,5 +125,10 @@ endif()
 
 include( SuperElastix )
 
+# ---------------------------------------------------------------------
+# Build Examples as an external project
+
+include( ExternalExamples )
+
 
 

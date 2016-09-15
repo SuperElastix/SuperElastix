@@ -17,17 +17,20 @@
 #
 #=========================================================================
 
-set( proj SuperElastixExamples )
+# Collect header files for Visual Studio Project 
+# http://stackoverflow.com/questions/8316104/specify-how-cmake-creates-visual-studio-project
+file(GLOB COMMANDLINE_HEADER_FILES "${COMMANDLINE_SOURCE_DIR}/*/include/*.*")
 
-ExternalProject_Add( ${proj}
-  DOWNLOAD_COMMAND ""
-  SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../Examples
-  BINARY_DIR ${proj}-build
-  CMAKE_ARGS
-    --no-warn-unused-cli
-    -DSuperElastix_DIR:PATH=${SuperElastix_DIR}
-    -DITK_DIR:PATH=${ITK_DIR}
-    -DELASTIX_USE_FILE:PATH=${ELASTIX_USE_FILE}
-  DEPENDS ${SUPERELASTIX_DEPENDENCIES}
-  INSTALL_COMMAND ""
+set( COMMANDLINE_SOURCE_FILES
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/selxSuperElastix.cxx
 )
+
+set(Boost_USE_STATIC_LIBS ON) 
+set(Boost_USE_MULTITHREADED ON)  
+
+set(BOOST_LIBRARYDIR ${BOOST_ROOT}/stage/lib)
+find_package(Boost COMPONENTS program_options system filesystem REQUIRED) 
+
+# Compile executable
+add_executable( SuperElastixCommandlineProgram ${COMMANDLINE_SOURCE_FILES} ${COMMANDLINE_HEADER_FILES} )
+target_link_libraries( SuperElastixCommandlineProgram ${SUPERELASTIX_LIBRARIES} ${Boost_LIBRARIES})

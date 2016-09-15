@@ -111,7 +111,7 @@ if( ${SUPERELASTIX_BUILD_TESTING} )
   add_subdirectory( Testing )
 endif()
 
-# -----------------------------------------------------------brkdwn----------
+# ---------------------------------------------------------------------
 # Build Documentation
 
 mark_as_advanced( SUPERELASTIX_BUILD_DOXYGEN )
@@ -120,6 +120,14 @@ option( SUPERELASTIX_BUILD_DOXYGEN "Enable building Doxygen documentation." OFF 
 mark_as_advanced( SUPERELASTIX_BUILD_READTHEDOCS )
 option( SUPERELASTIX_BUILD_READTHEDOCS "Enable building readthedocs.org documentation." OFF )
 
+# ---------------------------------------------------------------------
+# Enable other projects to use SuperElastix via CMake's find_packge() and a use-file
+
+set( SUPERELASTIX_CONFIG_DIR ${CMAKE_CURRENT_BINARY_DIR} )
+set( SUPERELASTIX_BINARY_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} )
+
+configure_file( SuperElastixConfig.cmake.in SuperElastixConfig.cmake @ONLY IMMEDIATE )
+configure_file( UseSuperElastix.cmake.in UseSuperElastix.cmake COPYONLY IMMEDIATE )
 
 # ---------------------------------------------------------------------
 # Install
