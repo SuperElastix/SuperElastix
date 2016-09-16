@@ -13,7 +13,7 @@ source, multi-platform image registration toolbox written in C++. SuperElastix
 aims at covering a wide range of image registration methodologies in a single experience, while considering both user-friendliness and algorithm modularity.
 
 ##Documentation
-- "The design of SuperElastix - a unifying framework for a wide range of image registration methodologies", F. F. Berendsen, K. Marstal, S. Klein and M. Staring, [WBIR2016](http://wbir2016.doc.ic.ac.uk/), [[paper latex source](Documentation/source/paperWBIR16/WBIRSuperElastix.tex)] [[poster](Documentation/source/posterWBIR16/Poster_SuperElastix_WBIR.svg)]
+- ["The design of SuperElastix - a unifying framework for a wide range of image registration methodologies", F. F. Berendsen, K. Marstal, S. Klein and M. Staring](http://www.cv-foundation.org/openaccess/content_cvpr_2016_workshops/w15/papers/Berendsen_The_Design_of_CVPR_2016_paper.pdf), [WBIR2016](http://wbir2016.doc.ic.ac.uk/), [[paper latex source](Documentation/source/paperWBIR16/WBIRSuperElastix.tex)] [[poster](Documentation/source/posterWBIR16/Poster_SuperElastix_WBIR.svg)]
 - [Build and Usage instructions](http://superelastix.readthedocs.io/en/latest/index.html)
 
 ##Authors:
