@@ -24,6 +24,8 @@
 #include "selxAnyFileWriter.h"
 
 #include "selxDefaultComponents.h"
+#include "selxTypeList.h"
+
 
 #include <boost/algorithm/string.hpp>
 
@@ -55,7 +57,17 @@ main( int ac, char * av[] )
   {
     typedef std::vector< std::string > VectorOfStringsType;
 
-    selx::SuperElastixFilter< selx::DefaultComponents >::Pointer superElastixFilter = selx::SuperElastixFilter< selx::DefaultComponents >::New();
+    using Elastix3DComponents = selx::TypeList <
+      selx::MonolithicElastixComponent< 3, float >,
+      selx::MonolithicTransformixComponent< 3, float >,
+      selx::ItkImageSourceFixedComponent< 3, float >,
+      selx::ItkImageSourceMovingComponent< 3, float >,
+      selx::ItkImageSinkComponent< 3, float >
+    >;
+
+
+    using RegisterComponents = selx::list_append<selx::DefaultComponents, Elastix3DComponents>::type;
+    selx::SuperElastixFilter< RegisterComponents >::Pointer superElastixFilter = selx::SuperElastixFilter< RegisterComponents >::New();
 
     fs::path            configurationPath;
     VectorOfStringsType inputPairs;
