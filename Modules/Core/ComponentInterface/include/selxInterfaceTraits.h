@@ -25,6 +25,7 @@
 #include "selxInterfaces.h"
 #include "selxStaticErrorMessageRevealT.h"
 #include "selxPodString.h"
+#include "selxKeys.h"
 //#include <type_traits>
 
 namespace selx
@@ -34,261 +35,230 @@ namespace selx
 // In our toolbox for each InterfaceType it is required to implement InterfaceName<InterfaceType>::Get()
 // If one omits this, the implementation falls back to the default implementation that provides a compiler error message including the InterfaceType name for which the specialization is missing.
 template< typename T >
-struct InterfaceName
+struct Properties
 {
-  static_assert(StaticErrorMessageRevealT<T>::False, "Please Implement InterfaceName<InterfaceType> for this InterfaceType");
+  static_assert(StaticErrorMessageRevealT<T>::False, "Please Implement Properties<InterfaceType> for this InterfaceType");
+};
+
+// Properties<T>::Get() should return the same name no matter whether T is an acceptor or provider interface.
+template< typename InterfaceType >
+struct Properties< InterfaceAcceptor< InterfaceType >>
+{
+  static const std::map<std::string, std::string> Get()
+  {
+    return Properties< InterfaceType >::Get();
+  }
 };
 
 // The specializations for each type of Interface supported by the toolbox
 
 template< >
-struct InterfaceName< MetricValueInterface >
+struct Properties< MetricValueInterface >
 {
-  static const char * Get()
+  static const std::map<std::string, std::string> Get()
   {
-    return "MetricValueInterface";
+    return{ { keys::NameOfInterface, "MetricValueInterface" } };
   }
 };
 template< >
-struct InterfaceName< MetricDerivativeInterface >
+struct Properties< MetricDerivativeInterface >
 {
-  static const char * Get()
+  static const std::map<std::string, std::string> Get()
   {
-    return "MetricDerivativeInterface";
+    return{ { keys::NameOfInterface, "MetricDerivativeInterface" } };
   }
 };
 template< >
-struct InterfaceName< OptimizerUpdateInterface >
+struct Properties< OptimizerUpdateInterface >
 {
-  static const char * Get()
+  static const std::map<std::string, std::string> Get()
   {
-    return "OptimizerUpdateInterface";
-  }
-};
-
-template< >
-struct InterfaceName< ConflictinUpdateInterface >
-{
-  static const char * Get()
-  {
-    return "ConflictinUpdateInterface";
+    return{ { keys::NameOfInterface, "OptimizerUpdateInterface" } };
   }
 };
 
 template< >
-struct InterfaceName< TransformedImageInterface >
+struct Properties< ConflictinUpdateInterface >
 {
-  static const char * Get()
+  static const std::map<std::string, std::string> Get()
   {
-    return "TransformedImageInterface";
+    return{ { keys::NameOfInterface, "ConflictinUpdateInterface" } };
+  }
+};
+
+template< >
+struct Properties< TransformedImageInterface >
+{
+  static const std::map<std::string, std::string> Get()
+  {
+    return{ { keys::NameOfInterface, "TransformedImageInterface" } };
   }
 };
 
 // InterfaceName<T>::Get() should return "itkImageSourceInterface" no matter over which arguments itkImageSourceInterface is templated
 template< int D, class TPixel >
-struct InterfaceName< itkImageInterface< D, TPixel >>
+struct Properties< itkImageInterface< D, TPixel >>
 {
-  static const char * Get()
-  {
-    return "itkImageInterface";
-  }
-};
-
-template< int D, class TPixel >
-struct InterfaceName< itkImageFixedInterface< D, TPixel >>
-{
-  static const char * Get()
-  {
-    return "itkImageFixedInterface";
-  }
-};
-
-template< int D >
-struct InterfaceName< itkImageDomainFixedInterface< D >>
-{
-  static const char * Get()
-  {
-    return "itkImageDomainFixedInterface";
-  }
-};
-
-template< int D, class TPixel >
-struct InterfaceName< itkImageMovingInterface< D, TPixel >>
-{
-  static const char * Get()
-  {
-    return "itkImageMovingInterface";
-  }
-};
-
-template< int D, class TPixel >
-struct InterfaceName< DisplacementFieldItkImageSourceInterface< D, TPixel >>
-{
-  static const char * Get()
-  {
-    return "DisplacementFieldItkImageSourceInterface";
-  }
-};
-
-template< int D, class TPixel >
-struct InterfaceName< itkMeshInterface< D, TPixel >>
-{
-  static const char * Get()
-  {
-    return "itkMeshInterface";
-  }
-};
-
-template< >
-struct InterfaceName< SourceInterface >
-{
-  static const char * Get()
-  {
-    return "SourceInterface";
-  }
-};
-
-template< >
-struct InterfaceName< SinkInterface >
-{
-  static const char * Get()
-  {
-    return "SinkInterface";
-  }
-};
-
-template< int D, class TPixel >
-struct InterfaceName< itkMetricv4Interface< D, TPixel >>
-{
-  static const char * Get()
-  {
-    return "itkMetricv4Interface";
-  }
-};
-
-template< class InternalComputationValueType >
-struct InterfaceName< itkOptimizerv4Interface< InternalComputationValueType >>
-{
-  static const char * Get()
-  {
-    return "itkOptimizerv4Interface";
-  }
-};
-
-template< class InternalComputationValueType, int D >
-struct InterfaceName< itkTransformInterface< InternalComputationValueType, D >>
-{
-  static const char * Get()
-  {
-    return "itkTransformInterface";
-  }
-};
-
-template< class F, class M >
-struct InterfaceName< elastixTransformParameterObjectInterface< F, M >>
-{
-  static const char * Get()
-  {
-    return "elastixTransformParameterObjectInterface";
-  }
-};
-
-template< >
-struct InterfaceName< RegistrationControllerStartInterface >
-{
-  static const char * Get()
-  {
-    return "RegistrationControllerStartInterface";
-  }
-};
-
-template< >
-struct InterfaceName< RunRegistrationInterface >
-{
-  static const char * Get()
-  {
-    return "RunRegistrationInterface";
-  }
-};
-
-template< >
-struct InterfaceName< AfterRegistrationInterface >
-{
-  static const char * Get()
-  {
-    return "AfterRegistrationInterface";
-  }
-};
-
-template< >
-struct InterfaceName< ReconnectTransformInterface >
-{
-  static const char * Get()
-  {
-    return "ReconnectTransformInterface";
-  }
-};
-
-template< class InternalComputationValueType, int D >
-struct InterfaceName< itkTransformParametersAdaptorsContainerInterface< InternalComputationValueType, D >>
-{
-  static const char * Get()
-  {
-    return "itkTransformParametersAdaptorsContainerInterface";
-  }
-};
-
-template< class InternalComputationValueType, int D >
-struct InterfaceName< itkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerInterface< InternalComputationValueType, D >>
-{
-  static const char * Get()
-  {
-    return "itkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerInterface";
-  }
-};
-
-// partial specialization of InterfaceName
-// InterfaceName<T>::Get() should return the same name no matter whether T is an acceptor or provider interface.
-template< typename InterfaceType >
-struct InterfaceName< InterfaceAcceptor< InterfaceType >>
-{
-  static const char * Get()
-  {
-    return InterfaceName< InterfaceType >::Get();
-  }
-};
-
-//************experimental**********
-
-template< typename T >
-struct Properties
-{
-  //static_assert(StaticErrorMessageRevealT<T>::False, "Please Implement InterfaceProperties<InterfaceType> for this InterfaceType");
   static const std::map<std::string, std::string> Get()
   {
-    return{ { "NameOfInterface", InterfaceName< T >::Get() } };
+    return{ { keys::NameOfInterface, "itkImageInterface" }, { keys::Dimensionality, std::to_string(D) }, { keys::PixelType, PodString<TPixel>::Get() } };
   }
 };
-
-// The specializations for each type of Interface supported by the toolbox
 
 template< int D, class TPixel >
 struct Properties< itkImageFixedInterface< D, TPixel >>
 {
   static const std::map<std::string, std::string> Get()
   {
-    return{ { "NameOfInterface", "itkImageFixedInterface" }, { "Dimensionality", std::to_string(D) }, { "PixelType", PodString<TPixel>::Get() } };
+    return{ { keys::NameOfInterface, "itkImageFixedInterface" }, { keys::Dimensionality, std::to_string(D) }, { keys::PixelType, PodString<TPixel>::Get() } };
   }
 };
 
-
-template< class C>
-struct Properties< itkOptimizerv4Interface< C > >
+template< int D >
+struct Properties< itkImageDomainFixedInterface< D >>
 {
   static const std::map<std::string, std::string> Get()
   {
-    return{ { "NameOfInterface", "itkOptimizerv4Interface" }, { "InternalComputationValueType", PodString<C>::Get() } };
+    return{ { keys::NameOfInterface, "itkImageDomainFixedInterface" }, { keys::Dimensionality, std::to_string(D) } };
   }
 };
+
+template< int D, class TPixel >
+struct Properties< itkImageMovingInterface< D, TPixel >>
+{
+  static const std::map<std::string, std::string> Get()
+  {
+    return{ { keys::NameOfInterface, "itkImageMovingInterface" }, { keys::Dimensionality, std::to_string(D) }, { keys::PixelType, PodString<TPixel>::Get() } };
+  }
+};
+
+template< int D, class TPixel >
+struct Properties< DisplacementFieldItkImageSourceInterface< D, TPixel >>
+{
+  static const std::map<std::string, std::string> Get()
+  {
+    return{ { keys::NameOfInterface, "DisplacementFieldItkImageSourceInterface" }, { keys::Dimensionality, std::to_string(D) }, { keys::PixelType, PodString<TPixel>::Get() } };
+  }
+};
+
+template< int D, class TPixel >
+struct Properties< itkMeshInterface< D, TPixel >>
+{
+  static const std::map<std::string, std::string> Get()
+  {
+    return{ { keys::NameOfInterface, "itkMeshInterface" }, { keys::Dimensionality, std::to_string(D) }, { keys::PixelType, PodString<TPixel>::Get() } };
+  }
+};
+
+template< >
+struct Properties< SourceInterface >
+{
+  static const std::map<std::string, std::string> Get()
+  {
+    return{ { keys::NameOfInterface, "SourceInterface" } };
+  }
+};
+
+template< >
+struct Properties< SinkInterface >
+{
+  static const std::map<std::string, std::string> Get()
+  {
+    return{ { keys::NameOfInterface, "SinkInterface" } };
+  }
+};
+
+template< int D, class TPixel >
+struct Properties< itkMetricv4Interface< D, TPixel >>
+{
+  static const std::map<std::string, std::string> Get()
+  {
+    return{ { keys::NameOfInterface, "itkMetricv4Interface" }, { keys::Dimensionality, std::to_string(D) }, { keys::PixelType, PodString<TPixel>::Get() } };
+  }
+};
+
+template< class InternalComputationValueType >
+struct Properties< itkOptimizerv4Interface< InternalComputationValueType >>
+{
+  static const std::map<std::string, std::string> Get()
+  {
+    return{ { keys::NameOfInterface, "itkOptimizerv4Interface" }, { keys::InternalComputationValueType, PodString<InternalComputationValueType>::Get() } };
+  }
+};
+
+template< class InternalComputationValueType, int D >
+struct Properties< itkTransformInterface< InternalComputationValueType, D >>
+{
+  static const std::map<std::string, std::string> Get()
+  {
+    return{ { keys::NameOfInterface, "itkTransformInterface" }, { keys::Dimensionality, std::to_string(D) } };
+  }
+};
+
+template< class F, class M >
+struct Properties< elastixTransformParameterObjectInterface< F, M >>
+{
+  static const std::map<std::string, std::string> Get()
+  {
+    return{ { keys::NameOfInterface, "elastixTransformParameterObjectInterface" } }; // TODO map F and M to strings?
+  }
+};
+
+template< >
+struct Properties< RegistrationControllerStartInterface >
+{
+  static const std::map<std::string, std::string> Get()
+  {
+    return{ { keys::NameOfInterface, "RegistrationControllerStartInterface" } };
+  }
+};
+
+template< >
+struct Properties< RunRegistrationInterface >
+{
+  static const std::map<std::string, std::string> Get()
+  {
+    return{ { keys::NameOfInterface, "RunRegistrationInterface" } };
+  }
+};
+
+template< >
+struct Properties< AfterRegistrationInterface >
+{
+  static const std::map<std::string, std::string> Get()
+  {
+    return{ { keys::NameOfInterface, "AfterRegistrationInterface" } };
+  }
+};
+
+template< >
+struct Properties< ReconnectTransformInterface >
+{
+  static const std::map<std::string, std::string> Get()
+  {
+    return{ { keys::NameOfInterface, "ReconnectTransformInterface" } };
+  }
+};
+
+template< class InternalComputationValueType, int D >
+struct Properties< itkTransformParametersAdaptorsContainerInterface< InternalComputationValueType, D >>
+{
+  static const std::map<std::string, std::string> Get()
+  {
+    return{ { keys::NameOfInterface, "itkTransformParametersAdaptorsContainerInterface" }, { keys::InternalComputationValueType, PodString<InternalComputationValueType>::Get() }, { keys::Dimensionality, std::to_string(D) } };
+  }
+};
+
+template< class InternalComputationValueType, int D >
+struct Properties< itkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerInterface< InternalComputationValueType, D >>
+{
+  static const std::map<std::string, std::string> Get()
+  {
+    return { { keys::NameOfInterface, "itkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerInterface" }, { keys::InternalComputationValueType, PodString<InternalComputationValueType>::Get() }, { keys::Dimensionality, std::to_string(D) } };
+  }
+};
+
+
+
 } // end namespace selx
 #endif // #define InterfaceTraits_h

@@ -58,8 +58,8 @@ public:
 
 TEST_F( InterfaceTest, InterfaceNameTraits )
 {
-  EXPECT_STREQ( InterfaceName< MetricValueInterface >::Get(), "MetricValueInterface" );
-  EXPECT_STREQ( InterfaceName< InterfaceAcceptor< MetricValueInterface >>::Get(), "MetricValueInterface" );
+  EXPECT_STREQ(Properties< MetricValueInterface >::Get().at("NameOfInterface").c_str(), "MetricValueInterface");
+  EXPECT_STREQ(Properties< InterfaceAcceptor< MetricValueInterface >>::Get().at("NameOfInterface").c_str(), "MetricValueInterface");
 }
 
 TEST_F( InterfaceTest, DynamicCast )
