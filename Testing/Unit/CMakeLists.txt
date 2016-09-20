@@ -68,7 +68,7 @@ list( APPEND TEST_LIBRARIES
 
 foreach( SuperElastixUnitTestFileName ${SUPERELASTIX_TESTS} )
   # Build tests executables
-  get_filename_component( SuperElastixUnitTest ${SuperElastixUnitTestFileName} NAME )
+  get_filename_component( SuperElastixUnitTest ${SuperElastixUnitTestFileName} NAME_WE )
   add_executable( ${SuperElastixUnitTest} ${SuperElastixUnitTestFileName} )
   target_link_libraries( "${SuperElastixUnitTest}" ${SUPERELASTIX_LIBRARIES} ${ITK_LIBRARIES} ${TEST_LIBRARIES} )
 
