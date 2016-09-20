@@ -30,10 +30,14 @@ enable_language(C)
 enable_language(CXX)
 set( CMAKE_CXX_STANDARD 11 )
 
-# Place libraries and executables in the bin directory
-set( CMAKE_RUNTIME_OUTPUT_DIRECTORY
-  "${CMAKE_BINARY_DIR}/bin"
-)
+# Place executables in the bin directory
+set( CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin" )
+
+# Place shared libraries in the lib directory
+set( CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib" )
+
+# Place static libraries in the lib directory
+set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib" )
 
 # Include SuperElastix CMake scripts
 list( APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake" )
@@ -124,7 +128,7 @@ option( SUPERELASTIX_BUILD_READTHEDOCS "Enable building readthedocs.org document
 # Enable other projects to use SuperElastix via CMake's find_packge() and a use-file
 
 set( SUPERELASTIX_CONFIG_DIR ${CMAKE_CURRENT_BINARY_DIR} )
-set( SUPERELASTIX_BINARY_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} )
+set( SUPERELASTIX_BINARY_DIR ${CMAKE_LIBRARY_OUTPUT_DIRECTORY} )
 
 configure_file( SuperElastixConfig.cmake.in SuperElastixConfig.cmake @ONLY IMMEDIATE )
 configure_file( UseSuperElastix.cmake.in UseSuperElastix.cmake COPYONLY IMMEDIATE )
