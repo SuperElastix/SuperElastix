@@ -271,34 +271,12 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel >
 {
   bool hasUndefinedCriteria( false );
   bool meetsCriteria( false );
-  if( criterion.first == "ComponentProperty" )
+  if (this->TemplateProperties().count(criterion.first) == 1) // e.g. is "Dimensionality" a template property?
   {
     meetsCriteria = true;
-    for( auto const & criterionValue : criterion.second ) // auto&& preferred?
+    for (auto const & criterionValue : criterion.second) 
     {
-      if( criterionValue != "SomeProperty" )  // e.g. "GradientDescent", "SupportsSparseSamples
-      {
-        meetsCriteria = false;
-      }
-    }
-  }
-  else if( criterion.first == "Dimensionality" ) //Supports this?
-  {
-    meetsCriteria = true;
-    for( auto const & criterionValue : criterion.second ) // auto&& preferred?
-    {
-      if( std::stoi( criterionValue ) != Dimensionality )
-      {
-        meetsCriteria = false;
-      }
-    }
-  }
-  else if( criterion.first == "PixelType" ) //Supports this?
-  {
-    meetsCriteria = true;
-    for( auto const & criterionValue : criterion.second ) // auto&& preferred?
-    {
-      if( criterionValue != Self::GetPixelTypeNameString() )
+      if (criterionValue != this->TemplateProperties().at(criterion.first)) 
       {
         meetsCriteria = false;
       }
