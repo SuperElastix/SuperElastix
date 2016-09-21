@@ -107,6 +107,9 @@ private:
   /** Read configuration at the blueprints edges and try to find instantiated components */
   void ApplyConnectionConfiguration();
 
+  /** For all uniquely selected components test handshake to non-uniquely selected components */
+  void PropagateConnectionsWithUniqueComponents();
+
   /** See which components need more configuration criteria */
   ComponentNamesType GetNonUniqueComponentNames();
 

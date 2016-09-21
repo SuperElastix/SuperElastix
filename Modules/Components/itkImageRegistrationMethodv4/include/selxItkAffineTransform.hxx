@@ -18,6 +18,7 @@
  *=========================================================================*/
 
 #include "selxItkAffineTransform.h"
+#include "selxCheckTemplateProperties.h"
 
 namespace selx
 {
@@ -52,28 +53,16 @@ ItkAffineTransformComponent< InternalComputationValueType, Dimensionality >
 {
   bool hasUndefinedCriteria( false );
   bool meetsCriteria( false );
-  if( criterion.first == "ComponentProperty" )
+
+  auto status = CheckTemplateProperties(this->TemplateProperties(), criterion);
+  if (status == CriterionStatus::Satisfied)
   {
-    meetsCriteria = true;
-    for( auto const & criterionValue : criterion.second ) // auto&& preferred?
-    {
-      if( criterionValue != "SomeProperty" )  // e.g. "GradientDescent", "SupportsSparseSamples
-      {
-        meetsCriteria = false;
-      }
-    }
+    return true;
   }
-  else if( criterion.first == "Dimensionality" ) //Supports this?
+  else if (status == CriterionStatus::Failed)
   {
-    meetsCriteria = true;
-    for( auto const & criterionValue : criterion.second ) // auto&& preferred?
-    {
-      if( std::stoi( criterionValue ) != Dimensionality )
-      {
-        meetsCriteria = false;
-      }
-    }
-  }
+    return false;
+  } // else: CriterionStatus::Unknown
   return meetsCriteria;
 }
 } //end namespace selx

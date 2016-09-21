@@ -80,8 +80,7 @@ public:
   //BaseClass methods
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
 
-  //static const char * GetName() { return "ItkImageRegistrationMethodv4"; } ;
-  static const char * GetDescription() { return "ItkImageRegistrationMethodv4 Component"; }
+  static const char * GetDescription() { return "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainer Component"; }
 
 private:
 
@@ -97,14 +96,9 @@ private:
 
 protected:
 
-  /* The following struct returns the string name of computation type */
-  /* default implementation */
-
-  static inline const std::string GetTypeNameString()
+  static inline const std::map<std::string, std::string> TemplateProperties()
   {
-    itkGenericExceptionMacro( << "Unknown ScalarType" << typeid( TransformInternalComputationValueType ).name() );
-    // TODO: provide the user instructions how to enable the compilation of the component with the required template types (if desired)
-    // We might define an exception object that can communicate various error messages: for simple user, for developer user, etc
+    return{ { keys::NameOfClass, "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent" }, { keys::InternalComputationValueType, PodString<InternalComputationValueType>::Get() }, { keys::Dimensionality, std::to_string(Dimensionality) } };
   }
 };
 } //end namespace selx

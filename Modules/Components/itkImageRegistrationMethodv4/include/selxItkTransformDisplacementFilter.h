@@ -76,8 +76,8 @@ public:
   //BaseClass methods
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
 
-  //static const char * GetName() { return "ItkTransformDisplacement"; } ;
-  static const char * GetDescription() { return "ItkTransformDisplacement Component"; }
+  //static const char * GetName() { return "ItkTransformDisplacementFilterComponent"; } ;
+  static const char * GetDescription() { return "ItkTransformDisplacementFilter Component"; }
 
 private:
 
@@ -86,113 +86,13 @@ private:
 
 protected:
 
-  /* The following struct returns the string name of computation type */
-  /* default implementation */
-
-  static inline const std::string GetTypeNameString()
+  // return the class name and the template arguments to uniquely identify this component.
+  static inline const std::map<std::string, std::string> TemplateProperties()
   {
-    itkGenericExceptionMacro( << "Unknown ScalarType" << typeid( TPixel ).name() );
-    // TODO: provide the user instructions how to enable the compilation of the component with the required template types (if desired)
-    // We might define an exception object that can communicate various error messages: for simple user, for developer user, etc
-  }
-
-
-  static inline const std::string GetPixelTypeNameString()
-  {
-    itkGenericExceptionMacro( << "Unknown PixelType" << typeid( TPixel ).name() );
-    // TODO: provide the user instructions how to enable the compilation of the component with the required template types (if desired)
-    // We might define an exception object that can communicate various error messages: for simple user, for developer user, etc
+    return{ { keys::NameOfClass, "ItkTransformDisplacementFilterComponent" }, { keys::PixelType, PodString<TPixel>::Get() }, { keys::InternalComputationValueType, PodString<TInternalComputationValue>::Get() }, { keys::Dimensionality, std::to_string(Dimensionality) } };
   }
 };
 
-// unfortunately partial specialization of member functions is not allowed, without partially specializing the entire class.
-
-/*
-template <int Dimensionality>
-class ItkTransformDisplacementComponent < Dimensionality, double >
-{
-  static inline const std::string GetPixelTypeNameString();
-};
-
-template <int Dimensionality>
-inline const std::string
-  ItkTransformDisplacementComponent<Dimensionality, double>
-  ::GetPixelTypeNameString()
-{
-  return std::string("double");
-}
-*/
-
-template< >
-inline const std::string
-ItkTransformDisplacementFilterComponent< 2, float, double >
-::GetPixelTypeNameString()
-{
-  return std::string( "float" );
-}
-
-
-template< >
-inline const std::string
-ItkTransformDisplacementFilterComponent< 2, double, double >
-::GetPixelTypeNameString()
-{
-  return std::string( "double" );
-}
-
-
-template< >
-inline const std::string
-ItkTransformDisplacementFilterComponent< 3, float, double >
-::GetPixelTypeNameString()
-{
-  return std::string( "float" );
-}
-
-
-template< >
-inline const std::string
-ItkTransformDisplacementFilterComponent< 3, double, double >
-::GetPixelTypeNameString()
-{
-  return std::string( "double" );
-}
-
-
-template< >
-inline const std::string
-ItkTransformDisplacementFilterComponent< 2, float, double >
-::GetTypeNameString()
-{
-  return std::string( "2_float" );
-}
-
-
-template< >
-inline const std::string
-ItkTransformDisplacementFilterComponent< 2, double, double >
-::GetTypeNameString()
-{
-  return std::string( "2_double" );
-}
-
-
-template< >
-inline const std::string
-ItkTransformDisplacementFilterComponent< 3, float, double >
-::GetTypeNameString()
-{
-  return std::string( "3_float" );
-}
-
-
-template< >
-inline const std::string
-ItkTransformDisplacementFilterComponent< 3, double, double >
-::GetTypeNameString()
-{
-  return std::string( "3_double" );
-}
 } //end namespace selx
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "selxItkTransformDisplacementFilter.hxx"

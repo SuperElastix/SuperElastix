@@ -21,6 +21,7 @@
 
 namespace selx
 {
+  //TODO deprecate this method: let derived class handle this (using selxCheckTemplateProperties.h)
 bool
 ComponentBase::MeetsCriterionBase( const CriterionType & criterion )
 {
