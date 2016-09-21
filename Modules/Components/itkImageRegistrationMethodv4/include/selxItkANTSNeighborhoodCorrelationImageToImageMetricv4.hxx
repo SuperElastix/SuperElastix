@@ -18,6 +18,7 @@
  *=========================================================================*/
 
 #include "selxItkANTSNeighborhoodCorrelationImageToImageMetricv4.h"
+#include "selxCheckTemplateProperties.h"
 
 namespace selx
 {
@@ -50,46 +51,20 @@ bool
 ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< Dimensionality, TPixel >
 ::MeetsCriterion( const ComponentBase::CriterionType & criterion )
 {
-  bool hasUndefinedCriteria( false );
-  bool meetsCriteria( false );
-  if( criterion.first == "ComponentProperty" )
+  auto status = CheckTemplateProperties(this->TemplateProperties(), criterion);
+  if (status == CriterionStatus::Satisfied)
   {
-    meetsCriteria = true;
-    for( auto const & criterionValue : criterion.second ) // auto&& preferred?
-    {
-      if( criterionValue != "SomeProperty" )  // e.g. "GradientDescent", "SupportsSparseSamples
-      {
-        meetsCriteria = false;
-      }
-    }
+    return true;
   }
-  else if( criterion.first == "Dimensionality" ) //Supports this?
+  else if (status == CriterionStatus::Failed)
   {
-    meetsCriteria = true;
-    for( auto const & criterionValue : criterion.second ) // auto&& preferred?
-    {
-      if( std::stoi( criterionValue ) != Dimensionality )
-      {
-        meetsCriteria = false;
-      }
-    }
-  }
-  else if( criterion.first == "PixelType" ) //Supports this?
-  {
-    meetsCriteria = true;
-    for( auto const & criterionValue : criterion.second ) // auto&& preferred?
-    {
-      if( criterionValue != Self::GetPixelTypeNameString() )
-      {
-        meetsCriteria = false;
-      }
-    }
-  }
+    return false;
+  } // else: CriterionStatus::Unknown
   else if( criterion.first == "Radius" ) //Supports this?
   {
     if( criterion.second.size() != 1 )
     {
-      meetsCriteria = false;
+      return false;
       //itkExceptionMacro("The criterion Sigma may have only 1 value");
     }
     else
@@ -102,15 +77,15 @@ ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< Dimensionality, TPi
         radius.Fill( std::stod( criterionValue ) );
 
         this->m_theItkFilter->SetRadius( radius );
-        meetsCriteria = true;
+        return true;
       }
       catch( itk::ExceptionObject & err )
       {
         //TODO log the error message?
-        meetsCriteria = false;
+        return false;
       }
     }
   }
-  return meetsCriteria;
+  return false;
 }
 } //end namespace selx

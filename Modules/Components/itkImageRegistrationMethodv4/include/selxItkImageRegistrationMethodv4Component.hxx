@@ -24,7 +24,7 @@
 #include "itkANTSNeighborhoodCorrelationImageToImageMetricv4.h"
 #include "itkGradientDescentOptimizerv4.h"
 #include "itkImageFileWriter.h"
-
+#include "selxCheckTemplateProperties.h"
 namespace selx
 {
 template< typename TFilter >
@@ -267,21 +267,20 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel >
 template< int Dimensionality, class TPixel >
 bool
 ItkImageRegistrationMethodv4Component< Dimensionality, TPixel >
-::MeetsCriterion( const ComponentBase::CriterionType & criterion )
+::MeetsCriterion(const ComponentBase::CriterionType & criterion)
 {
-  bool hasUndefinedCriteria( false );
-  bool meetsCriteria( false );
-  if (this->TemplateProperties().count(criterion.first) == 1) // e.g. is "Dimensionality" a template property?
+  bool hasUndefinedCriteria(false);
+  bool meetsCriteria(false);
+
+  auto status = CheckTemplateProperties(this->TemplateProperties(), criterion);
+  if (status == CriterionStatus::Satisfied)
   {
-    meetsCriteria = true;
-    for (auto const & criterionValue : criterion.second) 
-    {
-      if (criterionValue != this->TemplateProperties().at(criterion.first)) 
-      {
-        meetsCriteria = false;
-      }
-    }
+    return true;
   }
+  else if (status == CriterionStatus::Failed)
+  {
+    return false;
+  } // else: CriterionStatus::Unknown
   else if( criterion.first == "NumberOfLevels" ) //Supports this?
   {
     meetsCriteria = true;
