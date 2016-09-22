@@ -100,8 +100,6 @@ selxmodule_enable( ModuleItkImageRegistrationMethodv4 )
 selxmodule_enable( ModuleItkSyNImageRegistrationMethod )
 selxmodule_enable( ModuleElastix )
 selxmodule_enable( ModuleController )
-#selxmodule_enable( ModuleCommandLine )
-include(${CMAKE_SOURCE_DIR}/Modules/CommandLine/CommandLine.cmake)
 # TODO: Build tests depending on enabled modules
 
 # ---------------------------------------------------------------------
@@ -138,9 +136,9 @@ configure_file( UseSuperElastix.cmake.in UseSuperElastix.cmake COPYONLY IMMEDIAT
 # When building the "INSTALL" project of SuperElastix these files are installed
 
 # Copy the SuperElastix executable
-install(TARGETS "SuperElastix"
-  RUNTIME DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/installed"
-)
+# install(TARGETS "SuperElastix"
+#   RUNTIME DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/installed"
+# )
 
 # Copy some of the configuration files
 install(FILES "${SUPERELASTIX_UNITTEST_CONFIGURATION_DATA_DIR}/itkv4_SVF_ANTsCC.json" 
