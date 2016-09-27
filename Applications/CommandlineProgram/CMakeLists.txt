@@ -32,5 +32,5 @@ set(BOOST_LIBRARYDIR ${BOOST_ROOT}/stage/lib)
 find_package(Boost COMPONENTS program_options system filesystem REQUIRED) 
 
 # Compile executable
-add_executable( selx ${COMMANDLINE_SOURCE_FILES} ${COMMANDLINE_HEADER_FILES} )
-target_link_libraries( selx ${SUPERELASTIX_LIBRARIES} ${Boost_LIBRARIES})
+add_executable( superelastix ${COMMANDLINE_SOURCE_FILES} ${COMMANDLINE_HEADER_FILES} )
+target_link_libraries( superelastix ${SUPERELASTIX_LIBRARIES} ${Boost_LIBRARIES})

@@ -17,11 +17,11 @@
 #
 #=========================================================================
 
-set( proj SuperElastixExamples )
+set( proj SuperElastixApplications )
 
 ExternalProject_Add( ${proj}
   DOWNLOAD_COMMAND ""
-  SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../Examples
+  SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../Applications
   BINARY_DIR ${proj}-build
   CMAKE_ARGS
     --no-warn-unused-cli
