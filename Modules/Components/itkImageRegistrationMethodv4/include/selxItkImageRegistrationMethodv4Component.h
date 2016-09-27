@@ -33,17 +33,17 @@
 
 namespace selx
 {
-template< int Dimensionality, class TPixel >
+template< int Dimensionality, class TPixel, class InternalComputationValueType>
 class ItkImageRegistrationMethodv4Component :
   public SuperElastixComponent<
   Accepting< itkImageFixedInterface< Dimensionality, TPixel >,
   itkImageMovingInterface< Dimensionality, TPixel >,
-  itkTransformInterface< double, Dimensionality >,
-  itkTransformParametersAdaptorsContainerInterface< double, Dimensionality >,
+  itkTransformInterface< InternalComputationValueType, Dimensionality >,
+  itkTransformParametersAdaptorsContainerInterface< InternalComputationValueType, Dimensionality >,
   itkMetricv4Interface< Dimensionality, TPixel >,
-  itkOptimizerv4Interface< double >
+  itkOptimizerv4Interface< InternalComputationValueType >
   >,
-  Providing< itkTransformInterface< double, Dimensionality >,
+  Providing< itkTransformInterface< InternalComputationValueType, Dimensionality >,
   RunRegistrationInterface
   >
   >
@@ -58,7 +58,7 @@ public:
   virtual ~ItkImageRegistrationMethodv4Component();
 
   typedef TPixel PixelType;
-  using TransformInternalComputationValueType = double; //should be in class template
+  using TransformInternalComputationValueType = InternalComputationValueType;
 
   // Get the type definitions from the interfaces
 
@@ -115,7 +115,7 @@ protected:
   // return the class name and the template arguments to uniquely identify this component.
   static inline const std::map<std::string, std::string> TemplateProperties()
   {
-    return{ { keys::NameOfClass, "ItkImageRegistrationMethodv4Component" }, { keys::PixelType, PodString<TPixel>::Get() }, { keys::Dimensionality, std::to_string(Dimensionality) } };
+    return{ { keys::NameOfClass, "ItkImageRegistrationMethodv4Component" }, { keys::PixelType, PodString<TPixel>::Get() },{ keys::InternalComputationValueType, PodString<InternalComputationValueType>::Get() }, { keys::Dimensionality, std::to_string(Dimensionality) } };
   }
 
 };
