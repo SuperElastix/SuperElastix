@@ -125,9 +125,9 @@ endif()
 include( SuperElastix )
 
 # ---------------------------------------------------------------------
-# Build Examples as an external project
+# Build Applications as an external project as an integration test
 
-include( ExternalExamples )
+include( ExternalApplications )
 
 
 
