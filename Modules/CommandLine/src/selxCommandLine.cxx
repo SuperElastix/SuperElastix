@@ -62,7 +62,8 @@ main( int ac, char * av[] )
       selx::MonolithicTransformixComponent< 3, float >,
       selx::ItkImageSourceFixedComponent< 3, float >,
       selx::ItkImageSourceMovingComponent< 3, float >,
-      selx::ItkImageSinkComponent< 3, float >
+      selx::ItkImageSinkComponent< 3, float >,
+      selx::ItkImageRegistrationMethodv4Component< 3, float, float>
     >;
 
 

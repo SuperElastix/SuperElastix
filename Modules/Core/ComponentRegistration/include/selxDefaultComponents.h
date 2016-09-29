@@ -49,7 +49,7 @@ using DefaultComponents = selx::TypeList<
   ElastixComponent< 2, float >,
   MonolithicElastixComponent< 2, float >,
   MonolithicTransformixComponent< 2, float >,
-  ItkImageRegistrationMethodv4Component< 2, float >,
+  ItkImageRegistrationMethodv4Component< 2, float, double>,
   ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< 2, float >,
   ItkMeanSquaresImageToImageMetricv4Component< 2, float >,
   ItkGradientDescentOptimizerv4Component< double >,
