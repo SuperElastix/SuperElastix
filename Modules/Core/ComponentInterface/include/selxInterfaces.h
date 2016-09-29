@@ -86,7 +86,7 @@ public:
 template< int Dimensionality, class TPixel >
 class itkImageInterface
 {
-  // An interface that passes the pointer of an output image
+  // An interface that provides the pointer of an output image
 
 public:
 
@@ -97,7 +97,7 @@ public:
 template< int Dimensionality, class TPixel >
 class itkImageFixedInterface
 {
-  // An interface that passes the pointer of an output image
+  // An interface that provides the smart pointer to an itk image
 
 public:
 
@@ -108,7 +108,8 @@ public:
 template< int Dimensionality >
 class itkImageDomainFixedInterface
 {
-  // An interface that passes the pointer of an output image
+  // An interface that provides the smart pointer to the base class of an itk image
+  // that holds the origin/spacing/ etc domain information. 
 
 public:
 
@@ -119,7 +120,7 @@ public:
 template< int Dimensionality, class TPixel >
 class itkImageMovingInterface
 {
-  // An interface that passes the pointer of an output image
+  // An interface that provides the smart pointer to an itk image
 
 public:
 
