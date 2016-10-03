@@ -18,6 +18,7 @@
  *=========================================================================*/
 
 #include "selxItkImageSource.h"
+#include "selxCheckTemplateProperties.h"
 
 namespace selx
 {

@@ -18,6 +18,7 @@
  *=========================================================================*/
 
 #include "selxElastixComponent.h"
+#include "selxCheckTemplateProperties.h"
 
 namespace selx
 {

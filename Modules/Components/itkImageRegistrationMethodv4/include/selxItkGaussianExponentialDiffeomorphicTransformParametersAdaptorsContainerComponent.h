@@ -98,7 +98,7 @@ protected:
 
   static inline const std::map< std::string, std::string > TemplateProperties()
   {
-    return { { keys::NameOfClass, "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent" }, { keys::InternalComputationValueType, PodString< InternalComputationValueType >::Get() }, { keys::Dimensionality, std::to_string( Dimensionality ) } };
+    return { { keys::NameOfClass, "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent" }, { keys::InternalComputationValueType, PodString< TransformInternalComputationValueType >::Get() }, { keys::Dimensionality, std::to_string( Dimensionality ) } };
   }
 };
 } //end namespace selx

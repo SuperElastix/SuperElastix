@@ -18,6 +18,7 @@
  *=========================================================================*/
 
 #include "selxItkMeshSource.h"
+#include "selxCheckTemplateProperties.h"
 
 namespace selx
 {

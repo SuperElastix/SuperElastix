@@ -18,6 +18,7 @@
  *=========================================================================*/
 
 #include "selxDisplacementFieldItkImageFilterSink.h"
+#include "selxCheckTemplateProperties.h"
 
 namespace selx
 {

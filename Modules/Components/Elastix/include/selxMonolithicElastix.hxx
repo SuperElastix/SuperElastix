@@ -18,6 +18,7 @@
  *=========================================================================*/
 
 #include "selxMonolithicElastix.h"
+#include "selxCheckTemplateProperties.h"
 
 namespace selx
 {

@@ -18,6 +18,7 @@
  *=========================================================================*/
 
 #include "selxItkMeshSink.h"
+#include "selxCheckTemplateProperties.h"
 
 namespace selx
 {

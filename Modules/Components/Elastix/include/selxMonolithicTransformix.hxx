@@ -18,6 +18,7 @@
  *=========================================================================*/
 
 #include "selxMonolithicTransformix.h"
+#include "selxCheckTemplateProperties.h"
 #include <string>
 
 namespace selx
