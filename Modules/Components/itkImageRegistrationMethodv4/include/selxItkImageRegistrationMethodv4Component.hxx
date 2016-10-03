@@ -108,9 +108,9 @@ public:
     }
     else
     {
-      OptimizerPointer optimizer = static_cast< OptimizerPointer >( object );
-      std::cout << optimizer->GetCurrentIteration() << ": ";
-      std::cout << optimizer->GetCurrentMetricValue() << std::endl;
+      // OptimizerPointer optimizer = static_cast< OptimizerPointer >( object );
+      //std::cout << optimizer->GetCurrentIteration() << ": ";
+      //std::cout << optimizer->GetCurrentMetricValue() << std::endl;
       //std::cout << optimizer->GetInfinityNormOfProjectedGradient() << std::endl;
     }
   }
