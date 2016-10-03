@@ -54,12 +54,12 @@ ItkAffineTransformComponent< InternalComputationValueType, Dimensionality >
   bool hasUndefinedCriteria( false );
   bool meetsCriteria( false );
 
-  auto status = CheckTemplateProperties(this->TemplateProperties(), criterion);
-  if (status == CriterionStatus::Satisfied)
+  auto status = CheckTemplateProperties( this->TemplateProperties(), criterion );
+  if( status == CriterionStatus::Satisfied )
   {
     return true;
   }
-  else if (status == CriterionStatus::Failed)
+  else if( status == CriterionStatus::Failed )
   {
     return false;
   } // else: CriterionStatus::Unknown

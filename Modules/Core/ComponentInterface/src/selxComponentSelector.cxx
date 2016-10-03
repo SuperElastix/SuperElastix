@@ -54,37 +54,48 @@ ComponentSelector::AddCriterion( const CriterionType & criterion )
     } );
 }
 
-void
-ComponentSelector::AddAcceptingInterfaceCriteria(const InterfaceCriteriaType & interfaceCriteria)
-{
-  this->m_PossibleComponents.remove_if([&](ComponentBasePointer component){
-    return 0==component->CountAcceptingInterfaces(interfaceCriteria);
-  });
-}
 
 void
-ComponentSelector::AddProvidingInterfaceCriteria(const InterfaceCriteriaType & interfaceCriteria)
+ComponentSelector::AddAcceptingInterfaceCriteria( const InterfaceCriteriaType & interfaceCriteria )
 {
-  this->m_PossibleComponents.remove_if([&](ComponentBasePointer component){
-    return 0 == component->CountProvidingInterfaces(interfaceCriteria);
-  });
+  this->m_PossibleComponents.remove_if([ & ]( ComponentBasePointer component ){
+      return 0 == component->CountAcceptingInterfaces( interfaceCriteria );
+    } );
 }
+
+
+void
+ComponentSelector::AddProvidingInterfaceCriteria( const InterfaceCriteriaType & interfaceCriteria )
+{
+  this->m_PossibleComponents.remove_if([ & ]( ComponentBasePointer component ){
+      return 0 == component->CountProvidingInterfaces( interfaceCriteria );
+    } );
+}
+
 
 // CompatibleInterfaces
-unsigned int ComponentSelector::RequireAcceptingInterfaceFrom(ComponentBasePointer other, const InterfaceCriteriaType & interfaceCriteria)
+unsigned int
+ComponentSelector::RequireAcceptingInterfaceFrom( ComponentBasePointer other, const InterfaceCriteriaType & interfaceCriteria )
 {
-  this->m_PossibleComponents.remove_if([&](ComponentBasePointer component){auto status = component->CanAcceptConnectionFrom(other, interfaceCriteria);
-  return status == InterfaceStatus::noaccepter || status == InterfaceStatus::noprovider;
-  });
+  this->m_PossibleComponents.remove_if([ & ]( ComponentBasePointer component ){
+      auto status = component->CanAcceptConnectionFrom( other, interfaceCriteria );
+      return status == InterfaceStatus::noaccepter || status == InterfaceStatus::noprovider;
+    } );
   return 0;
 }
-unsigned int ComponentSelector::RequireProvidingInterfaceTo(ComponentBasePointer other, const InterfaceCriteriaType & interfaceCriteria)
+
+
+unsigned int
+ComponentSelector::RequireProvidingInterfaceTo( ComponentBasePointer other, const InterfaceCriteriaType & interfaceCriteria )
 {
-  this->m_PossibleComponents.remove_if([&](ComponentBasePointer component){auto status = other->CanAcceptConnectionFrom(component, interfaceCriteria);
-  return status == InterfaceStatus::noaccepter || status == InterfaceStatus::noprovider;
-  });
+  this->m_PossibleComponents.remove_if([ & ]( ComponentBasePointer component ){
+      auto status = other->CanAcceptConnectionFrom( component, interfaceCriteria );
+      return status == InterfaceStatus::noaccepter || status == InterfaceStatus::noprovider;
+    } );
   return 0;
 }
+
+
 ComponentSelector::ComponentBasePointer
 ComponentSelector::GetComponent()
 {
@@ -108,10 +119,11 @@ ComponentSelector::HasMultipleComponents()
   return ( this->m_PossibleComponents.size() > 1 );
 }
 
+
 unsigned int
 ComponentSelector::NumberOfComponents()
 {
-  return  this->m_PossibleComponents.size();
+  return this->m_PossibleComponents.size();
 }
 } // end namespace selx
 

@@ -21,7 +21,7 @@
 
 namespace selx
 {
-  //TODO deprecate this method: let derived class handle this (using selxCheckTemplateProperties.h)
+//TODO deprecate this method: let derived class handle this (using selxCheckTemplateProperties.h)
 bool
 ComponentBase::MeetsCriterionBase( const CriterionType & criterion )
 {
@@ -37,5 +37,4 @@ ComponentBase::MeetsCriterionBase( const CriterionType & criterion )
   // else pass criterion to derived Component
   return this->MeetsCriterion( criterion );
 }
-
 } // end namespace selx

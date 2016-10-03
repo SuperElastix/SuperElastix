@@ -91,12 +91,11 @@ private:
 protected:
 
   // return the class name and the template arguments to uniquely identify this component.
-  static inline const std::map<std::string, std::string> TemplateProperties()
+  static inline const std::map< std::string, std::string > TemplateProperties()
   {
-    return{ { keys::NameOfClass, "ItkResampleFilterComponent" }, { keys::PixelType, PodString<TPixel>::Get() }, { keys::InternalComputationValueType, PodString<TInternalComputationValue>::Get() }, { keys::Dimensionality, std::to_string(Dimensionality) } };
+    return { { keys::NameOfClass, "ItkResampleFilterComponent" }, { keys::PixelType, PodString< TPixel >::Get() }, { keys::InternalComputationValueType, PodString< TInternalComputationValue >::Get() }, { keys::Dimensionality, std::to_string( Dimensionality ) } };
   }
 };
-
 } //end namespace selx
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "selxItkResampleFilter.hxx"

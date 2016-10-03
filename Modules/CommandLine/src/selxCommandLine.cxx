@@ -26,7 +26,6 @@
 #include "selxDefaultComponents.h"
 #include "selxTypeList.h"
 
-
 #include <boost/algorithm/string.hpp>
 
 #include <boost/filesystem.hpp>
@@ -57,17 +56,16 @@ main( int ac, char * av[] )
   {
     typedef std::vector< std::string > VectorOfStringsType;
 
-    using Elastix3DComponents = selx::TypeList <
+    using Elastix3DComponents = selx::TypeList<
       selx::MonolithicElastixComponent< 3, float >,
       selx::MonolithicTransformixComponent< 3, float >,
       selx::ItkImageSourceFixedComponent< 3, float >,
       selx::ItkImageSourceMovingComponent< 3, float >,
       selx::ItkImageSinkComponent< 3, float >,
-      selx::ItkImageRegistrationMethodv4Component< 3, float, float>
-    >;
+      selx::ItkImageRegistrationMethodv4Component< 3, float, float >
+      >;
 
-
-    using RegisterComponents = selx::list_append<selx::DefaultComponents, Elastix3DComponents>::type;
+    using RegisterComponents = selx::list_append< selx::DefaultComponents, Elastix3DComponents >::type;
     selx::SuperElastixFilter< RegisterComponents >::Pointer superElastixFilter = selx::SuperElastixFilter< RegisterComponents >::New();
 
     fs::path            configurationPath;

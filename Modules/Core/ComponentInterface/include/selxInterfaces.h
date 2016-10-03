@@ -109,7 +109,7 @@ template< int Dimensionality >
 class itkImageDomainFixedInterface
 {
   // An interface that provides the smart pointer to the base class of an itk image
-  // that holds the origin/spacing/ etc domain information. 
+  // that holds the origin/spacing/ etc domain information.
 
 public:
 
@@ -229,10 +229,11 @@ class itkMetricv4Interface
 {
 public:
 
-  using FixedImageType = itk::Image< TPixel, Dimensionality >;
-  using MovingImageType = FixedImageType;
+  using FixedImageType   = itk::Image< TPixel, Dimensionality >;
+  using MovingImageType  = FixedImageType;
   using VirtualImageType = FixedImageType;
-  typedef typename itk::ImageToImageMetricv4< FixedImageType, MovingImageType, VirtualImageType, InternalComputationValueType > ImageToImageMetricv4Type;
+  typedef typename itk::ImageToImageMetricv4< FixedImageType, MovingImageType, VirtualImageType,
+    InternalComputationValueType > ImageToImageMetricv4Type;
 
   virtual typename ImageToImageMetricv4Type::Pointer GetItkMetricv4() = 0;
 };

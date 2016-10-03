@@ -33,7 +33,7 @@
 
 namespace selx
 {
-  template< int Dimensionality, class PixelType, class InternalComputationValueType>
+template< int Dimensionality, class PixelType, class InternalComputationValueType >
 class ItkImageRegistrationMethodv4Component :
   public SuperElastixComponent<
   Accepting< itkImageFixedInterface< Dimensionality, PixelType >,
@@ -59,28 +59,28 @@ public:
 
   // Get the type definitions from the interfaces
 
-  using FixedImageType = typename itkImageFixedInterface< Dimensionality, PixelType >::ItkImageType;
-  using MovingImageType = typename itkImageMovingInterface< Dimensionality, PixelType >::ItkImageType;
-  using TransformType = typename itkTransformInterface< InternalComputationValueType, Dimensionality >::TransformType;
+  using FixedImageType   = typename itkImageFixedInterface< Dimensionality, PixelType >::ItkImageType;
+  using MovingImageType  = typename itkImageMovingInterface< Dimensionality, PixelType >::ItkImageType;
+  using TransformType    = typename itkTransformInterface< InternalComputationValueType, Dimensionality >::TransformType;
   using TransformPointer = typename itkTransformInterface< InternalComputationValueType, Dimensionality >::TransformPointer;
 
   using TransformParametersAdaptorsContainerInterfaceType
       = itkTransformParametersAdaptorsContainerInterface< InternalComputationValueType, Dimensionality >;
 
-  typedef itk::ImageRegistrationMethodv4< FixedImageType, MovingImageType, TransformType >    TheItkFilterType;
-  typedef typename TheItkFilterType::ImageMetricType                           ImageMetricType;
-  typedef itk::RegistrationParameterScalesFromPhysicalShift< ImageMetricType > ScalesEstimatorType;
+  typedef itk::ImageRegistrationMethodv4< FixedImageType, MovingImageType, TransformType > TheItkFilterType;
+  typedef typename TheItkFilterType::ImageMetricType                                       ImageMetricType;
+  typedef itk::RegistrationParameterScalesFromPhysicalShift< ImageMetricType >             ScalesEstimatorType;
 
   //Accepting Interfaces:
-  virtual int Set(itkImageFixedInterface< Dimensionality, PixelType > *) override;
+  virtual int Set( itkImageFixedInterface< Dimensionality, PixelType > * ) override;
 
-  virtual int Set(itkImageMovingInterface< Dimensionality, PixelType > *) override;
+  virtual int Set( itkImageMovingInterface< Dimensionality, PixelType > * ) override;
 
   virtual int Set( itkTransformInterface< InternalComputationValueType, Dimensionality > * ) override;
 
   virtual int Set( TransformParametersAdaptorsContainerInterfaceType * ) override;
 
-  virtual int Set(itkMetricv4Interface< Dimensionality, PixelType, InternalComputationValueType > *) override;
+  virtual int Set( itkMetricv4Interface< Dimensionality, PixelType, InternalComputationValueType > * ) override;
 
   virtual int Set( itkOptimizerv4Interface< InternalComputationValueType > * ) override;
 
@@ -107,13 +107,11 @@ private:
 protected:
 
   // return the class name and the template arguments to uniquely identify this component.
-  static inline const std::map<std::string, std::string> TemplateProperties()
+  static inline const std::map< std::string, std::string > TemplateProperties()
   {
-    return{ { keys::NameOfClass, "ItkImageRegistrationMethodv4Component" }, { keys::PixelType, PodString<PixelType>::Get() }, { keys::InternalComputationValueType, PodString<InternalComputationValueType>::Get() }, { keys::Dimensionality, std::to_string(Dimensionality) } };
+    return { { keys::NameOfClass, "ItkImageRegistrationMethodv4Component" }, { keys::PixelType, PodString< PixelType >::Get() }, { keys::InternalComputationValueType, PodString< InternalComputationValueType >::Get() }, { keys::Dimensionality, std::to_string( Dimensionality ) } };
   }
-
 };
-
 } //end namespace selx
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "selxItkImageRegistrationMethodv4Component.hxx"

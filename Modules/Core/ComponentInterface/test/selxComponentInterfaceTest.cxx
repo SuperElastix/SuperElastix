@@ -58,8 +58,8 @@ public:
 
 TEST_F( InterfaceTest, InterfaceNameTraits )
 {
-  EXPECT_STREQ(Properties< MetricValueInterface >::Get().at("NameOfInterface").c_str(), "MetricValueInterface");
-  EXPECT_STREQ(Properties< InterfaceAcceptor< MetricValueInterface >>::Get().at("NameOfInterface").c_str(), "MetricValueInterface");
+  EXPECT_STREQ( Properties< MetricValueInterface >::Get().at( "NameOfInterface" ).c_str(), "MetricValueInterface" );
+  EXPECT_STREQ( Properties< InterfaceAcceptor< MetricValueInterface >>::Get().at( "NameOfInterface" ).c_str(), "MetricValueInterface" );
 }
 
 TEST_F( InterfaceTest, DynamicCast )
@@ -93,29 +93,29 @@ TEST_F( InterfaceTest, DynamicCast )
 TEST_F( InterfaceTest, ConnectByName )
 {
   InterfaceStatus IFstatus;
-  EXPECT_NO_THROW(IFstatus = optimizer3p->CanAcceptConnectionFrom( metric3p, { { "NameOfInterface", "MetricValueInterface" } }));
+  EXPECT_NO_THROW( IFstatus = optimizer3p->CanAcceptConnectionFrom( metric3p, { { "NameOfInterface", "MetricValueInterface" } } ) );
   EXPECT_EQ( IFstatus, InterfaceStatus::success );
 
-  EXPECT_NO_THROW(IFstatus = optimizer3p->CanAcceptConnectionFrom( metric4p, { { "NameOfInterface", "MetricValueInterface" } }));
+  EXPECT_NO_THROW( IFstatus = optimizer3p->CanAcceptConnectionFrom( metric4p, { { "NameOfInterface", "MetricValueInterface" } } ) );
   EXPECT_EQ( IFstatus, InterfaceStatus::success );
 
-  EXPECT_NO_THROW(IFstatus = optimizer4p->CanAcceptConnectionFrom( metric3p, { { "NameOfInterface", "MetricValueInterface" } }));
+  EXPECT_NO_THROW( IFstatus = optimizer4p->CanAcceptConnectionFrom( metric3p, { { "NameOfInterface", "MetricValueInterface" } } ) );
   EXPECT_EQ( IFstatus, InterfaceStatus::success );
 
-  EXPECT_NO_THROW(IFstatus = optimizer4p->CanAcceptConnectionFrom( metric4p, { { "NameOfInterface", "MetricValueInterface" } }));
+  EXPECT_NO_THROW( IFstatus = optimizer4p->CanAcceptConnectionFrom( metric4p, { { "NameOfInterface", "MetricValueInterface" } } ) );
   EXPECT_EQ( IFstatus, InterfaceStatus::success );
 
-  EXPECT_NO_THROW(IFstatus = optimizer3p->CanAcceptConnectionFrom( metric3p, { { "NameOfInterface", "MetricDerivativeInterface" } }));
+  EXPECT_NO_THROW( IFstatus = optimizer3p->CanAcceptConnectionFrom( metric3p, { { "NameOfInterface", "MetricDerivativeInterface" } } ) );
   EXPECT_EQ( IFstatus, InterfaceStatus::success );
 
-  EXPECT_NO_THROW(IFstatus = optimizer3p->CanAcceptConnectionFrom( metric4p, { { "NameOfInterface", "MetricDerivativeInterface" } }));
+  EXPECT_NO_THROW( IFstatus = optimizer3p->CanAcceptConnectionFrom( metric4p, { { "NameOfInterface", "MetricDerivativeInterface" } } ) );
   EXPECT_EQ( IFstatus, InterfaceStatus::noprovider );
 
-  EXPECT_NO_THROW(IFstatus = optimizer4p->CanAcceptConnectionFrom( metric3p, { { "NameOfInterface", "MetricDerivativeInterface" } }));
+  EXPECT_NO_THROW( IFstatus = optimizer4p->CanAcceptConnectionFrom( metric3p, { { "NameOfInterface", "MetricDerivativeInterface" } } ) );
   EXPECT_EQ( IFstatus, InterfaceStatus::noaccepter );
 
-  EXPECT_NO_THROW(IFstatus = optimizer3p->CanAcceptConnectionFrom(metric3p, { }));
-  EXPECT_EQ(IFstatus, InterfaceStatus::multiple);
+  EXPECT_NO_THROW( IFstatus = optimizer3p->CanAcceptConnectionFrom( metric3p, {} ) );
+  EXPECT_EQ( IFstatus, InterfaceStatus::multiple );
 }
 
 TEST_F( InterfaceTest, ConnectAll )

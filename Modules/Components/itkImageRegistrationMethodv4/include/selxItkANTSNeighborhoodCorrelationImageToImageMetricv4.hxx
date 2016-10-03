@@ -51,12 +51,12 @@ bool
 ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< Dimensionality, TPixel >
 ::MeetsCriterion( const ComponentBase::CriterionType & criterion )
 {
-  auto status = CheckTemplateProperties(this->TemplateProperties(), criterion);
-  if (status == CriterionStatus::Satisfied)
+  auto status = CheckTemplateProperties( this->TemplateProperties(), criterion );
+  if( status == CriterionStatus::Satisfied )
   {
     return true;
   }
-  else if (status == CriterionStatus::Failed)
+  else if( status == CriterionStatus::Failed )
   {
     return false;
   } // else: CriterionStatus::Unknown

@@ -64,12 +64,11 @@ private:
 protected:
 
   // return the class name and the template arguments to uniquely identify this component.
-  static inline const std::map<std::string, std::string> TemplateProperties()
+  static inline const std::map< std::string, std::string > TemplateProperties()
   {
-    return{ { keys::NameOfClass, "ItkMeshSourceComponent" }, { keys::PixelType, PodString<TPixel>::Get() }, { keys::Dimensionality, std::to_string(Dimensionality) } };
+    return { { keys::NameOfClass, "ItkMeshSourceComponent" }, { keys::PixelType, PodString< TPixel >::Get() }, { keys::Dimensionality, std::to_string( Dimensionality ) } };
   }
 };
-
 } //end namespace selx
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "selxItkMeshSource.hxx"

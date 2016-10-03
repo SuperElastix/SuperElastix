@@ -39,20 +39,23 @@ InterfaceAcceptor< InterfaceT >::Connect( ComponentBase * providerComponent )
   return 1;
 }
 
+
 template< class InterfaceT >
 bool
-InterfaceAcceptor< InterfaceT >::CanAcceptConnectionFrom(ComponentBase * providerComponent)
+InterfaceAcceptor< InterfaceT >::CanAcceptConnectionFrom( ComponentBase * providerComponent )
 {
-  InterfaceT * providerInterface = dynamic_cast< InterfaceT * >(providerComponent);
+  InterfaceT * providerInterface = dynamic_cast< InterfaceT * >( providerComponent );
   return bool(providerInterface);
 }
+
 
 //////////////////////////////////////////////////////////////////////////
 template< typename AcceptingInterfaces, typename ProvidingInterfaces >
 int
-SuperElastixComponent< AcceptingInterfaces, ProvidingInterfaces >::AcceptConnectionFrom(ComponentBase * other, const InterfaceCriteriaType interfaceCriteria)
+SuperElastixComponent< AcceptingInterfaces, ProvidingInterfaces >::AcceptConnectionFrom( ComponentBase * other,
+  const InterfaceCriteriaType interfaceCriteria )
 {
-  return AcceptingInterfaces::ConnectFromImpl(other, interfaceCriteria);
+  return AcceptingInterfaces::ConnectFromImpl( other, interfaceCriteria );
 }
 
 
@@ -63,30 +66,33 @@ SuperElastixComponent< AcceptingInterfaces, ProvidingInterfaces >::AcceptConnect
   return AcceptingInterfaces::ConnectFromImpl( other );
 }
 
+
 template< typename AcceptingInterfaces, typename ProvidingInterfaces >
 InterfaceStatus
 SuperElastixComponent< AcceptingInterfaces, ProvidingInterfaces >
-::CanAcceptConnectionFrom(ComponentBase* other, const InterfaceCriteriaType interfaceCriteria)
+::CanAcceptConnectionFrom( ComponentBase * other, const InterfaceCriteriaType interfaceCriteria )
 {
-  return AcceptingInterfaces::CanAcceptConnectionFrom(other, interfaceCriteria);
+  return AcceptingInterfaces::CanAcceptConnectionFrom( other, interfaceCriteria );
 }
+
 
 //////////////////////////////////////////////////////////////////////////
 template< typename FirstInterface, typename ... RestInterfaces >
 int
-Accepting< FirstInterface, RestInterfaces ... >::ConnectFromImpl(ComponentBase * other, const ComponentBase::InterfaceCriteriaType interfaceCriteria)
+Accepting< FirstInterface, RestInterfaces ... >::ConnectFromImpl( ComponentBase * other,
+  const ComponentBase::InterfaceCriteriaType interfaceCriteria )
 {
   // Does our component have an accepting interface sufficing the right criteria (e.g interfaceName)?
-  if (Count<FirstInterface>::MeetsCriteria(interfaceCriteria) == 1)   // We use the FirstInterface only (of each recursion level), thus the count can be 0 or 1
+  if( Count< FirstInterface >::MeetsCriteria( interfaceCriteria ) == 1 )   // We use the FirstInterface only (of each recursion level), thus the count can be 0 or 1
   {
     // cast always succeeds since we know via the template arguments of the component which InterfaceAcceptors its base classes are.
     InterfaceAcceptor< FirstInterface > * acceptIF = this;
     // Make the connection to the other component by this interface and add the number of successes.
-    return acceptIF->Connect(other) + Accepting< RestInterfaces ... >::ConnectFromImpl(other, interfaceCriteria);
+    return acceptIF->Connect( other ) + Accepting< RestInterfaces ... >::ConnectFromImpl( other, interfaceCriteria );
   }
   else
   {
-    return Accepting< RestInterfaces ... >::ConnectFromImpl(other, interfaceCriteria);
+    return Accepting< RestInterfaces ... >::ConnectFromImpl( other, interfaceCriteria );
   }
 }
 
@@ -106,37 +112,41 @@ Accepting< FirstInterface, RestInterfaces ... >::ConnectFromImpl( ComponentBase 
 
 template< typename FirstInterface, typename ... RestInterfaces >
 InterfaceStatus
-Accepting< FirstInterface, RestInterfaces ... >::CanAcceptConnectionFrom(ComponentBase* other, const ComponentBase::InterfaceCriteriaType interfaceCriteria)
+Accepting< FirstInterface, RestInterfaces ... >::CanAcceptConnectionFrom( ComponentBase * other,
+  const ComponentBase::InterfaceCriteriaType interfaceCriteria )
 {
-
-  InterfaceStatus restInterfacesStatus = Accepting< RestInterfaces ... >::CanAcceptConnectionFrom(other, interfaceCriteria);
+  InterfaceStatus restInterfacesStatus = Accepting< RestInterfaces ... >::CanAcceptConnectionFrom( other, interfaceCriteria );
   // if multiple interfaces were a success we do not have to check any further interfaces.
-  if (restInterfacesStatus == InterfaceStatus::multiple)
+  if( restInterfacesStatus == InterfaceStatus::multiple )
   {
     return InterfaceStatus::multiple;
   }
   // We use the FirstInterface only (of each recursion level), thus the count can be 0 or 1
-  unsigned int interfaceMeetsCriteria = Count<FirstInterface>::MeetsCriteria(interfaceCriteria);
-  if (interfaceMeetsCriteria == 0) // InterfaceStatus::noaccepter;
+  unsigned int interfaceMeetsCriteria = Count< FirstInterface >::MeetsCriteria( interfaceCriteria );
+  if( interfaceMeetsCriteria == 0 ) // InterfaceStatus::noaccepter;
   {
     // no new success, keep the status of previous recursion
     return restInterfacesStatus;
   }
   else // This "FirstInterface" of the component is an acceptor interface that fulfills the criteria
   {
-    InterfaceAcceptor< FirstInterface > * acceptIF = (this);
-    if (acceptIF->CanAcceptConnectionFrom(other))
+    InterfaceAcceptor< FirstInterface > * acceptIF = ( this );
+    if( acceptIF->CanAcceptConnectionFrom( other ) )
     {
       // if a previous interface was a success, we can have either success or multiple (successes)
-      if (restInterfacesStatus == InterfaceStatus::success)
+      if( restInterfacesStatus == InterfaceStatus::success )
+      {
         return InterfaceStatus::multiple;
+      }
       return InterfaceStatus::success;
     }
     else // InterfaceStatus::noprovider
     {
       // The found acceptor interface is not identical to a providing interface of the other component
-      if (restInterfacesStatus == InterfaceStatus::noaccepter)
+      if( restInterfacesStatus == InterfaceStatus::noaccepter )
+      {
         return InterfaceStatus::noprovider;
+      }
       return restInterfacesStatus;
     }
   }
@@ -147,37 +157,38 @@ Accepting< FirstInterface, RestInterfaces ... >::CanAcceptConnectionFrom(Compone
 
 template< typename FirstInterface, typename ... RestInterfaces >
 unsigned int
-Accepting< FirstInterface, RestInterfaces ... >::CountMeetsCriteria(const ComponentBase::InterfaceCriteriaType interfaceCriteria)
+Accepting< FirstInterface, RestInterfaces ... >::CountMeetsCriteria( const ComponentBase::InterfaceCriteriaType interfaceCriteria )
 {
-  return Count<FirstInterface, RestInterfaces ... >::MeetsCriteria(interfaceCriteria);
+  return Count< FirstInterface, RestInterfaces ... >::MeetsCriteria( interfaceCriteria );
 }
+
 
 template< typename FirstInterface, typename ... RestInterfaces >
 unsigned int
-Providing< FirstInterface, RestInterfaces ... >::CountMeetsCriteria(const ComponentBase::InterfaceCriteriaType interfaceCriteria)
+Providing< FirstInterface, RestInterfaces ... >::CountMeetsCriteria( const ComponentBase::InterfaceCriteriaType interfaceCriteria )
 {
-  return Count<FirstInterface, RestInterfaces ... >::MeetsCriteria(interfaceCriteria);
+  return Count< FirstInterface, RestInterfaces ... >::MeetsCriteria( interfaceCriteria );
 }
 
 
-template <typename FirstInterface, typename ... RestInterfaces>
-unsigned int Count<FirstInterface, RestInterfaces ...>::MeetsCriteria(const ComponentBase::InterfaceCriteriaType interfaceCriteria)
+template< typename FirstInterface, typename ... RestInterfaces >
+unsigned int
+Count< FirstInterface, RestInterfaces ... >::MeetsCriteria( const ComponentBase::InterfaceCriteriaType interfaceCriteria )
 {
   auto interfaceProperies = Properties< FirstInterface >::Get();
-  for (const auto keyAndValue : interfaceCriteria)
+  for( const auto keyAndValue : interfaceCriteria )
   {
-    auto && key = keyAndValue.first;
+    auto && key   = keyAndValue.first;
     auto && value = keyAndValue.second;
-    if (interfaceProperies.count(key) != 1 || interfaceProperies[key].compare(value)!=0 )
+    if( interfaceProperies.count( key ) != 1 || interfaceProperies[ key ].compare( value ) != 0 )
     {
       // as soon as any of the criteria fails we break the loop and test the RestInterfaces
-      return Count< RestInterfaces ... >::MeetsCriteria(interfaceCriteria);
+      return Count< RestInterfaces ... >::MeetsCriteria( interfaceCriteria );
     }
   }
   // if all criteria are met for this Interface we add 1 to the count and continue with the RestInterfaces
-  return 1 + Count< RestInterfaces ... >::MeetsCriteria(interfaceCriteria);
-};
-
+  return 1 + Count< RestInterfaces ... >::MeetsCriteria( interfaceCriteria );
+}
 } // end namespace selx
 
 #endif // #define selxSuperElastixComponent_hxx

@@ -31,11 +31,11 @@ namespace selx
 {
 namespace keys
 {
-const char * const NameOfInterface                      = "NameOfInterface";                      // Each Interface has a sting name
-const char * const NameOfClass                          = "NameOfClass";                      // Each Component has a sting name
-const char * const Dimensionality                       = "Dimensionality";                       // Template int parameter 
-const char * const PixelType                            = "PixelType";                            // Template POD parameter  
-const char * const InternalComputationValueType         = "InternalComputationValueType";         // Template POD parameter for transforms or optimizers etc.
+const char * const NameOfInterface              = "NameOfInterface";                          // Each Interface has a sting name
+const char * const NameOfClass                  = "NameOfClass";                              // Each Component has a sting name
+const char * const Dimensionality               = "Dimensionality";                           // Template int parameter
+const char * const PixelType                    = "PixelType";                                // Template POD parameter
+const char * const InternalComputationValueType = "InternalComputationValueType";             // Template POD parameter for transforms or optimizers etc.
 
 const char * const SourceInterface                      = "SourceInterface";                      // Special interface that connects to the outside of the SuperElastixFilter
 const char * const SinkInterface                        = "SinkInterface";                        // Special interface that connects to the outside of the SuperElastixFilter

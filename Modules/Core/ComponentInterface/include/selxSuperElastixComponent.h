@@ -26,10 +26,9 @@
 
 namespace selx
 {
-
-// All SuperElastix Components inherit from their interfaces classes. The interface classes as defined in 
+// All SuperElastix Components inherit from their interfaces classes. The interface classes as defined in
 // "selxInterfaces.h" are by default Providing. The InterfaceAcceptor class turns a Providing interface
-// into an Accepting interface. For a SuperElastixComponent this differentiation is done by grouping the 
+// into an Accepting interface. For a SuperElastixComponent this differentiation is done by grouping the
 // interfaces either in Providing<Interfaces...> or in Accepting<Interfaces...>
 template< class InterfaceT >
 class InterfaceAcceptor
@@ -43,52 +42,58 @@ public:
   // Connect tries to connect this accepting interface with all interfaces of the provider component.
   int Connect( ComponentBase * );
 
-  bool CanAcceptConnectionFrom(ComponentBase *);
+  bool CanAcceptConnectionFrom( ComponentBase * );
 
 private:
 
   bool isSet;
 };
 
-
-template <typename ... Interfaces>
+template< typename ... Interfaces >
 class Accepting;
 
-template <>
-class Accepting<>
+template< >
+class Accepting< >
 {
 public:
-  static unsigned int CountMeetsCriteria(const ComponentBase::InterfaceCriteriaType) { return 0; }
-  int ConnectFromImpl(ComponentBase* other, const ComponentBase::InterfaceCriteriaType interfaceCriteria) { return 0; } //no interface called interfacename ;
-  InterfaceStatus CanAcceptConnectionFrom(ComponentBase* other, const ComponentBase::InterfaceCriteriaType interfaceCriteria) { return InterfaceStatus::noaccepter; }
-  int ConnectFromImpl(ComponentBase *) { return 0; }                                                                                   //Empty RestInterfaces does 0 successful connects ;
+
+  static unsigned int CountMeetsCriteria( const ComponentBase::InterfaceCriteriaType ) { return 0; }
+  int ConnectFromImpl( ComponentBase * other, const ComponentBase::InterfaceCriteriaType interfaceCriteria ) { return 0; } //no interface called interfacename ;
+  InterfaceStatus CanAcceptConnectionFrom( ComponentBase * other, const ComponentBase::InterfaceCriteriaType interfaceCriteria )
+  {
+    return InterfaceStatus::noaccepter;
+  }
+  int ConnectFromImpl( ComponentBase * ) { return 0; }                                                                                   //Empty RestInterfaces does 0 successful connects ;
 
 protected:
-
-
 };
 
 template< typename FirstInterface, typename ... RestInterfaces >
 class Accepting< FirstInterface, RestInterfaces ... > : public InterfaceAcceptor< FirstInterface >, public Accepting< RestInterfaces ... >
 {
 public:
-  static unsigned int CountMeetsCriteria(const ComponentBase::InterfaceCriteriaType);
-  int ConnectFromImpl(ComponentBase* other, const ComponentBase::InterfaceCriteriaType interfaceCriteria);
-  InterfaceStatus CanAcceptConnectionFrom(ComponentBase* other, const ComponentBase::InterfaceCriteriaType interfaceCriteria);
+
+  static unsigned int CountMeetsCriteria( const ComponentBase::InterfaceCriteriaType );
+
+  int ConnectFromImpl( ComponentBase * other, const ComponentBase::InterfaceCriteriaType interfaceCriteria );
+
+  InterfaceStatus CanAcceptConnectionFrom( ComponentBase * other, const ComponentBase::InterfaceCriteriaType interfaceCriteria );
+
   int ConnectFromImpl( ComponentBase * );
 
 protected:
-
 };
 
-template <typename ... Interfaces>
+template< typename ... Interfaces >
 class Providing;
 
 template< >
-class Providing<>
+class Providing< >
 {
 public:
-  static unsigned int CountMeetsCriteria(const ComponentBase::InterfaceCriteriaType) { return 0; }
+
+  static unsigned int CountMeetsCriteria( const ComponentBase::InterfaceCriteriaType ) { return 0; }
+
 protected:
 };
 
@@ -96,7 +101,9 @@ template< typename FirstInterface, typename ... RestInterfaces >
 class Providing< FirstInterface, RestInterfaces ... > : public FirstInterface, public Providing< RestInterfaces ... >
 {
 public:
-  static unsigned int CountMeetsCriteria(const ComponentBase::InterfaceCriteriaType);
+
+  static unsigned int CountMeetsCriteria( const ComponentBase::InterfaceCriteriaType );
+
 protected:
 };
 
@@ -107,40 +114,45 @@ protected:
 
 // helper class for SuperElastixComponent::CountAcceptingInterfaces and SuperElastixComponent::CountProvidingInterfaces to loop over a set of interfaces
 
-template <typename ... Interfaces>
+template< typename ... Interfaces >
 struct Count;
 
-template <>
-struct Count<>
+template< >
+struct Count< >
 {
-  static unsigned int MeetsCriteria(const ComponentBase::InterfaceCriteriaType) { return 0; };
+  static unsigned int MeetsCriteria( const ComponentBase::InterfaceCriteriaType ) { return 0; }
 };
 
-template < typename FirstInterface, typename ... RestInterfaces>
+template< typename FirstInterface, typename ... RestInterfaces >
 struct Count< FirstInterface, RestInterfaces ... >
 {
-  static unsigned int MeetsCriteria(const ComponentBase::InterfaceCriteriaType);
+  static unsigned int MeetsCriteria( const ComponentBase::InterfaceCriteriaType );
 };
 
 template< typename AcceptingInterfaces, typename ProvidingInterfaces >
 class SuperElastixComponent : public AcceptingInterfaces, public ProvidingInterfaces, public ComponentBase
 {
 public:
-  
+
   using AcceptingInterfacesTypeList = AcceptingInterfaces;
   using ProvidingInterfacesTypeList = ProvidingInterfaces;
-  
-  virtual int AcceptConnectionFrom(ComponentBase * other, const InterfaceCriteriaType interfaceCriteria);
+
+  virtual int AcceptConnectionFrom( ComponentBase * other, const InterfaceCriteriaType interfaceCriteria );
 
   virtual int AcceptConnectionFrom( ComponentBase * );
 
 protected:
 
-  virtual InterfaceStatus CanAcceptConnectionFrom(ComponentBase* other, const InterfaceCriteriaType interfaceCriteria) override;
+  virtual InterfaceStatus CanAcceptConnectionFrom( ComponentBase * other, const InterfaceCriteriaType interfaceCriteria ) override;
 
-  virtual unsigned int CountAcceptingInterfaces(const ComponentBase::InterfaceCriteriaType interfaceCriteria){ return AcceptingInterfaces::CountMeetsCriteria(interfaceCriteria); };
-  virtual unsigned int CountProvidingInterfaces(const ComponentBase::InterfaceCriteriaType interfaceCriteria){ return ProvidingInterfaces::CountMeetsCriteria(interfaceCriteria); };
-  
+  virtual unsigned int CountAcceptingInterfaces( const ComponentBase::InterfaceCriteriaType interfaceCriteria )
+  {
+    return AcceptingInterfaces::CountMeetsCriteria( interfaceCriteria );
+  }
+  virtual unsigned int CountProvidingInterfaces( const ComponentBase::InterfaceCriteriaType interfaceCriteria )
+  {
+    return ProvidingInterfaces::CountMeetsCriteria( interfaceCriteria );
+  }
 };
 } // end namespace selx
 

@@ -89,7 +89,7 @@ public:
     ItkSyNImageRegistrationMethodComponent< 3, double >,
     ItkSyNImageRegistrationMethodComponent< 2, float >,
     ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< 3, double >,
-    ItkMeanSquaresImageToImageMetricv4Component< 3, double, double>,
+    ItkMeanSquaresImageToImageMetricv4Component< 3, double, double >,
     ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< 2, float >,
     ItkMeanSquaresImageToImageMetricv4Component< 2, float, double >,
     ItkAffineTransformComponent< double, 3 >,

@@ -27,7 +27,7 @@
 #include "selxMacro.h"
 namespace selx
 {
-  template< int Dimensionality, class TPixel, class InternalComputationValueType >
+template< int Dimensionality, class TPixel, class InternalComputationValueType >
 class ItkMeanSquaresImageToImageMetricv4Component :
   public SuperElastixComponent<
   Accepting< >,
@@ -53,7 +53,8 @@ public:
   typedef typename itk::ImageToImageMetricv4< FixedImageType, MovingImageType > ImageToImageMetricv4Type;
   typedef typename ImageToImageMetricv4Type::Pointer                            ItkMetricv4Pointer;
 
-  typedef typename itk::MeanSquaresImageToImageMetricv4< FixedImageType, MovingImageType, VirtualImageType, InternalComputationValueType > TheItkFilterType;
+  typedef typename itk::MeanSquaresImageToImageMetricv4< FixedImageType, MovingImageType, VirtualImageType,
+    InternalComputationValueType > TheItkFilterType;
 
   virtual ItkMetricv4Pointer GetItkMetricv4() override;
 
@@ -69,12 +70,13 @@ private:
 protected:
 
   // return the class name and the template arguments to uniquely identify this component.
-  static inline const std::map<std::string, std::string> TemplateProperties()
+  static inline const std::map< std::string, std::string > TemplateProperties()
   {
-    return{ { keys::NameOfClass, "ItkMeanSquaresImageToImageMetricv4Component" }, { keys::PixelType, PodString<TPixel>::Get() }, { keys::Dimensionality, std::to_string(Dimensionality) }, { keys::InternalComputationValueType, PodString<InternalComputationValueType>::Get() } };
+    return { { keys::NameOfClass, "ItkMeanSquaresImageToImageMetricv4Component" }, { keys::PixelType, PodString< TPixel >::Get() },
+             { keys::Dimensionality, std::to_string( Dimensionality ) },
+             { keys::InternalComputationValueType, PodString< InternalComputationValueType >::Get() } };
   }
 };
-
 } //end namespace selx
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "selxItkMeanSquaresImageToImageMetricv4.hxx"

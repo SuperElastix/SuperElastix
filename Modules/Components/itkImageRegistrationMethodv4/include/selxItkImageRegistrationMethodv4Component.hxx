@@ -61,7 +61,7 @@ public:
       typename TFilter::ShrinkFactorsPerDimensionContainerType shrinkFactors = filter->GetShrinkFactorsPerDimension( currentLevel );
       typename TFilter::SmoothingSigmasArrayType smoothingSigmas             = filter->GetSmoothingSigmasPerLevel();
       typename TFilter::TransformParametersAdaptorsContainerType adaptors    = filter->GetTransformParametersAdaptorsPerLevel();
-      
+
       // TODO optimizer is can be ObjectToObjectOptimizerBaseTemplate<double> or ObjectToObjectOptimizerBaseTemplate<float>
       // dynamic cast will fail on <float>, since GradientDescentOptimizerv4Type is by default <double>
       auto * optimizerBase = filter->GetOptimizer();
@@ -117,7 +117,8 @@ public:
 };
 
 template< int Dimensionality, class TPixel, class InternalComputationValueType >
-ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >::ItkImageRegistrationMethodv4Component() : m_TransformAdaptorsContainerInterface(
+ItkImageRegistrationMethodv4Component< Dimensionality, TPixel,
+InternalComputationValueType >::ItkImageRegistrationMethodv4Component() : m_TransformAdaptorsContainerInterface(
     nullptr )
 {
   m_theItkFilter = TheItkFilterType::New();
@@ -161,7 +162,8 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
 
 template< int Dimensionality, class TPixel, class InternalComputationValueType >
 int
-ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >::Set( itkTransformInterface< InternalComputationValueType,
+ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >::Set(
+  itkTransformInterface< InternalComputationValueType,
   Dimensionality > * component )
 {
   this->m_theItkFilter->SetInitialTransform( component->GetItkTransform() );
@@ -172,7 +174,8 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
 
 template< int Dimensionality, class TPixel, class InternalComputationValueType >
 int
-ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >::Set( TransformParametersAdaptorsContainerInterfaceType * component )
+ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >::Set(
+  TransformParametersAdaptorsContainerInterfaceType * component )
 {
   // store the interface to the ParametersAdaptorsContainer since during the setup of the connections the TransformParametersAdaptorComponent might not be fully connected and thus does not have the adaptors ready.
   this->m_TransformAdaptorsContainerInterface = component;
@@ -182,7 +185,8 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
 
 template< int Dimensionality, class TPixel, class InternalComputationValueType >
 int
-ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >::Set(itkMetricv4Interface< Dimensionality, TPixel, InternalComputationValueType > * component)
+ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >::Set( itkMetricv4Interface< Dimensionality, TPixel,
+  InternalComputationValueType > * component )
 {
   //TODO: The optimizer must be set explicitly, since this is a work-around for a bug in itkRegistrationMethodv4.
   //TODO: report bug to itk: when setting a metric, the optimizer must be set explicitly as well, since default optimizer setup breaks.
@@ -194,7 +198,8 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
 
 template< int Dimensionality, class TPixel, class InternalComputationValueType >
 int
-ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >::Set(itkOptimizerv4Interface< InternalComputationValueType > * component)
+ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >::Set(
+  itkOptimizerv4Interface< InternalComputationValueType > * component )
 {
   //TODO: The optimizer must be set explicitly, since this is a work-around for a bug in itkRegistrationMethodv4.
   //TODO: report bug to itk: when setting a metric, the optimizer must be set explicitly as well, since default optimizer setup breaks.
@@ -245,8 +250,8 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
   if( this->m_TransformAdaptorsContainerInterface != nullptr )
   {
     auto adaptors = this->m_TransformAdaptorsContainerInterface->GetItkTransformParametersAdaptorsContainer();
-    this->m_theItkFilter->SetTransformParametersAdaptorsPerLevel( adaptors 
-        );
+    this->m_theItkFilter->SetTransformParametersAdaptorsPerLevel( adaptors
+      );
   }
 
   typedef CommandIterationUpdate< TheItkFilterType > RegistrationCommandType;
@@ -270,17 +275,17 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
 template< int Dimensionality, class TPixel, class InternalComputationValueType >
 bool
 ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >
-::MeetsCriterion(const ComponentBase::CriterionType & criterion)
+::MeetsCriterion( const ComponentBase::CriterionType & criterion )
 {
-  bool hasUndefinedCriteria(false);
-  bool meetsCriteria(false);
+  bool hasUndefinedCriteria( false );
+  bool meetsCriteria( false );
 
-  auto status = CheckTemplateProperties(this->TemplateProperties(), criterion);
-  if (status == CriterionStatus::Satisfied)
+  auto status = CheckTemplateProperties( this->TemplateProperties(), criterion );
+  if( status == CriterionStatus::Satisfied )
   {
     return true;
   }
-  else if (status == CriterionStatus::Failed)
+  else if( status == CriterionStatus::Failed )
   {
     return false;
   } // else: CriterionStatus::Unknown

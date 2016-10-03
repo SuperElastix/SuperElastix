@@ -23,50 +23,47 @@
 
 namespace selx
 {
+template< typename T >
+struct PodString
+{
+  static_assert( StaticErrorMessageRevealT< T >::False, "Please Implement PodString<T> for this T" );
+};
 
+template< >
+struct PodString< unsigned int >
+{
+  static const char * Get()
+  {
+    return "unsigned int";
+  }
+};
 
-	template< typename T >
-	struct PodString
-	{
-		static_assert(StaticErrorMessageRevealT<T>::False, "Please Implement PodString<T> for this T");
-	};
+template< >
+struct PodString< int >
+{
+  static const char * Get()
+  {
+    return "int";
+  }
+};
 
-	template< >
-	struct PodString< unsigned int >
-	{
-		static const char * Get()
-		{
-			return "unsigned int";
-		}
-	};
+template< >
+struct PodString< float >
+{
+  static const char * Get()
+  {
+    return "float";
+  }
+};
 
-	template< >
-	struct PodString< int >
-	{
-		static const char * Get()
-		{
-			return "int";
-		}
-	};
-
-	template< >
-	struct PodString< float >
-	{
-		static const char * Get()
-		{
-			return "float";
-		}
-	};
-
-
-	template< >
-	struct PodString< double >
-	{
-		static const char * Get()
-		{
-			return "double";
-		}
-	};
+template< >
+struct PodString< double >
+{
+  static const char * Get()
+  {
+    return "double";
+  }
+};
 }
 
 #endif //selxPodString_h

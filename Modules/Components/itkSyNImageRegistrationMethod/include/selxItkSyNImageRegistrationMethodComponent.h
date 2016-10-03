@@ -75,7 +75,7 @@ public:
 
   virtual int Set( itkImageMovingInterface< Dimensionality, TPixel > * ) override;
 
-  virtual int Set(itkMetricv4Interface< Dimensionality, TPixel, double > *) override;
+  virtual int Set( itkMetricv4Interface< Dimensionality, TPixel, double > * ) override;
 
   //Providing Interfaces:
   virtual TransformPointer GetItkTransform() override;

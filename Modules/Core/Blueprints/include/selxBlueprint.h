@@ -124,7 +124,7 @@ public:
   ComponentNamesType GetOutputNames( const ComponentNameType name ) const;
 
   // Returns a vector of the Component names at the incoming direction
-  ComponentNamesType GetInputNames(const ComponentNameType name) const;
+  ComponentNamesType GetInputNames( const ComponentNameType name ) const;
 
   void WriteBlueprint( const std::string filename );
 

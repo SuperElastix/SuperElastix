@@ -70,7 +70,7 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel >
 
 template< int Dimensionality, class TPixel >
 int
-ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel >::Set(itkMetricv4Interface< Dimensionality, TPixel, double > * component)
+ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel >::Set( itkMetricv4Interface< Dimensionality, TPixel, double > * component )
 {
   this->m_theItkFilter->SetMetric( component->GetItkMetricv4() );
 

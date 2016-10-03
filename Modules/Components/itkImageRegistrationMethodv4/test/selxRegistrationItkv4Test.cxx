@@ -92,7 +92,7 @@ public:
     ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< 3, double >,
     ItkMeanSquaresImageToImageMetricv4Component< 3, double, double >,
     ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< 2, float >,
-    ItkMeanSquaresImageToImageMetricv4Component< 2, float,double  >,
+    ItkMeanSquaresImageToImageMetricv4Component< 2, float, double  >,
     ItkGradientDescentOptimizerv4Component< double >,
     ItkAffineTransformComponent< double, 3 >,
     ItkGaussianExponentialDiffeomorphicTransformComponent< double, 3 >,

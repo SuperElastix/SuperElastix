@@ -21,9 +21,9 @@
 
 namespace selx
 {
-	// helper to display type name in static assert error message (required, at least for VC++ 2013)
-	template <typename T>
-	struct StaticErrorMessageRevealT { enum { False = false }; };
+// helper to display type name in static assert error message (required, at least for VC++ 2013)
+template< typename T >
+struct StaticErrorMessageRevealT { enum { False = false }; };
 }
 
 #endif // selxStaticErrorMessageRevealT_h

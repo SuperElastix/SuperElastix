@@ -22,8 +22,8 @@
 
 namespace selx
 {
-  template< int Dimensionality, class TPixel, class InternalComputationValueType >
-  ItkMeanSquaresImageToImageMetricv4Component< Dimensionality, TPixel, InternalComputationValueType >::ItkMeanSquaresImageToImageMetricv4Component()
+template< int Dimensionality, class TPixel, class InternalComputationValueType >
+ItkMeanSquaresImageToImageMetricv4Component< Dimensionality, TPixel, InternalComputationValueType >::ItkMeanSquaresImageToImageMetricv4Component()
 {
   m_theItkFilter = TheItkFilterType::New();
 
@@ -53,12 +53,12 @@ ItkMeanSquaresImageToImageMetricv4Component< Dimensionality, TPixel, InternalCom
 {
   bool hasUndefinedCriteria( false );
   bool meetsCriteria( false );
-  auto status = CheckTemplateProperties(this->TemplateProperties(), criterion);
-  if (status == CriterionStatus::Satisfied)
+  auto status = CheckTemplateProperties( this->TemplateProperties(), criterion );
+  if( status == CriterionStatus::Satisfied )
   {
     return true;
   }
-  else if (status == CriterionStatus::Failed)
+  else if( status == CriterionStatus::Failed )
   {
     return false;
   } // else: CriterionStatus::Unknown

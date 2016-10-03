@@ -50,10 +50,10 @@ public:
   itkNewMacro( Self );
 
   /** Convenient typedefs. */
-  typedef ComponentBase::Pointer       ComponentBasePointer;
-  typedef ComponentBase::CriteriaType  CriteriaType;
-  typedef ComponentBase::CriterionType CriterionType;
-  typedef ComponentBase::InterfaceCriteriaType  InterfaceCriteriaType;
+  typedef ComponentBase::Pointer               ComponentBasePointer;
+  typedef ComponentBase::CriteriaType          CriteriaType;
+  typedef ComponentBase::CriterionType         CriterionType;
+  typedef ComponentBase::InterfaceCriteriaType InterfaceCriteriaType;
 
   typedef std::list< ComponentBasePointer > ComponentListType;
   typedef ComponentListType::size_type      NumberOfComponentsType;
@@ -62,16 +62,19 @@ public:
   /** Narrow selection criteria*/
   void AddCriterion( const CriterionType & criterion );
 
-  void AddAcceptingInterfaceCriteria(const InterfaceCriteriaType & interfaceCriteria);
-  void AddProvidingInterfaceCriteria(const InterfaceCriteriaType & interfaceCriteria);
+  void AddAcceptingInterfaceCriteria( const InterfaceCriteriaType & interfaceCriteria );
 
-  unsigned int NumberOfComponents(void);
+  void AddProvidingInterfaceCriteria( const InterfaceCriteriaType & interfaceCriteria );
+
+  unsigned int NumberOfComponents( void );
+
   /** Check for multiple versus 1 or 0 components*/
   bool HasMultipleComponents( void );
 
-  unsigned int RequireAcceptingInterfaceFrom(ComponentBasePointer other, const InterfaceCriteriaType & interfaceCriteria);
-  unsigned int RequireProvidingInterfaceTo(ComponentBasePointer other, const InterfaceCriteriaType & interfaceCriteria);
-  
+  unsigned int RequireAcceptingInterfaceFrom( ComponentBasePointer other, const InterfaceCriteriaType & interfaceCriteria );
+
+  unsigned int RequireProvidingInterfaceTo( ComponentBasePointer other, const InterfaceCriteriaType & interfaceCriteria );
+
   /** Return Component or Nullptr*/
   ComponentBasePointer GetComponent( void );
 

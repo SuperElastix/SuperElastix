@@ -61,7 +61,7 @@ ItkGradientDescentOptimizerv4Component< InternalComputationValueType >
     meetsCriteria = true;
     for( auto const & criterionValue : criterion.second ) // auto&& preferred?
     {
-      if (criterionValue != PodString<InternalComputationValueType>::Get())  // e.g. "GradientDescent", "SupportsSparseSamples
+      if( criterionValue != PodString< InternalComputationValueType >::Get() )  // e.g. "GradientDescent", "SupportsSparseSamples
       {
         meetsCriteria = false;
       }
