@@ -59,6 +59,12 @@ ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >
 {
 }
 
+template< class InternalComputationValueType, int Dimensionality >
+typename ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >::TransformType::Pointer
+ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >::GetItkTransform()
+{
+  return (typename TransformType::Pointer)this->m_CompositeTransform;
+}
 
 template< class InternalComputationValueType, int Dimensionality >
 bool
