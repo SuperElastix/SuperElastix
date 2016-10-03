@@ -98,39 +98,16 @@ DisplacementFieldItkImageFilterSinkComponent< Dimensionality, TPixel >::MeetsCri
 {
   bool hasUndefinedCriteria( false );
   bool meetsCriteria( false );
-  if( criterion.first == "ComponentProperty" )
+  auto status = CheckTemplateProperties(this->TemplateProperties(), criterion);
+  if (status == CriterionStatus::Satisfied)
   {
-    meetsCriteria = true;
-    for( auto const & criterionValue : criterion.second )  // auto&& preferred?
-    {
-      if( criterionValue != "SomeProperty" )   // e.g. "GradientDescent", "SupportsSparseSamples
-      {
-        meetsCriteria = false;
-      }
-    }
+    return true;
   }
-  else if( criterion.first == "Dimensionality" )  //Supports this?
+  else if (status == CriterionStatus::Failed)
   {
-    meetsCriteria = true;
-    for( auto const & criterionValue : criterion.second )  // auto&& preferred?
-    {
-      if( std::stoi( criterionValue ) != Dimensionality )
-      {
-        meetsCriteria = false;
-      }
-    }
-  }
-  else if( criterion.first == "PixelType" )  //Supports this?
-  {
-    meetsCriteria = true;
-    for( auto const & criterionValue : criterion.second )  // auto&& preferred?
-    {
-      if( criterionValue != Self::GetPixelTypeNameString() )
-      {
-        meetsCriteria = false;
-      }
-    }
-  }
+    return false;
+  } // else: CriterionStatus::Unknown
+
   if( criterion.first == "IsVectorField" )
   {
     meetsCriteria = true;
