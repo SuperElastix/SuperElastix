@@ -61,8 +61,10 @@ public:
       typename TFilter::ShrinkFactorsPerDimensionContainerType shrinkFactors = filter->GetShrinkFactorsPerDimension( currentLevel );
       typename TFilter::SmoothingSigmasArrayType smoothingSigmas             = filter->GetSmoothingSigmasPerLevel();
       typename TFilter::TransformParametersAdaptorsContainerType adaptors    = filter->GetTransformParametersAdaptorsPerLevel();
-
-      const itk::ObjectToObjectOptimizerBase * optimizerBase = filter->GetOptimizer();
+      
+      // TODO optimizer is can be ObjectToObjectOptimizerBaseTemplate<double> or ObjectToObjectOptimizerBaseTemplate<float>
+      // dynamic cast will fail on <float>, since GradientDescentOptimizerv4Type is by default <double>
+      auto * optimizerBase = filter->GetOptimizer();
       typedef itk::GradientDescentOptimizerv4 GradientDescentOptimizerv4Type;
       typename GradientDescentOptimizerv4Type::ConstPointer optimizer = dynamic_cast< const GradientDescentOptimizerv4Type * >( optimizerBase );
       if( !optimizer )
@@ -159,7 +161,7 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
 
 template< int Dimensionality, class TPixel, class InternalComputationValueType >
 int
-ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >::Set( itkTransformInterface< TransformInternalComputationValueType,
+ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >::Set( itkTransformInterface< InternalComputationValueType,
   Dimensionality > * component )
 {
   this->m_theItkFilter->SetInitialTransform( component->GetItkTransform() );
@@ -180,7 +182,7 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
 
 template< int Dimensionality, class TPixel, class InternalComputationValueType >
 int
-ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >::Set( itkMetricv4Interface< Dimensionality, TPixel > * component )
+ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >::Set(itkMetricv4Interface< Dimensionality, TPixel, InternalComputationValueType > * component)
 {
   //TODO: The optimizer must be set explicitly, since this is a work-around for a bug in itkRegistrationMethodv4.
   //TODO: report bug to itk: when setting a metric, the optimizer must be set explicitly as well, since default optimizer setup breaks.
@@ -192,7 +194,7 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
 
 template< int Dimensionality, class TPixel, class InternalComputationValueType >
 int
-ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >::Set( itkOptimizerv4Interface< OptimizerInternalComputationValueType > * component )
+ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >::Set(itkOptimizerv4Interface< InternalComputationValueType > * component)
 {
   //TODO: The optimizer must be set explicitly, since this is a work-around for a bug in itkRegistrationMethodv4.
   //TODO: report bug to itk: when setting a metric, the optimizer must be set explicitly as well, since default optimizer setup breaks.
@@ -214,7 +216,8 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
 
   ImageMetricType * theMetric = dynamic_cast< ImageMetricType * >( this->m_theItkFilter->GetModifiableMetric() );
 
-  auto optimizer = dynamic_cast< itk::GradientDescentOptimizerv4 * >( this->m_theItkFilter->GetModifiableOptimizer() );
+  //auto optimizer = dynamic_cast< itk::GradientDescentOptimizerv4 * >( this->m_theItkFilter->GetModifiableOptimizer() );
+  auto optimizer = this->m_theItkFilter->GetModifiableOptimizer();
   //auto optimizer = dynamic_cast<itk::ObjectToObjectOptimizerBaseTemplate< InternalComputationValueType > *>(this->m_theItkFilter->GetModifiableOptimizer());
 
   auto transform = this->m_theItkFilter->GetModifiableTransform();
@@ -232,12 +235,12 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
   scalesEstimator->SetTransformForward( true );
   scalesEstimator->SetSmallParameterVariation( 1.0 );
 
-  optimizer->SetScalesEstimator( ITK_NULLPTR );
+  //optimizer->SetScalesEstimator( ITK_NULLPTR );
   //optimizer->SetScalesEstimator(scalesEstimator);
-  optimizer->SetDoEstimateLearningRateOnce( false ); //true by default
-  optimizer->SetDoEstimateLearningRateAtEachIteration( false );
+  //optimizer->SetDoEstimateLearningRateOnce( false ); //true by default
+  //optimizer->SetDoEstimateLearningRateAtEachIteration( false );
 
-  this->m_theItkFilter->SetOptimizer( optimizer );
+  //this->m_theItkFilter->SetOptimizer( optimizer );
 
   if( this->m_TransformAdaptorsContainerInterface != nullptr )
   {
@@ -369,7 +372,7 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
       }
     }
 
-    itk::Array< TransformInternalComputationValueType > smoothingSigmasPerLevel;
+    itk::Array< InternalComputationValueType > smoothingSigmasPerLevel;
 
     smoothingSigmasPerLevel.SetSize( impliedNumberOfResolutions );
 

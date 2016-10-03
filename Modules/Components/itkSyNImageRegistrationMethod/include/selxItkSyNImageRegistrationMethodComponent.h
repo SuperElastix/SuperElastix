@@ -40,7 +40,7 @@ class ItkSyNImageRegistrationMethodComponent :
   public SuperElastixComponent<
   Accepting< itkImageFixedInterface< Dimensionality, TPixel >,
   itkImageMovingInterface< Dimensionality, TPixel >,
-  itkMetricv4Interface< Dimensionality, TPixel >
+  itkMetricv4Interface< Dimensionality, TPixel, double >
   >,
   Providing< itkTransformInterface< double, Dimensionality >,
   RunRegistrationInterface
@@ -75,7 +75,7 @@ public:
 
   virtual int Set( itkImageMovingInterface< Dimensionality, TPixel > * ) override;
 
-  virtual int Set( itkMetricv4Interface< Dimensionality, TPixel > * ) override;
+  virtual int Set(itkMetricv4Interface< Dimensionality, TPixel, double > *) override;
 
   //Providing Interfaces:
   virtual TransformPointer GetItkTransform() override;

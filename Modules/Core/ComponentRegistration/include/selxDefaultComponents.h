@@ -51,7 +51,7 @@ using DefaultComponents = selx::TypeList<
   MonolithicTransformixComponent< 2, float >,
   ItkImageRegistrationMethodv4Component< 2, float, double>,
   ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< 2, float >,
-  ItkMeanSquaresImageToImageMetricv4Component< 2, float >,
+  ItkMeanSquaresImageToImageMetricv4Component< 2, float, double >,
   ItkGradientDescentOptimizerv4Component< double >,
   ItkGaussianExponentialDiffeomorphicTransformComponent< double, 2 >,
   ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent< 2, double >,

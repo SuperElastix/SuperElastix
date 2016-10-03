@@ -168,12 +168,12 @@ struct Properties< SinkInterface >
   }
 };
 
-template< int D, class TPixel >
-struct Properties< itkMetricv4Interface< D, TPixel >>
+template< int D, class TPixel, class InternalComputationValueType >
+struct Properties< itkMetricv4Interface< D, TPixel, InternalComputationValueType >>
 {
   static const std::map<std::string, std::string> Get()
   {
-    return{ { keys::NameOfInterface, "itkMetricv4Interface" }, { keys::Dimensionality, std::to_string(D) }, { keys::PixelType, PodString<TPixel>::Get() } };
+    return{ { keys::NameOfInterface, "itkMetricv4Interface" }, { keys::Dimensionality, std::to_string(D) }, { keys::PixelType, PodString<TPixel>::Get() }, { keys::InternalComputationValueType, PodString<InternalComputationValueType>::Get() } };
   }
 };
 

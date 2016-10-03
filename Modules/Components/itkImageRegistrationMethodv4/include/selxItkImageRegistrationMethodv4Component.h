@@ -33,14 +33,14 @@
 
 namespace selx
 {
-template< int Dimensionality, class TPixel, class InternalComputationValueType>
+  template< int Dimensionality, class PixelType, class InternalComputationValueType>
 class ItkImageRegistrationMethodv4Component :
   public SuperElastixComponent<
-  Accepting< itkImageFixedInterface< Dimensionality, TPixel >,
-  itkImageMovingInterface< Dimensionality, TPixel >,
+  Accepting< itkImageFixedInterface< Dimensionality, PixelType >,
+  itkImageMovingInterface< Dimensionality, PixelType >,
   itkTransformInterface< InternalComputationValueType, Dimensionality >,
   itkTransformParametersAdaptorsContainerInterface< InternalComputationValueType, Dimensionality >,
-  itkMetricv4Interface< Dimensionality, TPixel >,
+  itkMetricv4Interface< Dimensionality, PixelType, InternalComputationValueType >,
   itkOptimizerv4Interface< InternalComputationValueType >
   >,
   Providing< itkTransformInterface< InternalComputationValueType, Dimensionality >,
@@ -57,38 +57,32 @@ public:
   ItkImageRegistrationMethodv4Component();
   virtual ~ItkImageRegistrationMethodv4Component();
 
-  typedef TPixel PixelType;
-  using TransformInternalComputationValueType = InternalComputationValueType;
-
   // Get the type definitions from the interfaces
 
-  typedef typename itkOptimizerv4Interface< TransformInternalComputationValueType >::InternalComputationValueType
-    OptimizerInternalComputationValueType;                                                                                                                             //should be from class template
-
-  typedef typename itkImageFixedInterface< Dimensionality, TPixel >::ItkImageType                                   FixedImageType;
-  typedef typename itkImageMovingInterface< Dimensionality, TPixel >::ItkImageType                                  MovingImageType;
-  typedef typename itkTransformInterface< TransformInternalComputationValueType, Dimensionality >::TransformType    TransformType;
-  typedef typename itkTransformInterface< TransformInternalComputationValueType, Dimensionality >::TransformPointer TransformPointer;
+  using FixedImageType = typename itkImageFixedInterface< Dimensionality, PixelType >::ItkImageType;
+  using MovingImageType = typename itkImageMovingInterface< Dimensionality, PixelType >::ItkImageType;
+  using TransformType = typename itkTransformInterface< InternalComputationValueType, Dimensionality >::TransformType;
+  using TransformPointer = typename itkTransformInterface< InternalComputationValueType, Dimensionality >::TransformPointer;
 
   using TransformParametersAdaptorsContainerInterfaceType
-      = itkTransformParametersAdaptorsContainerInterface< TransformInternalComputationValueType, Dimensionality >;
+      = itkTransformParametersAdaptorsContainerInterface< InternalComputationValueType, Dimensionality >;
 
-  typedef itk::ImageRegistrationMethodv4< FixedImageType, MovingImageType >    TheItkFilterType;
+  typedef itk::ImageRegistrationMethodv4< FixedImageType, MovingImageType, TransformType >    TheItkFilterType;
   typedef typename TheItkFilterType::ImageMetricType                           ImageMetricType;
   typedef itk::RegistrationParameterScalesFromPhysicalShift< ImageMetricType > ScalesEstimatorType;
 
   //Accepting Interfaces:
-  virtual int Set( itkImageFixedInterface< Dimensionality, TPixel > * ) override;
+  virtual int Set(itkImageFixedInterface< Dimensionality, PixelType > *) override;
 
-  virtual int Set( itkImageMovingInterface< Dimensionality, TPixel > * ) override;
+  virtual int Set(itkImageMovingInterface< Dimensionality, PixelType > *) override;
 
-  virtual int Set( itkTransformInterface< TransformInternalComputationValueType, Dimensionality > * ) override;
+  virtual int Set( itkTransformInterface< InternalComputationValueType, Dimensionality > * ) override;
 
   virtual int Set( TransformParametersAdaptorsContainerInterfaceType * ) override;
 
-  virtual int Set( itkMetricv4Interface< Dimensionality, TPixel > * ) override;
+  virtual int Set(itkMetricv4Interface< Dimensionality, PixelType, InternalComputationValueType > *) override;
 
-  virtual int Set( itkOptimizerv4Interface< OptimizerInternalComputationValueType > * ) override;
+  virtual int Set( itkOptimizerv4Interface< InternalComputationValueType > * ) override;
 
   //Providing Interfaces:
   virtual TransformPointer GetItkTransform() override;
@@ -115,7 +109,7 @@ protected:
   // return the class name and the template arguments to uniquely identify this component.
   static inline const std::map<std::string, std::string> TemplateProperties()
   {
-    return{ { keys::NameOfClass, "ItkImageRegistrationMethodv4Component" }, { keys::PixelType, PodString<TPixel>::Get() },{ keys::InternalComputationValueType, PodString<InternalComputationValueType>::Get() }, { keys::Dimensionality, std::to_string(Dimensionality) } };
+    return{ { keys::NameOfClass, "ItkImageRegistrationMethodv4Component" }, { keys::PixelType, PodString<PixelType>::Get() }, { keys::InternalComputationValueType, PodString<InternalComputationValueType>::Get() }, { keys::Dimensionality, std::to_string(Dimensionality) } };
   }
 
 };

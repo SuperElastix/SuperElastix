@@ -224,14 +224,15 @@ public:
   virtual void ReconnectTransform() = 0;
 };
 
-template< int Dimensionality, class TPixel >
+template< int Dimensionality, class TPixel, class InternalComputationValueType >
 class itkMetricv4Interface
 {
 public:
 
-  typedef typename itk::Image< TPixel, Dimensionality >                         FixedImageType;
-  typedef typename itk::Image< TPixel, Dimensionality >                         MovingImageType;
-  typedef typename itk::ImageToImageMetricv4< FixedImageType, MovingImageType > ImageToImageMetricv4Type;
+  using FixedImageType = itk::Image< TPixel, Dimensionality >;
+  using MovingImageType = FixedImageType;
+  using VirtualImageType = FixedImageType;
+  typedef typename itk::ImageToImageMetricv4< FixedImageType, MovingImageType, VirtualImageType, InternalComputationValueType > ImageToImageMetricv4Type;
 
   virtual typename ImageToImageMetricv4Type::Pointer GetItkMetricv4() = 0;
 };

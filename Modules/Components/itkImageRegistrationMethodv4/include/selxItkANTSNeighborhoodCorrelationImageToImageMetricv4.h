@@ -31,7 +31,7 @@ template< int Dimensionality, class TPixel >
 class ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component :
   public SuperElastixComponent<
   Accepting< >,
-  Providing< itkMetricv4Interface< Dimensionality, TPixel >>
+  Providing< itkMetricv4Interface< Dimensionality, TPixel, double >>
   >
 {
 public:

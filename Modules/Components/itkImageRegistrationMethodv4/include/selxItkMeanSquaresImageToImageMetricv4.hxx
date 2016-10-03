@@ -22,8 +22,8 @@
 
 namespace selx
 {
-template< int Dimensionality, class TPixel >
-ItkMeanSquaresImageToImageMetricv4Component< Dimensionality, TPixel >::ItkMeanSquaresImageToImageMetricv4Component()
+  template< int Dimensionality, class TPixel, class InternalComputationValueType >
+  ItkMeanSquaresImageToImageMetricv4Component< Dimensionality, TPixel, InternalComputationValueType >::ItkMeanSquaresImageToImageMetricv4Component()
 {
   m_theItkFilter = TheItkFilterType::New();
 
@@ -32,23 +32,23 @@ ItkMeanSquaresImageToImageMetricv4Component< Dimensionality, TPixel >::ItkMeanSq
 }
 
 
-template< int Dimensionality, class TPixel >
-ItkMeanSquaresImageToImageMetricv4Component< Dimensionality, TPixel >::~ItkMeanSquaresImageToImageMetricv4Component()
+template< int Dimensionality, class TPixel, class InternalComputationValueType >
+ItkMeanSquaresImageToImageMetricv4Component< Dimensionality, TPixel, InternalComputationValueType >::~ItkMeanSquaresImageToImageMetricv4Component()
 {
 }
 
 
-template< int Dimensionality, class TPixel >
-typename ItkMeanSquaresImageToImageMetricv4Component< Dimensionality, TPixel >::ItkMetricv4Pointer
-ItkMeanSquaresImageToImageMetricv4Component< Dimensionality, TPixel >::GetItkMetricv4()
+template< int Dimensionality, class TPixel, class InternalComputationValueType >
+typename ItkMeanSquaresImageToImageMetricv4Component< Dimensionality, TPixel, InternalComputationValueType >::ItkMetricv4Pointer
+ItkMeanSquaresImageToImageMetricv4Component< Dimensionality, TPixel, InternalComputationValueType >::GetItkMetricv4()
 {
   return (ItkMetricv4Pointer)this->m_theItkFilter;
 }
 
 
-template< int Dimensionality, class TPixel >
+template< int Dimensionality, class TPixel, class InternalComputationValueType >
 bool
-ItkMeanSquaresImageToImageMetricv4Component< Dimensionality, TPixel >
+ItkMeanSquaresImageToImageMetricv4Component< Dimensionality, TPixel, InternalComputationValueType >
 ::MeetsCriterion( const ComponentBase::CriterionType & criterion )
 {
   bool hasUndefinedCriteria( false );
