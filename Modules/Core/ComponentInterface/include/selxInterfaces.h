@@ -306,6 +306,16 @@ public:
   typedef typename elastix::ElastixFilter< TFixedImage, TMovingImage >::ParameterObjectType elastixTransformParameterObject;
   virtual elastixTransformParameterObject * GetTransformParameterObject() = 0;
 };
+
+template< class InternalComputationValueType, int Dimensionality >
+class MultiStageTransformInterface
+{
+public:
+  using TransformBaseType = itk::Transform< InternalComputationValueType, Dimensionality, Dimensionality >;
+  virtual typename TransformBaseType::Pointer GetTransformFixedInitialTransform(int stageIndex) = 0;
+  virtual typename TransformBaseType::Pointer GetTransformMovingInitialTransform(int stageIndex) = 0;
+  virtual void SetResultTransform(typename TransformBaseType::Pointer resultTransform, int stageIndex) = 0;
+};
 } // end namespace selx
 
 #endif // #define selxInterfaces_h
