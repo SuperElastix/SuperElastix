@@ -22,7 +22,7 @@
 
 #include "selxComponentBase.h"
 #include "selxInterfaces.h"
-#include "ItkCompositeTransform.h"
+#include "itkCompositeTransform.h"
 #include <string.h>
 #include "selxMacro.h"
 namespace selx
