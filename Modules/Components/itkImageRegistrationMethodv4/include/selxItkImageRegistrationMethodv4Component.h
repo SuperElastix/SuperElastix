@@ -44,6 +44,7 @@ class ItkImageRegistrationMethodv4Component :
   itkOptimizerv4Interface< InternalComputationValueType >
   >,
   Providing< itkTransformInterface< InternalComputationValueType, Dimensionality >,
+  MultiStageTransformInterface< InternalComputationValueType, Dimensionality >,
   RunRegistrationInterface
   >
   >
@@ -64,6 +65,7 @@ public:
   using TransformType    = typename itkTransformInterface< InternalComputationValueType, Dimensionality >::TransformType;
   using TransformPointer = typename itkTransformInterface< InternalComputationValueType, Dimensionality >::TransformPointer;
 
+  using CompositeTransformType = typename MultiStageTransformInterface< InternalComputationValueType, Dimensionality >::CompositeTransformType;
   using TransformParametersAdaptorsContainerInterfaceType
       = itkTransformParametersAdaptorsContainerInterface< InternalComputationValueType, Dimensionality >;
 
@@ -88,6 +90,11 @@ public:
   virtual TransformPointer GetItkTransform() override;
 
   virtual void RunRegistration() override;
+
+  virtual void SetFixedInitialTransform(typename CompositeTransformType::Pointer fixedInitialTransform) override;
+  virtual void SetMovingInitialTransform(typename CompositeTransformType::Pointer movingInitialTransform) override;
+
+  virtual typename std::string GetComponentName() override;
 
   //BaseClass methods
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;

@@ -31,6 +31,8 @@
 #include "itkGaussianExponentialDiffeomorphicTransformParametersAdaptor.h"
 #include "itkGaussianExponentialDiffeomorphicTransform.h"
 
+#include "itkCompositeTransform.h"
+
 #include "itkImage.h"
 #include "itkMesh.h"
 
@@ -312,9 +314,12 @@ class MultiStageTransformInterface
 {
 public:
   using TransformBaseType = itk::Transform< InternalComputationValueType, Dimensionality, Dimensionality >;
-  virtual typename TransformBaseType::Pointer GetTransformFixedInitialTransform(int stageIndex) = 0;
-  virtual typename TransformBaseType::Pointer GetTransformMovingInitialTransform(int stageIndex) = 0;
-  virtual void SetResultTransform(typename TransformBaseType::Pointer resultTransform, int stageIndex) = 0;
+  using CompositeTransformType = itk::CompositeTransform<InternalComputationValueType, Dimensionality >;
+  virtual void SetFixedInitialTransform(typename CompositeTransformType::Pointer) = 0;
+  virtual void RunRegistration(void) = 0;
+  virtual void SetMovingInitialTransform(typename CompositeTransformType::Pointer) = 0;
+  virtual typename TransformBaseType::Pointer GetItkTransform() = 0;
+  virtual typename std::string GetComponentName() = 0;
 };
 } // end namespace selx
 

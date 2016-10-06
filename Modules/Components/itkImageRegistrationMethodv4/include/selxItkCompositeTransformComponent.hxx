@@ -37,26 +37,13 @@ ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >::
 }
 
 template< class InternalComputationValueType, int Dimensionality >
-typename ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >::TransformType::Pointer
+int
 ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >
-::GetTransformFixedInitialTransform(int stageIndex)
+::Set(MultiStageTransformInterface< InternalComputationValueType, Dimensionality >* component)
 {
-  return nullptr;
-}
-
-template< class InternalComputationValueType, int Dimensionality >
-typename ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >::TransformType::Pointer
-ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >
-::GetTransformMovingInitialTransform(int stageIndex)
-{
-  return nullptr;
-}
-
-template< class InternalComputationValueType, int Dimensionality >
-void
-ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >
-::SetResultTransform(typename TransformType::Pointer resultTransform, int stageIndex)
-{
+  // todo how do we organize the fixedtransforms?
+  this->m_registrationStages.push_back(component);
+  return 1;
 }
 
 template< class InternalComputationValueType, int Dimensionality >
@@ -64,6 +51,19 @@ typename ItkCompositeTransformComponent< InternalComputationValueType, Dimension
 ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >::GetItkTransform()
 {
   return (typename TransformType::Pointer)this->m_CompositeTransform;
+}
+
+template< class InternalComputationValueType, int Dimensionality >
+void
+ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >::RunRegistration()
+{
+  for (auto & stage : this->m_registrationStages)
+  {
+    stage->SetMovingInitialTransform(this->m_CompositeTransform);
+    stage->RunRegistration();
+    this->m_CompositeTransform->AppendTransform(stage->GetItkTransform());
+  }
+  return;
 }
 
 template< class InternalComputationValueType, int Dimensionality >

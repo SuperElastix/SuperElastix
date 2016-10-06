@@ -30,8 +30,9 @@ namespace selx
 template< class InternalComputationValueType, int Dimensionality >
 class ItkCompositeTransformComponent :
   public SuperElastixComponent<
-  Accepting< >,
-  Providing< MultiStageTransformInterface< InternalComputationValueType, Dimensionality >, itkTransformInterface<InternalComputationValueType, Dimensionality> >
+  Accepting<MultiStageTransformInterface< InternalComputationValueType, Dimensionality > >,
+  Providing<itkTransformInterface<InternalComputationValueType, Dimensionality>,
+  RunRegistrationInterface>
   >
 {
 public:
@@ -48,10 +49,10 @@ public:
 
   typedef typename itk::CompositeTransform< InternalComputationValueType, Dimensionality > CompositeTransformType;
 
-  virtual typename TransformType::Pointer GetTransformFixedInitialTransform(int stageIndex) override;
-  virtual typename TransformType::Pointer GetTransformMovingInitialTransform(int stageIndex) override;
-  virtual void SetResultTransform(typename TransformType::Pointer resultTransform, int stageIndex) override;
+  virtual int Set(MultiStageTransformInterface< InternalComputationValueType, Dimensionality > *) override;
   
+  virtual typename void RunRegistration() override;
+
   virtual typename TransformType::Pointer GetItkTransform() override;
 
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
@@ -62,6 +63,7 @@ public:
 private:
 
   typename CompositeTransformType::Pointer m_CompositeTransform;
+  typename std::vector<MultiStageTransformInterface< InternalComputationValueType, Dimensionality >*> m_registrationStages;
 
 protected:
 
