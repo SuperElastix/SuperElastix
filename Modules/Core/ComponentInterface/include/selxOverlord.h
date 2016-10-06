@@ -113,6 +113,7 @@ private:
   /** See which components need more configuration criteria */
   ComponentNamesType GetNonUniqueComponentNames();
 
+  void PrintComponentSelector(std::string);
   //TODO make const correct
   //Overlord should be constructed with a blueprint.
   //Blueprint::ConstPointer m_Blueprint;

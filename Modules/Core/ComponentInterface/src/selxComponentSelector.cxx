@@ -113,13 +113,6 @@ ComponentSelector::GetComponent()
 }
 
 
-bool
-ComponentSelector::HasMultipleComponents()
-{
-  return ( this->m_PossibleComponents.size() > 1 );
-}
-
-
 unsigned int
 ComponentSelector::NumberOfComponents()
 {
