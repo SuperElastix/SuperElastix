@@ -50,7 +50,7 @@ void
 ComponentSelector::AddCriterion( const CriterionType & criterion )
 {
   this->m_PossibleComponents.remove_if([ & ]( ComponentBasePointer component ){
-      return !component->MeetsCriterionBase( criterion );
+      return !component->MeetsCriterion( criterion );
     } );
 }
 

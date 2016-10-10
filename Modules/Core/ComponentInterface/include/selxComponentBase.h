@@ -59,9 +59,6 @@ public:
 
   virtual int AcceptConnectionFrom( ComponentBase * ) = 0;
 
-  /** if there is any failed criterion, return false (like a short - circuit AND) */
-  bool MeetsCriterionBase( const CriterionType & criterion );
-
   virtual bool MeetsCriterion( const CriterionType & criterion ) = 0;
 
   virtual InterfaceStatus CanAcceptConnectionFrom( ComponentBase *, const InterfaceCriteriaType ) = 0;
@@ -70,7 +67,7 @@ public:
 
   virtual unsigned int CountProvidingInterfaces( const InterfaceCriteriaType ) = 0;
 
-  virtual const std::map< std::string, std::string >  TemplateProperties() { return {}; }; //TODO should be overridden
+  virtual const std::map< std::string, std::string >  TemplateProperties(); //TODO should be overridden
 
 
 protected:

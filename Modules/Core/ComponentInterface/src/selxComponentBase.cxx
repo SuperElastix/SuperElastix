@@ -21,20 +21,6 @@
 
 namespace selx
 {
-//TODO deprecate this method: let derived class handle this (using selxCheckTemplateProperties.h)
-bool
-ComponentBase::MeetsCriterionBase( const CriterionType & criterion )
-{
-  if( criterion.first == "NameOfClass" )
-  {
-    if( criterion.second.size() != 1 )
-    {
-      itkExceptionMacro( "The criterion NameOfClass may have only 1 value" );
-    }
-    return ( criterion.second[ 0 ] == this->GetNameOfClass() );
-  }
-
-  // else pass criterion to derived Component
-  return this->MeetsCriterion( criterion );
-}
+  const std::map< std::string, std::string > ComponentBase::TemplateProperties()
+  { return{}; }
 } // end namespace selx

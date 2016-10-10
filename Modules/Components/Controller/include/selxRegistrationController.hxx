@@ -83,19 +83,17 @@ template< bool dummy >
 bool
 RegistrationControllerComponent< dummy >::MeetsCriterion( const ComponentBase::CriterionType & criterion )
 {
-  bool hasUndefinedCriteria( false );
-  bool meetsCriteria( false );
-  if( criterion.first == "ComponentProperty" )
+  bool hasUndefinedCriteria(false);
+  bool meetsCriteria(false);
+  auto status = CheckTemplateProperties(this->TemplateProperties(), criterion);
+  if (status == CriterionStatus::Satisfied)
   {
-    meetsCriteria = true;
-    for( auto const & criterionValue : criterion.second )  // auto&& preferred?
-    {
-      if( criterionValue != "SomeProperty" )   // e.g. "GradientDescent", "SupportsSparseSamples
-      {
-        meetsCriteria = false;
-      }
-    }
+    return true;
   }
+  else if (status == CriterionStatus::Failed)
+  {
+    return false;
+  } // else: CriterionStatus::Unknown
   return meetsCriteria;
 }
 } //end namespace selx

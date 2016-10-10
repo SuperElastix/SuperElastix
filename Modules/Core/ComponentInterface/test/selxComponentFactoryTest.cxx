@@ -134,7 +134,7 @@ TEST_F( ComponentFactoryTest, AddCriteria )
   EXPECT_NO_THROW( ComponentFactory< TransformComponent1 >::RegisterOneFactory() );
   EXPECT_NO_THROW( ComponentFactory< MetricComponent1 >::RegisterOneFactory() );
 
-  CriterionType nonSelectiveCriterion( "ComponentProperty", { "SomeProperty" } );
+  CriterionType nonSelectiveCriterion({ "ComponentProperty", { "SomeProperty" } });
 
   CriterionType criterion1( { "ComponentOutput", { "Transform" } } );
 
