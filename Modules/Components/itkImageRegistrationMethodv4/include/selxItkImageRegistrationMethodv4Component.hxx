@@ -167,7 +167,6 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
   Dimensionality > * component )
 {
   this->m_theItkFilter->SetInitialTransform( component->GetItkTransform() );
-
   return 0;
 }
 

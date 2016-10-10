@@ -71,9 +71,18 @@ Overlord::Configure()
     for( const auto & nonUniqueComponentName : nonUniqueComponentNames )
     {
       std::cout << this->m_ComponentSelectorContainer[ nonUniqueComponentName ]->NumberOfComponents() << "  " << nonUniqueComponentName << std::endl;
+      this->m_ComponentSelectorContainer[nonUniqueComponentName]->PrintComponents();
     }
     return false;
   }
+  std::cout << "===== Selected Components =====" << std::endl;
+  for (auto const & componentName : m_Blueprint->GetComponentNames())
+  {
+    std::cout << componentName << ":" << std::endl;
+    this->m_ComponentSelectorContainer[componentName]->PrintComponents();
+  }
+
+  
   return true;
 }
 
@@ -304,13 +313,6 @@ Overlord::PropagateConnectionsWithUniqueComponents()
       }
     }
   }
-}
-
-
-void 
-Overlord::PrintComponentSelector(std::string componentName)
-{
-
 }
 
 bool

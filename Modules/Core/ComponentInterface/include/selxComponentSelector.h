@@ -75,6 +75,8 @@ public:
   /** Return Component or Nullptr*/
   ComponentBasePointer GetComponent( void );
 
+  void PrintComponents(void);
+
 protected:
 
   CriteriaType      m_Criteria;

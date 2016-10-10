@@ -118,6 +118,20 @@ ComponentSelector::NumberOfComponents()
 {
   return this->m_PossibleComponents.size();
 }
+
+void 
+ComponentSelector::PrintComponents(void)
+{
+  for (auto & component : this->m_PossibleComponents)
+  {
+    auto const & properties = component->TemplateProperties();
+    for (auto const & keyvalue : properties)
+    {
+      std::cout << "{ """ << keyvalue.first << """: """ << keyvalue.second << """}" << std::endl;
+    }
+    std::cout << std::endl;
+  }
+}
 } // end namespace selx
 
 //#endif

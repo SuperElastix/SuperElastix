@@ -32,7 +32,7 @@ class ItkCompositeTransformComponent :
   public SuperElastixComponent<
   Accepting<MultiStageTransformInterface< InternalComputationValueType, Dimensionality > >,
   Providing<itkTransformInterface<InternalComputationValueType, Dimensionality>,
-  RunRegistrationInterface>
+  RegistrationControllerStartInterface>
   >
 {
 public:
@@ -51,7 +51,7 @@ public:
 
   virtual int Set(MultiStageTransformInterface< InternalComputationValueType, Dimensionality > *) override;
   
-  virtual typename void RunRegistration() override;
+  virtual typename void RegistrationControllerStart() override;
 
   virtual typename TransformType::Pointer GetItkTransform() override;
 

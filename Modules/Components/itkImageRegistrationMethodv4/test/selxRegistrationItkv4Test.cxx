@@ -96,6 +96,7 @@ public:
     ItkMeanSquaresImageToImageMetricv4Component< 2, float, double  >,
     ItkGradientDescentOptimizerv4Component< double >,
     ItkAffineTransformComponent< double, 3 >,
+    ItkAffineTransformComponent< double, 2 >,
     ItkGaussianExponentialDiffeomorphicTransformComponent< double, 3 >,
     ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent< 3, double >,
     ItkTransformDisplacementFilterComponent< 2, float, double >,
@@ -103,7 +104,8 @@ public:
     ItkResampleFilterComponent< 2, float, double >,
     ItkResampleFilterComponent< 3, double, double >,
     RegistrationControllerComponent< >,
-    ItkCompositeTransformComponent<double, 3> > RegisterComponents;
+    ItkCompositeTransformComponent<double, 3>,
+    ItkCompositeTransformComponent<double, 2 >> RegisterComponents;
 
   typedef SuperElastixFilter< RegisterComponents > SuperElastixFilterType;
 

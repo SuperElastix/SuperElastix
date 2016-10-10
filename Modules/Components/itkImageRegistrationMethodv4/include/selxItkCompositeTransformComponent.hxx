@@ -55,7 +55,7 @@ ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >::
 
 template< class InternalComputationValueType, int Dimensionality >
 void
-ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >::RunRegistration()
+ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >::RegistrationControllerStart()
 {
   for (auto & stage : this->m_registrationStages)
   {
