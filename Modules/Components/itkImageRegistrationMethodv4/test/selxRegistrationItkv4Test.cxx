@@ -99,6 +99,8 @@ public:
     ItkAffineTransformComponent< double, 2 >,
     ItkGaussianExponentialDiffeomorphicTransformComponent< double, 3 >,
     ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent< 3, double >,
+    ItkGaussianExponentialDiffeomorphicTransformComponent< double, 2 >,
+    ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent< 2, double >,
     ItkTransformDisplacementFilterComponent< 2, float, double >,
     ItkTransformDisplacementFilterComponent< 3, double, double >,
     ItkResampleFilterComponent< 2, float, double >,
@@ -644,18 +646,24 @@ TEST_F(RegistrationItkv4Test, CompositeTransform)
 
   blueprint->AddComponent("MultiStageTransformController", { { "NameOfClass", { "ItkCompositeTransformComponent" } } });
 
+  blueprint->AddComponent("FixedImageSource", { { "NameOfClass", { "ItkImageSourceFixedComponent" } } });
+  blueprint->AddComponent("MovingImageSource", { { "NameOfClass", { "ItkImageSourceMovingComponent" } } });
+  blueprint->AddComponent("ResultImageSink", { { "NameOfClass", { "ItkImageSinkComponent" } } });
+
+  blueprint->AddComponent("ResampleFilter", { { "NameOfClass", { "ItkResampleFilterComponent" } } });
+  blueprint->AddConnection("FixedImageSource", "ResampleFilter", { {} });
+  blueprint->AddConnection("MovingImageSource", "ResampleFilter", { {} });
+  blueprint->AddConnection("MultiStageTransformController", "ResampleFilter", { {} }); //ReconnectTransformInterface
+
+  blueprint->AddConnection("ResampleFilter", "ResultImageSink", {});
+
+
   blueprint->AddComponent("RegistrationMethod1", { { "NameOfClass", { "ItkImageRegistrationMethodv4Component" } },
   { "Dimensionality", { "2" } },
   { "InternalComputationValueType", { "double" } },
   { "PixelType", { "float" } } });
-
-  blueprint->AddComponent("FixedImageSource", { { "NameOfClass", { "ItkImageSourceFixedComponent" } } });
   blueprint->AddConnection("FixedImageSource", "RegistrationMethod1", {});
-
-  blueprint->AddComponent("MovingImageSource", { { "NameOfClass", { "ItkImageSourceMovingComponent" } } });
   blueprint->AddConnection("MovingImageSource", "RegistrationMethod1", {});
-
-  blueprint->AddComponent("ResultImageSink", { { "NameOfClass", { "ItkImageSinkComponent" } } });
 
   blueprint->AddComponent("Metric1", { { "NameOfClass", { "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component" } } });
   blueprint->AddConnection("Metric1", "RegistrationMethod1", {});
@@ -666,13 +674,32 @@ TEST_F(RegistrationItkv4Test, CompositeTransform)
 
   blueprint->AddConnection("RegistrationMethod1", "MultiStageTransformController", {}); // MultiStageTransformInterface
 
-  blueprint->AddComponent("ResampleFilter", { { "NameOfClass", { "ItkResampleFilterComponent" } } });
-  blueprint->AddConnection("FixedImageSource", "ResampleFilter", { {} });
-  blueprint->AddConnection("MovingImageSource", "ResampleFilter", { {} });
-  blueprint->AddConnection("MultiStageTransformController", "ResampleFilter", { {} }); //ReconnectTransformInterface
+  blueprint->AddComponent("RegistrationMethod2", { { "NameOfClass", { "ItkImageRegistrationMethodv4Component" } },
+  { "Dimensionality", { "2" } },
+  { "InternalComputationValueType", { "double" } },
+  { "PixelType", { "float" } },
+  { "NumberOfLevels", { "2" } },
+  { "ShrinkFactorsPerLevel", { "2", "1" } },
+  { "SmoothingSigmasPerLevel", { "2", "1" } } });
+  blueprint->AddConnection("FixedImageSource", "RegistrationMethod2", {});
+  blueprint->AddConnection("MovingImageSource", "RegistrationMethod2", {});
 
-  blueprint->AddConnection("ResampleFilter", "ResultImageSink", {});
+  blueprint->AddComponent("Metric2", { { "NameOfClass", { "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component" } } });
+  blueprint->AddConnection("Metric2", "RegistrationMethod2", {});
+  blueprint->AddComponent("Transform2", { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent" } } });
+  blueprint->AddConnection("Transform2", "RegistrationMethod2", {});
+  blueprint->AddComponent("TransformResolutionAdaptor2", { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent" } },
+  { "ShrinkFactorsPerLevel", { "2", "1" } } });
+  blueprint->AddConnection("FixedImageSource", "TransformResolutionAdaptor2", {});
+  blueprint->AddConnection("TransformResolutionAdaptor2", "RegistrationMethod2", {});
 
+  blueprint->AddComponent("Optimizer2", { { "NameOfClass", { "ItkGradientDescentOptimizerv4Component" } } });
+  blueprint->AddConnection("Optimizer2", "RegistrationMethod2", {});
+
+
+  blueprint->AddConnection("RegistrationMethod2", "MultiStageTransformController", {}); // MultiStageTransformInterface
+
+  
 
 
   // Data manager provides the paths to the input and output data for unit tests
