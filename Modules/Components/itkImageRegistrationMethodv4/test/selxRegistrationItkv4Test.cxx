@@ -688,6 +688,7 @@ TEST_F(RegistrationItkv4Test, CompositeTransform)
   blueprint->AddConnection("Metric2", "RegistrationMethod2", {});
   blueprint->AddComponent("Transform2", { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformComponent" } } });
   blueprint->AddConnection("Transform2", "RegistrationMethod2", {});
+  blueprint->AddConnection("FixedImageSource", "Transform2", {});
   blueprint->AddComponent("TransformResolutionAdaptor2", { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent" } },
   { "ShrinkFactorsPerLevel", { "2", "1" } } });
   blueprint->AddConnection("FixedImageSource", "TransformResolutionAdaptor2", {});
@@ -733,7 +734,6 @@ TEST_F(RegistrationItkv4Test, CompositeTransform)
   //superElastixFilter->Update();
 
   // Update call on the writers triggers SuperElastix to configure and execute
-  //EXPECT_NO_THROW(resultImageWriter->Update());
-  resultImageWriter->Update();
+  EXPECT_NO_THROW(resultImageWriter->Update());
 }
 } // namespace selx
