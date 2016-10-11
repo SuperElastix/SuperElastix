@@ -51,7 +51,7 @@ public:
 
   virtual int Set(MultiStageTransformInterface< InternalComputationValueType, Dimensionality > *) override;
   
-  virtual typename void RegistrationControllerStart() override;
+  virtual void RegistrationControllerStart() override;
 
   virtual typename TransformType::Pointer GetItkTransform() override;
 

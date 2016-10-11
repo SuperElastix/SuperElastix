@@ -67,7 +67,7 @@ public:
 
   virtual unsigned int CountProvidingInterfaces( const InterfaceCriteriaType ) = 0;
 
-  virtual const std::map< std::string, std::string >  TemplateProperties(); //TODO should be overridden
+  //virtual const std::map< std::string, std::string >  TemplateProperties(); //TODO should be overridden
 
 
 protected:

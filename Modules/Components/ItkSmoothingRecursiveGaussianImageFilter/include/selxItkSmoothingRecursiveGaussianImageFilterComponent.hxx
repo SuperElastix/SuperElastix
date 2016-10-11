@@ -18,6 +18,7 @@
  *=========================================================================*/
 
 #include "selxItkSmoothingRecursiveGaussianImageFilterComponent.h"
+#include "selxCheckTemplateProperties.h"
 
 namespace selx
 {

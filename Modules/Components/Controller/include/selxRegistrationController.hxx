@@ -18,6 +18,7 @@
  *=========================================================================*/
 
 #include "selxRegistrationController.h"
+#include "selxCheckTemplateProperties.h"
 
 namespace selx
 {

@@ -21,6 +21,6 @@
 
 namespace selx
 {
-  const std::map< std::string, std::string > ComponentBase::TemplateProperties()
-  { return{}; }
+  //const std::map< std::string, std::string > ComponentBase::TemplateProperties()
+ // { return{}; }
 } // end namespace selx

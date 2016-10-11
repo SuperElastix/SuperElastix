@@ -122,6 +122,7 @@ ComponentSelector::NumberOfComponents()
 void 
 ComponentSelector::PrintComponents(void)
 {
+  /*
   for (auto & component : this->m_PossibleComponents)
   {
     auto const & properties = component->TemplateProperties();
@@ -131,6 +132,7 @@ ComponentSelector::PrintComponents(void)
     }
     std::cout << std::endl;
   }
+  */
 }
 } // end namespace selx
 
