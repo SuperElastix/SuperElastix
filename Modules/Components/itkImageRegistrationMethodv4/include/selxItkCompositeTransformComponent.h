@@ -30,7 +30,7 @@ namespace selx
 template< class InternalComputationValueType, int Dimensionality >
 class ItkCompositeTransformComponent :
   public SuperElastixComponent<
-  Accepting<MultiStageTransformInterface< InternalComputationValueType, Dimensionality > >,
+  Accepting<MultiStageTransformInterface< InternalComputationValueType, Dimensionality >, ReconnectTransformInterface >,
   Providing<itkTransformInterface<InternalComputationValueType, Dimensionality>,
   RegistrationControllerStartInterface>
   >
@@ -51,6 +51,8 @@ public:
 
   virtual int Set(MultiStageTransformInterface< InternalComputationValueType, Dimensionality > *) override;
   
+  virtual int Set(ReconnectTransformInterface * ) override;
+  
   virtual void RegistrationControllerStart() override;
 
   virtual typename TransformType::Pointer GetItkTransform() override;
@@ -65,6 +67,8 @@ private:
   typename CompositeTransformType::Pointer m_CompositeTransform;
   typename std::vector<MultiStageTransformInterface< InternalComputationValueType, Dimensionality >*> m_registrationStages;
 
+  std::set< ReconnectTransformInterface * > m_ReconnectTransformInterfaces;
+  
 protected:
 
   // return the class name and the template arguments to uniquely identify this component.
