@@ -68,12 +68,15 @@ public:
   virtual unsigned int CountProvidingInterfaces( const InterfaceCriteriaType ) = 0;
 
   //virtual const std::map< std::string, std::string >  TemplateProperties(); //TODO should be overridden
-
+  
+  void Name(const std::string setName){ m_Name = setName; }; //Setter should be via constructor. We should get rid of itk factory design.
+  const std::string Name(){ return m_Name; };
 
 protected:
 
   ComponentBase() {}
   virtual ~ComponentBase() {}
+  std::string m_Name;
 };
 } // end namespace selx
 

@@ -31,11 +31,11 @@ ComponentSelector::ComponentSelector()
   for( std::list< itk::LightObject::Pointer >::iterator i = allobjects.begin();
     i != allobjects.end(); ++i )
   {
-    ComponentBase * io
+    ComponentBase * component
       = dynamic_cast< ComponentBase * >( i->GetPointer() );
-    if( io )
+    if (component)
     {
-      this->m_PossibleComponents.push_back( io );
+      this->m_PossibleComponents.push_back(component);
     }
   }
 }
@@ -43,6 +43,14 @@ ComponentSelector::ComponentSelector()
 
 ComponentSelector::~ComponentSelector()
 {
+}
+
+void ComponentSelector::ComponentName(const std::string name)
+{
+  for (const auto & component : this->m_PossibleComponents)
+  {
+    component->Name(name);
+  }
 }
 
 

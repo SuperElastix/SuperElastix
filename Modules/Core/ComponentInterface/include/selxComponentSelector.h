@@ -77,9 +77,9 @@ public:
 
   void PrintComponents(void);
 
-protected:
+  void ComponentName(const std::string); //Setter should be via constructor. We should get rid of itk factory design.
 
-  CriteriaType      m_Criteria;
+protected:
   ComponentListType m_PossibleComponents;
   ComponentSelector();
   ~ComponentSelector();
