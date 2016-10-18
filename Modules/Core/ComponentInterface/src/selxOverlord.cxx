@@ -137,6 +137,8 @@ Overlord::ApplyNodeConfiguration()
   {
     std::cout << " Blueprint Node: " << name << std::endl;
     ComponentSelectorPointer    currentComponentSelector = ComponentSelector::New();
+    currentComponentSelector->ComponentName(name); // Todo via constructor
+
     Blueprint::ParameterMapType currentProperty          = this->m_Blueprint->GetComponent( name );
     for( auto const & criterion : currentProperty )
     {

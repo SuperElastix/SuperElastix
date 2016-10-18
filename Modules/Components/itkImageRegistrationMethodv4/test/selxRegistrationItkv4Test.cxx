@@ -644,7 +644,7 @@ TEST_F(RegistrationItkv4Test, CompositeTransform)
   /** make example blueprint configuration */
   blueprint = Blueprint::New();
 
-  blueprint->AddComponent("MultiStageTransformController", { { "NameOfClass", { "ItkCompositeTransformComponent" } } });
+  blueprint->AddComponent("MultiStageTransformController", { { "NameOfClass", { "ItkCompositeTransformComponent" } }, { "ExecutionOrder", { "RegistrationMethod1", "RegistrationMethod2" } } });
 
   blueprint->AddComponent("FixedImageSource", { { "NameOfClass", { "ItkImageSourceFixedComponent" } } });
   blueprint->AddComponent("MovingImageSource", { { "NameOfClass", { "ItkImageSourceMovingComponent" } } });

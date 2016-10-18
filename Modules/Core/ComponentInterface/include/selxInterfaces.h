@@ -319,7 +319,7 @@ public:
   virtual void RunRegistration(void) = 0;
   virtual void SetMovingInitialTransform(typename CompositeTransformType::Pointer) = 0;
   virtual typename TransformBaseType::Pointer GetItkTransform() = 0;
-  virtual typename std::string GetComponentName() = 0;
+  virtual const typename std::string GetComponentName() = 0;
 };
 } // end namespace selx
 

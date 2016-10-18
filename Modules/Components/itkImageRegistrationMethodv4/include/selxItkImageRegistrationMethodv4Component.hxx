@@ -287,11 +287,11 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
 }
 
 template< int Dimensionality, class TPixel, class InternalComputationValueType >
-typename std::string
+const typename std::string
 ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >
 ::GetComponentName()
 {
-  return "to be implemented";
+  return this->m_Name; //from ComponentBase
 }
 
 template< int Dimensionality, class TPixel, class InternalComputationValueType >

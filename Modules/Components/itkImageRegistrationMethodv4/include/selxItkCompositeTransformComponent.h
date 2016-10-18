@@ -68,7 +68,7 @@ private:
   typename std::vector<MultiStageTransformInterface< InternalComputationValueType, Dimensionality >*> m_registrationStages;
 
   std::set< ReconnectTransformInterface * > m_ReconnectTransformInterfaces;
-  
+  std::vector<std::string> m_ExecutionOrder;
 protected:
 
   // return the class name and the template arguments to uniquely identify this component.

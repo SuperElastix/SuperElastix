@@ -66,11 +66,43 @@ template< class InternalComputationValueType, int Dimensionality >
 void
 ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >::RegistrationControllerStart()
 {
-  for (auto & stage : this->m_registrationStages)
+  // Check if the names connected stages are compatible with the provided execution order
+  // TODO: should we handle such component sanity checks as separate overlord check instead of as execution stage?
+  std::vector<std::string> sortedExecutionNames(this->m_ExecutionOrder); // copy container
+  std::vector<std::string> sortedStageNames; // empty container
+  sortedStageNames.resize(sortedExecutionNames.size()); // allocate space
+
+  std::transform(this->m_registrationStages.begin(), this->m_registrationStages.end(), sortedStageNames.begin(),
+    [](MultiStageTransformInterface< InternalComputationValueType, Dimensionality >* stageIterator) { return stageIterator->GetComponentName(); });
+
+  sort(sortedExecutionNames.begin(), sortedExecutionNames.end());
+  sort(sortedStageNames.begin(), sortedStageNames.end());
+
+  std::vector<std::string> mismatchNames;
+  //mismatchNames.resize(sortedExecutionNames.size() + sortedStageNames.size()); // allocate space worst case, no overlap
+  std::set_symmetric_difference(sortedExecutionNames.begin(), sortedExecutionNames.end(), sortedStageNames.begin(), sortedStageNames.end(), mismatchNames.begin());
+
+  if (mismatchNames.size() > 0)
   {
-    stage->SetMovingInitialTransform(this->m_CompositeTransform);
-    stage->RunRegistration();
-    this->m_CompositeTransform->AppendTransform(stage->GetItkTransform());
+    std::cout << "Non-fatal error: The names of ExecutionOrder and the connected Stages do not correspond for " << this->m_Name << ". Found mismatch is [ ";
+    for (auto const & name : mismatchNames)
+    {
+      std::cout <<""<< name << """ ";
+    }
+    std::cout << "]." << std::endl;
+  }
+  
+
+  // Perform execution flow
+  for (auto const & stageName : this->m_ExecutionOrder)
+  {
+    auto && stageIterator = std::find_if(this->m_registrationStages.begin(), 
+                                 this->m_registrationStages.end(), 
+                                 [stageName](MultiStageTransformInterface< InternalComputationValueType, Dimensionality >* thisStage) { return thisStage->GetComponentName() == stageName; });
+    (*stageIterator)->SetMovingInitialTransform(this->m_CompositeTransform);
+    (*stageIterator)->RunRegistration();
+
+    this->m_CompositeTransform->AppendTransform((*stageIterator)->GetItkTransform());
   }
   for( auto && reconnectTransformInterface : this->m_ReconnectTransformInterfaces )
   {
@@ -85,7 +117,6 @@ ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >
 ::MeetsCriterion( const ComponentBase::CriterionType & criterion )
 {
   bool hasUndefinedCriteria( false );
-  bool meetsCriteria( false );
 
   auto status = CheckTemplateProperties( this->TemplateProperties(), criterion );
   if( status == CriterionStatus::Satisfied )
@@ -96,6 +127,13 @@ ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >
   {
     return false;
   } // else: CriterionStatus::Unknown
-  return meetsCriteria;
+
+  if (criterion.first == "ExecutionOrder") //Supports this?
+  {
+    // should we check on non-repeating names?
+    this->m_ExecutionOrder = criterion.second;
+    return true;
+  }
+  return hasUndefinedCriteria;
 }
 } //end namespace selx

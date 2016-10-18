@@ -94,7 +94,7 @@ public:
   virtual void SetFixedInitialTransform(typename CompositeTransformType::Pointer fixedInitialTransform) override;
   virtual void SetMovingInitialTransform(typename CompositeTransformType::Pointer movingInitialTransform) override;
 
-  virtual typename std::string GetComponentName() override;
+  virtual const typename std::string GetComponentName() override;
 
   //BaseClass methods
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
