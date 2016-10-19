@@ -65,12 +65,23 @@ GDOptimizer3rdPartyComponent
 {
   bool hasUndefinedCriteria( false );
   bool meetsCriteria( false );
-  if( criterion.first == "ComponentProperty" )
+  if( criterion.first == "NameOfClass" )
   {
     meetsCriteria = true;
     for( auto const & criterionValue : criterion.second ) // auto&& preferred?
     {
-      if( criterionValue != "SomeProperty" )  // e.g. "GradientDescent", "SupportsSparseSamples
+      if( criterionValue != "GDOptimizer3rdPartyComponent" )  // e.g. "GradientDescent", "SupportsSparseSamples
+      {
+        meetsCriteria = false;
+      }
+    }
+  }
+  else if (criterion.first == "ComponentProperty")
+  {
+    meetsCriteria = true;
+    for (auto const & criterionValue : criterion.second) // auto&& preferred?
+    {
+      if (criterionValue != "SomeProperty")  // e.g. "GradientDescent", "SupportsSparseSamples
       {
         meetsCriteria = false;
       }

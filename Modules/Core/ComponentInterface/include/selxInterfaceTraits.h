@@ -195,6 +195,15 @@ struct Properties< itkTransformInterface< InternalComputationValueType, D >>
   }
 };
 
+template< class InternalComputationValueType, int D >
+struct Properties< MultiStageTransformInterface< InternalComputationValueType, D >>
+{
+  static const std::map< std::string, std::string > Get()
+  {
+    return{ { keys::NameOfInterface, "MultiStageTransformInterface" }, { keys::Dimensionality, std::to_string(D) } };
+  }
+};
+
 template< class F, class M >
 struct Properties< elastixTransformParameterObjectInterface< F, M >>
 {

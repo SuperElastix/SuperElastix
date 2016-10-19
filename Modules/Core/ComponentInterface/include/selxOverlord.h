@@ -43,6 +43,7 @@ namespace selx
 {
 class Overlord
 {
+  // TODO: consider renaming Overlord to NetworkBuilder (?). Its output should be a (light weight) ComponentContainer with 1 Execute button. All other data such as graphs and selectors can be deleted.
 public:
 
   typedef Blueprint::ComponentNameType ComponentNameType;

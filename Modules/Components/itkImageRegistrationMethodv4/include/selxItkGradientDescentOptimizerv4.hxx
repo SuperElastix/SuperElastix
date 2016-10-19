@@ -54,20 +54,19 @@ bool
 ItkGradientDescentOptimizerv4Component< InternalComputationValueType >
 ::MeetsCriterion( const ComponentBase::CriterionType & criterion )
 {
-  bool hasUndefinedCriteria( false );
-  bool meetsCriteria( false );
-  if( criterion.first == "InternalComputationValueType" )
+  bool hasUndefinedCriteria(false);
+  bool meetsCriteria(false);
+  auto status = CheckTemplateProperties(this->TemplateProperties(), criterion);
+  if (status == CriterionStatus::Satisfied)
   {
-    meetsCriteria = true;
-    for( auto const & criterionValue : criterion.second ) // auto&& preferred?
-    {
-      if( criterionValue != PodString< InternalComputationValueType >::Get() )  // e.g. "GradientDescent", "SupportsSparseSamples
-      {
-        meetsCriteria = false;
-      }
-    }
+    return true;
   }
-  else if( criterion.first == "NumberOfIterations" ) //Supports this?
+  else if (status == CriterionStatus::Failed)
+  {
+    return false;
+  } // else: CriterionStatus::Unknown
+
+  if( criterion.first == "NumberOfIterations" ) //Supports this?
   {
     if( criterion.second.size() != 1 )
     {

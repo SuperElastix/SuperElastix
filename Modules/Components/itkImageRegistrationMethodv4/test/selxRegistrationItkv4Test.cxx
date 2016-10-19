@@ -44,6 +44,7 @@
 #include "selxItkImageSourceMoving.h"
 
 #include "selxRegistrationController.h"
+#include "selxItkCompositeTransformComponent.h"
 
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
@@ -95,13 +96,18 @@ public:
     ItkMeanSquaresImageToImageMetricv4Component< 2, float, double  >,
     ItkGradientDescentOptimizerv4Component< double >,
     ItkAffineTransformComponent< double, 3 >,
+    ItkAffineTransformComponent< double, 2 >,
     ItkGaussianExponentialDiffeomorphicTransformComponent< double, 3 >,
     ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent< 3, double >,
+    ItkGaussianExponentialDiffeomorphicTransformComponent< double, 2 >,
+    ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent< 2, double >,
     ItkTransformDisplacementFilterComponent< 2, float, double >,
     ItkTransformDisplacementFilterComponent< 3, double, double >,
     ItkResampleFilterComponent< 2, float, double >,
     ItkResampleFilterComponent< 3, double, double >,
-    RegistrationControllerComponent< >> RegisterComponents;
+    RegistrationControllerComponent< >,
+    ItkCompositeTransformComponent<double, 3>,
+    ItkCompositeTransformComponent<double, 2 >> RegisterComponents;
 
   typedef SuperElastixFilter< RegisterComponents > SuperElastixFilterType;
 
@@ -631,5 +637,103 @@ TEST_F( RegistrationItkv4Test, FullyConfigured3dAffine )
   EXPECT_NO_THROW( resultDisplacementWriter->Update() );
 
   blueprint->WriteBlueprint( dataManager->GetOutputFile( "RegistrationItkv4Test_DisplacementField_network.dot" ) );
+}
+
+TEST_F(RegistrationItkv4Test, CompositeTransform)
+{
+  /** make example blueprint configuration */
+  blueprint = Blueprint::New();
+
+  blueprint->AddComponent("MultiStageTransformController", { { "NameOfClass", { "ItkCompositeTransformComponent" } }, { "ExecutionOrder", { "RegistrationMethod1", "RegistrationMethod2" } } });
+
+  blueprint->AddComponent("FixedImageSource", { { "NameOfClass", { "ItkImageSourceFixedComponent" } } });
+  blueprint->AddComponent("MovingImageSource", { { "NameOfClass", { "ItkImageSourceMovingComponent" } } });
+  blueprint->AddComponent("ResultImageSink", { { "NameOfClass", { "ItkImageSinkComponent" } } });
+
+  blueprint->AddComponent("ResampleFilter", { { "NameOfClass", { "ItkResampleFilterComponent" } } });
+  blueprint->AddConnection("FixedImageSource", "ResampleFilter", { {} });
+  blueprint->AddConnection("MovingImageSource", "ResampleFilter", { {} });
+  blueprint->AddConnection("MultiStageTransformController", "ResampleFilter", { {} }); //ReconnectTransformInterface
+
+  blueprint->AddConnection("ResampleFilter", "ResultImageSink", {});
+
+
+  blueprint->AddComponent("RegistrationMethod1", { { "NameOfClass", { "ItkImageRegistrationMethodv4Component" } },
+  { "Dimensionality", { "2" } },
+  { "InternalComputationValueType", { "double" } },
+  { "PixelType", { "float" } } });
+  blueprint->AddConnection("FixedImageSource", "RegistrationMethod1", {});
+  blueprint->AddConnection("MovingImageSource", "RegistrationMethod1", {});
+
+  blueprint->AddComponent("Metric1", { { "NameOfClass", { "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component" } } });
+  blueprint->AddConnection("Metric1", "RegistrationMethod1", {});
+  blueprint->AddComponent("Transform1", { { "NameOfClass", { "ItkAffineTransformComponent" } } });
+  blueprint->AddConnection("Transform1", "RegistrationMethod1", {});
+  blueprint->AddComponent("Optimizer1", { { "NameOfClass", { "ItkGradientDescentOptimizerv4Component" } } });
+  blueprint->AddConnection("Optimizer1", "RegistrationMethod1", {});
+
+  blueprint->AddConnection("RegistrationMethod1", "MultiStageTransformController", {}); // MultiStageTransformInterface
+
+  blueprint->AddComponent("RegistrationMethod2", { { "NameOfClass", { "ItkImageRegistrationMethodv4Component" } },
+  { "Dimensionality", { "2" } },
+  { "InternalComputationValueType", { "double" } },
+  { "PixelType", { "float" } },
+  { "NumberOfLevels", { "2" } },
+  { "ShrinkFactorsPerLevel", { "2", "1" } },
+  { "SmoothingSigmasPerLevel", { "2", "1" } } });
+  blueprint->AddConnection("FixedImageSource", "RegistrationMethod2", {});
+  blueprint->AddConnection("MovingImageSource", "RegistrationMethod2", {});
+
+  blueprint->AddComponent("Metric2", { { "NameOfClass", { "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component" } } });
+  blueprint->AddConnection("Metric2", "RegistrationMethod2", {});
+  blueprint->AddComponent("Transform2", { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformComponent" } } });
+  blueprint->AddConnection("Transform2", "RegistrationMethod2", {});
+  blueprint->AddConnection("FixedImageSource", "Transform2", {});
+  blueprint->AddComponent("TransformResolutionAdaptor2", { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent" } },
+  { "ShrinkFactorsPerLevel", { "2", "1" } } });
+  blueprint->AddConnection("FixedImageSource", "TransformResolutionAdaptor2", {});
+  blueprint->AddConnection("TransformResolutionAdaptor2", "RegistrationMethod2", {});
+
+  blueprint->AddComponent("Optimizer2", { { "NameOfClass", { "ItkGradientDescentOptimizerv4Component" } } });
+  blueprint->AddConnection("Optimizer2", "RegistrationMethod2", {});
+
+
+  blueprint->AddConnection("RegistrationMethod2", "MultiStageTransformController", {}); // MultiStageTransformInterface
+
+  
+
+
+  // Data manager provides the paths to the input and output data for unit tests
+  DataManagerType::Pointer dataManager = DataManagerType::New();
+
+  blueprint->WriteBlueprint(dataManager->GetOutputFile("RegistrationItkv4Test_CompositeTransform.dot"));
+
+  // Instantiate SuperElastix
+  SuperElastixFilterType::Pointer superElastixFilter;
+  EXPECT_NO_THROW(superElastixFilter = SuperElastixFilterType::New());
+
+  // Set up the readers and writers
+  ImageReader2DType::Pointer fixedImageReader = ImageReader2DType::New();
+  fixedImageReader->SetFileName(dataManager->GetInputFile("coneA2d64.mhd"));
+
+  ImageReader2DType::Pointer movingImageReader = ImageReader2DType::New();
+  movingImageReader->SetFileName(dataManager->GetInputFile("coneB2d64.mhd"));
+
+  ImageWriter2DType::Pointer resultImageWriter = ImageWriter2DType::New();
+  resultImageWriter->SetFileName(dataManager->GetOutputFile("RegistrationItkv4Test_CompositeTransform.mhd"));
+
+  // Connect SuperElastix in an itk pipeline
+  superElastixFilter->SetInput("FixedImageSource", fixedImageReader->GetOutput());
+  superElastixFilter->SetInput("MovingImageSource", movingImageReader->GetOutput());
+
+  resultImageWriter->SetInput(superElastixFilter->GetOutput< Image2DType >("ResultImageSink"));
+
+  EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
+
+  //Optional Update call
+  //superElastixFilter->Update();
+
+  // Update call on the writers triggers SuperElastix to configure and execute
+  EXPECT_NO_THROW(resultImageWriter->Update());
 }
 } // namespace selx
