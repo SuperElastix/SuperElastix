@@ -137,14 +137,11 @@ SuperElastixFilter< ComponentTypeList >
     allUniqueComponents = this->m_Overlord->Configure();
   }
 
-  bool isSuccess( false );
-
   if( allUniqueComponents && !this->m_IsConnected )
   {
-    isSuccess           = this->m_Overlord->ConnectComponents();
-    this->m_IsConnected = true;
+    this->m_IsConnected = this->m_Overlord->ConnectComponents();
+    std::cout << "Connecting Components: " << (this->m_IsConnected ? "succeeded" : "failed") << std::endl << std::endl;
   }
-  std::cout << "Connecting Components: " << ( isSuccess ? "succeeded" : "failed" ) << std::endl;
 
   if( ( m_OutputConnectionModified == true ) || ( this->m_BlueprintConnectionModified == true ) )
   {
@@ -173,6 +170,7 @@ void
 SuperElastixFilter< ComponentTypeList >
 ::GenerateData( void )
 {
+  std::cout << "Executing Network:" << std::endl;
   // This calls controller components that take over the control flow if the itk pipeline is broken.
   this->m_Overlord->Execute();
 

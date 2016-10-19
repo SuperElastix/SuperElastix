@@ -58,13 +58,15 @@ Overlord::Configure()
 
     std::cout << "===== Performing Handshakes between unique and non-unique Components =====" << std::endl;
     this->PropagateConnectionsWithUniqueComponents();
+    
+
+    nonUniqueComponentNames = this->GetNonUniqueComponentNames();
+    std::cout << nonUniqueComponentNames.size() << " out of " << m_Blueprint->GetComponentNames().size()
+      << " Components could not be uniquely selected" << std::endl << std::endl;
     this->m_isConfigured = true;
   }
   auto nonUniqueComponentNames = this->GetNonUniqueComponentNames();
-
-  std::cout << nonUniqueComponentNames.size() << " out of " << m_Blueprint->GetComponentNames().size()
-            << " Components could not be uniquely selected" << std::endl << std::endl;
-
+  
   if( nonUniqueComponentNames.size() > 0 )
   {
     std::cout << std::endl << "These Nodes need more criteria: " << std::endl;
@@ -75,13 +77,15 @@ Overlord::Configure()
     }
     return false;
   }
+
+  /*
   std::cout << "===== Selected Components =====" << std::endl;
   for (auto const & componentName : m_Blueprint->GetComponentNames())
   {
     std::cout << componentName << ":" << std::endl;
     this->m_ComponentSelectorContainer[componentName]->PrintComponents();
   }
-
+  */
   
   return true;
 }
