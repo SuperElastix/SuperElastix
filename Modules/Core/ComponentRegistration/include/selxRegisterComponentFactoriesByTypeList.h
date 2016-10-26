@@ -28,7 +28,7 @@ template< typename >
 struct RegisterFactoriesByTypeList;
 
 template< typename ... ComponentTypes >
-struct RegisterFactoriesByTypeList< TypeList< ComponentTypes ... >>
+struct RegisterFactoriesByTypeList< TypeList< ComponentTypes ... > >
 {
   static void Register()
   {
@@ -36,12 +36,12 @@ struct RegisterFactoriesByTypeList< TypeList< ComponentTypes ... >>
 };
 
 template< typename ComponentType, typename ... Rest >
-struct RegisterFactoriesByTypeList< TypeList< ComponentType, Rest ... >>
+struct RegisterFactoriesByTypeList< TypeList< ComponentType, Rest ... > >
 {
   static void Register()
   {
     ComponentFactory< ComponentType >::RegisterOneFactory();
-    RegisterFactoriesByTypeList< TypeList< Rest ... >>::Register();
+    RegisterFactoriesByTypeList< TypeList< Rest ... > >::Register();
   }
 };
 }

@@ -30,6 +30,7 @@
 
 #include <string.h>
 #include "selxMacro.h"
+ 
 namespace selx
 {
 template< int Dimensionality, class TPixel >

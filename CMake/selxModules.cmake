@@ -41,6 +41,7 @@ macro( _selxmodule_enable MODULE_NAME )
 
     if( ${MODULE_NAME}_INCLUDE_DIRS )
       include_directories( ${${MODULE_NAME}_INCLUDE_DIRS} )
+      list( APPEND SUPERELASTIX_INCLUDE_DIRS ${${MODULE_NAME}_INCLUDE_DIRS} )
     endif()
 
     if( ${MODULE_NAME}_LIBRARIES )
@@ -63,6 +64,7 @@ endmacro()
 
 macro( _selxmodules_initialize )
   set( SUPERELASTIX_MODULES )
+  set( SUPERELASTIX_INCLUDE_DIRS )
   set( SUPERELASTIX_LIBRARIES )
   set( SUPERELASTIX_TESTS )
 

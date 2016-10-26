@@ -63,7 +63,7 @@ public:
     ItkImageSourceComponent< 3, double >,
     ItkSmoothingRecursiveGaussianImageFilterComponent< 3, double >,
     ItkMeshSinkComponent< 2, float >,
-    ItkMeshSourceComponent< 2, float >> RegisterComponents;
+    ItkMeshSourceComponent< 2, float > > RegisterComponents;
 
   typedef SuperElastixFilter< RegisterComponents > SuperElastixFilterType;
 

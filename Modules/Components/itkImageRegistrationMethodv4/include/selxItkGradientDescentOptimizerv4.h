@@ -32,7 +32,7 @@ template< class InternalComputationValueType >
 class ItkGradientDescentOptimizerv4Component :
   public SuperElastixComponent<
   Accepting< >,
-  Providing< itkOptimizerv4Interface< InternalComputationValueType >>
+  Providing< itkOptimizerv4Interface< InternalComputationValueType > >
   >
 {
 public:

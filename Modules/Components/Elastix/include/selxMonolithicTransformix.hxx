@@ -35,7 +35,7 @@ MonolithicTransformixComponent< Dimensionality, TPixel >::MonolithicTransformixC
 
   //TODO m_elastixFilter returns a nullptr GetTransformParameterObject instead of a valid object. However, we need this object to satisfy the input conditions of m_transformixFilter
   elxParameterObjectPointer trxParameterObject = elxParameterObjectType::New();
-  //typename elxParameterObjectType::ParameterMapType defaultParameters = elxParameterObject->GetDefaultParameterMap("rigid");
+  //typename elxParameterObjectType::ParameterMapType defaultParameters = elxParameterObject->Get ParameterMap("rigid");
   //elxParameterObject->SetParameterMap(defaultParameters);
   //m_transformixFilter->SetTransformParameterObject(m_elastixFilter->GetTransformParameterObject());
   m_transformixFilter->SetTransformParameterObject( trxParameterObject ); // supply a dummy object
@@ -109,7 +109,7 @@ MonolithicTransformixComponent< Dimensionality, TPixel >::Set( itkImageMovingInt
 {
   auto movingImage = component->GetItkImageMoving();
   // connect the itk pipeline
-  this->m_transformixFilter->SetInput( movingImage );
+  this->m_transformixFilter->SetMovingImage( movingImage );
   return 0;
 }
 

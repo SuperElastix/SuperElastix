@@ -30,10 +30,14 @@ enable_language(C)
 enable_language(CXX)
 set( CMAKE_CXX_STANDARD 11 )
 
-# Place libraries and executables in the bin directory
-set( CMAKE_RUNTIME_OUTPUT_DIRECTORY
-  "${CMAKE_BINARY_DIR}/bin"
-)
+# Place executables in the bin directory
+set( CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin" )
+
+# Place shared libraries in the lib directory
+set( CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib" )
+
+# Place static libraries in the lib directory
+set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib" )
 
 # Include SuperElastix CMake scripts
 list( APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake" )
@@ -88,6 +92,7 @@ include_directories( ${Boost_INCLUDE_DIRS} )
 # For now we just enable all modules
 include( selxModules )
 selxmodule_enable( ModuleCore )
+selxmodule_enable( ModuleLog )
 selxmodule_enable( ModuleExamples )
 selxmodule_enable( ModuleSinksAndSources )
 selxmodule_enable( ModuleItkSmoothingRecursiveGaussianImageFilter )
@@ -95,8 +100,6 @@ selxmodule_enable( ModuleItkImageRegistrationMethodv4 )
 selxmodule_enable( ModuleItkSyNImageRegistrationMethod )
 selxmodule_enable( ModuleElastix )
 selxmodule_enable( ModuleController )
-#selxmodule_enable( ModuleCommandLine )
-include(${CMAKE_SOURCE_DIR}/Modules/CommandLine/CommandLine.cmake)
 # TODO: Build tests depending on enabled modules
 
 # ---------------------------------------------------------------------
@@ -110,7 +113,7 @@ if( ${SUPERELASTIX_BUILD_TESTING} )
   add_subdirectory( Testing )
 endif()
 
-# -----------------------------------------------------------brkdwn----------
+# ---------------------------------------------------------------------
 # Build Documentation
 
 mark_as_advanced( SUPERELASTIX_BUILD_DOXYGEN )
@@ -119,15 +122,23 @@ option( SUPERELASTIX_BUILD_DOXYGEN "Enable building Doxygen documentation." OFF 
 mark_as_advanced( SUPERELASTIX_BUILD_READTHEDOCS )
 option( SUPERELASTIX_BUILD_READTHEDOCS "Enable building readthedocs.org documentation." OFF )
 
+# ---------------------------------------------------------------------
+# Enable other projects to use SuperElastix via CMake's find_packge() and a use-file
+
+set( SUPERELASTIX_CONFIG_DIR ${CMAKE_CURRENT_BINARY_DIR} )
+set( SUPERELASTIX_BINARY_DIR ${CMAKE_LIBRARY_OUTPUT_DIRECTORY} )
+
+configure_file( SuperElastixConfig.cmake.in SuperElastixConfig.cmake @ONLY IMMEDIATE )
+configure_file( UseSuperElastix.cmake.in UseSuperElastix.cmake COPYONLY IMMEDIATE )
 
 # ---------------------------------------------------------------------
 # Install
 # When building the "INSTALL" project of SuperElastix these files are installed
 
 # Copy the SuperElastix executable
-install(TARGETS "SuperElastix"
-  RUNTIME DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/installed"
-)
+# install(TARGETS "SuperElastix"
+#   RUNTIME DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/installed"
+# )
 
 # Copy some of the configuration files
 install(FILES "${SUPERELASTIX_UNITTEST_CONFIGURATION_DATA_DIR}/itkv4_SVF_ANTsCC.json" 

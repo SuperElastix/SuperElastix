@@ -35,7 +35,7 @@ class ItkImageSourceFixedComponent :
   Accepting< >,
   Providing< SourceInterface,
   itkImageFixedInterface< Dimensionality, TPixel >,
-  itkImageDomainFixedInterface< Dimensionality >>
+  itkImageDomainFixedInterface< Dimensionality > >
   >
 {
 public:

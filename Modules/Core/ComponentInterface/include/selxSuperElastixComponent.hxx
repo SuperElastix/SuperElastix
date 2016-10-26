@@ -82,8 +82,13 @@ int
 Accepting< FirstInterface, RestInterfaces ... >::ConnectFromImpl( ComponentBase * other,
   const ComponentBase::InterfaceCriteriaType interfaceCriteria )
 {
+<<<<<<< HEAD
   // Does our component have an accepting interface sufficing the right criteria (e.g interfaceName)?
   if( Count< FirstInterface >::MeetsCriteria( interfaceCriteria ) == 1 )   // We use the FirstInterface only (of each recursion level), thus the count can be 0 or 1
+=======
+  // does our component have an accepting interface called interfacename?
+  if( InterfaceName< InterfaceAcceptor< FirstInterface > >::Get() == std::string( interfacename ) )
+>>>>>>> elastix-152-build-commandline-program-in-superbuild
   {
     // cast always succeeds since we know via the template arguments of the component which InterfaceAcceptors its base classes are.
     InterfaceAcceptor< FirstInterface > * acceptIF = this;

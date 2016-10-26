@@ -17,3 +17,22 @@
 #
 #=========================================================================
 
+cmake_minimum_required( VERSION 3.0.2 )
+project(SuperElastixExamples)
+
+if( NOT CMAKE_PROJECT_NAME STREQUAL "SuperElastix" )
+  # Examples are build as an external project, need to import dependencies
+
+  set(CMAKE_CXX_STANDARD 11)
+  
+  find_package( SuperElastix )
+  include( ${SUPERELASTIX_USE_FILE} )
+
+  find_package( ITK )
+  include( ${ITK_USE_FILE} )
+
+  message( STATUS "ELASTIX_USE_FILE: ${ELASTIX_USE_FILE}")
+  include( ${ELASTIX_USE_FILE} )
+endif()
+
+add_subdirectory( CommandlineProgram )

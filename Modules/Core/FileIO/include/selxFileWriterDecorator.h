@@ -30,7 +30,7 @@
 
 namespace selx
 {
-template< typename TWriter, typename FileWriterDecoratorTraits = FileWriterDecoratorDefaultTraits< TWriter >>
+template< typename TWriter, typename FileWriterDecoratorTraits = FileWriterDecoratorDefaultTraits< TWriter > >
 class FileWriterDecorator : public AnyFileWriter
 {
 public:

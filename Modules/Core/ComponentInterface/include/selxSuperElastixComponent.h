@@ -20,6 +20,7 @@
 #ifndef SuperElastixComponent_h
 #define SuperElastixComponent_h
 
+#include "selxMacro.h"
 #include "selxComponentBase.h"
 #include <typeinfo>
 #include <string>

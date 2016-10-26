@@ -101,7 +101,7 @@ public:
     ItkTransformDisplacementFilterComponent< 3, double, double >,
     ItkResampleFilterComponent< 2, float, double >,
     ItkResampleFilterComponent< 3, double, double >,
-    RegistrationControllerComponent< >> RegisterComponents;
+    RegistrationControllerComponent< > > RegisterComponents;
 
   typedef SuperElastixFilter< RegisterComponents > SuperElastixFilterType;
 

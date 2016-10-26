@@ -77,7 +77,7 @@ ElastixComponent< Dimensionality, TPixel >::Set( itkImageMovingInterface< Dimens
   // connect the itk pipeline
   this->m_elastixFilter->SetMovingImage( movingImage );
   // In the current transformix filter an input image is required even if we want a deformation field only.
-  this->m_transformixFilter->SetInput( movingImage );
+  this->m_transformixFilter->SetMovingImage( movingImage );
   return 0;
 }
 

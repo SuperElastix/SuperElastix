@@ -78,7 +78,7 @@ public:
     ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent< 2, double >,
     ItkTransformDisplacementFilterComponent< 2, float, double >,
     ItkResampleFilterComponent< 2, float, double >,
-    RegistrationControllerComponent< >> RegisterComponents;
+    RegistrationControllerComponent< > > RegisterComponents;
 
   typedef SuperElastixFilter< RegisterComponents > SuperElastixFilterType;
 

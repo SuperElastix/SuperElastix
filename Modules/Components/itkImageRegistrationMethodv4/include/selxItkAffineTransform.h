@@ -31,7 +31,7 @@ template< class InternalComputationValueType, int Dimensionality >
 class ItkAffineTransformComponent :
   public SuperElastixComponent<
   Accepting< >,
-  Providing< itkTransformInterface< InternalComputationValueType, Dimensionality >>
+  Providing< itkTransformInterface< InternalComputationValueType, Dimensionality > >
   >
 {
 public:

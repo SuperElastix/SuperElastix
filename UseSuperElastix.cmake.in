@@ -1,0 +1,12 @@
+#
+# This file sets up include directories and link directories 
+# for a project to use SuperElastix. It should not be
+# included directly, but rather through the SUPERELASTIX_USE_FILE setting
+# obtained from SimpleITKConfig.cmake.
+#
+
+# Add include directories needed to use SuperElastix
+include_directories( ${SUPERELASTIX_INCLUDE_DIRS} )
+
+# Add link directories needed to use SuperElastix
+link_directories( ${SUPERELASTIX_LIBRARY_DIRS} )

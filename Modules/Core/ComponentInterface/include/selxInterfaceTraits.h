@@ -97,7 +97,11 @@ struct Properties< TransformedImageInterface >
 
 // InterfaceName<T>::Get() should return "itkImageSourceInterface" no matter over which arguments itkImageSourceInterface is templated
 template< int D, class TPixel >
+<<<<<<< HEAD
 struct Properties< itkImageInterface< D, TPixel >>
+=======
+struct InterfaceName< itkImageInterface< D, TPixel > >
+>>>>>>> elastix-152-build-commandline-program-in-superbuild
 {
   static const std::map< std::string, std::string > Get()
   {
@@ -239,7 +243,6 @@ struct Properties< ReconnectTransformInterface >
     return { { keys::NameOfInterface, "ReconnectTransformInterface" } };
   }
 };
-
 template< class InternalComputationValueType, int D >
 struct Properties< itkTransformParametersAdaptorsContainerInterface< InternalComputationValueType, D >>
 {
