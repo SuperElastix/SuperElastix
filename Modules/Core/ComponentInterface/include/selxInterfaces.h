@@ -31,6 +31,8 @@
 #include "itkGaussianExponentialDiffeomorphicTransformParametersAdaptor.h"
 #include "itkGaussianExponentialDiffeomorphicTransform.h"
 
+#include "itkCompositeTransform.h"
+
 #include "itkImage.h"
 #include "itkMesh.h"
 
@@ -313,6 +315,19 @@ public:
 
   typedef typename elastix::ElastixFilter< TFixedImage, TMovingImage >::ParameterObjectType elastixTransformParameterObject;
   virtual elastixTransformParameterObject * GetTransformParameterObject() = 0;
+};
+
+template< class InternalComputationValueType, int Dimensionality >
+class MultiStageTransformInterface
+{
+public:
+  using TransformBaseType = itk::Transform< InternalComputationValueType, Dimensionality, Dimensionality >;
+  using CompositeTransformType = itk::CompositeTransform<InternalComputationValueType, Dimensionality >;
+  virtual void SetFixedInitialTransform(typename CompositeTransformType::Pointer) = 0;
+  virtual void RunRegistration(void) = 0;
+  virtual void SetMovingInitialTransform(typename CompositeTransformType::Pointer) = 0;
+  virtual typename TransformBaseType::Pointer GetItkTransform() = 0;
+  virtual const typename std::string GetComponentName() = 0;
 };
 } // end namespace selx
 

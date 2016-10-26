@@ -69,6 +69,11 @@ private:
   std::set< AfterRegistrationInterface * >  m_AfterRegistrationInterfaces;
 
 protected:
+  // return the class name and the template arguments to uniquely identify this component.
+  static inline const std::map< std::string, std::string > TemplateProperties()
+  {
+    return{ { keys::NameOfClass, "RegistrationControllerComponent" } };
+  }
 };
 } //end namespace selx
 #ifndef ITK_MANUAL_INSTANTIATION

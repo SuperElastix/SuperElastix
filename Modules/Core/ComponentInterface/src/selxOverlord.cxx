@@ -58,22 +58,35 @@ Overlord::Configure()
 
     std::cout << "===== Performing Handshakes between unique and non-unique Components =====" << std::endl;
     this->PropagateConnectionsWithUniqueComponents();
+    
+
+    nonUniqueComponentNames = this->GetNonUniqueComponentNames();
+    std::cout << nonUniqueComponentNames.size() << " out of " << m_Blueprint->GetComponentNames().size()
+      << " Components could not be uniquely selected" << std::endl << std::endl;
     this->m_isConfigured = true;
   }
   auto nonUniqueComponentNames = this->GetNonUniqueComponentNames();
-
-  std::cout << nonUniqueComponentNames.size() << " out of " << m_Blueprint->GetComponentNames().size()
-            << " Components could not be uniquely selected" << std::endl << std::endl;
-
+  
   if( nonUniqueComponentNames.size() > 0 )
   {
     std::cout << std::endl << "These Nodes need more criteria: " << std::endl;
     for( const auto & nonUniqueComponentName : nonUniqueComponentNames )
     {
       std::cout << this->m_ComponentSelectorContainer[ nonUniqueComponentName ]->NumberOfComponents() << "  " << nonUniqueComponentName << std::endl;
+      this->m_ComponentSelectorContainer[nonUniqueComponentName]->PrintComponents();
     }
     return false;
   }
+
+  /*
+  std::cout << "===== Selected Components =====" << std::endl;
+  for (auto const & componentName : m_Blueprint->GetComponentNames())
+  {
+    std::cout << componentName << ":" << std::endl;
+    this->m_ComponentSelectorContainer[componentName]->PrintComponents();
+  }
+  */
+  
   return true;
 }
 
@@ -128,6 +141,8 @@ Overlord::ApplyNodeConfiguration()
   {
     std::cout << " Blueprint Node: " << name << std::endl;
     ComponentSelectorPointer    currentComponentSelector = ComponentSelector::New();
+    currentComponentSelector->ComponentName(name); // Todo via constructor
+
     Blueprint::ParameterMapType currentProperty          = this->m_Blueprint->GetComponent( name );
     for( auto const & criterion : currentProperty )
     {
@@ -305,7 +320,6 @@ Overlord::PropagateConnectionsWithUniqueComponents()
     }
   }
 }
-
 
 bool
 Overlord::ConnectComponents()

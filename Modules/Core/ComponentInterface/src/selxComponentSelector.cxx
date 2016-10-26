@@ -31,11 +31,11 @@ ComponentSelector::ComponentSelector()
   for( std::list< itk::LightObject::Pointer >::iterator i = allobjects.begin();
     i != allobjects.end(); ++i )
   {
-    ComponentBase * io
+    ComponentBase * component
       = dynamic_cast< ComponentBase * >( i->GetPointer() );
-    if( io )
+    if (component)
     {
-      this->m_PossibleComponents.push_back( io );
+      this->m_PossibleComponents.push_back(component);
     }
   }
 }
@@ -45,12 +45,20 @@ ComponentSelector::~ComponentSelector()
 {
 }
 
+void ComponentSelector::ComponentName(const std::string name)
+{
+  for (const auto & component : this->m_PossibleComponents)
+  {
+    component->Name(name);
+  }
+}
+
 
 void
 ComponentSelector::AddCriterion( const CriterionType & criterion )
 {
   this->m_PossibleComponents.remove_if([ & ]( ComponentBasePointer component ){
-      return !component->MeetsCriterionBase( criterion );
+      return !component->MeetsCriterion( criterion );
     } );
 }
 
@@ -113,17 +121,26 @@ ComponentSelector::GetComponent()
 }
 
 
-bool
-ComponentSelector::HasMultipleComponents()
-{
-  return ( this->m_PossibleComponents.size() > 1 );
-}
-
-
 unsigned int
 ComponentSelector::NumberOfComponents()
 {
   return this->m_PossibleComponents.size();
+}
+
+void 
+ComponentSelector::PrintComponents(void)
+{
+  /*
+  for (auto & component : this->m_PossibleComponents)
+  {
+    auto const & properties = component->TemplateProperties();
+    for (auto const & keyvalue : properties)
+    {
+      std::cout << "{ """ << keyvalue.first << """: """ << keyvalue.second << """}" << std::endl;
+    }
+    std::cout << std::endl;
+  }
+  */
 }
 } // end namespace selx
 

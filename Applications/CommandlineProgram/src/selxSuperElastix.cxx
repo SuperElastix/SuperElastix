@@ -122,7 +122,6 @@ main( int ac, char * av[] )
 
     if( vm.count( "in" ) )
     {
-      std::cout << "Number of input data: " << inputPairs.size() << "\n";
       int index = 0;
       for( const auto & inputPair : inputPairs )
       {
@@ -131,8 +130,7 @@ main( int ac, char * av[] )
         const std::string & name = nameAndPath[ 0 ];
         const std::string & path = nameAndPath[ 1 ];
 
-        std::cout << " " << index << " " << name << " : " << path << "\n";
-        ++index;
+
 
         // since we do not know which reader type we should instantiate for input "name",
         // we ask SuperElastix for a reader that matches the type of the source component "name"
@@ -141,12 +139,14 @@ main( int ac, char * av[] )
         reader->SetFileName( path );
         superElastixFilter->SetInput( name, reader->GetOutput() );
         fileReaders.push_back( reader );
+
+        std::cout << "Input data " << index << " " << name << " : " << path << "\n";
+        ++index;
       }
     }
 
     if( vm.count( "out" ) )
     {
-      std::cout << "Number of output data: " << outputPairs.size() << "\n";
       int index = 0;
       for( const auto & outputPair : outputPairs )
       {
@@ -154,9 +154,6 @@ main( int ac, char * av[] )
         boost::split( nameAndPath, outputPair, boost::is_any_of( "=" ) );  // NameAndPath == { "name","path" }
         const std::string & name = nameAndPath[ 0 ];
         const std::string & path = nameAndPath[ 1 ];
-
-        std::cout << " " << index << " " << name << " : " << path << "\n";
-        ++index;
 
         // since we do not know which writer type we should instantiate for output "name",
         // we ask SuperElastix for a writer that matches the type of the sink component "name"
@@ -167,6 +164,10 @@ main( int ac, char * av[] )
         //writer->SetInput(superElastixFilter->GetOutput<Image2DType>(name));
         writer->SetInput( superElastixFilter->GetOutput( name ) );
         fileWriters.push_back( writer );
+
+        std::cout << "Output data " << index << " " << name << " : " << path << "\n";
+        ++index;
+
       }
     }
 

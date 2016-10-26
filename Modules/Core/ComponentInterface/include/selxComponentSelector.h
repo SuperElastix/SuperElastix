@@ -68,9 +68,6 @@ public:
 
   unsigned int NumberOfComponents( void );
 
-  /** Check for multiple versus 1 or 0 components*/
-  bool HasMultipleComponents( void );
-
   unsigned int RequireAcceptingInterfaceFrom( ComponentBasePointer other, const InterfaceCriteriaType & interfaceCriteria );
 
   unsigned int RequireProvidingInterfaceTo( ComponentBasePointer other, const InterfaceCriteriaType & interfaceCriteria );
@@ -78,9 +75,11 @@ public:
   /** Return Component or Nullptr*/
   ComponentBasePointer GetComponent( void );
 
-protected:
+  void PrintComponents(void);
 
-  CriteriaType      m_Criteria;
+  void ComponentName(const std::string); //Setter should be via constructor. We should get rid of itk factory design.
+
+protected:
   ComponentListType m_PossibleComponents;
   ComponentSelector();
   ~ComponentSelector();

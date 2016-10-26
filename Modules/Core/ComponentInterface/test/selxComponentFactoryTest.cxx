@@ -134,7 +134,7 @@ TEST_F( ComponentFactoryTest, AddCriteria )
   EXPECT_NO_THROW( ComponentFactory< TransformComponent1 >::RegisterOneFactory() );
   EXPECT_NO_THROW( ComponentFactory< MetricComponent1 >::RegisterOneFactory() );
 
-  CriterionType nonSelectiveCriterion( "ComponentProperty", { "SomeProperty" } );
+  CriterionType nonSelectiveCriterion({ "ComponentProperty", { "SomeProperty" } });
 
   CriterionType criterion1( { "ComponentOutput", { "Transform" } } );
 
@@ -143,7 +143,7 @@ TEST_F( ComponentFactoryTest, AddCriteria )
   EXPECT_NO_THROW( Node1->AddCriterion( nonSelectiveCriterion ) );
   ComponentType::Pointer Node1Component;
 
-  EXPECT_TRUE( Node1->HasMultipleComponents() );
+  EXPECT_TRUE( Node1->NumberOfComponents()>1 );
   EXPECT_NO_THROW( Node1Component = Node1->GetComponent() );
   //Unsufficient criteria means no Component was selected."
   EXPECT_TRUE( Node1Component.IsNull() );
@@ -152,7 +152,7 @@ TEST_F( ComponentFactoryTest, AddCriteria )
   EXPECT_NO_THROW( Node1Component = Node1->GetComponent() );
 
   //Sufficient criteria means one Component was selected."
-  EXPECT_FALSE( Node1->HasMultipleComponents() );
+  EXPECT_FALSE( Node1->NumberOfComponents()>1 );
   EXPECT_FALSE( Node1Component.IsNull() );
   //Based on the criteria TransformComponent1 should be selected
   EXPECT_STREQ( Node1Component->GetNameOfClass(), "TransformComponent1" );
@@ -205,7 +205,7 @@ TEST_F( ComponentFactoryTest, UnknownComponent )
   ComponentType::Pointer NodeComponent;
 
   // we expect 0 components
-  EXPECT_FALSE( Node->HasMultipleComponents() );
+  EXPECT_TRUE( Node->NumberOfComponents() == 0 );
   EXPECT_TRUE( Node->GetComponent().IsNull() );
 }
 } // namespace selx
