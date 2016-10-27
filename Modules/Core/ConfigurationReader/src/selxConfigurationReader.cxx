@@ -77,7 +77,7 @@ ConfigurationReader::FromJson( const std::string & filename )
 ConfigurationReader::BlueprintPointerType
 ConfigurationReader::FromPropertyTree( const PropertyTreeType & pt )
 {
-  BlueprintPointerType blueprint = Blueprint::New();
+  BlueprintPointerType blueprint = std::make_shared< Blueprint >();
 
   BOOST_FOREACH( const PropertyTreeType::value_type & v, pt.equal_range( "Component" ) )
   {
@@ -97,7 +97,7 @@ ConfigurationReader::FromPropertyTree( const PropertyTreeType & pt )
       componentPropertyMap[ propertyKey ] = propertyMultiValue;
     }
 
-    blueprint->AddComponent( componentName, componentPropertyMap );
+    blueprint->SetComponent( componentName, componentPropertyMap );
   }
 
   BOOST_FOREACH( const PropertyTreeType::value_type & v, pt.equal_range( "Connection" ) )
@@ -138,7 +138,7 @@ ConfigurationReader::FromPropertyTree( const PropertyTreeType & pt )
       }
     }
 
-    blueprint->AddConnection( outName, inName, componentPropertyMap );
+    blueprint->SetConnection( outName, inName, componentPropertyMap );
   }
   return blueprint;
 }

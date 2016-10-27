@@ -43,7 +43,7 @@ public:
   typedef Blueprint::ParameterKeyType   ParameterKeyType;
   typedef Blueprint::ParameterValueType ParameterValueType;
   typedef Blueprint::ParameterMapType   ParameterMapType;
-  typedef Blueprint::Pointer            BlueprintPointerType;
+  typedef std::shared_ptr< Blueprint >  BlueprintPointerType;
 
   static BlueprintPointerType FromXML( const std::string & filename );
 

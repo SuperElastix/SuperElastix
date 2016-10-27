@@ -26,10 +26,9 @@
 
 namespace selx
 {
-Overlord::Overlord() : m_isConfigured( false )
+Overlord::Overlord( Blueprint const * blueprint ) : m_Blueprint( blueprint ), m_isConfigured( false )
 {
 }
-
 
 bool
 Overlord::Configure()
