@@ -93,6 +93,16 @@ if( SUPERELASTIX_BUILD_ELASTIX )
 endif()
 
 # ---------------------------------------------------------------------
+# Build Niftyreg
+
+mark_as_advanced( SUPERELASTIX_BUILD_NIFTYREG )
+option( SUPERELASTIX_BUILD_NIFTYREG "Build support for Niftyreg." ON )
+if( SUPERELASTIX_BUILD_NIFTYREG )
+#TODO add USE_SYSTEM_NIFTYREG option
+  include( ExternalNiftyreg )
+endif()
+
+# ---------------------------------------------------------------------
 # Boost Graph Library
 
 mark_as_advanced( USE_SYSTEM_BOOST )
