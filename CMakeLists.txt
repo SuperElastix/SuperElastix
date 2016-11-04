@@ -99,6 +99,7 @@ selxmodule_enable( ModuleItkImageRegistrationMethodv4 )
 selxmodule_enable( ModuleItkSyNImageRegistrationMethod )
 selxmodule_enable( ModuleElastix )
 selxmodule_enable( ModuleController )
+selxmodule_enable( ModuleNiftyreg )
 # TODO: Build tests depending on enabled modules
 
 # ---------------------------------------------------------------------
