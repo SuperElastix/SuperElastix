@@ -34,7 +34,7 @@ SuperElastixFilter< ComponentTypeList >
 ::SuperElastixFilter( void ) : m_InputConnectionModified( true ), m_OutputConnectionModified( true ), m_BlueprintConnectionModified( true ),
   m_IsConnected( false )
 {
-  this->m_Overlord = std::unique_ptr< Overlord >( new Overlord() );
+  this->m_Overlord = std::unique_ptr< Overlord >( new Overlord( this->m_Blueprint.Get() ) );
 
   RegisterFactoriesByTypeList< ComponentTypeList >::Register();
 

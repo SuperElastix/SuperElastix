@@ -31,19 +31,27 @@ Blueprint
 ::~Blueprint( void ) = default;
 
 
-Blueprint::ParameterMapType
-Blueprint
-::GetComponent( ComponentNameType name ) const
-{
-  return this->m_Pimple->GetComponent( name );
-}
-
-
 bool
 Blueprint
 ::SetComponent( ComponentNameType name, ParameterMapType parameterMap )
 {
   return this->m_Pimple->SetComponent( name, parameterMap );
+}
+
+
+Blueprint::ParameterMapType
+Blueprint
+::GetComponent( ComponentNameType componentName ) const
+{
+  return this->m_Pimple->GetComponent( componentName );
+}
+
+
+bool
+Blueprint
+::DeleteComponent( ComponentNameType componentName )
+{
+  return this->m_Pimple->DeleteComponent( componentName );
 }
 
 
@@ -54,19 +62,19 @@ Blueprint::GetComponentNames( void ) const
 }
 
 
-Blueprint::ParameterMapType
-Blueprint
-::GetConnection( ComponentNameType upstream, ComponentNameType downstream ) const
-{
-  return this->m_Pimple->GetConnection( upstream, downstream );
-}
-
-
 bool
 Blueprint
 ::SetConnection( ComponentNameType upstream, ComponentNameType downstream, ParameterMapType parameterMap )
 {
   return this->m_Pimple->SetConnection( upstream, downstream, parameterMap );
+}
+
+
+Blueprint::ParameterMapType
+Blueprint
+::GetConnection( ComponentNameType upstream, ComponentNameType downstream ) const
+{
+  return this->m_Pimple->GetConnection( upstream, downstream );
 }
 
 

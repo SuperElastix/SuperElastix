@@ -17,15 +17,16 @@
  *
  *=========================================================================*/
 
-#include "selxBlueprint.h"
 #include "selxBlueprintImpl.h"
+
+#include <stdexcept>
 
 namespace selx
 {
 
   
 bool
-BlueprintImpl
+Blueprint::BlueprintImpl
 ::SetComponent( ComponentNameType name, ParameterMapType parameterMap )
 {
   if( this->ComponentExists( name ) )
@@ -41,7 +42,7 @@ BlueprintImpl
 
   
 Blueprint::ParameterMapType
-BlueprintImpl
+Blueprint::BlueprintImpl
 ::GetComponent( ComponentNameType name ) const
 {
   if( !this->ComponentExists( name ) )
@@ -56,21 +57,21 @@ BlueprintImpl
 
 
 bool
-BlueprintImpl
+Blueprint::BlueprintImpl
 ::DeleteComponent( ComponentNameType name )
 {
   if( !this->ComponentExists( name ) )
   {
-    clear_vertex( name, this->m_Graph );
-    remove_vertex( name, this->m_Graph );
+    this->m_Graph.remove_vertex( name );
     return true;
   }
   
   return false;
 }
 
-BlueprintImpl::ComponentNamesType
-BlueprintImpl::GetComponentNames( void ) const
+Blueprint::ComponentNamesType
+Blueprint::BlueprintImpl
+::GetComponentNames( void ) const
 {
   ComponentNamesType container;
   for( auto it = boost::vertices( this->m_Graph.graph() ).first; it != boost::vertices( this->m_Graph.graph() ).second; ++it )
@@ -82,10 +83,10 @@ BlueprintImpl::GetComponentNames( void ) const
 
 
 bool
-BlueprintImpl
+Blueprint::BlueprintImpl
 ::SetConnection( ComponentNameType upstream, ComponentNameType downstream, ParameterMapType parameterMap )
 {
-  if( !this->ComponentExists( upstream ) || !this->ComponentExists( downstream ) 
+  if( !this->ComponentExists( upstream ) || !this->ComponentExists( downstream ) )
   {
     return false;
   }
@@ -104,7 +105,7 @@ BlueprintImpl
 
 
 Blueprint::ParameterMapType
-BlueprintImpl
+Blueprint::BlueprintImpl
 ::GetConnection( ComponentNameType upstream, ComponentNameType downstream ) const
 {
   return this->m_Graph[ this->GetConnectionIndex( upstream, downstream ) ].parameterMap;
@@ -112,8 +113,8 @@ BlueprintImpl
 
 
 bool
-BlueprintImpl
-::DeleteConnection( ComponentNameType upstream, ComponentNameType downstream )
+Blueprint::BlueprintImpl
+::DeleteConnection( Blueprint::ComponentNameType upstream, Blueprint::ComponentNameType downstream )
 {
   if( this->ConnectionExists( upstream, downstream ) )
   {
@@ -125,7 +126,7 @@ BlueprintImpl
 
 
 bool
-BlueprintImpl
+Blueprint::BlueprintImpl
 ::ComponentExists( ComponentNameType componentName ) const
 {
   const GraphType::vertex_descriptor descriptor = this->m_Graph.vertex( componentName );
@@ -134,7 +135,7 @@ BlueprintImpl
 
 
 bool
-BlueprintImpl
+Blueprint::BlueprintImpl
 ::ConnectionExists( ComponentNameType upstream, ComponentNameType downstream ) const
 {
   if( !this->ComponentExists( upstream ) )
@@ -150,23 +151,8 @@ BlueprintImpl
 }
 
 
-BlueprintImpl::ComponentNamesType
-BlueprintImpl
-::GetOutputNames( const ComponentNameType name ) const
-{
-  ComponentNamesType     container;
-  OutputIteratorPairType outputIteratorPair = boost::out_edges( this->m_Graph.vertex( name ), this->m_Graph );
-  for( auto it = outputIteratorPair.first; it != outputIteratorPair.second; ++it )
-  {
-    container.push_back( this->m_Graph.graph()[ it->m_target ].name );
-  }
-
-  return container;
-}
-
-
-BlueprintImpl::ComponentNamesType
-BlueprintImpl
+Blueprint::ComponentNamesType
+Blueprint::BlueprintImpl
 ::GetInputNames( const ComponentNameType name ) const
 {
   ComponentNamesType container;
@@ -182,14 +168,29 @@ BlueprintImpl
 }
 
 
-BlueprintImpl::ConnectionIndexType
-BlueprintImpl
+Blueprint::ComponentNamesType
+Blueprint::BlueprintImpl
+::GetOutputNames( const ComponentNameType name ) const
+{
+  ComponentNamesType     container;
+  OutputIteratorPairType outputIteratorPair = boost::out_edges( this->m_Graph.vertex( name ), this->m_Graph );
+  for( auto it = outputIteratorPair.first; it != outputIteratorPair.second; ++it )
+  {
+    container.push_back( this->m_Graph.graph()[ it->m_target ].name );
+  }
+
+  return container;
+}
+
+
+Blueprint::BlueprintImpl::ConnectionIndexType
+Blueprint::BlueprintImpl
 ::GetConnectionIndex( ComponentNameType upstream, ComponentNameType downstream ) const
 {
   // This function is part of the internal API and should fail hard if we use it incorrectly
   if( !this->ConnectionExists( upstream, downstream ) )
   {
-    itkExceptionMacro( "Blueprint does not contain connection from component " << upstream << " to " << downstream );
+    throw std::runtime_error( "Blueprint does not contain connection from component " + upstream + " to " + downstream );
   }
 
   return boost::edge_by_label( upstream, downstream, this->m_Graph ).first;
@@ -197,7 +198,7 @@ BlueprintImpl
 
 
 void
-BlueprintImpl
+Blueprint::BlueprintImpl
 ::Write( const std::string filename )
 {
   std::ofstream dotfile( filename.c_str() );

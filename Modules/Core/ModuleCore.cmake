@@ -54,6 +54,8 @@ set( ${MODULE}_TESTS
 # Module source files
 set( ${MODULE}_SOURCE_FILES
   ${${MODULE}_SOURCE_DIR}/Blueprints/src/selxBlueprint.cxx
+  ${${MODULE}_SOURCE_DIR}/Blueprints/src/selxBlueprintImpl.h
+  ${${MODULE}_SOURCE_DIR}/Blueprints/src/selxBlueprintImpl.cxx
   ${${MODULE}_SOURCE_DIR}/ComponentInterface/src/selxComponentBase.cxx
   ${${MODULE}_SOURCE_DIR}/ComponentInterface/src/selxOverlord.cxx
   ${${MODULE}_SOURCE_DIR}/ComponentInterface/src/selxComponentSelector.cxx
