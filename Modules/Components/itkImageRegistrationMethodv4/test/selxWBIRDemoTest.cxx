@@ -82,11 +82,12 @@ public:
 
   typedef SuperElastixFilter< RegisterComponents > SuperElastixFilterType;
 
-  typedef Blueprint::Pointer            BlueprintPointerType;
-  typedef Blueprint::ConstPointer       BlueprintConstPointerType;
-  typedef Blueprint::ParameterMapType   ParameterMapType;
-  typedef Blueprint::ParameterValueType ParameterValueType;
-  typedef DataManager                   DataManagerType;
+  typedef SuperElastixFilterType::BlueprintType BlueprintType;
+  typedef BlueprintType::Pointer                BlueprintPointer;
+  typedef BlueprintType::ConstPointer           BlueprintConstPointerType;
+  typedef Blueprint::ParameterMapType           ParameterMapType;
+  typedef Blueprint::ParameterValueType         ParameterValueType;
+  typedef DataManager                           DataManagerType;
 
   typedef itk::Image< float, 2 >              Image2DType;
   typedef itk::ImageFileReader< Image2DType > ImageReader2DType;
@@ -129,7 +130,7 @@ public:
   }
 
 
-  BlueprintPointerType            blueprint;
+  BlueprintPointer                blueprint;
   SuperElastixFilterType::Pointer superElastixFilter;
 
   ImageReader2DType::Pointer             baselineImageReader;
@@ -143,69 +144,69 @@ public:
 TEST_F( WBIRDemoTest, itkv4_SVF_ANTSCC )
 {
   /** make example blueprint configuration */
-  blueprint = Blueprint::New();
-  blueprint->AddComponent( "RegistrationMethod", { { "NameOfClass", { "ItkImageRegistrationMethodv4Component" } },
+  blueprint = BlueprintType::New();
+  blueprint->Get()->SetComponent( "RegistrationMethod", { { "NameOfClass", { "ItkImageRegistrationMethodv4Component" } },
                                                    { "NumberOfLevels", { "3" } },
                                                    { "ShrinkFactorsPerLevel", { "4", "2", "1" } },
                                                    { "SmoothingSigmasPerLevel", { "4", "2", "1" } } } );
 
-  blueprint->AddComponent( "Metric", { { "NameOfClass", { "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component" } } } );
-  blueprint->AddComponent( "Optimizer", { { "NameOfClass", { "ItkGradientDescentOptimizerv4Component" } },
+  blueprint->Get()->SetComponent( "Metric", { { "NameOfClass", { "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component" } } } );
+  blueprint->Get()->SetComponent( "Optimizer", { { "NameOfClass", { "ItkGradientDescentOptimizerv4Component" } },
                                           { "NumberOfIterations", { "100" } },
                                           { "LearningRate", { "100" } } } );
-  blueprint->AddComponent( "Transform", { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformComponent" } } } );
+  blueprint->Get()->SetComponent( "Transform", { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformComponent" } } } );
 
-  blueprint->AddComponent( "TransformResolutionAdaptor", { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent" } },
+  blueprint->Get()->SetComponent( "TransformResolutionAdaptor", { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent" } },
                                                            { "ShrinkFactorsPerLevel", { "4", "2", "1" } } } );
 
-  blueprint->AddComponent( "ResampleFilter", { { "NameOfClass", { "ItkResampleFilterComponent" } } } );
-  blueprint->AddComponent( "TransformDisplacementFilter", { { "NameOfClass", { "ItkTransformDisplacementFilterComponent" } } } );
+  blueprint->Get()->SetComponent( "ResampleFilter", { { "NameOfClass", { "ItkResampleFilterComponent" } } } );
+  blueprint->Get()->SetComponent( "TransformDisplacementFilter", { { "NameOfClass", { "ItkTransformDisplacementFilterComponent" } } } );
 
-  blueprint->AddComponent( "FixedImageSource", { { "NameOfClass", { "ItkImageSourceFixedComponent" } } } );
-  blueprint->AddComponent( "MovingImageSource", { { "NameOfClass", { "ItkImageSourceMovingComponent" } } } );
-  blueprint->AddComponent( "ResultImageSink", { { "NameOfClass", { "ItkImageSinkComponent" } } } );
-  blueprint->AddComponent( "ResultDisplacementFieldSink", { { "NameOfClass", { "DisplacementFieldItkImageFilterSinkComponent" } } } );
-  blueprint->AddComponent( "Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } } );
+  blueprint->Get()->SetComponent( "FixedImageSource", { { "NameOfClass", { "ItkImageSourceFixedComponent" } } } );
+  blueprint->Get()->SetComponent( "MovingImageSource", { { "NameOfClass", { "ItkImageSourceMovingComponent" } } } );
+  blueprint->Get()->SetComponent( "ResultImageSink", { { "NameOfClass", { "ItkImageSinkComponent" } } } );
+  blueprint->Get()->SetComponent( "ResultDisplacementFieldSink", { { "NameOfClass", { "DisplacementFieldItkImageFilterSinkComponent" } } } );
+  blueprint->Get()->SetComponent( "Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } } );
 
   //optionally, tie properties to connection to avoid ambiguities
   //blueprint->AddConnection("FixedImageSource", "RegistrationMethod", { { "NameOfInterface", { "itkImageFixedInterface" } } });
-  blueprint->AddConnection( "FixedImageSource", "RegistrationMethod", { {} } );
+  blueprint->Get()->SetConnection( "FixedImageSource", "RegistrationMethod", { {} } );
 
   //optionally, tie properties to connection to avoid ambiguities
   //blueprint->AddConnection("MovingImageSource", "RegistrationMethod", { { "NameOfInterface", { "itkImageMovingInterface" } } });
-  blueprint->AddConnection( "MovingImageSource", "RegistrationMethod", { {} } );
+  blueprint->Get()->SetConnection( "MovingImageSource", "RegistrationMethod", { {} } );
 
   //optionally, tie properties to connection to avoid ambiguities
   //blueprint->AddConnection("RegistrationMethod", "ResultImageSink", { { "NameOfInterface", { "itkImageSourceInterface" } } });
-  blueprint->AddConnection( "ResampleFilter", "ResultImageSink", { {} } );
+  blueprint->Get()->SetConnection( "ResampleFilter", "ResultImageSink", { {} } );
 
   //optionally, tie properties to connection to avoid ambiguities
   //blueprint->AddConnection("RegistrationMethod", "ResultDisplacementFieldSink", { { "NameOfInterface", { "DisplacementFieldItkImageSourceInterface" } } });
-  blueprint->AddConnection( "TransformDisplacementFilter", "ResultDisplacementFieldSink", { {} } );
+  blueprint->Get()->SetConnection( "TransformDisplacementFilter", "ResultDisplacementFieldSink", { {} } );
 
   //optionally, tie properties to connection to avoid ambiguities
   //blueprint->AddConnection("Metric", "RegistrationMethod", { { "NameOfInterface", { "itkMetricv4Interface" } } });
-  blueprint->AddConnection( "Metric", "RegistrationMethod", { {} } );
+  blueprint->Get()->SetConnection( "Metric", "RegistrationMethod", { {} } );
 
-  blueprint->AddConnection( "FixedImageSource", "Transform", { {} } );
-  blueprint->AddConnection( "Transform", "RegistrationMethod", { {} } );
-  blueprint->AddConnection( "FixedImageSource", "TransformResolutionAdaptor", { {} } );
-  blueprint->AddConnection( "TransformResolutionAdaptor", "RegistrationMethod", { {} } );
-  blueprint->AddConnection( "Optimizer", "RegistrationMethod", { {} } );
-  blueprint->AddConnection( "RegistrationMethod", "TransformDisplacementFilter", { {} } );
-  blueprint->AddConnection( "FixedImageSource", "TransformDisplacementFilter", { {} } );
-  blueprint->AddConnection( "RegistrationMethod", "ResampleFilter", { {} } );
-  blueprint->AddConnection( "FixedImageSource", "ResampleFilter", { {} } );
-  blueprint->AddConnection( "MovingImageSource", "ResampleFilter", { {} } );
+  blueprint->Get()->SetConnection( "FixedImageSource", "Transform", { {} } );
+  blueprint->Get()->SetConnection( "Transform", "RegistrationMethod", { {} } );
+  blueprint->Get()->SetConnection( "FixedImageSource", "TransformResolutionAdaptor", { {} } );
+  blueprint->Get()->SetConnection( "TransformResolutionAdaptor", "RegistrationMethod", { {} } );
+  blueprint->Get()->SetConnection( "Optimizer", "RegistrationMethod", { {} } );
+  blueprint->Get()->SetConnection( "RegistrationMethod", "TransformDisplacementFilter", { {} } );
+  blueprint->Get()->SetConnection( "FixedImageSource", "TransformDisplacementFilter", { {} } );
+  blueprint->Get()->SetConnection( "RegistrationMethod", "ResampleFilter", { {} } );
+  blueprint->Get()->SetConnection( "FixedImageSource", "ResampleFilter", { {} } );
+  blueprint->Get()->SetConnection( "MovingImageSource", "ResampleFilter", { {} } );
 
-  blueprint->AddConnection( "RegistrationMethod", "Controller", { {} } );          //RunRegistrationInterface
-  blueprint->AddConnection( "ResampleFilter", "Controller", { {} } );              //ReconnectTransformInterface
-  blueprint->AddConnection( "TransformDisplacementFilter", "Controller", { {} } ); //ReconnectTransformInterface
+  blueprint->Get()->SetConnection( "RegistrationMethod", "Controller", { {} } );          //RunRegistrationInterface
+  blueprint->Get()->SetConnection( "ResampleFilter", "Controller", { {} } );              //ReconnectTransformInterface
+  blueprint->Get()->SetConnection( "TransformDisplacementFilter", "Controller", { {} } ); //ReconnectTransformInterface
 
   // Data manager provides the paths to the input and output data for unit tests
   DataManagerType::Pointer dataManager = DataManagerType::New();
 
-  blueprint->WriteBlueprint( dataManager->GetOutputFile( "itkv4_SVF_ANTSCC.dot" ) );
+  blueprint->Get()->Write( dataManager->GetOutputFile( "itkv4_SVF_ANTSCC.dot" ) );
 
   // Instantiate SuperElastix
   EXPECT_NO_THROW( superElastixFilter = SuperElastixFilterType::New() );
@@ -256,68 +257,68 @@ TEST_F( WBIRDemoTest, itkv4_SVF_ANTSCC )
 TEST_F( WBIRDemoTest, itkv4_SVF_MSD )
 {
   /** make example blueprint configuration */
-  blueprint = Blueprint::New();
+  blueprint = BlueprintType::New();
 
-  blueprint->AddComponent( "RegistrationMethod", { { "NameOfClass", { "ItkImageRegistrationMethodv4Component" } },
+  blueprint->Get()->SetComponent( "RegistrationMethod", { { "NameOfClass", { "ItkImageRegistrationMethodv4Component" } },
                                                    { "NumberOfLevels", { "3" } },
                                                    { "ShrinkFactorsPerLevel", { "4", "2", "1" } },
                                                    { "SmoothingSigmasPerLevel", { "4", "2", "1" } } } );
-  blueprint->AddComponent( "Metric", { { "NameOfClass", { "ItkMeanSquaresImageToImageMetricv4Component" } } } );
-  blueprint->AddComponent( "Optimizer", { { "NameOfClass", { "ItkGradientDescentOptimizerv4Component" } },
+  blueprint->Get()->SetComponent( "Metric", { { "NameOfClass", { "ItkMeanSquaresImageToImageMetricv4Component" } } } );
+  blueprint->Get()->SetComponent( "Optimizer", { { "NameOfClass", { "ItkGradientDescentOptimizerv4Component" } },
                                           { "NumberOfIterations", { "100" } },
                                           { "LearningRate", { "0.001" } } } );
-  blueprint->AddComponent( "Transform", { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformComponent" } } } );
-  blueprint->AddComponent( "TransformResolutionAdaptor", { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent" } },
+  blueprint->Get()->SetComponent( "Transform", { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformComponent" } } } );
+  blueprint->Get()->SetComponent( "TransformResolutionAdaptor", { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent" } },
                                                            { "ShrinkFactorsPerLevel", { "4", "2", "1" } } } );
 
-  blueprint->AddComponent( "ResampleFilter", { { "NameOfClass", { "ItkResampleFilterComponent" } } } );
-  blueprint->AddComponent( "TransformDisplacementFilter", { { "NameOfClass", { "ItkTransformDisplacementFilterComponent" } } } );
+  blueprint->Get()->SetComponent( "ResampleFilter", { { "NameOfClass", { "ItkResampleFilterComponent" } } } );
+  blueprint->Get()->SetComponent( "TransformDisplacementFilter", { { "NameOfClass", { "ItkTransformDisplacementFilterComponent" } } } );
 
-  blueprint->AddComponent( "FixedImageSource", { { "NameOfClass", { "ItkImageSourceFixedComponent" } } } );
-  blueprint->AddComponent( "MovingImageSource", { { "NameOfClass", { "ItkImageSourceMovingComponent" } } } );
-  blueprint->AddComponent( "ResultImageSink", { { "NameOfClass", { "ItkImageSinkComponent" } } } );
-  blueprint->AddComponent( "ResultDisplacementFieldSink", { { "NameOfClass", { "DisplacementFieldItkImageFilterSinkComponent" } } } );
-  blueprint->AddComponent( "Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } } );
+  blueprint->Get()->SetComponent( "FixedImageSource", { { "NameOfClass", { "ItkImageSourceFixedComponent" } } } );
+  blueprint->Get()->SetComponent( "MovingImageSource", { { "NameOfClass", { "ItkImageSourceMovingComponent" } } } );
+  blueprint->Get()->SetComponent( "ResultImageSink", { { "NameOfClass", { "ItkImageSinkComponent" } } } );
+  blueprint->Get()->SetComponent( "ResultDisplacementFieldSink", { { "NameOfClass", { "DisplacementFieldItkImageFilterSinkComponent" } } } );
+  blueprint->Get()->SetComponent( "Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } } );
 
   //optionally, tie properties to connection to avoid ambiguities
   //blueprint->AddConnection("FixedImageSource", "RegistrationMethod", { { "NameOfInterface", { "itkImageFixedInterface" } } });
-  blueprint->AddConnection( "FixedImageSource", "RegistrationMethod", { {} } );
+  blueprint->Get()->SetConnection( "FixedImageSource", "RegistrationMethod", { {} } );
 
   //optionally, tie properties to connection to avoid ambiguities
   //blueprint->AddConnection("MovingImageSource", "RegistrationMethod", { { "NameOfInterface", { "itkImageMovingInterface" } } });
-  blueprint->AddConnection( "MovingImageSource", "RegistrationMethod", { {} } );
+  blueprint->Get()->SetConnection( "MovingImageSource", "RegistrationMethod", { {} } );
 
   //optionally, tie properties to connection to avoid ambiguities
   //blueprint->AddConnection("RegistrationMethod", "ResultImageSink", { { "NameOfInterface", { "itkImageSourceInterface" } } });
-  blueprint->AddConnection( "ResampleFilter", "ResultImageSink", { {} } );
+  blueprint->Get()->SetConnection( "ResampleFilter", "ResultImageSink", { {} } );
 
   //optionally, tie properties to connection to avoid ambiguities
   //blueprint->AddConnection("RegistrationMethod", "ResultDisplacementFieldSink", { { "NameOfInterface", { "DisplacementFieldItkImageSourceInterface" } } });
-  blueprint->AddConnection( "TransformDisplacementFilter", "ResultDisplacementFieldSink", { {} } );
+  blueprint->Get()->SetConnection( "TransformDisplacementFilter", "ResultDisplacementFieldSink", { {} } );
 
   //optionally, tie properties to connection to avoid ambiguities
   //blueprint->AddConnection("Metric", "RegistrationMethod", { { "NameOfInterface", { "itkMetricv4Interface" } } });
-  blueprint->AddConnection( "Metric", "RegistrationMethod", { {} } );
+  blueprint->Get()->SetConnection( "Metric", "RegistrationMethod", { {} } );
 
-  blueprint->AddConnection( "FixedImageSource", "Transform", { {} } );
-  blueprint->AddConnection( "Transform", "RegistrationMethod", { {} } );
-  blueprint->AddConnection( "FixedImageSource", "TransformResolutionAdaptor", { {} } );
-  blueprint->AddConnection( "TransformResolutionAdaptor", "RegistrationMethod", { {} } );
-  blueprint->AddConnection( "Optimizer", "RegistrationMethod", { {} } );
-  blueprint->AddConnection( "RegistrationMethod", "TransformDisplacementFilter", { {} } );
-  blueprint->AddConnection( "FixedImageSource", "TransformDisplacementFilter", { {} } );
-  blueprint->AddConnection( "RegistrationMethod", "ResampleFilter", { {} } );
-  blueprint->AddConnection( "FixedImageSource", "ResampleFilter", { {} } );
-  blueprint->AddConnection( "MovingImageSource", "ResampleFilter", { {} } );
+  blueprint->Get()->SetConnection( "FixedImageSource", "Transform", { {} } );
+  blueprint->Get()->SetConnection( "Transform", "RegistrationMethod", { {} } );
+  blueprint->Get()->SetConnection( "FixedImageSource", "TransformResolutionAdaptor", { {} } );
+  blueprint->Get()->SetConnection( "TransformResolutionAdaptor", "RegistrationMethod", { {} } );
+  blueprint->Get()->SetConnection( "Optimizer", "RegistrationMethod", { {} } );
+  blueprint->Get()->SetConnection( "RegistrationMethod", "TransformDisplacementFilter", { {} } );
+  blueprint->Get()->SetConnection( "FixedImageSource", "TransformDisplacementFilter", { {} } );
+  blueprint->Get()->SetConnection( "RegistrationMethod", "ResampleFilter", { {} } );
+  blueprint->Get()->SetConnection( "FixedImageSource", "ResampleFilter", { {} } );
+  blueprint->Get()->SetConnection( "MovingImageSource", "ResampleFilter", { {} } );
 
-  blueprint->AddConnection( "RegistrationMethod", "Controller", { {} } );          //RunRegistrationInterface
-  blueprint->AddConnection( "ResampleFilter", "Controller", { {} } );              //ReconnectTransformInterface
-  blueprint->AddConnection( "TransformDisplacementFilter", "Controller", { {} } ); //ReconnectTransformInterface
+  blueprint->Get()->SetConnection( "RegistrationMethod", "Controller", { {} } );          //RunRegistrationInterface
+  blueprint->Get()->SetConnection( "ResampleFilter", "Controller", { {} } );              //ReconnectTransformInterface
+  blueprint->Get()->SetConnection( "TransformDisplacementFilter", "Controller", { {} } ); //ReconnectTransformInterface
 
   // Data manager provides the paths to the input and output data for unit tests
   DataManagerType::Pointer dataManager = DataManagerType::New();
 
-  blueprint->WriteBlueprint( dataManager->GetOutputFile( "itkv4_SVF_MSD.dot" ) );
+  blueprint->Get()->Write( dataManager->GetOutputFile( "itkv4_SVF_MSD.dot" ) );
 
   // Instantiate SuperElastix
   EXPECT_NO_THROW( superElastixFilter = SuperElastixFilterType::New() );
@@ -368,45 +369,45 @@ TEST_F( WBIRDemoTest, itkv4_SVF_MSD )
 TEST_F( WBIRDemoTest, elastix_BS_NCC )
 {
   /** make blueprint configuration */
-  blueprint = Blueprint::New();
+  blueprint = BlueprintType::New();
 
-  blueprint->AddComponent( "RegistrationMethod", { { "NameOfClass", { "MonolithicElastixComponent" } },
+  blueprint->Get()->SetComponent( "RegistrationMethod", { { "NameOfClass", { "MonolithicElastixComponent" } },
                                                    { "Transform", { "BSplineTransform" } }, { "Metric", { "AdvancedNormalizedCorrelation" } } } );
 
-  blueprint->AddComponent( "TransformDisplacementField", { { "NameOfClass", { "MonolithicTransformixComponent" } } } );
+  blueprint->Get()->SetComponent( "TransformDisplacementField", { { "NameOfClass", { "MonolithicTransformixComponent" } } } );
 
-  blueprint->AddComponent( "FixedImageSource", { { "NameOfClass", { "ItkImageSourceFixedComponent" } } } );
+  blueprint->Get()->SetComponent( "FixedImageSource", { { "NameOfClass", { "ItkImageSourceFixedComponent" } } } );
 
-  blueprint->AddComponent( "MovingImageSource", { { "NameOfClass", { "ItkImageSourceMovingComponent" } } } );
+  blueprint->Get()->SetComponent( "MovingImageSource", { { "NameOfClass", { "ItkImageSourceMovingComponent" } } } );
 
-  blueprint->AddComponent( "ResultImageSink", { { "NameOfClass", { "ItkImageSinkComponent" } } } );
+  blueprint->Get()->SetComponent( "ResultImageSink", { { "NameOfClass", { "ItkImageSinkComponent" } } } );
 
-  blueprint->AddComponent( "Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } } );
-
-  //optionally, tie properties to connection to avoid ambiguities
-  blueprint->AddConnection( "FixedImageSource", "RegistrationMethod", { {} } ); // {{"NameOfInterface", { "itkImageFixedInterface" }}};
+  blueprint->Get()->SetComponent( "Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } } );
 
   //optionally, tie properties to connection to avoid ambiguities
-  blueprint->AddConnection( "MovingImageSource", "RegistrationMethod", { {} } ); // {{"NameOfInterface", { "itkImageMovingInterface" }}};
+  blueprint->Get()->SetConnection( "FixedImageSource", "RegistrationMethod", { {} } ); // {{"NameOfInterface", { "itkImageFixedInterface" }}};
 
-  blueprint->AddConnection( "RegistrationMethod", "TransformDisplacementField", { {} } ); // { { "NameOfInterface", { "elastixTransformParameterObjectInterface" } } } ;
+  //optionally, tie properties to connection to avoid ambiguities
+  blueprint->Get()->SetConnection( "MovingImageSource", "RegistrationMethod", { {} } ); // {{"NameOfInterface", { "itkImageMovingInterface" }}};
 
-  blueprint->AddConnection( "FixedImageSource", "TransformDisplacementField", { {} } ); // { { "NameOfInterface", { "itkImageDomainFixedInterface" } } } ;
+  blueprint->Get()->SetConnection( "RegistrationMethod", "TransformDisplacementField", { {} } ); // { { "NameOfInterface", { "elastixTransformParameterObjectInterface" } } } ;
 
-  blueprint->AddConnection( "MovingImageSource", "TransformDisplacementField", { {} } ); // { { "NameOfInterface", { "itkImageMovingInterface" } } };
+  blueprint->Get()->SetConnection( "FixedImageSource", "TransformDisplacementField", { {} } ); // { { "NameOfInterface", { "itkImageDomainFixedInterface" } } } ;
 
-  blueprint->AddConnection( "TransformDisplacementField", "ResultImageSink", { {} } ); // { { "NameOfInterface", { "itkImageInterface" } } } ;
+  blueprint->Get()->SetConnection( "MovingImageSource", "TransformDisplacementField", { {} } ); // { { "NameOfInterface", { "itkImageMovingInterface" } } };
 
-  blueprint->AddConnection( "RegistrationMethod", "Controller", { {} } ); // { { "NameOfInterface", { "RunRegistrationInterface" } } } ;
+  blueprint->Get()->SetConnection( "TransformDisplacementField", "ResultImageSink", { {} } ); // { { "NameOfInterface", { "itkImageInterface" } } } ;
 
-  blueprint->AddConnection( "TransformDisplacementField", "Controller", { {} } ); // { { "NameOfInterface", { "ReconnectTransformInterface" } } } ;
+  blueprint->Get()->SetConnection( "RegistrationMethod", "Controller", { {} } ); // { { "NameOfInterface", { "RunRegistrationInterface" } } } ;
 
-  blueprint->AddConnection( "ResultImageSink", "Controller", { {} } ); // { { "NameOfInterface", { "AfterRegistrationInterface" } } } ;
+  blueprint->Get()->SetConnection( "TransformDisplacementField", "Controller", { {} } ); // { { "NameOfInterface", { "ReconnectTransformInterface" } } } ;
+
+  blueprint->Get()->SetConnection( "ResultImageSink", "Controller", { {} } ); // { { "NameOfInterface", { "AfterRegistrationInterface" } } } ;
 
   // Data manager provides the paths to the input and output data for unit tests
   DataManagerType::Pointer dataManager = DataManagerType::New();
 
-  blueprint->WriteBlueprint( dataManager->GetOutputFile( "elastix_BS_NCC.dot" ) );
+  blueprint->Get()->Write( dataManager->GetOutputFile( "elastix_BS_NCC.dot" ) );
 
   // Instantiate SuperElastix
   EXPECT_NO_THROW( superElastixFilter = SuperElastixFilterType::New() );
@@ -462,45 +463,45 @@ TEST_F( WBIRDemoTest, elastix_BS_NCC )
 TEST_F( WBIRDemoTest, elastix_BS_MSD )
 {
   /** make blueprint configuration */
-  blueprint = Blueprint::New();
+  blueprint = BlueprintType::New();
 
-  blueprint->AddComponent( "RegistrationMethod", { { "NameOfClass", { "MonolithicElastixComponent" } },
+  blueprint->Get()->SetComponent( "RegistrationMethod", { { "NameOfClass", { "MonolithicElastixComponent" } },
                                                    { "Transform", { "BSplineTransform" } }, { "Metric", { "AdvancedMeanSquares" } } } );
 
-  blueprint->AddComponent( "TransformDisplacementField", { { "NameOfClass", { "MonolithicTransformixComponent" } } } );
+  blueprint->Get()->SetComponent( "TransformDisplacementField", { { "NameOfClass", { "MonolithicTransformixComponent" } } } );
 
-  blueprint->AddComponent( "FixedImageSource", { { "NameOfClass", { "ItkImageSourceFixedComponent" } } } );
+  blueprint->Get()->SetComponent( "FixedImageSource", { { "NameOfClass", { "ItkImageSourceFixedComponent" } } } );
 
-  blueprint->AddComponent( "MovingImageSource", { { "NameOfClass", { "ItkImageSourceMovingComponent" } } } );
+  blueprint->Get()->SetComponent( "MovingImageSource", { { "NameOfClass", { "ItkImageSourceMovingComponent" } } } );
 
-  blueprint->AddComponent( "ResultImageSink", { { "NameOfClass", { "ItkImageSinkComponent" } } } );
+  blueprint->Get()->SetComponent( "ResultImageSink", { { "NameOfClass", { "ItkImageSinkComponent" } } } );
 
-  blueprint->AddComponent( "Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } } );
-
-  //optionally, tie properties to connection to avoid ambiguities
-  blueprint->AddConnection( "FixedImageSource", "RegistrationMethod", { {} } ); // {{"NameOfInterface", { "itkImageFixedInterface" }}};
+  blueprint->Get()->SetComponent( "Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } } );
 
   //optionally, tie properties to connection to avoid ambiguities
-  blueprint->AddConnection( "MovingImageSource", "RegistrationMethod", { {} } ); // {{"NameOfInterface", { "itkImageMovingInterface" }}};
+  blueprint->Get()->SetConnection( "FixedImageSource", "RegistrationMethod", { {} } ); // {{"NameOfInterface", { "itkImageFixedInterface" }}};
 
-  blueprint->AddConnection( "RegistrationMethod", "TransformDisplacementField", { {} } ); // { { "NameOfInterface", { "elastixTransformParameterObjectInterface" } } } ;
+  //optionally, tie properties to connection to avoid ambiguities
+  blueprint->Get()->SetConnection( "MovingImageSource", "RegistrationMethod", { {} } ); // {{"NameOfInterface", { "itkImageMovingInterface" }}};
 
-  blueprint->AddConnection( "FixedImageSource", "TransformDisplacementField", { {} } ); // { { "NameOfInterface", { "itkImageDomainFixedInterface" } } } ;
+  blueprint->Get()->SetConnection( "RegistrationMethod", "TransformDisplacementField", { {} } ); // { { "NameOfInterface", { "elastixTransformParameterObjectInterface" } } } ;
 
-  blueprint->AddConnection( "MovingImageSource", "TransformDisplacementField", { {} } ); // { { "NameOfInterface", { "itkImageMovingInterface" } } };
+  blueprint->Get()->SetConnection( "FixedImageSource", "TransformDisplacementField", { {} } ); // { { "NameOfInterface", { "itkImageDomainFixedInterface" } } } ;
 
-  blueprint->AddConnection( "TransformDisplacementField", "ResultImageSink", { {} } ); // { { "NameOfInterface", { "itkImageInterface" } } } ;
+  blueprint->Get()->SetConnection( "MovingImageSource", "TransformDisplacementField", { {} } ); // { { "NameOfInterface", { "itkImageMovingInterface" } } };
 
-  blueprint->AddConnection( "RegistrationMethod", "Controller", { {} } ); // { { "NameOfInterface", { "RunRegistrationInterface" } } } ;
+  blueprint->Get()->SetConnection( "TransformDisplacementField", "ResultImageSink", { {} } ); // { { "NameOfInterface", { "itkImageInterface" } } } ;
 
-  blueprint->AddConnection( "TransformDisplacementField", "Controller", { {} } ); // { { "NameOfInterface", { "ReconnectTransformInterface" } } } ;
+  blueprint->Get()->SetConnection( "RegistrationMethod", "Controller", { {} } ); // { { "NameOfInterface", { "RunRegistrationInterface" } } } ;
 
-  blueprint->AddConnection( "ResultImageSink", "Controller", { {} } ); // { { "NameOfInterface", { "AfterRegistrationInterface" } } } ;
+  blueprint->Get()->SetConnection( "TransformDisplacementField", "Controller", { {} } ); // { { "NameOfInterface", { "ReconnectTransformInterface" } } } ;
+
+  blueprint->Get()->SetConnection( "ResultImageSink", "Controller", { {} } ); // { { "NameOfInterface", { "AfterRegistrationInterface" } } } ;
 
   // Data manager provides the paths to the input and output data for unit tests
   DataManagerType::Pointer dataManager = DataManagerType::New();
 
-  blueprint->WriteBlueprint( dataManager->GetOutputFile( "elastix_BS_MSD.dot" ) );
+  blueprint->Get()->Write( dataManager->GetOutputFile( "elastix_BS_MSD.dot" ) );
 
   // Instantiate SuperElastix
   EXPECT_NO_THROW( superElastixFilter = SuperElastixFilterType::New() );

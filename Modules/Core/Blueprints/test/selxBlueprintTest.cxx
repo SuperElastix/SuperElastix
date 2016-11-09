@@ -105,47 +105,47 @@ TEST_F( BlueprintTest, SetGetDeleteConnection )
 
 }
 
-TEST_F( BlueprintTest, WriteBlueprint )
-{
-  std::unique_ptr< Blueprint > blueprint;
-  EXPECT_NO_THROW( blueprint = std::unique_ptr< Blueprint >( new Blueprint() ) );
-
-  // create some made up configuration to show graphviz output
-  ParameterMapType component0Parameters;
-  component0Parameters[ "NameOfClass" ]    = { "MyMetric" };
-  component0Parameters[ "Dimensionality" ] = { "3" };
-  component0Parameters[ "Kernel" ]         = { "5", "5", "5" };
-  blueprint->SetComponent( "Metric", component0Parameters );
-
-  ParameterMapType component1Parameters;
-  component1Parameters[ "NameOfClass" ] = { "MyFiniteDifferenceCalculator" };
-  component1Parameters[ "Delta" ]       = { "0.01" };
-  blueprint->SetComponent( "MetricGradient", component1Parameters );
-
-  ParameterMapType component2Parameters;
-  component2Parameters[ "NameOfClass" ] = { "MyOptimizer" };
-  blueprint->SetComponent( "Optimizer", component2Parameters );
-
-  ParameterMapType component3Parameters;
-  component3Parameters[ "NameOfClass" ] = { "MyTransform" };
-  blueprint->SetComponent( "Transform", component3Parameters );
-
-  blueprint->SetConnection( "Metric", "MetricGradient", parameterMap );
-  blueprint->SetConnection( "MetricGradient", "Optimizer", parameterMap );
-
-  ParameterMapType connection0Parameters;
-  // Example use case: The connection between the metric and optimizer should
-  // only be by "MetricValue", not by "MetricDerivative" as well. Since we want
-  // to redirect the "MetricDerivative" through the MetricGradient component,
-  // we need to specify "NameOfInterface" otherwise there is an ambiguity in
-  // which "MetricDerivative" to connect to the optimizer.
-
-  connection0Parameters[ "NameOfInterface" ] = { "MetricValue" };
-  blueprint->SetConnection( "Metric", "Optimizer", connection0Parameters );
-
-  blueprint->SetConnection( "MetricGradient", "Optimizer", parameterMap );
-  blueprint->SetConnection( "Optimizer", "Transform", parameterMap );
-  blueprint->SetConnection( "Transform", "Metric", parameterMap );
-
-  EXPECT_NO_THROW( blueprint->Write( "blueprint.dot" ) );
-}
+//TEST_F( BlueprintTest, WriteBlueprint )
+//{
+//  std::unique_ptr< Blueprint > blueprint;
+//  EXPECT_NO_THROW( blueprint = std::unique_ptr< Blueprint >( new Blueprint() ) );
+//
+//  // create some made up configuration to show graphviz output
+//  ParameterMapType component0Parameters;
+//  component0Parameters[ "NameOfClass" ]    = { "MyMetric" };
+//  component0Parameters[ "Dimensionality" ] = { "3" };
+//  component0Parameters[ "Kernel" ]         = { "5", "5", "5" };
+//  blueprint->SetComponent( "Metric", component0Parameters );
+//
+//  ParameterMapType component1Parameters;
+//  component1Parameters[ "NameOfClass" ] = { "MyFiniteDifferenceCalculator" };
+//  component1Parameters[ "Delta" ]       = { "0.01" };
+//  blueprint->SetComponent( "MetricGradient", component1Parameters );
+//
+//  ParameterMapType component2Parameters;
+//  component2Parameters[ "NameOfClass" ] = { "MyOptimizer" };
+//  blueprint->SetComponent( "Optimizer", component2Parameters );
+//
+//  ParameterMapType component3Parameters;
+//  component3Parameters[ "NameOfClass" ] = { "MyTransform" };
+//  blueprint->SetComponent( "Transform", component3Parameters );
+//
+//  blueprint->SetConnection( "Metric", "MetricGradient", parameterMap );
+//  blueprint->SetConnection( "MetricGradient", "Optimizer", parameterMap );
+//
+//  ParameterMapType connection0Parameters;
+//  // Example use case: The connection between the metric and optimizer should
+//  // only be by "MetricValue", not by "MetricDerivative" as well. Since we want
+//  // to redirect the "MetricDerivative" through the MetricGradient component,
+//  // we need to specify "NameOfInterface" otherwise there is an ambiguity in
+//  // which "MetricDerivative" to connect to the optimizer.
+//
+//  connection0Parameters[ "NameOfInterface" ] = { "MetricValue" };
+//  blueprint->SetConnection( "Metric", "Optimizer", connection0Parameters );
+//
+//  blueprint->SetConnection( "MetricGradient", "Optimizer", parameterMap );
+//  blueprint->SetConnection( "Optimizer", "Transform", parameterMap );
+//  blueprint->SetConnection( "Transform", "Metric", parameterMap );
+//
+//  EXPECT_NO_THROW( blueprint->Write( "blueprint.dot" ) );
+//}

@@ -31,14 +31,15 @@ namespace selx
 
 template< typename ComponentTypeList >
 SuperElastixFilter< ComponentTypeList >
-::SuperElastixFilter( void ) : m_InputConnectionModified( true ), m_OutputConnectionModified( true ), m_BlueprintConnectionModified( true ),
+::SuperElastixFilter( void ) :
+  m_InputConnectionModified( true ),
+  m_OutputConnectionModified( true ),
+  m_BlueprintConnectionModified( true ),
   m_IsConnected( false )
 {
-  this->m_Overlord = std::unique_ptr< Overlord >( new Overlord( this->m_Blueprint.Get() ) );
-
   RegisterFactoriesByTypeList< ComponentTypeList >::Register();
 
-  //Disable "Primary" as required input
+  // Disable "Primary" as required input
   this->SetRequiredInputNames( {} );
 } // end Constructor
 
@@ -71,7 +72,7 @@ SuperElastixFilter< ComponentTypeList >
   bool allUniqueComponents = true;
   if( this->m_BlueprintConnectionModified == true )
   {
-    this->m_Overlord->SetBlueprint( this->m_Blueprint );
+    this->m_Overlord = OverlordPointer( new Overlord( this->m_Blueprint->Get() ) );
     allUniqueComponents = this->m_Overlord->Configure();
   }
 
@@ -249,7 +250,7 @@ typename SuperElastixFilter< ComponentTypeList >::OutputDataType
       itkExceptionMacro( << "Setting a Blueprint is required first." )
     }
 
-    this->m_Overlord->SetBlueprint( this->m_Blueprint );
+    this->m_Overlord = OverlordPointer( new Overlord( this->m_Blueprint->Get() ) );
     this->m_Overlord->Configure();
     this->m_BlueprintConnectionModified = false;
 

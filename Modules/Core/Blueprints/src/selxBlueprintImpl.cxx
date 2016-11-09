@@ -276,4 +276,5 @@ Blueprint::BlueprintImpl
   boost::get( &ComponentPropertyType::parameterMap, this->m_Graph ) ),
   make_edge_label_writer( boost::get( &ConnectionPropertyType::parameterMap, this->m_Graph ) ) );
 }
+
 } // namespace selx

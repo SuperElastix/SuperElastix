@@ -47,13 +47,15 @@ class itkImageFilterTest : public ::testing::Test
 {
 public:
 
-  typedef Blueprint::Pointer            BlueprintPointerType;
-  typedef Blueprint::ConstPointer       BlueprintConstPointerType;
-  typedef Blueprint::ParameterMapType   ParameterMapType;
-  typedef Blueprint::ParameterValueType ParameterValueType;
-  typedef DataManager                   DataManagerType;
+  typedef typename itk::AutoPointerDataObjectDecorator< Blueprint > BlueprintITKType;
+  typedef BlueprintITKType::Pointer                                 BlueprintITKPointer;
 
-  typedef SuperElastixFilter< TypeList< >> SuperElastixFilterType;
+  typedef std::shared_ptr< Blueprint >        BlueprintPointer;
+  typedef Blueprint::ParameterMapType         ParameterMapType;
+  typedef Blueprint::ParameterValueType       ParameterValueType;
+  typedef DataManager                         DataManagerType;
+
+  typedef SuperElastixFilter< TypeList< > >   SuperElastixFilterType;
 
   typedef itk::Image< double, 3 >             Image3DType;
   typedef itk::ImageFileReader< Image3DType > ImageReader3DType;
@@ -72,7 +74,7 @@ public:
     ComponentFactory< ItkSmoothingRecursiveGaussianImageFilterComponent< 2, float >>::RegisterOneFactory();
 
     /** make example blueprint configuration */
-    blueprint = Blueprint::New();
+    BlueprintPointer blueprint = BlueprintPointer( new Blueprint() );
 
     /** the 2 itkImageFilter Components are ItkSmoothingRecursiveGaussianImageFilterComponent*/
     ParameterMapType componentParameters;
@@ -84,8 +86,8 @@ public:
     // Setting of the component are considered as criteria too. If the components can interpret the parameters, it's all good.
     componentParameters[ "Sigma" ] = { "2.5" };
 
-    blueprint->AddComponent( "FistStageFilter", componentParameters );
-    blueprint->AddComponent( "SecondStageFilter", componentParameters );
+    blueprint->SetComponent( "FistStageFilter", componentParameters );
+    blueprint->SetComponent( "SecondStageFilter", componentParameters );
 
     // TODO: For now, the connections to make are explicitly indicated by the Interface name.
     // Design consideration: connections might be indicated by higher concepts ( MetricCostConnection: value and/or derivative? DefaultPipeline? )
@@ -93,21 +95,24 @@ public:
     //connectionParameters["NameOfInterface"] = { "itkImageSourceInterface" };
 
     //TODO: check direction
-    blueprint->AddConnection( "FistStageFilter", "SecondStageFilter", connectionParameters );
+    blueprint->SetConnection( "FistStageFilter", "SecondStageFilter", connectionParameters );
 
     /** Add a description of the SourceComponent*/
     ParameterMapType sourceComponentParameters;
     sourceComponentParameters[ "NameOfClass" ] = { "ItkImageSourceComponent" };
-    blueprint->AddComponent( "Source", sourceComponentParameters );
+    blueprint->SetComponent( "Source", sourceComponentParameters );
 
     /** Add a description of the SinkComponent*/
     ParameterMapType sinkComponentParameters;
     sinkComponentParameters[ "NameOfClass" ] = { "ItkImageSinkComponent" };
-    blueprint->AddComponent( "Sink", sinkComponentParameters );
+    blueprint->SetComponent( "Sink", sinkComponentParameters );
 
     /** Connect Sink and Source to the itkImageFilter Components*/
-    blueprint->AddConnection( "Source", "FistStageFilter", connectionParameters ); //
-    blueprint->AddConnection( "SecondStageFilter", "Sink", connectionParameters );
+    blueprint->SetConnection( "Source", "FistStageFilter", connectionParameters ); //
+    blueprint->SetConnection( "SecondStageFilter", "Sink", connectionParameters );
+
+    BlueprintITKPointer ITKBlueprint = BlueprintITKType::New();
+    ITKBlueprint->Set( blueprint.get() );
   }
 
 
@@ -117,7 +122,7 @@ public:
   }
 
 
-  BlueprintPointerType blueprint;
+  BlueprintITKPointer ITKBlueprint;
 };
 
 TEST_F( itkImageFilterTest, Run )
@@ -140,7 +145,7 @@ TEST_F( itkImageFilterTest, Run )
   superElastixFilter->SetInput( "Source", inputImageReader->GetOutput() );
   resultImageWriter->SetInput( superElastixFilter->GetOutput< Image3DType >( "Sink" ) );
 
-  EXPECT_NO_THROW( superElastixFilter->SetBlueprint( blueprint ) );
+  EXPECT_NO_THROW( superElastixFilter->SetBlueprint( ITKBlueprint ) );
 
   //Optional Update call
   //superElastixFilter->Update();

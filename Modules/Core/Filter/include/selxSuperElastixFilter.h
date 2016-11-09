@@ -57,11 +57,14 @@ public:
   typedef AnyFileReader AnyFileReaderType;
   typedef AnyFileWriter AnyFileWriterType;
 
-  typedef typename itk::AutoPointerDataObjectDecorator< Blueprint > BlueprintType;
+  typedef std::unique_ptr< Overlord > OverlordPointer;
 
-  //TODO make const correct
-  //itkSetConstObjectMacro(Blueprint,Blueprint)
-  itkSetObjectMacro( Blueprint, Blueprint );
+  typedef typename itk::AutoPointerDataObjectDecorator< Blueprint > BlueprintType;
+  typedef BlueprintType::Pointer                                    BlueprintPointer;
+  typedef BlueprintType::ConstPointer                               BlueprintConstPointer;
+
+  // TODO: Make const-correct
+  itkSetObjectMacro( Blueprint, BlueprintType )
 
   typename AnyFileReaderType::Pointer GetInputFileReader( const DataObjectIdentifierType & );
 
@@ -91,7 +94,7 @@ private:
 
   //TODO make const correct
   BlueprintType::Pointer m_Blueprint;
-  std::unique_ptr< Overlord > m_Overlord;
+  OverlordPointer             m_Overlord;
   bool                        m_InputConnectionModified;
   bool                        m_OutputConnectionModified;
   bool                        m_BlueprintConnectionModified;

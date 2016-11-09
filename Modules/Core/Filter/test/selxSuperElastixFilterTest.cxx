@@ -65,7 +65,12 @@ public:
     ItkMeshSinkComponent< 2, float >,
     ItkMeshSourceComponent< 2, float > > RegisterComponents;
 
-  typedef SuperElastixFilter< RegisterComponents > SuperElastixFilterType;
+  typedef std::unique_ptr< Blueprint >                  BlueprintPointer;
+
+  typedef SuperElastixFilter< RegisterComponents >      SuperElastixFilterType;
+  typedef SuperElastixFilterType::Pointer               SuperElastixFilterPointer;
+  typedef SuperElastixFilterType::BlueprintType         SuperElastixFilterBlueprintType;
+  typedef SuperElastixFilterType::BlueprintPointer      SuperElastixFilterBlueprintPointer;
 
   typedef itk::Mesh< float, 2 >           MeshType;
   typedef itk::MeshFileReader< MeshType > MeshReaderType;
@@ -93,20 +98,23 @@ TEST_F( SuperElastixFilterTest, ImageOnly )
   imageReader3D->SetFileName( dataManager->GetInputFile( "sphereA3d.mhd" ) );
   imageWriter3D->SetFileName( dataManager->GetOutputFile( "SuperElastixFilterTest_sphereA3d.mhd" ) );
 
-  Blueprint::Pointer blueprint = Blueprint::New();
+  BlueprintPointer blueprint = BlueprintPointer( new Blueprint() );
 
-  blueprint->AddComponent( "InputImage", { { "NameOfClass", { "ItkImageSourceComponent" } } } );
-  blueprint->AddComponent( "ImageFilter", { { "NameOfClass", { "ItkSmoothingRecursiveGaussianImageFilterComponent" } } } );
-  blueprint->AddComponent( "OutputImage", { { "NameOfClass", { "ItkImageSinkComponent" } } } );
-  blueprint->AddConnection( "InputImage", "ImageFilter", { {} } ); //
-  blueprint->AddConnection( "ImageFilter", "OutputImage", { {} } );
+  blueprint->SetComponent( "InputImage", { { "NameOfClass", { "ItkImageSourceComponent" } } } );
+  blueprint->SetComponent( "ImageFilter", { { "NameOfClass", { "ItkSmoothingRecursiveGaussianImageFilterComponent" } } } );
+  blueprint->SetComponent( "OutputImage", { { "NameOfClass", { "ItkImageSinkComponent" } } } );
+  blueprint->SetConnection( "InputImage", "ImageFilter", { {} } ); //
+  blueprint->SetConnection( "ImageFilter", "OutputImage", { {} } );
 
-  SuperElastixFilterType::Pointer mySuperElastix;
-  EXPECT_NO_THROW( mySuperElastix = SuperElastixFilterType::New() );
-  mySuperElastix->SetBlueprint( blueprint );
+  SuperElastixFilterType::Pointer superElastix;
+  EXPECT_NO_THROW( superElastix = SuperElastixFilterType::New() );
 
-  mySuperElastix->SetInput( "InputImage", imageReader3D->GetOutput() );
-  imageWriter3D->SetInput( mySuperElastix->GetOutput< Image3DType >( "OutputImage" ) );
+  SuperElastixFilterBlueprintPointer superElastixBlueprint = SuperElastixFilterBlueprintType::New();
+  superElastixBlueprint->Set( blueprint.get() );
+  superElastix->SetBlueprint( superElastixBlueprint );
+
+  superElastix->SetInput( "InputImage", imageReader3D->GetOutput() );
+  imageWriter3D->SetInput( superElastix->GetOutput< Image3DType >( "OutputImage" ) );
 
   EXPECT_NO_THROW( imageWriter3D->Update() );
 }
@@ -126,29 +134,30 @@ TEST_F( SuperElastixFilterTest, ImageAndMesh )
   meshReader->SetFileName( dataManager->GetInputFile( "2dSquare.vtk" ) );
   meshWriter->SetFileName( dataManager->GetOutputFile( "SuperElastixFilterTest_2dSquare.vtk" ) );
 
-  Blueprint::Pointer blueprint = Blueprint::New();
+  BlueprintPointer blueprint = BlueprintPointer( new Blueprint() );
 
-  blueprint->AddComponent( "InputImage", { { "NameOfClass", { "ItkImageSourceComponent" } } } );
-  blueprint->AddComponent( "ImageFilter", { { "NameOfClass", { "ItkSmoothingRecursiveGaussianImageFilterComponent" } } } );
-  blueprint->AddComponent( "OutputImage", { { "NameOfClass", { "ItkImageSinkComponent" } } } );
-  blueprint->AddConnection( "InputImage", "ImageFilter", Blueprint::ParameterMapType() ); //
-  blueprint->AddConnection( "ImageFilter", "OutputImage", Blueprint::ParameterMapType() );
+  blueprint->SetComponent( "InputImage", { { "NameOfClass", { "ItkImageSourceComponent" } } } );
+  blueprint->SetComponent( "ImageFilter", { { "NameOfClass", { "ItkSmoothingRecursiveGaussianImageFilterComponent" } } } );
+  blueprint->SetComponent( "OutputImage", { { "NameOfClass", { "ItkImageSinkComponent" } } } );
+  blueprint->SetConnection( "InputImage", "ImageFilter", Blueprint::ParameterMapType() ); //
+  blueprint->SetConnection( "ImageFilter", "OutputImage", Blueprint::ParameterMapType() );
 
-  blueprint->AddComponent( "InputMesh", { { "NameOfClass", { "ItkMeshSourceComponent" } } } );
-  blueprint->AddComponent( "OutputMesh", { { "NameOfClass", { "ItkMeshSinkComponent" } } } );
-  blueprint->AddConnection( "InputMesh", "OutputMesh", Blueprint::ParameterMapType() );
+  blueprint->SetComponent( "InputMesh", { { "NameOfClass", { "ItkMeshSourceComponent" } } } );
+  blueprint->SetComponent( "OutputMesh", { { "NameOfClass", { "ItkMeshSinkComponent" } } } );
+  blueprint->SetConnection( "InputMesh", "OutputMesh", Blueprint::ParameterMapType() );
 
-  SuperElastixFilterType::Pointer mySuperElastix;
-  EXPECT_NO_THROW( mySuperElastix = SuperElastixFilterType::New() );
-  mySuperElastix->SetBlueprint( blueprint );
+  SuperElastixFilterType::Pointer superElastix;
+  EXPECT_NO_THROW( superElastix = SuperElastixFilterType::New() );
 
-  mySuperElastix->SetInput( "InputMesh", meshReader->GetOutput() );
-  meshWriter->SetInput( mySuperElastix->GetOutput< MeshType >( "OutputMesh" ) );
+  SuperElastixFilterBlueprintPointer superElastixFilterBlueprint = SuperElastixFilterBlueprintType::New();
+  superElastixFilterBlueprint->Set( blueprint.get() );
+  superElastix->SetBlueprint( superElastixFilterBlueprint );
 
-  mySuperElastix->SetInput( "InputImage", imageReader3D->GetOutput() );
-  imageWriter3D->SetInput( mySuperElastix->GetOutput< Image3DType >( "OutputImage" ) );
+  superElastix->SetInput( "InputMesh", meshReader->GetOutput() );
+  meshWriter->SetInput( superElastix->GetOutput< MeshType >( "OutputMesh" ) );
 
-  //mySuperElastix->Update();
+  superElastix->SetInput( "InputImage", imageReader3D->GetOutput() );
+  imageWriter3D->SetInput( superElastix->GetOutput< Image3DType >( "OutputImage" ) );
 
   EXPECT_NO_THROW( meshWriter->Update() );
   EXPECT_NO_THROW( imageWriter3D->Update() );
@@ -163,18 +172,20 @@ TEST_F( SuperElastixFilterTest, TooManyInputs )
   imageReader3D_A->SetFileName( dataManager->GetInputFile( "sphereA3d.mhd" ) );
   imageReader3D_B->SetFileName( dataManager->GetInputFile( "sphereA3d.mhd" ) );
 
-  Blueprint::Pointer blueprint = Blueprint::New();
+  BlueprintPointer blueprint = BlueprintPointer( new Blueprint() );
 
-  blueprint->AddComponent( "Source_A", { { "NameOfClass", { "ItkImageSourceComponent" } } } );
+  blueprint->SetComponent( "Source_A", { { "NameOfClass", { "ItkImageSourceComponent" } } } );
 
-  SuperElastixFilterType::Pointer mySuperElastix;
-  EXPECT_NO_THROW( mySuperElastix = SuperElastixFilterType::New() );
-  mySuperElastix->SetBlueprint( blueprint );
+  SuperElastixFilterType::Pointer superElastix;
 
-  mySuperElastix->SetInput( "Source_A", imageReader3D_A->GetOutput() );
-  mySuperElastix->SetInput( "Source_B", imageReader3D_B->GetOutput() );
+  SuperElastixFilterBlueprintPointer superElastixFilterBlueprint = SuperElastixFilterBlueprintType::New();
+  superElastixFilterBlueprint->Set( blueprint.get() );
+  superElastix->SetBlueprint( superElastixFilterBlueprint );
 
-  EXPECT_THROW( mySuperElastix->Update(), itk::ExceptionObject );
+  superElastix->SetInput( "Source_A", imageReader3D_A->GetOutput() );
+  superElastix->SetInput( "Source_B", imageReader3D_B->GetOutput() );
+
+  EXPECT_THROW( superElastix->Update(), itk::ExceptionObject );
 }
 TEST_F( SuperElastixFilterTest, TooManySources )
 {
@@ -184,17 +195,21 @@ TEST_F( SuperElastixFilterTest, TooManySources )
 
   imageReader3D_A->SetFileName( dataManager->GetInputFile( "sphereA3d.mhd" ) );
 
-  Blueprint::Pointer blueprint = Blueprint::New();
+  BlueprintPointer blueprint = BlueprintPointer( new Blueprint() );
 
-  blueprint->AddComponent( "Source_A", { { "NameOfClass", { "ItkImageSourceComponent" } } } );
-  blueprint->AddComponent( "Source_B", { { "NameOfClass", { "ItkImageSourceComponent" } } } );
-  SuperElastixFilterType::Pointer mySuperElastix;
-  EXPECT_NO_THROW( mySuperElastix = SuperElastixFilterType::New() );
-  mySuperElastix->SetBlueprint( blueprint );
+  blueprint->SetComponent( "Source_A", { { "NameOfClass", { "ItkImageSourceComponent" } } } );
+  blueprint->SetComponent( "Source_B", { { "NameOfClass", { "ItkImageSourceComponent" } } } );
 
-  mySuperElastix->SetInput( "Source_A", imageReader3D_A->GetOutput() );
+  SuperElastixFilterType::Pointer superElastixFilter;
+  EXPECT_NO_THROW( superElastixFilter = SuperElastixFilterType::New() );
 
-  EXPECT_THROW( mySuperElastix->Update(), itk::ExceptionObject );
+  itk::AutoPointerDataObjectDecorator< Blueprint >::Pointer superElastixFilterBlueprint = itk::AutoPointerDataObjectDecorator< Blueprint >::New();
+  superElastixFilterBlueprint->Set( blueprint.get() );
+  EXPECT_NO_THROW( superElastixFilter->SetBlueprint( superElastixFilterBlueprint ) );
+
+  superElastixFilter->SetInput( "Source_A", imageReader3D_A->GetOutput() );
+
+  EXPECT_THROW( superElastixFilter->Update(), itk::ExceptionObject );
 }
 TEST_F( SuperElastixFilterTest, TooManyOutputs )
 {
@@ -205,16 +220,17 @@ TEST_F( SuperElastixFilterTest, TooManyOutputs )
   imageWriter3D_A->SetFileName( dataManager->GetOutputFile( "SuperElastixFilterTest_TooManyOutputs.mhd" ) );
   imageWriter3D_B->SetFileName( dataManager->GetOutputFile( "SuperElastixFilterTest_TooManyOutputs.mhd" ) );
 
-  Blueprint::Pointer blueprint = Blueprint::New();
+  BlueprintPointer blueprint = BlueprintPointer( new Blueprint() );
 
-  blueprint->AddComponent( "Sink_A", { { "NameOfClass", { "ItkImageSinkComponent" } } } );
+  blueprint->SetComponent( "Sink_A", { { "NameOfClass", { "ItkImageSinkComponent" } } } );
 
-  SuperElastixFilterType::Pointer mySuperElastix;
-  EXPECT_NO_THROW( mySuperElastix = SuperElastixFilterType::New() );
-  mySuperElastix->SetBlueprint( blueprint );
+  SuperElastixFilterPointer superElastixFilter = SuperElastixFilterType::New();
+  SuperElastixFilterBlueprintPointer superElastixFilterBlueprint = SuperElastixFilterBlueprintType::New();
+  superElastixFilterBlueprint->Set( blueprint.get() );
+  superElastixFilter->SetBlueprint( superElastixFilterBlueprint );
 
-  imageWriter3D_A->SetInput( mySuperElastix->GetOutput< Image3DType >( "Sink_A" ) );
-  imageWriter3D_B->SetInput( mySuperElastix->GetOutput< Image3DType >( "Sink_B" ) );
+  imageWriter3D_A->SetInput( superElastixFilter->GetOutput< Image3DType >( "Sink_A" ) );
+  imageWriter3D_B->SetInput( superElastixFilter->GetOutput< Image3DType >( "Sink_B" ) );
 
   EXPECT_THROW( imageWriter3D_B->Update(), itk::ExceptionObject );
 }
@@ -225,16 +241,19 @@ TEST_F( SuperElastixFilterTest, TooManySinks )
   ImageWriter3DType::Pointer imageWriter3D_A = ImageWriter3DType::New();
   imageWriter3D_A->SetFileName( dataManager->GetOutputFile( "SuperElastixFilterTest_TooManyOutputs.mhd" ) );
 
-  Blueprint::Pointer blueprint = Blueprint::New();
+  BlueprintPointer blueprint = BlueprintPointer( new Blueprint() );
 
-  blueprint->AddComponent( "Sink_A", { { "NameOfClass", { "ItkImageSinkComponent" } } } );
-  blueprint->AddComponent( "Sink_B", { { "NameOfClass", { "ItkImageSinkComponent" } } } );
+  blueprint->SetComponent( "Sink_A", { { "NameOfClass", { "ItkImageSinkComponent" } } } );
+  blueprint->SetComponent( "Sink_B", { { "NameOfClass", { "ItkImageSinkComponent" } } } );
 
-  SuperElastixFilterType::Pointer mySuperElastix;
-  EXPECT_NO_THROW( mySuperElastix = SuperElastixFilterType::New() );
-  mySuperElastix->SetBlueprint( blueprint );
+  SuperElastixFilterType::Pointer superElastixFilter;
+  EXPECT_NO_THROW( superElastixFilter = SuperElastixFilterType::New() );
 
-  imageWriter3D_A->SetInput( mySuperElastix->GetOutput< Image3DType >( "Sink_A" ) );
+  SuperElastixFilterBlueprintPointer superElastixFilterBlueprint = SuperElastixFilterBlueprintType::New();
+  superElastixFilterBlueprint->Set( blueprint.get() );
+  superElastixFilter->SetBlueprint( superElastixFilterBlueprint );
+
+  imageWriter3D_A->SetInput( superElastixFilter->GetOutput< Image3DType >( "Sink_A" ) );
 
   EXPECT_THROW( imageWriter3D_A->Update(), itk::ExceptionObject );
 }

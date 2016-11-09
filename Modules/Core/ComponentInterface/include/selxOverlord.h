@@ -55,6 +55,7 @@ public:
   typedef std::map<
     std::string, RegistrationControllerStartInterface * > RegistrationControllerStartInterfaceMapType;
 
+  Overlord( std::shared_ptr< const Blueprint > blueprint );
   Overlord( Blueprint const * blueprint );
   ~Overlord() {}
 

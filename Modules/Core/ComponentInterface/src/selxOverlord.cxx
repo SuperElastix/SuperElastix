@@ -26,6 +26,10 @@
 
 namespace selx
 {
+Overlord::Overlord( std::shared_ptr< const Blueprint > blueprint ) : m_Blueprint( blueprint ), m_isConfigured(false )
+{
+}
+
 Overlord::Overlord( Blueprint const * blueprint ) : m_Blueprint( blueprint ), m_isConfigured( false )
 {
 }
