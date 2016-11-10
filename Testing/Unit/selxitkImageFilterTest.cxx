@@ -46,8 +46,7 @@ namespace selx
 class itkImageFilterTest : public ::testing::Test
 {
 public:
-
-  typedef typename itk::AutoPointerDataObjectDecorator< Blueprint > BlueprintITKType;
+  using BlueprintITKType = itk::AutoPointerDataObjectDecorator< Blueprint >;
   typedef BlueprintITKType::Pointer                                 BlueprintITKPointer;
 
   typedef std::shared_ptr< Blueprint >        BlueprintPointer;
