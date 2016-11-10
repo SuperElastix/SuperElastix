@@ -25,7 +25,7 @@
 #include "selxOverlord.h"
 #include "selxAnyFileReader.h"
 #include "selxAnyFileWriter.h"
-#include "itkAutoPointerDataObjectDecorator.h"
+#include "itkSharedPointerDataObjectDecorator.h"
 
 /**
  * \class SuperElastixFilter
@@ -59,9 +59,9 @@ public:
 
   typedef std::unique_ptr< Overlord > OverlordPointer;
 
-  typedef typename itk::AutoPointerDataObjectDecorator< Blueprint > BlueprintType;
-  typedef BlueprintType::Pointer                                    BlueprintPointer;
-  typedef BlueprintType::ConstPointer                               BlueprintConstPointer;
+  typedef typename itk::SharedPointerDataObjectDecorator< Blueprint > BlueprintType;
+  typedef BlueprintType::Pointer                                      BlueprintPointer;
+  typedef BlueprintType::ConstPointer                                 BlueprintConstPointer;
 
   // TODO: Make const-correct
   itkSetObjectMacro( Blueprint, BlueprintType )
@@ -93,7 +93,7 @@ protected:
 private:
 
   //TODO make const correct
-  BlueprintType::Pointer m_Blueprint;
+  BlueprintType::Pointer      m_Blueprint;
   OverlordPointer             m_Overlord;
   bool                        m_InputConnectionModified;
   bool                        m_OutputConnectionModified;
