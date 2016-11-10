@@ -55,8 +55,8 @@ public:
   typedef std::map<
     std::string, RegistrationControllerStartInterface * > RegistrationControllerStartInterfaceMapType;
 
-  Overlord( std::shared_ptr< const Blueprint > blueprint );
-  Overlord( Blueprint const * blueprint );
+  Overlord( std::shared_ptr< Blueprint > blueprint );
+  Overlord( Blueprint * blueprint );
   ~Overlord() {}
 
   /** Read configuration at the blueprints nodes and edges and return true if all components could be uniquely selected*/
@@ -93,7 +93,7 @@ private:
   typedef ComponentSelectorContainerType::iterator                ComponentSelectorIteratorType;
 
   /** Read configuration at the blueprints nodes and try to find instantiated components */
-  void ApplyNodeConfiguration();
+  void ApplyComponentConfiguration();
 
   /** Read configuration at the blueprints edges and try to find instantiated components */
   void ApplyConnectionConfiguration();
