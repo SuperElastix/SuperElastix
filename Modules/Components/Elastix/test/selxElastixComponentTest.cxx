@@ -90,6 +90,9 @@ TEST_F( ElastixComponentTest, ImagesOnly )
   component0Parameters[ "NameOfClass" ]               = { "ElastixComponent" };
   component0Parameters[ "RegistrationSettings" ]      = { "rigid" };
   component0Parameters[ "MaximumNumberOfIterations" ] = { "2" };
+  component0Parameters[ "Dimensionality" ] = { "2" };
+  component0Parameters[ "PixelType" ] = { "float" };
+  component0Parameters[ "ResultImagePixelType" ] = { "float" };
 
   blueprint->SetComponent( "RegistrationMethod", component0Parameters );
 
