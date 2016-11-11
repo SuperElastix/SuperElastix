@@ -41,7 +41,7 @@
 
 #include "elxElastixFilter.h"
 
-#include "boost/log/trivial.hpp"
+//#include "boost/log/trivial.hpp"
 
 namespace selx
 {
@@ -87,11 +87,11 @@ public:
   virtual int Update( ConflictinUpdateInterface * ) = 0;
 };
 
-class LogInterface
-{
-public:
-  virtual std::stringstream Log( boost::log::trivial::severity_level severity_level ) = 0;
-};
+//class LogInterface
+//{
+//public:
+//  virtual std::stringstream Log( boost::log::trivial::severity_level severity_level ) = 0;
+//};
 
 template< int Dimensionality, class TPixel >
 class itkImageInterface
