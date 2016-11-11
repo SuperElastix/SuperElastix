@@ -52,9 +52,7 @@ namespace itk
   {
     if ( m_Component != val )
     {
-      // store the pointer and take ownership of the memory
-      ComponentPointer aPointer(val);
-      m_Component = aPointer;
+      m_Component = val;
       this->Modified();
     }
   }

@@ -61,7 +61,9 @@ class SyNRegistrationItkv4Test : public ::testing::Test
 {
 public:
 
-  typedef std::unique_ptr< Blueprint >  BlueprintPointer;
+  typedef std::shared_ptr< Blueprint >                        BlueprintPointer;
+  typedef itk::SharedPointerDataObjectDecorator< Blueprint >  BlueprintITKType;
+  typedef BlueprintITKType::Pointer                           BlueprintITKPointer;
   typedef Blueprint::ParameterMapType   ParameterMapType;
   typedef Blueprint::ParameterValueType ParameterValueType;
   typedef DataManager                   DataManagerType;
@@ -232,9 +234,10 @@ TEST_F( SyNRegistrationItkv4Test, FullyConfigured3d )
   resultImageWriter->SetInput( superElastixFilter->GetOutput< Image3DType >( "ResultImageSink" ) );
   resultDisplacementWriter->SetInput( superElastixFilter->GetOutput< DisplacementImage3DType >( "ResultDisplacementFieldSink" ) );
 
-  itk::AutoPointerDataObjectDecorator< Blueprint >::Pointer superElastixFilterBlueprint = itk::AutoPointerDataObjectDecorator< Blueprint >::New();
-  superElastixFilterBlueprint->Set( blueprint.get() );
+  BlueprintITKPointer superElastixFilterBlueprint = BlueprintITKType::New();
+  superElastixFilterBlueprint->Set( blueprint );
   EXPECT_NO_THROW( superElastixFilter->SetBlueprint( superElastixFilterBlueprint ) );
+
 
   //Optional Update call
   //superElastixFilter->Update();
@@ -350,8 +353,8 @@ TEST_F( SyNRegistrationItkv4Test, WBIRDemo )
   resultImageWriter->SetInput( superElastixFilter->GetOutput< Image2DType >( "ResultImageSink" ) );
   resultDisplacementWriter->SetInput( superElastixFilter->GetOutput< DisplacementImage2DType >( "ResultDisplacementFieldSink" ) );
 
-  itk::AutoPointerDataObjectDecorator< Blueprint >::Pointer superElastixFilterBlueprint = itk::AutoPointerDataObjectDecorator< Blueprint >::New();
-  superElastixFilterBlueprint->Set( blueprint.get() );
+  BlueprintITKPointer superElastixFilterBlueprint = BlueprintITKType::New();
+  superElastixFilterBlueprint->Set( blueprint );
   EXPECT_NO_THROW( superElastixFilter->SetBlueprint( superElastixFilterBlueprint ) );
 
   //Optional Update call

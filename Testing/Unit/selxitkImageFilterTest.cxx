@@ -46,7 +46,7 @@ namespace selx
 class itkImageFilterTest : public ::testing::Test
 {
 public:
-  using BlueprintITKType = itk::AutoPointerDataObjectDecorator< Blueprint >;
+  using BlueprintITKType = itk::SharedPointerDataObjectDecorator< Blueprint >;
   typedef BlueprintITKType::Pointer                                 BlueprintITKPointer;
 
   typedef std::shared_ptr< Blueprint >        BlueprintPointer;
@@ -111,7 +111,7 @@ public:
     blueprint->SetConnection( "SecondStageFilter", "Sink", connectionParameters );
 
     BlueprintITKPointer ITKBlueprint = BlueprintITKType::New();
-    ITKBlueprint->Set( blueprint.get() );
+    ITKBlueprint->Set( blueprint );
   }
 
 

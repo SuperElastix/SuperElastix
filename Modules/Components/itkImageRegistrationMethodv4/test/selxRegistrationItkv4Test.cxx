@@ -105,7 +105,10 @@ public:
 
   typedef SuperElastixFilter< RegisterComponents > SuperElastixFilterType;
 
-  typedef std::unique_ptr< Blueprint >          BlueprintPointer;
+  typedef std::shared_ptr< Blueprint >                        BlueprintPointer;
+  typedef itk::SharedPointerDataObjectDecorator< Blueprint >  BlueprintITKType;
+  typedef BlueprintITKType::Pointer                           BlueprintITKPointer;
+
   typedef SuperElastixFilterType::BlueprintType SuperElastixFilterBlueprintType;
   typedef SuperElastixFilterType::Pointer       SuperElastixFilterBlueprintPointer;
   typedef SuperElastixFilterType::ConstPointer  SuperElastixFilterBlueprintConstPointer;
@@ -200,8 +203,8 @@ TEST_F( RegistrationItkv4Test, DISABLED_3DImagesOnly )
   superElastixFilter->SetInput( "MovingImageSource", movingImageReader->GetOutput() );
   resultImageWriter->SetInput( superElastixFilter->GetOutput< Image3DType >( "ResultImageSink" ) );
 
-  itk::AutoPointerDataObjectDecorator< Blueprint >::Pointer superElastixFilterBlueprint = itk::AutoPointerDataObjectDecorator< Blueprint >::New();
-  superElastixFilterBlueprint->Set( blueprint.get() );
+  BlueprintITKPointer superElastixFilterBlueprint = BlueprintITKType::New();
+  superElastixFilterBlueprint->Set( blueprint );
   EXPECT_NO_THROW( superElastixFilter->SetBlueprint( superElastixFilterBlueprint ) );
 
   //Optional Update call
@@ -291,8 +294,8 @@ TEST_F( RegistrationItkv4Test, DISABLED_3DANTSCCMetric )
   superElastixFilter->SetInput( "MovingImageSource", movingImageReader->GetOutput() );
   resultImageWriter->SetInput( superElastixFilter->GetOutput< Image3DType >( "ResultImageSink" ) );
 
-  itk::AutoPointerDataObjectDecorator< Blueprint >::Pointer superElastixFilterBlueprint = itk::AutoPointerDataObjectDecorator< Blueprint >::New();
-  superElastixFilterBlueprint->Set( blueprint.get() );
+  BlueprintITKPointer superElastixFilterBlueprint = BlueprintITKType::New();
+  superElastixFilterBlueprint->Set( blueprint );
   EXPECT_NO_THROW( superElastixFilter->SetBlueprint( superElastixFilterBlueprint ) );
 
   //Optional Update call
@@ -382,8 +385,8 @@ TEST_F( RegistrationItkv4Test, DISABLED_3DMeanSquaresMetric )
   superElastixFilter->SetInput( "MovingImageSource", movingImageReader->GetOutput() );
   resultImageWriter->SetInput( superElastixFilter->GetOutput< Image3DType >( "ResultImageSink" ) );
 
-  itk::AutoPointerDataObjectDecorator< Blueprint >::Pointer superElastixFilterBlueprint = itk::AutoPointerDataObjectDecorator< Blueprint >::New();
-  superElastixFilterBlueprint->Set( blueprint.get() );
+  BlueprintITKPointer superElastixFilterBlueprint = BlueprintITKType::New();
+  superElastixFilterBlueprint->Set( blueprint );
   EXPECT_NO_THROW( superElastixFilter->SetBlueprint( superElastixFilterBlueprint ) );
 
   //Optional Update call
@@ -512,8 +515,8 @@ TEST_F( RegistrationItkv4Test, FullyConfigured3d )
   resultImageWriter->SetInput( superElastixFilter->GetOutput< Image3DType >( "ResultImageSink" ) );
   resultDisplacementWriter->SetInput( superElastixFilter->GetOutput< DisplacementImage3DType >( "ResultDisplacementFieldSink" ) );
 
-  itk::AutoPointerDataObjectDecorator< Blueprint >::Pointer superElastixFilterBlueprint = itk::AutoPointerDataObjectDecorator< Blueprint >::New();
-  superElastixFilterBlueprint->Set( blueprint.get() );
+  BlueprintITKPointer superElastixFilterBlueprint = BlueprintITKType::New();
+  superElastixFilterBlueprint->Set( blueprint );
   EXPECT_NO_THROW( superElastixFilter->SetBlueprint( superElastixFilterBlueprint ) );
 
   //Optional Update call
@@ -637,8 +640,8 @@ TEST_F( RegistrationItkv4Test, FullyConfigured3dAffine )
   resultImageWriter->SetInput( superElastixFilter->GetOutput< Image3DType >( "ResultImageSink" ) );
   resultDisplacementWriter->SetInput( superElastixFilter->GetOutput< DisplacementImage3DType >( "ResultDisplacementFieldSink" ) );
 
-  itk::AutoPointerDataObjectDecorator< Blueprint >::Pointer superElastixFilterBlueprint = itk::AutoPointerDataObjectDecorator< Blueprint >::New();
-  superElastixFilterBlueprint->Set( blueprint.get() );
+  BlueprintITKPointer superElastixFilterBlueprint = BlueprintITKType::New();
+  superElastixFilterBlueprint->Set( blueprint );
   EXPECT_NO_THROW( superElastixFilter->SetBlueprint( superElastixFilterBlueprint ) );
 
   //Optional Update call
@@ -740,8 +743,8 @@ TEST_F(RegistrationItkv4Test, CompositeTransform)
 
   resultImageWriter->SetInput(superElastixFilter->GetOutput< Image2DType >("ResultImageSink"));
 
-  itk::AutoPointerDataObjectDecorator< Blueprint >::Pointer superElastixFilterBlueprint = itk::AutoPointerDataObjectDecorator< Blueprint >::New();
-  superElastixFilterBlueprint->Set( blueprint.get() );
+  BlueprintITKPointer superElastixFilterBlueprint = BlueprintITKType::New();
+  superElastixFilterBlueprint->Set( blueprint );
   EXPECT_NO_THROW( superElastixFilter->SetBlueprint( superElastixFilterBlueprint ) );
 
   //Optional Update call

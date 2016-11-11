@@ -43,12 +43,12 @@ class ElastixComponentTest : public ::testing::Test
 {
 public:
 
-  typedef std::unique_ptr< Blueprint >                      BlueprintPointer;
-  typedef itk::AutoPointerDataObjectDecorator< Blueprint >  BlueprintITKType;
-  typedef BlueprintITKType::Pointer                         BlueprintITKPointer;
-  typedef Blueprint::ParameterMapType                       ParameterMapType;
-  typedef Blueprint::ParameterValueType                     ParameterValueType;
-  typedef DataManager                                       DataManagerType;
+  typedef std::shared_ptr< Blueprint >                        BlueprintPointer;
+  typedef itk::SharedPointerDataObjectDecorator< Blueprint >  BlueprintITKType;
+  typedef BlueprintITKType::Pointer                           BlueprintITKPointer;
+  typedef Blueprint::ParameterMapType                         ParameterMapType;
+  typedef Blueprint::ParameterValueType                       ParameterValueType;
+  typedef DataManager                                         DataManagerType;
 
   /** Make a list of components to be registered for this test*/
   typedef TypeList< ElastixComponent< 2, float >,
@@ -150,7 +150,7 @@ TEST_F( ElastixComponentTest, ImagesOnly )
   resultImageWriter->SetInput( superElastixFilter->GetOutput< Image2DType >( "ResultImageSink" ) );
 
   BlueprintITKPointer ITKBlueprint = BlueprintITKType::New();
-  ITKBlueprint->Set( blueprint.get() );
+  ITKBlueprint->Set( blueprint );
   EXPECT_NO_THROW( superElastixFilter->SetBlueprint( ITKBlueprint ) );
 
   //Optional Update call
@@ -215,7 +215,7 @@ TEST_F( ElastixComponentTest, MonolithicElastixTransformix )
   resultImageWriter->SetInput( superElastixFilter->GetOutput< Image2DType >( "ResultImageSink" ) );
 
   BlueprintITKPointer ITKBlueprint = BlueprintITKType::New();
-  ITKBlueprint->Set( blueprint.get() );
+  ITKBlueprint->Set( blueprint );
   EXPECT_NO_THROW( superElastixFilter->SetBlueprint( ITKBlueprint ) );
 
   //Optional Update call
