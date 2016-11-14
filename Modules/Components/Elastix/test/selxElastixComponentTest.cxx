@@ -159,13 +159,17 @@ TEST_F( ElastixComponentTest, ImagesOnly )
   // Update call on the writers triggers SuperElastix to configure and execute
   EXPECT_NO_THROW( resultImageWriter->Update() );
 }
-TEST_F( ElastixComponentTest, MonolithicElastixTransformix )
+TEST_F(ElastixComponentTest, MonolithicElastixTransformix)
 {
   /** make example blueprint configuration */
-  blueprint = BlueprintPointer( new Blueprint() );
+  blueprint = BlueprintPointer(new Blueprint());
 
-  blueprint->SetComponent( "RegistrationMethod", { { "NameOfClass", { "MonolithicElastixComponent" } },
-                                                   { "RegistrationSettings", { "rigid" } }, { "MaximumNumberOfIterations", { "2" } } } );
+  blueprint->SetComponent("RegistrationMethod", { { "NameOfClass", { "MonolithicElastixComponent" } },
+  { "RegistrationSettings", { "rigid" } }, { "MaximumNumberOfIterations", { "2" } },
+  {"Dimensionality", { "2" } },
+  { "PixelType", { "float" } },
+  { "ResultImagePixelType", { "float" } }
+});
   blueprint->SetComponent( "TransformDisplacementField", { { "NameOfClass", { "MonolithicTransformixComponent" } } } );
 
   blueprint->SetComponent( "FixedImageSource", { { "NameOfClass", { "ItkImageSourceFixedComponent" } }, { "Dimensionality", { "2" } } } );
