@@ -55,7 +55,7 @@ public:
     ComponentFactory< SSDMetric4thPartyComponent >::RegisterOneFactory();
 
     /** make example blueprint configuration */
-    BlueprintPointer blueprint = BlueprintPointer( new Blueprint( ) );
+    blueprint = BlueprintPointer( new Blueprint( ) );
     ParameterMapType metricComponentParameters;
     metricComponentParameters[ "NameOfClass" ] = { "MetricComponent1" };
 
