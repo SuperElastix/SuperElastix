@@ -31,6 +31,7 @@ set(Boost_USE_MULTITHREADED ON)
 set(BOOST_LIBRARYDIR ${BOOST_ROOT}/stage/lib)
 find_package(Boost COMPONENTS program_options system filesystem REQUIRED) 
 
+include_directories(${Boost_INCLUDE_DIR})
 # Compile executable
 add_executable( superelastix ${COMMANDLINE_SOURCE_FILES} ${COMMANDLINE_HEADER_FILES} )
 target_link_libraries( superelastix ${SUPERELASTIX_LIBRARIES} ${Boost_LIBRARIES})
