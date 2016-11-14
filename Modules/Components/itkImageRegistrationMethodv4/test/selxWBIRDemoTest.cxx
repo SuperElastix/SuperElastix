@@ -107,6 +107,11 @@ public:
 
   virtual void SetUp()
   {
+
+    blueprint = BlueprintType::New();
+    blueprint->Set(std::shared_ptr<BlueprintType::ComponentType>(new BlueprintType::ComponentType()));
+
+
     baselineImageReader = ImageReader2DType::New();
     compareImageFilter  = ComparisonImageFilterType::New();
     compareImageFilter->SetValidInput( baselineImageReader->GetOutput() );
@@ -144,7 +149,7 @@ public:
 TEST_F( WBIRDemoTest, itkv4_SVF_ANTSCC )
 {
   /** make example blueprint configuration */
-  blueprint = BlueprintType::New();
+
   blueprint->Get()->SetComponent( "RegistrationMethod", { { "NameOfClass", { "ItkImageRegistrationMethodv4Component" } },
                                                    { "NumberOfLevels", { "3" } },
                                                    { "ShrinkFactorsPerLevel", { "4", "2", "1" } },
@@ -257,8 +262,6 @@ TEST_F( WBIRDemoTest, itkv4_SVF_ANTSCC )
 TEST_F( WBIRDemoTest, itkv4_SVF_MSD )
 {
   /** make example blueprint configuration */
-  blueprint = BlueprintType::New();
-
   blueprint->Get()->SetComponent( "RegistrationMethod", { { "NameOfClass", { "ItkImageRegistrationMethodv4Component" } },
                                                    { "NumberOfLevels", { "3" } },
                                                    { "ShrinkFactorsPerLevel", { "4", "2", "1" } },
@@ -369,8 +372,6 @@ TEST_F( WBIRDemoTest, itkv4_SVF_MSD )
 TEST_F( WBIRDemoTest, elastix_BS_NCC )
 {
   /** make blueprint configuration */
-  blueprint = BlueprintType::New();
-
   blueprint->Get()->SetComponent( "RegistrationMethod", { { "NameOfClass", { "MonolithicElastixComponent" } },
                                                    { "Transform", { "BSplineTransform" } }, { "Metric", { "AdvancedNormalizedCorrelation" } } } );
 
@@ -463,8 +464,6 @@ TEST_F( WBIRDemoTest, elastix_BS_NCC )
 TEST_F( WBIRDemoTest, elastix_BS_MSD )
 {
   /** make blueprint configuration */
-  blueprint = BlueprintType::New();
-
   blueprint->Get()->SetComponent( "RegistrationMethod", { { "NameOfClass", { "MonolithicElastixComponent" } },
                                                    { "Transform", { "BSplineTransform" } }, { "Metric", { "AdvancedMeanSquares" } } } );
 
