@@ -372,8 +372,9 @@ TEST_F( WBIRDemoTest, itkv4_SVF_MSD )
 TEST_F( WBIRDemoTest, elastix_BS_NCC )
 {
   /** make blueprint configuration */
-  blueprint->Get()->SetComponent( "RegistrationMethod", { { "NameOfClass", { "MonolithicElastixComponent" } },
-                                                   { "Transform", { "BSplineTransform" } }, { "Metric", { "AdvancedNormalizedCorrelation" } } } );
+  blueprint->Get()->SetComponent("RegistrationMethod", { { "NameOfClass", { "MonolithicElastixComponent" } },
+  { "Transform", { "BSplineTransform" } }, { "Metric", { "AdvancedNormalizedCorrelation" } },
+  { "Dimensionality", { "2" } }, { "PixelType", { "float" } }, { "ResultImagePixelType", { "float" } } });
 
   blueprint->Get()->SetComponent( "TransformDisplacementField", { { "NameOfClass", { "MonolithicTransformixComponent" } } } );
 
@@ -464,9 +465,10 @@ TEST_F( WBIRDemoTest, elastix_BS_NCC )
 TEST_F( WBIRDemoTest, elastix_BS_MSD )
 {
   /** make blueprint configuration */
-  blueprint->Get()->SetComponent( "RegistrationMethod", { { "NameOfClass", { "MonolithicElastixComponent" } },
-                                                   { "Transform", { "BSplineTransform" } }, { "Metric", { "AdvancedMeanSquares" } } } );
-
+  blueprint->Get()->SetComponent("RegistrationMethod", { { "NameOfClass", { "MonolithicElastixComponent" } },
+  { "Transform", { "BSplineTransform" } }, { "Metric", { "AdvancedMeanSquares" } },
+  { "Dimensionality", { "2" } }, { "PixelType", { "float" } }, { "ResultImagePixelType", { "float" } } });
+  
   blueprint->Get()->SetComponent( "TransformDisplacementField", { { "NameOfClass", { "MonolithicTransformixComponent" } } } );
 
   blueprint->Get()->SetComponent( "FixedImageSource", { { "NameOfClass", { "ItkImageSourceFixedComponent" } } } );
