@@ -110,7 +110,7 @@ public:
     blueprint->SetConnection( "Source", "FistStageFilter", connectionParameters ); //
     blueprint->SetConnection( "SecondStageFilter", "Sink", connectionParameters );
 
-    BlueprintITKPointer ITKBlueprint = BlueprintITKType::New();
+    ITKBlueprint = BlueprintITKType::New();
     ITKBlueprint->Set( blueprint );
   }
 
