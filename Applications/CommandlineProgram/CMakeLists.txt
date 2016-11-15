@@ -35,3 +35,35 @@ include_directories(${Boost_INCLUDE_DIR})
 # Compile executable
 add_executable( superelastix ${COMMANDLINE_SOURCE_FILES} ${COMMANDLINE_HEADER_FILES} )
 target_link_libraries( superelastix ${SUPERELASTIX_LIBRARIES} ${Boost_LIBRARIES})
+
+#add_custom_target(InstallDemo DEPENDS superelastix)
+
+set(CMAKE_INSTALL_PREFIX ${PROJECT_BINARY_DIR}/Demo)
+#Copy the SuperElastix executable
+install(TARGETS "superelastix"
+   RUNTIME DESTINATION "${PROJECT_BINARY_DIR}/Demo"
+)
+
+include( ExternalData )
+
+list( APPEND ExternalData_URL_TEMPLATES
+  "http://midas3.kitware.com/midas/api/rest?method=midas.bitstream.download&checksum=%(hash)&algorithm=%(algo)"
+  "https://midas3.kitware.com/midas/api/rest?method=midas.bitstream.download&checksum=%(hash)&algorithm=%(algo)"
+)
+
+# Scan the Data directory for content links on the form "[filename].[ext].md5". 
+# The content links contains md5 hashes that are checked for consistensy  
+# against files downloaded from servers in ExternalData_URL_TEMPLATES. These 
+# files are placed in a corresponding location in the build directory.
+file( GLOB_RECURSE DemoDataContentLinks "*.md5" )
+message(STATUS DemoDataContentLinks: ${DemoDataContentLinks})
+foreach( DemoDataContentLink ${DemoContentLinks} )
+  string( REGEX REPLACE "\\.md5$" "" DemoDataContentLink ${DemoDataContentLink} )
+  ExternalData_Expand_Arguments( InstallDemo
+    DemoDataFilenames
+    DATA{${DemoDataContentLink}}
+  )
+endforeach()
+
+# Test data is downloaded when this target is built
+ExternalData_Add_Target( InstallDemo )

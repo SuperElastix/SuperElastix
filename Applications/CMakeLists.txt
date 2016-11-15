@@ -18,7 +18,7 @@
 #=========================================================================
 
 cmake_minimum_required( VERSION 3.0.2 )
-project(SuperElastixExamples)
+project(SuperElastixApplications)
 
 if( NOT CMAKE_PROJECT_NAME STREQUAL "SuperElastix" )
   # Examples are build as an external project, need to import dependencies
