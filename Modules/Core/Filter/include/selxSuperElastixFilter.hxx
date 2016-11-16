@@ -193,7 +193,7 @@ SuperElastixFilter< ComponentTypeList >
 {
   //TODO: Before we can get the reader the Blueprint needs to set and applied in the overlord.
   // This is not like the itk pipeline philosophy
-  if (!this->m_Overlord)
+  if (!this->m_Blueprint)
   {
     itkExceptionMacro( << "Setting a Blueprint is required first." )
   }
@@ -211,7 +211,7 @@ SuperElastixFilter< ComponentTypeList >
 {
   //TODO: Before we can get the reader the Blueprint needs to set and applied in the overlord.
   // This is not like the itk pipeline philosophy
-  if (!this->m_Overlord)
+  if (!this->m_Blueprint)
   {
     itkExceptionMacro( << "Setting a Blueprint is required first." )
   }
