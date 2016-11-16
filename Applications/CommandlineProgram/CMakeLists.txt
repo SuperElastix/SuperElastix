@@ -60,10 +60,22 @@ message(STATUS DemoDataContentLinks: ${DemoDataContentLinks})
 foreach( DemoDataContentLink ${DemoContentLinks} )
   string( REGEX REPLACE "\\.md5$" "" DemoDataContentLink ${DemoDataContentLink} )
   ExternalData_Expand_Arguments( InstallDemo
-    DemoDataFilenames
+    InstallDemoFilenames
     DATA{${DemoDataContentLink}}
   )
 endforeach()
 
+# Copy some of the configuration files
+install(FILES "${CMAKE_SOURCE_DIR}/../Testing/Unit/Data/Configuration/itkv4_SVF_ANTsCC.json" 
+  "${CMAKE_SOURCE_DIR}/../Testing/Unit/Data/Configuration/itkv4_SVF_MSD.json"
+  "${CMAKE_SOURCE_DIR}/../Testing/Unit/Data/Configuration/elastix_Bspline_NC.json"
+  "${CMAKE_SOURCE_DIR}/../Testing/Unit/Data/Configuration/elastix_Bspline_MSD.json"
+  DESTINATION "${PROJECT_BINARY_DIR}/Demo/Configuration"
+)
+
+# Copy the demo scripts
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/Demo/" DESTINATION  "${PROJECT_BINARY_DIR}/Demo" FILE_PERMISSIONS OWNER_EXECUTE OWNER_READ OWNER_WRITE GROUP_EXECUTE GROUP_READ GROUP_WRITE )
+
 # Test data is downloaded when this target is built
 ExternalData_Add_Target( InstallDemo )
+#set_property(TARGET InstallDemo PROPERTY DEPENDS INSTALL)
