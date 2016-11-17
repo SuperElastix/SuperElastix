@@ -193,12 +193,12 @@ SuperElastixFilter< ComponentTypeList >
 {
   //TODO: Before we can get the reader the Blueprint needs to set and applied in the overlord.
   // This is not like the itk pipeline philosophy
-  if( !this->m_Blueprint )
+  if (!this->m_Overlord)
   {
     itkExceptionMacro( << "Setting a Blueprint is required first." )
   }
-  this->m_Overlord->SetBlueprint( this->m_Blueprint );
-  this->m_Overlord->Configure();
+  this->m_Overlord = OverlordPointer(new Overlord(this->m_Blueprint->Get()));
+  bool allUniqueComponents = this->m_Overlord->Configure();
 
   return this->m_Overlord->GetInputFileReader( inputName );
 }
@@ -211,13 +211,13 @@ SuperElastixFilter< ComponentTypeList >
 {
   //TODO: Before we can get the reader the Blueprint needs to set and applied in the overlord.
   // This is not like the itk pipeline philosophy
-  if( !this->m_Blueprint )
+  if (!this->m_Overlord)
   {
     itkExceptionMacro( << "Setting a Blueprint is required first." )
   }
 
-  this->m_Overlord->SetBlueprint( this->m_Blueprint );
-  this->m_Overlord->Configure();
+  this->m_Overlord = OverlordPointer(new Overlord(this->m_Blueprint->Get()));
+  bool allUniqueComponents = this->m_Overlord->Configure();
 
   return this->m_Overlord->GetOutputFileWriter( outputName );
 }
