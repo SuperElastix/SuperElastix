@@ -24,74 +24,74 @@
 namespace selx
 {
 
-  // Declared outside of the class body, so it is a free function
-  std::ostream &
-    operator<<(std::ostream & out, const Blueprint::ParameterMapType & val)
+// Declared outside of the class body, so it is a free function
+std::ostream &
+  operator<<(std::ostream & out, const Blueprint::ParameterMapType & val)
+{
+  for (auto const & mapPair : val)
   {
-    for (auto const & mapPair : val)
+    out << mapPair.first << " : [ ";
+    for (auto const & value : mapPair.second)
     {
-      out << mapPair.first << " : [ ";
-      for (auto const & value : mapPair.second)
-      {
-        out << value << " ";
-      }
-      out << "]\\n";
+      out << value << " ";
     }
-    return out;
+    out << "]\\n";
+  }
+  return out;
+}
+
+
+template< class NameType, class ParameterMapType >
+class vertex_label_writer
+{
+public:
+
+  vertex_label_writer(NameType _name, ParameterMapType _parameterMap) : name(_name), parameterMap(_parameterMap) {}
+  template< class VertexOrEdge >
+  void operator()(std::ostream & out, const VertexOrEdge & v) const
+  {
+    out << "[label=\"" << name[v] << "\n" << parameterMap[v] << "\"]";
   }
 
 
-  template< class NameType, class ParameterMapType >
-  class vertex_label_writer
+private:
+
+  NameType         name;
+  ParameterMapType parameterMap;
+};
+
+template< class NameType, class ParameterMapType >
+inline vertex_label_writer< NameType, ParameterMapType >
+  make_vertex_label_writer(NameType n, ParameterMapType p)
+{
+  return vertex_label_writer< NameType, ParameterMapType >(n, p);
+}
+
+
+template< class ParameterMapType >
+class edge_label_writer
+{
+public:
+
+  edge_label_writer(ParameterMapType _parameterMap) : parameterMap(_parameterMap) {}
+  template< class VertexOrEdge >
+  void operator()(std::ostream & out, const VertexOrEdge & v) const
   {
-  public:
-
-    vertex_label_writer(NameType _name, ParameterMapType _parameterMap) : name(_name), parameterMap(_parameterMap) {}
-    template< class VertexOrEdge >
-    void operator()(std::ostream & out, const VertexOrEdge & v) const
-    {
-      out << "[label=\"" << name[v] << "\n" << parameterMap[v] << "\"]";
-    }
-
-
-  private:
-
-    NameType         name;
-    ParameterMapType parameterMap;
-  };
-
-  template< class NameType, class ParameterMapType >
-  inline vertex_label_writer< NameType, ParameterMapType >
-    make_vertex_label_writer(NameType n, ParameterMapType p)
-  {
-    return vertex_label_writer< NameType, ParameterMapType >(n, p);
+    out << "[label=\"" << parameterMap[v] << "\"]";
   }
 
 
-  template< class ParameterMapType >
-  class edge_label_writer
-  {
-  public:
+private:
 
-    edge_label_writer(ParameterMapType _parameterMap) : parameterMap(_parameterMap) {}
-    template< class VertexOrEdge >
-    void operator()(std::ostream & out, const VertexOrEdge & v) const
-    {
-      out << "[label=\"" << parameterMap[v] << "\"]";
-    }
+  ParameterMapType parameterMap;
+};
 
-
-  private:
-
-    ParameterMapType parameterMap;
-  };
-
-  template< class ParameterMapType >
-  inline edge_label_writer< ParameterMapType >
-    make_edge_label_writer(ParameterMapType p)
-  {
-    return edge_label_writer< ParameterMapType >(p);
-  }
+template< class ParameterMapType >
+inline edge_label_writer< ParameterMapType >
+  make_edge_label_writer(ParameterMapType p)
+{
+  return edge_label_writer< ParameterMapType >(p);
+}
 
   
 bool

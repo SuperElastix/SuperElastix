@@ -50,4 +50,4 @@ private:
 
 } // namespace
 
-#endif Logger_h
+#endif // Logger_h

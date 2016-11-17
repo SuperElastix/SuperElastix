@@ -70,7 +70,7 @@ public:
 
 private:
   
-  class BlueprintImpl;
+  struct BlueprintImpl;
   std::unique_ptr< BlueprintImpl > m_Pimple;
 
 };

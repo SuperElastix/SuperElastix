@@ -17,22 +17,25 @@
  *
  *=========================================================================*/
 
+#ifndef LoggerImpl_h
+#define LoggerImpl_h
+
 #include "selxLogger.h"
-#include "selxLoggerImpl.h"
+
+#include "boost/log/sources/severity_logger.hpp"
 
 namespace selx {
 
-Logger
-::Logger( void ) : m_Pimple( new Logger::LoggerImpl ) {};
+struct Logger::LoggerImpl {
 
-Logger
-::~Logger( void ) = default;
+  LoggerImpl();
 
-void
-Logger
-::Log( SeverityLevel severityLevel, const std::string message )
-{
-  this->m_Pimple->Log( severityLevel, message );
-}
+  void Log( SeverityLevel severityLevel, const std::string message );
+
+  boost::log::sources::severity_logger< SeverityLevel > m_Logger;
+
+};
 
 }
+
+#endif // LoggerImpl_h

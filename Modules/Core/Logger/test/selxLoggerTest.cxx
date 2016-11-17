@@ -18,21 +18,12 @@
  *=========================================================================*/
 
 #include "selxLogger.h"
-#include "selxLoggerImpl.h"
 
-namespace selx {
+#include "gtest/gtest.h"
 
-Logger
-::Logger( void ) : m_Pimple( new Logger::LoggerImpl ) {};
+using namespace selx;
 
-Logger
-::~Logger( void ) = default;
-
-void
-Logger
-::Log( SeverityLevel severityLevel, const std::string message )
+TEST( LoggerTest, Initialization )
 {
-  this->m_Pimple->Log( severityLevel, message );
-}
-
+  Logger* logger = new Logger();
 }
