@@ -68,12 +68,20 @@ SuperElastixFilter< ComponentTypeList >
   // are passed further down stream.
   // Eventually configuration boils down to a while loop that repeatedly tries to narrow down
   // the component selectors until no more unique components can be found.
-
   bool allUniqueComponents = true;
-  if( this->m_BlueprintConnectionModified == true )
+  if (!this->m_Overlord)
   {
-    this->m_Overlord = OverlordPointer( new Overlord( this->m_Blueprint->Get() ) );
+    if (!this->m_Blueprint)
+    {
+      itkExceptionMacro(<< "Setting a Blueprint is required first.")
+    }
+
+    this->m_Overlord = OverlordPointer(new Overlord(this->m_Blueprint->Get()));
     allUniqueComponents = this->m_Overlord->Configure();
+  }
+  else if (this->m_BlueprintConnectionModified == true)
+  {
+//TODO: 
   }
 
   if( ( m_InputConnectionModified == true ) || ( this->m_BlueprintConnectionModified == true ) )
@@ -189,17 +197,23 @@ SuperElastixFilter< ComponentTypeList >
 template< typename ComponentTypeList >
 typename SuperElastixFilter< ComponentTypeList >::AnyFileReaderType::Pointer
 SuperElastixFilter< ComponentTypeList >
-::GetInputFileReader( const DataObjectIdentifierType & inputName )
+::GetInputFileReader(const DataObjectIdentifierType & inputName)
 {
   //TODO: Before we can get the reader the Blueprint needs to set and applied in the overlord.
   // This is not like the itk pipeline philosophy
-  if (!this->m_Blueprint)
+  if (!this->m_Overlord)
   {
-    itkExceptionMacro( << "Setting a Blueprint is required first." )
+    if (!this->m_Blueprint)
+    {
+      itkExceptionMacro(<< "Setting a Blueprint is required first.")
+    }
+    this->m_Overlord = OverlordPointer(new Overlord(this->m_Blueprint->Get()));
+    bool allUniqueComponents = this->m_Overlord->Configure();
   }
-  this->m_Overlord = OverlordPointer(new Overlord(this->m_Blueprint->Get()));
-  bool allUniqueComponents = this->m_Overlord->Configure();
-
+  if (!this->m_IsConnected)
+  {
+    itkExceptionMacro(<< "Blueprint was not sufficiently specified to build a network.")
+  }
   return this->m_Overlord->GetInputFileReader( inputName );
 }
 
@@ -211,13 +225,20 @@ SuperElastixFilter< ComponentTypeList >
 {
   //TODO: Before we can get the reader the Blueprint needs to set and applied in the overlord.
   // This is not like the itk pipeline philosophy
-  if (!this->m_Blueprint)
+  if (!this->m_Overlord)
   {
-    itkExceptionMacro( << "Setting a Blueprint is required first." )
-  }
+    if (!this->m_Blueprint)
+    {
+      itkExceptionMacro(<< "Setting a Blueprint is required first.")
+    }
 
-  this->m_Overlord = OverlordPointer(new Overlord(this->m_Blueprint->Get()));
-  bool allUniqueComponents = this->m_Overlord->Configure();
+    this->m_Overlord = OverlordPointer(new Overlord(this->m_Blueprint->Get()));
+    bool allUniqueComponents = this->m_Overlord->Configure();
+  }
+  if (!this->m_IsConnected)
+  {
+    itkExceptionMacro(<< "Blueprint was not sufficiently specified to build a network.")
+  }
 
   return this->m_Overlord->GetOutputFileWriter( outputName );
 }
@@ -245,15 +266,17 @@ typename SuperElastixFilter< ComponentTypeList >::OutputDataType
   }
   else  // otherwise ask the sink component to initialize an output of the right type (the sink knows what type that is).
   {
-    if( !this->m_Blueprint ) // to ask the sink it must be configured by a blueprint.
+    if (!this->m_Overlord)
     {
-      itkExceptionMacro( << "Setting a Blueprint is required first." )
+      if (!this->m_Blueprint) // to ask the sink it must be configured by a blueprint.
+      {
+        itkExceptionMacro(<< "Setting a Blueprint is required first.")
+      }
+
+      this->m_Overlord = OverlordPointer(new Overlord(this->m_Blueprint->Get()));
+      this->m_Overlord->Configure();
+      this->m_BlueprintConnectionModified = false;
     }
-
-    this->m_Overlord = OverlordPointer( new Overlord( this->m_Blueprint->Get() ) );
-    this->m_Overlord->Configure();
-    this->m_BlueprintConnectionModified = false;
-
     typename OutputDataType::Pointer newOutput = this->m_Overlord->GetInitializedOutput( outputName );
     this->m_OutputConnectionModified           = true;
 

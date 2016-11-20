@@ -76,7 +76,8 @@ Overlord::Configure()
     for( const auto & nonUniqueComponentName : nonUniqueComponentNames )
     {
       std::cout << this->m_ComponentSelectorContainer[ nonUniqueComponentName ]->NumberOfComponents() << "  " << nonUniqueComponentName << std::endl;
-      this->m_ComponentSelectorContainer[nonUniqueComponentName]->PrintComponents();
+      //this->m_ComponentSelectorContainer[nonUniqueComponentName]->PrintComponents();
+      std::cout << "TODO: print components" << std::endl;
     }
     return false;
   }
