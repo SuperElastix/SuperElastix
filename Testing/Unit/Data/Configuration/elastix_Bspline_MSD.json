@@ -3,28 +3,28 @@
         "Name": "RegistrationMethod",
         "NameOfClass": "MonolithicElastixComponent",
         "Dimensionality": "2",
-		"Transform": "BSplineTransform",
-        "Metric": "AdvancedMeanSquares" 
+        "Transform": "BSplineTransform",
+        "Metric": "AdvancedMeanSquares",
+        "PixelType": "float",
+        "ResultImagePixelType": "float"
     },
     "Component": {
         "Name": "FixedImage",
         "NameOfClass": "ItkImageSourceFixedComponent",
-        "Dimensionality": "2"
+        "Dimensionality": "2",
+        "PixelType": "float"
     },
     "Component": {
         "Name": "MovingImage",
-        "NameOfClass": "ItkImageSourceMovingComponent",
-        "Dimensionality": "2"
+        "NameOfClass": "ItkImageSourceMovingComponent"
     },
     "Component": {
         "Name": "ResultImage",
-        "NameOfClass": "ItkImageSinkComponent",
-        "Dimensionality": "2"
+        "NameOfClass": "ItkImageSinkComponent"
     },
     "Component": {
         "Name": "TransformDisplacementField",
-        "NameOfClass": "MonolithicTransformixComponent",
-        "Dimensionality": "2"
+        "NameOfClass": "MonolithicTransformixComponent"
     },
 	"Component": {
         "Name": "Controller",
