@@ -27,9 +27,15 @@ if (OPENMP_FOUND)
   set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}" )
 endif()
 
+set(NIFTYREG_DIR "/home/flopper/Programming/SuperElastix/bld2/Niftyreg-prefix")
+message(WARNING ${NIFTYREG_DIR})
+
 find_package( Niftyreg )
 #mark_as_advanced(Niftyreg_DIR)
-
+if (NOT Niftyreg_FOUND)
+  set( NIFTYREG_DIR "" CACHE PATH "Path to Niftyreg build folder" )
+  message(FATAL_ERROR "Could not find Niftyreg. Point NIFTYREG_DIR to its install folder.")
+endif()
 
 # Export include files
 set( ${MODULE}_INCLUDE_DIRS
@@ -37,13 +43,15 @@ set( ${MODULE}_INCLUDE_DIRS
   ${Niftyreg_INCLUDE_DIR}
 )
 
+message(WARNING ${${MODULE}_INCLUDE_DIRS})
+
 # Collect header files for Visual Studio Project
 file(GLOB ${MODULE}_HEADER_FILES "${${MODULE}_SOURCE_DIR}/include/*.*")
 
 # Export libraries
 set( ${MODULE}_LIBRARIES 
   ${MODULE}
-  ${Niftyreg_LIBRARIES}
+  #${Niftyreg_LIBRARIES}
 )
 
 # Export tests

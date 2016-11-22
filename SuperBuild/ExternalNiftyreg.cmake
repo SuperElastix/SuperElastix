@@ -35,6 +35,6 @@ ExternalProject_Add( ${proj}
 )
 
 ExternalProject_Get_Property( ${proj} install_dir )
-set( NIFTYREG_DIR "${install_dir}" )
+set( NIFTYREG_DIR "${install_dir}")
 
 list( APPEND SUPERELASTIX_DEPENDENCIES ${proj} )

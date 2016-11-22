@@ -17,14 +17,14 @@
 #
 #=========================================================================
  
-#set(Niftyreg_FIND_COMPONENTS lib_reg_aladin lib_reg_blockMatching lib_reg_f3d lib_reg_femTrans lib_reg_globalTrans lib_reg_localTrans lib_reg_maths lib_reg_measure  lib_reg_resampling lib_reg_tools)
-set(Niftyreg_FIND_COMPONENTS _reg_aladin _reg_blockMatching _reg_f3d _reg_femTrans _reg_globalTrans _reg_localTrans _reg_maths _reg_measure _reg_resampling _reg_tools)
+set(Niftyreg_FIND_COMPONENTS lib_reg_aladin lib_reg_blockMatching lib_reg_f3d lib_reg_femTrans lib_reg_globalTrans lib_reg_localTrans lib_reg_maths lib_reg_measure  lib_reg_resampling lib_reg_tools)
+#set(Niftyreg_FIND_COMPONENTS _reg_aladin _reg_blockMatching _reg_f3d _reg_femTrans _reg_globalTrans _reg_localTrans _reg_maths _reg_measure _reg_resampling _reg_tools)
 
-set(Niftyreg_INCLUDE_DIR "${NIFTYREG_DIR}/include")
+set(Niftyreg_INCLUDE_DIR ${NIFTYREG_DIR}/include)
 
 foreach(component ${Niftyreg_FIND_COMPONENTS})
-  #set(Niftyreg_LIBRARIES ${Niftyreg_LIBRARIES}  ${Niftyreg_DIR}/lib/${component}.a)
-  set(Niftyreg_LIBRARIES ${Niftyreg_LIBRARIES}  ${Niftyreg_DIR}/lib/${component}.lib)
+  set(Niftyreg_LIBRARIES ${Niftyreg_LIBRARIES}  ${NIFTYREG_DIR}/lib/${component}.a)
+  #set(Niftyreg_LIBRARIES ${Niftyreg_LIBRARIES}  ${Niftyreg_DIR}/lib/${component}.lib)
 endforeach()
 
 # handle the QUIETLY and REQUIRED arguments and set Niftyreg_FOUND to TRUE if
