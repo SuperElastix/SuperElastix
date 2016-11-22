@@ -35,7 +35,8 @@ SuperElastixFilter< ComponentTypeList >
   m_InputConnectionModified( true ),
   m_OutputConnectionModified( true ),
   m_BlueprintConnectionModified( true ),
-  m_IsConnected( false )
+  m_IsConnected( false ),
+  m_AllUniqueComponents( false )
 {
   RegisterFactoriesByTypeList< ComponentTypeList >::Register();
 
@@ -68,7 +69,6 @@ SuperElastixFilter< ComponentTypeList >
   // are passed further down stream.
   // Eventually configuration boils down to a while loop that repeatedly tries to narrow down
   // the component selectors until no more unique components can be found.
-  bool allUniqueComponents = true;
   if (!this->m_Overlord)
   {
     if (!this->m_Blueprint)
@@ -77,7 +77,7 @@ SuperElastixFilter< ComponentTypeList >
     }
 
     this->m_Overlord = OverlordPointer(new Overlord(this->m_Blueprint->Get()));
-    allUniqueComponents = this->m_Overlord->Configure();
+    this->m_AllUniqueComponents = this->m_Overlord->Configure();
   }
   else if (this->m_BlueprintConnectionModified == true)
   {
@@ -141,12 +141,12 @@ SuperElastixFilter< ComponentTypeList >
     }
   }
 
-  if( allUniqueComponents == false ) // by setting inputs and outputs, settings could be derived to uniquely select the other components
+  if (this->m_AllUniqueComponents == false) // by setting inputs and outputs, settings could be derived to uniquely select the other components
   {
-    allUniqueComponents = this->m_Overlord->Configure();
+    this->m_AllUniqueComponents = this->m_Overlord->Configure();
   }
 
-  if( allUniqueComponents && !this->m_IsConnected )
+  if (this->m_AllUniqueComponents  && !this->m_IsConnected)
   {
     this->m_IsConnected = this->m_Overlord->ConnectComponents();
     std::cout << "Connecting Components: " << (this->m_IsConnected ? "succeeded" : "failed") << std::endl << std::endl;
@@ -208,9 +208,9 @@ SuperElastixFilter< ComponentTypeList >
       itkExceptionMacro(<< "Setting a Blueprint is required first.")
     }
     this->m_Overlord = OverlordPointer(new Overlord(this->m_Blueprint->Get()));
-    bool allUniqueComponents = this->m_Overlord->Configure();
+    this->m_AllUniqueComponents = this->m_Overlord->Configure();
   }
-  if (!this->m_IsConnected)
+  if (!this->m_AllUniqueComponents)
   {
     itkExceptionMacro(<< "Blueprint was not sufficiently specified to build a network.")
   }
@@ -233,9 +233,9 @@ SuperElastixFilter< ComponentTypeList >
     }
 
     this->m_Overlord = OverlordPointer(new Overlord(this->m_Blueprint->Get()));
-    bool allUniqueComponents = this->m_Overlord->Configure();
+    this->m_AllUniqueComponents = this->m_Overlord->Configure();
   }
-  if (!this->m_IsConnected)
+  if (!this->m_AllUniqueComponents)
   {
     itkExceptionMacro(<< "Blueprint was not sufficiently specified to build a network.")
   }
@@ -274,7 +274,7 @@ typename SuperElastixFilter< ComponentTypeList >::OutputDataType
       }
 
       this->m_Overlord = OverlordPointer(new Overlord(this->m_Blueprint->Get()));
-      this->m_Overlord->Configure();
+      this->m_AllUniqueComponents = this->m_Overlord->Configure();
       this->m_BlueprintConnectionModified = false;
     }
     typename OutputDataType::Pointer newOutput = this->m_Overlord->GetInitializedOutput( outputName );

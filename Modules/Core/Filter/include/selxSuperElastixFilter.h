@@ -99,6 +99,7 @@ private:
   bool                        m_OutputConnectionModified;
   bool                        m_BlueprintConnectionModified;
   bool                        m_IsConnected;
+  bool                        m_AllUniqueComponents;
 };
 } // namespace elx
 
