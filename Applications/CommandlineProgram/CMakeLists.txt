@@ -30,52 +30,85 @@ set(Boost_USE_MULTITHREADED ON)
 
 set(BOOST_LIBRARYDIR ${BOOST_ROOT}/stage/lib)
 find_package(Boost COMPONENTS program_options system filesystem REQUIRED) 
-
 include_directories(${Boost_INCLUDE_DIR})
+
 # Compile executable
-add_executable( superelastix ${COMMANDLINE_SOURCE_FILES} ${COMMANDLINE_HEADER_FILES} )
-target_link_libraries( superelastix ${SUPERELASTIX_LIBRARIES} ${Boost_LIBRARIES})
+add_executable( SuperElastix ${COMMANDLINE_SOURCE_FILES} ${COMMANDLINE_HEADER_FILES} )
+target_link_libraries( SuperElastix ${SUPERELASTIX_LIBRARIES} ${Boost_LIBRARIES})
 
-#add_custom_target(InstallDemo DEPENDS superelastix)
 
-set(CMAKE_INSTALL_PREFIX ${PROJECT_BINARY_DIR}/Demo)
-#Copy the SuperElastix executable
-install(TARGETS "superelastix"
-   RUNTIME DESTINATION "${PROJECT_BINARY_DIR}/Demo"
-)
 
+# InstallDemo copies SuperElastix executable, image data, configuration files and bat/bash scripts to the INSTALLDEMO_PREFIX directory
+
+set(INSTALLDEMO_PREFIX ${PROJECT_BINARY_DIR}/Demo CACHE PATH "Path where to copy the Demo files")
+#add_custom_target( InstallDemo EXCLUDE_FROM_ALL DEPENDS SuperElastix)
+
+#Demo Image data
 include( ExternalData )
-
+# Get the demo image data: from superelastix-build or otherwise download 
 list( APPEND ExternalData_URL_TEMPLATES
+  "file://${PROJECT_BINARY_DIR}/../SuperElastix-build/ExternalData/Objects/%(algo)/%(hash)"
   "http://midas3.kitware.com/midas/api/rest?method=midas.bitstream.download&checksum=%(hash)&algorithm=%(algo)"
   "https://midas3.kitware.com/midas/api/rest?method=midas.bitstream.download&checksum=%(hash)&algorithm=%(algo)"
 )
 
-# Scan the Data directory for content links on the form "[filename].[ext].md5". 
-# The content links contains md5 hashes that are checked for consistensy  
-# against files downloaded from servers in ExternalData_URL_TEMPLATES. These 
-# files are placed in a corresponding location in the build directory.
 file( GLOB_RECURSE DemoDataContentLinks "*.md5" )
-message(STATUS DemoDataContentLinks: ${DemoDataContentLinks})
-foreach( DemoDataContentLink ${DemoContentLinks} )
+foreach( DemoDataContentLink ${DemoDataContentLinks} )
   string( REGEX REPLACE "\\.md5$" "" DemoDataContentLink ${DemoDataContentLink} )
   ExternalData_Expand_Arguments( InstallDemo
-    InstallDemoFilenames
+    InstallDemoFileName
     DATA{${DemoDataContentLink}}
   )
+  list( APPEND InstallDemoFileNames ${InstallDemoFileName} )
 endforeach()
 
-# Copy some of the configuration files
-install(FILES "${CMAKE_SOURCE_DIR}/../Testing/Unit/Data/Configuration/itkv4_SVF_ANTsCC.json" 
-  "${CMAKE_SOURCE_DIR}/../Testing/Unit/Data/Configuration/itkv4_SVF_MSD.json"
-  "${CMAKE_SOURCE_DIR}/../Testing/Unit/Data/Configuration/elastix_Bspline_NC.json"
-  "${CMAKE_SOURCE_DIR}/../Testing/Unit/Data/Configuration/elastix_Bspline_MSD.json"
-  DESTINATION "${PROJECT_BINARY_DIR}/Demo/Configuration"
-)
-
-# Copy the demo scripts
-install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/Demo/" DESTINATION  "${PROJECT_BINARY_DIR}/Demo" FILE_PERMISSIONS OWNER_EXECUTE OWNER_READ OWNER_WRITE GROUP_EXECUTE GROUP_READ GROUP_WRITE )
-
-# Test data is downloaded when this target is built
+#Create target and reference the external data
 ExternalData_Add_Target( InstallDemo )
-#set_property(TARGET InstallDemo PROPERTY DEPENDS INSTALL)
+#add_custom_target( InstallDemo EXCLUDE_FROM_ALL DEPENDS SuperElastix)
+add_dependencies(InstallDemo SuperElastix )
+set_target_properties(InstallDemo PROPERTIES EXCLUDE_FROM_ALL TRUE) 
+
+foreach(InstallDemoFileName ${InstallDemoFileNames})
+  add_custom_command(TARGET InstallDemo POST_BUILD
+					COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTALLDEMO_PREFIX}/Data
+                    COMMAND ${CMAKE_COMMAND} -E copy ${InstallDemoFileName} ${INSTALLDEMO_PREFIX}/Data/)
+endforeach()
+
+# Copy executable
+add_custom_command(TARGET InstallDemo POST_BUILD
+                    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:SuperElastix> ${INSTALLDEMO_PREFIX}/$<TARGET_FILE_NAME:SuperElastix>)
+
+# Copy Configuration files
+set(ConfigFiles "itkv4_SVF_ANTsCC.json" 
+  "itkv4_SVF_MSD.json"
+  "elastix_Bspline_NC.json"
+  "elastix_Bspline_MSD.json")
+
+foreach(ConfigFile ${ConfigFiles})
+  add_custom_command(TARGET InstallDemo POST_BUILD
+						COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTALLDEMO_PREFIX}/Configuration
+                     COMMAND ${CMAKE_COMMAND} -E
+                         copy "${CMAKE_SOURCE_DIR}/../Testing/Unit/Data/Configuration/${ConfigFile}" ${INSTALLDEMO_PREFIX}/Configuration/${ConfigFile})
+endforeach()
+
+# Copy bat/bash scripts
+set(ScriptFiles "1A_SuperElastix_elastix_NC" "1B_SuperElastix_elastix_MSD" "2A_SuperElastix_itkv4_NC" "2B_SuperElastix_itkv4_MSD")
+
+if(WIN32)
+foreach(ScriptFile ${ScriptFiles})
+  add_custom_command(TARGET InstallDemo POST_BUILD
+					COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTALLDEMO_PREFIX}/Scripts
+                     COMMAND ${CMAKE_COMMAND} -E
+                         copy "${CMAKE_CURRENT_SOURCE_DIR}/Demo/Scripts_Windows/${ScriptFile}.bat" "${INSTALLDEMO_PREFIX}/Scripts/${ScriptFile}.bat")
+endforeach()
+else(WIN32)
+foreach(ScriptFile ${ScriptFiles})
+  add_custom_command(TARGET InstallDemo PRE_BUILD
+					COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTALLDEMO_PREFIX}/Scripts
+                     COMMAND ${CMAKE_COMMAND} -E
+                         copy "${CMAKE_CURRENT_SOURCE_DIR}/Demo/Scripts_Linux/${ScriptFile}.sh" "${INSTALLDEMO_PREFIX}/Scripts/${ScriptFile}.sh")
+endforeach()
+endif(WIN32)
+
+
+#
