@@ -25,6 +25,17 @@ if( NOT CMAKE_PROJECT_NAME STREQUAL "SuperElastix" )
 
   set(CMAKE_CXX_STANDARD 11)
   
+  # -----------------------------------------------------------------
+  # Compiler-dependent settings
+
+  # GCC
+  if( ${CMAKE_CXX_COMPILER_ID} STREQUAL GNU )
+    add_definitions(
+      -DVCL_CAN_STATIC_CONST_INIT_FLOAT=0
+      -DVCL_CAN_STATIC_CONST_INIT_INT=0
+    )
+  endif()
+
   find_package( SuperElastix )
   include( ${SUPERELASTIX_USE_FILE} )
 
