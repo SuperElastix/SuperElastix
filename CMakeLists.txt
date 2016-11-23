@@ -19,6 +19,9 @@
 
 cmake_minimum_required( VERSION 3.0.2 )
 
+cmake_policy( SET CMP0054 OLD )
+cmake_policy( SET CMP0064 OLD )
+
 # Explicitly add INCREMENTAL linking option to command lines.
 # http://www.cmake.org/pipermail/cmake/2010-February/035174.html
 #set( MSVC_INCREMENTAL_DEFAULT ON )
@@ -82,8 +85,10 @@ include( ${ITK_USE_FILE} )
 include("${CMAKE_CURRENT_SOURCE_DIR}/CMake/elxRequiredITKModules.cmake")
 
 # ---------------------------------------------------------------------
-# Boost Graph Library
-find_package( Boost REQUIRED )
+# Boost Library
+set( Boost_USE_STATIC_LIBS ON )   
+set( Boost_USE_STATIC_RUNTIME ON ) 
+find_package( Boost COMPONENTS graph log REQUIRED )
 include_directories( ${Boost_INCLUDE_DIRS} )
 
 # ---------------------------------------------------------------------
@@ -99,7 +104,6 @@ selxmodule_enable( ModuleItkImageRegistrationMethodv4 )
 selxmodule_enable( ModuleItkSyNImageRegistrationMethod )
 selxmodule_enable( ModuleElastix )
 selxmodule_enable( ModuleController )
-# TODO: Build tests depending on enabled modules
 
 # ---------------------------------------------------------------------
 # Testing

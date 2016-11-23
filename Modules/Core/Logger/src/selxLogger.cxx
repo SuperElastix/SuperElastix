@@ -30,9 +30,30 @@ Logger
 
 void
 Logger
-::Log( SeverityLevel severityLevel, const std::string message )
+::AddConsole( FormatType format )
 {
-  this->m_Pimple->Log( severityLevel, message );
+  this->m_Pimple->AddConsole( format );
+}
+
+void
+Logger
+:: AddFile( FileNameType fileName, RotationSizeType rotationSize, FormatType format )
+{
+  this->m_Pimple->AddFile( fileName, rotationSize, format );
+}
+               
+void
+Logger
+::Log( SeverityType severity, MessageType message )
+{
+  this->m_Pimple->Log( severity, message );
+}
+
+void
+Logger
+::Log( ChannelType channel, SeverityType severity, MessageType message )
+{
+  this->m_Pimple->Log( channel, severity, message );
 }
 
 }

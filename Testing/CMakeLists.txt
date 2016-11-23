@@ -40,7 +40,7 @@ file( GLOB_RECURSE SuperElastixDataContentLinks "*.md5" )
 foreach( SuperElastixDataContentLink ${SuperElastixDataContentLinks} )
   string( REGEX REPLACE "\\.md5$" "" SuperElastixDataContentLink ${SuperElastixDataContentLink} )
   ExternalData_Expand_Arguments( SuperElastixData
-    SuperElastixDataFilenames
+    SuperElastixDataFileNames
     DATA{${SuperElastixDataContentLink}}
   )
 endforeach()

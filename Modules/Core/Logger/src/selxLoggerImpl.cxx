@@ -33,30 +33,69 @@ namespace selx
 Logger::LoggerImpl
 ::LoggerImpl()
 {
-  this->m_Logger = boost::log::sources::severity_logger< SeverityLevel >();
+  this->m_Logger = boost::log::sources::severity_channel_logger< SeverityType, ChannelType >();
 
   // Add LineID, TimeStamp, ProcessID and ThreadID
   boost::log::add_common_attributes();
+}
 
-  // TODO: Initialize parameters with values from blueprint
-  boost::log::add_file_log(
-    boost::log::keywords::file_name = "SuperElastix_%Y-%m-%d_%H-%M-%S.%N.log",
-    boost::log::keywords::rotation_size = 1024 * 1024 * 1024, // 1GB
-    boost::log::keywords::format = "[%LineID% %TimeStamp% %ComponentName% %SeverityLevel%]: %Message%"
-  );
-
-  boost::log::add_console_log(
-    std::cout, 
-    boost::log::keywords::format = "[%TimeStamp% %ComponentName% %SeverityLevel%]: %Message%"
-  );
-
+Logger::LoggerImpl
+::~LoggerImpl()
+{
 }
 
 void
 Logger::LoggerImpl
-::Log( SeverityLevel severityLevel, const std::string message )
+::AddConsole( FormatType format )
 {
-  boost::log::record record = this->m_Logger.open_record( boost::log::keywords::severity = severityLevel );
+  boost::log::add_console_log(
+    std::cout, 
+    boost::log::keywords::format = format
+  ); 
+} 
+
+void
+Logger::LoggerImpl
+::AddFile( FileNameType fileName, RotationSizeType rotationSize, FormatType format )
+{
+  boost::log::add_file_log(
+    boost::log::keywords::file_name = fileName,
+    boost::log::keywords::rotation_size = rotationSize, // 1GB
+    boost::log::keywords::format = format
+  );
+}
+
+void
+Logger::LoggerImpl
+::AddFile( FileNameType fileName, ChannelType channel, RotationSizeType rotationSize, FormatType format )
+{
+  boost::log::add_file_log(
+    boost::log::keywords::file_name = fileName,
+    //boost::log::keywords::filter = channel_filter == channel,
+    boost::log::keywords::rotation_size = rotationSize, // 1GB
+    boost::log::keywords::format = format
+  );
+}
+
+void
+Logger::LoggerImpl
+::Log( SeverityType severity, MessageType message )
+{
+  boost::log::record record = this->m_Logger.open_record( boost::log::keywords::severity = severity );
+  if( record )
+  {
+    boost::log::record_ostream strm( record );
+    strm << message;
+    strm.flush();
+    this->m_Logger.push_record( boost::move( record ) );
+  }
+}
+
+void
+Logger::LoggerImpl
+::Log( Logger::ChannelType channel, SeverityType severity, const std::string message )
+{
+  boost::log::record record = this->m_Logger.open_record( ( boost::log::keywords::channel = channel, boost::log::keywords::severity = severity ) );
   if( record )
   {
     boost::log::record_ostream strm( record );

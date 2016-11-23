@@ -21,18 +21,29 @@
 #define LoggerImpl_h
 
 #include "selxLogger.h"
-
-#include "boost/log/sources/severity_logger.hpp"
+#include "boost/log/expressions/keyword.hpp"
+#include "boost/log/sources/severity_channel_logger.hpp"
 
 namespace selx {
 
+BOOST_LOG_ATTRIBUTE_KEYWORD( severity_filter, "Severity", SeverityType );
+BOOST_LOG_ATTRIBUTE_KEYWORD( channel_filter, "Channel", Logger::ChannelType );
+
 struct Logger::LoggerImpl {
 
+  typedef boost::log::sources::severity_channel_logger< SeverityType, ChannelType > LoggerType;
+
   LoggerImpl();
+  ~LoggerImpl();
 
-  void Log( SeverityLevel severityLevel, const std::string message );
+  void AddConsole( FormatType format );
+  void AddFile( Logger::FileNameType fileName, Logger::ChannelType channel, Logger::RotationSizeType rotationSize, Logger::FormatType format );
+  void AddFile( Logger::FileNameType fileName, Logger::RotationSizeType rotationSize, Logger::FormatType format );
 
-  boost::log::sources::severity_logger< SeverityLevel > m_Logger;
+  void Log( SeverityType severity, Logger::MessageType message );
+  void Log( Logger::ChannelType channel, SeverityType severity, Logger::MessageType message );
+
+  LoggerType m_Logger;
 
 };
 
