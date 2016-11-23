@@ -1,6 +1,6 @@
 /*=========================================================================
  *
- *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,7 +21,7 @@
 #define selxMacro_h
 
 /**
- * Register class with the object factory and set RTTI (Run-Time Type 
+ * Register class with the object factory and set RTTI (Run-Time Type
  * Information)
  */
 #define selxNewMacro( className, superClassName )        \

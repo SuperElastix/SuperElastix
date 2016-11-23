@@ -56,7 +56,6 @@ endif()
 # Do not build dashboard by default
 option( SUPERELASTIX_BUILD_DASHBOARD "Enable building dashboard." OFF )
 
-
 # ---------------------------------------------------------------------
 # Build ITK
 
@@ -124,6 +123,11 @@ endif()
 # Build SuperElastix
 
 include( SuperElastix )
+
+# ---------------------------------------------------------------------
+# Build Applications as an external project as an integration test
+
+include( ExternalApplications )
 
 
 

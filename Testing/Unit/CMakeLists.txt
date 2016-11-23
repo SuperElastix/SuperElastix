@@ -36,6 +36,10 @@ set( SUPERELASTIX_UNITTEST_OUTPUT_DATA_DIR ${CMAKE_CURRENT_BINARY_DIR}/Data/Outp
 set( SUPERELASTIX_UNITTEST_BASELINE_DATA_DIR ${CMAKE_CURRENT_BINARY_DIR}/Data/Baseline )
 set( SUPERELASTIX_UNITTEST_CONFIGURATION_DATA_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Data/Configuration )
 
+set( SUPERELASTIX_UNITTEST_INPUT_DATA_DIR ${CMAKE_CURRENT_BINARY_DIR}/Data/Input PARENT_SCOPE )
+set( SUPERELASTIX_UNITTEST_BASELINE_DATA_DIR ${CMAKE_CURRENT_BINARY_DIR}/Data/Baseline PARENT_SCOPE )
+set( SUPERELASTIX_UNITTEST_CONFIGURATION_DATA_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Data/Configuration PARENT_SCOPE )
+
 if( NOT EXISTS ${SUPERELASTIX_UNITTEST_OUTPUT_DATA_DIR} )
   file( MAKE_DIRECTORY ${SUPERELASTIX_UNITTEST_OUTPUT_DATA_DIR} )
 endif()
@@ -68,7 +72,7 @@ list( APPEND TEST_LIBRARIES
 
 foreach( SuperElastixUnitTestFileName ${SUPERELASTIX_TESTS} )
   # Build tests executables
-  get_filename_component( SuperElastixUnitTest ${SuperElastixUnitTestFileName} NAME )
+  get_filename_component( SuperElastixUnitTest ${SuperElastixUnitTestFileName} NAME_WE )
   add_executable( ${SuperElastixUnitTest} ${SuperElastixUnitTestFileName} )
   target_link_libraries( "${SuperElastixUnitTest}" ${SUPERELASTIX_LIBRARIES} ${ITK_LIBRARIES} ${TEST_LIBRARIES} )
 

@@ -66,6 +66,11 @@ set( CTEST_CONFIGURATION_TYPE Debug )
 # Unit tests
 add_subdirectory( Unit )
 
+# Make data directories available parent cmake for installation of SuperElastix
+set( SUPERELASTIX_UNITTEST_INPUT_DATA_DIR ${SUPERELASTIX_UNITTEST_INPUT_DATA_DIR} PARENT_SCOPE )
+set( SUPERELASTIX_UNITTEST_BASELINE_DATA_DIR ${SUPERELASTIX_UNITTEST_BASELINE_DATA_DIR} PARENT_SCOPE )
+set( SUPERELASTIX_UNITTEST_CONFIGURATION_DATA_DIR ${SUPERELASTIX_UNITTEST_CONFIGURATION_DATA_DIR} PARENT_SCOPE )
+
 # ---------------------------------------------------------------------
 # Configure dashboard
 mark_as_advanced( SUPERELASTIX_BUILD_DASHBOARD )

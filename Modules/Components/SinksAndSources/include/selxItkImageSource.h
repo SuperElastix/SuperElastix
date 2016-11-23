@@ -1,6 +1,6 @@
 /*=========================================================================
  *
- *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,89 +20,55 @@
 #ifndef selxItkImageSource_h
 #define selxItkImageSource_h
 
-#include "ComponentBase.h"
-#include "Interfaces.h"
+#include "selxSuperElastixComponent.h"
+#include "selxInterfaces.h"
 #include <string.h>
 #include "selxMacro.h"
+#include "itkImageFileReader.h"
+#include "selxAnyFileReader.h"
+#include "selxFileReaderDecorator.h"
 namespace selx
 {
-  template<int Dimensionality, class TPixel>
-  class ItkImageSourceComponent : 
-    public Implements<
-    Accepting<>,
-    Providing< SourceInterface, itkImageInterface<Dimensionality, TPixel > >
-    >
+template< int Dimensionality, class TPixel >
+class ItkImageSourceComponent :
+  public SuperElastixComponent<
+  Accepting< >,
+  Providing< SourceInterface, itkImageInterface< Dimensionality, TPixel > >
+  >
+{
+public:
+
+  selxNewMacro( ItkImageSourceComponent, ComponentBase );
+
+  ItkImageSourceComponent();
+  virtual ~ItkImageSourceComponent();
+
+  typedef itk::Image< TPixel, Dimensionality > ItkImageType;
+
+  typedef typename itk::ImageFileReader< ItkImageType > ItkImageReaderType;
+  typedef FileReaderDecorator< ItkImageReaderType >     DecoratedReaderType;
+
+  virtual typename ItkImageType::Pointer GetItkImage() override;
+
+  virtual void SetMiniPipelineInput( itk::DataObject::Pointer ) override;
+  virtual AnyFileReader::Pointer GetInputFileReader( void ) override;
+
+  virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
+
+  static const char * GetDescription() { return "ItkImageSource Component"; }
+
+private:
+
+  typename ItkImageType::Pointer m_Image;
+
+protected:
+
+  // return the class name and the template arguments to uniquely identify this component.
+  static inline const std::map< std::string, std::string > TemplateProperties()
   {
-  public:
-    selxNewMacro(ItkImageSourceComponent, ComponentBase);
-
-    ItkImageSourceComponent();
-    virtual ~ItkImageSourceComponent();
-
-    typedef itk::Image<TPixel, Dimensionality> ItkImageType;
-    
-    virtual typename ItkImageType::Pointer GetItkImage() override;
-    virtual void SetMiniPipelineInput(itk::DataObject::Pointer) override;
-    virtual bool MeetsCriterion(const ComponentBase::CriterionType &criterion) override;
-    static const char * GetDescription() { return "ItkImageSource Component"; };
-  private:
-    typename ItkImageType::Pointer m_Image;
-
-  protected:
-    /* The following struct returns the string name of computation type */
-    /* default implementation */
-
-    static inline const std::string GetTypeNameString()
-    {
-      itkGenericExceptionMacro(<< "Unknown ScalarType" << typeid(TPixel).name());
-      // TODO: provide the user instructions how to enable the compilation of the component with the required template types (if desired)
-      // We might define an exception object that can communicate various error messages: for simple user, for developer user, etc
-    }
-
-    static inline const std::string GetPixelTypeNameString()
-    {
-      itkGenericExceptionMacro(<< "Unknown PixelType" << typeid(TPixel).name());
-      // TODO: provide the user instructions how to enable the compilation of the component with the required template types (if desired)
-      // We might define an exception object that can communicate various error messages: for simple user, for developer user, etc
-    }
-
-  };
-
-
-
-  template <>
-  inline const std::string
-    ItkImageSourceComponent<2, float>
-    ::GetPixelTypeNameString()
-  {
-    return std::string("float");
+    return { { keys::NameOfClass, "ItkImageSourceComponent" }, { keys::PixelType, PodString< TPixel >::Get() }, { keys::Dimensionality, std::to_string( Dimensionality ) } };
   }
-
-
-  template <>
-  inline const std::string
-    ItkImageSourceComponent<2, double>
-    ::GetPixelTypeNameString()
-  {
-    return std::string("double");
-  }
-
-  template <>
-  inline const std::string
-    ItkImageSourceComponent<3, float>
-    ::GetPixelTypeNameString()
-  {
-    return std::string("float");
-  }
-
-  template <>
-  inline const std::string
-    ItkImageSourceComponent<3, double>
-    ::GetPixelTypeNameString()
-  {
-    return std::string("double");
-  }
-
+};
 } //end namespace selx
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "selxItkImageSource.hxx"

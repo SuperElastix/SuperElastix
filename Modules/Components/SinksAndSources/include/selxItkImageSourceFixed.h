@@ -1,6 +1,6 @@
 /*=========================================================================
  *
- *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,93 +20,63 @@
 #ifndef selxItkImageSourceFixed_h
 #define selxItkImageSourceFixed_h
 
-#include "ComponentBase.h"
-#include "Interfaces.h"
+#include "selxSuperElastixComponent.h"
+#include "selxInterfaces.h"
 #include <string.h>
 #include "selxMacro.h"
+#include "itkImageFileReader.h"
+#include "selxAnyFileReader.h"
+#include "selxFileReaderDecorator.h"
 namespace selx
 {
-  template<int Dimensionality, class TPixel>
-  class ItkImageSourceFixedComponent : 
-    public Implements<
-    Accepting<>,
-    Providing< SourceInterface, itkImageFixedInterface<Dimensionality, TPixel > >
-    >
+template< int Dimensionality, class TPixel >
+class ItkImageSourceFixedComponent :
+  public SuperElastixComponent<
+  Accepting< >,
+  Providing< SourceInterface,
+  itkImageFixedInterface< Dimensionality, TPixel >,
+  itkImageDomainFixedInterface< Dimensionality > >
+  >
+{
+public:
+
+  selxNewMacro( ItkImageSourceFixedComponent, ComponentBase );
+
+  //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
+
+  ItkImageSourceFixedComponent();
+  virtual ~ItkImageSourceFixedComponent();
+
+  typedef typename itkImageFixedInterface< Dimensionality, TPixel >::ItkImageType     ItkImageType;
+  typedef typename itkImageDomainFixedInterface< Dimensionality >::ItkImageDomainType ItkImageDomainType;
+
+  typedef typename itk::ImageFileReader< ItkImageType > ItkImageReaderType;
+  typedef FileReaderDecorator< ItkImageReaderType >     DecoratedReaderType;
+
+  // providing interfaces
+  virtual typename ItkImageType::Pointer GetItkImageFixed() override;
+
+  virtual void SetMiniPipelineInput( itk::DataObject::Pointer ) override;
+  virtual AnyFileReader::Pointer GetInputFileReader( void ) override;
+
+  virtual typename ItkImageDomainType::Pointer GetItkImageDomainFixed() override;
+
+  virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
+
+  static const char * GetDescription() { return "ItkImageSourceFixed Component"; }
+
+private:
+
+  typename ItkImageType::Pointer m_Image;
+
+protected:
+
+  // return the class name and the template arguments to uniquely identify this component.
+  static inline const std::map< std::string, std::string > TemplateProperties()
   {
-  public:
-    selxNewMacro(ItkImageSourceFixedComponent, ComponentBase);
-
-    //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
-
-    ItkImageSourceFixedComponent();
-    virtual ~ItkImageSourceFixedComponent();
-
-    typedef typename itkImageFixedInterface<Dimensionality, TPixel >::ItkImageType ItkImageType;
-    
-
-    virtual typename ItkImageType::Pointer GetItkImageFixed() override;
-    virtual void SetMiniPipelineInput(itk::DataObject::Pointer) override;
-
-    virtual bool MeetsCriterion(const ComponentBase::CriterionType &criterion) override;
-    static const char * GetDescription() { return "ItkImageSourceFixed Component"; };
-  private:
-    typename ItkImageType::Pointer m_Image;
-
-  protected:
-    /* The following struct returns the string name of computation type */
-    /* default implementation */
-
-    static inline const std::string GetTypeNameString()
-    {
-      itkGenericExceptionMacro(<< "Unknown ScalarType" << typeid(TPixel).name());
-      // TODO: provide the user instructions how to enable the compilation of the component with the required template types (if desired)
-      // We might define an exception object that can communicate various error messages: for simple user, for developer user, etc
-    }
-
-    static inline const std::string GetPixelTypeNameString()
-    {
-      itkGenericExceptionMacro(<< "Unknown PixelType" << typeid(TPixel).name());
-      // TODO: provide the user instructions how to enable the compilation of the component with the required template types (if desired)
-      // We might define an exception object that can communicate various error messages: for simple user, for developer user, etc
-    }
-
-  };
-
-
-
-  template <>
-  inline const std::string
-    ItkImageSourceFixedComponent<2, float>
-    ::GetPixelTypeNameString()
-  {
-    return std::string("float");
+    return { { keys::NameOfClass, "ItkImageSourceFixedComponent" }, { keys::PixelType, PodString< TPixel >::Get() }, { keys::Dimensionality, std::to_string( Dimensionality ) } };
   }
-
-
-  template <>
-  inline const std::string
-    ItkImageSourceFixedComponent<2, double>
-    ::GetPixelTypeNameString()
-  {
-    return std::string("double");
-  }
-
-  template <>
-  inline const std::string
-    ItkImageSourceFixedComponent<3, float>
-    ::GetPixelTypeNameString()
-  {
-    return std::string("float");
-  }
-
-  template <>
-  inline const std::string
-    ItkImageSourceFixedComponent<3, double>
-    ::GetPixelTypeNameString()
-  {
-    return std::string("double");
-  }
-
+};
 } //end namespace selx
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "selxItkImageSourceFixed.hxx"

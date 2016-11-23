@@ -1,6 +1,6 @@
 /*=========================================================================
  *
- *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,6 +26,8 @@
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 
+#include "selxDefaultComponents.h"
+
 #include "selxDataManager.h"
 #include "gtest/gtest.h"
 
@@ -39,112 +41,115 @@
  The overlord finds the Source and Sink Components and connects these to it's external pipeline (internal reader and writer filters, currently).
 */
 
-namespace selx {
-
-  class itkImageFilterTest : public ::testing::Test {
+namespace selx
+{
+class itkImageFilterTest : public ::testing::Test
+{
 public:
-  typedef Overlord::Pointer                 OverlordPointerType;
-  typedef Blueprint::Pointer                BlueprintPointerType;
-  typedef Blueprint::ConstPointer           BlueprintConstPointerType;
-  typedef Blueprint::ParameterMapType       ParameterMapType;
-  typedef Blueprint::ParameterValueType     ParameterValueType;
-  typedef DataManager DataManagerType;
+  using BlueprintITKType = itk::SharedPointerDataObjectDecorator< Blueprint >;
+  typedef BlueprintITKType::Pointer                                 BlueprintITKPointer;
 
-  typedef SuperElastixFilter<bool>          SuperElastixFilterType;
+  typedef std::shared_ptr< Blueprint >        BlueprintPointer;
+  typedef Blueprint::ParameterMapType         ParameterMapType;
+  typedef Blueprint::ParameterValueType       ParameterValueType;
+  typedef DataManager                         DataManagerType;
 
-  typedef itk::Image<double, 3> Image3DType;
-  typedef itk::ImageFileReader<Image3DType> ImageReader3DType;
-  typedef itk::ImageFileWriter<Image3DType> ImageWriter3DType;
+  typedef SuperElastixFilter< TypeList< > >   SuperElastixFilterType;
 
-  virtual void SetUp() {
+  typedef itk::Image< double, 3 >             Image3DType;
+  typedef itk::ImageFileReader< Image3DType > ImageReader3DType;
+  typedef itk::ImageFileWriter< Image3DType > ImageWriter3DType;
 
-
+  virtual void SetUp()
+  {
     /** register all components used for this test */
     // For testing the itkfilter pipeline
-    ComponentFactory<ItkSmoothingRecursiveGaussianImageFilterComponent<3, double>>::RegisterOneFactory();
-    ComponentFactory<ItkImageSinkComponent<3, double>>::RegisterOneFactory();
-    ComponentFactory<ItkImageSourceComponent<3, double>>::RegisterOneFactory();
+    ComponentFactory< ItkSmoothingRecursiveGaussianImageFilterComponent< 3, double >>::RegisterOneFactory();
+    ComponentFactory< ItkImageSinkComponent< 3, double >>::RegisterOneFactory();
+    ComponentFactory< ItkImageSourceComponent< 3, double >>::RegisterOneFactory();
     // For testing templated components
-    ComponentFactory<ItkSmoothingRecursiveGaussianImageFilterComponent<2, double>>::RegisterOneFactory();
-    ComponentFactory<ItkSmoothingRecursiveGaussianImageFilterComponent<3, float>>::RegisterOneFactory();
-    ComponentFactory<ItkSmoothingRecursiveGaussianImageFilterComponent<2, float>>::RegisterOneFactory();
-
+    ComponentFactory< ItkSmoothingRecursiveGaussianImageFilterComponent< 2, double >>::RegisterOneFactory();
+    ComponentFactory< ItkSmoothingRecursiveGaussianImageFilterComponent< 3, float >>::RegisterOneFactory();
+    ComponentFactory< ItkSmoothingRecursiveGaussianImageFilterComponent< 2, float >>::RegisterOneFactory();
 
     /** make example blueprint configuration */
-    blueprint = Blueprint::New();
+    BlueprintPointer blueprint = BlueprintPointer( new Blueprint() );
 
     /** the 2 itkImageFilter Components are ItkSmoothingRecursiveGaussianImageFilterComponent*/
     ParameterMapType componentParameters;
-    componentParameters["NameOfClass"] = { "ItkSmoothingRecursiveGaussianImageFilterComponent" };
+    componentParameters[ "NameOfClass" ] = { "ItkSmoothingRecursiveGaussianImageFilterComponent" };
     // The parameters over which the Component is templated are criteria for the ComponentSelector too.
-    componentParameters["Dimensionality"] = { "3" }; // template parameters
-    componentParameters["PixelType"] = { "double" };
+    componentParameters[ "Dimensionality" ] = { "3" }; // template parameters
+    componentParameters[ "PixelType" ]      = { "double" };
 
-    // Setting of the component are considered as criteria too. If the components can interpret the parameters, it's all good. 
-    componentParameters["Sigma"] = { "2.5" };
+    // Setting of the component are considered as criteria too. If the components can interpret the parameters, it's all good.
+    componentParameters[ "Sigma" ] = { "2.5" };
 
-    blueprint->AddComponent("FistStageFilter", componentParameters);
-    blueprint->AddComponent("SecondStageFilter", componentParameters);
+    blueprint->SetComponent( "FistStageFilter", componentParameters );
+    blueprint->SetComponent( "SecondStageFilter", componentParameters );
 
-    // TODO: For now, the connections to make are explicitly indicated by the Interface name. 
-    // Design consideration: connections might be indicated by higher concepts ( MetricCostConnection: value and/or derivative? DefaultPipeline? ) 
+    // TODO: For now, the connections to make are explicitly indicated by the Interface name.
+    // Design consideration: connections might be indicated by higher concepts ( MetricCostConnection: value and/or derivative? DefaultPipeline? )
     ParameterMapType connectionParameters;
     //connectionParameters["NameOfInterface"] = { "itkImageSourceInterface" };
 
     //TODO: check direction
-    blueprint->AddConnection("FistStageFilter", "SecondStageFilter", connectionParameters);
+    blueprint->SetConnection( "FistStageFilter", "SecondStageFilter", connectionParameters );
 
     /** Add a description of the SourceComponent*/
     ParameterMapType sourceComponentParameters;
-    sourceComponentParameters["NameOfClass"] = { "ItkImageSourceComponent" };
-    blueprint->AddComponent("Source", sourceComponentParameters);
+    sourceComponentParameters[ "NameOfClass" ] = { "ItkImageSourceComponent" };
+    blueprint->SetComponent( "Source", sourceComponentParameters );
 
     /** Add a description of the SinkComponent*/
     ParameterMapType sinkComponentParameters;
-    sinkComponentParameters["NameOfClass"] = { "ItkImageSinkComponent" };
-    blueprint->AddComponent("Sink", sinkComponentParameters);
-    
+    sinkComponentParameters[ "NameOfClass" ] = { "ItkImageSinkComponent" };
+    blueprint->SetComponent( "Sink", sinkComponentParameters );
+
     /** Connect Sink and Source to the itkImageFilter Components*/
-    blueprint->AddConnection("Source", "FistStageFilter", connectionParameters); // 
-    blueprint->AddConnection("SecondStageFilter", "Sink", connectionParameters);
+    blueprint->SetConnection( "Source", "FistStageFilter", connectionParameters ); //
+    blueprint->SetConnection( "SecondStageFilter", "Sink", connectionParameters );
+
+    ITKBlueprint = BlueprintITKType::New();
+    ITKBlueprint->Set( blueprint );
   }
 
-  virtual void TearDown() {
+
+  virtual void TearDown()
+  {
     itk::ObjectFactoryBase::UnRegisterAllFactories();
   }
 
-  BlueprintPointerType blueprint;
-  Overlord::Pointer overlord;
+
+  BlueprintITKPointer ITKBlueprint;
 };
 
-  TEST_F(itkImageFilterTest, Run)
+TEST_F( itkImageFilterTest, Run )
 {
   // Instantiate SuperElastix
   SuperElastixFilterType::Pointer superElastixFilter;
-  EXPECT_NO_THROW(superElastixFilter = SuperElastixFilterType::New());
+  EXPECT_NO_THROW( superElastixFilter = SuperElastixFilterType::New() );
 
   // Data manager provides the paths to the input and output data for unit tests
   DataManagerType::Pointer dataManager = DataManagerType::New();
 
   // Set up the readers and writers
   ImageReader3DType::Pointer inputImageReader = ImageReader3DType::New();
-  inputImageReader->SetFileName(dataManager->GetInputFile("sphereA3d.mhd"));
+  inputImageReader->SetFileName( dataManager->GetInputFile( "sphereA3d.mhd" ) );
 
   ImageWriter3DType::Pointer resultImageWriter = ImageWriter3DType::New();
-  resultImageWriter->SetFileName(dataManager->GetOutputFile("itkImageFilterTest.mhd"));
-
+  resultImageWriter->SetFileName( dataManager->GetOutputFile( "itkImageFilterTest.mhd" ) );
 
   // Connect SuperElastix in an itk pipeline
-  superElastixFilter->SetInput("Source", inputImageReader->GetOutput());
-  resultImageWriter->SetInput(superElastixFilter->GetOutput<Image3DType>("Sink"));
-  
-  EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
+  superElastixFilter->SetInput( "Source", inputImageReader->GetOutput() );
+  resultImageWriter->SetInput( superElastixFilter->GetOutput< Image3DType >( "Sink" ) );
+
+  EXPECT_NO_THROW( superElastixFilter->SetBlueprint( ITKBlueprint ) );
 
   //Optional Update call
   //superElastixFilter->Update();
 
   // Update call on the writers triggers SuperElastix to configure and execute
-  EXPECT_NO_THROW(resultImageWriter->Update());
+  EXPECT_NO_THROW( resultImageWriter->Update() );
 }
-
 } // namespace selx

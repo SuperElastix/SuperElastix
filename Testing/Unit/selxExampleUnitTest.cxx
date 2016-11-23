@@ -1,6 +1,6 @@
 /*=========================================================================
  *
- *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,7 +38,7 @@ TEST( GoogleTest, Example1 )
 {
   // Record random number between 0 and 9
   int MetricValue = rand() % 10;
-  RecordProperty("MetricValue", MetricValue);
+  RecordProperty( "MetricValue", MetricValue );
   ASSERT_TRUE( true );
 }
 
@@ -46,8 +46,8 @@ TEST( GoogleTest, Example2 )
 {
   // Record random number between 10 and 19
   int MetricValue = rand() % 10 + 10;
-  RecordProperty("MetricValue", MetricValue);
-  RecordProperty("OverlapCoefficient", 1);
+  RecordProperty( "MetricValue", MetricValue );
+  RecordProperty( "OverlapCoefficient", 1 );
   ASSERT_TRUE( true );
 }
 
@@ -55,6 +55,6 @@ TEST( GoogleTest, Example3 )
 {
   // Record random number between 20 and 29
   int MetricValue = rand() % 10 + 20;
-  RecordProperty("MetricValue", MetricValue);
+  RecordProperty( "MetricValue", MetricValue );
   ASSERT_TRUE( true );
 }

@@ -28,6 +28,7 @@ set( ${MODULE}_INCLUDE_DIRS
   ${${MODULE}_SOURCE_DIR}/ConfigurationReader/include
   ${${MODULE}_SOURCE_DIR}/Filter/include
   ${${MODULE}_SOURCE_DIR}/FileIO/include
+  ${${MODULE}_SOURCE_DIR}/ComponentRegistration/include
   )
 
 # Collect header files for Visual Studio Project 
@@ -53,9 +54,11 @@ set( ${MODULE}_TESTS
 # Module source files
 set( ${MODULE}_SOURCE_FILES
   ${${MODULE}_SOURCE_DIR}/Blueprints/src/selxBlueprint.cxx
-  ${${MODULE}_SOURCE_DIR}/ComponentInterface/src/ComponentBase.cxx
-  ${${MODULE}_SOURCE_DIR}/ComponentInterface/src/Overlord.cxx
-  ${${MODULE}_SOURCE_DIR}/ComponentInterface/src/ComponentSelector.cxx
+  ${${MODULE}_SOURCE_DIR}/Blueprints/src/selxBlueprintImpl.h
+  ${${MODULE}_SOURCE_DIR}/Blueprints/src/selxBlueprintImpl.cxx
+  ${${MODULE}_SOURCE_DIR}/ComponentInterface/src/selxComponentBase.cxx
+  ${${MODULE}_SOURCE_DIR}/ComponentInterface/src/selxOverlord.cxx
+  ${${MODULE}_SOURCE_DIR}/ComponentInterface/src/selxComponentSelector.cxx
   ${${MODULE}_SOURCE_DIR}/ConfigurationReader/src/selxConfigurationReader.cxx
   ${${MODULE}_SOURCE_DIR}/Filter/src/selxSuperElastixFilter.cxx
 )

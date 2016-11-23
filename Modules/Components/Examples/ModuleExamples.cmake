@@ -34,16 +34,16 @@ set( ${MODULE}_LIBRARIES
 
 # Module source files
 set( ${MODULE}_SOURCE_FILES
-  ${${MODULE}_SOURCE_DIR}/src/Example3rdPartyCode.cxx
-  ${${MODULE}_SOURCE_DIR}/src/Example4thPartyCode.cxx
-  ${${MODULE}_SOURCE_DIR}/src/GDOptimizer3rdPartyComponent.cxx
-  ${${MODULE}_SOURCE_DIR}/src/GDOptimizer4thPartyComponent.cxx
-  ${${MODULE}_SOURCE_DIR}/src/Metric3rdPartyWrapper.cxx
-  ${${MODULE}_SOURCE_DIR}/src/Metric4thPartyWrapper.cxx
-  ${${MODULE}_SOURCE_DIR}/src/SSDMetric3rdPartyComponent.cxx
-  ${${MODULE}_SOURCE_DIR}/src/SSDMetric4thPartyComponent.cxx
-  ${${MODULE}_SOURCE_DIR}/src/TransformComponent1.cxx
-  ${${MODULE}_SOURCE_DIR}/src/MetricComponent1.cxx
+  ${${MODULE}_SOURCE_DIR}/src/selxExample3rdPartyCode.cxx
+  ${${MODULE}_SOURCE_DIR}/src/selxExample4thPartyCode.cxx
+  ${${MODULE}_SOURCE_DIR}/src/selxGDOptimizer3rdPartyComponent.cxx
+  ${${MODULE}_SOURCE_DIR}/src/selxGDOptimizer4thPartyComponent.cxx
+  ${${MODULE}_SOURCE_DIR}/src/selxMetric3rdPartyWrapper.cxx
+  ${${MODULE}_SOURCE_DIR}/src/selxMetric4thPartyWrapper.cxx
+  ${${MODULE}_SOURCE_DIR}/src/selxSSDMetric3rdPartyComponent.cxx
+  ${${MODULE}_SOURCE_DIR}/src/selxSSDMetric4thPartyComponent.cxx
+  ${${MODULE}_SOURCE_DIR}/src/selxTransformComponent1.cxx
+  ${${MODULE}_SOURCE_DIR}/src/selxMetricComponent1.cxx
 )
 
 # Compile library
