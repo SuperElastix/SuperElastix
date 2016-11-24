@@ -32,10 +32,13 @@ set( CMAKE_MODULE_PATH
   ${CMAKE_MODULE_PATH}
 )
 
-set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR} CACHE PATH "SuperBuild install directory" FORCE)
+set( CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR} CACHE PATH "SuperBuild install directory" FORC )
 
 # ---------------------------------------------------------------------
 # SuperElastix SuperBuild configuration
+
+mark_as_advanced( SUPERELASTIX_BUILD_SHARED_LIBS )
+option( SUPERELASTIX_BUILD_SHARED_LIBS "Build SuperElastix with shared libraries." OFF )
 
 # Build release by default
 if( NOT DEFINED CMAKE_BUILD_TYPE )
@@ -93,12 +96,12 @@ if( SUPERELASTIX_BUILD_ELASTIX )
 endif()
 
 # ---------------------------------------------------------------------
-# Boost Graph Library
+# Build Boost Library
 
 mark_as_advanced( USE_SYSTEM_BOOST )
 option( USE_SYSTEM_BOOST "Use an installed version of BOOST" OFF )
 if( USE_SYSTEM_BOOST )
-  find_package( BOOST REQUIRED graph program_options filesystem)
+  find_package( BOOST REQUIRED log graph program_options filesystem )
 else()
   include( ExternalBoost )
 endif()
@@ -125,7 +128,7 @@ endif()
 include( SuperElastix )
 
 # ---------------------------------------------------------------------
-# Build Applications as an external project as an integration test
+# Build Applications as an external project
 
 include( ExternalApplications )
 

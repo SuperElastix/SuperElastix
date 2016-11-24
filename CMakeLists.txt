@@ -22,16 +22,8 @@ cmake_minimum_required( VERSION 3.0.2 )
 cmake_policy( SET CMP0054 OLD )
 cmake_policy( SET CMP0064 OLD )
 
-# Explicitly add INCREMENTAL linking option to command lines.
-# http://www.cmake.org/pipermail/cmake/2010-February/035174.html
-#set( MSVC_INCREMENTAL_DEFAULT ON )
-
 # ---------------------------------------------------------------------
 project( SuperElastix )
-
-enable_language(C)
-enable_language(CXX)
-set( CMAKE_CXX_STANDARD 11 )
 
 # Place executables in the bin directory
 set( CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin" )
@@ -46,7 +38,15 @@ set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib" )
 list( APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake" )
 
 # -----------------------------------------------------------------
-# Compiler-dependent settings
+# Compilation settings
+
+enable_language(C)
+enable_language(CXX)
+set( CMAKE_CXX_STANDARD 11 )
+
+mark_as_advanced( SUPERELASTIX_BUILD_SHARED_LIBS )
+option( SUPERELASTIX_BUILD_SHARED_LIBS "Build SuperElastix with shared libraries." OFF )
+set( BUILD_SHARED_LIBS ${SUPERELASTIX_BUILD_SHARED_LIBS} )
 
 # GCC
 if( ${CMAKE_CXX_COMPILER_ID} STREQUAL GNU )
@@ -75,6 +75,10 @@ if( ${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC )
       "Please move the build directory to a directory with a shorter path."
     )
   endif()
+
+  # Explicitly add INCREMENTAL linking option to command lines.
+  # http://www.cmake.org/pipermail/cmake/2010-February/035174.html
+  # set( MSVC_INCREMENTAL_DEFAULT ON )
 endif()
 
 # ---------------------------------------------------------------------
@@ -86,8 +90,9 @@ include("${CMAKE_CURRENT_SOURCE_DIR}/CMake/elxRequiredITKModules.cmake")
 
 # ---------------------------------------------------------------------
 # Boost Library
-set( Boost_USE_STATIC_LIBS ON )   
-set( Boost_USE_STATIC_RUNTIME ON ) 
+
+set( Boost_USE_STATIC_LIBS NOT ${BUILD_SHARED_LIBS} )   
+set( Boost_USE_STATIC_RUNTIME NOT ${BUILD_SHARED_LIBS} ) 
 find_package( Boost COMPONENTS graph log REQUIRED )
 include_directories( ${Boost_INCLUDE_DIRS} )
 
@@ -168,19 +173,21 @@ install(FILES "${SUPERELASTIX_UNITTEST_CONFIGURATION_DATA_DIR}/itkv4_SVF_ANTsCC.
 # temporarilly solved by hard coding a copy based on the hashed files
 set(EXTERNALDATA_OBJECT_DIR "${CMAKE_BINARY_DIR}/ExternalData/Objects/MD5")
 
-install(FILES "${EXTERNALDATA_OBJECT_DIR}/10aa9442cc6a1fd518da83cedbfcbdd3" 
-  DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/installed/Data/"
-  RENAME "coneA2d64.mhd")
-install(FILES "${EXTERNALDATA_OBJECT_DIR}/2d0ff0e14af2155659429d6f137f209e" 
-  DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/installed/Data/"
-  RENAME "coneA2d64.raw")
-install(FILES "${EXTERNALDATA_OBJECT_DIR}/7c358ebe7f53f01a4fe23ee953fa45d4" 
-  DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/installed/Data/"
-  RENAME "coneB2d64.mhd")
-install(FILES "${EXTERNALDATA_OBJECT_DIR}/deb92a27f201be258dedf66b632a2571" 
-  DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/installed/Data/"
-  RENAME "coneB2d64.raw")
+install( FILES "${EXTERNALDATA_OBJECT_DIR}/10aa9442cc6a1fd518da83cedbfcbdd3" 
+         DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/installed/Data/"
+         RENAME "coneA2d64.mhd")
+install( FILES "${EXTERNALDATA_OBJECT_DIR}/2d0ff0e14af2155659429d6f137f209e" 
+         DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/installed/Data/"
+         RENAME "coneA2d64.raw")
+install( FILES "${EXTERNALDATA_OBJECT_DIR}/7c358ebe7f53f01a4fe23ee953fa45d4" 
+         DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/installed/Data/"
+         RENAME "coneB2d64.mhd")
+install( FILES "${EXTERNALDATA_OBJECT_DIR}/deb92a27f201be258dedf66b632a2571" 
+         DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/installed/Data/"
+         RENAME "coneB2d64.raw")
   
 
 # Copy the demo scripts
-install(DIRECTORY "${CMAKE_SOURCE_DIR}/Install/" DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/installed" FILE_PERMISSIONS OWNER_EXECUTE OWNER_READ OWNER_WRITE GROUP_EXECUTE GROUP_READ GROUP_WRITE )
+install( DIRECTORY "${CMAKE_SOURCE_DIR}/Install/" 
+         DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/installed" 
+         FILE_PERMISSIONS OWNER_EXECUTE OWNER_READ OWNER_WRITE GROUP_EXECUTE GROUP_READ GROUP_WRITE )
