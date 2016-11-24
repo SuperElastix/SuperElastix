@@ -54,28 +54,28 @@ ExternalData_Add_Target( SuperElastixData )
 find_package( GTest REQUIRED )
 include_directories( ${GTEST_INCLUDE_DIRS} )
 
-set( TEST_LIBRARIES
-  ${GTEST_BOTH_LIBRARIES}
+set( TEST_LIBRARIES ${GTEST_BOTH_LIBRARIES} )
+
+# ---------------------------------------------------------------------
+# Build data manager
+
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/selxDataDirectories.h.in
+  ${CMAKE_CURRENT_BINARY_DIR}/selxDataDirectories.h
+  ESCAPE_QUOTES
 )
+
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR} ) # selxDataManager.h
+include_directories( ${CMAKE_CURRENT_BINARY_DIR} ) # selxDataDirectories.h
+add_library( DataManager selxDataManager.cxx )
+
+list( APPEND TEST_LIBRARIES DataManager )
 
 # ---------------------------------------------------------------------
 # Build test suite
 
 set( CTEST_CONFIGURATION_TYPE Debug )
 
-# Unit tests
 add_subdirectory( Unit )
+add_subdirectory( Integration )
 
-# Make data directories available parent cmake for installation of SuperElastix
-set( SUPERELASTIX_UNITTEST_INPUT_DATA_DIR ${SUPERELASTIX_UNITTEST_INPUT_DATA_DIR} PARENT_SCOPE )
-set( SUPERELASTIX_UNITTEST_BASELINE_DATA_DIR ${SUPERELASTIX_UNITTEST_BASELINE_DATA_DIR} PARENT_SCOPE )
-set( SUPERELASTIX_UNITTEST_CONFIGURATION_DATA_DIR ${SUPERELASTIX_UNITTEST_CONFIGURATION_DATA_DIR} PARENT_SCOPE )
-
-# ---------------------------------------------------------------------
-# Configure dashboard
-mark_as_advanced( SUPERELASTIX_BUILD_DASHBOARD )
-option( SUPERELASTIX_BUILD_DASHBOARD "Enable SuperElastix dashboard." OFF )
-
-if( ${SUPERELASTIX_BUILD_DASHBOARD} )
-  add_subdirectory( Dashboard )
-endif()

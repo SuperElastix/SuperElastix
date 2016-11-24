@@ -30,44 +30,6 @@ if( SUPERELASTIX_BUILD_LONG_TESTS )
 endif()
 
 # ---------------------------------------------------------------------
-# Set data directories
-set( SUPERELASTIX_UNITTEST_INPUT_DATA_DIR ${CMAKE_CURRENT_BINARY_DIR}/Data/Input )
-set( SUPERELASTIX_UNITTEST_OUTPUT_DATA_DIR ${CMAKE_CURRENT_BINARY_DIR}/Data/Output )
-set( SUPERELASTIX_UNITTEST_BASELINE_DATA_DIR ${CMAKE_CURRENT_BINARY_DIR}/Data/Baseline )
-set( SUPERELASTIX_UNITTEST_CONFIGURATION_DATA_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Data/Configuration )
-
-set( SUPERELASTIX_UNITTEST_INPUT_DATA_DIR ${CMAKE_CURRENT_BINARY_DIR}/Data/Input PARENT_SCOPE )
-set( SUPERELASTIX_UNITTEST_BASELINE_DATA_DIR ${CMAKE_CURRENT_BINARY_DIR}/Data/Baseline PARENT_SCOPE )
-set( SUPERELASTIX_UNITTEST_CONFIGURATION_DATA_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Data/Configuration PARENT_SCOPE )
-
-if( NOT EXISTS ${SUPERELASTIX_UNITTEST_OUTPUT_DATA_DIR} )
-  file( MAKE_DIRECTORY ${SUPERELASTIX_UNITTEST_OUTPUT_DATA_DIR} )
-endif()
-
-if( NOT EXISTS ${SUPERELASTIX_UNITTEST_OUTPUT_DATA_DIR} )
-  message( FATAL_ERROR 
-    "Could not create directory for output data. Make sure SuperElastix has permission to write to disk."
-  )
-endif()
-
-# ---------------------------------------------------------------------
-# Build test data manager
-
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/selxDataDirectories.h.in
-  ${CMAKE_CURRENT_BINARY_DIR}/selxDataDirectories.h
-  ESCAPE_QUOTES
-)
-
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR} ) # selxDataManager.h
-include_directories( ${CMAKE_CURRENT_BINARY_DIR} ) # selxDataDirectories.h
-add_library( DataManager selxDataManager.cxx )
-
-list( APPEND TEST_LIBRARIES 
-  DataManager
-)
-
-# ---------------------------------------------------------------------
 # Build tests
 
 foreach( SuperElastixUnitTestFileName ${SUPERELASTIX_TESTS} )

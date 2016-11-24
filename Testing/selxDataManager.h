@@ -36,10 +36,10 @@ public:
 
   DataManager()
   {
-    this->m_InputDirectory         = SUPERELASTIX_UNITTEST_INPUT_DATA_DIR;
-    this->m_OutputDirectory        = SUPERELASTIX_UNITTEST_OUTPUT_DATA_DIR;
-    this->m_BaselineDirectory      = SUPERELASTIX_UNITTEST_BASELINE_DATA_DIR;
-    this->m_ConfigurationDirectory = SUPERELASTIX_UNITTEST_CONFIGURATION_DATA_DIR;
+    this->m_InputDirectory         = SUPERELASTIX_INPUT_DATA_DIR;
+    this->m_OutputDirectory        = SUPERELASTIX_OUTPUT_DATA_DIR;
+    this->m_BaselineDirectory      = SUPERELASTIX_BASELINE_DATA_DIR;
+    this->m_ConfigurationDirectory = SUPERELASTIX_CONFIGURATION_DATA_DIR;
   }
 
 

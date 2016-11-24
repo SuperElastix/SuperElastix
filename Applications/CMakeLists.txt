@@ -39,7 +39,7 @@ if( NOT CMAKE_PROJECT_NAME STREQUAL "SuperElastix" )
   #TODO SuperElastix Application should not link against elastix libraries
   # If OpenMP is supported by this machine, elastix will be compiled with
   # OpenMP flags, and we need to add them here as well
-  find_package( OpenMP )
+  find_package( OpenMP QUIET )
   if (OPENMP_FOUND)
     set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}" )
     set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}" )

@@ -104,6 +104,21 @@ selxmodule_enable( ModuleController )
 # ---------------------------------------------------------------------
 # Testing
 
+set( SUPERELASTIX_INPUT_DATA_DIR ${CMAKE_CURRENT_BINARY_DIR}/Testing/Data/Input )
+set( SUPERELASTIX_OUTPUT_DATA_DIR ${CMAKE_CURRENT_BINARY_DIR}/Testing/Data/Output )
+set( SUPERELASTIX_BASELINE_DATA_DIR ${CMAKE_CURRENT_BINARY_DIR}/Testing/Data/Baseline )
+set( SUPERELASTIX_CONFIGURATION_DATA_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Testing/Data/Configuration )
+
+if( NOT EXISTS ${SUPERELASTIX_OUTPUT_DATA_DIR} )
+  file( MAKE_DIRECTORY ${SUPERELASTIX_OUTPUT_DATA_DIR} )
+endif()
+
+if( NOT EXISTS ${SUPERELASTIX_OUTPUT_DATA_DIR} )
+  message( FATAL_ERROR 
+    "Could not create directory for output data. Make sure CMake has write permissions."
+  )
+endif()
+
 option( SUPERELASTIX_BUILD_TESTING "Enable building tests." ON )
 if( ${SUPERELASTIX_BUILD_TESTING} )
   mark_as_advanced( SUPERELASTIX_BUILD_LONG_TESTS )
