@@ -48,6 +48,7 @@ public:
   /** SetInput accepts any input data as long as it is derived from itk::DataObject */
   virtual void SetInput( const InputDataType * ) = 0;
 
+  /** This method should be overriden. See fx. the FileWriterDecorator. */
   virtual void Update( void ) = 0;
 
 protected:

@@ -146,11 +146,11 @@ protected:
 
   virtual InterfaceStatus CanAcceptConnectionFrom( ComponentBase * other, const InterfaceCriteriaType interfaceCriteria ) override;
 
-  virtual unsigned int CountAcceptingInterfaces( const ComponentBase::InterfaceCriteriaType interfaceCriteria )
+  virtual unsigned int CountAcceptingInterfaces( const ComponentBase::InterfaceCriteriaType interfaceCriteria ) override
   {
     return AcceptingInterfaces::CountMeetsCriteria( interfaceCriteria );
   }
-  virtual unsigned int CountProvidingInterfaces( const ComponentBase::InterfaceCriteriaType interfaceCriteria )
+  virtual unsigned int CountProvidingInterfaces( const ComponentBase::InterfaceCriteriaType interfaceCriteria ) override
   {
     return ProvidingInterfaces::CountMeetsCriteria( interfaceCriteria );
   }
