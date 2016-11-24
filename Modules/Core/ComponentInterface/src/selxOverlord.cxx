@@ -26,10 +26,13 @@
 
 namespace selx
 {
-Overlord::Overlord() : m_isConfigured( false )
+Overlord::Overlord( std::shared_ptr< Blueprint > blueprint ) : m_Blueprint( blueprint ), m_isConfigured(false )
 {
 }
 
+Overlord::Overlord( Blueprint * blueprint ) : m_Blueprint( blueprint ), m_isConfigured( false )
+{
+}
 
 bool
 Overlord::Configure()
@@ -44,7 +47,7 @@ Overlord::Configure()
   if( !this->m_isConfigured )
   {
     std::cout << "===== Applying Component Criteria =====" << std::endl;
-    this->ApplyNodeConfiguration();
+    this->ApplyComponentConfiguration();
 
     auto nonUniqueComponentNames = this->GetNonUniqueComponentNames();
     std::cout << nonUniqueComponentNames.size() << " out of " << m_Blueprint->GetComponentNames().size()
@@ -73,7 +76,8 @@ Overlord::Configure()
     for( const auto & nonUniqueComponentName : nonUniqueComponentNames )
     {
       std::cout << this->m_ComponentSelectorContainer[ nonUniqueComponentName ]->NumberOfComponents() << "  " << nonUniqueComponentName << std::endl;
-      this->m_ComponentSelectorContainer[nonUniqueComponentName]->PrintComponents();
+      //this->m_ComponentSelectorContainer[nonUniqueComponentName]->PrintComponents();
+      std::cout << "TODO: print components" << std::endl;
     }
     return false;
   }
@@ -114,7 +118,7 @@ Overlord::GetNonUniqueComponentNames()
 
 
 void
-Overlord::ApplyNodeConfiguration()
+Overlord::ApplyComponentConfiguration()
 {
   // Creates a ComponentSelector for each node of the graph and apply
   // the criteria/properties at each node to narrow the Component selection.

@@ -97,7 +97,7 @@ main( int ac, char * av[] )
       return 0;
     }
 
-    selx::Blueprint::Pointer blueprint;
+    selx::ConfigurationReader::BlueprintPointerType blueprint;
     if( configurationPath.extension() == ".xml" )
     {
       // TODO: open file here and pass a stream to the ConfigurationReader
@@ -115,10 +115,13 @@ main( int ac, char * av[] )
 
     if( vm.count( "graphout" ) )
     {
-      blueprint->WriteBlueprint( vm[ "graphout" ].as< fs::path >().string() );
+      blueprint->Write( vm[ "graphout" ].as< fs::path >().string() );
     }
 
-    superElastixFilter->SetBlueprint( blueprint );
+    //turn the blueprint into an itkObject to connect to the superElastix itkFilter
+    selx::SuperElastixFilter< RegisterComponents >::BlueprintPointer itkBluePrint = selx::SuperElastixFilter< RegisterComponents >::BlueprintType::New();
+    itkBluePrint->Set(blueprint);
+    superElastixFilter->SetBlueprint(itkBluePrint);
 
     if( vm.count( "in" ) )
     {

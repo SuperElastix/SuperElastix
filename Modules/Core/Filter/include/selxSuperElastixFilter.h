@@ -25,6 +25,7 @@
 #include "selxOverlord.h"
 #include "selxAnyFileReader.h"
 #include "selxAnyFileWriter.h"
+#include "itkSharedPointerDataObjectDecorator.h"
 
 /**
  * \class SuperElastixFilter
@@ -56,9 +57,14 @@ public:
   typedef AnyFileReader AnyFileReaderType;
   typedef AnyFileWriter AnyFileWriterType;
 
-  //TODO make const correct
-  //itkSetConstObjectMacro(Blueprint,Blueprint)
-  itkSetObjectMacro( Blueprint, Blueprint );
+  typedef std::unique_ptr< Overlord > OverlordPointer;
+
+  typedef typename itk::SharedPointerDataObjectDecorator< Blueprint > BlueprintType;
+  typedef BlueprintType::Pointer                                      BlueprintPointer;
+  typedef BlueprintType::ConstPointer                                 BlueprintConstPointer;
+
+  // TODO: Make const-correct
+  itkSetObjectMacro( Blueprint, BlueprintType )
 
   typename AnyFileReaderType::Pointer GetInputFileReader( const DataObjectIdentifierType & );
 
@@ -87,13 +93,13 @@ protected:
 private:
 
   //TODO make const correct
-  //Blueprint::ConstPointer m_Blueprint;
-  Blueprint::Pointer          m_Blueprint;
-  std::unique_ptr< Overlord > m_Overlord;
+  BlueprintType::Pointer      m_Blueprint;
+  OverlordPointer             m_Overlord;
   bool                        m_InputConnectionModified;
   bool                        m_OutputConnectionModified;
   bool                        m_BlueprintConnectionModified;
   bool                        m_IsConnected;
+  bool                        m_AllUniqueComponents;
 };
 } // namespace elx
 

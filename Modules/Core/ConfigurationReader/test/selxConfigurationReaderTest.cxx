@@ -43,7 +43,7 @@ TEST_F( ConfigurationReaderTest, ReadXML )
   ConfigurationReader::BlueprintPointerType blueprint;
 
   EXPECT_NO_THROW( blueprint = ConfigurationReader::FromXML( this->dataManager->GetConfigurationFile( "itkv4_SVF_ANTsCC.xml" ) ) );
-  blueprint->WriteBlueprint( this->dataManager->GetOutputFile( "configurationReaderTest_itkv4_SVF_ANTsCC.xml.dot" ) );
+  blueprint->Write( this->dataManager->GetOutputFile( "configurationReaderTest_itkv4_SVF_ANTsCC.xml.dot" ) );
 }
 
 TEST_F( ConfigurationReaderTest, ReadJson )
@@ -51,5 +51,5 @@ TEST_F( ConfigurationReaderTest, ReadJson )
   ConfigurationReader::BlueprintPointerType blueprint;
 
   EXPECT_NO_THROW( blueprint = ConfigurationReader::FromJson( this->dataManager->GetConfigurationFile( "itkv4_SVF_ANTsCC.json" ) ) );
-  blueprint->WriteBlueprint( this->dataManager->GetOutputFile( "configurationReaderTest_itkv4_SVF_ANTsCC.json.dot" ) );
+  blueprint->Write( this->dataManager->GetOutputFile( "configurationReaderTest_itkv4_SVF_ANTsCC.json.dot" ) );
 }

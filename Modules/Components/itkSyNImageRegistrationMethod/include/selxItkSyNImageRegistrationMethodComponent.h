@@ -49,7 +49,7 @@ class ItkSyNImageRegistrationMethodComponent :
 {
 public:
 
-  selxNewMacro( ItkSyNImageRegistrationMethodComponent, ComponentBase );
+  selxNewMacro(ItkSyNImageRegistrationMethodComponent, ComponentBase);
 
   //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
 
@@ -57,25 +57,26 @@ public:
   virtual ~ItkSyNImageRegistrationMethodComponent();
 
   typedef TPixel PixelType;
+  typedef double InternalComputationValueType;
 
   // Get the type definitions from the interfaces
   typedef typename itkImageFixedInterface< Dimensionality, TPixel >::ItkImageType    FixedImageType;
   typedef typename itkImageMovingInterface< Dimensionality, TPixel >::ItkImageType   MovingImageType;
-  typedef typename itkTransformInterface< double, Dimensionality >::TransformType    TransformType;
-  typedef typename itkTransformInterface< double, Dimensionality >::TransformPointer TransformPointer;
+  typedef typename itkTransformInterface< InternalComputationValueType, Dimensionality >::TransformType    TransformType;
+  typedef typename itkTransformInterface< InternalComputationValueType, Dimensionality >::TransformPointer TransformPointer;
 
-  typedef typename itkTransformInterface< double, Dimensionality >::InternalComputationValueType TransformInternalComputationValueType; //should be from class template
+  typedef typename itkTransformInterface< InternalComputationValueType, Dimensionality >::InternalComputationValueType TransformInternalComputationValueType; //should be from class template
 
   typedef itk::SyNImageRegistrationMethod< FixedImageType, MovingImageType >   TheItkFilterType;
   typedef typename TheItkFilterType::ImageMetricType                           ImageMetricType;
   typedef itk::RegistrationParameterScalesFromPhysicalShift< ImageMetricType > ScalesEstimatorType;
 
   //Accepting Interfaces:
-  virtual int Set( itkImageFixedInterface< Dimensionality, TPixel > * ) override;
+  virtual int Set(itkImageFixedInterface< Dimensionality, TPixel > *) override;
 
-  virtual int Set( itkImageMovingInterface< Dimensionality, TPixel > * ) override;
+  virtual int Set(itkImageMovingInterface< Dimensionality, TPixel > *) override;
 
-  virtual int Set( itkMetricv4Interface< Dimensionality, TPixel, double > * ) override;
+  virtual int Set(itkMetricv4Interface< Dimensionality, TPixel, double > *) override;
 
   //Providing Interfaces:
   virtual TransformPointer GetItkTransform() override;
@@ -83,7 +84,7 @@ public:
   virtual void RunRegistration() override;
 
   //BaseClass methods
-  virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
+  virtual bool MeetsCriterion(const ComponentBase::CriterionType & criterion) override;
 
   //static const char * GetName() { return "ItkSyNImageRegistrationMethod"; } ;
   static const char * GetDescription() { return "ItkSyNImageRegistrationMethod Component"; }
@@ -93,96 +94,12 @@ private:
   typename TheItkFilterType::Pointer m_theItkFilter;
 
 protected:
-
-  /* The following struct returns the string name of computation type */
-  /* default implementation */
-
-  static inline const std::string GetTypeNameString()
+  // return the class name and the template arguments to uniquely identify this component.
+  static inline const std::map< std::string, std::string > TemplateProperties()
   {
-    itkGenericExceptionMacro( << "Unknown ScalarType" << typeid( TPixel ).name() );
-    // TODO: provide the user instructions how to enable the compilation of the component with the required template types (if desired)
-    // We might define an exception object that can communicate various error messages: for simple user, for developer user, etc
-  }
-
-
-  static inline const std::string GetPixelTypeNameString()
-  {
-    itkGenericExceptionMacro( << "Unknown PixelType" << typeid( TPixel ).name() );
-    // TODO: provide the user instructions how to enable the compilation of the component with the required template types (if desired)
-    // We might define an exception object that can communicate various error messages: for simple user, for developer user, etc
+    return{ { keys::NameOfClass, "ItkSyNImageRegistrationMethodComponent" }, { keys::PixelType, PodString< PixelType >::Get() }, { keys::InternalComputationValueType, PodString< InternalComputationValueType >::Get() }, { keys::Dimensionality, std::to_string(Dimensionality) } };
   }
 };
-
-template< >
-inline const std::string
-ItkSyNImageRegistrationMethodComponent< 2, float >
-::GetPixelTypeNameString()
-{
-  return std::string( "float" );
-}
-
-
-template< >
-inline const std::string
-ItkSyNImageRegistrationMethodComponent< 2, double >
-::GetPixelTypeNameString()
-{
-  return std::string( "double" );
-}
-
-
-template< >
-inline const std::string
-ItkSyNImageRegistrationMethodComponent< 3, float >
-::GetPixelTypeNameString()
-{
-  return std::string( "float" );
-}
-
-
-template< >
-inline const std::string
-ItkSyNImageRegistrationMethodComponent< 3, double >
-::GetPixelTypeNameString()
-{
-  return std::string( "double" );
-}
-
-
-template< >
-inline const std::string
-ItkSyNImageRegistrationMethodComponent< 2, float >
-::GetTypeNameString()
-{
-  return std::string( "2_float" );
-}
-
-
-template< >
-inline const std::string
-ItkSyNImageRegistrationMethodComponent< 2, double >
-::GetTypeNameString()
-{
-  return std::string( "2_double" );
-}
-
-
-template< >
-inline const std::string
-ItkSyNImageRegistrationMethodComponent< 3, float >
-::GetTypeNameString()
-{
-  return std::string( "3_float" );
-}
-
-
-template< >
-inline const std::string
-ItkSyNImageRegistrationMethodComponent< 3, double >
-::GetTypeNameString()
-{
-  return std::string( "3_double" );
-}
 } //end namespace selx
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "selxItkSyNImageRegistrationMethodComponent.hxx"

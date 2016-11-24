@@ -55,19 +55,9 @@ public:
   typedef std::map<
     std::string, RegistrationControllerStartInterface * > RegistrationControllerStartInterfaceMapType;
 
-  Overlord();
+  Overlord( std::shared_ptr< Blueprint > blueprint );
+  Overlord( Blueprint * blueprint );
   ~Overlord() {}
-
-  //void SetBlueprint(Blueprint const * blueprint){
-  //  m_Blueprint = blueprint;
-  //}
-
-  void SetBlueprint( Blueprint::Pointer blueprint )
-  {
-    //Overlord should be constructed with a blueprint.
-    m_Blueprint = blueprint;
-  }
-
 
   /** Read configuration at the blueprints nodes and edges and return true if all components could be uniquely selected*/
   bool Configure();
@@ -103,7 +93,7 @@ private:
   typedef ComponentSelectorContainerType::iterator                ComponentSelectorIteratorType;
 
   /** Read configuration at the blueprints nodes and try to find instantiated components */
-  void ApplyNodeConfiguration();
+  void ApplyComponentConfiguration();
 
   /** Read configuration at the blueprints edges and try to find instantiated components */
   void ApplyConnectionConfiguration();
@@ -118,7 +108,7 @@ private:
   //Overlord should be constructed with a blueprint.
   //Blueprint::ConstPointer m_Blueprint;
   //Blueprint const * m_Blueprint;
-  Blueprint::Pointer m_Blueprint;
+  std::shared_ptr< const Blueprint > m_Blueprint;
 
   // A selector for each node, that each can hold multiple instantiated components. Ultimately is should be 1 component each.
   ComponentSelectorContainerType m_ComponentSelectorContainer;

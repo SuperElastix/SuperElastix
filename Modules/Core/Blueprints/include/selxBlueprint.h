@@ -20,119 +20,59 @@
 #ifndef Blueprint_h
 #define Blueprint_h
 
-#include "boost/graph/graph_traits.hpp"
-#include "boost/graph/directed_graph.hpp"
-#include "boost/graph/labeled_graph.hpp"
-
-#include "itkObjectFactory.h"
-#include "itkDataObject.h"
-
-#include "selxMacro.h"
+#include <string>
+#include <vector>
+#include <map>
+#include <memory>
 
 namespace selx
 {
-class Blueprint : public itk::DataObject
+
+class Blueprint
 {
 public:
-
-  selxNewMacro( Blueprint, itk::DataObject );
-
+  
   typedef std::string                                      ParameterKeyType;
   typedef std::vector< std::string >                       ParameterValueType;
   typedef std::map< ParameterKeyType, ParameterValueType > ParameterMapType;
+  typedef std::string                                      ComponentNameType;
+  typedef std::vector< ComponentNameType >                 ComponentNamesType;
 
-  typedef std::string ComponentNameType;
+  Blueprint( void );
+  ~Blueprint( void );
+  
+  bool SetComponent( ComponentNameType, ParameterMapType parameterMap );
 
-  // Component parameter map that sits on a node in the graph
-  // and holds component configuration settings
-  struct ComponentPropertyType
-  {
-    ComponentNameType name;
-    ParameterMapType  parameterMap;
-  };
+  ParameterMapType GetComponent( ComponentNameType componentName ) const;
 
-  // Component parameter map that sits on an edge in the graph
-  // and holds component connection configuration settings
-  struct ConnectionPropertyType
-  {
-    ParameterMapType parameterMap;
-  };
-
-  typedef boost::labeled_graph< boost::adjacency_list<
-    boost::vecS,
-    boost::vecS,
-    boost::bidirectionalS,
-    ComponentPropertyType,
-    ConnectionPropertyType
-    >,
-    ComponentNameType >                  GraphType;
-
-  typedef std::vector< ComponentNameType > ComponentNamesType;
-
-  typedef boost::graph_traits< GraphType >::vertex_descriptor       ComponentIndexType;
-  typedef boost::graph_traits< GraphType >::vertex_iterator         ComponentIteratorType;
-  typedef std::pair< ComponentIteratorType, ComponentIteratorType > ComponentIteratorPairType;
-
-  typedef boost::graph_traits< GraphType >::edge_descriptor           ConnectionIndexType;
-  typedef boost::graph_traits< GraphType >::edge_iterator             ConnectionIteratorType;
-  typedef std::pair< ConnectionIteratorType, ConnectionIteratorType > ConnectionIteratorPairType;
-
-  typedef boost::graph_traits< GraphType >::in_edge_iterator InputIteratorType;
-  typedef std::pair< InputIteratorType, InputIteratorType >  InputIteratorPairType;
-
-  typedef boost::graph_traits< GraphType >::out_edge_iterator OutputIteratorType;
-  typedef std::pair< OutputIteratorType, OutputIteratorType > OutputIteratorPairType;
-
-  // Interface for managing components
-  bool AddComponent( ComponentNameType name );
-
-  bool AddComponent( ComponentNameType name, ParameterMapType parameterMap );
-
-  ParameterMapType GetComponent( ComponentNameType name ) const;
-
-  void SetComponent( ComponentNameType, ParameterMapType parameterMap );
-
-  // TODO: Let user delete component. Before we do this, we need a proper way of
-  // checking that a vertex exist. Otherwise a call to GetComponent() on
-  // a deleted vertex will result in segfault. It is not really a in issue
-  // _before_ release since typically we (the developers) will use blueprint
-  // interface procedurally.
-  // void DeleteComponent( ComponentIndexType );
+  bool DeleteComponent( ComponentNameType componentName );
+  
+  bool ComponentExists( ComponentNameType componentName ) const;
 
   // Returns a vector of the all Component names in the graph.
-  // TODO: should this be an iterator over the names?
   ComponentNamesType GetComponentNames( void ) const;
-
-  // Interface for managing connections between components in which we
-  // deliberately avoid using connection indexes, but instead force
-  // the user to think in terms of components (which is conceptually simpler)
-  bool AddConnection( ComponentNameType upstream, ComponentNameType downstream );
-
-  bool AddConnection( ComponentNameType upstream, ComponentNameType downstream, ParameterMapType parameterMap );
-
-  ParameterMapType GetConnection( ComponentNameType upstream, ComponentNameType downstream ) const;
 
   bool SetConnection( ComponentNameType upstream, ComponentNameType downstream, ParameterMapType parameterMap );
 
-  bool DeleteConnection( ComponentNameType upstream, ComponentNameType downstream );
+  ParameterMapType GetConnection( ComponentNameType upstream, ComponentNameType downstream ) const;
 
-  bool ComponentExists( ComponentNameType componentName ) const;
+  bool DeleteConnection( ComponentNameType upstream, ComponentNameType downstream );
 
   bool ConnectionExists( ComponentNameType upstream, ComponentNameType downstream ) const;
 
+  // Returns a vector of the Component names at the incoming direction
+  ComponentNamesType GetInputNames( const ComponentNameType name ) const;
+  
   // Returns a vector of the Component names at the outgoing direction
   ComponentNamesType GetOutputNames( const ComponentNameType name ) const;
 
-  // Returns a vector of the Component names at the incoming direction
-  ComponentNamesType GetInputNames( const ComponentNameType name ) const;
-
-  void WriteBlueprint( const std::string filename );
+  void Write( const std::string filename );
 
 private:
+  
+  class BlueprintImpl;
+  std::unique_ptr< BlueprintImpl > m_Pimple;
 
-  ConnectionIndexType GetConnectionIndex( ComponentNameType upsteam, ComponentNameType downstream ) const;
-
-  GraphType m_Graph;
 };
 }
 
