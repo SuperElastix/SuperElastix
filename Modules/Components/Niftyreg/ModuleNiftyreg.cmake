@@ -28,22 +28,24 @@ if (OPENMP_FOUND)
 endif()
 
 set(NIFTYREG_DIR "/home/flopper/Programming/SuperElastix/bld2/Niftyreg-prefix")
-message(WARNING ${NIFTYREG_DIR})
+message(STATUS ${NIFTYREG_DIR})
 
 find_package( Niftyreg )
 #mark_as_advanced(Niftyreg_DIR)
 if (NOT Niftyreg_FOUND)
-  set( NIFTYREG_DIR "" CACHE PATH "Path to Niftyreg build folder" )
+  #set( NIFTYREG_DIR "" CACHE PATH "Path to Niftyreg build folder" )
   message(FATAL_ERROR "Could not find Niftyreg. Point NIFTYREG_DIR to its install folder.")
 endif()
 
+find_package( ZLIB )
 # Export include files
 set( ${MODULE}_INCLUDE_DIRS
   ${${MODULE}_SOURCE_DIR}/include
   ${Niftyreg_INCLUDE_DIR}
+  ${ZLIB_INCLUDE_DIRS}
 )
 
-message(WARNING ${${MODULE}_INCLUDE_DIRS})
+message(STATUS ${${MODULE}_INCLUDE_DIRS})
 
 # Collect header files for Visual Studio Project
 file(GLOB ${MODULE}_HEADER_FILES "${${MODULE}_SOURCE_DIR}/include/*.*")
@@ -68,4 +70,4 @@ set( ${MODULE}_SOURCE_FILES
 
 add_library( ${MODULE} STATIC ${${MODULE}_SOURCE_FILES} ${${MODULE}_HEADER_FILES})
 
-target_link_libraries( ${MODULE} ${Niftyreg_LIBRARIES} )
+target_link_libraries( ${MODULE} ${Niftyreg_LIBRARIES} ${ZLIB_LIBRARIES} )
