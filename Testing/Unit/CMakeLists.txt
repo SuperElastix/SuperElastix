@@ -32,12 +32,13 @@ endif()
 # ---------------------------------------------------------------------
 # Build tests
 
-foreach( SuperElastixUnitTestFileName ${SUPERELASTIX_TESTS} )
+foreach( SuperElastixTestFileName ${SUPERELASTIX_TEST_SOURCE_FILES} )
   # Build tests executables
-  get_filename_component( SuperElastixUnitTest ${SuperElastixUnitTestFileName} NAME_WE )
-  add_executable( ${SuperElastixUnitTest} ${SuperElastixUnitTestFileName} )
-  target_link_libraries( "${SuperElastixUnitTest}" ${SUPERELASTIX_LIBRARIES} ${ITK_LIBRARIES} ${TEST_LIBRARIES} )
+  get_filename_component( SuperElastixTest ${SuperElastixTestFileName} NAME_WE )
+  add_executable( ${SuperElastixTest} ${SuperElastixTestFileName} )
+  target_include_directories( ${SuperElastixTest} PUBLIC {SUPERELASTIX_INCLUDE_DIRS} )
+  target_link_libraries( "${SuperElastixTest}" ${SUPERELASTIX_LIBRARIES} ${ITK_LIBRARIES} ${TEST_LIBRARIES} )
 
   # Add GoogleTest to CTest
-  GTEST_ADD_TESTS( ${SuperElastixUnitTest} "--gtest_output=xml:${CMAKE_BINARY_DIR}/Testing/Unit/${SuperElastixUnitTest}.xml" ${SuperElastixUnitTestFileName} )
+  GTEST_ADD_TESTS( ${SuperElastixTest} "--gtest_output=xml:${CMAKE_BINARY_DIR}/Testing/Unit/${SuperElastixTest}.xml" ${SuperElastixTestFileName} )
 endforeach()

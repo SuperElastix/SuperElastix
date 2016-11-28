@@ -65,10 +65,8 @@ configure_file(
   ESCAPE_QUOTES
 )
 
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR} ) # selxDataManager.h
-include_directories( ${CMAKE_CURRENT_BINARY_DIR} ) # selxDataDirectories.h
 add_library( DataManager selxDataManager.cxx )
-
+target_include_directories( DataManager PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${SUPERELASTIX_INCLUDE_DIRS} )
 list( APPEND TEST_LIBRARIES DataManager )
 
 # ---------------------------------------------------------------------

@@ -37,6 +37,15 @@ set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR} CACHE PATH "SuperBuild inst
 # ---------------------------------------------------------------------
 # SuperElastix SuperBuild configuration
 
+mark_as_advanced( SUPERELASTIX_EXPRESS_BUILD )
+option( SUPERELASTIX_EXPRESS_BUILD "" OFF )
+
+if( SUPERELASTIX_EXPRESS_BUILD )
+  set( SUPERELASTIX_BUILD_MODULES 
+    ModuleItkSyNImageRegistrationMethod
+  )
+endif()
+
 # Build release by default
 if( NOT DEFINED CMAKE_BUILD_TYPE )
   set( CMAKE_BUILD_TYPE "Release" )

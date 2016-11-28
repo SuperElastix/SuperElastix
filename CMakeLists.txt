@@ -19,6 +19,8 @@
 
 cmake_minimum_required( VERSION 3.0.2 )
 
+cmake_policy( SET CMP0064 OLD )
+
 # Explicitly add INCREMENTAL linking option to command lines.
 # http://www.cmake.org/pipermail/cmake/2010-February/035174.html
 #set( MSVC_INCREMENTAL_DEFAULT ON )
@@ -89,17 +91,27 @@ include_directories( ${Boost_INCLUDE_DIRS} )
 # ---------------------------------------------------------------------
 # Build SuperElastix
 
-# For now we just enable all modules
 include( selxModules )
-selxmodule_enable( ModuleCore )
-selxmodule_enable( ModuleExamples )
-selxmodule_enable( ModuleSinksAndSources )
-selxmodule_enable( ModuleItkSmoothingRecursiveGaussianImageFilter )
-selxmodule_enable( ModuleItkImageRegistrationMethodv4 )
-selxmodule_enable( ModuleItkSyNImageRegistrationMethod )
-selxmodule_enable( ModuleElastix )
-selxmodule_enable( ModuleController )
-# TODO: Build tests depending on enabled modules
+
+mark_as_advanced( SUPERELASTIX_EXPRESS_BUILD )
+option( SUPERELASTIX_EXPRESS_BUILD "" OFF )
+
+set( SUPERELASTIX_DEFAULT_MODULES
+  ModuleElastix 
+  ModuleExamples
+  ModuleItkSmoothingRecursiveGaussianImageFilter
+  ModuleItkImageRegistrationMethodv4
+  ModuleItkSyNImageRegistrationMethod
+  ModuleController
+)
+
+if( ${SUPERELASTIX_EXPRESS_BUILD} )
+  disable_modules( ${SUPERELASTIX_DEFAULT_MODULES} )
+else()
+  enable_modules( ${SUPERELASTIX_DEFAULT_MODULES} )
+endif()
+
+# TODO: Functionality to disable default modules again
 
 # ---------------------------------------------------------------------
 # Testing
