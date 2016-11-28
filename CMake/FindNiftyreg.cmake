@@ -20,9 +20,14 @@
 #set(Niftyreg_FIND_COMPONENTS lib_reg_aladin lib_reg_blockMatching lib_reg_f3d lib_reg_femTrans lib_reg_globalTrans lib_reg_localTrans lib_reg_maths lib_reg_measure  lib_reg_resampling lib_reg_tools)
 set(Niftyreg_FIND_COMPONENTS _reg_aladin _reg_blockMatching _reg_f3d _reg_femTrans _reg_globalTrans _reg_localTrans _reg_maths _reg_measure _reg_ReadWriteImage _reg_resampling _reg_tools reg_nifti reg_png)
 
-set(Niftyreg_INCLUDE_DIR ${NIFTYREG_DIR}/include CACHE PATH "Installed Include Directory of NiftyReg" )
-set(Niftyreg_LIBRARIES "" CACHE STRING "Found libraries NiftyReg" )
+# *NIX OSes use system zlib, Niftyreg is configured to build zlib for Windows OS
+if( WIN32)
+	list(APPEND Niftyreg_FIND_COMPONENTS z)
+endif (WIN32)
 
+set(Niftyreg_INCLUDE_DIR ${NIFTYREG_DIR}/include CACHE PATH "Installed Include Directory of NiftyReg" )
+#set(Niftyreg_LIBRARIES "" CACHE STRING "Found libraries NiftyReg" )
+#message(STATUS NIFTYREG_DIR/lib "${NIFTYREG_DIR}/lib")
 foreach(component ${Niftyreg_FIND_COMPONENTS})
 #  message(component: ${component})
   find_library(Niftyreg_${component}_LIBRARY
@@ -30,8 +35,6 @@ foreach(component ${Niftyreg_FIND_COMPONENTS})
     "${NIFTYREG_DIR}/lib"
     DOC "Path to NiftyReg library files (lib_*.a)"
   )
-#  Message(STATUS ${Niftyreg_${component}_LIBRARY})
-  
   set(Niftyreg_LIBRARIES ${Niftyreg_LIBRARIES} ${Niftyreg_${component}_LIBRARY})
 endforeach()
 

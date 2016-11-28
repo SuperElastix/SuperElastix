@@ -27,25 +27,29 @@ if (OPENMP_FOUND)
   set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}" )
 endif()
 
-set(NIFTYREG_DIR "/home/flopper/Programming/SuperElastix/bld2/Niftyreg-prefix")
-message(STATUS ${NIFTYREG_DIR})
+set(NIFTYREG_DIR ${CMAKE_BINARY_DIR}/../Niftyreg-prefix)
+#message(STATUS ${NIFTYREG_DIR})
 
-find_package( Niftyreg )
+find_package( Niftyreg REQUIRED )
 #mark_as_advanced(Niftyreg_DIR)
 if (NOT Niftyreg_FOUND)
   #set( NIFTYREG_DIR "" CACHE PATH "Path to Niftyreg build folder" )
   message(FATAL_ERROR "Could not find Niftyreg. Point NIFTYREG_DIR to its install folder.")
 endif()
 
-find_package( ZLIB )
 # Export include files
 set( ${MODULE}_INCLUDE_DIRS
   ${${MODULE}_SOURCE_DIR}/include
   ${Niftyreg_INCLUDE_DIR}
-  ${ZLIB_INCLUDE_DIRS}
 )
 
-message(STATUS ${${MODULE}_INCLUDE_DIRS})
+# *NIX OSes use system zlib, Niftyreg is configured to build zlib for Windows OS
+if (!WIN32)
+  find_package( ZLIB REQUIRED)
+  list(APPEND ${MODULE}_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS} )
+endif(!WIN32)
+
+#message(STATUS ${${MODULE}_INCLUDE_DIRS})
 
 # Collect header files for Visual Studio Project
 file(GLOB ${MODULE}_HEADER_FILES "${${MODULE}_SOURCE_DIR}/include/*.*")
