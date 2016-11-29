@@ -17,6 +17,9 @@
 #
 #=========================================================================
 
+# This CMakeLists.txt allows the Applications directory to be built as an
+# external project. 
+
 cmake_minimum_required( VERSION 3.0.2 )
 project(SuperElastixApplications)
 
@@ -50,9 +53,8 @@ if( NOT CMAKE_PROJECT_NAME STREQUAL "SuperElastix" )
 
   find_package( ITK )
   include( ${ITK_USE_FILE} )
-
-  message( STATUS "ELASTIX_USE_FILE: ${ELASTIX_USE_FILE}")
+  
   include( ${ELASTIX_USE_FILE} )
 endif()
 
-add_subdirectory( CommandlineProgram )
+add_subdirectory( SuperElastixCommandLineInterface )

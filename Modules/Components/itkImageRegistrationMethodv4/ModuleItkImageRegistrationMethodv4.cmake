@@ -33,5 +33,4 @@ set( ${MODULE}_LIBRARIES
 
 set( ${MODULE}_TEST_SOURCE_FILES
   ${${MODULE}_SOURCE_DIR}/test/selxRegistrationItkv4Test.cxx
-  ${${MODULE}_SOURCE_DIR}/test/selxWBIRDemoTest.cxx
 )

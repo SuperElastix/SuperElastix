@@ -17,6 +17,11 @@
 #
 #=========================================================================
 
+# This file allows the SuperElastix command line interface to be
+# built as an external project. 
+
+# ---------------------------------------------------------------------
+
 # Collect header files for Visual Studio Project 
 # http://stackoverflow.com/questions/8316104/specify-how-cmake-creates-visual-studio-project
 file(GLOB COMMANDLINE_HEADER_FILES "${COMMANDLINE_SOURCE_DIR}/*/include/*.*")

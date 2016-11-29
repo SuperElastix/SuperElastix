@@ -17,6 +17,8 @@
 #
 #=========================================================================
 
+include( selxCMakeColors )
+
 # ---------------------------------------------------------------------
 # Private macros
 
@@ -72,29 +74,43 @@ endmacro()
 macro( _selxmodule_enable MODULE UPSTREAM )
   _selxmodule_check_name( ${MODULE} )
 
-  message( STATUS "Enabling ${MODULE} requested by ${UPSTREAM}.")
+  message( STATUS "${BoldMagenta}Enabling ${MODULE} requested by ${UPSTREAM}.${ColourReset}")
 
   if( NOT ${MODULE}_IS_ENABLED )    
     set( ${MODULE}_IS_ENABLED TRUE )
-
     include( ${${MODULE}_CMAKE_FILE} )
     
     add_library( ${MODULE} "${${MODULE}_HEADER_FILES}" "${${MODULE}_SOURCE_FILES}" )
-    _selxmodule_include_directories( ${MODULE} ${MODULE} )
 
-    if( NOT ${MODULE} STREQUAL ModuleCore )
-      _selxmodule_include_directories( ${MODULE} ModuleCore )
-      _selxmodule_link_libraries( ${MODULE} ModuleCore )
+    if( ${MODULE}_INCLUDE_DIRS )
+      _selxmodule_include_directory( ${MODULE} ${MODULE} )
     endif()
 
-    if( ${MODULE}_MODULE_DEPENDENCIES ) 
-      _selxmodule_include_directories( ${MODULE} ${${MODULE}_MODULE_DEPENDENCIES} )
-      _selxmodule_link_libraries( ${MODULE} ${${MODULE}_MODULE_DEPENDENCIES} )
+    if( NOT ${MODULE} STREQUAL ModuleCore )
+      _selxmodule_include_directory( ${MODULE} ModuleCore )
+      _selxmodule_link_libraries( ${MODULE} ModuleCore )
     endif()
 
     if( SUPERELASTIX_BUILD_TESTING AND ${MODULE}_TEST_SOURCE_FILES )
       list( APPEND SUPERELASTIX_TEST_SOURCE_FILES ${${MODULE}_TEST_SOURCE_FILES} )
     endif()
+
+    if( ${MODULE}_MODULE_DEPENDENCIES )
+      _selxmodule_enable_dependencies( ${MODULE}_MODULE_DEPENDENCIES ${MODULE} )
+      _selxmodule_include_directories( ${MODULE} ${MODULE}_MODULE_DEPENDENCIES )
+      _selxmodule_link_libraries( ${MODULE} ${MODULE}_MODULE_DEPENDENCIES )
+
+      # TODO: Resolve cylic dependency graph. SuperElastix compiles only because 
+      # CMake is not aware of dependencies and because of the specific order in 
+      # which modules are compiled
+      # add_dependencies( ${MODULE} ${${MODULE}_MODULE_DEPENDENCIES} )
+    endif()
+
+    if( ${MODULE}_LINK_LIBARIES )
+      _selxmodule_link_libraries( ${MODULE} ${MODULE}_LINK_LIBARIES )
+    endif()
+
+    message( STATUS "${BoldGreen}${MODULE} enabled.${ColourReset}" ) 
 
     # SUPERELASTIX_INCLUDE_DIRS and SUPERELASTIX_LIBRARIES are convenience 
     # variables that should only be used when absolutely necessary,  e.g. when
@@ -106,19 +122,8 @@ macro( _selxmodule_enable MODULE UPSTREAM )
     if( ${MODULE}_LIBRARIES )
       list( APPEND SUPERELASTIX_LIBRARIES ${${MODULE}_LIBRARIES} )
     endif()
-
-    if( ${MODULE}_MODULE_DEPENDENCIES )
-      _selxmodule_enable_dependencies( ${MODULE}_MODULE_DEPENDENCIES ${MODULE} )
-
-      # TODO: Resolve cylic dependency graph. SuperElastix compiles only because 
-      # CMake is not aware of dependencies and because of the specific order in 
-      # which modules are compiled
-      # add_dependencies( ${MODULE} ${${MODULE}_MODULE_DEPENDENCIES} )
-    endif()
-
-    message( STATUS "${MODULE} enabled." ) 
   else()
-    message( STATUS "${MODULE} already enabled." )
+    message( STATUS "${Green}${MODULE} already enabled.${ColourReset}" )
   endif()
 endmacro()
 
@@ -129,26 +134,28 @@ macro( _selxmodule_enable_dependencies MODULES UPSTREAM )
 endmacro()
 
 macro( _selxmodule_disable MODULE )
-  set( ${MODULE}_IS_ENABLED FALSE )
+  set( USE_${MODULE} FALSE )
   list( FILTER SUPERELASTIX_INCLUDE_DIRS MATCHES EXCLUDE> REGEX "(.*)${MODULE}(.*)" )
   list( FILTER SUPERELASTIX_LIBRARY_DIRS MATCHES EXCLUDE> REGEX "(.*)${MODULE}(.*)" )
   list( FILTER SUPERELASTIX_LIBRARIES MATCHES EXCLUDE> REGEX "(.*)${MODULE}(.*)" )
   list( FILTER SUPERELASTIX_TEST_SOURCE_FILES MATCHES EXCLUDE> REGEX "(.*)${MODULE}(.*)" )
 endmacro()
 
+macro( _selxmodule_include_directory TARGET DEPENDENCY )
+  target_include_directories( ${TARGET} PUBLIC ${${DEPENDENCY}_INCLUDE_DIRS} )
+endmacro()
+
 macro( _selxmodule_include_directories TARGET DEPENDENCIES )
-  foreach( DEPENDENCY ${DEPENDENCIES} )
-    target_include_directories( ${TARGET} PUBLIC ${${DEPENDENCY}_INCLUDE_DIRS} )
+  foreach( DEPENDENCY ${${DEPENDENCIES}} )
+    _selxmodule_include_directory( ${TARGET} ${DEPENDENCY} )
   endforeach()
 endmacro()
 
 macro( _selxmodule_link_libraries TARGET DEPENDENCIES )
-  foreach( DEPENDENCY ${DEPENDENCIES} )
-    target_include_directories( ${TARGET} PUBLIC ${${DEPENDENCY}_INCLUDE_DIRS} )
+  foreach( DEPENDENCY ${${DEPENDENCIES}} )
     target_link_libraries( ${TARGET} ${DEPENDENCY} )
   endforeach()
 endmacro()
-
 
 # ---------------------------------------------------------------------
 # Public macros
@@ -174,10 +181,6 @@ macro( disable_modules MODULES )
 endmacro()
 
 # ---------------------------------------------------------------------
-
-# Build core
-_selxmodules_initialize()
-_selxmodule_enable( ModuleCore "SuperElastix" )
 
 # Enable user-selected modules
 # TODO: Loop over USE

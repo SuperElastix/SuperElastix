@@ -17,12 +17,30 @@
 #
 #=========================================================================
 
-list( APPEND RequiredITKModules
-  ITKReview
+set( APPLICATION ApplicationSuperElastixCLI )
+
+set( ${APPLICATION}_TARGET_NAME SuperElastix )
+
+set( ${APPLICATION}_SOURCE_FILES
+  ${${APPLICATION}_SOURCE_DIR}/src/selxSuperElastix.cxx
 )
 
-foreach( ITKModule ${RequiredITKModules} )
-  if( NOT ${ITKModule}_LOADED )
-    message( FATAL_ERROR "elastix requires that ITK is build with ${ITKModule}. Please rebuild ITK with Module_${ITKModule} set to ON." )
-  endif()
-endforeach()
+set( ${APPLICATION}_LINK_LIBRARIES
+  ${ITK_LIBRARIES}
+  elastix transformix
+  ${Boost_LIBRARIES}
+)
+
+set( ${APPLICATION}_MODULE_DEPENDENCIES
+  ModuleCore
+  ModuleController
+  ModuleElastix
+  ModuleExamples
+  ModuleItkImageRegistrationMethodv4
+  ModuleItkSmoothingRecursiveGaussianImageFilter
+  ModuleSinksAndSources
+)
+
+set( ${APPLICATION}_INTEGRATION_TESTS 
+  --conf ../Configuration/itkv4_SVF_ANTsCC.json --in FixedImage=../Data/coneA2d64.mhd MovingImage=../Data/coneB2d64.mhd --out ResultImage=2A_image_itkv4_NC.mhd ResultDisplacementField=2A_deformation_itkv4_NC.mhd
+)

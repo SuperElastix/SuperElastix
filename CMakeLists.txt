@@ -81,21 +81,37 @@ endif()
 
 find_package( ITK REQUIRED )
 include( ${ITK_USE_FILE} )
-include("${CMAKE_CURRENT_SOURCE_DIR}/CMake/elxRequiredITKModules.cmake")
+
+list( APPEND RequiredITKModules
+  ITKReview
+)
+
+foreach( ITKModule ${RequiredITKModules} )
+  if( NOT ${ITKModule}_LOADED )
+    message( FATAL_ERROR "elastix requires that ITK is build with ${ITKModule}. Please rebuild ITK with Module_${ITKModule} set to ON." )
+  endif()
+endforeach()
 
 # ---------------------------------------------------------------------
 # Boost Graph Library
-find_package( Boost REQUIRED )
+find_package( Boost COMPONENTS program_options filesystem system REQUIRED )
 include_directories( ${Boost_INCLUDE_DIRS} )
 
 # ---------------------------------------------------------------------
 # Build SuperElastix
 
+# Initialize the build system and build the core. 
+# These calls are mandatory. Do not change and do
+# not call initialization macros anywhere else.
 include( selxModules )
+include( selxApplications )
 
-mark_as_advanced( SUPERELASTIX_EXPRESS_BUILD )
-option( SUPERELASTIX_EXPRESS_BUILD "" OFF )
+_selxmodules_initialize()
+_selxapplications_initialize()
 
+_selxmodule_enable( ModuleCore "SuperElastix" )
+
+# User configuration
 set( SUPERELASTIX_DEFAULT_MODULES
   ModuleElastix 
   ModuleExamples
@@ -105,13 +121,27 @@ set( SUPERELASTIX_DEFAULT_MODULES
   ModuleController
 )
 
-if( ${SUPERELASTIX_EXPRESS_BUILD} )
-  disable_modules( ${SUPERELASTIX_DEFAULT_MODULES} )
-else()
+set( SUPERELASTIX_DEFAULT_APPLICATIONS
+  ApplicationSuperElastixCLI
+)
+
+# TODO: Foreach() in enable_modules/applications cannot handle list of length 1
+enable_application( ApplicationSuperElastixCLI )
+
+# TODO: At the moment there is no difference between the default build 
+# and the express build because ModuleCore depends on all modules.
+mark_as_advanced( SUPERELASTIX_EXPRESS_BUILD )
+option( SUPERELASTIX_EXPRESS_BUILD "" OFF )
+
+if( NOT ${SUPERELASTIX_EXPRESS_BUILD} )
   enable_modules( ${SUPERELASTIX_DEFAULT_MODULES} )
+  enable_applications( ${SUPERELASTIX_DEFAULT_APPLICATIONS} )
+else()
+  disable_modules( ${SUPERELASTIX_DEFAULT_MODULES} )
+  disable_applications( ${SUPERELASTIX_DEFAULT_APPLICATIONS} )
 endif()
 
-# TODO: Functionality to disable default modules again
+# TODO: Functionality to disable default modules/applications
 
 # ---------------------------------------------------------------------
 # Testing
@@ -132,10 +162,12 @@ if( NOT EXISTS ${SUPERELASTIX_OUTPUT_DATA_DIR} )
 endif()
 
 option( SUPERELASTIX_BUILD_TESTING "Enable building tests." ON )
+set( BUILD_TESTING ${SUPERELASTIX_BUILD_TESTING} )
 if( ${SUPERELASTIX_BUILD_TESTING} )
-  mark_as_advanced( SUPERELASTIX_BUILD_LONG_TESTS )
-  option( SUPERELASTIX_BUILD_LONG_TESTS "Also build tests that take a long time to run." OFF )
-  enable_testing()
+  mark_as_advanced( SUPERELASTIX_BUILD_INTEGRATION_TESTS )
+  option( SUPERELASTIX_BUILD_INTEGRATION_TESTS "Also build tests that take a long time to run." OFF )
+  mark_as_advanced( SUPERELASTIX_BUILD_LONG_UNIT_TESTS )
+  option( SUPERELASTIX_BUILD_LONG_UNIT_TESTS "Also build tests that take a long time to run." OFF )
   add_subdirectory( Testing )
 endif()
 
