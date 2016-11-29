@@ -43,13 +43,12 @@ set( ${MODULE}_INCLUDE_DIRS
   ${Niftyreg_INCLUDE_DIR}
 )
 
-# *NIX OSes use system zlib, Niftyreg is configured to build zlib for Windows OS
-if (!WIN32)
+# *NIX OSes use system zlib, for Windows OS Niftyreg is configured to build zlib 
+if (NOT WIN32)
   find_package( ZLIB REQUIRED)
   list(APPEND ${MODULE}_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS} )
-endif(!WIN32)
+endif(NOT WIN32)
 
-#message(STATUS ${${MODULE}_INCLUDE_DIRS})
 
 # Collect header files for Visual Studio Project
 file(GLOB ${MODULE}_HEADER_FILES "${${MODULE}_SOURCE_DIR}/include/*.*")
@@ -57,7 +56,6 @@ file(GLOB ${MODULE}_HEADER_FILES "${${MODULE}_SOURCE_DIR}/include/*.*")
 # Export libraries
 set( ${MODULE}_LIBRARIES 
   ${MODULE}
-  #${Niftyreg_LIBRARIES}
 )
 
 # Export tests
