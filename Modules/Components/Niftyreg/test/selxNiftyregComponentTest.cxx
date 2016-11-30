@@ -17,17 +17,35 @@
  *
  *=========================================================================*/
 
-#include "_reg_f3d.h"
+#include "selxSuperElastixFilter.h"
+#include "selxRegistrationController.h"
+
+#include "selxNiftyregReadImageComponent.h"
+#include "selxNiftyregf3dComponent.h"
 #include "selxDataManager.h"
 #include "gtest/gtest.h"
 
-//using namespace selx;
+namespace selx
+{
 
 class NiftyregComponentTest : public ::testing::Test
 {
 public:
   
-  typedef DataManager DataManagerType;
+    typedef std::shared_ptr< Blueprint >                        BlueprintPointer;
+  typedef itk::SharedPointerDataObjectDecorator< Blueprint >  BlueprintITKType;
+  typedef BlueprintITKType::Pointer                           BlueprintITKPointer;
+  typedef Blueprint::ParameterMapType   ParameterMapType;
+  typedef Blueprint::ParameterValueType ParameterValueType;
+  typedef DataManager                   DataManagerType;
+
+  /** register all example components */
+  typedef TypeList< Niftyregf3dComponent<float>, NiftyregReadImageComponent<float>,
+    RegistrationControllerComponent< > > RegisterComponents;
+
+  typedef SuperElastixFilter< RegisterComponents >  SuperElastixFilterType;
+  
+
   virtual void SetUp()
   {
   }
@@ -35,12 +53,30 @@ public:
 
   virtual void TearDown()
   {
+        itk::ObjectFactoryBase::UnRegisterAllFactories();
   }
+    BlueprintPointer blueprint;
 };
 
 TEST_F( NiftyregComponentTest, Create )
 {
-	nifti_image *referenceImage=NULL;
-	nifti_image *floatingImage=NULL;
-	reg_f3d<float>* REG=new reg_f3d<float>(referenceImage->nt,floatingImage->nt);
+    /** make example blueprint configuration */
+  BlueprintPointer blueprint = BlueprintPointer( new Blueprint() );
+  blueprint->SetComponent( "FixedImage", { { "NameOfClass", { "NiftyregReadImageComponent" } } });
+
+   // Instantiate SuperElastix
+  SuperElastixFilterType::Pointer superElastixFilter;
+  EXPECT_NO_THROW( superElastixFilter = SuperElastixFilterType::New() );
+
+  // Data manager provides the paths to the input and output data for unit tests
+  DataManagerType::Pointer dataManager = DataManagerType::New();
+
+  BlueprintITKPointer superElastixFilterBlueprint = BlueprintITKType::New();
+  superElastixFilterBlueprint->Set( blueprint );
+  EXPECT_NO_THROW( superElastixFilter->SetBlueprint( superElastixFilterBlueprint ) );
+
+  //nifti_image *referenceImage=NULL;
+  //nifti_image *floatingImage=NULL;
+  //reg_f3d<float>* REG=new reg_f3d<float>(referenceImage->nt,floatingImage->nt);
+}
 }
