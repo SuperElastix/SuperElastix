@@ -33,7 +33,7 @@ template< class TPixel >
 class Niftyregf3dComponent :
   public SuperElastixComponent<
   Accepting< NiftyregReferenceImageInterface<TPixel >, NiftyregFloatingImageInterface<TPixel > >,
-  Providing< >
+  Providing< RunRegistrationInterface >
   >
 {
 public:
@@ -48,6 +48,8 @@ public:
 
   virtual int Set( NiftyregReferenceImageInterface< TPixel > * ) override;
   virtual int Set( NiftyregFloatingImageInterface< TPixel > * ) override;
+  
+  virtual void RunRegistration() override;
   
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
 

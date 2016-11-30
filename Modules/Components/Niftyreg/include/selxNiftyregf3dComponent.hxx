@@ -58,6 +58,19 @@ Niftyregf3dComponent< TPixel >
   return 0;
 }
 
+
+
+template< class TPixel >
+void
+Niftyregf3dComponent<  TPixel >
+::RunRegistration()
+{
+  this->m_reg_f3d->UseSSD(0, true);
+  this->m_reg_f3d->UseCubicSplineInterpolation();
+  this->m_reg_f3d->Run();
+  
+}
+  
 template< class TPixel >
 bool
 Niftyregf3dComponent<  TPixel >

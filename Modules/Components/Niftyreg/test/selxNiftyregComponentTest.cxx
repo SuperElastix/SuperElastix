@@ -48,6 +48,8 @@ public:
 
   virtual void SetUp()
   {
+      // Data manager provides the paths to the input and output data for unit tests
+  dataManager = DataManagerType::New();
   }
 
 
@@ -56,14 +58,26 @@ public:
         itk::ObjectFactoryBase::UnRegisterAllFactories();
   }
     BlueprintPointer blueprint;
+    DataManagerType::Pointer dataManager;
 };
 
-TEST_F( NiftyregComponentTest, Create )
+TEST_F( NiftyregComponentTest, Register2d )
 {
     /** make example blueprint configuration */
   BlueprintPointer blueprint = BlueprintPointer( new Blueprint() );
-  blueprint->SetComponent( "FixedImage", { { "NameOfClass", { "NiftyregReadImageComponent" } } });
+  blueprint->SetComponent( "FixedImage", { { "NameOfClass", { "NiftyregReadImageComponent" } }, {"FileName", { this->dataManager->GetInputFile( "BrainProtonDensitySliceBorder20.png" ) }} });
+  blueprint->SetComponent( "MovingImage", { { "NameOfClass", { "NiftyregReadImageComponent" } }, {"FileName", { this->dataManager->GetInputFile( "BrainProtonDensitySliceR10X13Y17.png" ) }} });
+  blueprint->SetComponent( "RegistrationMethod", { { "NameOfClass", { "Niftyregf3dComponent" } } });
+  blueprint->SetComponent( "Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } });
 
+    ParameterMapType connection5Parameters;
+  connection5Parameters[ "NameOfInterface" ] = { "itkMetricv4Interface" };
+  blueprint->SetConnection( "Metric", "RegistrationMethod", connection5Parameters );
+
+  blueprint->SetConnection( "FixedImage", "RegistrationMethod", { {} } ); //{ { "NameOfInterface", { "NiftyregReferenceImageInterface" } } }
+  blueprint->SetConnection( "MovingImage", "RegistrationMethod", { {} } ); //{ { "NameOfInterface", { "NiftyregFloatingImageInterface" } } }
+  blueprint->SetConnection( "RegistrationMethod", "Controller", { {} } );
+  
    // Instantiate SuperElastix
   SuperElastixFilterType::Pointer superElastixFilter;
   EXPECT_NO_THROW( superElastixFilter = SuperElastixFilterType::New() );
@@ -75,8 +89,7 @@ TEST_F( NiftyregComponentTest, Create )
   superElastixFilterBlueprint->Set( blueprint );
   EXPECT_NO_THROW( superElastixFilter->SetBlueprint( superElastixFilterBlueprint ) );
 
-  //nifti_image *referenceImage=NULL;
-  //nifti_image *floatingImage=NULL;
-  //reg_f3d<float>* REG=new reg_f3d<float>(referenceImage->nt,floatingImage->nt);
+  EXPECT_NO_THROW( superElastixFilter->Update() );
+  
 }
 }
