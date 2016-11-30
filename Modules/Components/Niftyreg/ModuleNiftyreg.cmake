@@ -43,8 +43,10 @@ set( ${MODULE}_INCLUDE_DIRS
   ${Niftyreg_INCLUDE_DIR}
 )
 
-# *NIX OSes use system zlib, for Windows OS Niftyreg is configured to build zlib 
+# *NIX OSes use system png and zlib, for Windows OS Niftyreg is configured to build these libraries
 if (NOT WIN32)
+  find_package( PNG REQUIRED)
+  list(APPEND ${MODULE}_INCLUDE_DIRS ${PNG_INCLUDE_DIRS} )  
   find_package( ZLIB REQUIRED)
   list(APPEND ${MODULE}_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS} )
 endif(NOT WIN32)
@@ -72,4 +74,4 @@ set( ${MODULE}_SOURCE_FILES
 
 add_library( ${MODULE} STATIC ${${MODULE}_SOURCE_FILES} ${${MODULE}_HEADER_FILES})
 
-target_link_libraries( ${MODULE} ${Niftyreg_LIBRARIES} ${ZLIB_LIBRARIES} )
+target_link_libraries( ${MODULE} ${Niftyreg_LIBRARIES} ${PNG_LIBRARIES} ${ZLIB_LIBRARIES} )
