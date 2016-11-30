@@ -36,6 +36,10 @@ macro( _selxmodule_check_name MODULE )
 endmacro()
 
 macro( _selxmodules_initialize )
+  if( SUPERELASTIX_MODULES )
+    message( FATAL "Modules have already been initialized. _selxmodules_initialize() may only be called once." )
+  endif()
+
   set( SUPERELASTIX_MODULES )
   set( SUPERELASTIX_INCLUDE_DIRS )
   set( SUPERELASTIX_LIBRARIES )
@@ -91,7 +95,7 @@ macro( _selxmodule_enable MODULE UPSTREAM )
       _selxmodule_link_libraries( ${MODULE} ModuleCore )
     endif()
 
-    if( SUPERELASTIX_BUILD_TESTING AND ${MODULE}_TEST_SOURCE_FILES )
+    if( BUILD_TESTING AND ${MODULE}_TEST_SOURCE_FILES )
       list( APPEND SUPERELASTIX_TEST_SOURCE_FILES ${${MODULE}_TEST_SOURCE_FILES} )
     endif()
 

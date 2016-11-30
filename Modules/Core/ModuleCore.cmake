@@ -17,8 +17,6 @@
 #
 #=========================================================================
 
-set( MODULE ModuleCore )
-
 set( ${MODULE}_INCLUDE_DIRS
   ${${MODULE}_SOURCE_DIR}/Common/include
   ${${MODULE}_SOURCE_DIR}/Blueprints/include

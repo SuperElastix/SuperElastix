@@ -57,4 +57,4 @@ if( NOT CMAKE_PROJECT_NAME STREQUAL "SuperElastix" )
   include( ${ELASTIX_USE_FILE} )
 endif()
 
-add_subdirectory( SuperElastixCommandLineInterface )
+add_subdirectory( CommandLineInterface )

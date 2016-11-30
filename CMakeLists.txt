@@ -94,8 +94,20 @@ endforeach()
 
 # ---------------------------------------------------------------------
 # Boost Graph Library
-find_package( Boost COMPONENTS program_options filesystem system REQUIRED )
+
+find_package( Boost COMPONENTS program_options filesystem system REQUIRED QUIET )
 include_directories( ${Boost_INCLUDE_DIRS} )
+
+# ---------------------------------------------------------------------
+# SuperElastix configuration 
+
+mark_as_advanced( BUILD_SHARED_LIBS )
+option( BUILD_SHARED_LIBS "Build shared libraries." OFF )
+
+# TODO: At the moment there is no difference between the default build 
+# and the express build because ModuleCore depends on all modules.
+mark_as_advanced( BUILD_EXPRESS )
+option( BUILD_EXPRESS "" OFF )
 
 # ---------------------------------------------------------------------
 # Build SuperElastix
@@ -105,41 +117,13 @@ include_directories( ${Boost_INCLUDE_DIRS} )
 # not call initialization macros anywhere else.
 include( selxModules )
 include( selxApplications )
-
 _selxmodules_initialize()
 _selxapplications_initialize()
-
 _selxmodule_enable( ModuleCore "SuperElastix" )
 
-# User configuration
-set( SUPERELASTIX_DEFAULT_MODULES
-  ModuleElastix 
-  ModuleExamples
-  ModuleItkSmoothingRecursiveGaussianImageFilter
-  ModuleItkImageRegistrationMethodv4
-  ModuleItkSyNImageRegistrationMethod
-  ModuleController
-)
-
-set( SUPERELASTIX_DEFAULT_APPLICATIONS
-  ApplicationSuperElastixCLI
-)
-
-# TODO: Foreach() in enable_modules/applications cannot handle list of length 1
-enable_application( ApplicationSuperElastixCLI )
-
-# TODO: At the moment there is no difference between the default build 
-# and the express build because ModuleCore depends on all modules.
-mark_as_advanced( SUPERELASTIX_EXPRESS_BUILD )
-option( SUPERELASTIX_EXPRESS_BUILD "" OFF )
-
-if( NOT ${SUPERELASTIX_EXPRESS_BUILD} )
-  enable_modules( ${SUPERELASTIX_DEFAULT_MODULES} )
-  enable_applications( ${SUPERELASTIX_DEFAULT_APPLICATIONS} )
-else()
-  disable_modules( ${SUPERELASTIX_DEFAULT_MODULES} )
-  disable_applications( ${SUPERELASTIX_DEFAULT_APPLICATIONS} )
-endif()
+if( NOT ${BUILD_EXPRESS} )
+  enable_applications( SUPERELASTIX_APPLICATIONS )
+endif() 
 
 # TODO: Functionality to disable default modules/applications
 
@@ -156,29 +140,30 @@ if( NOT EXISTS ${SUPERELASTIX_OUTPUT_DATA_DIR} )
 endif()
 
 if( NOT EXISTS ${SUPERELASTIX_OUTPUT_DATA_DIR} )
-  message( FATAL_ERROR 
-    "Could not create directory for output data. Make sure CMake has write permissions."
-  )
+  message( FATAL_ERROR "Could not create directory for output data. Make sure CMake has write permissions." )
 endif()
 
-option( SUPERELASTIX_BUILD_TESTING "Enable building tests." ON )
-set( BUILD_TESTING ${SUPERELASTIX_BUILD_TESTING} )
-if( ${SUPERELASTIX_BUILD_TESTING} )
-  mark_as_advanced( SUPERELASTIX_BUILD_INTEGRATION_TESTS )
-  option( SUPERELASTIX_BUILD_INTEGRATION_TESTS "Also build tests that take a long time to run." OFF )
-  mark_as_advanced( SUPERELASTIX_BUILD_LONG_UNIT_TESTS )
-  option( SUPERELASTIX_BUILD_LONG_UNIT_TESTS "Also build tests that take a long time to run." OFF )
+include( CTest )
+option( BUILD_TESTING "Build SuperElastix unit tests." ON )
+
+if( ${BUILD_TESTING} )
+  mark_as_advanced( BUILD_UNIT_TESTS )
+  option( BUILD_UNIT_TESTS "Also build tests that take a long time to run." ON )
+  mark_as_advanced( BUILD_LONG_UNIT_TESTS )
+  option( BUILD_LONG_UNIT_TESTS "Also build tests that take a long time to run." OFF )
+  mark_as_advanced( BUILD_INTEGRATION_TESTS )
+  option( BUILD_INTEGRATION_TESTS "Build integration tests for applications." OFF )
   add_subdirectory( Testing )
 endif()
 
 # ---------------------------------------------------------------------
-# Build Documentation
+# Documentation
 
-mark_as_advanced( SUPERELASTIX_BUILD_DOXYGEN )
-option( SUPERELASTIX_BUILD_DOXYGEN "Enable building Doxygen documentation." OFF )
+mark_as_advanced( BUILD_DOXYGEN )
+option( BUILD_DOXYGEN "Enable building Doxygen documentation." OFF )
 
-mark_as_advanced( SUPERELASTIX_BUILD_READTHEDOCS )
-option( SUPERELASTIX_BUILD_READTHEDOCS "Enable building readthedocs.org documentation." OFF )
+mark_as_advanced( BUILD_READTHEDOCS )
+option( BUILD_READTHEDOCS "Enable building readthedocs.org documentation." OFF )
 
 # ---------------------------------------------------------------------
 # Enable other projects to use SuperElastix via CMake's find_packge() and a use-file

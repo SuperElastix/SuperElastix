@@ -17,7 +17,7 @@
 #
 #=========================================================================
 
-set( proj SuperElastixApplications )
+set( proj Applications )
 
 ExternalProject_Add( ${proj}
   DOWNLOAD_COMMAND ""

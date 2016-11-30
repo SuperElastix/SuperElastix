@@ -17,8 +17,6 @@
 #
 #=========================================================================
 
-set( MODULE ModuleSinksAndSources )
-
 set( ${MODULE}_INCLUDE_DIRS
   ${${MODULE}_SOURCE_DIR}/include
 )

@@ -25,8 +25,8 @@
 
 # ---------------------------------------------------------------------
 # Options
-if( SUPERELASTIX_BUILD_LONG_TESTS )
-  add_definitions( -DSUPERELASTIX_BUILD_LONG_TESTS )
+if( BUILD_LONG_UNIT_TESTS )
+  add_definitions( -DSUPERELASTIX_BUILD_LONG_UNIT_TESTS )
 endif()
 
 # ---------------------------------------------------------------------

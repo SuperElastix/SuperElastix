@@ -17,8 +17,6 @@
 #
 #=========================================================================
 
-set( MODULE ModuleElastix )
-
 # If OpenMP is supported by this machine, elastix will be compiled with
 # OpenMP flags, and we need to add them here as well
 find_package( OpenMP QUIET )

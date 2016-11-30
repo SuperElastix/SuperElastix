@@ -40,7 +40,7 @@ file( GLOB_RECURSE SuperElastixDataContentLinks "*.md5" )
 foreach( SuperElastixDataContentLink ${SuperElastixDataContentLinks} )
   string( REGEX REPLACE "\\.md5$" "" SuperElastixDataContentLink ${SuperElastixDataContentLink} )
   ExternalData_Expand_Arguments( SuperElastixData
-    SuperElastixDataFilenames
+    SuperElastixDataFileName
     DATA{${SuperElastixDataContentLink}}
   )
 endforeach()
@@ -72,8 +72,11 @@ list( APPEND TEST_LIBRARIES DataManager )
 # ---------------------------------------------------------------------
 # Build test suite
 
-set( CTEST_CONFIGURATION_TYPE Debug )
+if( ${BUILD_UNIT_TESTS} )
+  add_subdirectory( Unit )
+endif()
 
-add_subdirectory( Unit )
-add_subdirectory( Integration )
+if( ${BUILD_INTEGRATION_TESTS} )
+  add_subdirectory( Integration )
+endif()
 

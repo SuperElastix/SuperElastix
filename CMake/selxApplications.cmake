@@ -36,6 +36,10 @@ macro( _selxapplication_check_name APPLICATION )
 endmacro()
 
 macro( _selxapplications_initialize )
+  if( SUPERELASTIX_APPLICATIONS )
+    message( FATAL "Applications have already been initialized. _selxapplications_initialize() may only be called once." )
+  endif()
+
   set( SUPERELASTIX_APPLICATIONS )
 
   file( GLOB_RECURSE APPLICATION_CMAKE_FILES RELATIVE "${CMAKE_SOURCE_DIR}"
@@ -55,6 +59,7 @@ macro( _selxapplications_initialize )
 
     set( ${APPLICATION}_SOURCE_DIR ${CMAKE_SOURCE_DIR}/${${APPLICATION}_PATH} )
     set( ${APPLICATION}_BINARY_DIR ${CMAKE_BINARY_DIR}/${${APPLICATION}_PATH} )
+    set( ${APPLICATION}_TEST_DIR ${CMAKE_SOURCE_DIR}/${${APPLICATION}_PATH}/test )
 
     # Collect header files for Visual Studio Project 
     # http://stackoverflow.com/questions/8316104/specify-how-cmake-creates-visual-studio-project
@@ -107,6 +112,18 @@ macro( _selxapplication_link_libraries TARGET LIBRARIES )
   target_link_libraries( ${${TARGET}} ${${LIBRARIES}} )
 endmacro()
 
+macro( add_integration_test )
+  cmake_parse_arguments( add_integration_test "" "NAME;DRIVER" "ARGUMENTS" ${ARGN} )
+
+  add_test(
+    NAME ${add_integration_test_NAME}
+    COMMAND ${add_integration_test_DRIVER} ${add_integration_test_ARGUMENTS}
+  )
+endmacro()
+
+# TODO: Allow application developers to use arbitrarty test drivers. We 
+# currently CMake for scripting and executable itself to execute tests. 
+# Most users will probably prefer not to use CMake for scripting. 
 
 # ---------------------------------------------------------------------
 # Public macros
@@ -117,17 +134,16 @@ endmacro()
 
 macro( enable_applications APPLICATIONS )
   foreach( APPLICATION ${${APPLICATIONS}} )
-    message( STATUS "APPLICATION: ${APPLICATION}" )
     enable_application( ${APPLICATION} )
   endforeach()
 endmacro()
 
 macro( disable_application APPLICATION )
-  _selxapplication_disable( ${APPLICATION} )
+  _selxapplication_disable( ${APPLICATION} "user" )
 endmacro()
 
 macro( disable_applications APPLICATIONS )
   foreach( APPLICATION ${${APPLICATIONS}} )
-    disable_application( ${APPLICATION} "user" )
+    disable_application( ${APPLICATION} )
   endforeach()
 endmacro()
