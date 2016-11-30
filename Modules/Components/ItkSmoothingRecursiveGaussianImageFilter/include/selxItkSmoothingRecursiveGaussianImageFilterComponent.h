@@ -22,10 +22,12 @@
 
 #include "selxSuperElastixComponent.h"
 #include "selxInterfaces.h"
+#include "selxItkRegistrationMethodv4Interfaces.h"
+#include "selxSinksAndSourcesInterfaces.h"
+
 #include "itkSmoothingRecursiveGaussianImageFilter.h"
 #include "itkImageSource.h"
-#include <string.h>
-#include "selxMacro.h"
+
 namespace selx
 {
 template< int Dimensionality, class TPixel >

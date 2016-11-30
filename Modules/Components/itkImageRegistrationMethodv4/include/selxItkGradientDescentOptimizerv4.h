@@ -20,11 +20,12 @@
 #ifndef selxItkGradientDescentOptimizerv4Component_h
 #define selxItkGradientDescentOptimizerv4Component_h
 
-#include "selxComponentBase.h"
+#include "selxSuperElastixComponent.h"
 #include "selxInterfaces.h"
+#include "selxItkRegistrationMethodv4Interfaces.h"
+#include "selxSinksAndSourcesInterfaces.h"
+
 #include "itkGradientDescentOptimizerv4.h"
-#include <string.h>
-#include "selxMacro.h"
 
 namespace selx
 {

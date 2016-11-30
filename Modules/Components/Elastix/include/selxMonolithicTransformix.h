@@ -22,6 +22,8 @@
 
 #include "selxSuperElastixComponent.h"
 #include "selxInterfaces.h"
+#include "selxElastixInterfaces.h"
+#include "selxSinksAndSourcesInterfaces.h"
 #include "itkImageSource.h"
 
 #include "elxElastixFilter.h"

@@ -17,59 +17,53 @@
  *
  *=========================================================================*/
 
-#ifndef selxInterfaces_h
-#define selxInterfaces_h
+#ifndef selxExamplesInterfaces_h
+#define selxExamplesInterfaces_h
 
 namespace selx
 {
 // Define the providing interfaces abstractly
-
-class RegistrationControllerStartInterface
+class MetricDerivativeInterface
 {
-  // A special interface: the Overlord checks components for this type of interface.
-  // This interface is to control the execution of the network
-
 public:
 
-  virtual void RegistrationControllerStart() = 0;
+  virtual int GetDerivative() = 0;
 };
 
-class RunRegistrationInterface
+class MetricValueInterface
 {
-  // This interface is to control the execution of the network
-
 public:
 
-  virtual void RunRegistration() = 0;
+  virtual int GetValue() = 0;
 };
 
-class AfterRegistrationInterface
+class OptimizerUpdateInterface
 {
-  // This interface is to control the execution of the network
-
 public:
 
-  virtual void AfterRegistration() = 0;
+  virtual int Update() = 0;
 };
 
-class RunResolutionInterface
+class TransformedImageInterface
 {
-  // This interface is to control the execution of the network
-
 public:
 
-  virtual bool RunResolution() = 0;
+  virtual int GetTransformedImage() = 0;
 };
 
-class ReconnectTransformInterface
+class ConflictinUpdateInterface
 {
-  // This interface is to control the execution of the network
-
 public:
 
-  virtual void ReconnectTransform() = 0;
+  // "error" : member function templates cannot be virtual
+  // template <class ConflictinUpdateInterface> virtual int Update() = 0;
+  //TODO http://en.cppreference.com/w/cpp/language/member_template
+
+  //TODO solution: http://stackoverflow.com/questions/2004820/inherit-interfaces-which-share-a-method-name
+  //TODO better?: http://stackoverflow.com/questions/18398409/c-inherit-from-multiple-base-classes-with-the-same-virtual-function-name
+  virtual int Update( ConflictinUpdateInterface * ) = 0;
 };
 
 } // end namespace selx
 
-#endif // #define selxInterfaces_h
+#endif // #define selxExamplesInterfaces_h

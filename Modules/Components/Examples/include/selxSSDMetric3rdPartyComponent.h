@@ -22,6 +22,7 @@
 
 #include "selxSuperElastixComponent.h"
 #include "selxInterfaces.h"
+#include "selxExamplesInterfaces.h"
 #include "selxExample3rdPartyCode.h"
 
 namespace selx
