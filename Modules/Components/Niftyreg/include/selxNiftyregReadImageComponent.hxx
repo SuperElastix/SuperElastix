@@ -28,6 +28,11 @@ NiftyregReadImageComponent< TPixel >::NiftyregReadImageComponent()
 }
 
 template< class TPixel >
+NiftyregReadImageComponent< TPixel >::~NiftyregReadImageComponent()
+{
+}
+
+template< class TPixel >
 nifti_image *
 NiftyregReadImageComponent<  TPixel >::GetReferenceNiftiImage( )
 {
