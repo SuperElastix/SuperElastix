@@ -21,7 +21,7 @@
 #define selxRegistrationController_h
 
 #include "selxSuperElastixComponent.h"
-#include "selxInterfaces.h"
+
 #include <string.h>
 #include "selxMacro.h"
 

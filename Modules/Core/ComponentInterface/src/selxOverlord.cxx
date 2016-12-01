@@ -21,7 +21,7 @@
 #include "selxKeys.h"
 
 //todo remove
-#include "selxInterfaces.h"
+
 #include "selxSuperElastixComponent.h"
 
 namespace selx

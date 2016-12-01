@@ -21,7 +21,7 @@
 #define selxItkImageSink_h
 
 #include "selxSuperElastixComponent.h"
-#include "selxInterfaces.h"
+#include "selxSinksAndSourcesInterfaces.h"
 #include <string.h>
 #include "selxMacro.h"
 #include "itkImageFileWriter.h"

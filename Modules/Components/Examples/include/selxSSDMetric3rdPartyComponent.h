@@ -21,7 +21,6 @@
 #define SSDMetric3rdPartyComponent_h
 
 #include "selxSuperElastixComponent.h"
-#include "selxInterfaces.h"
 #include "selxExamplesInterfaces.h"
 #include "selxExample3rdPartyCode.h"
 

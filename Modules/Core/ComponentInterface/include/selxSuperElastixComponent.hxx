@@ -20,7 +20,6 @@
 #ifndef selxSuperElastixComponent_hxx
 #define selxSuperElastixComponent_hxx
 
-#include "selxInterfaceTraits.h"
 namespace selx
 {
 template< class InterfaceT >

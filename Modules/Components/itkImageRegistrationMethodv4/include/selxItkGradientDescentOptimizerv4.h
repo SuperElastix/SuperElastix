@@ -21,7 +21,7 @@
 #define selxItkGradientDescentOptimizerv4Component_h
 
 #include "selxSuperElastixComponent.h"
-#include "selxInterfaces.h"
+
 #include "selxItkRegistrationMethodv4Interfaces.h"
 #include "selxSinksAndSourcesInterfaces.h"
 

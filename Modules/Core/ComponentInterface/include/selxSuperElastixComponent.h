@@ -25,6 +25,8 @@
 #include <typeinfo>
 #include <string>
 
+#include "selxInterfaceTraits.h"
+#include "selxInterfaces.h"
 namespace selx
 {
 // All SuperElastix Components inherit from their interfaces classes. The interface classes as defined in

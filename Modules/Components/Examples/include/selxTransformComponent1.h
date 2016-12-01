@@ -21,7 +21,7 @@
 #define itkTransformComponent1_h
 
 #include "selxSuperElastixComponent.h"
-#include "selxInterfaces.h"
+
 #include "selxExamplesInterfaces.h"
 #include "selxMacro.h"
 

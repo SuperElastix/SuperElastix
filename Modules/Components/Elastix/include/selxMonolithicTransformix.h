@@ -21,7 +21,6 @@
 #define selxMonolithicTransformixComponent_h
 
 #include "selxSuperElastixComponent.h"
-#include "selxInterfaces.h"
 #include "selxElastixInterfaces.h"
 #include "selxSinksAndSourcesInterfaces.h"
 #include "itkImageSource.h"
