@@ -17,9 +17,7 @@
  *
  *=========================================================================*/
 #include "selxComponentFactory.h"
-//#include "itkMetricComponent1.h"
 #include "itkVersion.h"
-//#include "ComponentTraits.h"
 #include <typeinfo>
 namespace selx
 {
@@ -50,18 +48,4 @@ ComponentFactory< ComponentT >::GetDescription() const
 }
 
 
-// Undocumented API used to register during static initialization.
-// DO NOT CALL DIRECTLY.
-/*
-static bool MetricComponent1FactoryHasBeenRegistered;
-
-void MetricComponent1FactoryRegister__Private(void)
-{
-  if( ! MetricComponent1FactoryHasBeenRegistered )
-    {
-    MetricComponent1FactoryHasBeenRegistered = true;
-    MetricComponent1Factory::RegisterOneFactory();
-    }
-}
-*/
 } // end namespace selx

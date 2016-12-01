@@ -21,6 +21,7 @@
 #define selxElastixInterfaces_h
 
 #include "elxElastixFilter.h"
+#include "elxElastixFilter.h"
 
 namespace selx
 {
@@ -32,6 +33,15 @@ public:
 
   typedef typename elastix::ElastixFilter< TFixedImage, TMovingImage >::ParameterObjectType elastixTransformParameterObject;
   virtual elastixTransformParameterObject * GetTransformParameterObject() = 0;
+};
+
+template< class F, class M >
+struct Properties< elastixTransformParameterObjectInterface< F, M >>
+{
+  static const std::map< std::string, std::string > Get()
+  {
+    return { { keys::NameOfInterface, "elastixTransformParameterObjectInterface" } }; // TODO map F and M to strings?
+  }
 };
 
 } // end namespace selx

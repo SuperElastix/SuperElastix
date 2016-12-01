@@ -20,8 +20,8 @@
 #ifndef selxSinksAndSourcesInterfaces_h
 #define selxSinksAndSourcesInterfaces_h
 
+#include "selxInterfaces.h"
 #include "itkDataObject.h"
-
 #include "selxAnyFileReader.h"
 #include "selxAnyFileWriter.h"
 
@@ -57,6 +57,26 @@ public:
   virtual AnyFileWriter::Pointer GetOutputFileWriter( void ) = 0;
 
   virtual DataObjectPointer GetInitializedOutput( void ) = 0;
+};
+
+
+
+template< >
+struct Properties< SourceInterface >
+{
+  static const std::map< std::string, std::string > Get()
+  {
+    return { { keys::NameOfInterface, "SourceInterface" } };
+  }
+};
+
+template< >
+struct Properties< SinkInterface >
+{
+  static const std::map< std::string, std::string > Get()
+  {
+    return { { keys::NameOfInterface, "SinkInterface" } };
+  }
 };
 
 } // end namespace selx

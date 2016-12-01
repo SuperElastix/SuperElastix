@@ -20,6 +20,8 @@
 #ifndef selxExamplesInterfaces_h
 #define selxExamplesInterfaces_h
 
+#include selxInterfaces.h
+
 namespace selx
 {
 // Define the providing interfaces abstractly
@@ -63,6 +65,52 @@ public:
   //TODO better?: http://stackoverflow.com/questions/18398409/c-inherit-from-multiple-base-classes-with-the-same-virtual-function-name
   virtual int Update( ConflictinUpdateInterface * ) = 0;
 };
+
+
+
+template< >
+struct Properties< MetricValueInterface >
+{
+  static const std::map< std::string, std::string > Get()
+  {
+    return { { keys::NameOfInterface, "MetricValueInterface" } };
+  }
+};
+template< >
+struct Properties< MetricDerivativeInterface >
+{
+  static const std::map< std::string, std::string > Get()
+  {
+    return { { keys::NameOfInterface, "MetricDerivativeInterface" } };
+  }
+};
+template< >
+struct Properties< OptimizerUpdateInterface >
+{
+  static const std::map< std::string, std::string > Get()
+  {
+    return { { keys::NameOfInterface, "OptimizerUpdateInterface" } };
+  }
+};
+
+template< >
+struct Properties< ConflictinUpdateInterface >
+{
+  static const std::map< std::string, std::string > Get()
+  {
+    return { { keys::NameOfInterface, "ConflictinUpdateInterface" } };
+  }
+};
+
+template< >
+struct Properties< TransformedImageInterface >
+{
+  static const std::map< std::string, std::string > Get()
+  {
+    return { { keys::NameOfInterface, "TransformedImageInterface" } };
+  }
+};
+
 
 } // end namespace selx
 
