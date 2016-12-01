@@ -21,40 +21,38 @@
 # external project. 
 
 cmake_minimum_required( VERSION 3.0.2 )
-project(SuperElastixApplications)
+project( SuperElastixApplications )
 
-if( NOT CMAKE_PROJECT_NAME STREQUAL "SuperElastix" )
-  # Examples are build as an external project, need to import dependencies
+# Examples are build as an external project, need to import dependencies
 
-  set(CMAKE_CXX_STANDARD 11)
-  
-  # -----------------------------------------------------------------
-  # Compiler-dependent settings
+set(CMAKE_CXX_STANDARD 11)
 
-  # GCC
-  if( ${CMAKE_CXX_COMPILER_ID} STREQUAL GNU )
-    add_definitions(
-      -DVCL_CAN_STATIC_CONST_INIT_FLOAT=0
-      -DVCL_CAN_STATIC_CONST_INIT_INT=0
-    )
-  endif()
+# -----------------------------------------------------------------
+# Compiler-dependent settings
 
-  #TODO SuperElastix Application should not link against elastix libraries
-  # If OpenMP is supported by this machine, elastix will be compiled with
-  # OpenMP flags, and we need to add them here as well
-  find_package( OpenMP QUIET )
-  if (OPENMP_FOUND)
-    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}" )
-    set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}" )
-  endif()
-
-  find_package( SuperElastix )
-  include( ${SUPERELASTIX_USE_FILE} )
-
-  find_package( ITK )
-  include( ${ITK_USE_FILE} )
-  
-  include( ${ELASTIX_USE_FILE} )
+# GCC
+if( ${CMAKE_CXX_COMPILER_ID} STREQUAL GNU )
+  add_definitions(
+    -DVCL_CAN_STATIC_CONST_INIT_FLOAT=0
+    -DVCL_CAN_STATIC_CONST_INIT_INT=0
+  )
 endif()
+
+# TODO: SuperElastix Application should not link against elastix libraries
+# If OpenMP is supported by this machine, elastix will be compiled with
+# OpenMP flags, and we need to add them here as well
+find_package( OpenMP QUIET )
+if (OPENMP_FOUND)
+  set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}" )
+  set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}" )
+endif()
+
+find_package( SuperElastix )
+include( ${SUPERELASTIX_USE_FILE} )
+
+find_package( ITK )
+include( ${ITK_USE_FILE} )
+
+include( ${ELASTIX_USE_FILE} )
 
 add_subdirectory( CommandLineInterface )
