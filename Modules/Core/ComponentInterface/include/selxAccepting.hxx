@@ -20,6 +20,8 @@
 #ifndef Accepting_hxx
 #define Accepting_hxx
 
+#include "selxCount.h"
+
 namespace selx
 {
 

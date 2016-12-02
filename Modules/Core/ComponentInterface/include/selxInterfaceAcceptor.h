@@ -20,6 +20,8 @@
 #ifndef InterfaceAcceptor_h
 #define InterfaceAcceptor_h
 
+#include "selxComponentBase.h"
+
 namespace selx
 {
 // All SuperElastix Components inherit from their interfaces classes. The interface classes as defined in

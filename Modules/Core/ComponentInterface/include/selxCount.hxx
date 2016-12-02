@@ -20,6 +20,8 @@
 #ifndef Count_hxx
 #define Count_hxx
 
+#include "selxInterfaceTraits.h"
+
 namespace selx
 {
 

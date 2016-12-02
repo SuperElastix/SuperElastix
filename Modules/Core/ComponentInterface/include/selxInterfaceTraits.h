@@ -23,6 +23,7 @@
 //TODO: note, maybe this functionality shouldn't be called a Trait, since we use a method ::Get(). Is Policy a better name?
 
 #include "selxInterfaces.h"
+#include "selxInterfaceAcceptor.h"
 #include "selxStaticErrorMessageRevealT.h"
 #include "selxPodString.h"
 #include "selxKeys.h"
