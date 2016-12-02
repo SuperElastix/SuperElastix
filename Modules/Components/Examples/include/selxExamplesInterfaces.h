@@ -20,7 +20,7 @@
 #ifndef selxExamplesInterfaces_h
 #define selxExamplesInterfaces_h
 
-#include selxInterfaces.h
+#include "selxInterfaces.h" 
 
 namespace selx
 {
