@@ -31,10 +31,4 @@ set( ${APPLICATION}_LINK_LIBRARIES
 
 set( ${APPLICATION}_MODULE_DEPENDENCIES
   ModuleCore
-  ModuleController
-  ModuleElastix
-  ModuleExamples
-  ModuleItkImageRegistrationMethodv4
-  ModuleItkSmoothingRecursiveGaussianImageFilter
-  ModuleSinksAndSources
 )
