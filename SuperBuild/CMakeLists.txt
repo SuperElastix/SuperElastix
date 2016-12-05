@@ -94,7 +94,7 @@ else()
 endif()
 
 # ---------------------------------------------------------------------
-# Boost Graph Library
+# Build Boost
 
 mark_as_advanced( USE_SYSTEM_BOOST )
 option( USE_SYSTEM_BOOST "Use an installed version of BOOST" OFF )
@@ -110,16 +110,10 @@ endif()
 mark_as_advanced( USE_SYSTEM_GOOGLETEST )
 option( USE_SYSTEM_GOOGLETEST "Use a pre-compiled version of GoogleTest. " OFF ) 
 
-if( SUPERELASTIX_BUILD_TESTING )
-  mark_as_advanced( SUPERELASTIX_BUILD_INTEGRATION_TESTS )
-  option( SUPERELASTIX_BUILD_INTEGRATION_TESTS "Also build tests that take a long time to run." OFF )
-  mark_as_advanced( SUPERELASTIX_BUILD_LONG_UNIT_TESTS )
-  option( SUPERELASTIX_BUILD_LONG_UNIT_TESTS "Also build tests that take a long time to run." OFF )
-  if ( USE_SYSTEM_GOOGLETEST ) 
-    find_package( GTest REQUIRED ) 
-  else() 
-    include( ExternalGoogleTest ) 
-  endif() 
+if ( USE_SYSTEM_GOOGLETEST ) 
+  find_package( GTest REQUIRED ) 
+else() 
+  include( ExternalGoogleTest ) 
 endif() 
 
 # ---------------------------------------------------------------------
