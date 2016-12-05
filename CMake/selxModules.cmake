@@ -17,8 +17,6 @@
 #
 #=========================================================================
 
-include( selxCMakeColors )
-
 # ---------------------------------------------------------------------
 # Private macros
 
@@ -78,7 +76,7 @@ endmacro()
 macro( _selxmodule_enable MODULE UPSTREAM )
   _selxmodule_check_name( ${MODULE} )
 
-  message( STATUS "${BoldMagenta}Enabling ${MODULE} requested by ${UPSTREAM}.${ColourReset}")
+  message( STATUS "Enabling ${MODULE} requested by ${UPSTREAM}.")
 
   if( NOT ${MODULE}_IS_ENABLED )    
     set( ${MODULE}_IS_ENABLED TRUE )
@@ -114,7 +112,7 @@ macro( _selxmodule_enable MODULE UPSTREAM )
       _selxmodule_link_libraries( ${MODULE} ${MODULE}_LINK_LIBARIES )
     endif()
 
-    message( STATUS "${BoldGreen}${MODULE} enabled.${ColourReset}" ) 
+    message( STATUS "${MODULE} enabled." ) 
 
     # SUPERELASTIX_INCLUDE_DIRS and SUPERELASTIX_LIBRARIES are convenience 
     # variables that should only be used when absolutely necessary,  e.g. when
@@ -127,7 +125,7 @@ macro( _selxmodule_enable MODULE UPSTREAM )
       list( APPEND SUPERELASTIX_LIBRARIES ${${MODULE}_LIBRARIES} )
     endif()
   else()
-    message( STATUS "${Green}${MODULE} already enabled.${ColourReset}" )
+    message( STATUS "${MODULE} already enabled." )
   endif()
 endmacro()
 

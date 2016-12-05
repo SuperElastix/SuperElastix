@@ -17,8 +17,6 @@
 #
 #=========================================================================
 
-include( selxModules )
-
 # ---------------------------------------------------------------------
 # Private macros
 
@@ -72,7 +70,7 @@ endmacro()
 macro( _selxapplication_enable APPLICATION UPSTREAM )
   _selxapplication_check_name( ${APPLICATION} )
 
-  message( STATUS "${BoldMagenta}Enabling ${APPLICATION} requested by ${UPSTREAM}.${ColourReset}")
+  message( STATUS "Enabling ${APPLICATION} requested by ${UPSTREAM}.")
 
   if( NOT ${APPLICATION}_IS_ENABLED )   
     include( ${${APPLICATION}_CMAKE_FILE} )
@@ -98,9 +96,9 @@ macro( _selxapplication_enable APPLICATION UPSTREAM )
       _selxapplication_link_libraries( ${APPLICATION}_TARGET_NAME ${APPLICATION}_LINK_LIBRARIES ) 
     endif()
 
-    message( STATUS "${BoldGreen}${APPLICATION} enabled.${ColourReset}" ) 
+    message( STATUS "${APPLICATION} enabled." ) 
   else()
-    message( STATUS "${Green}${APPLICATION} already enabled.${ColourReset}" )
+    message( STATUS "${APPLICATION} already enabled." )
   endif()
 endmacro()
 
