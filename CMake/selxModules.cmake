@@ -61,11 +61,15 @@ macro( _selxmodules_initialize )
     set( ${MODULE}_SOURCE_DIR ${CMAKE_SOURCE_DIR}/${${MODULE}_PATH} )
     set( ${MODULE}_BINARY_DIR ${CMAKE_BINARY_DIR}/${${MODULE}_PATH} )
 
-    # Collect header files for Visual Studio Project 
+    # Collect header files for Visual Studio 
     # http://stackoverflow.com/questions/8316104/specify-how-cmake-creates-visual-studio-project
     file( GLOB ${MODULE}_HEADER_FILES "${${MODULE}_SOURCE_DIR}/*/include/*.*")
 
+    # These variables are defined in the module's .cmake file
     set( ${MODULE}_INCLUDE_DIRS )
+    set( ${MODULE}_SOURCE_FILES )
+    set( ${MODULE}_TEST_SOURCE_FILES )
+    set( ${MODULE}_MODULE_DEPENDENCIES )
     set( ${MODULE}_LIBRARY_DIRS )
     set( ${MODULE}_LIBRARIES )
 
@@ -185,7 +189,7 @@ endmacro()
 # ---------------------------------------------------------------------
 
 # Enable user-selected modules
-# TODO: Loop over USE
+# TODO:
 
 # Disable user-selected modules
 # TODO:
