@@ -23,12 +23,12 @@
 cmake_minimum_required( VERSION 3.0.2 )
 project( SuperElastixApplications )
 
-# Examples are build as an external project, need to import dependencies
-
-set(CMAKE_CXX_STANDARD 11)
-
 # -----------------------------------------------------------------
 # Compiler-dependent settings
+
+enable_language( C )
+enable_language( CXX )
+set( CMAKE_CXX_STANDARD 11 )
 
 # GCC
 if( ${CMAKE_CXX_COMPILER_ID} STREQUAL GNU )

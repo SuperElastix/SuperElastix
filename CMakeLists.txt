@@ -28,8 +28,8 @@ cmake_policy( SET CMP0064 OLD )
 # ---------------------------------------------------------------------
 project( SuperElastix )
 
-enable_language(C)
-enable_language(CXX)
+enable_language( C )
+enable_language( CXX )
 set( CMAKE_CXX_STANDARD 11 )
 
 # Place executables in the bin directory
