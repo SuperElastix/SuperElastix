@@ -18,8 +18,8 @@
 #=========================================================================
 
 foreach( APPLICATION ${SUPERELASTIX_APPLICATIONS} )
-	if( EXISTS "${${APPLICATION}_TEST_DIR}/integration.cmake" )
-	  include( "${${APPLICATION}_TEST_DIR}/integration.cmake" )
-	endif()
+	foreach( SuperElastixIntegrationTestSourceFile ${${APPLICATION}_INTEGRATION_TEST_SOURCE_FILES} )
+	  include( ${SuperElastixIntegrationTestSourceFile} )
+	endforeach()
 endforeach()
 
