@@ -28,8 +28,9 @@
 #include "selxAccepting.h"
 #include "selxProviding.h"
 #include "selxCount.h"
-#include "selxInterfaceTraits.h"
 #include "selxInterfaces.h"
+#include "selxInterfaceTraits.h"
+
 namespace selx
 {
 

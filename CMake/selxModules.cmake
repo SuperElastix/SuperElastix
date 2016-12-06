@@ -42,6 +42,7 @@ macro( _selxmodules_initialize )
   set( SUPERELASTIX_INCLUDE_DIRS )
   set( SUPERELASTIX_LIBRARIES )
   set( SUPERELASTIX_TEST_SOURCE_FILES )
+  set( SUPERELASTIX_INTERFACE_DIRS )
 
   file( GLOB_RECURSE MODULE_CMAKE_FILES RELATIVE "${CMAKE_SOURCE_DIR}"
      "${CMAKE_SOURCE_DIR}/Modules/*/Module*.cmake"
@@ -74,6 +75,12 @@ macro( _selxmodules_initialize )
     set( ${MODULE}_LIBRARIES )
 
     list( APPEND SUPERELASTIX_MODULES ${MODULE} )
+	
+	# scan for interface header files
+	if(EXISTS "${CMAKE_SOURCE_DIR}/${${MODULE}_PATH}/interfaces/")
+	  message(STATUS "Found ${CMAKE_SOURCE_DIR}/${${MODULE}_PATH}/interfaces")
+	  list( APPEND SUPERELASTIX_INTERFACE_DIRS "${CMAKE_SOURCE_DIR}/${${MODULE}_PATH}/interfaces" )
+	endif()
   endforeach()
 endmacro()
 
@@ -91,12 +98,15 @@ macro( _selxmodule_enable MODULE UPSTREAM )
     if( ${MODULE}_INCLUDE_DIRS )
       _selxmodule_include_directory( ${MODULE} ${MODULE} )
     endif()
-
+	
     if( NOT ${MODULE} STREQUAL ModuleCore )
       _selxmodule_include_directory( ${MODULE} ModuleCore )
       _selxmodule_link_libraries( ${MODULE} ModuleCore )
     endif()
 
+	# include all interface header files
+	target_include_directories( ${MODULE} PUBLIC ${SUPERELASTIX_INTERFACE_DIRS} )
+		
     if( BUILD_TESTING AND ${MODULE}_TEST_SOURCE_FILES )
       list( APPEND SUPERELASTIX_TEST_SOURCE_FILES ${${MODULE}_TEST_SOURCE_FILES} )
     endif()
