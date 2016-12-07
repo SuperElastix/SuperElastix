@@ -20,8 +20,6 @@
 #ifndef selxInterfaces_h
 #define selxInterfaces_h
 
-#include "selxInterfaceTraits.h"
-
 namespace selx
 {
 // Define the providing interfaces abstractly

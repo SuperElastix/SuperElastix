@@ -20,7 +20,6 @@
 #ifndef selxSinksAndSourcesInterfaces_h
 #define selxSinksAndSourcesInterfaces_h
 
-#include "selxInterfaces.h"
 #include "itkDataObject.h"
 #include "selxAnyFileReader.h"
 #include "selxAnyFileWriter.h"
@@ -28,7 +27,6 @@
 namespace selx
 {
 // Define the providing interfaces abstractly
-
 
 class SourceInterface
 {

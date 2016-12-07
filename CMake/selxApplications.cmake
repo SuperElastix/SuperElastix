@@ -17,8 +17,6 @@
 #
 #=========================================================================
 
-include( selxModules )
-
 # ---------------------------------------------------------------------
 # Private macros
 
@@ -59,7 +57,14 @@ macro( _selxapplications_initialize )
 
     set( ${APPLICATION}_SOURCE_DIR ${CMAKE_SOURCE_DIR}/${${APPLICATION}_PATH} )
     set( ${APPLICATION}_BINARY_DIR ${CMAKE_BINARY_DIR}/${${APPLICATION}_PATH} )
-    set( ${APPLICATION}_TEST_DIR ${CMAKE_SOURCE_DIR}/${${APPLICATION}_PATH}/test )
+
+    # These variables are defined in the applications's .cmake file
+    set( ${APPLICATION}_INCLUDE_DIRS )
+    set( ${APPLICATION}_SOURCE_FILES )
+    set( ${APPLICATION}_INTEGRATION_TEST_SOURCE_FILES )
+    set( ${APPLICATION}_MODULE_DEPENDENCIES )
+    set( ${APPLICATION}_LIBRARY_DIRS )
+    set( ${APPLICATION}_LIBRARIES )
 
     # Collect header files for Visual Studio Project 
     # http://stackoverflow.com/questions/8316104/specify-how-cmake-creates-visual-studio-project
@@ -72,7 +77,7 @@ endmacro()
 macro( _selxapplication_enable APPLICATION UPSTREAM )
   _selxapplication_check_name( ${APPLICATION} )
 
-  message( STATUS "${BoldMagenta}Enabling ${APPLICATION} requested by ${UPSTREAM}.${ColourReset}")
+  message( STATUS "Enabling ${APPLICATION} requested by ${UPSTREAM}.")
 
   if( NOT ${APPLICATION}_IS_ENABLED )   
     include( ${${APPLICATION}_CMAKE_FILE} )
@@ -98,9 +103,9 @@ macro( _selxapplication_enable APPLICATION UPSTREAM )
       _selxapplication_link_libraries( ${APPLICATION}_TARGET_NAME ${APPLICATION}_LINK_LIBRARIES ) 
     endif()
 
-    message( STATUS "${BoldGreen}${APPLICATION} enabled.${ColourReset}" ) 
+    message( STATUS "${APPLICATION} enabled." ) 
   else()
-    message( STATUS "${Green}${APPLICATION} already enabled.${ColourReset}" )
+    message( STATUS "${APPLICATION} already enabled." )
   endif()
 endmacro()
 
@@ -120,10 +125,6 @@ macro( add_integration_test )
     COMMAND ${add_integration_test_DRIVER} ${add_integration_test_ARGUMENTS}
   )
 endmacro()
-
-# TODO: Allow application developers to use arbitrarty test drivers. We 
-# currently CMake for scripting and executable itself to execute tests. 
-# Most users will probably prefer not to use CMake for scripting. 
 
 # ---------------------------------------------------------------------
 # Public macros

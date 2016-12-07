@@ -20,8 +20,6 @@
 #ifndef selxRegistrationMethodv4Interfaces_h
 #define selxRegistrationMethodv4Interfaces_h
 
-#include "selxInterfaces.h"
-
 #include <string>
 
 #include "itkProcessObject.h"
@@ -42,71 +40,6 @@
 namespace selx
 {
 // Define the providing interfaces abstractly
-template< int Dimensionality, class TPixel >
-class itkImageInterface
-{
-  // An interface that provides the pointer of an output image
-
-public:
-
-  typedef typename itk::Image< TPixel, Dimensionality > ItkImageType;
-  virtual typename ItkImageType::Pointer GetItkImage() = 0;
-};
-
-template< int Dimensionality, class TPixel >
-class itkImageFixedInterface
-{
-  // An interface that provides the smart pointer to an itk image
-
-public:
-
-  typedef typename itk::Image< TPixel, Dimensionality > ItkImageType;
-  virtual typename ItkImageType::Pointer GetItkImageFixed() = 0;
-};
-
-template< int Dimensionality >
-class itkImageDomainFixedInterface
-{
-  // An interface that provides the smart pointer to the base class of an itk image
-  // that holds the origin/spacing/ etc domain information.
-
-public:
-
-  typedef typename itk::ImageBase< Dimensionality > ItkImageDomainType;
-  virtual typename ItkImageDomainType::Pointer GetItkImageDomainFixed() = 0;
-};
-
-template< int Dimensionality, class TPixel >
-class itkImageMovingInterface
-{
-  // An interface that provides the smart pointer to an itk image
-
-public:
-
-  typedef typename itk::Image< TPixel, Dimensionality > ItkImageType;
-  virtual typename ItkImageType::Pointer GetItkImageMoving() = 0;
-};
-
-template< int Dimensionality, class TPixel >
-class DisplacementFieldItkImageSourceInterface
-{
-  // An interface that passes the pointer of an output image
-
-public:
-
-  typedef typename itk::Image< itk::Vector< TPixel, Dimensionality >, Dimensionality > ItkImageType;
-  virtual typename ItkImageType::Pointer GetDisplacementFieldItkImage() = 0;
-};
-
-template< int Dimensionality, class TPixel >
-class itkMeshInterface
-{
-  // An interface that passes the pointer of an output mesh
-
-public:
-
-  virtual typename itk::Mesh< TPixel, Dimensionality >::Pointer GetItkMesh() = 0;
-};
 
 template< int Dimensionality, class TPixel, class InternalComputationValueType >
 class itkMetricv4Interface
@@ -193,63 +126,6 @@ public:
   virtual void SetMovingInitialTransform(typename CompositeTransformType::Pointer) = 0;
   virtual typename TransformBaseType::Pointer GetItkTransform() = 0;
   virtual const typename std::string GetComponentName() = 0;
-};
-
-
-
-// InterfaceName<T>::Get() should return "itkImageSourceInterface" no matter over which arguments itkImageSourceInterface is templated
-template< int D, class TPixel >
-struct Properties< itkImageInterface< D, TPixel >>
-{
-  static const std::map< std::string, std::string > Get()
-  {
-    return { { keys::NameOfInterface, "itkImageInterface" }, { keys::Dimensionality, std::to_string( D ) }, { keys::PixelType, PodString< TPixel >::Get() } };
-  }
-};
-
-template< int D, class TPixel >
-struct Properties< itkImageFixedInterface< D, TPixel >>
-{
-  static const std::map< std::string, std::string > Get()
-  {
-    return { { keys::NameOfInterface, "itkImageFixedInterface" }, { keys::Dimensionality, std::to_string( D ) }, { keys::PixelType, PodString< TPixel >::Get() } };
-  }
-};
-
-template< int D >
-struct Properties< itkImageDomainFixedInterface< D >>
-{
-  static const std::map< std::string, std::string > Get()
-  {
-    return { { keys::NameOfInterface, "itkImageDomainFixedInterface" }, { keys::Dimensionality, std::to_string( D ) } };
-  }
-};
-
-template< int D, class TPixel >
-struct Properties< itkImageMovingInterface< D, TPixel >>
-{
-  static const std::map< std::string, std::string > Get()
-  {
-    return { { keys::NameOfInterface, "itkImageMovingInterface" }, { keys::Dimensionality, std::to_string( D ) }, { keys::PixelType, PodString< TPixel >::Get() } };
-  }
-};
-
-template< int D, class TPixel >
-struct Properties< DisplacementFieldItkImageSourceInterface< D, TPixel >>
-{
-  static const std::map< std::string, std::string > Get()
-  {
-    return { { keys::NameOfInterface, "DisplacementFieldItkImageSourceInterface" }, { keys::Dimensionality, std::to_string( D ) }, { keys::PixelType, PodString< TPixel >::Get() } };
-  }
-};
-
-template< int D, class TPixel >
-struct Properties< itkMeshInterface< D, TPixel >>
-{
-  static const std::map< std::string, std::string > Get()
-  {
-    return { { keys::NameOfInterface, "itkMeshInterface" }, { keys::Dimensionality, std::to_string( D ) }, { keys::PixelType, PodString< TPixel >::Get() } };
-  }
 };
 
 

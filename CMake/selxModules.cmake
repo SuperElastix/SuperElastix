@@ -17,8 +17,6 @@
 #
 #=========================================================================
 
-#include( selxCMakeColors )
-
 # ---------------------------------------------------------------------
 # Private macros
 
@@ -44,6 +42,7 @@ macro( _selxmodules_initialize )
   set( SUPERELASTIX_INCLUDE_DIRS )
   set( SUPERELASTIX_LIBRARIES )
   set( SUPERELASTIX_TEST_SOURCE_FILES )
+  set( SUPERELASTIX_INTERFACE_DIRS )
 
   file( GLOB_RECURSE MODULE_CMAKE_FILES RELATIVE "${CMAKE_SOURCE_DIR}"
      "${CMAKE_SOURCE_DIR}/Modules/*/Module*.cmake"
@@ -63,22 +62,32 @@ macro( _selxmodules_initialize )
     set( ${MODULE}_SOURCE_DIR ${CMAKE_SOURCE_DIR}/${${MODULE}_PATH} )
     set( ${MODULE}_BINARY_DIR ${CMAKE_BINARY_DIR}/${${MODULE}_PATH} )
 
-    # Collect header files for Visual Studio Project 
+    # Collect header files for Visual Studio 
     # http://stackoverflow.com/questions/8316104/specify-how-cmake-creates-visual-studio-project
     file( GLOB ${MODULE}_HEADER_FILES "${${MODULE}_SOURCE_DIR}/*/include/*.*")
 
+    # These variables are defined in the module's .cmake file
     set( ${MODULE}_INCLUDE_DIRS )
+    set( ${MODULE}_SOURCE_FILES )
+    set( ${MODULE}_TEST_SOURCE_FILES )
+    set( ${MODULE}_MODULE_DEPENDENCIES )
     set( ${MODULE}_LIBRARY_DIRS )
     set( ${MODULE}_LIBRARIES )
 
     list( APPEND SUPERELASTIX_MODULES ${MODULE} )
+	
+	# scan for interface header files
+	if(EXISTS "${CMAKE_SOURCE_DIR}/${${MODULE}_PATH}/interfaces/")
+	  message(STATUS "Found ${CMAKE_SOURCE_DIR}/${${MODULE}_PATH}/interfaces")
+	  list( APPEND SUPERELASTIX_INTERFACE_DIRS "${CMAKE_SOURCE_DIR}/${${MODULE}_PATH}/interfaces" )
+	endif()
   endforeach()
 endmacro()
 
 macro( _selxmodule_enable MODULE UPSTREAM )
   _selxmodule_check_name( ${MODULE} )
 
-  message( STATUS "${BoldMagenta}Enabling ${MODULE} requested by ${UPSTREAM}.${ColourReset}")
+  message( STATUS "Enabling ${MODULE} requested by ${UPSTREAM}.")
 
   if( NOT ${MODULE}_IS_ENABLED )    
     set( ${MODULE}_IS_ENABLED TRUE )
@@ -89,12 +98,15 @@ macro( _selxmodule_enable MODULE UPSTREAM )
     if( ${MODULE}_INCLUDE_DIRS )
       _selxmodule_include_directory( ${MODULE} ${MODULE} )
     endif()
-
+	
     if( NOT ${MODULE} STREQUAL ModuleCore )
       _selxmodule_include_directory( ${MODULE} ModuleCore )
       _selxmodule_link_libraries( ${MODULE} ModuleCore )
     endif()
 
+	# include all interface header files
+	target_include_directories( ${MODULE} PUBLIC ${SUPERELASTIX_INTERFACE_DIRS} )
+		
     if( BUILD_TESTING AND ${MODULE}_TEST_SOURCE_FILES )
       list( APPEND SUPERELASTIX_TEST_SOURCE_FILES ${${MODULE}_TEST_SOURCE_FILES} )
     endif()
@@ -114,7 +126,7 @@ macro( _selxmodule_enable MODULE UPSTREAM )
       _selxmodule_link_libraries( ${MODULE} ${MODULE}_LINK_LIBARIES )
     endif()
 
-    message( STATUS "${BoldGreen}${MODULE} enabled.${ColourReset}" ) 
+    message( STATUS "${MODULE} enabled." ) 
 
     # SUPERELASTIX_INCLUDE_DIRS and SUPERELASTIX_LIBRARIES are convenience 
     # variables that should only be used when absolutely necessary,  e.g. when
@@ -127,7 +139,7 @@ macro( _selxmodule_enable MODULE UPSTREAM )
       list( APPEND SUPERELASTIX_LIBRARIES ${${MODULE}_LIBRARIES} )
     endif()
   else()
-    message( STATUS "${Green}${MODULE} already enabled.${ColourReset}" )
+    message( STATUS "${MODULE} already enabled." )
   endif()
 endmacro()
 
@@ -187,7 +199,7 @@ endmacro()
 # ---------------------------------------------------------------------
 
 # Enable user-selected modules
-# TODO: Loop over USE
+# TODO:
 
 # Disable user-selected modules
 # TODO:

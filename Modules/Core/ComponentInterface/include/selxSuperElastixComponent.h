@@ -24,12 +24,14 @@
 #include "selxComponentBase.h"
 #include <typeinfo>
 #include <string>
+#include "selxInterfaces.h"
+#include "selxInterfaceTraits.h"
 #include "selxInterfaceAcceptor.h"
 #include "selxAccepting.h"
 #include "selxProviding.h"
 #include "selxCount.h"
-#include "selxInterfaceTraits.h"
-#include "selxInterfaces.h"
+
+
 namespace selx
 {
 

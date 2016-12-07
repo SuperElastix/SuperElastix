@@ -24,6 +24,7 @@
 
 #include "selxItkRegistrationMethodv4Interfaces.h"
 #include "selxSinksAndSourcesInterfaces.h"
+#include "selxItkObjectInterfaces.h"
 
 #include "itkSmoothingRecursiveGaussianImageFilter.h"
 #include "itkImageSource.h"

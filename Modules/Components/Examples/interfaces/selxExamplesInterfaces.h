@@ -20,8 +20,6 @@
 #ifndef selxExamplesInterfaces_h
 #define selxExamplesInterfaces_h
 
-#include "selxInterfaces.h" 
-
 namespace selx
 {
 // Define the providing interfaces abstractly
