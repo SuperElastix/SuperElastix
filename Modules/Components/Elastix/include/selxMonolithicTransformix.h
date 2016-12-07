@@ -23,8 +23,9 @@
 #include "selxSuperElastixComponent.h"
 #include "selxElastixInterfaces.h"
 #include "selxSinksAndSourcesInterfaces.h"
-#include "itkImageSource.h"
+#include "selxItkObjectInterfaces.h"
 
+#include "itkImageSource.h"
 #include "elxElastixFilter.h"
 #include "elxParameterObject.h"
 #include "elxTransformixFilter.h"

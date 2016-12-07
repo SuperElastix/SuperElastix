@@ -22,6 +22,8 @@
 
 #include "selxSuperElastixComponent.h"
 #include "selxSinksAndSourcesInterfaces.h"
+#include "selxItkObjectInterfaces.h"
+
 #include <string.h>
 #include "selxMacro.h"
 #include "itkImageFileReader.h"

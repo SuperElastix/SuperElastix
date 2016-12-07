@@ -21,6 +21,8 @@
 #define Metric4thPartyWrapper_h
 
 #include "selxExample4thPartyCode.h"
+#include "selxInterfaces.h"
+#include "selxInterfaceTraits.h"
 #include "selxExamplesInterfaces.h"
 namespace selx
 {

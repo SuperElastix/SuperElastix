@@ -24,6 +24,7 @@
 
 #include "selxItkRegistrationMethodv4Interfaces.h"
 #include "selxSinksAndSourcesInterfaces.h"
+#include "selxItkObjectInterfaces.h"
 
 #include "itkImageRegistrationMethodv4.h"
 #include "itkGradientDescentOptimizerv4.h"
