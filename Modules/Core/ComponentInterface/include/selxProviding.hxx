@@ -1,6 +1,6 @@
-/*=========================================================================
+ /*=========================================================================
  *
- *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,12 +17,18 @@
  *
  *=========================================================================*/
 
-#ifndef __selxDataDirectories_h
-#define __selxDataDirectories_h
+#ifndef Providing_hxx
+#define Providing_hxx
 
-#define SUPERELASTIX_UNITTEST_INPUT_DATA_DIR "@SUPERELASTIX_UNITTEST_INPUT_DATA_DIR@"
-#define SUPERELASTIX_UNITTEST_OUTPUT_DATA_DIR "@SUPERELASTIX_UNITTEST_OUTPUT_DATA_DIR@"
-#define SUPERELASTIX_UNITTEST_BASELINE_DATA_DIR "@SUPERELASTIX_UNITTEST_BASELINE_DATA_DIR@"
-#define SUPERELASTIX_UNITTEST_CONFIGURATION_DATA_DIR "@SUPERELASTIX_UNITTEST_CONFIGURATION_DATA_DIR@"
+namespace selx
+{
 
-#endif // __selxTestDataDirectories_h
+template< typename FirstInterface, typename ... RestInterfaces >
+unsigned int
+Providing< FirstInterface, RestInterfaces ... >::CountMeetsCriteria( const ComponentBase::InterfaceCriteriaType interfaceCriteria )
+{
+  return Count< FirstInterface, RestInterfaces ... >::MeetsCriteria( interfaceCriteria );
+}
+
+} //end namespace selx
+#endif // Providing_hxx

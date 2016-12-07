@@ -21,14 +21,15 @@
 #define selxItkImageRegistrationMethodv4Component_h
 
 #include "selxSuperElastixComponent.h"
-#include "selxInterfaces.h"
+
+#include "selxItkRegistrationMethodv4Interfaces.h"
+#include "selxSinksAndSourcesInterfaces.h"
+#include "selxItkObjectInterfaces.h"
+
 #include "itkImageRegistrationMethodv4.h"
 #include "itkGradientDescentOptimizerv4.h"
 #include "itkImageSource.h"
-#include <itkTransformToDisplacementFieldFilter.h>
-#include <string.h>
-#include "selxMacro.h"
-
+#include "itkTransformToDisplacementFieldFilter.h"
 #include "itkComposeDisplacementFieldsImageFilter.h"
 
 namespace selx

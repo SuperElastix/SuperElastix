@@ -21,7 +21,8 @@
 #define selxElastixComponent_h
 
 #include "selxSuperElastixComponent.h"
-#include "selxInterfaces.h"
+#include "selxSinksAndSourcesInterfaces.h"
+#include "selxItkObjectInterfaces.h"
 #include "itkImageSource.h"
 
 #include "elxElastixFilter.h"
@@ -72,8 +73,6 @@ public:
   typedef elxParameterObjectType::Pointer                           elxParameterObjectPointer;
 
   typedef elastix::TransformixFilter< FixedImageType > TransformixFilterType;
-
-  typedef itk::ResampleImageFilter< MovingImageType, ConnectionImageType > ResampleFilterType;
 
   virtual int Set( itkImageFixedInterface< Dimensionality, TPixel > * ) override;
 

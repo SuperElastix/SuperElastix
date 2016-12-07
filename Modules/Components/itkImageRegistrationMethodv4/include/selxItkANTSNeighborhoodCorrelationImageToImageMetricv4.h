@@ -20,11 +20,13 @@
 #ifndef selxItkANTSNeighborhoodCorrelationImageToImageMetricv4Component_h
 #define selxItkANTSNeighborhoodCorrelationImageToImageMetricv4Component_h
 
-#include "selxComponentBase.h"
-#include "selxInterfaces.h"
+#include "selxSuperElastixComponent.h"
+
+#include "selxItkRegistrationMethodv4Interfaces.h"
+#include "selxSinksAndSourcesInterfaces.h"
+
 #include "itkANTSNeighborhoodCorrelationImageToImageMetricv4.h"
-#include <string.h>
-#include "selxMacro.h"
+
 namespace selx
 {
 template< int Dimensionality, class TPixel >

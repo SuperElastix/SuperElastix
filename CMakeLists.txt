@@ -19,6 +19,8 @@
 
 cmake_minimum_required( VERSION 3.0.2 )
 
+cmake_policy( SET CMP0064 OLD )
+
 # Explicitly add INCREMENTAL linking option to command lines.
 # http://www.cmake.org/pipermail/cmake/2010-February/035174.html
 #set( MSVC_INCREMENTAL_DEFAULT ON )
@@ -26,8 +28,8 @@ cmake_minimum_required( VERSION 3.0.2 )
 # ---------------------------------------------------------------------
 project( SuperElastix )
 
-enable_language(C)
-enable_language(CXX)
+enable_language( C )
+enable_language( CXX )
 set( CMAKE_CXX_STANDARD 11 )
 
 # Place executables in the bin directory
@@ -79,48 +81,93 @@ endif()
 
 find_package( ITK REQUIRED )
 include( ${ITK_USE_FILE} )
-include("${CMAKE_CURRENT_SOURCE_DIR}/CMake/elxRequiredITKModules.cmake")
+
+list( APPEND RequiredITKModules
+  ITKReview
+)
+
+foreach( ITKModule ${RequiredITKModules} )
+  if( NOT ${ITKModule}_LOADED )
+    message( FATAL_ERROR "elastix requires that ITK is build with ${ITKModule}. Please rebuild ITK with Module_${ITKModule} set to ON." )
+  endif()
+endforeach()
 
 # ---------------------------------------------------------------------
 # Boost Graph Library
-find_package( Boost REQUIRED )
+
+set(Boost_USE_STATIC_LIBS        ON) # only find static libs
+set(Boost_USE_MULTITHREADED      ON)
+set(Boost_USE_STATIC_RUNTIME    OFF)
+
+find_package( Boost COMPONENTS program_options filesystem system REQUIRED QUIET )
 include_directories( ${Boost_INCLUDE_DIRS} )
+
+# ---------------------------------------------------------------------
+# SuperElastix configuration 
+
+mark_as_advanced( BUILD_SHARED_LIBS )
+option( BUILD_SHARED_LIBS "Build shared libraries." OFF )
+
+# TODO: At the moment there is no difference between the default build 
+# and the express build because ModuleCore depends on all modules.
+mark_as_advanced( BUILD_EXPRESS )
+option( BUILD_EXPRESS "" OFF )
 
 # ---------------------------------------------------------------------
 # Build SuperElastix
 
-# For now we just enable all modules
+# Initialize the build system and build the core. 
+# These calls are mandatory. Do not change and do
+# not call initialization macros anywhere else.
 include( selxModules )
-selxmodule_enable( ModuleCore )
-selxmodule_enable( ModuleExamples )
-selxmodule_enable( ModuleSinksAndSources )
-selxmodule_enable( ModuleItkSmoothingRecursiveGaussianImageFilter )
-selxmodule_enable( ModuleItkImageRegistrationMethodv4 )
-selxmodule_enable( ModuleItkSyNImageRegistrationMethod )
-selxmodule_enable( ModuleElastix )
-selxmodule_enable( ModuleController )
-selxmodule_enable( ModuleNiftyreg )
-# TODO: Build tests depending on enabled modules
+include( selxApplications )
+_selxmodules_initialize()
+_selxapplications_initialize()
+_selxmodule_enable( ModuleCore "SuperElastix" )
+
+if( NOT ${BUILD_EXPRESS} )
+  enable_applications( SUPERELASTIX_APPLICATIONS )
+endif() 
+
+# TODO: Functionality to disable default modules/applications
 
 # ---------------------------------------------------------------------
 # Testing
 
-option( SUPERELASTIX_BUILD_TESTING "Enable building tests." ON )
-if( ${SUPERELASTIX_BUILD_TESTING} )
-  mark_as_advanced( SUPERELASTIX_BUILD_LONG_TESTS )
-  option( SUPERELASTIX_BUILD_LONG_TESTS "Also build tests that take a long time to run." OFF )
-  enable_testing()
+set( SUPERELASTIX_INPUT_DATA_DIR ${CMAKE_CURRENT_BINARY_DIR}/Testing/Data/Input )
+set( SUPERELASTIX_OUTPUT_DATA_DIR ${CMAKE_CURRENT_BINARY_DIR}/Testing/Data/Output )
+set( SUPERELASTIX_BASELINE_DATA_DIR ${CMAKE_CURRENT_BINARY_DIR}/Testing/Data/Baseline )
+set( SUPERELASTIX_CONFIGURATION_DATA_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Testing/Data/Configuration )
+
+if( NOT EXISTS ${SUPERELASTIX_OUTPUT_DATA_DIR} )
+  file( MAKE_DIRECTORY ${SUPERELASTIX_OUTPUT_DATA_DIR} )
+endif()
+
+if( NOT EXISTS ${SUPERELASTIX_OUTPUT_DATA_DIR} )
+  message( FATAL_ERROR "Could not create directory for output data. Make sure CMake has write permissions." )
+endif()
+
+include( CTest )
+option( BUILD_TESTING "Build SuperElastix unit tests." ON )
+
+if( ${BUILD_TESTING} )
+  mark_as_advanced( BUILD_UNIT_TESTS )
+  option( BUILD_UNIT_TESTS "Also build tests that take a long time to run." ON )
+  mark_as_advanced( BUILD_LONG_UNIT_TESTS )
+  option( BUILD_LONG_UNIT_TESTS "Also build tests that take a long time to run." OFF )
+  mark_as_advanced( BUILD_INTEGRATION_TESTS )
+  option( BUILD_INTEGRATION_TESTS "Build integration tests for applications." OFF )
   add_subdirectory( Testing )
 endif()
 
 # ---------------------------------------------------------------------
-# Build Documentation
+# Documentation
 
-mark_as_advanced( SUPERELASTIX_BUILD_DOXYGEN )
-option( SUPERELASTIX_BUILD_DOXYGEN "Enable building Doxygen documentation." OFF )
+mark_as_advanced( BUILD_DOXYGEN )
+option( BUILD_DOXYGEN "Enable building Doxygen documentation." OFF )
 
-mark_as_advanced( SUPERELASTIX_BUILD_READTHEDOCS )
-option( SUPERELASTIX_BUILD_READTHEDOCS "Enable building readthedocs.org documentation." OFF )
+mark_as_advanced( BUILD_READTHEDOCS )
+option( BUILD_READTHEDOCS "Enable building readthedocs.org documentation." OFF )
 
 # ---------------------------------------------------------------------
 # Enable other projects to use SuperElastix via CMake's find_packge() and a use-file

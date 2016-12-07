@@ -17,12 +17,22 @@
 #
 #=========================================================================
 
-list( APPEND RequiredITKModules
-  ITKReview
+set( ${APPLICATION}_TARGET_NAME SuperElastix )
+
+set( ${APPLICATION}_SOURCE_FILES
+  ${${APPLICATION}_SOURCE_DIR}/src/selxSuperElastix.cxx
 )
 
-foreach( ITKModule ${RequiredITKModules} )
-  if( NOT ${ITKModule}_LOADED )
-    message( FATAL_ERROR "elastix requires that ITK is build with ${ITKModule}. Please rebuild ITK with Module_${ITKModule} set to ON." )
-  endif()
-endforeach()
+set( ${APPLICATION}_LINK_LIBRARIES
+  ${ITK_LIBRARIES}
+  elastix transformix
+  ${Boost_LIBRARIES}
+)
+
+set( ${APPLICATION}_MODULE_DEPENDENCIES
+  ModuleCore
+)
+
+set( ${APPLICATION}_INTEGRATION_TEST_SOURCE_FILES 
+  ${${APPLICATION}_SOURCE_DIR}/test/integration.cmake
+)

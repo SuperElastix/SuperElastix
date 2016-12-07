@@ -17,19 +17,9 @@
 #
 #=========================================================================
 
-set( PROJECT GoogleBenchmark )
-set( GOOGLEBENCHMARK_REPOSITORY https://github.com/google/benchmark.git )
-set( GOOGLEBENCHMARK_TAG "v${GOOGLEBENCHMARK_VERSION_STRING")
+foreach( APPLICATION ${SUPERELASTIX_APPLICATIONS} )
+	foreach( SuperElastixIntegrationTestSourceFile ${${APPLICATION}_INTEGRATION_TEST_SOURCE_FILES} )
+	  include( ${SuperElastixIntegrationTestSourceFile} )
+	endforeach()
+endforeach()
 
-ExternalProject_Add( ${PROJECT}
-  GIT_REPOSITORY ${GOOGLEBENCHMARK_REPOSITORY}
-  GIT_TAG ${GOOGLEBENCHMARK_TAG}
-  UPDATE_COMMAND ""
-  SOURCE_DIR ${PROJECT}
-  BINARY_DIR ${prPROJECToj}-build
-  CMAKE_ARGS
-    --no-warn-unused-cli
-    -DBENCHMARK_ENABLE_TESTING:BOOL=OFF
-    -DCMAKE_SKIP_RPATH:BOOL=ON
-    -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-)
