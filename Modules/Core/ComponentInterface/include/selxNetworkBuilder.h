@@ -20,10 +20,6 @@
 #ifndef NetworkBuilder_h
 #define NetworkBuilder_h
 
-#include "itkLightProcessObject.h"
-#include "itkObjectFactory.h"
-#include "itkVectorContainer.h"
-
 #include "selxAnyFileReader.h"
 #include "selxAnyFileWriter.h"
 
@@ -37,6 +33,7 @@
 
 #include "selxMacro.h"
 #include "selxBlueprint.h"
+#include "selxNetworkContainer.h"
 #include "selxComponentFactory.h"
 #include "selxInterfaces.h"
 #include "selxInterfaceTraits.h"
@@ -47,7 +44,7 @@ namespace selx
 {
 class NetworkBuilder
 {
-  // TODO: consider renaming NetworkBuilder to NetworkBuilder (?). Its output should be a (light weight) ComponentContainer with 1 Execute button. All other data such as graphs and selectors can be deleted.
+  // TODO: Its output should be a (light weight) ComponentContainer with 1 Execute button. All other data such as graphs and selectors can be deleted.
 public:
 
   typedef Blueprint::ComponentNameType ComponentNameType;
@@ -69,8 +66,7 @@ public:
   /** if all components are uniquely selected, they can be connected */
   bool ConnectComponents();
 
-  /** Run the (registration) algorithm */
-  void Execute();
+  NetworkContainer GetRealizedNetwork();
 
   SourceInterfaceMapType GetSourceInterfaces();
 

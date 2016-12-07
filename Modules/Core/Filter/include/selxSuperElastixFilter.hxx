@@ -181,7 +181,9 @@ SuperElastixFilter< ComponentTypeList >
 {
   std::cout << "Executing Network:" << std::endl;
   // This calls controller components that take over the control flow if the itk pipeline is broken.
-  this->m_NetworkBuilder->Execute();
+
+  auto fullyConfiguredNetwork  = this->m_NetworkBuilder->GetRealizedNetwork();
+  fullyConfiguredNetwork.Execute();
 
   NetworkBuilder::SinkInterfaceMapType sinks = this->m_NetworkBuilder->GetSinkInterfaces();
   for( const auto & nameAndInterface : sinks )

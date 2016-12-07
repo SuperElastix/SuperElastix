@@ -19,9 +19,6 @@
 
 #include "selxNetworkBuilder.h"
 #include "selxKeys.h"
-
-//todo remove
-
 #include "selxSuperElastixComponent.h"
 
 namespace selx
@@ -415,27 +412,6 @@ NetworkBuilder::GetSinkInterfaces()
   return sinkInterfaceMap;
 }
 
-
-void
-NetworkBuilder::Execute()
-{
-  /** Scans all Components to find those with RegistrationControllerStart capability and call them */
-  for( auto const & componentSelector : this->m_ComponentSelectorContainer )
-  {
-    ComponentBase::Pointer component = componentSelector.second->GetComponent();
-    if( component->CountProvidingInterfaces( { { keys::NameOfInterface, keys::RegistrationControllerStartInterface } } ) == 1 )
-    {
-      RegistrationControllerStartInterface * providingInterface = dynamic_cast< RegistrationControllerStartInterface * >( component.GetPointer() );
-      if( providingInterface == nullptr )  // is actually a double-check for sanity: based on criterion cast should be successful
-      {
-        throw std::runtime_error( "dynamic_cast<RegistrationControllerStartInterface*> fails, but based on component criterion it shouldn't" );
-      }
-      providingInterface->RegistrationControllerStart();
-    }
-  }
-}
-
-
 AnyFileReader::Pointer
 NetworkBuilder::GetInputFileReader( const NetworkBuilder::ComponentNameType & inputName )
 {
@@ -479,4 +455,32 @@ NetworkBuilder::GetInitializedOutput( const NetworkBuilder::ComponentNameType & 
 
   return sinks[ outputName ]->GetInitializedOutput();
 }
+
+NetworkContainer 
+NetworkBuilder::GetRealizedNetwork()
+{
+  std::vector<ComponentBase::Pointer> components;
+  if (this->Configure())
+  {
+    
+
+    for (const auto & componentSelector : this->m_ComponentSelectorContainer)
+    {
+      ComponentBase::Pointer component = componentSelector.second->GetComponent();
+      components.push_back(component);
+    }
+
+    return NetworkContainer(components);
+  }
+  else
+  {
+    std::stringstream msg;
+    msg << "Network is not realized yet";
+    throw std::runtime_error(msg.str());
+    return NetworkContainer(components);
+  }
+
+}
+
+
 } // end namespace selx
