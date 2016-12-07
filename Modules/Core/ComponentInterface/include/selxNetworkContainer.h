@@ -21,6 +21,9 @@
 #define selxNetworkContainer_h
 
 #include "selxComponentBase.h"
+#include "itkDataObject.h"
+
+#include <map>
 #include <vector>
 #include <memory>
 
@@ -30,13 +33,24 @@ namespace selx
   {
     // a (light weight) ComponentContainer with 1 Execute button. All other data such as graphs and selectors can be deleted.
   public:
-    NetworkContainer(std::vector<ComponentBase::Pointer> components);
+
+    using ComponentContainerType = std::vector<ComponentBase::Pointer>;
+    using OutputObjectsMapType = std::map<std::string, itk::DataObject::Pointer>;
+    
+    NetworkContainer(ComponentContainerType components, OutputObjectsMapType outputObjectsMap);
     ~NetworkContainer() {}
+
+
+
     /** Run the (registration) algorithm */
     void Execute();
 
+    /** Get the Sinking output objects */
+    OutputObjectsMapType GetOutputObjectsMap();
+
   private:
-    const std::vector<ComponentBase::Pointer> m_ComponentContainer;
+    const ComponentContainerType m_ComponentContainer;
+    const OutputObjectsMapType m_OutputObjectsMap;
   };
 } // end namespace selx
 #endif // selxNetworkContainer_h

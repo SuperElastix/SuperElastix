@@ -180,18 +180,23 @@ SuperElastixFilter< ComponentTypeList >
 ::GenerateData( void )
 {
   std::cout << "Executing Network:" << std::endl;
-  // This calls controller components that take over the control flow if the itk pipeline is broken.
+  
 
   auto fullyConfiguredNetwork  = this->m_NetworkBuilder->GetRealizedNetwork();
+  // delete the networkbuilder
+  this->m_NetworkBuilder = nullptr; 
+
+  // This calls controller components that take over the control flow if the itk pipeline is broken.
   fullyConfiguredNetwork.Execute();
 
-  NetworkBuilder::SinkInterfaceMapType sinks = this->m_NetworkBuilder->GetSinkInterfaces();
-  for( const auto & nameAndInterface : sinks )
+  // Connect the itk pipeline.
+  auto outputObjectsMap = fullyConfiguredNetwork.GetOutputObjectsMap();
+  for (const auto & nameAndObject : outputObjectsMap)
   {
     // Here we force all output to be updated.
     // TODO: it might be desirable to leave parts of the mini pipeline 'outdated' for memory/speed reasons and only update if requested downsteam.
-    nameAndInterface.second->GetMiniPipelineOutput()->Update();
-    this->GetOutput( nameAndInterface.first )->Graft( nameAndInterface.second->GetMiniPipelineOutput() );
+    nameAndObject.second->Update();
+    this->GetOutput(nameAndObject.first)->Graft(nameAndObject.second);
   }
 }
 

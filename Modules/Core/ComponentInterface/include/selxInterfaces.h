@@ -20,9 +20,43 @@
 #ifndef selxInterfaces_h
 #define selxInterfaces_h
 
+#include "itkDataObject.h"
+#include "selxAnyFileReader.h"
+#include "selxAnyFileWriter.h"
+
 namespace selx
 {
 // Define the providing interfaces abstractly
+
+  class SourceInterface
+  {
+    // A special interface: the Overlord checks components for this type of interface.
+    // By this interface only Source Components can to talk to the Overlord.
+    // How specific Source Components connect to the graph is up to them, i.e. they might adapt the passed Object to other types.
+
+  public:
+
+    virtual void SetMiniPipelineInput(itk::DataObject::Pointer) = 0;
+    virtual AnyFileReader::Pointer GetInputFileReader(void) = 0;
+  };
+
+  class SinkInterface
+  {
+    // A special interface: the Overlord checks components for this type of interface.
+    // By this interface only Sink Components can to talk to the Overlord
+    // How specific Sink Components connect to the graph is up to them, i.e. they might adapt the passed Object to other types.
+
+  public:
+
+    typedef itk::DataObject::Pointer DataObjectPointer;
+    virtual void SetMiniPipelineOutput(DataObjectPointer) = 0;
+    virtual DataObjectPointer GetMiniPipelineOutput(void) = 0;
+
+    virtual AnyFileWriter::Pointer GetOutputFileWriter(void) = 0;
+
+    virtual DataObjectPointer GetInitializedOutput(void) = 0;
+  };
+
 
 class RegistrationControllerStartInterface
 {

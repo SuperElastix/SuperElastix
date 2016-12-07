@@ -459,25 +459,39 @@ NetworkBuilder::GetInitializedOutput( const NetworkBuilder::ComponentNameType & 
 NetworkContainer 
 NetworkBuilder::GetRealizedNetwork()
 {
+  // vector that stores all components
   std::vector<ComponentBase::Pointer> components;
+
+  std::map<std::string, itk::DataObject::Pointer> outputObjectsMap;
+
   if (this->Configure())
   {
-    
-
     for (const auto & componentSelector : this->m_ComponentSelectorContainer)
     {
+      //store all components
       ComponentBase::Pointer component = componentSelector.second->GetComponent();
       components.push_back(component);
-    }
 
-    return NetworkContainer(components);
+      /** Scans all Components to find those with Sinking capability and store the outputs in outputObjectsMap */      
+        if (component->CountProvidingInterfaces({ { keys::NameOfInterface, keys::SinkInterface } }) == 1)
+        {
+          SinkInterface * provingSinkInterface = dynamic_cast<SinkInterface *>(component.GetPointer());
+          if (provingSinkInterface == nullptr)  // is actually a double-check for sanity: based on criterion cast should be successful
+          {
+            throw std::runtime_error("dynamic_cast<SinkInterface*> fails, but based on component criterion it shouldn't");
+          }
+          outputObjectsMap[componentSelector.first] = provingSinkInterface->GetMiniPipelineOutput();
+        }
+      }
+
+    return NetworkContainer(components, outputObjectsMap );
   }
   else
   {
     std::stringstream msg;
     msg << "Network is not realized yet";
     throw std::runtime_error(msg.str());
-    return NetworkContainer(components);
+    return NetworkContainer(components, outputObjectsMap);
   }
 
 }

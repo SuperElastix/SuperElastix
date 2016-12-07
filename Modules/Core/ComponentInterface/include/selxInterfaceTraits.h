@@ -54,6 +54,24 @@ struct Properties< InterfaceAcceptor< InterfaceType >>
 // The specializations for each type of Interface supported by the toolbox
 
 template< >
+struct Properties< SourceInterface >
+{
+  static const std::map< std::string, std::string > Get()
+  {
+    return{ { keys::NameOfInterface, "SourceInterface" } };
+  }
+};
+
+template< >
+struct Properties< SinkInterface >
+{
+  static const std::map< std::string, std::string > Get()
+  {
+    return{ { keys::NameOfInterface, "SinkInterface" } };
+  }
+};
+
+template< >
 struct Properties< RegistrationControllerStartInterface >
 {
   static const std::map< std::string, std::string > Get()
