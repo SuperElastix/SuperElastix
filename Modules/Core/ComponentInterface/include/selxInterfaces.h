@@ -26,7 +26,7 @@ namespace selx
 
 class RegistrationControllerStartInterface
 {
-  // A special interface: the Overlord checks components for this type of interface.
+  // A special interface: the NetworkBuilder checks components for this type of interface.
   // This interface is to control the execution of the network
 
 public:

@@ -74,7 +74,7 @@ public:
 private:
 
   typename DeformationFieldImageType::Pointer m_MiniPipelineOutputImage;
-  typename DeformationFieldImageType::Pointer m_OverlordOutputImage;
+  typename DeformationFieldImageType::Pointer m_NetworkBuilderOutputImage;
 
 protected:
 

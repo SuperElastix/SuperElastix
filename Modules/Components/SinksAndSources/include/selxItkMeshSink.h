@@ -70,7 +70,7 @@ public:
 private:
 
   typename ItkMeshType::Pointer m_MiniPipelineOutputMesh;
-  typename ItkMeshType::Pointer m_OverlordOutputMesh;
+  typename ItkMeshType::Pointer m_NetworkBuilderOutputMesh;
 
   itkMeshInterface< Dimensionality, TPixel > * m_ProvidingGetItkMeshInterface;
 

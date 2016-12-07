@@ -17,8 +17,8 @@
  *
  *=========================================================================*/
 
-#ifndef Overlord_h
-#define Overlord_h
+#ifndef NetworkBuilder_h
+#define NetworkBuilder_h
 
 #include "itkLightProcessObject.h"
 #include "itkObjectFactory.h"
@@ -45,9 +45,9 @@
 
 namespace selx
 {
-class Overlord
+class NetworkBuilder
 {
-  // TODO: consider renaming Overlord to NetworkBuilder (?). Its output should be a (light weight) ComponentContainer with 1 Execute button. All other data such as graphs and selectors can be deleted.
+  // TODO: consider renaming NetworkBuilder to NetworkBuilder (?). Its output should be a (light weight) ComponentContainer with 1 Execute button. All other data such as graphs and selectors can be deleted.
 public:
 
   typedef Blueprint::ComponentNameType ComponentNameType;
@@ -59,9 +59,9 @@ public:
   typedef std::map<
     std::string, RegistrationControllerStartInterface * > RegistrationControllerStartInterfaceMapType;
 
-  Overlord( std::shared_ptr< Blueprint > blueprint );
-  Overlord( Blueprint * blueprint );
-  ~Overlord() {}
+  NetworkBuilder( std::shared_ptr< Blueprint > blueprint );
+  NetworkBuilder( Blueprint * blueprint );
+  ~NetworkBuilder() {}
 
   /** Read configuration at the blueprints nodes and edges and return true if all components could be uniquely selected*/
   bool Configure();
@@ -80,7 +80,7 @@ public:
 
   AnyFileWriter::Pointer GetOutputFileWriter( const ComponentNameType & );
 
-  SinkInterface::DataObjectPointer GetInitializedOutput( const Overlord::ComponentNameType & );
+  SinkInterface::DataObjectPointer GetInitializedOutput( const NetworkBuilder::ComponentNameType & );
 
 protected:
 
@@ -109,7 +109,7 @@ private:
   ComponentNamesType GetNonUniqueComponentNames();
 
   //TODO make const correct
-  //Overlord should be constructed with a blueprint.
+  //NetworkBuilder should be constructed with a blueprint.
   //Blueprint::ConstPointer m_Blueprint;
   //Blueprint const * m_Blueprint;
   std::shared_ptr< const Blueprint > m_Blueprint;
@@ -120,4 +120,4 @@ private:
 };
 } // end namespace selx
 
-#endif // Overlord_h
+#endif // NetworkBuilder_h

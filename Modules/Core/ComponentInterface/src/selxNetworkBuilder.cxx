@@ -17,7 +17,7 @@
  *
  *=========================================================================*/
 
-#include "selxOverlord.h"
+#include "selxNetworkBuilder.h"
 #include "selxKeys.h"
 
 //todo remove
@@ -26,16 +26,16 @@
 
 namespace selx
 {
-Overlord::Overlord( std::shared_ptr< Blueprint > blueprint ) : m_Blueprint( blueprint ), m_isConfigured(false )
+NetworkBuilder::NetworkBuilder( std::shared_ptr< Blueprint > blueprint ) : m_Blueprint( blueprint ), m_isConfigured(false )
 {
 }
 
-Overlord::Overlord( Blueprint * blueprint ) : m_Blueprint( blueprint ), m_isConfigured( false )
+NetworkBuilder::NetworkBuilder( Blueprint * blueprint ) : m_Blueprint( blueprint ), m_isConfigured( false )
 {
 }
 
 bool
-Overlord::Configure()
+NetworkBuilder::Configure()
 {
   // Instantiates all the components as described in the blueprint. Returns true
   // if all components could be uniquely selected.
@@ -95,8 +95,8 @@ Overlord::Configure()
 }
 
 
-Overlord::ComponentNamesType
-Overlord::GetNonUniqueComponentNames()
+NetworkBuilder::ComponentNamesType
+NetworkBuilder::GetNonUniqueComponentNames()
 {
   ComponentNamesType                  nonUniqueComponentNames;
   const Blueprint::ComponentNamesType componentNames = m_Blueprint->GetComponentNames();
@@ -118,12 +118,12 @@ Overlord::GetNonUniqueComponentNames()
 
 
 void
-Overlord::ApplyComponentConfiguration()
+NetworkBuilder::ApplyComponentConfiguration()
 {
   // Creates a ComponentSelector for each node of the graph and apply
   // the criteria/properties at each node to narrow the Component selection.
 
-  // At the overlord we store all components selectors in a mapping based
+  // At the NetworkBuilder we store all components selectors in a mapping based
   // on the keys we find in the graph. This is a flexible solution, but is
   // fragile as well since correspondence is implicit.
   // We might consider copying the blueprint graph to a component selector
@@ -184,7 +184,7 @@ Overlord::ApplyComponentConfiguration()
 
 
 void
-Overlord::ApplyConnectionConfiguration()
+NetworkBuilder::ApplyConnectionConfiguration()
 {
   // Read the criteria/properties at each Connection and narrow the selection of
   // components.
@@ -244,7 +244,7 @@ Overlord::ApplyConnectionConfiguration()
 
 
 void
-Overlord::PropagateConnectionsWithUniqueComponents()
+NetworkBuilder::PropagateConnectionsWithUniqueComponents()
 {
   // Narrow down the selection of non-uniquely selected components by finding all
   // connections to a component that is uniquely selected and verifying the matching interface types.
@@ -326,7 +326,7 @@ Overlord::PropagateConnectionsWithUniqueComponents()
 }
 
 bool
-Overlord::ConnectComponents()
+NetworkBuilder::ConnectComponents()
 {
   bool isAllSuccess = true;
 
@@ -336,7 +336,7 @@ Overlord::ConnectComponents()
     for( auto const & outgoingName : this->m_Blueprint->GetOutputNames( name ) )
     {
       //TODO check direction upstream/downstream input/output source/target
-      //TODO GetComponent returns NULL if possible components !=1 we can check for that, but Overlord::UpdateSelectors() does something similar.
+      //TODO GetComponent returns NULL if possible components !=1 we can check for that, but NetworkBuilder::UpdateSelectors() does something similar.
       ComponentBase::Pointer sourceComponent = this->m_ComponentSelectorContainer[ name ]->GetComponent();
       ComponentBase::Pointer targetComponent = this->m_ComponentSelectorContainer[ outgoingName ]->GetComponent();
 
@@ -369,8 +369,8 @@ Overlord::ConnectComponents()
 }
 
 
-Overlord::SourceInterfaceMapType
-Overlord::GetSourceInterfaces()
+NetworkBuilder::SourceInterfaceMapType
+NetworkBuilder::GetSourceInterfaces()
 {
   /** Scans all Components to find those with Sourcing capability and store them in SourceComponents list */
 
@@ -393,8 +393,8 @@ Overlord::GetSourceInterfaces()
 }
 
 
-Overlord::SinkInterfaceMapType
-Overlord::GetSinkInterfaces()
+NetworkBuilder::SinkInterfaceMapType
+NetworkBuilder::GetSinkInterfaces()
 {
   /** Scans all Components to find those with Sinking capability and store them in SinkComponents list */
 
@@ -417,7 +417,7 @@ Overlord::GetSinkInterfaces()
 
 
 void
-Overlord::Execute()
+NetworkBuilder::Execute()
 {
   /** Scans all Components to find those with RegistrationControllerStart capability and call them */
   for( auto const & componentSelector : this->m_ComponentSelectorContainer )
@@ -437,7 +437,7 @@ Overlord::Execute()
 
 
 AnyFileReader::Pointer
-Overlord::GetInputFileReader( const Overlord::ComponentNameType & inputName )
+NetworkBuilder::GetInputFileReader( const NetworkBuilder::ComponentNameType & inputName )
 {
   SourceInterfaceMapType sources = this->GetSourceInterfaces();
   if( sources.count( inputName ) != 1 )
@@ -452,7 +452,7 @@ Overlord::GetInputFileReader( const Overlord::ComponentNameType & inputName )
 
 
 AnyFileWriter::Pointer
-Overlord::GetOutputFileWriter( const Overlord::ComponentNameType & outputName )
+NetworkBuilder::GetOutputFileWriter( const NetworkBuilder::ComponentNameType & outputName )
 {
   SinkInterfaceMapType sinks = this->GetSinkInterfaces();
   if( sinks.count( outputName ) != 1 )
@@ -467,7 +467,7 @@ Overlord::GetOutputFileWriter( const Overlord::ComponentNameType & outputName )
 
 
 SinkInterface::DataObjectPointer
-Overlord::GetInitializedOutput( const Overlord::ComponentNameType & outputName )
+NetworkBuilder::GetInitializedOutput( const NetworkBuilder::ComponentNameType & outputName )
 {
   SinkInterfaceMapType sinks = this->GetSinkInterfaces();
   if( sinks.count( outputName ) != 1 )

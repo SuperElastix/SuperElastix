@@ -17,7 +17,7 @@
  *
  *=========================================================================*/
 
-#include "selxOverlord.h"
+#include "selxNetworkBuilder.h"
 
 //#include "ComponentFactory.h"
 #include "selxTransformComponent1.h"
@@ -35,11 +35,11 @@
 
 namespace selx
 {
-class OverlordTest : public ::testing::Test
+class NetworkBuilderTest : public ::testing::Test
 {
 public:
 
-  typedef std::unique_ptr< Overlord >         OverlordPointer;
+  typedef std::unique_ptr< NetworkBuilder >         NetworkBuilderPointer;
   typedef std::shared_ptr< Blueprint >        BlueprintPointer;
   typedef Blueprint::ParameterMapType         ParameterMapType;
   typedef Blueprint::ParameterValueType       ParameterValueType;
@@ -81,27 +81,27 @@ public:
   BlueprintPointer blueprint;
 };
 
-TEST_F( OverlordTest, Create )
+TEST_F( NetworkBuilderTest, Create )
 {
-  OverlordPointer overlord = OverlordPointer( new Overlord( new Blueprint() ) );
+  NetworkBuilderPointer networkBuilder = NetworkBuilderPointer( new NetworkBuilder( new Blueprint() ) );
 }
 
-TEST_F( OverlordTest, Configure )
+TEST_F( NetworkBuilderTest, Configure )
 {
-  OverlordPointer overlord = OverlordPointer( new Overlord( blueprint ) );
+  NetworkBuilderPointer networkBuilder = NetworkBuilderPointer( new NetworkBuilder( blueprint ) );
   bool allUniqueComponents;
-  EXPECT_NO_THROW( allUniqueComponents = overlord->Configure() );
+  EXPECT_NO_THROW( allUniqueComponents = networkBuilder->Configure() );
   EXPECT_TRUE( allUniqueComponents );
 }
 
-TEST_F( OverlordTest, Connect )
+TEST_F( NetworkBuilderTest, Connect )
 {
-  std::unique_ptr< Overlord > overlord( new Overlord( blueprint ) );
-  EXPECT_NO_THROW( bool allUniqueComponents = overlord->Configure() );
+  std::unique_ptr< NetworkBuilder > networkBuilder( new NetworkBuilder( blueprint ) );
+  EXPECT_NO_THROW( bool allUniqueComponents = networkBuilder->Configure() );
   bool success;
-  EXPECT_NO_THROW( success = overlord->ConnectComponents() );
+  EXPECT_NO_THROW(success = networkBuilder->ConnectComponents());
 }
-TEST_F( OverlordTest, DeduceComponentsFromConnections )
+TEST_F( NetworkBuilderTest, DeduceComponentsFromConnections )
 {
   using CustomRegisterComponents = TypeList<
     DisplacementFieldItkImageFilterSinkComponent< 3, double >,
@@ -217,9 +217,9 @@ TEST_F( OverlordTest, DeduceComponentsFromConnections )
   blueprint->SetConnection( "ResampleFilter", "Controller", { {} } );              //ReconnectTransformInterface
   blueprint->SetConnection( "TransformDisplacementFilter", "Controller", { {} } ); //ReconnectTransformInterface
 
-  std::unique_ptr< Overlord > overlord( new Overlord( blueprint ) );
+  std::unique_ptr< NetworkBuilder > networkBuilder(new NetworkBuilder(blueprint));
   bool allUniqueComponents;
-  EXPECT_NO_THROW( allUniqueComponents = overlord->Configure() );
+  EXPECT_NO_THROW(allUniqueComponents = networkBuilder->Configure());
   EXPECT_TRUE( allUniqueComponents );
 }
 } // namespace selx

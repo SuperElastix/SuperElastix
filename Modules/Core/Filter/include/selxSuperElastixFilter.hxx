@@ -59,7 +59,7 @@ SuperElastixFilter< ComponentTypeList >
   * therefore the output information must come from the sink components.
   */
 
-  // TODO this method should be revised together with overlord->Configure(). A functionality
+  // TODO this method should be revised together with NetworkBuilder->Configure(). A functionality
   // is foreseen in which the user may provide a minimalistic configuration (blueprint) and in
   // which other criteria to select a component are derived from neighboring components.
   // E.g. we could implement source nodes that provides ImageReaders of multiple dimensions.
@@ -69,15 +69,15 @@ SuperElastixFilter< ComponentTypeList >
   // are passed further down stream.
   // Eventually configuration boils down to a while loop that repeatedly tries to narrow down
   // the component selectors until no more unique components can be found.
-  if (!this->m_Overlord)
+  if (!this->m_NetworkBuilder)
   {
     if (!this->m_Blueprint)
     {
       itkExceptionMacro(<< "Setting a Blueprint is required first.")
     }
 
-    this->m_Overlord = OverlordPointer(new Overlord(this->m_Blueprint->Get()));
-    this->m_AllUniqueComponents = this->m_Overlord->Configure();
+    this->m_NetworkBuilder = NetworkBuilderPointer(new NetworkBuilder(this->m_Blueprint->Get()));
+    this->m_AllUniqueComponents = this->m_NetworkBuilder->Configure();
   }
   else if (this->m_BlueprintConnectionModified == true)
   {
@@ -87,7 +87,7 @@ SuperElastixFilter< ComponentTypeList >
   if( ( m_InputConnectionModified == true ) || ( this->m_BlueprintConnectionModified == true ) )
   {
     auto                             usedInputs = this->GetInputNames();
-    Overlord::SourceInterfaceMapType sources    = this->m_Overlord->GetSourceInterfaces();
+    NetworkBuilder::SourceInterfaceMapType sources    = this->m_NetworkBuilder->GetSourceInterfaces();
     for( const auto & nameAndInterface : sources )
     {
       auto foundIndex = std::find( usedInputs.begin(), usedInputs.end(), nameAndInterface.first );
@@ -116,7 +116,7 @@ SuperElastixFilter< ComponentTypeList >
   if( ( m_OutputConnectionModified == true ) || ( this->m_BlueprintConnectionModified == true ) )
   {
     auto                           usedOutputs = this->GetOutputNames();
-    Overlord::SinkInterfaceMapType sinks       = this->m_Overlord->GetSinkInterfaces();
+    NetworkBuilder::SinkInterfaceMapType sinks       = this->m_NetworkBuilder->GetSinkInterfaces();
     for( const auto & nameAndInterface : sinks )
     {
       auto foundIndex = std::find( usedOutputs.begin(), usedOutputs.end(), nameAndInterface.first );
@@ -143,18 +143,18 @@ SuperElastixFilter< ComponentTypeList >
 
   if (this->m_AllUniqueComponents == false) // by setting inputs and outputs, settings could be derived to uniquely select the other components
   {
-    this->m_AllUniqueComponents = this->m_Overlord->Configure();
+    this->m_AllUniqueComponents = this->m_NetworkBuilder->Configure();
   }
 
   if (this->m_AllUniqueComponents  && !this->m_IsConnected)
   {
-    this->m_IsConnected = this->m_Overlord->ConnectComponents();
+    this->m_IsConnected = this->m_NetworkBuilder->ConnectComponents();
     std::cout << "Connecting Components: " << (this->m_IsConnected ? "succeeded" : "failed") << std::endl << std::endl;
   }
 
   if( ( m_OutputConnectionModified == true ) || ( this->m_BlueprintConnectionModified == true ) )
   {
-    Overlord::SinkInterfaceMapType sinks = this->m_Overlord->GetSinkInterfaces();
+    NetworkBuilder::SinkInterfaceMapType sinks = this->m_NetworkBuilder->GetSinkInterfaces();
     for( const auto & nameAndInterface : sinks )
     {
       // Update information: ask the mini pipeline what the size of the data will be
@@ -181,9 +181,9 @@ SuperElastixFilter< ComponentTypeList >
 {
   std::cout << "Executing Network:" << std::endl;
   // This calls controller components that take over the control flow if the itk pipeline is broken.
-  this->m_Overlord->Execute();
+  this->m_NetworkBuilder->Execute();
 
-  Overlord::SinkInterfaceMapType sinks = this->m_Overlord->GetSinkInterfaces();
+  NetworkBuilder::SinkInterfaceMapType sinks = this->m_NetworkBuilder->GetSinkInterfaces();
   for( const auto & nameAndInterface : sinks )
   {
     // Here we force all output to be updated.
@@ -199,22 +199,22 @@ typename SuperElastixFilter< ComponentTypeList >::AnyFileReaderType::Pointer
 SuperElastixFilter< ComponentTypeList >
 ::GetInputFileReader(const DataObjectIdentifierType & inputName)
 {
-  //TODO: Before we can get the reader the Blueprint needs to set and applied in the overlord.
+  //TODO: Before we can get the reader the Blueprint needs to set and applied in the NetworkBuilder.
   // This is not like the itk pipeline philosophy
-  if (!this->m_Overlord)
+  if (!this->m_NetworkBuilder)
   {
     if (!this->m_Blueprint)
     {
       itkExceptionMacro(<< "Setting a Blueprint is required first.")
     }
-    this->m_Overlord = OverlordPointer(new Overlord(this->m_Blueprint->Get()));
-    this->m_AllUniqueComponents = this->m_Overlord->Configure();
+    this->m_NetworkBuilder = NetworkBuilderPointer(new NetworkBuilder(this->m_Blueprint->Get()));
+    this->m_AllUniqueComponents = this->m_NetworkBuilder->Configure();
   }
   if (!this->m_AllUniqueComponents)
   {
     itkExceptionMacro(<< "Blueprint was not sufficiently specified to build a network.")
   }
-  return this->m_Overlord->GetInputFileReader( inputName );
+  return this->m_NetworkBuilder->GetInputFileReader( inputName );
 }
 
 
@@ -223,24 +223,24 @@ typename SuperElastixFilter< ComponentTypeList >::AnyFileWriterType::Pointer
 SuperElastixFilter< ComponentTypeList >
 ::GetOutputFileWriter( const DataObjectIdentifierType & outputName )
 {
-  //TODO: Before we can get the reader the Blueprint needs to set and applied in the overlord.
+  //TODO: Before we can get the reader the Blueprint needs to set and applied in the NetworkBuilder.
   // This is not like the itk pipeline philosophy
-  if (!this->m_Overlord)
+  if (!this->m_NetworkBuilder)
   {
     if (!this->m_Blueprint)
     {
       itkExceptionMacro(<< "Setting a Blueprint is required first.")
     }
 
-    this->m_Overlord = OverlordPointer(new Overlord(this->m_Blueprint->Get()));
-    this->m_AllUniqueComponents = this->m_Overlord->Configure();
+    this->m_NetworkBuilder = NetworkBuilderPointer(new NetworkBuilder(this->m_Blueprint->Get()));
+    this->m_AllUniqueComponents = this->m_NetworkBuilder->Configure();
   }
   if (!this->m_AllUniqueComponents)
   {
     itkExceptionMacro(<< "Blueprint was not sufficiently specified to build a network.")
   }
 
-  return this->m_Overlord->GetOutputFileWriter( outputName );
+  return this->m_NetworkBuilder->GetOutputFileWriter( outputName );
 }
 
 
@@ -266,18 +266,18 @@ typename SuperElastixFilter< ComponentTypeList >::OutputDataType
   }
   else  // otherwise ask the sink component to initialize an output of the right type (the sink knows what type that is).
   {
-    if (!this->m_Overlord)
+    if (!this->m_NetworkBuilder)
     {
       if (!this->m_Blueprint) // to ask the sink it must be configured by a blueprint.
       {
         itkExceptionMacro(<< "Setting a Blueprint is required first.")
       }
 
-      this->m_Overlord = OverlordPointer(new Overlord(this->m_Blueprint->Get()));
-      this->m_AllUniqueComponents = this->m_Overlord->Configure();
+      this->m_NetworkBuilder = NetworkBuilderPointer(new NetworkBuilder(this->m_Blueprint->Get()));
+      this->m_AllUniqueComponents = this->m_NetworkBuilder->Configure();
       this->m_BlueprintConnectionModified = false;
     }
-    typename OutputDataType::Pointer newOutput = this->m_Overlord->GetInitializedOutput( outputName );
+    typename OutputDataType::Pointer newOutput = this->m_NetworkBuilder->GetInitializedOutput( outputName );
     this->m_OutputConnectionModified           = true;
 
     Superclass::SetOutput( outputName, newOutput );

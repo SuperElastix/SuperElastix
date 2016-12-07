@@ -59,7 +59,7 @@ public:
   }
 
 
-  // each node can hold multiple components (or none). Its the overlord's task to make it one per node.
+  // each node can hold multiple components (or none). Its the NetworkBuilder's task to make it one per node.
   NodePointer Node1;
   NodePointer Node2;
 };
@@ -75,7 +75,7 @@ TEST_F( ComponentFactoryTest, EmptyObjectFactoryBase )
 
   // "When CMake is not used to register the Component classes, there are"
   EXPECT_NO_THROW( registeredComponents = itk::ObjectFactoryBase::CreateAllInstance( "ComponentBase" ) );
-  // " 0 Component objects available to the Overlord."
+  // " 0 Component objects available to the NetworkBuilder."
   EXPECT_EQ( registeredComponents.size(), 0 );
 }
 
@@ -91,7 +91,7 @@ TEST_F( ComponentFactoryTest, FilledObjectFactoryBase )
 
   // After registering the TransformComponent1 and MetricComponent1object, there are
   EXPECT_NO_THROW( registeredComponents = itk::ObjectFactoryBase::CreateAllInstance( "ComponentBase" ) );
-  // " 2 Component objects available to the Overlord."
+  // " 2 Component objects available to the NetworkBuilder."
   EXPECT_EQ( registeredComponents.size(), 2 );
 }
 
@@ -169,7 +169,7 @@ TEST_F( ComponentFactoryTest, InterfacedObjects )
   EXPECT_NO_THROW( ComponentFactory< SSDMetric4thPartyComponent >::RegisterOneFactory() );
 
   EXPECT_NO_THROW( registeredComponents = itk::ObjectFactoryBase::CreateAllInstance( "ComponentBase" ) );
-  // " 6 Component objects available to the Overlord."
+  // " 6 Component objects available to the NetworkBuilder."
   EXPECT_EQ( registeredComponents.size(), 6 );
 
   NodePointer Node3 = ComponentSelector::New();

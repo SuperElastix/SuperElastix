@@ -71,7 +71,7 @@ public:
 private:
 
   typename ItkImageType::Pointer m_MiniPipelineOutputImage;
-  typename ItkImageType::Pointer m_OverlordOutputImage;
+  typename ItkImageType::Pointer m_NetworkBuilderOutputImage;
 
 protected:
 
