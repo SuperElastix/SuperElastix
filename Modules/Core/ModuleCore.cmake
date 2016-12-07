@@ -61,4 +61,5 @@ set( ${MODULE}_MODULE_DEPENDENCIES
   ModuleItkImageRegistrationMethodv4
   ModuleItkSmoothingRecursiveGaussianImageFilter
   ModuleSinksAndSources
+  ModuleNiftyreg
 )
