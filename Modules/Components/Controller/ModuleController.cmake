@@ -22,7 +22,6 @@ set( ${MODULE}_INCLUDE_DIRS
 )
 
 set( ${MODULE}_SOURCE_FILES
-  ${${MODULE}_SOURCE_DIR}/src/selxRegistrationController.cxx 
 )
 
 set( ${MODULE}_LIBRARIES 
