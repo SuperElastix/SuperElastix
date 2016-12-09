@@ -43,9 +43,6 @@ set( ${MODULE}_INCLUDE_DIRS
 )
 
 set( ${MODULE}_SOURCE_FILES
-  ${${MODULE}_SOURCE_DIR}/src/selxElastixComponent.cxx 
-  ${${MODULE}_SOURCE_DIR}/src/selxMonolithicElastix.cxx 
-  ${${MODULE}_SOURCE_DIR}/src/selxMonolithicTransformix.cxx 
 )
 
 set( ${MODULE}_TEST_SOURCE_FILES 

@@ -95,6 +95,8 @@ macro( _selxmodule_enable MODULE UPSTREAM )
     
     add_library( ${MODULE} "${${MODULE}_HEADER_FILES}" "${${MODULE}_SOURCE_FILES}" )
 
+    set_target_properties(${MODULE} PROPERTIES LINKER_LANGUAGE CXX)
+    
     if( ${MODULE}_INCLUDE_DIRS )
       _selxmodule_include_directory( ${MODULE} ${MODULE} )
     endif()
