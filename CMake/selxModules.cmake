@@ -78,7 +78,7 @@ macro( _selxmodules_initialize )
 	
 	# scan for interface header files
 	if(EXISTS "${CMAKE_SOURCE_DIR}/${${MODULE}_PATH}/interfaces/")
-	  message(STATUS "Found ${CMAKE_SOURCE_DIR}/${${MODULE}_PATH}/interfaces")
+	  message(STATUS "   Including: ${CMAKE_SOURCE_DIR}/${${MODULE}_PATH}/interfaces")
 	  list( APPEND SUPERELASTIX_INTERFACE_DIRS "${CMAKE_SOURCE_DIR}/${${MODULE}_PATH}/interfaces" )
 	endif()
   endforeach()
