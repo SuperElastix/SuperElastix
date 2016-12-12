@@ -37,7 +37,6 @@
 #include "selxComponentFactory.h"
 #include "selxInterfaces.h"
 #include "selxInterfaceTraits.h"
-#include "selxItkObjectInterfaces.h"
 
 namespace selx
 {
