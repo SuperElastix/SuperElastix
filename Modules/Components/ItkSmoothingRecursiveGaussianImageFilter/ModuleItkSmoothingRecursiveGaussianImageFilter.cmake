@@ -21,15 +21,15 @@ set( ${MODULE}_INCLUDE_DIRS
   ${${MODULE}_SOURCE_DIR}/include
 )
 
+# This module is header-only and does not contain any source files
 set( ${MODULE}_SOURCE_FILES
+)
+
+# This module is header-only and does not export any libraries
+set( ${MODULE}_LIBRARIES 
 )
 
 set( ${MODULE}_TEST_SOURCE_FILES
   selxitkImageFilterTest.cxx
 )
-
-set( ${MODULE}_LIBRARIES 
-  ${MODULE}
-)
-
 

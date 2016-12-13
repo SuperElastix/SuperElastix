@@ -89,6 +89,8 @@ macro( _selxapplication_enable APPLICATION UPSTREAM )
 
     add_executable( ${${APPLICATION}_TARGET_NAME} "${${APPLICATION}_HEADER_FILES}" "${${APPLICATION}_SOURCE_FILES}" )
  
+    _selxmodule_include_directories( ${${APPLICATION}_TARGET_NAME} ${SUPERELASTIX_INTERFACE_DIRS} )
+
     if( ${APPLICATION}_INCLUDE_DIRS )
       _selxmodule_include_directories( ${${APPLICATION}_TARGET_NAME} ${APPLICATION} )
     endif()
@@ -114,7 +116,9 @@ macro( _selxapplication_disable APPLICATION )
 endmacro()
  
 macro( _selxapplication_link_libraries TARGET LIBRARIES )
-  target_link_libraries( ${${TARGET}} ${${LIBRARIES}} )
+  foreach( LIBRARY ${${LIBRARIES}} )
+    target_link_libraries( ${${TARGET}} ${LIBRARY} )
+  endforeach()
 endmacro()
 
 macro( add_integration_test )

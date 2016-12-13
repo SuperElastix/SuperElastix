@@ -32,7 +32,7 @@ endif()
 
 if( NOT EXISTS ${ELASTIX_USE_FILE} )
   set( ELASTIX_DIR "" CACHE PATH "Path to elastix build folder" )
-  message(FATAL_ERROR "Could not find UseElastix.cmake. Point ELASTIX_DIR to folder containing UseElastix.cmake or use SuperBuild.")
+  message( FATAL_ERROR "Could not find UseElastix.cmake. Point ELASTIX_DIR to folder containing UseElastix.cmake or use SuperBuild." )
 endif()
 
 # TODO: Add include and link directories manually to avoid elastix polluting CMake environment
@@ -50,7 +50,6 @@ set( ${MODULE}_TEST_SOURCE_FILES
 )
 
 set( ${MODULE}_LIBRARIES 
-  ${MODULE}
   elastix
   transformix
 )

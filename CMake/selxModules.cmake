@@ -55,16 +55,21 @@ macro( _selxmodules_initialize )
     
     message( STATUS "  ${MODULE}" )
 
-    option( "USE_${MODULE}" OFF )
-    set( "${MODULE}_CMAKE_FILE" ${CMAKE_SOURCE_DIR}/${MODULE_CMAKE_FILE} )
-    set( "${MODULE}_IS_ENABLED" FALSE )
+    option( USE_${MODULE} OFF )
+    set( ${MODULE}_IS_ENABLED FALSE )
 
+    set( ${MODULE}_CMAKE_FILE ${CMAKE_SOURCE_DIR}/${MODULE_CMAKE_FILE} )
     set( ${MODULE}_SOURCE_DIR ${CMAKE_SOURCE_DIR}/${${MODULE}_PATH} )
     set( ${MODULE}_BINARY_DIR ${CMAKE_BINARY_DIR}/${${MODULE}_PATH} )
 
+    # Find interface header files
+    if( EXISTS "${CMAKE_SOURCE_DIR}/${${MODULE}_PATH}/interfaces/" )
+      list( APPEND SUPERELASTIX_INTERFACE_DIRS "${CMAKE_SOURCE_DIR}/${${MODULE}_PATH}/interfaces" )
+    endif()
+
     # Collect header files for Visual Studio 
     # http://stackoverflow.com/questions/8316104/specify-how-cmake-creates-visual-studio-project
-    file( GLOB ${MODULE}_HEADER_FILES "${${MODULE}_SOURCE_DIR}/*/include/*.*")
+    file( GLOB ${MODULE}_HEADER_FILES "${${MODULE}_SOURCE_DIR}/*/include/*.*" )
 
     # These variables are defined in the module's .cmake file
     set( ${MODULE}_INCLUDE_DIRS )
@@ -75,12 +80,7 @@ macro( _selxmodules_initialize )
     set( ${MODULE}_LIBRARIES )
 
     list( APPEND SUPERELASTIX_MODULES ${MODULE} )
-	
-	# scan for interface header files
-	if(EXISTS "${CMAKE_SOURCE_DIR}/${${MODULE}_PATH}/interfaces/")
-	  message(STATUS "   Including: ${CMAKE_SOURCE_DIR}/${${MODULE}_PATH}/interfaces")
-	  list( APPEND SUPERELASTIX_INTERFACE_DIRS "${CMAKE_SOURCE_DIR}/${${MODULE}_PATH}/interfaces" )
-	endif()
+
   endforeach()
 endmacro()
 
@@ -92,31 +92,45 @@ macro( _selxmodule_enable MODULE UPSTREAM )
   if( NOT ${MODULE}_IS_ENABLED )    
     set( ${MODULE}_IS_ENABLED TRUE )
     include( ${${MODULE}_CMAKE_FILE} )
-    
-    add_library( ${MODULE} "${${MODULE}_HEADER_FILES}" "${${MODULE}_SOURCE_FILES}" )
 
-    set_target_properties(${MODULE} PROPERTIES LINKER_LANGUAGE CXX)
-    
-    if( ${MODULE}_INCLUDE_DIRS )
-      _selxmodule_include_directory( ${MODULE} ${MODULE} )
+    # Header-only modules should not be compiled
+    if( ${MODULE}_SOURCE_FILES )
+      # Check if user accidentally tries to compile header-only library
+      if( ${MODULE}_LIBRARIES )
+        list( FIND "${MODULE}" ${MODULE}_LIBRARIES _index )
+        if( _index GREATER -1 AND NOT ${MODULE}_SOURCE_FILES )
+          message( FATAL_ERROR "Compilation of header-only module ${MODULE} requested. Remove ${MODULE} from \$\{MODULE\}_LIBRARIES in ${${MODULE}_CMAKE_FILE}" )
+        endif()
+      endif()
+
+      add_library( ${MODULE} "${${MODULE}_HEADER_FILES}" "${${MODULE}_SOURCE_FILES}" )
+
+      # Include module headers
+      if( ${MODULE}_INCLUDE_DIRS )
+        target_include_directories( ${MODULE} PUBLIC ${${MODULE}_INCLUDE_DIRS} )
+      endif()
+
+      # Include interface headers
+      target_include_directories( ${MODULE} PUBLIC ${SUPERELASTIX_INTERFACE_DIRS} )
+
+      if( NOT ${MODULE} STREQUAL ModuleCore )
+        target_include_directories( ${MODULE} PUBLIC ${ModuleCore_INCLUDE_DIRS} )
+        target_link_libraries( ${MODULE} ModuleCore )
+      endif()
     endif()
 	
-    if( NOT ${MODULE} STREQUAL ModuleCore )
-      _selxmodule_include_directory( ${MODULE} ModuleCore )
-      _selxmodule_link_libraries( ${MODULE} ModuleCore )
-    endif()
-
-	# include all interface header files
-	target_include_directories( ${MODULE} PUBLIC ${SUPERELASTIX_INTERFACE_DIRS} )
-		
     if( BUILD_TESTING AND ${MODULE}_TEST_SOURCE_FILES )
       list( APPEND SUPERELASTIX_TEST_SOURCE_FILES ${${MODULE}_TEST_SOURCE_FILES} )
     endif()
 
     if( ${MODULE}_MODULE_DEPENDENCIES )
-      _selxmodule_enable_dependencies( ${MODULE}_MODULE_DEPENDENCIES ${MODULE} )
-      _selxmodule_include_directories( ${MODULE} ${MODULE}_MODULE_DEPENDENCIES )
-      _selxmodule_link_libraries( ${MODULE} ${MODULE}_MODULE_DEPENDENCIES )
+      _selxmodule_enable_dependencies( ${MODULE} ${MODULE}_MODULE_DEPENDENCIES )
+
+      # # Header-only modules should not be linked against dependencies
+      if( ${MODULE}_SOURCE_FILES )
+        _selxmodule_include_directories( ${MODULE} ${MODULE}_MODULE_DEPENDENCIES )
+        _selxmodule_link_libraries( ${MODULE} ${MODULE}_MODULE_DEPENDENCIES )
+      endif()
 
       # TODO: Resolve cylic dependency graph. SuperElastix compiles only because 
       # CMake is not aware of dependencies and because of the specific order in 
@@ -145,7 +159,7 @@ macro( _selxmodule_enable MODULE UPSTREAM )
   endif()
 endmacro()
 
-macro( _selxmodule_enable_dependencies MODULES UPSTREAM )
+macro( _selxmodule_enable_dependencies UPSTREAM MODULES )
   foreach( MODULE ${${MODULES}} )
     _selxmodule_enable( ${MODULE} ${UPSTREAM} )
   endforeach()
@@ -171,7 +185,9 @@ endmacro()
 
 macro( _selxmodule_link_libraries TARGET DEPENDENCIES )
   foreach( DEPENDENCY ${${DEPENDENCIES}} )
-    target_link_libraries( ${TARGET} ${DEPENDENCY} )
+    if( TARGET ${DEPENDENCY} )
+      target_link_libraries( ${TARGET} ${DEPENDENCY} )
+    endif()
   endforeach()
 endmacro()
 
