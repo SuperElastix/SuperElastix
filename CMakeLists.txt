@@ -120,13 +120,13 @@ option( BUILD_EXPRESS "" OFF )
 # These calls are mandatory. Do not change and do
 # not call initialization macros anywhere else.
 include( selxModules )
-include( selxApplications )
+#include( selxApplications )
 _selxmodules_initialize()
-_selxapplications_initialize()
+#_selxapplications_initialize()
 _selxmodule_enable( ModuleCore "SuperElastix" )
 
 if( NOT ${BUILD_EXPRESS} )
-  enable_applications( SUPERELASTIX_APPLICATIONS )
+  #enable_applications( SUPERELASTIX_APPLICATIONS )
 endif() 
 
 # TODO: Functionality to disable default modules/applications
