@@ -89,18 +89,23 @@ macro( _selxapplication_enable APPLICATION UPSTREAM )
 
     add_executable( ${${APPLICATION}_TARGET_NAME} "${${APPLICATION}_HEADER_FILES}" "${${APPLICATION}_SOURCE_FILES}" )
  
-    _selxmodule_include_directories( ${${APPLICATION}_TARGET_NAME} ${SUPERELASTIX_INTERFACE_DIRS} )
-
+    # Include application headers
     if( ${APPLICATION}_INCLUDE_DIRS )
-      _selxmodule_include_directories( ${${APPLICATION}_TARGET_NAME} ${APPLICATION} )
+      target_include_directories( $${${APPLICATION}_TARGET_NAME} PUBLIC ${${APPLICATION}_INCLUDE_DIRS} )
     endif()
+
+    # Include interface headers
+    target_include_directories( ${${APPLICATION}_TARGET_NAME} PUBLIC ${SUPERELASTIX_INTERFACE_DIRS} )
 
     if( ${APPLICATION}_MODULE_DEPENDENCIES )
       _selxmodule_enable_dependencies( ${APPLICATION}_MODULE_DEPENDENCIES ${APPLICATION} )
+
+      # Macros for including and linking all dependencies
       _selxmodule_include_directories( ${${APPLICATION}_TARGET_NAME} ${APPLICATION}_MODULE_DEPENDENCIES )
       _selxmodule_link_libraries( ${${APPLICATION}_TARGET_NAME} ${APPLICATION}_MODULE_DEPENDENCIES )
     endif()
 
+    # Link against external libraries
     if( ${APPLICATION}_LINK_LIBRARIES )
       _selxapplication_link_libraries( ${APPLICATION}_TARGET_NAME ${APPLICATION}_LINK_LIBRARIES ) 
     endif()

@@ -126,9 +126,10 @@ macro( _selxmodule_enable MODULE UPSTREAM )
     if( ${MODULE}_MODULE_DEPENDENCIES )
       _selxmodule_enable_dependencies( ${MODULE} ${MODULE}_MODULE_DEPENDENCIES )
 
-      # # Header-only modules should not be linked against dependencies
+      # Header-only modules should not be linked against dependencies
       if( ${MODULE}_SOURCE_FILES )
-        _selxmodule_include_directories( ${MODULE} ${MODULE}_MODULE_DEPENDENCIES )
+        # Macro for including and linking all dependencies
+        _selxmodule_include_directories( ${MODULE} ${MODULE}_MODULE_DEPENDENCIES ) 
         _selxmodule_link_libraries( ${MODULE} ${MODULE}_MODULE_DEPENDENCIES )
       endif()
 
