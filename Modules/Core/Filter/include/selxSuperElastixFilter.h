@@ -22,7 +22,7 @@
 
 #include "itkProcessObject.h"
 #include "selxBlueprint.h"
-#include "selxOverlord.h"
+#include "selxNetworkBuilder.h"
 #include "selxAnyFileReader.h"
 #include "selxAnyFileWriter.h"
 #include "itkSharedPointerDataObjectDecorator.h"
@@ -57,7 +57,7 @@ public:
   typedef AnyFileReader AnyFileReaderType;
   typedef AnyFileWriter AnyFileWriterType;
 
-  typedef std::unique_ptr< Overlord > OverlordPointer;
+  typedef std::unique_ptr< NetworkBuilder > NetworkBuilderPointer;
 
   typedef typename itk::SharedPointerDataObjectDecorator< Blueprint > BlueprintType;
   typedef BlueprintType::Pointer                                      BlueprintPointer;
@@ -94,7 +94,7 @@ private:
 
   //TODO make const correct
   BlueprintType::Pointer      m_Blueprint;
-  OverlordPointer             m_Overlord;
+  NetworkBuilderPointer             m_NetworkBuilder;
   bool                        m_InputConnectionModified;
   bool                        m_OutputConnectionModified;
   bool                        m_BlueprintConnectionModified;

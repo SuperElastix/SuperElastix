@@ -38,7 +38,7 @@
  - All the nodes are identified by their Class names
  - All Connections are identified by their Interface names
 
- The overlord finds the Source and Sink Components and connects these to it's external pipeline (internal reader and writer filters, currently).
+ The NetworkBuilder finds the Source and Sink Components and connects these to it's external pipeline (internal reader and writer filters, currently).
 */
 
 namespace selx

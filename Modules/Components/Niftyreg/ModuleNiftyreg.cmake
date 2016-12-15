@@ -17,11 +17,9 @@
 #
 #=========================================================================
 
-set( MODULE ModuleNiftyreg )
-
 # If OpenMP is supported by this machine, niftyreg will be compiled with
 # OpenMP flags, and we need to add them here as well
-find_package( OpenMP )
+find_package( OpenMP QUIET )
 if (OPENMP_FOUND)
   set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}" )
   set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}" )
@@ -37,7 +35,6 @@ if (NOT Niftyreg_FOUND)
   message(FATAL_ERROR "Could not find Niftyreg. Point NIFTYREG_DIR to its install folder.")
 endif()
 
-# Export include files
 set( ${MODULE}_INCLUDE_DIRS
   ${${MODULE}_SOURCE_DIR}/include
   ${Niftyreg_INCLUDE_DIR}
@@ -51,27 +48,17 @@ if (NOT WIN32)
   list(APPEND ${MODULE}_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS} )
 endif(NOT WIN32)
 
-
-# Collect header files for Visual Studio Project
-file(GLOB ${MODULE}_HEADER_FILES "${${MODULE}_SOURCE_DIR}/include/*.*")
-
-# Export libraries
-set( ${MODULE}_LIBRARIES 
-  ${MODULE}
-)
-
-# Export tests
-set( ${MODULE}_TESTS 
-  ${${MODULE}_SOURCE_DIR}/test/selxNiftyregComponentTest.cxx
-)
-
-# Module source files
 set( ${MODULE}_SOURCE_FILES
   ${${MODULE}_SOURCE_DIR}/src/selxNiftyregComponent.cxx 
   )
 
-# Compile library
+set( ${MODULE}_TEST_SOURCE_FILES 
+  ${${MODULE}_SOURCE_DIR}/test/selxNiftyregComponentTest.cxx
+)
 
-add_library( ${MODULE} STATIC ${${MODULE}_SOURCE_FILES} ${${MODULE}_HEADER_FILES})
-
-target_link_libraries( ${MODULE} ${Niftyreg_LIBRARIES} ${PNG_LIBRARIES} ${ZLIB_LIBRARIES} )
+set( ${MODULE}_LIBRARIES 
+  ${MODULE}
+  ${Niftyreg_LIBRARIES} 
+  ${PNG_LIBRARIES} 
+  ${ZLIB_LIBRARIES}
+)

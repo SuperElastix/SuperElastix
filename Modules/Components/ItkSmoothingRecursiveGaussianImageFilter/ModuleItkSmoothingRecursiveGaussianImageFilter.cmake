@@ -17,33 +17,19 @@
 #
 #=========================================================================
 
-set( MODULE ModuleItkSmoothingRecursiveGaussianImageFilter )
-
-# Export include files
 set( ${MODULE}_INCLUDE_DIRS
   ${${MODULE}_SOURCE_DIR}/include
 )
 
-# Collect header files for Visual Studio Project
-file(GLOB ${MODULE}_HEADER_FILES "${${MODULE}_SOURCE_DIR}/include/*.*")
-
-# Export libraries
-set( ${MODULE}_LIBRARIES 
-  ${MODULE}
+# This module is header-only and does not contain any source files
+set( ${MODULE}_SOURCE_FILES
 )
 
-# Export tests
-set( ${MODULE}_TESTS 
+# This module is header-only and does not export any libraries
+set( ${MODULE}_LIBRARIES 
+)
+
+set( ${MODULE}_TEST_SOURCE_FILES
   selxitkImageFilterTest.cxx
 )
 
-# Module source files
-set( ${MODULE}_SOURCE_FILES
-  ${${MODULE}_SOURCE_DIR}/src/selxItkSmoothingRecursiveGaussianImageFilterComponent.cxx
-)
-
-# Compile library
-
-add_library( ${MODULE} STATIC "${${MODULE}_SOURCE_FILES}" ${${MODULE}_HEADER_FILES})
-
-target_link_libraries( ${MODULE} ${SUPERELASTIX_LIBRARIES} )

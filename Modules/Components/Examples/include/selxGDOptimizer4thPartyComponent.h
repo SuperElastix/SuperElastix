@@ -21,7 +21,7 @@
 #define GDOptimizer4thPartyComponent_h
 
 #include "selxSuperElastixComponent.h"
-#include "selxInterfaces.h"
+#include "selxExamplesInterfaces.h"
 #include "selxExample4thPartyCode.h"
 #include "selxMetric4thPartyWrapper.h"
 

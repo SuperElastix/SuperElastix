@@ -21,7 +21,9 @@
 #define selxDisplacementFieldItkImageFilterSink_h
 
 #include "selxSuperElastixComponent.h"
-#include "selxInterfaces.h"
+#include "selxSinksAndSourcesInterfaces.h"
+#include "selxItkObjectInterfaces.h"
+
 #include <string.h>
 #include "selxMacro.h"
 #include "itkImageFileWriter.h"
@@ -72,7 +74,7 @@ public:
 private:
 
   typename DeformationFieldImageType::Pointer m_MiniPipelineOutputImage;
-  typename DeformationFieldImageType::Pointer m_OverlordOutputImage;
+  typename DeformationFieldImageType::Pointer m_NetworkBuilderOutputImage;
 
 protected:
 

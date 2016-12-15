@@ -24,7 +24,6 @@
 #include "itkObjectFactory.h"
 #include "itkMacro.h"
 #include "selxInterfaceStatus.h"
-//#include "itkComponentBase.h"
 #include <list>
 #include <iostream>
 #include <fstream>

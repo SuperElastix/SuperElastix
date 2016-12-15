@@ -24,7 +24,7 @@ namespace selx
 {
 template< int Dimensionality, class TPixel >
 DisplacementFieldItkImageFilterSinkComponent< Dimensionality, TPixel >::DisplacementFieldItkImageFilterSinkComponent() :
-  m_MiniPipelineOutputImage( nullptr ), m_OverlordOutputImage( nullptr )
+  m_MiniPipelineOutputImage( nullptr ), m_NetworkBuilderOutputImage( nullptr )
 {
 }
 
@@ -39,15 +39,15 @@ template< int Dimensionality, class TPixel >
 int
 DisplacementFieldItkImageFilterSinkComponent< Dimensionality, TPixel >::Set( AcceptingDisplacementFieldInterfaceType * other )
 {
-  if( this->m_OverlordOutputImage == nullptr )
+  if( this->m_NetworkBuilderOutputImage == nullptr )
   {
     itkExceptionMacro( "SinkComponent needs to be initialized by SetMiniPipelineOutput()" );
   }
 
-  // Store pointer to MiniPipelineOutputImage for later grafting onto Overlord output.
+  // Store pointer to MiniPipelineOutputImage for later grafting onto NetworkBuilder output.
   this->m_MiniPipelineOutputImage = other->GetDisplacementFieldItkImage();
-  // Graft Overlord output onto MiniPipelineOutputImage.
-  //this->m_MiniPipelineOutputImage->Graft(this->m_OverlordOutputImage);
+  // Graft NetworkBuilder output onto MiniPipelineOutputImage.
+  //this->m_MiniPipelineOutputImage->Graft(this->m_NetworkBuilderOutputImage);
   return 0;
 }
 
@@ -63,16 +63,16 @@ DisplacementFieldItkImageFilterSinkComponent< Dimensionality, TPixel >::GetOutpu
 
 template< int Dimensionality, class TPixel >
 void
-DisplacementFieldItkImageFilterSinkComponent< Dimensionality, TPixel >::SetMiniPipelineOutput( itk::DataObject::Pointer overlordOutput )
+DisplacementFieldItkImageFilterSinkComponent< Dimensionality, TPixel >::SetMiniPipelineOutput( itk::DataObject::Pointer NetworkBuilderOutput )
 {
-  /** Tries to cast the overlordOutput to an image (data object) and stores the result.
+  /** Tries to cast the NetworkBuilderOutput to an image (data object) and stores the result.
   *  The resulting output image will be grafted into when the sink component is connected to an other component.
   * */
   //
-  this->m_OverlordOutputImage = dynamic_cast< DeformationFieldImageType * >( overlordOutput.GetPointer() );
-  if( this->m_OverlordOutputImage == nullptr )
+  this->m_NetworkBuilderOutputImage = dynamic_cast< DeformationFieldImageType * >( NetworkBuilderOutput.GetPointer() );
+  if( this->m_NetworkBuilderOutputImage == nullptr )
   {
-    itkExceptionMacro( "SinkComponent cannot cast the Overlord's Output to the required type" );
+    itkExceptionMacro( "SinkComponent cannot cast the NetworkBuilder's Output to the required type" );
   }
 }
 

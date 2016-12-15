@@ -20,11 +20,12 @@
 #ifndef selxItkAffineTransformComponent_h
 #define selxItkAffineTransformComponent_h
 
-#include "selxComponentBase.h"
-#include "selxInterfaces.h"
+#include "selxSuperElastixComponent.h"
+
+#include "selxItkRegistrationMethodv4Interfaces.h"
+#include "selxSinksAndSourcesInterfaces.h"
 #include "itkAffineTransform.h"
-#include <string.h>
-#include "selxMacro.h"
+
 namespace selx
 {
 template< class InternalComputationValueType, int Dimensionality >

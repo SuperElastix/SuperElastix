@@ -21,7 +21,9 @@
 #define selxItkImageSink_h
 
 #include "selxSuperElastixComponent.h"
-#include "selxInterfaces.h"
+#include "selxSinksAndSourcesInterfaces.h"
+#include "selxItkObjectInterfaces.h"
+
 #include <string.h>
 #include "selxMacro.h"
 #include "itkImageFileWriter.h"
@@ -69,7 +71,7 @@ public:
 private:
 
   typename ItkImageType::Pointer m_MiniPipelineOutputImage;
-  typename ItkImageType::Pointer m_OverlordOutputImage;
+  typename ItkImageType::Pointer m_NetworkBuilderOutputImage;
 
 protected:
 

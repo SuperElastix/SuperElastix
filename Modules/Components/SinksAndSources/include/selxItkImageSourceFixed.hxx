@@ -57,7 +57,7 @@ ItkImageSourceFixedComponent< Dimensionality, TPixel >
   this->m_Image = dynamic_cast< ItkImageType * >( object.GetPointer() );
   if( this->m_Image == nullptr )
   {
-    itkExceptionMacro( "DataObject passed by the Overlord is not of the right ImageType or not at all an ImageType" );
+    itkExceptionMacro( "DataObject passed by the NetworkBuilder is not of the right ImageType or not at all an ImageType" );
   }
   return;
 }

@@ -24,7 +24,7 @@ namespace selx
 {
 template< int Dimensionality, class TPixel >
 ItkMeshSinkComponent< Dimensionality, TPixel >::ItkMeshSinkComponent() :
-  m_MiniPipelineOutputMesh( nullptr ), m_OverlordOutputMesh( nullptr )
+  m_MiniPipelineOutputMesh( nullptr ), m_NetworkBuilderOutputMesh( nullptr )
 {
 }
 
@@ -39,15 +39,15 @@ template< int Dimensionality, class TPixel >
 int
 ItkMeshSinkComponent< Dimensionality, TPixel >::Set( itkMeshInterface< Dimensionality, TPixel > * other )
 {
-  if( this->m_OverlordOutputMesh == nullptr )
+  if( this->m_NetworkBuilderOutputMesh == nullptr )
   {
-    itkExceptionMacro( "SinkComponent needs to be initialized by ConnectToOverlordSink()" );
+    itkExceptionMacro( "SinkComponent needs to be initialized by ConnectToNetworkBuilderSink()" );
   }
 
-  // Store pointer to MiniPipelineOutputMesh for later grafting onto Overlord output.
+  // Store pointer to MiniPipelineOutputMesh for later grafting onto NetworkBuilder output.
   this->m_MiniPipelineOutputMesh = other->GetItkMesh();
-  // Graft Overlord output onto MiniPipelineOutputMesh.
-  // this->m_MiniPipelineOutputMesh->Graft(this->m_OverlordOutputMesh);
+  // Graft NetworkBuilder output onto MiniPipelineOutputMesh.
+  // this->m_MiniPipelineOutputMesh->Graft(this->m_NetworkBuilderOutputMesh);
   return 0;
 }
 
@@ -71,16 +71,16 @@ ItkMeshSinkComponent< Dimensionality, TPixel >::GetOutputFileWriter()
 
 template< int Dimensionality, class TPixel >
 void
-ItkMeshSinkComponent< Dimensionality, TPixel >::SetMiniPipelineOutput( itk::DataObject::Pointer overlordOutput )
+ItkMeshSinkComponent< Dimensionality, TPixel >::SetMiniPipelineOutput( itk::DataObject::Pointer NetworkBuilderOutput )
 {
-  /** Tries to cast the overlordOutput to an Mesh (data object) and stores the result.
+  /** Tries to cast the NetworkBuilderOutput to an Mesh (data object) and stores the result.
    *  The resulting output Mesh will be grafted into when the sink component is connected to an other component.
    * */
   //
-  this->m_OverlordOutputMesh = dynamic_cast< ItkMeshType * >( &( *overlordOutput ) );
-  if( this->m_OverlordOutputMesh == nullptr )
+  this->m_NetworkBuilderOutputMesh = dynamic_cast< ItkMeshType * >( &( *NetworkBuilderOutput ) );
+  if( this->m_NetworkBuilderOutputMesh == nullptr )
   {
-    itkExceptionMacro( "SinkComponent cannot cast the Overlord's Output to the required type" );
+    itkExceptionMacro( "SinkComponent cannot cast the NetworkBuilder's Output to the required type" );
   }
 }
 
@@ -94,7 +94,7 @@ ItkMeshSinkComponent< Dimensionality, TPixel >::GetMiniPipelineOutput()
 
 
 //template<int Dimensionality, class TPixel>
-//bool ItkMeshSinkComponent< Dimensionality, TPixel>::ConnectToOverlordSink(itk::DataObject::Pointer object)
+//bool ItkMeshSinkComponent< Dimensionality, TPixel>::ConnectToNetworkBuilderSink(itk::DataObject::Pointer object)
 //{
 //  this->m_Mesh = dynamic_cast<ItkMeshType*>(&(*object));
 

@@ -67,7 +67,7 @@ void
 ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >::RegistrationControllerStart()
 {
   // Check if the names connected stages are compatible with the provided execution order
-  // TODO: should we handle such component sanity checks as separate overlord check instead of as execution stage?
+  // TODO: should we handle such component sanity checks as separate NetworkBuilder check instead of as execution stage?
   std::vector<std::string> sortedExecutionNames(this->m_ExecutionOrder); // copy container
   std::vector<std::string> sortedStageNames; // empty container
   sortedStageNames.resize(sortedExecutionNames.size()); // allocate space
