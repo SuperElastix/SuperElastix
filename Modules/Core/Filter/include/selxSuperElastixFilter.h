@@ -34,7 +34,6 @@
 
 namespace selx
 {
-template< typename ComponentTypeList >
 class SuperElastixFilter : public itk::ProcessObject
 {
 public:
@@ -102,9 +101,5 @@ private:
   bool                        m_AllUniqueComponents;
 };
 } // namespace elx
-
-#ifndef ITK_MANUAL_INSTANTIATION
-#include "selxSuperElastixFilter.hxx"
-#endif
 
 #endif // selxSuperElastixFilter_h

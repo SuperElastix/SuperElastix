@@ -29,8 +29,7 @@ namespace selx
  * ********************* Constructor *********************
  */
 
-template< typename ComponentTypeList >
-SuperElastixFilter< ComponentTypeList >
+SuperElastixFilter
 ::SuperElastixFilter( void ) :
   m_InputConnectionModified( true ),
   m_OutputConnectionModified( true ),
@@ -38,9 +37,9 @@ SuperElastixFilter< ComponentTypeList >
   m_IsConnected( false ),
   m_AllUniqueComponents( false )
 {
-  RegisterFactoriesByTypeList< ComponentTypeList >::Register();
+  //RegisterFactoriesByTypeList< ComponentTypeList >::Register();
 
-  // Disable "Primary" as required input
+  // Disable "Primary" as required input< C< ComponentTypeList >omponentTypeList >
   this->SetRequiredInputNames( {} );
 } // end Constructor
 
@@ -49,9 +48,8 @@ SuperElastixFilter< ComponentTypeList >
 * ********************* GenerateOutputInformation *********************
 */
 
-template< typename ComponentTypeList >
 void
-SuperElastixFilter< ComponentTypeList >
+SuperElastixFilter
 ::GenerateOutputInformation()
 {
   /*
@@ -174,9 +172,8 @@ SuperElastixFilter< ComponentTypeList >
  * ********************* GenerateData *********************
  */
 
-template< typename ComponentTypeList >
 void
-SuperElastixFilter< ComponentTypeList >
+SuperElastixFilter
 ::GenerateData( void )
 {
   std::cout << "Executing Network:" << std::endl;
@@ -201,9 +198,8 @@ SuperElastixFilter< ComponentTypeList >
 }
 
 
-template< typename ComponentTypeList >
-typename SuperElastixFilter< ComponentTypeList >::AnyFileReaderType::Pointer
-SuperElastixFilter< ComponentTypeList >
+typename SuperElastixFilter::AnyFileReaderType::Pointer
+SuperElastixFilter
 ::GetInputFileReader(const DataObjectIdentifierType & inputName)
 {
   //TODO: Before we can get the reader the Blueprint needs to set and applied in the NetworkBuilder.
@@ -225,9 +221,8 @@ SuperElastixFilter< ComponentTypeList >
 }
 
 
-template< typename ComponentTypeList >
-typename SuperElastixFilter< ComponentTypeList >::AnyFileWriterType::Pointer
-SuperElastixFilter< ComponentTypeList >
+typename SuperElastixFilter::AnyFileWriterType::Pointer
+SuperElastixFilter
 ::GetOutputFileWriter( const DataObjectIdentifierType & outputName )
 {
   //TODO: Before we can get the reader the Blueprint needs to set and applied in the NetworkBuilder.
@@ -251,9 +246,8 @@ SuperElastixFilter< ComponentTypeList >
 }
 
 
-template< typename ComponentTypeList >
 void
-SuperElastixFilter< ComponentTypeList >
+SuperElastixFilter
 ::SetInput( const DataObjectIdentifierType & inputName, itk::DataObject * input )
 {
   Superclass::SetInput( inputName, input );
@@ -261,9 +255,8 @@ SuperElastixFilter< ComponentTypeList >
 }
 
 
-template< typename ComponentTypeList >
-typename SuperElastixFilter< ComponentTypeList >::OutputDataType
-* SuperElastixFilter< ComponentTypeList >
+typename SuperElastixFilter::OutputDataType
+* SuperElastixFilter
 ::GetOutput( const DataObjectIdentifierType &outputName )
 {
   OutputDataType * output = Superclass::GetOutput( outputName );
@@ -293,10 +286,9 @@ typename SuperElastixFilter< ComponentTypeList >::OutputDataType
   }
 }
 
-template< typename ComponentTypeList >
 template< typename ReturnType >
 ReturnType *
-SuperElastixFilter< ComponentTypeList >
+SuperElastixFilter
 ::GetOutput( const DataObjectIdentifierType & outputName )
 {
   OutputDataType * output = Superclass::GetOutput( outputName );
@@ -320,9 +312,8 @@ SuperElastixFilter< ComponentTypeList >
 }
 
 
-template< typename ComponentTypeList >
 void
-SuperElastixFilter< ComponentTypeList >
+SuperElastixFilter
 ::Update( void )
 {
   //this->SetPrimaryOutput()
