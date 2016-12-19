@@ -18,6 +18,7 @@
  *=========================================================================*/
 
 #include "selxSuperElastixFilter.h"
+#include "selxRegisterComponentFactoriesByTypeList.h"
 
 #include "selxTransformComponent1.h"
 #include "selxMetricComponent1.h"
@@ -103,15 +104,13 @@ public:
     ItkCompositeTransformComponent<double, 3>,
     ItkCompositeTransformComponent<double, 2 >> RegisterComponents;
 
-  typedef SuperElastixFilter< RegisterComponents > SuperElastixFilterType;
-
   typedef std::shared_ptr< Blueprint >                        BlueprintPointer;
   typedef itk::SharedPointerDataObjectDecorator< Blueprint >  BlueprintITKType;
   typedef BlueprintITKType::Pointer                           BlueprintITKPointer;
 
-  typedef SuperElastixFilterType::BlueprintType SuperElastixFilterBlueprintType;
-  typedef SuperElastixFilterType::Pointer       SuperElastixFilterBlueprintPointer;
-  typedef SuperElastixFilterType::ConstPointer  SuperElastixFilterBlueprintConstPointer;
+  typedef SuperElastixFilter::BlueprintType SuperElastixFilterBlueprintType;
+  typedef SuperElastixFilter::Pointer       SuperElastixFilterBlueprintPointer;
+  typedef SuperElastixFilter::ConstPointer  SuperElastixFilterBlueprintConstPointer;
   typedef Blueprint::ParameterMapType           ParameterMapType;
   typedef Blueprint::ParameterValueType         ParameterValueType;
   typedef DataManager                           DataManagerType;
@@ -129,16 +128,26 @@ public:
 
   virtual void SetUp()
   {
+    // Instantiate SuperElastixFilter before each test
+    superElastixFilter = SuperElastixFilter::New();
+    // Register the components we want to have available in SuperElastix
+    RegisterFactoriesByTypeList< RegisterComponents >::Register();
+    dataManager = DataManagerType::New();
   }
-
 
   virtual void TearDown()
   {
+    // Unregister all components after each test 
     itk::ObjectFactoryBase::UnRegisterAllFactories();
+    // Delete the SuperElastixFilter after each test 
+    superElastixFilter = nullptr;
   }
 
-
+  // Blueprint holds a configuration for SuperElastix
   BlueprintPointer blueprint;
+  SuperElastixFilter::Pointer superElastixFilter;
+  // Data manager provides the paths to the input and output data for unit tests
+  DataManagerType::Pointer dataManager;
 };
 
 // These test are disabled, since may not want to check each component with this much boilerplate code.
@@ -180,13 +189,6 @@ TEST_F( RegistrationItkv4Test, DISABLED_3DImagesOnly )
   ParameterMapType connection3Parameters;
   connection3Parameters[ "NameOfInterface" ] = { "itkImageInterface" };
   blueprint->SetConnection( "RegistrationMethod", "ResultImageSink", connection3Parameters );
-
-  // Instantiate SuperElastix
-  SuperElastixFilterType::Pointer superElastixFilter;
-  EXPECT_NO_THROW( superElastixFilter = SuperElastixFilterType::New() );
-
-  // Data manager provides the paths to the input and output data for unit tests
-  DataManagerType::Pointer dataManager = DataManagerType::New();
 
   // Set up the readers and writers
   ImageReader3DType::Pointer fixedImageReader = ImageReader3DType::New();
@@ -272,12 +274,6 @@ TEST_F( RegistrationItkv4Test, DISABLED_3DANTSCCMetric )
   connection5Parameters[ "NameOfInterface" ] = { "itkOptimizerv4Interface" };
   blueprint->SetConnection( "Optimizer", "RegistrationMethod", connection5Parameters );
 
-  // Instantiate SuperElastix
-  SuperElastixFilterType::Pointer superElastixFilter;
-  EXPECT_NO_THROW( superElastixFilter = SuperElastixFilterType::New() );
-
-  // Data manager provides the paths to the input and output data for unit tests
-  DataManagerType::Pointer dataManager = DataManagerType::New();
 
   // Set up the readers and writers
   ImageReader3DType::Pointer fixedImageReader = ImageReader3DType::New();
@@ -362,13 +358,6 @@ TEST_F( RegistrationItkv4Test, DISABLED_3DMeanSquaresMetric )
   ParameterMapType connection5Parameters;
   connection5Parameters[ "NameOfInterface" ] = { "itkOptimizerv4Interface" };
   blueprint->SetConnection( "Optimizer", "RegistrationMethod", connection5Parameters );
-
-  // Instantiate SuperElastix
-  SuperElastixFilterType::Pointer superElastixFilter;
-  EXPECT_NO_THROW( superElastixFilter = SuperElastixFilterType::New() );
-
-  // Data manager provides the paths to the input and output data for unit tests
-  DataManagerType::Pointer dataManager = DataManagerType::New();
 
   // Set up the readers and writers
   ImageReader3DType::Pointer fixedImageReader = ImageReader3DType::New();
@@ -489,13 +478,6 @@ TEST_F( RegistrationItkv4Test, FullyConfigured3d )
   blueprint->SetConnection( "ResampleFilter", "Controller", { {} } );              //ReconnectTransformInterface
   blueprint->SetConnection( "TransformDisplacementFilter", "Controller", { {} } ); //ReconnectTransformInterface
 
-  // Instantiate SuperElastix
-  SuperElastixFilterType::Pointer superElastixFilter;
-  EXPECT_NO_THROW( superElastixFilter = SuperElastixFilterType::New() );
-
-  // Data manager provides the paths to the input and output data for unit tests
-  DataManagerType::Pointer dataManager = DataManagerType::New();
-
   // Set up the readers and writers
   ImageReader3DType::Pointer fixedImageReader = ImageReader3DType::New();
   fixedImageReader->SetFileName( dataManager->GetInputFile( "sphereA3d.mhd" ) );
@@ -614,13 +596,6 @@ TEST_F( RegistrationItkv4Test, FullyConfigured3dAffine )
   blueprint->SetConnection( "ResampleFilter", "Controller", { {} } );              //ReconnectTransformInterface
   blueprint->SetConnection( "TransformDisplacementFilter", "Controller", { {} } ); //ReconnectTransformInterface
 
-  // Instantiate SuperElastix
-  SuperElastixFilterType::Pointer superElastixFilter;
-  EXPECT_NO_THROW( superElastixFilter = SuperElastixFilterType::New() );
-
-  // Data manager provides the paths to the input and output data for unit tests
-  DataManagerType::Pointer dataManager = DataManagerType::New();
-
   // Set up the readers and writers
   ImageReader3DType::Pointer fixedImageReader = ImageReader3DType::New();
   fixedImageReader->SetFileName( dataManager->GetInputFile( "sphereA3d.mhd" ) );
@@ -711,21 +686,9 @@ TEST_F(RegistrationItkv4Test, CompositeTransform)
 
   blueprint->SetComponent("Optimizer2", { { "NameOfClass", { "ItkGradientDescentOptimizerv4Component" } } });
   blueprint->SetConnection("Optimizer2", "RegistrationMethod2", {});
-
-
   blueprint->SetConnection("RegistrationMethod2", "MultiStageTransformController", {}); // MultiStageTransformInterface
 
-  
-
-
-  // Data manager provides the paths to the input and output data for unit tests
-  DataManagerType::Pointer dataManager = DataManagerType::New();
-
   blueprint->Write(dataManager->GetOutputFile("RegistrationItkv4Test_CompositeTransform.dot"));
-
-  // Instantiate SuperElastix
-  SuperElastixFilterType::Pointer superElastixFilter;
-  EXPECT_NO_THROW(superElastixFilter = SuperElastixFilterType::New());
 
   // Set up the readers and writers
   ImageReader2DType::Pointer fixedImageReader = ImageReader2DType::New();

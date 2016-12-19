@@ -18,7 +18,7 @@
  *=========================================================================*/
 
 #include "selxSuperElastixFilter.h"
-
+#include "selxRegisterComponentFactoriesByTypeList.h"
 #include "elxParameterObject.h"
 
 #include "selxElastixComponent.h"
@@ -61,24 +61,32 @@ public:
     ItkImageSourceMovingComponent< 3, double >,
     RegistrationControllerComponent< > > RegisterComponents;
 
-  typedef SuperElastixFilter< RegisterComponents > SuperElastixFilterType;
-
   typedef itk::Image< float, 2 >              Image2DType;
   typedef itk::ImageFileReader< Image2DType > ImageReader2DType;
   typedef itk::ImageFileWriter< Image2DType > ImageWriter2DType;
 
   virtual void SetUp()
   {
+    // Instantiate SuperElastixFilter before each test
+    superElastixFilter = SuperElastixFilter::New();
+    // Register the components we want to have available in SuperElastix
+    RegisterFactoriesByTypeList< RegisterComponents >::Register();
+    dataManager = DataManagerType::New();
   }
 
 
   virtual void TearDown()
   {
+    // Unregister all components after each test 
     itk::ObjectFactoryBase::UnRegisterAllFactories();
+    // Delete the SuperElastixFilter after each test 
+    superElastixFilter = nullptr;
   }
-
-
+  // Blueprint holds a configuration for SuperElastix
   BlueprintPointer blueprint;
+  SuperElastixFilter::Pointer superElastixFilter;
+  // Data manager provides the paths to the input and output data for unit tests
+  DataManagerType::Pointer dataManager;
 };
 
 TEST_F( ElastixComponentTest, ImagesOnly )
@@ -127,12 +135,6 @@ TEST_F( ElastixComponentTest, ImagesOnly )
 
   blueprint->SetConnection( "RegistrationMethod", "Controller", { {} } ); //
   blueprint->SetConnection( "ResultImageSink", "Controller", { {} } );    //
-  // Instantiate SuperElastix
-  SuperElastixFilterType::Pointer superElastixFilter;
-  EXPECT_NO_THROW( superElastixFilter = SuperElastixFilterType::New() );
-
-  // Data manager provides the paths to the input and output data for unit tests
-  DataManagerType::Pointer dataManager = DataManagerType::New();
 
   // Set up the readers and writers
   ImageReader2DType::Pointer fixedImageReader = ImageReader2DType::New();
@@ -195,13 +197,6 @@ TEST_F(ElastixComponentTest, MonolithicElastixTransformix)
   blueprint->SetConnection( "RegistrationMethod", "Controller", { {} } );         //
   blueprint->SetConnection( "TransformDisplacementField", "Controller", { {} } ); //
   blueprint->SetConnection( "ResultImageSink", "Controller", { {} } );            //
-
-  // Instantiate SuperElastix
-  SuperElastixFilterType::Pointer superElastixFilter;
-  EXPECT_NO_THROW( superElastixFilter = SuperElastixFilterType::New() );
-
-  // Data manager provides the paths to the input and output data for unit tests
-  DataManagerType::Pointer dataManager = DataManagerType::New();
 
   // Set up the readers and writers
   ImageReader2DType::Pointer fixedImageReader = ImageReader2DType::New();

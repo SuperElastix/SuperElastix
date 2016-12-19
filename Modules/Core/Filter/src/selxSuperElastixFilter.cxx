@@ -198,7 +198,7 @@ SuperElastixFilter
 }
 
 
-typename SuperElastixFilter::AnyFileReaderType::Pointer
+SuperElastixFilter::AnyFileReaderType::Pointer
 SuperElastixFilter
 ::GetInputFileReader(const DataObjectIdentifierType & inputName)
 {
@@ -221,7 +221,7 @@ SuperElastixFilter
 }
 
 
-typename SuperElastixFilter::AnyFileWriterType::Pointer
+SuperElastixFilter::AnyFileWriterType::Pointer
 SuperElastixFilter
 ::GetOutputFileWriter( const DataObjectIdentifierType & outputName )
 {
@@ -255,7 +255,7 @@ SuperElastixFilter
 }
 
 
-typename SuperElastixFilter::OutputDataType
+SuperElastixFilter::OutputDataType
 * SuperElastixFilter
 ::GetOutput( const DataObjectIdentifierType &outputName )
 {
@@ -277,7 +277,7 @@ typename SuperElastixFilter::OutputDataType
       this->m_AllUniqueComponents = this->m_NetworkBuilder->Configure();
       this->m_BlueprintConnectionModified = false;
     }
-    typename OutputDataType::Pointer newOutput = this->m_NetworkBuilder->GetInitializedOutput( outputName );
+    OutputDataType::Pointer newOutput = this->m_NetworkBuilder->GetInitializedOutput( outputName );
     this->m_OutputConnectionModified           = true;
 
     Superclass::SetOutput( outputName, newOutput );

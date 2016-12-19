@@ -18,6 +18,7 @@
  *=========================================================================*/
 
 #include "selxSuperElastixFilter.h"
+#include "selxRegisterComponentFactoriesByTypeList.h"
 #include "selxRegistrationController.h"
 
 #include "selxNiftyregReadImageComponent.h"
@@ -32,7 +33,7 @@ class NiftyregComponentTest : public ::testing::Test
 {
 public:
   
-    typedef std::shared_ptr< Blueprint >                        BlueprintPointer;
+  typedef std::shared_ptr< Blueprint >                        BlueprintPointer;
   typedef itk::SharedPointerDataObjectDecorator< Blueprint >  BlueprintITKType;
   typedef BlueprintITKType::Pointer                           BlueprintITKPointer;
   typedef Blueprint::ParameterMapType   ParameterMapType;
@@ -43,21 +44,26 @@ public:
   typedef TypeList< Niftyregf3dComponent<float>, NiftyregReadImageComponent<float>,
     RegistrationControllerComponent< > > RegisterComponents;
 
-  typedef SuperElastixFilter< RegisterComponents >  SuperElastixFilterType;
-  
-
   virtual void SetUp()
   {
-      // Data manager provides the paths to the input and output data for unit tests
-  dataManager = DataManagerType::New();
+    // Instantiate SuperElastixFilter before each test
+    superElastixFilter = SuperElastixFilter::New();
+    // Register the components we want to have available in SuperElastix
+    RegisterFactoriesByTypeList< RegisterComponents >::Register();
+    dataManager = DataManagerType::New();
   }
-
 
   virtual void TearDown()
   {
-        itk::ObjectFactoryBase::UnRegisterAllFactories();
+    // Unregister all components after each test 
+    itk::ObjectFactoryBase::UnRegisterAllFactories();
+    // Delete the SuperElastixFilter after each test 
+    superElastixFilter = nullptr;
   }
+    // Blueprint holds a configuration for SuperElastix
     BlueprintPointer blueprint;
+    SuperElastixFilter::Pointer superElastixFilter;
+    // Data manager provides the paths to the input and output data for unit tests
     DataManagerType::Pointer dataManager;
 };
 
@@ -78,13 +84,6 @@ TEST_F( NiftyregComponentTest, Register2d )
   blueprint->SetConnection( "MovingImage", "RegistrationMethod", { {} } ); //{ { "NameOfInterface", { "NiftyregFloatingImageInterface" } } }
   blueprint->SetConnection( "RegistrationMethod", "Controller", { {} } );
   
-   // Instantiate SuperElastix
-  SuperElastixFilterType::Pointer superElastixFilter;
-  EXPECT_NO_THROW( superElastixFilter = SuperElastixFilterType::New() );
-
-  // Data manager provides the paths to the input and output data for unit tests
-  DataManagerType::Pointer dataManager = DataManagerType::New();
-
   BlueprintITKPointer superElastixFilterBlueprint = BlueprintITKType::New();
   superElastixFilterBlueprint->Set( blueprint );
   EXPECT_NO_THROW( superElastixFilter->SetBlueprint( superElastixFilterBlueprint ) );

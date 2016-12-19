@@ -58,16 +58,16 @@ public:
 
   typedef std::unique_ptr< NetworkBuilder > NetworkBuilderPointer;
 
-  typedef typename itk::SharedPointerDataObjectDecorator< Blueprint > BlueprintType;
+  typedef itk::SharedPointerDataObjectDecorator< Blueprint > BlueprintType;
   typedef BlueprintType::Pointer                                      BlueprintPointer;
   typedef BlueprintType::ConstPointer                                 BlueprintConstPointer;
 
   // TODO: Make const-correct
   itkSetObjectMacro( Blueprint, BlueprintType )
 
-  typename AnyFileReaderType::Pointer GetInputFileReader( const DataObjectIdentifierType & );
+  AnyFileReaderType::Pointer GetInputFileReader( const DataObjectIdentifierType & );
 
-  typename AnyFileWriterType::Pointer GetOutputFileWriter( const DataObjectIdentifierType & );
+  AnyFileWriterType::Pointer GetOutputFileWriter( const DataObjectIdentifierType & );
 
   /** SetInput accepts any input data as long as it is derived from itk::DataObject */
   void SetInput( const DataObjectIdentifierType &, InputDataType * );
