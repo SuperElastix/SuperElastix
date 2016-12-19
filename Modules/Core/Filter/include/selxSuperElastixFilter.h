@@ -77,7 +77,27 @@ public:
 
   /** GetOutput tries dynamic cast to required output type */
   template< typename ReturnType >
-  ReturnType * GetOutput( const DataObjectIdentifierType & );
+  ReturnType * GetOutput( const DataObjectIdentifierType & outputName)
+  {
+      OutputDataType * output = Superclass::GetOutput( outputName );
+  if( output != nullptr ) // if an output already exists, return it
+  {
+    ReturnType * returnOutput = dynamic_cast< ReturnType * >( output );
+    if( returnOutput != nullptr ) // if it is of the same type as requested before
+    {
+      return returnOutput;
+    }
+    itkExceptionMacro( << "Output " "" << outputName << "" " was requested before, but the ReturnTypes do not match" )
+  }
+  // Purposely not checking the outputName, but just create the requested&named data object in the filter.
+  // When connecting the Sinks the selxFilter names and data types are checked.
+  typename ReturnType::Pointer newOutput = ReturnType::New();
+
+  Superclass::SetOutput( outputName, newOutput );
+
+  this->m_OutputConnectionModified = true;
+  return newOutput;
+  };
 
   void Update( void ) ITK_OVERRIDE;
 
