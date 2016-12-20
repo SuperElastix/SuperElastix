@@ -98,16 +98,19 @@ macro( _selxapplication_enable APPLICATION UPSTREAM )
     if( ${APPLICATION}_MODULE_DEPENDENCIES )
       _selxmodule_enable_dependencies( ${APPLICATION}_MODULE_DEPENDENCIES ${APPLICATION} )
 
+      # Include directories
+      target_include_directories( ${${APPLICATION}_TARGET_NAME} PUBLIC ${${DEPENDENCY}_INCLUDE_DIRS} )
+
+      # Link if the dependency is a library (as opposed to header-only)
       foreach( DEPENDENCY ${${APPLICATION}_MODULE_DEPENDENCIES} )
         if( TARGET ${DEPENDENCY} )
-          target_include_directories( ${${APPLICATION}_TARGET_NAME} ${DEPENDENCY}_INCLUDE_DIRS )
           target_link_libraries( ${${APPLICATION}_TARGET_NAME} ${DEPENDENCY} )
         endif()
       endforeach()
     endif()
 
     if( ${APPLICATION}_LINK_LIBRARIES )
-      _selmodule_link_libraries( ${${APPLICATION}_TARGET_NAME} ${APPLICATION}_LINK_LIBRARIES ) 
+      target_link_libraries( ${${APPLICATION}_TARGET_NAME} ${${APPLICATION}_LINK_LIBRARIES} ) 
     endif()
 
     message( STATUS "${APPLICATION} enabled." ) 
@@ -118,10 +121,6 @@ endmacro()
 
 macro( _selxapplication_disable APPLICATION )
   set( USE_${APPLICATION} FALSE )
-endmacro()
- 
-macro( _selxapplication_link_libraries TARGET LIBRARIES )
-  target_link_libraries( ${${TARGET}} ${${LIBRARIES}} )
 endmacro()
 
 macro( add_integration_test )

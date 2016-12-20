@@ -105,27 +105,27 @@ include_directories( ${Boost_INCLUDE_DIRS} )
 # ---------------------------------------------------------------------
 # SuperElastix configuration 
 
+option( BUILD_APPLICATIONS "Build applications." OFF )
+
 mark_as_advanced( BUILD_SHARED_LIBS )
 option( BUILD_SHARED_LIBS "Build shared libraries." OFF )
 
-# TODO: At the moment there is no difference between the default build 
-# and the express build because ModuleCore depends on all modules.
 mark_as_advanced( BUILD_EXPRESS )
-option( BUILD_EXPRESS "" OFF )
+option( BUILD_EXPRESS "Use express build." OFF )
 
 # ---------------------------------------------------------------------
 # Build SuperElastix
 
-# Initialize the build system and build the core. 
-# These calls are mandatory. Do not change and do
-# not call initialization macros anywhere else.
+# Initialize the build system and build the core. These calls are mandatory. 
+# Do not change and do not call anywhere else.
 include( selxModules )
-include( selxApplications )
 _selxmodules_initialize()
-_selxapplications_initialize()
 _selxmodule_enable( ModuleCore "SuperElastix" )
 
-if( NOT ${BUILD_EXPRESS} )
+# Build applications
+if( ${BUILD_APPLICATIONS} AND NOT ${BUILD_EXPRESS} )
+  include( selxApplications )
+  _selxapplications_initialize()
   enable_applications( SUPERELASTIX_APPLICATIONS )
 endif() 
 
