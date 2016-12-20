@@ -48,7 +48,7 @@ macro( _selxapplications_initialize )
   foreach( APPLICATION_CMAKE_FILE ${APPLICATION_CMAKE_FILES})
     get_filename_component( APPLICATION ${APPLICATION_CMAKE_FILE} NAME_WE )
     get_filename_component( ${APPLICATION}_PATH ${APPLICATION_CMAKE_FILE} PATH )
-    
+
     message( STATUS "  ${APPLICATION}" )
 
     option( "USE_${APPLICATION}" OFF )
@@ -87,6 +87,8 @@ macro( _selxapplication_enable APPLICATION UPSTREAM )
       set( ${APPLICATION}_TARGET_NAME ${APPLICATION} )
     endif()
 
+    # TODO: Add check for source files
+
     add_executable( ${${APPLICATION}_TARGET_NAME} "${${APPLICATION}_HEADER_FILES}" "${${APPLICATION}_SOURCE_FILES}" )
  
     if( ${APPLICATION}_INCLUDE_DIRS )
@@ -95,12 +97,17 @@ macro( _selxapplication_enable APPLICATION UPSTREAM )
 
     if( ${APPLICATION}_MODULE_DEPENDENCIES )
       _selxmodule_enable_dependencies( ${APPLICATION}_MODULE_DEPENDENCIES ${APPLICATION} )
-      _selxmodule_include_directories( ${${APPLICATION}_TARGET_NAME} ${APPLICATION}_MODULE_DEPENDENCIES )
-      _selxmodule_link_libraries( ${${APPLICATION}_TARGET_NAME} ${APPLICATION}_MODULE_DEPENDENCIES )
+
+      foreach( DEPENDENCY ${${APPLICATION}_MODULE_DEPENDENCIES} )
+        if( TARGET ${DEPENDENCY} )
+          target_include_directories( ${${APPLICATION}_TARGET_NAME} ${DEPENDENCY}_INCLUDE_DIRS )
+          target_link_libraries( ${${APPLICATION}_TARGET_NAME} ${DEPENDENCY} )
+        endif()
+      endforeach()
     endif()
 
     if( ${APPLICATION}_LINK_LIBRARIES )
-      _selxapplication_link_libraries( ${APPLICATION}_TARGET_NAME ${APPLICATION}_LINK_LIBRARIES ) 
+      _selmodule_link_libraries( ${${APPLICATION}_TARGET_NAME} ${APPLICATION}_LINK_LIBRARIES ) 
     endif()
 
     message( STATUS "${APPLICATION} enabled." ) 
