@@ -22,7 +22,7 @@
 
 #include "itkProcessObject.h"
 #include "selxBlueprint.h"
-#include "selxNetworkBuilder.h"
+
 #include "selxAnyFileReader.h"
 #include "selxAnyFileWriter.h"
 #include "itkSharedPointerDataObjectDecorator.h"
@@ -34,6 +34,8 @@
 
 namespace selx
 {
+class NetworkBuilder; // forward declaration, hiding implementation details and speeding up compilation time (PIMPL idiom)
+  
 class SuperElastixFilter : public itk::ProcessObject
 {
 public:
@@ -55,8 +57,6 @@ public:
 
   typedef AnyFileReader AnyFileReaderType;
   typedef AnyFileWriter AnyFileWriterType;
-
-  typedef std::unique_ptr< NetworkBuilder > NetworkBuilderPointer;
 
   typedef itk::SharedPointerDataObjectDecorator< Blueprint > BlueprintType;
   typedef BlueprintType::Pointer                                      BlueprintPointer;
@@ -113,7 +113,7 @@ private:
 
   //TODO make const correct
   BlueprintType::Pointer      m_Blueprint;
-  NetworkBuilderPointer             m_NetworkBuilder;
+  std::unique_ptr< NetworkBuilder >   m_NetworkBuilder;
   bool                        m_InputConnectionModified;
   bool                        m_OutputConnectionModified;
   bool                        m_BlueprintConnectionModified;
