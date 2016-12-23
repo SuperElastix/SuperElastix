@@ -34,11 +34,11 @@
 
 namespace itk
 {
-/** \class AutoPointerDataObjectDecorator
+/** \class SharedPointerDataObjectDecorator
  * \brief Decorates any pointer to a simple object with a DataObject API using
- * AutoPointer semantics.
+ * SharedPointer semantics.
  *
- * AutoPointerDataObjectDecorator decorates a pointer to an object
+ * SharedPointerDataObjectDecorator decorates a pointer to an object
  * with a DataObject API. This allows a pointer to an object to be
  * encapsulated in a DataObject and passed through the pipeline. This
  * object differs from SimpleDataObjectDecorator in that the decorator
@@ -51,6 +51,7 @@ namespace itk
  * the component is initialized with its default constructor (i.e. a
  * null pointer).
  *
+ * \sa AutoPointerDataObjectDecorator
  * \sa SimpleDataObjectDecorator
  * \sa DataObjectDecorator
  * \ingroup ITKSystemObjects

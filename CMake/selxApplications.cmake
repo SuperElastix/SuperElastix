@@ -48,7 +48,7 @@ macro( _selxapplications_initialize )
   foreach( APPLICATION_CMAKE_FILE ${APPLICATION_CMAKE_FILES})
     get_filename_component( APPLICATION ${APPLICATION_CMAKE_FILE} NAME_WE )
     get_filename_component( ${APPLICATION}_PATH ${APPLICATION_CMAKE_FILE} PATH )
-    
+
     message( STATUS "  ${APPLICATION}" )
 
     option( "USE_${APPLICATION}" OFF )
@@ -87,27 +87,30 @@ macro( _selxapplication_enable APPLICATION UPSTREAM )
       set( ${APPLICATION}_TARGET_NAME ${APPLICATION} )
     endif()
 
+    # TODO: Add check for source files
+
     add_executable( ${${APPLICATION}_TARGET_NAME} "${${APPLICATION}_HEADER_FILES}" "${${APPLICATION}_SOURCE_FILES}" )
  
-    # Include application headers
     if( ${APPLICATION}_INCLUDE_DIRS )
-      target_include_directories( $${${APPLICATION}_TARGET_NAME} PUBLIC ${${APPLICATION}_INCLUDE_DIRS} )
+      _selxmodule_include_directories( ${${APPLICATION}_TARGET_NAME} ${APPLICATION} )
     endif()
-
-    # Include interface headers
-    target_include_directories( ${${APPLICATION}_TARGET_NAME} PUBLIC ${SUPERELASTIX_INTERFACE_DIRS} )
 
     if( ${APPLICATION}_MODULE_DEPENDENCIES )
       _selxmodule_enable_dependencies( ${APPLICATION}_MODULE_DEPENDENCIES ${APPLICATION} )
 
-      # Macros for including and linking all dependencies
-      _selxmodule_include_directories( ${${APPLICATION}_TARGET_NAME} ${APPLICATION}_MODULE_DEPENDENCIES )
-      _selxmodule_link_libraries( ${${APPLICATION}_TARGET_NAME} ${APPLICATION}_MODULE_DEPENDENCIES )
+      # Include directories
+      target_include_directories( ${${APPLICATION}_TARGET_NAME} PUBLIC ${${DEPENDENCY}_INCLUDE_DIRS} )
+
+      # Link if the dependency is a library (as opposed to header-only)
+      foreach( DEPENDENCY ${${APPLICATION}_MODULE_DEPENDENCIES} )
+        if( TARGET ${DEPENDENCY} )
+          target_link_libraries( ${${APPLICATION}_TARGET_NAME} ${DEPENDENCY} )
+        endif()
+      endforeach()
     endif()
 
-    # Link against external libraries
     if( ${APPLICATION}_LINK_LIBRARIES )
-      _selxapplication_link_libraries( ${APPLICATION}_TARGET_NAME ${APPLICATION}_LINK_LIBRARIES ) 
+      target_link_libraries( ${${APPLICATION}_TARGET_NAME} ${${APPLICATION}_LINK_LIBRARIES} ) 
     endif()
 
     message( STATUS "${APPLICATION} enabled." ) 
@@ -118,12 +121,6 @@ endmacro()
 
 macro( _selxapplication_disable APPLICATION )
   set( USE_${APPLICATION} FALSE )
-endmacro()
- 
-macro( _selxapplication_link_libraries TARGET LIBRARIES )
-  foreach( LIBRARY ${${LIBRARIES}} )
-    target_link_libraries( ${${TARGET}} ${LIBRARY} )
-  endforeach()
 endmacro()
 
 macro( add_integration_test )
