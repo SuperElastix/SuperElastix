@@ -19,6 +19,7 @@
 
 #include "selxSuperElastixFilter.h"
 #include "selxRegisterComponentFactoriesByTypeList.h"
+#include "selxDefaultComponents.h"
 #include "selxRegistrationController.h"
 
 #include "selxNiftyregReadImageComponent.h"

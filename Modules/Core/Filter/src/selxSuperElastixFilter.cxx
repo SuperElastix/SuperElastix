@@ -75,7 +75,7 @@ SuperElastixFilter
       itkExceptionMacro(<< "Setting a Blueprint is required first.")
     }
 
-    this->m_NetworkBuilder = NetworkBuilderPointer(new NetworkBuilder(this->m_Blueprint->Get()));
+    this->m_NetworkBuilder = std::unique_ptr< NetworkBuilder >(new NetworkBuilder(this->m_Blueprint->Get()));
     this->m_AllUniqueComponents = this->m_NetworkBuilder->Configure();
   }
   else if (this->m_BlueprintConnectionModified == true)
@@ -211,7 +211,7 @@ SuperElastixFilter
     {
       itkExceptionMacro(<< "Setting a Blueprint is required first.")
     }
-    this->m_NetworkBuilder = NetworkBuilderPointer(new NetworkBuilder(this->m_Blueprint->Get()));
+    this->m_NetworkBuilder = std::unique_ptr< NetworkBuilder >(new NetworkBuilder(this->m_Blueprint->Get()));
     this->m_AllUniqueComponents = this->m_NetworkBuilder->Configure();
   }
   if (!this->m_AllUniqueComponents)
@@ -235,7 +235,7 @@ SuperElastixFilter
       itkExceptionMacro(<< "Setting a Blueprint is required first.")
     }
 
-    this->m_NetworkBuilder = NetworkBuilderPointer(new NetworkBuilder(this->m_Blueprint->Get()));
+    this->m_NetworkBuilder = std::unique_ptr< NetworkBuilder >(new NetworkBuilder(this->m_Blueprint->Get()));
     this->m_AllUniqueComponents = this->m_NetworkBuilder->Configure();
   }
   if (!this->m_AllUniqueComponents)
@@ -274,7 +274,7 @@ SuperElastixFilter::OutputDataType
         itkExceptionMacro(<< "Setting a Blueprint is required first.")
       }
 
-      this->m_NetworkBuilder = NetworkBuilderPointer(new NetworkBuilder(this->m_Blueprint->Get()));
+      this->m_NetworkBuilder = std::unique_ptr< NetworkBuilder >(new NetworkBuilder(this->m_Blueprint->Get()));
       this->m_AllUniqueComponents = this->m_NetworkBuilder->Configure();
       this->m_BlueprintConnectionModified = false;
     }
