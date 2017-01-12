@@ -49,7 +49,6 @@ if (NOT WIN32)
 endif(NOT WIN32)
 
 set( ${MODULE}_SOURCE_FILES
-  ${${MODULE}_SOURCE_DIR}/src/selxNiftyregComponent.cxx 
   )
 
 set( ${MODULE}_TEST_SOURCE_FILES 
@@ -57,8 +56,6 @@ set( ${MODULE}_TEST_SOURCE_FILES
 )
 
 set( ${MODULE}_LIBRARIES 
-  ${MODULE}
-  ${Niftyreg_LIBRARIES} 
   ${PNG_LIBRARIES} 
   ${ZLIB_LIBRARIES}
 )
