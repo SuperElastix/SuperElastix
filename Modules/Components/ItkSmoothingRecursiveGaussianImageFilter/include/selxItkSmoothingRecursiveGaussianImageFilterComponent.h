@@ -22,7 +22,7 @@
 
 #include "selxSuperElastixComponent.h"
 
-//#include "selxItkRegistrationMethodv4Interfaces.h"
+#include "selxItkRegistrationMethodv4Interfaces.h"
 #include "selxSinksAndSourcesInterfaces.h"
 #include "selxItkObjectInterfaces.h"
 
