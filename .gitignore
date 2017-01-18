@@ -36,8 +36,9 @@
 
 # IDEs
 .idea
-.kdev4
 cmake-build-*
+.kdev4
+.vscode
 
 # Source
 Documentation/build

@@ -17,8 +17,6 @@
 #
 #=========================================================================
 
-set( MODULE ModuleElastix )
-
 # If OpenMP is supported by this machine, elastix will be compiled with
 # OpenMP flags, and we need to add them here as well
 find_package( OpenMP QUIET )
@@ -34,41 +32,24 @@ endif()
 
 if( NOT EXISTS ${ELASTIX_USE_FILE} )
   set( ELASTIX_DIR "" CACHE PATH "Path to elastix build folder" )
-  message(FATAL_ERROR "Could not find UseElastix.cmake. Point ELASTIX_DIR to folder containing UseElastix.cmake or use SuperBuild.")
+  message( FATAL_ERROR "Could not find UseElastix.cmake. Point ELASTIX_DIR to folder containing UseElastix.cmake or use SuperBuild." )
 endif()
 
-# Export include files
+# TODO: Add include and link directories manually to avoid elastix polluting CMake environment
 include( ${ELASTIX_USE_FILE} )
 
-# Export include files
 set( ${MODULE}_INCLUDE_DIRS
   ${${MODULE}_SOURCE_DIR}/include
 )
 
-# Collect header files for Visual Studio Project
-file(GLOB ${MODULE}_HEADER_FILES "${${MODULE}_SOURCE_DIR}/include/*.*")
-
-# Export libraries
-set( ${MODULE}_LIBRARIES 
-  ${MODULE}
-  elastix
-  transformix
+set( ${MODULE}_SOURCE_FILES
 )
 
-# Export tests
-set( ${MODULE}_TESTS 
+set( ${MODULE}_TEST_SOURCE_FILES 
   ${${MODULE}_SOURCE_DIR}/test/selxElastixComponentTest.cxx
 )
 
-# Module source files
-set( ${MODULE}_SOURCE_FILES
-  ${${MODULE}_SOURCE_DIR}/src/selxElastixComponent.cxx 
-  ${${MODULE}_SOURCE_DIR}/src/selxMonolithicElastix.cxx 
-  ${${MODULE}_SOURCE_DIR}/src/selxMonolithicTransformix.cxx 
-  )
-
-# Compile library
-
-add_library( ${MODULE} STATIC ${${MODULE}_SOURCE_FILES} ${${MODULE}_HEADER_FILES})
-
-target_link_libraries( ${MODULE} ${ELASTIX_LIBRARIES} )
+set( ${MODULE}_LIBRARIES 
+  elastix
+  transformix
+)

@@ -24,10 +24,7 @@
 
 namespace selx
 {
-/** \class MetricComponent1Factory
- * \brief Create instances of MetaImageIO objects using an object factory.
- * \ingroup ITKIOMeta
- */
+
 template< class ComponentT >
 class ComponentFactory : public itk::ObjectFactoryBase
 {

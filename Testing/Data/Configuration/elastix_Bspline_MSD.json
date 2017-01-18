@@ -1,0 +1,73 @@
+{
+    "Component": {
+        "Name": "RegistrationMethod",
+        "NameOfClass": "MonolithicElastixComponent",
+        "Dimensionality": "2",
+        "Transform": "BSplineTransform",
+        "Metric": "AdvancedMeanSquares",
+        "PixelType": "float",
+        "ResultImagePixelType": "float"
+    },
+    "Component": {
+        "Name": "FixedImage",
+        "NameOfClass": "ItkImageSourceFixedComponent",
+        "Dimensionality": "2",
+        "PixelType": "float"
+    },
+    "Component": {
+        "Name": "MovingImage",
+        "NameOfClass": "ItkImageSourceMovingComponent"
+    },
+    "Component": {
+        "Name": "ResultImage",
+        "NameOfClass": "ItkImageSinkComponent"
+    },
+    "Component": {
+        "Name": "TransformDisplacementField",
+        "NameOfClass": "MonolithicTransformixComponent"
+    },
+	"Component": {
+        "Name": "Controller",
+        "NameOfClass": "RegistrationControllerComponent"
+    },
+    "Connection": {
+        "Out": "FixedImage",
+        "In": "RegistrationMethod",
+        "NameOfInterface": "itkImageFixedInterface"
+    },
+    "Connection": {
+        "Out": "MovingImage",
+        "In": "RegistrationMethod",
+        "NameOfInterface": "itkImageMovingInterface"
+    },
+	"Connection": {
+        "Out": "FixedImage",
+        "In": "TransformDisplacementField",
+        "NameOfInterface": "itkImageDomainFixedInterface"
+    },
+	"Connection": {
+        "Out": "MovingImage",
+        "In": "TransformDisplacementField",
+        "NameOfInterface": "itkImageMovingInterface"
+    },
+    "Connection": {
+        "Out": "RegistrationMethod",
+        "In": "TransformDisplacementField",
+		"NameOfInterface": "elastixTransformParameterObjectInterface"
+    },
+    "Connection": {
+        "Out": "TransformDisplacementField",
+        "In": "ResultImage",
+		"NameOfInterface": "itkImageInterface"
+    },
+    "Connection": {
+        "Out": "RegistrationMethod",
+        "In": "Controller",
+		"NameOfInterface": "RunRegistrationInterface"
+    },
+    "Connection": {
+        "Out": "TransformDisplacementField",
+        "In": "Controller",
+		"NameOfInterface": "ReconnectTransformInterface"
+    }
+}

@@ -17,10 +17,11 @@
 *
 *=========================================================================*/
 
-#include "selxTypeList.h"
-
 #ifndef RegisterByTypeList_h
 #define RegisterByTypeList_h
+
+#include "selxTypeList.h"
+#include "selxComponentFactory.h"
 
 namespace selx
 {

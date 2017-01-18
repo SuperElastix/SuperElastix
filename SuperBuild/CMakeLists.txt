@@ -37,8 +37,11 @@ set( CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR} CACHE PATH "SuperBuild ins
 # ---------------------------------------------------------------------
 # SuperElastix SuperBuild configuration
 
-mark_as_advanced( SUPERELASTIX_BUILD_SHARED_LIBS )
-option( SUPERELASTIX_BUILD_SHARED_LIBS "Build SuperElastix with shared libraries." OFF )
+mark_as_advanced( BUILD_SHARED_LIBS )
+option( BUILD_SHARED_LIBS "Build shared libraries." OFF )
+
+mark_as_advanced( BUILD_EXPRESS )
+option( BUILD_EXPRESS "" OFF )
 
 # Build release by default
 if( NOT DEFINED CMAKE_BUILD_TYPE )
@@ -47,23 +50,22 @@ endif()
 
 # Build examples by default
 # Examples will be build as an external project to verify the installation of SuperElastix
-option( SUPERELASTIX_BUILD_EXAMPLES "Enable building examples." ON )
+option( BUILD_APPLICATIONS_EXTERNAL_PROJECT "Enable building examples." ON )
 
 # Build tests by default
-option( SUPERELASTIX_BUILD_TESTING "Enable building tests." ON )
-if( SUPERELASTIX_BUILD_TESTING )
-  option( SUPERELASTIX_BUILD_BENCHMARKING "Enable building benchmarks." ON )
-  option( SUPERELASTIX_BUILD_DASHBOARD "Enable building benchmarks." ON )
+option( BUILD_TESTING "Enable building tests." ON )
+if( BUILD_TESTING )
+  mark_as_advanced( BUILD_INTEGRATION_TESTS )
+  option( BUILD_INTEGRATION_TESTS "Also build tests that take a long time to run." OFF )
+  mark_as_advanced( BUILD_LONG_UNIT_TESTS )
+  option( BUILD_LONG_UNIT_TESTS "Also build tests that take a long time to run." OFF )
 endif()
-
-# Do not build dashboard by default
-option( SUPERELASTIX_BUILD_DASHBOARD "Enable building dashboard." OFF )
 
 # ---------------------------------------------------------------------
 # Build ITK
 
 set( ITK_VERSION_MAJOR "4" )
-set( ITK_VERSION_MINOR "8" )
+set( ITK_VERSION_MINOR "10" )
 set( ITK_VERSION_PATCH "1" )
 set( ITK_VERSION_STRING "${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR}.${ITK_VERSION_PATCH}" )
 
@@ -78,25 +80,31 @@ else()
 endif()
 
 # ---------------------------------------------------------------------
-# Build Old Elastix
+# Build Elastix
 
-mark_as_advanced( SUPERELASTIX_BUILD_ELASTIX )
-option( SUPERELASTIX_BUILD_ELASTIX "Build support for Elastix ${ELASTIX_VERSION_STRING}." ON )
-if( SUPERELASTIX_BUILD_ELASTIX )
-  mark_as_advanced( USE_SYSTEM_ELASTIX )
-  option( USE_SYSTEM_ELASTIX "Use an installed version of Elastix." OFF )
-  if( USE_SYSTEM_ELASTIX )
-    if( NOT EXISTS ${ELASTIX_USE_FILE} )
-      set( ELASTIX_USE_FILE "NOT_FOUND" CACHE PATH "Absolute path to UseElastix.cmake in the root of the elastix build tree." )
-      message( FATAL_ERROR "Could not find the ELASTIX_USE_FILE (${ELASTIX_USE_FILE}). Use the SuperBuild or manually point the ELASTIX_USE_FILE CMake variable to the UseElastix.cmake file in the root of your elastix build tree." )
-    endif()
-  else()
-    include( ExternalElastix )
+mark_as_advanced( USE_SYSTEM_ELASTIX )
+option( USE_SYSTEM_ELASTIX "Use an installed version of elastix" OFF )
+if( USE_SYSTEM_ELASTIX )
+  if( NOT EXISTS ${ELASTIX_USE_FILE} )
+    set( ELASTIX_USE_FILE "NOT_FOUND" CACHE PATH "Absolute path to UseElastix.cmake." )
+    message( FATAL_ERROR "Could not find the ELASTIX_USE_FILE (${ELASTIX_USE_FILE}). Use the SuperBuild or manually point the ELASTIX_USE_FILE CMake variable to the UseElastix.cmake file in source directory of your elastix build tree." )
   endif()
+else()
+  include( ExternalElastix )
 endif()
 
 # ---------------------------------------------------------------------
-# Build Boost Library
+# Build Niftyreg
+
+mark_as_advanced( SUPERELASTIX_BUILD_NIFTYREG )
+option( SUPERELASTIX_BUILD_NIFTYREG "Build support for Niftyreg." ON )
+if( SUPERELASTIX_BUILD_NIFTYREG )
+#TODO add USE_SYSTEM_NIFTYREG option
+  include( ExternalNiftyreg )
+endif()
+
+# ---------------------------------------------------------------------
+# Build Boost
 
 mark_as_advanced( USE_SYSTEM_BOOST )
 option( USE_SYSTEM_BOOST "Use an installed version of BOOST" OFF )
@@ -111,15 +119,11 @@ endif()
 
 mark_as_advanced( USE_SYSTEM_GOOGLETEST )
 option( USE_SYSTEM_GOOGLETEST "Use a pre-compiled version of GoogleTest. " OFF ) 
-mark_as_advanced( USE_SYSTEM_GOOGLETEST ) 
-if( SUPERELASTIX_BUILD_TESTING )
-  mark_as_advanced( SUPERELASTIX_BUILD_LONG_TESTS )
-  option( SUPERELASTIX_BUILD_LONG_TESTS "Also build tests that take a long time to run." OFF )
-  if ( USE_SYSTEM_GOOGLETEST ) 
-    find_package( GTest REQUIRED ) 
-  else() 
-    include( ExternalGoogleTest ) 
-  endif() 
+
+if ( USE_SYSTEM_GOOGLETEST ) 
+  find_package( GTest REQUIRED ) 
+else() 
+  include( ExternalGoogleTest ) 
 endif() 
 
 # ---------------------------------------------------------------------
@@ -130,7 +134,9 @@ include( SuperElastix )
 # ---------------------------------------------------------------------
 # Build Applications as an external project
 
-include( ExternalApplications )
+if( ${BUILD_APPLICATIONS_EXTERNAL_PROJECT} )
+  include( ExternalApplications )
+endif()
 
 
 

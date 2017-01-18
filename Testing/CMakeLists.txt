@@ -40,7 +40,7 @@ file( GLOB_RECURSE SuperElastixDataContentLinks "*.md5" )
 foreach( SuperElastixDataContentLink ${SuperElastixDataContentLinks} )
   string( REGEX REPLACE "\\.md5$" "" SuperElastixDataContentLink ${SuperElastixDataContentLink} )
   ExternalData_Expand_Arguments( SuperElastixData
-    SuperElastixDataFileNames
+    SuperElastixDataFileName
     DATA{${SuperElastixDataContentLink}}
   )
 endforeach()
@@ -54,28 +54,40 @@ ExternalData_Add_Target( SuperElastixData )
 find_package( GTest REQUIRED )
 include_directories( ${GTEST_INCLUDE_DIRS} )
 
-set( TEST_LIBRARIES
-  ${GTEST_BOTH_LIBRARIES}
+set( TEST_LIBRARIES ${GTEST_BOTH_LIBRARIES} )
+
+# ---------------------------------------------------------------------
+# Build data manager
+
+if( WIN32 )
+  string(REGEX REPLACE "/" "\\\\\\\\" SUPERELASTIX_INPUT_DATA_DIR ${SUPERELASTIX_INPUT_DATA_DIR})
+  string(REGEX REPLACE "/" "\\\\\\\\" SUPERELASTIX_OUTPUT_DATA_DIR ${SUPERELASTIX_OUTPUT_DATA_DIR})
+  string(REGEX REPLACE "/" "\\\\\\\\" SUPERELASTIX_BASELINE_DATA_DIR ${SUPERELASTIX_BASELINE_DATA_DIR})
+  string(REGEX REPLACE "/" "\\\\\\\\" SUPERELASTIX_CONFIGURATION_DATA_DIR ${SUPERELASTIX_CONFIGURATION_DATA_DIR})
+endif (WIN32)
+
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/selxDataDirectories.h.in
+  ${CMAKE_CURRENT_BINARY_DIR}/selxDataDirectories.h
+  ESCAPE_QUOTES
 )
+
+add_library( DataManager selxDataManager.cxx )
+
+# TODO: move Common dir?
+set (COMMON_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/Modules/Core/Common/include" )
+
+target_include_directories( DataManager PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${SUPERELASTIX_INCLUDE_DIRS} ${COMMON_INCLUDE_DIR} )
+list( APPEND TEST_LIBRARIES DataManager )
 
 # ---------------------------------------------------------------------
 # Build test suite
 
-set( CTEST_CONFIGURATION_TYPE Debug )
-
-# Unit tests
-add_subdirectory( Unit )
-
-# Make data directories available parent cmake for installation of SuperElastix
-set( SUPERELASTIX_UNITTEST_INPUT_DATA_DIR ${SUPERELASTIX_UNITTEST_INPUT_DATA_DIR} PARENT_SCOPE )
-set( SUPERELASTIX_UNITTEST_BASELINE_DATA_DIR ${SUPERELASTIX_UNITTEST_BASELINE_DATA_DIR} PARENT_SCOPE )
-set( SUPERELASTIX_UNITTEST_CONFIGURATION_DATA_DIR ${SUPERELASTIX_UNITTEST_CONFIGURATION_DATA_DIR} PARENT_SCOPE )
-
-# ---------------------------------------------------------------------
-# Configure dashboard
-mark_as_advanced( SUPERELASTIX_BUILD_DASHBOARD )
-option( SUPERELASTIX_BUILD_DASHBOARD "Enable SuperElastix dashboard." OFF )
-
-if( ${SUPERELASTIX_BUILD_DASHBOARD} )
-  add_subdirectory( Dashboard )
+if( ${BUILD_UNIT_TESTS} )
+  add_subdirectory( Unit )
 endif()
+
+if( ${BUILD_INTEGRATION_TESTS} )
+  add_subdirectory( Integration )
+endif()
+

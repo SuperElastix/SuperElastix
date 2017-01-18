@@ -36,8 +36,6 @@ ExternalProject_Add( ${proj}
   -DELASTIX_BUILD_SHARED_LIBS:BOOL=${SUPERELASTIX_BUILD_SHARED_LIBS}
   -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
   -DITK_DIR:PATH=${ITK_DIR}
-  # explicitly set the types for 3d
-  # -DELASTIX_IMAGE_3D_PIXELTYPES:STRING={"float;double"}
   # Elastix components configuration
   -DUSE_AdaptiveStochasticGradientDescent:BOOL=ON                                           
   -DUSE_AdvancedAffineTransformElastix:BOOL=ON

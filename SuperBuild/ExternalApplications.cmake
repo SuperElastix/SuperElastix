@@ -17,7 +17,7 @@
 #
 #=========================================================================
 
-set( proj SuperElastixApplications )
+set( proj Applications )
 
 ExternalProject_Add( ${proj}
   DOWNLOAD_COMMAND ""
@@ -28,6 +28,7 @@ ExternalProject_Add( ${proj}
     -DSuperElastix_DIR:PATH=${SuperElastix_DIR}
     -DITK_DIR:PATH=${ITK_DIR}
     -DELASTIX_USE_FILE:PATH=${ELASTIX_USE_FILE}
+	-DBOOST_ROOT:PATH=${BOOST_ROOT}
   DEPENDS ${SUPERELASTIX_DEPENDENCIES}
   INSTALL_COMMAND ""
 )

@@ -20,11 +20,13 @@
 #ifndef selxItkGaussianExponentialDiffeomorphicTransformComponent_h
 #define selxItkGaussianExponentialDiffeomorphicTransformComponent_h
 
-#include "selxComponentBase.h"
-#include "selxInterfaces.h"
+#include "selxSuperElastixComponent.h"
+
+#include "selxItkRegistrationMethodv4Interfaces.h"
+#include "selxSinksAndSourcesInterfaces.h"
+
 #include "itkGaussianExponentialDiffeomorphicTransform.h"
-#include <string.h>
-#include "selxMacro.h"
+
 namespace selx
 {
 template< class InternalComputationValueType, int Dimensionality >

@@ -19,11 +19,16 @@
 
 cmake_minimum_required( VERSION 3.0.2 )
 
-cmake_policy( SET CMP0054 OLD )
-cmake_policy( SET CMP0064 OLD )
+# Explicitly add INCREMENTAL linking option to command lines.
+# http://www.cmake.org/pipermail/cmake/2010-February/035174.html
+#set( MSVC_INCREMENTAL_DEFAULT ON )
 
 # ---------------------------------------------------------------------
 project( SuperElastix )
+
+enable_language( C )
+enable_language( CXX )
+set( CMAKE_CXX_STANDARD 11 )
 
 # Place executables in the bin directory
 set( CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin" )
@@ -86,49 +91,93 @@ endif()
 
 find_package( ITK REQUIRED )
 include( ${ITK_USE_FILE} )
-include("${CMAKE_CURRENT_SOURCE_DIR}/CMake/elxRequiredITKModules.cmake")
+
+list( APPEND RequiredITKModules
+  ITKReview
+)
+
+foreach( ITKModule ${RequiredITKModules} )
+  if( NOT ${ITKModule}_LOADED )
+    message( FATAL_ERROR "elastix requires that ITK is build with ${ITKModule}. Please rebuild ITK with Module_${ITKModule} set to ON." )
+  endif()
+endforeach()
 
 # ---------------------------------------------------------------------
 # Boost Library
 
-set( Boost_USE_STATIC_LIBS NOT ${BUILD_SHARED_LIBS} )   
-set( Boost_USE_STATIC_RUNTIME NOT ${BUILD_SHARED_LIBS} ) 
-find_package( Boost COMPONENTS graph log REQUIRED )
+set(Boost_USE_STATIC_LIBS        ON) # only find static libs
+set(Boost_USE_MULTITHREADED      ON)
+set(Boost_USE_STATIC_RUNTIME    OFF)
+
+find_package( Boost COMPONENTS program_options filesystem system REQUIRED QUIET ) # graph log ?
 include_directories( ${Boost_INCLUDE_DIRS} )
+
+# ---------------------------------------------------------------------
+# SuperElastix configuration 
+
+option( BUILD_APPLICATIONS "Build applications." OFF )
+
+mark_as_advanced( BUILD_SHARED_LIBS )
+option( BUILD_SHARED_LIBS "Build shared libraries." OFF )
+
+mark_as_advanced( BUILD_EXPRESS )
+option( BUILD_EXPRESS "Use express build." OFF )
 
 # ---------------------------------------------------------------------
 # Build SuperElastix
 
-# For now we just enable all modules
+# Initialize the build system and build the core. These calls are mandatory. 
+# Do not change and do not call anywhere else.
 include( selxModules )
-selxmodule_enable( ModuleCore )
-selxmodule_enable( ModuleExamples )
-selxmodule_enable( ModuleSinksAndSources )
-selxmodule_enable( ModuleItkSmoothingRecursiveGaussianImageFilter )
-selxmodule_enable( ModuleItkImageRegistrationMethodv4 )
-selxmodule_enable( ModuleItkSyNImageRegistrationMethod )
-selxmodule_enable( ModuleElastix )
-selxmodule_enable( ModuleController )
+_selxmodules_initialize()
+_selxmodule_enable( ModuleCore "SuperElastix" )
+
+# Build applications
+if( ${BUILD_APPLICATIONS} AND NOT ${BUILD_EXPRESS} )
+  include( selxApplications )
+  _selxapplications_initialize()
+  enable_applications( SUPERELASTIX_APPLICATIONS )
+endif() 
+
+# TODO: Functionality to disable default modules/applications
 
 # ---------------------------------------------------------------------
 # Testing
 
-option( SUPERELASTIX_BUILD_TESTING "Enable building tests." ON )
-if( ${SUPERELASTIX_BUILD_TESTING} )
-  mark_as_advanced( SUPERELASTIX_BUILD_LONG_TESTS )
-  option( SUPERELASTIX_BUILD_LONG_TESTS "Also build tests that take a long time to run." OFF )
-  enable_testing()
+set( SUPERELASTIX_INPUT_DATA_DIR ${CMAKE_CURRENT_BINARY_DIR}/Testing/Data/Input )
+set( SUPERELASTIX_OUTPUT_DATA_DIR ${CMAKE_CURRENT_BINARY_DIR}/Testing/Data/Output )
+set( SUPERELASTIX_BASELINE_DATA_DIR ${CMAKE_CURRENT_BINARY_DIR}/Testing/Data/Baseline )
+set( SUPERELASTIX_CONFIGURATION_DATA_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Testing/Data/Configuration )
+
+if( NOT EXISTS ${SUPERELASTIX_OUTPUT_DATA_DIR} )
+  file( MAKE_DIRECTORY ${SUPERELASTIX_OUTPUT_DATA_DIR} )
+endif()
+
+if( NOT EXISTS ${SUPERELASTIX_OUTPUT_DATA_DIR} )
+  message( FATAL_ERROR "Could not create directory for output data. Make sure CMake has write permissions." )
+endif()
+
+include( CTest )
+option( BUILD_TESTING "Build SuperElastix unit tests." ON )
+
+if( ${BUILD_TESTING} )
+  mark_as_advanced( BUILD_UNIT_TESTS )
+  option( BUILD_UNIT_TESTS "Also build tests that take a long time to run." ON )
+  mark_as_advanced( BUILD_LONG_UNIT_TESTS )
+  option( BUILD_LONG_UNIT_TESTS "Also build tests that take a long time to run." OFF )
+  mark_as_advanced( BUILD_INTEGRATION_TESTS )
+  option( BUILD_INTEGRATION_TESTS "Build integration tests for applications." OFF )
   add_subdirectory( Testing )
 endif()
 
 # ---------------------------------------------------------------------
-# Build Documentation
+# Documentation
 
-mark_as_advanced( SUPERELASTIX_BUILD_DOXYGEN )
-option( SUPERELASTIX_BUILD_DOXYGEN "Enable building Doxygen documentation." OFF )
+mark_as_advanced( BUILD_DOXYGEN )
+option( BUILD_DOXYGEN "Enable building Doxygen documentation." OFF )
 
-mark_as_advanced( SUPERELASTIX_BUILD_READTHEDOCS )
-option( SUPERELASTIX_BUILD_READTHEDOCS "Enable building readthedocs.org documentation." OFF )
+mark_as_advanced( BUILD_READTHEDOCS )
+option( BUILD_READTHEDOCS "Enable building readthedocs.org documentation." OFF )
 
 # ---------------------------------------------------------------------
 # Enable other projects to use SuperElastix via CMake's find_packge() and a use-file
@@ -138,56 +187,3 @@ set( SUPERELASTIX_BINARY_DIR ${CMAKE_LIBRARY_OUTPUT_DIRECTORY} )
 
 configure_file( SuperElastixConfig.cmake.in SuperElastixConfig.cmake @ONLY IMMEDIATE )
 configure_file( UseSuperElastix.cmake.in UseSuperElastix.cmake COPYONLY IMMEDIATE )
-
-# ---------------------------------------------------------------------
-# Install
-# When building the "INSTALL" project of SuperElastix these files are installed
-
-# Copy the SuperElastix executable
-# install(TARGETS "SuperElastix"
-#   RUNTIME DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/installed"
-# )
-
-# Copy some of the configuration files
-install(FILES "${SUPERELASTIX_UNITTEST_CONFIGURATION_DATA_DIR}/itkv4_SVF_ANTsCC.json" 
-  "${SUPERELASTIX_UNITTEST_CONFIGURATION_DATA_DIR}/itkv4_SVF_MSD.json"
-  "${SUPERELASTIX_UNITTEST_CONFIGURATION_DATA_DIR}/elastix_Bspline_NC.json"
-  "${SUPERELASTIX_UNITTEST_CONFIGURATION_DATA_DIR}/elastix_Bspline_MSD.json"
-  DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/installed/Configuration"
-)
-
-# Copy some of the input data files
-
-#TODO: normal copy installing does not work
-#get_filename_component(ABS_INPUT_DIR ${SUPERELASTIX_UNITTEST_INPUT_DATA_DIR} REALPATH)
-#install(FILES "${ABS_INPUT_DIR}/coneA2d64.mhd"
-#  "${ABS_INPUT_DIR}/coneA2d64.raw"
-#  "${ABS_INPUT_DIR}/coneB2d64.mhd"
-#  "${ABS_INPUT_DIR}/coneB2d64.raw"
-#  DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/installed/Data/"
-#)
-
-#TODO: data files are only present if SUPERELASTIX_BUILD_TESTING is enabled.
-# copying these files should therefor be also via the ExternalData commands
-
-# temporarilly solved by hard coding a copy based on the hashed files
-set(EXTERNALDATA_OBJECT_DIR "${CMAKE_BINARY_DIR}/ExternalData/Objects/MD5")
-
-install( FILES "${EXTERNALDATA_OBJECT_DIR}/10aa9442cc6a1fd518da83cedbfcbdd3" 
-         DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/installed/Data/"
-         RENAME "coneA2d64.mhd")
-install( FILES "${EXTERNALDATA_OBJECT_DIR}/2d0ff0e14af2155659429d6f137f209e" 
-         DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/installed/Data/"
-         RENAME "coneA2d64.raw")
-install( FILES "${EXTERNALDATA_OBJECT_DIR}/7c358ebe7f53f01a4fe23ee953fa45d4" 
-         DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/installed/Data/"
-         RENAME "coneB2d64.mhd")
-install( FILES "${EXTERNALDATA_OBJECT_DIR}/deb92a27f201be258dedf66b632a2571" 
-         DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/installed/Data/"
-         RENAME "coneB2d64.raw")
-  
-
-# Copy the demo scripts
-install( DIRECTORY "${CMAKE_SOURCE_DIR}/Install/" 
-         DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/installed" 
-         FILE_PERMISSIONS OWNER_EXECUTE OWNER_READ OWNER_WRITE GROUP_EXECUTE GROUP_READ GROUP_WRITE )

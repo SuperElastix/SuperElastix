@@ -20,11 +20,13 @@
 #ifndef selxItkCompositeTransformComponent_h
 #define selxItkCompositeTransformComponent_h
 
-#include "selxComponentBase.h"
-#include "selxInterfaces.h"
+#include "selxSuperElastixComponent.h"
+
+#include "selxItkRegistrationMethodv4Interfaces.h"
+#include "selxSinksAndSourcesInterfaces.h"
+
 #include "itkCompositeTransform.h"
-#include <string.h>
-#include "selxMacro.h"
+
 namespace selx
 {
 template< class InternalComputationValueType, int Dimensionality >

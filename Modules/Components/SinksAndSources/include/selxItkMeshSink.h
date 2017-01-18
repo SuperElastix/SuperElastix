@@ -21,7 +21,9 @@
 #define selxItkMeshSink_h
 
 #include "selxSuperElastixComponent.h"
-#include "selxInterfaces.h"
+#include "selxSinksAndSourcesInterfaces.h"
+#include "selxItkObjectInterfaces.h"
+
 #include <string.h>
 #include "selxMacro.h"
 #include "itkMeshFileWriter.h"
@@ -68,7 +70,7 @@ public:
 private:
 
   typename ItkMeshType::Pointer m_MiniPipelineOutputMesh;
-  typename ItkMeshType::Pointer m_OverlordOutputMesh;
+  typename ItkMeshType::Pointer m_NetworkBuilderOutputMesh;
 
   itkMeshInterface< Dimensionality, TPixel > * m_ProvidingGetItkMeshInterface;
 

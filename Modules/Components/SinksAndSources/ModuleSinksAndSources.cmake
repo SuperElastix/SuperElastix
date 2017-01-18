@@ -17,40 +17,21 @@
 #
 #=========================================================================
 
-set( MODULE ModuleSinksAndSources )
-
-# Export include files
 set( ${MODULE}_INCLUDE_DIRS
   ${${MODULE}_SOURCE_DIR}/include
 )
 
-# Collect header files for Visual Studio Project
-file(GLOB ${MODULE}_HEADER_FILES "${${MODULE}_SOURCE_DIR}/include/*.*")
-
-# Export libraries
-set( ${MODULE}_LIBRARIES 
-  ${MODULE}
-)
-
-# Export tests
-set( ${MODULE}_TESTS 
-)
-
-# Module source files
+# This module is header-only and does not contain any source files
 set( ${MODULE}_SOURCE_FILES
-  ${${MODULE}_SOURCE_DIR}/src/selxItkImageSource.cxx
-  ${${MODULE}_SOURCE_DIR}/src/selxItkImageSink.cxx
-  ${${MODULE}_SOURCE_DIR}/src/selxItkImageSourceFixed.cxx
-  ${${MODULE}_SOURCE_DIR}/src/selxItkImageSourceMoving.cxx
-  ${${MODULE}_SOURCE_DIR}/src/selxDisplacementFieldItkImageFilterSink.cxx
-  ${${MODULE}_SOURCE_DIR}/src/selxItkMeshSource.cxx
-  ${${MODULE}_SOURCE_DIR}/src/selxItkMeshSink.cxx
-  
 )
 
-# Compile library
+# This module is header-only and does not export any libraries
+set( ${MODULE}_LIBRARIES 
+)
 
-add_library( ${MODULE} STATIC "${${MODULE}_SOURCE_FILES}" ${${MODULE}_HEADER_FILES})
+set( ${MODULE}_TEST_SOURCE_FILES )
 
-target_link_libraries( ${MODULE} ${SUPERELASTIX_LIBRARIES} )
+set( ${MODULE}_MODULE_DEPENDENCIES 
+  ModuleController
+)
 
