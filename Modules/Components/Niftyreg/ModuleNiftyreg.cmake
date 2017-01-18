@@ -58,4 +58,7 @@ set( ${MODULE}_TEST_SOURCE_FILES
 set( ${MODULE}_LIBRARIES 
   ${PNG_LIBRARIES} 
   ${ZLIB_LIBRARIES}
+  ${Niftyreg_LIBRARIES}
+  #${Niftyreg__reg_ReadWriteImage_LIBRARY}
+  #${Niftyreg__reg_f3d_LIBRARY}
 )
