@@ -102,8 +102,11 @@ public:
   void Update( void ) ITK_OVERRIDE;
 
 protected:
-
+  // default constructor for API library use
   SuperElastixFilter( void );
+
+  // special constructor which is called by the templated SuperElastixFilter for SDK library use
+  SuperElastixFilter( bool InitializeEmptyComponentList );
 
   virtual void GenerateOutputInformation( void ) ITK_OVERRIDE;
 

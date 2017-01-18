@@ -17,8 +17,7 @@
  *
  *=========================================================================*/
 
-#include "selxSuperElastixFilter.h"
-#include "selxRegisterComponentFactoriesByTypeList.h"
+#include "selxSuperElastixFilterCustomComponents.h"
 #include "elxParameterObject.h"
 
 #include "selxElastixComponent.h"
@@ -68,9 +67,9 @@ public:
   virtual void SetUp()
   {
     // Instantiate SuperElastixFilter before each test
-    superElastixFilter = SuperElastixFilter::New();
     // Register the components we want to have available in SuperElastix
-    RegisterFactoriesByTypeList< RegisterComponents >::Register();
+    superElastixFilter = SuperElastixFilterCustomComponents<RegisterComponents>::New();
+
     dataManager = DataManagerType::New();
   }
 
@@ -84,7 +83,7 @@ public:
   }
   // Blueprint holds a configuration for SuperElastix
   BlueprintPointer blueprint;
-  SuperElastixFilter::Pointer superElastixFilter;
+  SuperElastixFilterCustomComponents<RegisterComponents>::Pointer superElastixFilter;
   // Data manager provides the paths to the input and output data for unit tests
   DataManagerType::Pointer dataManager;
 };

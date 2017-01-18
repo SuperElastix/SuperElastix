@@ -23,6 +23,8 @@
 #include "selxSuperElastixFilter.h"
 #include "selxNetworkBuilder.h"
 
+#include "selxRegisterComponentFactoriesByTypeList.h"
+#include "selxDefaultComponents.h"
 
 namespace selx
 {
@@ -31,17 +33,24 @@ namespace selx
  */
 
 SuperElastixFilter
-::SuperElastixFilter( void ) :
-  m_InputConnectionModified( true ),
-  m_OutputConnectionModified( true ),
-  m_BlueprintConnectionModified( true ),
-  m_IsConnected( false ),
-  m_AllUniqueComponents( false )
+::SuperElastixFilter(void) : SuperElastixFilter(true)
 {
-  //RegisterFactoriesByTypeList< ComponentTypeList >::Register();
+  // The default constructor registers the default components.
+  RegisterFactoriesByTypeList< DefaultComponents >::Register();
+} // end Constructor
 
-  // Disable "Primary" as required input< C< ComponentTypeList >omponentTypeList >
-  this->SetRequiredInputNames( {} );
+// 
+SuperElastixFilter
+::SuperElastixFilter(bool InitializeEmptyComponentList) :
+m_InputConnectionModified(true),
+m_OutputConnectionModified(true),
+m_BlueprintConnectionModified(true),
+m_IsConnected(false),
+m_AllUniqueComponents(false)
+{
+   // Disable "Primary" as required input
+  // TODO: Blueprint should become primary
+  this->SetRequiredInputNames({});
 } // end Constructor
 
 
