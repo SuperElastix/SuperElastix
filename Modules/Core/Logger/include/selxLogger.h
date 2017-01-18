@@ -21,6 +21,7 @@
 #define Logger_h
 
 #include <string>
+#include <memory>
 
 namespace selx {
 

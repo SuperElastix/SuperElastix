@@ -29,8 +29,8 @@ namespace selx {
 BOOST_LOG_ATTRIBUTE_KEYWORD( severity_filter, "Severity", SeverityType );
 BOOST_LOG_ATTRIBUTE_KEYWORD( channel_filter, "Channel", Logger::ChannelType );
 
-struct Logger::LoggerImpl {
-
+class Logger::LoggerImpl {
+public:
   typedef boost::log::sources::severity_channel_logger< SeverityType, ChannelType > LoggerType;
 
   LoggerImpl();

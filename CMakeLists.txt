@@ -116,16 +116,6 @@ set(BOOST_ROOT "${BOOST_ROOT}/BOOST-prefix/src/Boost/" )
 find_package( Boost COMPONENTS filesystem system log date_time thread regex REQUIRED QUIET ) # graph ?
 include_directories( ${Boost_INCLUDE_DIRS} )
 
-if (WIN32)  # TODO test if we really need this 
-  # disable autolinking in boost
-  add_definitions( -DBOOST_ALL_NO_LIB )
-
-  # force all boost libraries to dynamic link (we already disabled
-  # autolinking, so I don't know why we need this, but we do!)
-  add_definitions( -DBOOST_ALL_DYN_LINK )
-endif()
-
-
 # ---------------------------------------------------------------------
 # SuperElastix configuration 
 
