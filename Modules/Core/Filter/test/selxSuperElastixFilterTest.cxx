@@ -17,8 +17,8 @@
 *
 *=========================================================================*/
 
-#include "selxSuperElastixFilter.h"
-#include "selxRegisterComponentFactoriesByTypeList.h"
+#include "selxSuperElastixFilterCustomComponents.h"
+
 #include "itkSharedPointerDataObjectDecorator.h"
 
 #include "selxItkSmoothingRecursiveGaussianImageFilterComponent.h"
@@ -86,6 +86,7 @@ public:
   virtual void TearDown()
   {
     // Unregister all components after each test 
+    // TODO: when SuperElastix is refactored to not use the ITK object factory this UnRegisterAllFactories call must be removed
     itk::ObjectFactoryBase::UnRegisterAllFactories();
     // Delete the SuperElastixFilter after each test 
     superElastixFilter = nullptr;
@@ -113,10 +114,11 @@ TEST_F( SuperElastixFilterTest, ImageOnly )
   blueprint->SetConnection( "InputImage", "ImageFilter", { {} } ); //
   blueprint->SetConnection( "ImageFilter", "OutputImage", { {} } );
 
-  // Instantiate SuperElastixFilter before each test
-  EXPECT_NO_THROW(superElastixFilter = SuperElastixFilter::New());
-  // Register the components we want to have available in SuperElastix
-  RegisterFactoriesByTypeList< RegisterComponents >::Register();
+  // Instantiate SuperElastixFilter before each test and
+  // register the components we want to have available in SuperElastix
+  EXPECT_NO_THROW(superElastixFilter = SuperElastixFilterCustomComponents<RegisterComponents>::New());
+ 
+  
 
   SuperElastixFilterBlueprintPointer superElastixBlueprint = SuperElastixFilterBlueprintType::New();
   superElastixBlueprint->Set( blueprint );
@@ -153,10 +155,9 @@ TEST_F( SuperElastixFilterTest, ImageAndMesh )
   blueprint->SetComponent( "OutputMesh", { { "NameOfClass", { "ItkMeshSinkComponent" } } } );
   blueprint->SetConnection( "InputMesh", "OutputMesh", Blueprint::ParameterMapType() );
 
-  // Instantiate SuperElastixFilter before each test
-  EXPECT_NO_THROW(superElastixFilter = SuperElastixFilter::New());
-  // Register the components we want to have available in SuperElastix
-  RegisterFactoriesByTypeList< RegisterComponents >::Register();
+  // Instantiate SuperElastixFilter before each test and
+  // register the components we want to have available in SuperElastix
+  EXPECT_NO_THROW(superElastixFilter = SuperElastixFilterCustomComponents<RegisterComponents>::New());
 
   SuperElastixFilterBlueprintPointer superElastixFilterBlueprint = SuperElastixFilterBlueprintType::New();
   superElastixFilterBlueprint->Set( blueprint );
@@ -184,10 +185,9 @@ TEST_F( SuperElastixFilterTest, TooManyInputs )
 
   blueprint->SetComponent( "Source_A", { { "NameOfClass", { "ItkImageSourceComponent" } } } );
 
-  // Instantiate SuperElastixFilter before each test
-  EXPECT_NO_THROW(superElastixFilter = SuperElastixFilter::New());
-  // Register the components we want to have available in SuperElastix
-  RegisterFactoriesByTypeList< RegisterComponents >::Register();
+  // Instantiate SuperElastixFilter before each test and
+  // register the components we want to have available in SuperElastix
+  EXPECT_NO_THROW(superElastixFilter = SuperElastixFilterCustomComponents<RegisterComponents>::New());
 
   SuperElastixFilterBlueprintPointer superElastixFilterBlueprint = SuperElastixFilterBlueprintType::New();
   superElastixFilterBlueprint->Set( blueprint );
@@ -211,10 +211,9 @@ TEST_F( SuperElastixFilterTest, TooManySources )
   blueprint->SetComponent( "Source_A", { { "NameOfClass", { "ItkImageSourceComponent" } } } );
   blueprint->SetComponent( "Source_B", { { "NameOfClass", { "ItkImageSourceComponent" } } } );
 
-  // Instantiate SuperElastixFilter before each test
-  EXPECT_NO_THROW(superElastixFilter = SuperElastixFilter::New());
-  // Register the components we want to have available in SuperElastix
-  RegisterFactoriesByTypeList< RegisterComponents >::Register();
+  // Instantiate SuperElastixFilter before each test and
+  // register the components we want to have available in SuperElastix
+  EXPECT_NO_THROW(superElastixFilter = SuperElastixFilterCustomComponents<RegisterComponents>::New());
 
   SuperElastixFilterBlueprintPointer superElastixFilterBlueprint = SuperElastixFilterBlueprintType::New();
   superElastixFilterBlueprint->Set( blueprint );
@@ -235,10 +234,9 @@ TEST_F( SuperElastixFilterTest, TooManyOutputs )
 
   blueprint->SetComponent( "Sink_A", { { "NameOfClass", { "ItkImageSinkComponent" } } } );
 
-  // Instantiate SuperElastixFilter before each test
-  EXPECT_NO_THROW(superElastixFilter = SuperElastixFilter::New());
-  // Register the components we want to have available in SuperElastix
-  RegisterFactoriesByTypeList< RegisterComponents >::Register();
+  // Instantiate SuperElastixFilter before each test and
+  // register the components we want to have available in SuperElastix
+  EXPECT_NO_THROW(superElastixFilter = SuperElastixFilterCustomComponents<RegisterComponents>::New());
 
   SuperElastixFilterBlueprintPointer superElastixFilterBlueprint = SuperElastixFilterBlueprintType::New();
   superElastixFilterBlueprint->Set( blueprint );
@@ -259,10 +257,9 @@ TEST_F( SuperElastixFilterTest, TooManySinks )
   blueprint->SetComponent( "Sink_A", { { "NameOfClass", { "ItkImageSinkComponent" } } } );
   blueprint->SetComponent( "Sink_B", { { "NameOfClass", { "ItkImageSinkComponent" } } } );
 
-  // Instantiate SuperElastixFilter before each test
-  EXPECT_NO_THROW(superElastixFilter = SuperElastixFilter::New());
-  // Register the components we want to have available in SuperElastix
-  RegisterFactoriesByTypeList< RegisterComponents >::Register();
+  // Instantiate SuperElastixFilter before each test and
+  // register the components we want to have available in SuperElastix
+  EXPECT_NO_THROW(superElastixFilter = SuperElastixFilterCustomComponents<RegisterComponents>::New());
 
   SuperElastixFilterBlueprintPointer superElastixFilterBlueprint = SuperElastixFilterBlueprintType::New();
   superElastixFilterBlueprint->Set( blueprint );

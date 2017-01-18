@@ -17,8 +17,7 @@
  *
  *=========================================================================*/
 
-#include "selxSuperElastixFilter.h"
-#include "selxRegisterComponentFactoriesByTypeList.h"
+#include "selxSuperElastixFilterCustomComponents.h"
 
 #include "selxTransformComponent1.h"
 #include "selxMetricComponent1.h"
@@ -128,10 +127,9 @@ public:
 
   virtual void SetUp()
   {
-    // Instantiate SuperElastixFilter before each test
-    superElastixFilter = SuperElastixFilter::New();
-    // Register the components we want to have available in SuperElastix
-    RegisterFactoriesByTypeList< RegisterComponents >::Register();
+    // Instantiate SuperElastixFilter before each test and
+    // register the components we want to have available in SuperElastix
+    superElastixFilter = SuperElastixFilterCustomComponents< RegisterComponents >::New();
     dataManager = DataManagerType::New();
   }
 
