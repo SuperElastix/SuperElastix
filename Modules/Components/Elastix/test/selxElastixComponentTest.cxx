@@ -31,7 +31,7 @@
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 
-#include "selxDefaultComponents.h"
+//#include "selxDefaultComponents.h"
 
 #include "selxDataManager.h"
 #include "gtest/gtest.h"

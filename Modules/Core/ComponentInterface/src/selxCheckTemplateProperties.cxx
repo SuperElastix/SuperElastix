@@ -24,20 +24,37 @@
 // In the core we could type these names directly as literal cstrings, but this is sensitive to typos.
 // By these definitions tools such as visual assist will auto-complete when typing keys::HasP...
 
-#ifndef selxCheckTemplateProperties_h
-#define selxCheckTemplateProperties_h
+#include "selxCheckTemplateProperties.h"
 
-#include <map>
-#include <string>
-#include <vector>
-
+#include <sstream>
+#include <exception>
 
 namespace selx
 {
-enum class CriterionStatus { Satisfied, Failed, Unknown };
 
 CriterionStatus
-CheckTemplateProperties(const std::map< std::string, std::string > templateProperties,
-const std::pair< std::string, std::vector< std::string >> criterion);
+CheckTemplateProperties( const std::map< std::string, std::string > templateProperties,
+  const std::pair< std::string, std::vector< std::string >> criterion )
+{
+  if( templateProperties.count( criterion.first ) == 1 ) // e.g. is "Dimensionality" a template property? Or is NameOfClass queried?
+  {
+    if( criterion.second.size() != 1 )  // criteria can be of format: "keystring": ["value1", value2","value3"], but for templateproperties only 1 value is allowed.
+    {
+      std::stringstream msg;
+      msg << "The criterion " << criterion.first << " may have only 1 value";
+      throw std::runtime_error( msg.str() );
+      //itkExceptionMacro("The criterion " << criterion.first << " may have only 1 value");
+    }
+    for( auto const & criterionValue : criterion.second )
+    {
+      if( criterionValue != templateProperties.at( criterion.first ) )
+      {
+        return CriterionStatus::Failed;
+      }
+    }
+    return CriterionStatus::Satisfied;
+  }
+  return CriterionStatus::Unknown;
 }
-#endif //selxCheckTemplateProperties_h
+}
+
