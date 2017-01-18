@@ -32,7 +32,7 @@ set( CMAKE_MODULE_PATH
   ${CMAKE_MODULE_PATH}
 )
 
-set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR} CACHE PATH "SuperBuild install directory" FORCE)
+set( CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR} CACHE PATH "SuperBuild install directory" FORC )
 
 # ---------------------------------------------------------------------
 # SuperElastix SuperBuild configuration
@@ -109,7 +109,7 @@ endif()
 mark_as_advanced( USE_SYSTEM_BOOST )
 option( USE_SYSTEM_BOOST "Use an installed version of BOOST" OFF )
 if( USE_SYSTEM_BOOST )
-  find_package( BOOST REQUIRED graph program_options filesystem)
+  find_package( BOOST REQUIRED log date_time thread regex graph program_options filesystem )
 else()
   include( ExternalBoost )
 endif()
@@ -132,7 +132,7 @@ endif()
 include( SuperElastix )
 
 # ---------------------------------------------------------------------
-# Build Applications as an external project for integration testing
+# Build Applications as an external project
 
 if( ${BUILD_APPLICATIONS_EXTERNAL_PROJECT} )
   include( ExternalApplications )

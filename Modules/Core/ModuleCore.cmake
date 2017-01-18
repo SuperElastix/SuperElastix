@@ -18,16 +18,19 @@
 #=========================================================================
 
 set( ${MODULE}_INCLUDE_DIRS
-  ${${MODULE}_SOURCE_DIR}/Common/include
   ${${MODULE}_SOURCE_DIR}/Blueprints/include
-  ${${MODULE}_SOURCE_DIR}/ParameterObject/include
+  ${${MODULE}_SOURCE_DIR}/Common/include
   ${${MODULE}_SOURCE_DIR}/ComponentInterface/include
+  ${${MODULE}_SOURCE_DIR}/ComponentRegistration/include
   ${${MODULE}_SOURCE_DIR}/ConfigurationReader/include
-  ${${MODULE}_SOURCE_DIR}/Filter/include
   ${${MODULE}_SOURCE_DIR}/FileIO/include
   ${${MODULE}_SOURCE_DIR}/ComponentRegistration/include
+  ${${MODULE}_SOURCE_DIR}/Filter/include
+  ${${MODULE}_SOURCE_DIR}/Logger/include
+  ${${MODULE}_SOURCE_DIR}/ParameterObject/include
 )
 
+# Module source files
 set( ${MODULE}_SOURCE_FILES
   ${${MODULE}_SOURCE_DIR}/Blueprints/src/selxBlueprint.cxx
   ${${MODULE}_SOURCE_DIR}/Blueprints/src/selxBlueprintImpl.h
@@ -39,6 +42,9 @@ set( ${MODULE}_SOURCE_FILES
   ${${MODULE}_SOURCE_DIR}/ComponentInterface/src/selxComponentSelector.cxx
   ${${MODULE}_SOURCE_DIR}/ConfigurationReader/src/selxConfigurationReader.cxx
   ${${MODULE}_SOURCE_DIR}/Filter/src/selxSuperElastixFilter.cxx
+  ${${MODULE}_SOURCE_DIR}/Logger/src/selxLogger.cxx
+  ${${MODULE}_SOURCE_DIR}/Logger/src/selxLoggerImpl.h
+  ${${MODULE}_SOURCE_DIR}/Logger/src/selxLoggerImpl.cxx
 )
 
 # Export tests
@@ -50,9 +56,11 @@ set( ${MODULE}_TEST_SOURCE_FILES
   ${${MODULE}_SOURCE_DIR}/ConfigurationReader/test/selxConfigurationReaderTest.cxx
   ${${MODULE}_SOURCE_DIR}/Filter/test/selxSuperElastixFilterTest.cxx
   ${${MODULE}_SOURCE_DIR}/FileIO/test/selxAnyFileIOTest.cxx
+  ${${MODULE}_SOURCE_DIR}/Logger/test/selxLoggerTest.cxx
 )
 
 set( ${MODULE}_LIBRARIES 
+  ${Boost_LIBRARIES} # log filesystem system time_date thread
   ${MODULE}
 )
 

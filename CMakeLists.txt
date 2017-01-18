@@ -19,8 +19,6 @@
 
 cmake_minimum_required( VERSION 3.0.2 )
 
-cmake_policy( SET CMP0064 OLD )
-
 # Explicitly add INCREMENTAL linking option to command lines.
 # http://www.cmake.org/pipermail/cmake/2010-February/035174.html
 #set( MSVC_INCREMENTAL_DEFAULT ON )
@@ -45,7 +43,15 @@ set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib" )
 list( APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake" )
 
 # -----------------------------------------------------------------
-# Compiler-dependent settings
+# Compilation settings
+
+enable_language(C)
+enable_language(CXX)
+set( CMAKE_CXX_STANDARD 11 )
+
+mark_as_advanced( SUPERELASTIX_BUILD_SHARED_LIBS )
+option( SUPERELASTIX_BUILD_SHARED_LIBS "Build SuperElastix with shared libraries." OFF )
+set( BUILD_SHARED_LIBS ${SUPERELASTIX_BUILD_SHARED_LIBS} )
 
 # GCC
 if( ${CMAKE_CXX_COMPILER_ID} STREQUAL GNU )
@@ -74,6 +80,10 @@ if( ${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC )
       "Please move the build directory to a directory with a shorter path."
     )
   endif()
+
+  # Explicitly add INCREMENTAL linking option to command lines.
+  # http://www.cmake.org/pipermail/cmake/2010-February/035174.html
+  # set( MSVC_INCREMENTAL_DEFAULT ON )
 endif()
 
 # ---------------------------------------------------------------------
@@ -93,13 +103,17 @@ foreach( ITKModule ${RequiredITKModules} )
 endforeach()
 
 # ---------------------------------------------------------------------
-# Boost Graph Library
+# Boost Library
 
 set(Boost_USE_STATIC_LIBS        ON) # only find static libs
 set(Boost_USE_MULTITHREADED      ON)
 set(Boost_USE_STATIC_RUNTIME    OFF)
+#set( Boost_DEBUG ON )
+set(BOOST_INCLUDEDIR "${BOOST_ROOT}/BOOST-prefix/src/Boost/boost/" )
+set(BOOST_LIBRARYDIR "${BOOST_ROOT}/BOOST-prefix/src/Boost/stage/lib/" )
+set(BOOST_ROOT "${BOOST_ROOT}/BOOST-prefix/src/Boost/" )
 
-find_package( Boost COMPONENTS program_options filesystem system REQUIRED QUIET )
+find_package( Boost COMPONENTS filesystem system log date_time thread regex REQUIRED QUIET ) # graph ?
 include_directories( ${Boost_INCLUDE_DIRS} )
 
 # ---------------------------------------------------------------------
