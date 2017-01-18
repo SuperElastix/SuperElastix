@@ -77,7 +77,7 @@ public:
     dataManager = DataManagerType::New();
 
     /** make example blueprint configuration */
-    BlueprintPointer blueprint = BlueprintPointer( new Blueprint() );
+    blueprint = BlueprintPointer( new Blueprint() );
 
     /** the 2 itkImageFilter Components are ItkSmoothingRecursiveGaussianImageFilterComponent*/
     ParameterMapType componentParameters;
