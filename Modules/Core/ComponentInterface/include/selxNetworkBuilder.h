@@ -63,7 +63,9 @@ public:
   NetworkBuilder( std::shared_ptr< Blueprint > blueprint );
   NetworkBuilder( Blueprint * blueprint );
   NetworkBuilder();
-  virtual ~NetworkBuilder() = default;
+  virtual ~NetworkBuilder() {};
+
+  virtual bool AddBlueprint(std::shared_ptr< Blueprint > blueprint);
 
   /** Read configuration at the blueprints nodes and edges and return true if all components could be uniquely selected*/
   virtual bool Configure();

@@ -36,7 +36,8 @@ SuperElastixFilter
 ::SuperElastixFilter(void) : SuperElastixFilter(true)
 {
   // The default constructor registers the default components.
-  RegisterFactoriesByTypeList< DefaultComponents >::Register();
+  //RegisterFactoriesByTypeList< DefaultComponents >::Register();
+  m_NetworkBuilder = std::make_unique<NetworkBuilder<DefaultComponents>>(new NetworkBuilder<DefaultComponents>());
 } // end Constructor
 
 // 
@@ -77,17 +78,14 @@ SuperElastixFilter
   // are passed further down stream.
   // Eventually configuration boils down to a while loop that repeatedly tries to narrow down
   // the component selectors until no more unique components can be found.
-  if (!this->m_NetworkBuilder)
-  {
     if (!this->m_Blueprint)
     {
       itkExceptionMacro(<< "Setting a Blueprint is required first.")
     }
 
-    this->m_NetworkBuilder = std::unique_ptr< NetworkBuilder<DefaultComponents> >(new NetworkBuilder<DefaultComponents>(this->m_Blueprint->Get()));
+    this->m_NetworkBuilder->AddBlueprint(this->m_Blueprint->Get());
     this->m_AllUniqueComponents = this->m_NetworkBuilder->Configure();
-  }
-  else if (this->m_BlueprintConnectionModified == true)
+  if (this->m_BlueprintConnectionModified == true)
   {
 //TODO: 
   }
@@ -191,7 +189,7 @@ SuperElastixFilter
 
   auto fullyConfiguredNetwork  = this->m_NetworkBuilder->GetRealizedNetwork();
   // delete the networkbuilder
-  this->m_NetworkBuilder = nullptr; 
+  // this->m_NetworkBuilder = nullptr; 
 
   // This calls controller components that take over the control flow if the itk pipeline is broken.
   fullyConfiguredNetwork.Execute();
@@ -220,7 +218,7 @@ SuperElastixFilter
     {
       itkExceptionMacro(<< "Setting a Blueprint is required first.")
     }
-    this->m_NetworkBuilder = std::unique_ptr< NetworkBuilder<DefaultComponents> >(new NetworkBuilder<DefaultComponents>(this->m_Blueprint->Get()));
+    this->m_NetworkBuilder->AddBlueprint(this->m_Blueprint->Get());
     this->m_AllUniqueComponents = this->m_NetworkBuilder->Configure();
   }
   if (!this->m_AllUniqueComponents)
@@ -244,7 +242,7 @@ SuperElastixFilter
       itkExceptionMacro(<< "Setting a Blueprint is required first.")
     }
 
-    this->m_NetworkBuilder = std::unique_ptr< NetworkBuilder<DefaultComponents> >(new NetworkBuilder<DefaultComponents>(this->m_Blueprint->Get()));
+    this->m_NetworkBuilder->AddBlueprint(this->m_Blueprint->Get());
     this->m_AllUniqueComponents = this->m_NetworkBuilder->Configure();
   }
   if (!this->m_AllUniqueComponents)
@@ -283,7 +281,7 @@ SuperElastixFilter::OutputDataType
         itkExceptionMacro(<< "Setting a Blueprint is required first.")
       }
 
-      this->m_NetworkBuilder = std::unique_ptr< NetworkBuilder<DefaultComponents> >(new NetworkBuilder<DefaultComponents>(this->m_Blueprint->Get()));
+      this->m_NetworkBuilder->AddBlueprint(this->m_Blueprint->Get());
       this->m_AllUniqueComponents = this->m_NetworkBuilder->Configure();
       this->m_BlueprintConnectionModified = false;
     }

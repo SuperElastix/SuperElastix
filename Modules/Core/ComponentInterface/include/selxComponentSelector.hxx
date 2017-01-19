@@ -23,22 +23,46 @@
 
 namespace selx
 {
+
+
+  template< >
+  struct ContructComponentsFromTypeList< TypeList< > >
+  {
+    static std::list<ComponentBase::Pointer> fill(std::list<ComponentBase::Pointer> &components, std::string &name)
+    {
+      return components;
+    }
+  };
+
+  template< typename ComponentType, typename ... Rest >
+  struct ContructComponentsFromTypeList< TypeList< ComponentType, Rest ... > >
+  {
+    static std::list<ComponentBase::Pointer> fill(std::list<ComponentBase::Pointer> &components, std::string &name)
+    {
+      //components->push_back(new ComponentType(name));
+      components.push_back(ComponentType::New().GetPointer());
+      return ContructComponentsFromTypeList<TypeList< Rest ... >>::fill(components, name);
+    }
+  };
+
 template <class ComponentList>
   ComponentSelector<ComponentList>::ComponentSelector()
 {
-  std::list< itk::LightObject::Pointer > allobjects
-    = itk::ObjectFactoryBase::CreateAllInstance( "ComponentBase" );
+  m_PossibleComponents = std::list<ComponentBase::Pointer>();
+  m_PossibleComponents = ContructComponentsFromTypeList<ComponentList>::fill(m_PossibleComponents,std::string(""));
+  //std::list< itk::LightObject::Pointer > allobjects
+  //  = itk::ObjectFactoryBase::CreateAllInstance( "ComponentBase" );
 
-  for( std::list< itk::LightObject::Pointer >::iterator i = allobjects.begin();
-    i != allobjects.end(); ++i )
-  {
-    ComponentBase * component
-      = dynamic_cast< ComponentBase * >( i->GetPointer() );
-    if (component)
-    {
-      this->m_PossibleComponents.push_back(component);
-    }
-  }
+  //for( std::list< itk::LightObject::Pointer >::iterator i = allobjects.begin();
+  //  i != allobjects.end(); ++i )
+  //{
+  //  ComponentBase * component
+  //    = dynamic_cast< ComponentBase * >( i->GetPointer() );
+  //  if (component)
+  //  {
+  //    this->m_PossibleComponents.push_back(component);
+  //  }
+  //}
 }
 
   template <class ComponentList>

@@ -58,8 +58,12 @@ public:
     std::string, RegistrationControllerStartInterface * > RegistrationControllerStartInterfaceMapType;
 
   typedef Blueprint::ComponentNamesType                           ComponentNamesType;
+  
+  NetworkBuilderBase() {};
 
-  virtual ~NetworkBuilderBase() = default;
+  virtual ~NetworkBuilderBase() {};
+
+  virtual bool AddBlueprint(std::shared_ptr< Blueprint > blueprint) = 0;
 
   /** Read configuration at the blueprints nodes and edges and return true if all components could be uniquely selected*/
   virtual bool Configure() = 0;

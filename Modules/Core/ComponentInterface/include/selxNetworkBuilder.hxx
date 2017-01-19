@@ -33,6 +33,19 @@ namespace selx
 {
 }
 
+template< typename ComponentList >
+NetworkBuilder<ComponentList>::NetworkBuilder() : m_isConfigured(false)
+{
+}
+
+template< typename ComponentList >
+bool
+NetworkBuilder<ComponentList>::AddBlueprint(std::shared_ptr< Blueprint > blueprint)
+{
+  m_Blueprint = blueprint;
+  return true;
+}
+
   template< typename ComponentList >
 bool
 NetworkBuilder<ComponentList>::Configure()
@@ -144,6 +157,7 @@ NetworkBuilder<ComponentList>::ApplyComponentConfiguration()
   for( auto const & name : componentNames )
   {
     std::cout << " Blueprint Node: " << name << std::endl;
+    typename ComponentSelector<ComponentList>::Pointer currentComponentSelectorA = ComponentSelector<ComponentList>::New();
     ComponentSelectorPointer    currentComponentSelector = ComponentSelectorType::New();
     currentComponentSelector->ComponentName(name); // Todo via constructor
 

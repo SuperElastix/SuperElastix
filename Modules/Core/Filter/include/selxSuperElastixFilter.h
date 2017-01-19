@@ -112,11 +112,13 @@ protected:
 
   virtual void GenerateData( void ) ITK_OVERRIDE;
 
+  std::unique_ptr< NetworkBuilderBase >   m_NetworkBuilder;
+
 private:
 
   //TODO make const correct
   BlueprintType::Pointer      m_Blueprint;
-  std::unique_ptr< NetworkBuilderBase >   m_NetworkBuilder;
+  
   bool                        m_InputConnectionModified;
   bool                        m_OutputConnectionModified;
   bool                        m_BlueprintConnectionModified;

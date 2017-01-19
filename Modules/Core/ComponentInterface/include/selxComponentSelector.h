@@ -22,7 +22,7 @@
 #include "itkObjectFactory.h"
 #include "selxComponentBase.h"
 
-//#pragma once
+#include "selxTypeList.h"
 
 namespace selx
 {
@@ -90,6 +90,11 @@ private:
   ComponentSelector( const Self & ); //purposely not implemented
   void operator=( const Self & );    //purposely not implemented
 };
+
+template< typename >
+struct ContructComponentsFromTypeList;
+
+
 } // end namespace selx
 
 #ifndef ITK_MANUAL_INSTANTIATION

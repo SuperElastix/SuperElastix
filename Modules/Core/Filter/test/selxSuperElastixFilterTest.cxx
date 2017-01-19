@@ -59,17 +59,18 @@ public:
   typedef itk::ImageFileReader< Image3DType > ImageReader3DType;
   typedef itk::ImageFileWriter< Image3DType > ImageWriter3DType;
 
-  /** Fill SUPERelastix' component data base by registering various components */
+  /** Fill SuperElastix' component data base by registering various components */
   typedef TypeList<
     ItkImageSinkComponent< 3, double >,
     ItkImageSourceComponent< 3, double >,
     ItkSmoothingRecursiveGaussianImageFilterComponent< 3, double >,
     ItkMeshSinkComponent< 2, float >,
-    ItkMeshSourceComponent< 2, float > > RegisterComponents;
+    ItkMeshSourceComponent< 2, float > > CustomComponents;
+
+  using RegisterComponents = list_append<CustomComponents,DefaultComponents >::type;
 
   typedef std::shared_ptr< Blueprint >                  BlueprintPointer;
 
-  typedef SuperElastixFilter::Pointer               SuperElastixFilterPointer;
   typedef SuperElastixFilter::BlueprintType         SuperElastixFilterBlueprintType;
   typedef SuperElastixFilter::BlueprintPointer      SuperElastixFilterBlueprintPointer;
 
@@ -87,13 +88,11 @@ public:
   {
     // Unregister all components after each test 
     // TODO: when SuperElastix is refactored to not use the ITK object factory this UnRegisterAllFactories call must be removed
-    itk::ObjectFactoryBase::UnRegisterAllFactories();
+    // itk::ObjectFactoryBase::UnRegisterAllFactories();
     // Delete the SuperElastixFilter after each test 
-    superElastixFilter = nullptr;
   }
   // Blueprint holds a configuration for SuperElastix
   BlueprintPointer blueprint;
-  SuperElastixFilter::Pointer superElastixFilter;
   // Data manager provides the paths to the input and output data for unit tests
   DataManagerType::Pointer dataManager;
 };
@@ -116,9 +115,8 @@ TEST_F( SuperElastixFilterTest, ImageOnly )
 
   // Instantiate SuperElastixFilter before each test and
   // register the components we want to have available in SuperElastix
+  SuperElastixFilterCustomComponents<RegisterComponents>::Pointer superElastixFilter;
   EXPECT_NO_THROW(superElastixFilter = SuperElastixFilterCustomComponents<RegisterComponents>::New());
- 
-  
 
   SuperElastixFilterBlueprintPointer superElastixBlueprint = SuperElastixFilterBlueprintType::New();
   superElastixBlueprint->Set( blueprint );
@@ -157,6 +155,7 @@ TEST_F( SuperElastixFilterTest, ImageAndMesh )
 
   // Instantiate SuperElastixFilter before each test and
   // register the components we want to have available in SuperElastix
+  SuperElastixFilterCustomComponents<RegisterComponents>::Pointer superElastixFilter;
   EXPECT_NO_THROW(superElastixFilter = SuperElastixFilterCustomComponents<RegisterComponents>::New());
 
   SuperElastixFilterBlueprintPointer superElastixFilterBlueprint = SuperElastixFilterBlueprintType::New();
@@ -187,6 +186,7 @@ TEST_F( SuperElastixFilterTest, TooManyInputs )
 
   // Instantiate SuperElastixFilter before each test and
   // register the components we want to have available in SuperElastix
+  SuperElastixFilterCustomComponents<RegisterComponents>::Pointer superElastixFilter;
   EXPECT_NO_THROW(superElastixFilter = SuperElastixFilterCustomComponents<RegisterComponents>::New());
 
   SuperElastixFilterBlueprintPointer superElastixFilterBlueprint = SuperElastixFilterBlueprintType::New();
@@ -213,6 +213,7 @@ TEST_F( SuperElastixFilterTest, TooManySources )
 
   // Instantiate SuperElastixFilter before each test and
   // register the components we want to have available in SuperElastix
+  SuperElastixFilterCustomComponents<RegisterComponents>::Pointer superElastixFilter;
   EXPECT_NO_THROW(superElastixFilter = SuperElastixFilterCustomComponents<RegisterComponents>::New());
 
   SuperElastixFilterBlueprintPointer superElastixFilterBlueprint = SuperElastixFilterBlueprintType::New();
@@ -236,6 +237,7 @@ TEST_F( SuperElastixFilterTest, TooManyOutputs )
 
   // Instantiate SuperElastixFilter before each test and
   // register the components we want to have available in SuperElastix
+  SuperElastixFilterCustomComponents<RegisterComponents>::Pointer superElastixFilter;
   EXPECT_NO_THROW(superElastixFilter = SuperElastixFilterCustomComponents<RegisterComponents>::New());
 
   SuperElastixFilterBlueprintPointer superElastixFilterBlueprint = SuperElastixFilterBlueprintType::New();
@@ -259,6 +261,7 @@ TEST_F( SuperElastixFilterTest, TooManySinks )
 
   // Instantiate SuperElastixFilter before each test and
   // register the components we want to have available in SuperElastix
+  SuperElastixFilterCustomComponents<RegisterComponents>::Pointer superElastixFilter;
   EXPECT_NO_THROW(superElastixFilter = SuperElastixFilterCustomComponents<RegisterComponents>::New());
 
   SuperElastixFilterBlueprintPointer superElastixFilterBlueprint = SuperElastixFilterBlueprintType::New();
