@@ -26,10 +26,11 @@
 
 namespace selx
 {
-/** \class ComponentFactor
- * \brief Create instances of MetaImageIO objects using an object factory.
- * \ingroup ITKIOMeta
+/** \class ComponentSelector
+ * \brief A Component factory that accepts criteria, possibly in multiple passes, to construct and return the right Component
  */
+
+template <class ComponentList>
 class ComponentSelector : public itk::Object
 {
 public:
@@ -91,8 +92,8 @@ private:
 };
 } // end namespace selx
 
-//#ifndef ITK_MANUAL_INSTANTIATION
-//#include "ComponentSelector.hxx"
-//#endif
+#ifndef ITK_MANUAL_INSTANTIATION
+#include "selxComponentSelector.hxx"
+#endif
 
 #endif

@@ -144,7 +144,7 @@ NetworkBuilder<ComponentList>::ApplyComponentConfiguration()
   for( auto const & name : componentNames )
   {
     std::cout << " Blueprint Node: " << name << std::endl;
-    ComponentSelectorPointer    currentComponentSelector = ComponentSelector::New();
+    ComponentSelectorPointer    currentComponentSelector = ComponentSelectorType::New();
     currentComponentSelector->ComponentName(name); // Todo via constructor
 
     Blueprint::ParameterMapType currentProperty          = this->m_Blueprint->GetComponent( name );

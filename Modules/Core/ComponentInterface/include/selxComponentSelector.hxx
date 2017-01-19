@@ -16,14 +16,15 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-//#ifndef ComponentSelector_hxx
-//#define ComponentSelector_hxx
+#ifndef selxComponentSelector_hxx
+#define selxComponentSelector_hxx
 
 #include "selxComponentSelector.h"
 
 namespace selx
 {
-ComponentSelector::ComponentSelector()
+template <class ComponentList>
+  ComponentSelector<ComponentList>::ComponentSelector()
 {
   std::list< itk::LightObject::Pointer > allobjects
     = itk::ObjectFactoryBase::CreateAllInstance( "ComponentBase" );
@@ -40,12 +41,13 @@ ComponentSelector::ComponentSelector()
   }
 }
 
-
-ComponentSelector::~ComponentSelector()
+  template <class ComponentList>
+  ComponentSelector<ComponentList>::~ComponentSelector()
 {
 }
 
-void ComponentSelector::ComponentName(const std::string name)
+  template <class ComponentList>
+  void ComponentSelector<ComponentList>::ComponentName(const std::string name)
 {
   for (const auto & component : this->m_PossibleComponents)
   {
@@ -53,27 +55,27 @@ void ComponentSelector::ComponentName(const std::string name)
   }
 }
 
-
+template <class ComponentList>
 void
-ComponentSelector::AddCriterion( const CriterionType & criterion )
+ComponentSelector<ComponentList>::AddCriterion(const CriterionType & criterion)
 {
   this->m_PossibleComponents.remove_if([ & ]( ComponentBasePointer component ){
       return !component->MeetsCriterion( criterion );
     } );
 }
 
-
+template <class ComponentList>
 void
-ComponentSelector::AddAcceptingInterfaceCriteria( const InterfaceCriteriaType & interfaceCriteria )
+ComponentSelector<ComponentList>::AddAcceptingInterfaceCriteria(const InterfaceCriteriaType & interfaceCriteria)
 {
   this->m_PossibleComponents.remove_if([ & ]( ComponentBasePointer component ){
       return 0 == component->CountAcceptingInterfaces( interfaceCriteria );
     } );
 }
 
-
+template <class ComponentList>
 void
-ComponentSelector::AddProvidingInterfaceCriteria( const InterfaceCriteriaType & interfaceCriteria )
+ComponentSelector<ComponentList>::AddProvidingInterfaceCriteria(const InterfaceCriteriaType & interfaceCriteria)
 {
   this->m_PossibleComponents.remove_if([ & ]( ComponentBasePointer component ){
       return 0 == component->CountProvidingInterfaces( interfaceCriteria );
@@ -82,8 +84,9 @@ ComponentSelector::AddProvidingInterfaceCriteria( const InterfaceCriteriaType & 
 
 
 // CompatibleInterfaces
+template <class ComponentList>
 unsigned int
-ComponentSelector::RequireAcceptingInterfaceFrom( ComponentBasePointer other, const InterfaceCriteriaType & interfaceCriteria )
+ComponentSelector<ComponentList>::RequireAcceptingInterfaceFrom(ComponentBasePointer other, const InterfaceCriteriaType & interfaceCriteria)
 {
   this->m_PossibleComponents.remove_if([ & ]( ComponentBasePointer component ){
       auto status = component->CanAcceptConnectionFrom( other, interfaceCriteria );
@@ -92,9 +95,9 @@ ComponentSelector::RequireAcceptingInterfaceFrom( ComponentBasePointer other, co
   return 0;
 }
 
-
+template <class ComponentList>
 unsigned int
-ComponentSelector::RequireProvidingInterfaceTo( ComponentBasePointer other, const InterfaceCriteriaType & interfaceCriteria )
+ComponentSelector<ComponentList>::RequireProvidingInterfaceTo(ComponentBasePointer other, const InterfaceCriteriaType & interfaceCriteria)
 {
   this->m_PossibleComponents.remove_if([ & ]( ComponentBasePointer component ){
       auto status = other->CanAcceptConnectionFrom( component, interfaceCriteria );
@@ -103,9 +106,9 @@ ComponentSelector::RequireProvidingInterfaceTo( ComponentBasePointer other, cons
   return 0;
 }
 
-
-ComponentSelector::ComponentBasePointer
-ComponentSelector::GetComponent()
+template <class ComponentList>
+typename ComponentSelector<ComponentList>::ComponentBasePointer
+ComponentSelector<ComponentList>::GetComponent()
 {
   //TODO check if Modified
   //this->UpdatePossibleComponents();
@@ -120,15 +123,16 @@ ComponentSelector::GetComponent()
   }
 }
 
-
+template <class ComponentList>
 unsigned int
-ComponentSelector::NumberOfComponents()
+ComponentSelector<ComponentList>::NumberOfComponents()
 {
   return this->m_PossibleComponents.size();
 }
 
+template <class ComponentList>
 void 
-ComponentSelector::PrintComponents(void)
+ComponentSelector<ComponentList>::PrintComponents(void)
 {
   /*
   for (auto & component : this->m_PossibleComponents)
@@ -144,4 +148,4 @@ ComponentSelector::PrintComponents(void)
 }
 } // end namespace selx
 
-//#endif
+#endif //selxComponentSelector_hxx

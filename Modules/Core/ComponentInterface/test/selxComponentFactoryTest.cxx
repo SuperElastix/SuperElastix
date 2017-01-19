@@ -19,6 +19,7 @@
 
 #include "gtest/gtest.h"
 
+#include "selxTypeList.h"
 #include "selxTransformComponent1.h"
 //#include "itkTransformComponent1Factory.h"
 
@@ -45,8 +46,9 @@ public:
   typedef ComponentBase::ParameterValueType ParameterValueType;
   //typedef std::map<std::string, std::string> CriteriaType;
   //typedef std::pair<std::string, std::string> CriterionType;
+  typedef TypeList<> ComponentList;
+  typedef ComponentSelector<ComponentList>::Pointer NodePointer;
 
-  typedef ComponentSelector::Pointer NodePointer;
 
   virtual void SetUp()
   {
@@ -102,7 +104,7 @@ TEST_F( ComponentFactoryTest, SetEmptyCriteria )
 
   CriterionType emptyCriterion; // = CriterionType();
 
-  ASSERT_NO_THROW( Node1 = ComponentSelector::New() );
+  ASSERT_NO_THROW(Node1 = ComponentSelector<ComponentList>::New());
 
   EXPECT_NO_THROW( Node1->AddCriterion( emptyCriterion ) );
   ComponentType::Pointer Node1Component;
@@ -118,7 +120,7 @@ TEST_F( ComponentFactoryTest, SetSufficientCriteria )
   EXPECT_NO_THROW( ComponentFactory< MetricComponent1 >::RegisterOneFactory() );
 
   CriterionType criterion2 = { "ComponentInput", { "Transform" } };
-  ASSERT_NO_THROW( Node2 = ComponentSelector::New() );
+  ASSERT_NO_THROW(Node2 = ComponentSelector<ComponentList>::New());
 
   ASSERT_NO_THROW( Node2->AddCriterion( criterion2 ) );
   ComponentType::Pointer Node2Component;
@@ -138,7 +140,7 @@ TEST_F( ComponentFactoryTest, AddCriteria )
 
   CriterionType criterion1( { "ComponentOutput", { "Transform" } } );
 
-  Node1 = ComponentSelector::New();
+  Node1 = ComponentSelector<ComponentList>::New();
 
   EXPECT_NO_THROW( Node1->AddCriterion( nonSelectiveCriterion ) );
   ComponentType::Pointer Node1Component;
@@ -172,14 +174,14 @@ TEST_F( ComponentFactoryTest, InterfacedObjects )
   // " 6 Component objects available to the NetworkBuilder."
   EXPECT_EQ( registeredComponents.size(), 6 );
 
-  NodePointer Node3 = ComponentSelector::New();
+  NodePointer Node3 = ComponentSelector<ComponentList>::New();
   Node3->AddAcceptingInterfaceCriteria( { { "NameOfInterface", "MetricDerivativeInterface" } } );
 
   ComponentType::Pointer Node3Component;
   EXPECT_NO_THROW( Node3Component = Node3->GetComponent() );
   EXPECT_STREQ( Node3Component->GetNameOfClass(), "GDOptimizer3rdPartyComponent" );
 
-  NodePointer Node4 = ComponentSelector::New();
+  NodePointer Node4 = ComponentSelector<ComponentList>::New();
   Node4->AddProvidingInterfaceCriteria( { { "NameOfInterface", "MetricDerivativeInterface" } } );
   ComponentType::Pointer Node4Component;
   EXPECT_NO_THROW( Node4Component = Node4->GetComponent() );
@@ -200,7 +202,7 @@ TEST_F( ComponentFactoryTest, UnknownComponent )
   // Setup the criterion for a component that does not exist in our data base
   CriterionType criterion( { "NameOfClass", { "DoYouHaveThisComponent?" } } );
 
-  NodePointer Node = ComponentSelector::New();
+  NodePointer Node = ComponentSelector<ComponentList>::New();
   Node->AddCriterion( criterion );
   ComponentType::Pointer NodeComponent;
 

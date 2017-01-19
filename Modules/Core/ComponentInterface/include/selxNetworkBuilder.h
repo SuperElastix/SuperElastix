@@ -89,10 +89,11 @@ protected:
   typedef ComponentBase::CriterionType      CriterionType;
   typedef ComponentBase::ParameterValueType ParameterValueType;
 
-  typedef ComponentSelector::Pointer ComponentSelectorPointer;
+  typedef typename ComponentSelector<ComponentList> ComponentSelectorType;
+  typedef typename ComponentSelectorType::Pointer ComponentSelectorPointer;
 
   typedef std::map< ComponentNameType, ComponentSelectorPointer > ComponentSelectorContainerType;
-  typedef ComponentSelectorContainerType::iterator                ComponentSelectorIteratorType;
+  typedef typename ComponentSelectorContainerType::iterator                ComponentSelectorIteratorType;
 
   /** Read configuration at the blueprints nodes and try to find instantiated components */
   virtual void ApplyComponentConfiguration();
