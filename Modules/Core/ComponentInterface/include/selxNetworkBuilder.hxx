@@ -23,16 +23,19 @@
 
 namespace selx
 {
-NetworkBuilder::NetworkBuilder( std::shared_ptr< Blueprint > blueprint ) : m_Blueprint( blueprint ), m_isConfigured(false )
+  template< typename ComponentList >
+  NetworkBuilder<ComponentList>::NetworkBuilder(std::shared_ptr< Blueprint > blueprint) : m_Blueprint(blueprint), m_isConfigured(false)
 {
 }
 
-NetworkBuilder::NetworkBuilder( Blueprint * blueprint ) : m_Blueprint( blueprint ), m_isConfigured( false )
+  template< typename ComponentList >
+  NetworkBuilder<ComponentList>::NetworkBuilder(Blueprint * blueprint) : m_Blueprint(blueprint), m_isConfigured(false)
 {
 }
 
+  template< typename ComponentList >
 bool
-NetworkBuilder::Configure()
+NetworkBuilder<ComponentList>::Configure()
 {
   // Instantiates all the components as described in the blueprint. Returns true
   // if all components could be uniquely selected.
@@ -91,9 +94,9 @@ NetworkBuilder::Configure()
   return true;
 }
 
-
-NetworkBuilder::ComponentNamesType
-NetworkBuilder::GetNonUniqueComponentNames()
+template< typename ComponentList >
+NetworkBuilderBase::ComponentNamesType
+NetworkBuilder<ComponentList>::GetNonUniqueComponentNames()
 {
   ComponentNamesType                  nonUniqueComponentNames;
   const Blueprint::ComponentNamesType componentNames = m_Blueprint->GetComponentNames();
@@ -113,9 +116,9 @@ NetworkBuilder::GetNonUniqueComponentNames()
   return nonUniqueComponentNames;
 }
 
-
+template< typename ComponentList >
 void
-NetworkBuilder::ApplyComponentConfiguration()
+NetworkBuilder<ComponentList>::ApplyComponentConfiguration()
 {
   // Creates a ComponentSelector for each node of the graph and apply
   // the criteria/properties at each node to narrow the Component selection.
@@ -179,9 +182,9 @@ NetworkBuilder::ApplyComponentConfiguration()
   return;
 }
 
-
+template< typename ComponentList >
 void
-NetworkBuilder::ApplyConnectionConfiguration()
+NetworkBuilder<ComponentList>::ApplyConnectionConfiguration()
 {
   // Read the criteria/properties at each Connection and narrow the selection of
   // components.
@@ -239,9 +242,9 @@ NetworkBuilder::ApplyConnectionConfiguration()
   return;
 }
 
-
+template< typename ComponentList >
 void
-NetworkBuilder::PropagateConnectionsWithUniqueComponents()
+NetworkBuilder<ComponentList>::PropagateConnectionsWithUniqueComponents()
 {
   // Narrow down the selection of non-uniquely selected components by finding all
   // connections to a component that is uniquely selected and verifying the matching interface types.
@@ -322,8 +325,9 @@ NetworkBuilder::PropagateConnectionsWithUniqueComponents()
   }
 }
 
+template< typename ComponentList >
 bool
-NetworkBuilder::ConnectComponents()
+NetworkBuilder<ComponentList>::ConnectComponents()
 {
   bool isAllSuccess = true;
 
@@ -365,9 +369,9 @@ NetworkBuilder::ConnectComponents()
   return isAllSuccess;
 }
 
-
-NetworkBuilder::SourceInterfaceMapType
-NetworkBuilder::GetSourceInterfaces()
+template< typename ComponentList >
+NetworkBuilderBase::SourceInterfaceMapType
+NetworkBuilder<ComponentList>::GetSourceInterfaces()
 {
   /** Scans all Components to find those with Sourcing capability and store them in SourceComponents list */
 
@@ -389,9 +393,9 @@ NetworkBuilder::GetSourceInterfaces()
   return sourceInterfaceMap;
 }
 
-
-NetworkBuilder::SinkInterfaceMapType
-NetworkBuilder::GetSinkInterfaces()
+template< typename ComponentList >
+NetworkBuilderBase::SinkInterfaceMapType
+NetworkBuilder<ComponentList>::GetSinkInterfaces()
 {
   /** Scans all Components to find those with Sinking capability and store them in SinkComponents list */
 
@@ -412,8 +416,9 @@ NetworkBuilder::GetSinkInterfaces()
   return sinkInterfaceMap;
 }
 
+template< typename ComponentList >
 AnyFileReader::Pointer
-NetworkBuilder::GetInputFileReader( const NetworkBuilder::ComponentNameType & inputName )
+NetworkBuilder<ComponentList>::GetInputFileReader(const NetworkBuilderBase::ComponentNameType & inputName)
 {
   SourceInterfaceMapType sources = this->GetSourceInterfaces();
   if( sources.count( inputName ) != 1 )
@@ -426,9 +431,9 @@ NetworkBuilder::GetInputFileReader( const NetworkBuilder::ComponentNameType & in
   return sources[ inputName ]->GetInputFileReader();
 }
 
-
+template< typename ComponentList >
 AnyFileWriter::Pointer
-NetworkBuilder::GetOutputFileWriter( const NetworkBuilder::ComponentNameType & outputName )
+NetworkBuilder<ComponentList>::GetOutputFileWriter(const NetworkBuilderBase::ComponentNameType & outputName)
 {
   SinkInterfaceMapType sinks = this->GetSinkInterfaces();
   if( sinks.count( outputName ) != 1 )
@@ -441,9 +446,9 @@ NetworkBuilder::GetOutputFileWriter( const NetworkBuilder::ComponentNameType & o
   return sinks[ outputName ]->GetOutputFileWriter();
 }
 
-
+template< typename ComponentList >
 SinkInterface::DataObjectPointer
-NetworkBuilder::GetInitializedOutput( const NetworkBuilder::ComponentNameType & outputName )
+NetworkBuilder<ComponentList>::GetInitializedOutput(const NetworkBuilderBase::ComponentNameType & outputName)
 {
   SinkInterfaceMapType sinks = this->GetSinkInterfaces();
   if( sinks.count( outputName ) != 1 )
@@ -456,8 +461,9 @@ NetworkBuilder::GetInitializedOutput( const NetworkBuilder::ComponentNameType & 
   return sinks[ outputName ]->GetInitializedOutput();
 }
 
+template< typename ComponentList >
 NetworkContainer 
-NetworkBuilder::GetRealizedNetwork()
+NetworkBuilder<ComponentList>::GetRealizedNetwork()
 {
   // vector that stores all components
   std::vector<ComponentBase::Pointer> components;

@@ -38,7 +38,6 @@ set( ${MODULE}_SOURCE_FILES
   ${${MODULE}_SOURCE_DIR}/ComponentInterface/src/selxComponentBase.cxx
   ${${MODULE}_SOURCE_DIR}/ComponentInterface/src/selxCheckTemplateProperties.cxx
   ${${MODULE}_SOURCE_DIR}/ComponentInterface/src/selxNetworkContainer.cxx
-  ${${MODULE}_SOURCE_DIR}/ComponentInterface/src/selxNetworkBuilder.cxx
   ${${MODULE}_SOURCE_DIR}/ComponentInterface/src/selxComponentSelector.cxx
   ${${MODULE}_SOURCE_DIR}/ConfigurationReader/src/selxConfigurationReader.cxx
   ${${MODULE}_SOURCE_DIR}/Filter/src/selxSuperElastixFilter.cxx

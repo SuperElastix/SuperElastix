@@ -20,6 +20,7 @@
 #ifndef NetworkBuilder_h
 #define NetworkBuilder_h
 
+#include "selxNetworkBuilderBase.h"
 #include "selxAnyFileReader.h"
 #include "selxAnyFileWriter.h"
 
@@ -40,10 +41,15 @@
 
 namespace selx
 {
-class NetworkBuilder
+  template<class ComponentList>
+  class NetworkBuilder : public NetworkBuilderBase
 {
-  // TODO: Its output should be a (light weight) ComponentContainer with 1 Execute button. All other data such as graphs and selectors can be deleted.
+  // The NetworkBuilder takes care of the at run time realization of the algorithm network that is described by the Blueprint.
+  // The output, GetRealizedNetwork(), is a (light weight) ComponentContainer with 1 Execute button that is self-contained to run the registration algorithm. 
+  // After obtaining the RealizedNetwork(), the NetworkBuilder object can be deleted in order to free memory, releasing all internal/intermediate data of the configuration process.
 public:
+
+
 
   typedef Blueprint::ComponentNameType ComponentNameType;
   typedef std::map<
@@ -56,29 +62,28 @@ public:
 
   NetworkBuilder( std::shared_ptr< Blueprint > blueprint );
   NetworkBuilder( Blueprint * blueprint );
-  ~NetworkBuilder() {}
+  NetworkBuilder();
+  virtual ~NetworkBuilder() = default;
 
   /** Read configuration at the blueprints nodes and edges and return true if all components could be uniquely selected*/
-  bool Configure();
+  virtual bool Configure();
 
   /** if all components are uniquely selected, they can be connected */
-  bool ConnectComponents();
+  virtual bool ConnectComponents();
 
-  NetworkContainer GetRealizedNetwork();
+  virtual NetworkContainer GetRealizedNetwork();
 
-  SourceInterfaceMapType GetSourceInterfaces();
+  virtual SourceInterfaceMapType GetSourceInterfaces();
 
-  SinkInterfaceMapType GetSinkInterfaces();
+  virtual SinkInterfaceMapType GetSinkInterfaces();
 
-  AnyFileReader::Pointer GetInputFileReader( const ComponentNameType & );
+  virtual AnyFileReader::Pointer GetInputFileReader(const ComponentNameType &);
 
-  AnyFileWriter::Pointer GetOutputFileWriter( const ComponentNameType & );
+  virtual AnyFileWriter::Pointer GetOutputFileWriter(const ComponentNameType &);
 
-  SinkInterface::DataObjectPointer GetInitializedOutput( const NetworkBuilder::ComponentNameType & );
+  virtual SinkInterface::DataObjectPointer GetInitializedOutput(const NetworkBuilderBase::ComponentNameType &);
 
 protected:
-
-private:
 
   typedef ComponentBase::CriteriaType       CriteriaType;
   typedef ComponentBase::CriterionType      CriterionType;
@@ -86,21 +91,20 @@ private:
 
   typedef ComponentSelector::Pointer ComponentSelectorPointer;
 
-  typedef Blueprint::ComponentNamesType                           ComponentNamesType;
   typedef std::map< ComponentNameType, ComponentSelectorPointer > ComponentSelectorContainerType;
   typedef ComponentSelectorContainerType::iterator                ComponentSelectorIteratorType;
 
   /** Read configuration at the blueprints nodes and try to find instantiated components */
-  void ApplyComponentConfiguration();
+  virtual void ApplyComponentConfiguration();
 
   /** Read configuration at the blueprints edges and try to find instantiated components */
-  void ApplyConnectionConfiguration();
+  virtual void ApplyConnectionConfiguration();
 
   /** For all uniquely selected components test handshake to non-uniquely selected components */
-  void PropagateConnectionsWithUniqueComponents();
+  virtual void PropagateConnectionsWithUniqueComponents();
 
   /** See which components need more configuration criteria */
-  ComponentNamesType GetNonUniqueComponentNames();
+  virtual ComponentNamesType GetNonUniqueComponentNames();
 
   //TODO make const correct
   //NetworkBuilder should be constructed with a blueprint.
@@ -111,7 +115,14 @@ private:
   // A selector for each node, that each can hold multiple instantiated components. Ultimately is should be 1 component each.
   ComponentSelectorContainerType m_ComponentSelectorContainer;
   bool                           m_isConfigured;
+
+private:
+
 };
 } // end namespace selx
+
+#ifndef ITK_MANUAL_INSTANTIATION
+#include "selxNetworkBuilder.hxx"
+#endif
 
 #endif // NetworkBuilder_h

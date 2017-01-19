@@ -39,7 +39,7 @@ class NetworkBuilderTest : public ::testing::Test
 {
 public:
 
-  typedef std::unique_ptr< NetworkBuilder >         NetworkBuilderPointer;
+  typedef std::unique_ptr< NetworkBuilderBase >         NetworkBuilderPointer;
   typedef std::shared_ptr< Blueprint >        BlueprintPointer;
   typedef Blueprint::ParameterMapType         ParameterMapType;
   typedef Blueprint::ParameterValueType       ParameterValueType;
@@ -83,12 +83,12 @@ public:
 
 TEST_F( NetworkBuilderTest, Create )
 {
-  NetworkBuilderPointer networkBuilder = NetworkBuilderPointer( new NetworkBuilder( new Blueprint() ) );
+  NetworkBuilderPointer networkBuilder = NetworkBuilderPointer( new NetworkBuilder<TypeList<>>( new Blueprint() ) );
 }
 
 TEST_F( NetworkBuilderTest, Configure )
 {
-  NetworkBuilderPointer networkBuilder = NetworkBuilderPointer( new NetworkBuilder( blueprint ) );
+  NetworkBuilderPointer networkBuilder = NetworkBuilderPointer(new NetworkBuilder<TypeList<>>(blueprint));
   bool allUniqueComponents;
   EXPECT_NO_THROW( allUniqueComponents = networkBuilder->Configure() );
   EXPECT_TRUE( allUniqueComponents );
@@ -96,7 +96,7 @@ TEST_F( NetworkBuilderTest, Configure )
 
 TEST_F( NetworkBuilderTest, Connect )
 {
-  std::unique_ptr< NetworkBuilder > networkBuilder( new NetworkBuilder( blueprint ) );
+  std::unique_ptr< NetworkBuilderBase > networkBuilder(new NetworkBuilder<TypeList<>>(blueprint));
   EXPECT_NO_THROW( bool allUniqueComponents = networkBuilder->Configure() );
   bool success;
   EXPECT_NO_THROW(success = networkBuilder->ConnectComponents());
@@ -217,7 +217,7 @@ TEST_F( NetworkBuilderTest, DeduceComponentsFromConnections )
   blueprint->SetConnection( "ResampleFilter", "Controller", { {} } );              //ReconnectTransformInterface
   blueprint->SetConnection( "TransformDisplacementFilter", "Controller", { {} } ); //ReconnectTransformInterface
 
-  std::unique_ptr< NetworkBuilder > networkBuilder(new NetworkBuilder(blueprint));
+  std::unique_ptr< NetworkBuilderBase > networkBuilder(new NetworkBuilder<CustomRegisterComponents>(blueprint));
   bool allUniqueComponents;
   EXPECT_NO_THROW(allUniqueComponents = networkBuilder->Configure());
   EXPECT_TRUE( allUniqueComponents );

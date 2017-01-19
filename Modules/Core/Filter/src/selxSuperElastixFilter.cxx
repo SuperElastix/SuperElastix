@@ -84,7 +84,7 @@ SuperElastixFilter
       itkExceptionMacro(<< "Setting a Blueprint is required first.")
     }
 
-    this->m_NetworkBuilder = std::unique_ptr< NetworkBuilder >(new NetworkBuilder(this->m_Blueprint->Get()));
+    this->m_NetworkBuilder = std::unique_ptr< NetworkBuilder<DefaultComponents> >(new NetworkBuilder<DefaultComponents>(this->m_Blueprint->Get()));
     this->m_AllUniqueComponents = this->m_NetworkBuilder->Configure();
   }
   else if (this->m_BlueprintConnectionModified == true)
@@ -95,7 +95,7 @@ SuperElastixFilter
   if( ( m_InputConnectionModified == true ) || ( this->m_BlueprintConnectionModified == true ) )
   {
     auto                             usedInputs = this->GetInputNames();
-    NetworkBuilder::SourceInterfaceMapType sources    = this->m_NetworkBuilder->GetSourceInterfaces();
+    NetworkBuilderBase::SourceInterfaceMapType sources = this->m_NetworkBuilder->GetSourceInterfaces();
     for( const auto & nameAndInterface : sources )
     {
       auto foundIndex = std::find( usedInputs.begin(), usedInputs.end(), nameAndInterface.first );
@@ -124,7 +124,7 @@ SuperElastixFilter
   if( ( m_OutputConnectionModified == true ) || ( this->m_BlueprintConnectionModified == true ) )
   {
     auto                           usedOutputs = this->GetOutputNames();
-    NetworkBuilder::SinkInterfaceMapType sinks       = this->m_NetworkBuilder->GetSinkInterfaces();
+    NetworkBuilderBase::SinkInterfaceMapType sinks = this->m_NetworkBuilder->GetSinkInterfaces();
     for( const auto & nameAndInterface : sinks )
     {
       auto foundIndex = std::find( usedOutputs.begin(), usedOutputs.end(), nameAndInterface.first );
@@ -162,7 +162,7 @@ SuperElastixFilter
 
   if( ( m_OutputConnectionModified == true ) || ( this->m_BlueprintConnectionModified == true ) )
   {
-    NetworkBuilder::SinkInterfaceMapType sinks = this->m_NetworkBuilder->GetSinkInterfaces();
+    NetworkBuilderBase::SinkInterfaceMapType sinks = this->m_NetworkBuilder->GetSinkInterfaces();
     for( const auto & nameAndInterface : sinks )
     {
       // Update information: ask the mini pipeline what the size of the data will be
@@ -220,7 +220,7 @@ SuperElastixFilter
     {
       itkExceptionMacro(<< "Setting a Blueprint is required first.")
     }
-    this->m_NetworkBuilder = std::unique_ptr< NetworkBuilder >(new NetworkBuilder(this->m_Blueprint->Get()));
+    this->m_NetworkBuilder = std::unique_ptr< NetworkBuilder<DefaultComponents> >(new NetworkBuilder<DefaultComponents>(this->m_Blueprint->Get()));
     this->m_AllUniqueComponents = this->m_NetworkBuilder->Configure();
   }
   if (!this->m_AllUniqueComponents)
@@ -244,7 +244,7 @@ SuperElastixFilter
       itkExceptionMacro(<< "Setting a Blueprint is required first.")
     }
 
-    this->m_NetworkBuilder = std::unique_ptr< NetworkBuilder >(new NetworkBuilder(this->m_Blueprint->Get()));
+    this->m_NetworkBuilder = std::unique_ptr< NetworkBuilder<DefaultComponents> >(new NetworkBuilder<DefaultComponents>(this->m_Blueprint->Get()));
     this->m_AllUniqueComponents = this->m_NetworkBuilder->Configure();
   }
   if (!this->m_AllUniqueComponents)
@@ -283,7 +283,7 @@ SuperElastixFilter::OutputDataType
         itkExceptionMacro(<< "Setting a Blueprint is required first.")
       }
 
-      this->m_NetworkBuilder = std::unique_ptr< NetworkBuilder >(new NetworkBuilder(this->m_Blueprint->Get()));
+      this->m_NetworkBuilder = std::unique_ptr< NetworkBuilder<DefaultComponents> >(new NetworkBuilder<DefaultComponents>(this->m_Blueprint->Get()));
       this->m_AllUniqueComponents = this->m_NetworkBuilder->Configure();
       this->m_BlueprintConnectionModified = false;
     }

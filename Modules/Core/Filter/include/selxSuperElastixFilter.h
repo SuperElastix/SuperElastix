@@ -34,7 +34,7 @@
 
 namespace selx
 {
-class NetworkBuilder; // forward declaration, hiding implementation details and speeding up compilation time (PIMPL idiom)
+class NetworkBuilderBase; // forward declaration, hiding implementation details and speeding up compilation time (PIMPL idiom)
   
 class SuperElastixFilter : public itk::ProcessObject
 {
@@ -116,7 +116,7 @@ private:
 
   //TODO make const correct
   BlueprintType::Pointer      m_Blueprint;
-  std::unique_ptr< NetworkBuilder >   m_NetworkBuilder;
+  std::unique_ptr< NetworkBuilderBase >   m_NetworkBuilder;
   bool                        m_InputConnectionModified;
   bool                        m_OutputConnectionModified;
   bool                        m_BlueprintConnectionModified;
