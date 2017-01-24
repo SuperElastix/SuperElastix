@@ -37,7 +37,7 @@ SuperElastixFilter
 {
   // The default constructor registers the default components.
   //RegisterFactoriesByTypeList< DefaultComponents >::Register();
-  m_NetworkBuilder = std::make_unique<NetworkBuilder<DefaultComponents>>(new NetworkBuilder<DefaultComponents>());
+  m_NetworkBuilder = std::make_unique<NetworkBuilder<DefaultComponents>>();
 } // end Constructor
 
 // 

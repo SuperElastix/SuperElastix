@@ -113,7 +113,7 @@ protected:
   //NetworkBuilder should be constructed with a blueprint.
   //Blueprint::ConstPointer m_Blueprint;
   //Blueprint const * m_Blueprint;
-  std::shared_ptr< const Blueprint > m_Blueprint;
+  std::shared_ptr< Blueprint > m_Blueprint;
 
   // A selector for each node, that each can hold multiple instantiated components. Ultimately is should be 1 component each.
   ComponentSelectorContainerType m_ComponentSelectorContainer;

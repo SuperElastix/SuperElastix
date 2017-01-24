@@ -35,7 +35,7 @@ namespace selx
     ::SuperElastixFilterCustomComponents(void) : SuperElastixFilter(true)
 {
   //RegisterFactoriesByTypeList< ComponentTypeList >::Register();
-  m_NetworkBuilder = std::unique_ptr<NetworkBuilder<ComponentTypeList>>(new NetworkBuilder<ComponentTypeList>());
+  m_NetworkBuilder = std::make_unique<NetworkBuilder<ComponentTypeList>>();
 } // end Constructor
 
 } // namespace elx
