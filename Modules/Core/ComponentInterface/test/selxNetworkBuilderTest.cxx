@@ -44,15 +44,11 @@ public:
   typedef Blueprint::ParameterMapType         ParameterMapType;
   typedef Blueprint::ParameterValueType       ParameterValueType;
 
+  /** register all example components */
+  using CustomComponentList = TypeList<TransformComponent1, MetricComponent1, GDOptimizer3rdPartyComponent, GDOptimizer4thPartyComponent, SSDMetric3rdPartyComponent, SSDMetric4thPartyComponent>;
+
   virtual void SetUp()
   {
-    /** register all example components */
-    ComponentFactory< TransformComponent1 >::RegisterOneFactory();
-    ComponentFactory< MetricComponent1 >::RegisterOneFactory();
-    ComponentFactory< GDOptimizer3rdPartyComponent >::RegisterOneFactory();
-    ComponentFactory< GDOptimizer4thPartyComponent >::RegisterOneFactory();
-    ComponentFactory< SSDMetric3rdPartyComponent >::RegisterOneFactory();
-    ComponentFactory< SSDMetric4thPartyComponent >::RegisterOneFactory();
 
     /** make example blueprint configuration */
     blueprint = BlueprintPointer( new Blueprint( ) );
@@ -74,7 +70,6 @@ public:
 
   virtual void TearDown()
   {
-    itk::ObjectFactoryBase::UnRegisterAllFactories();
   }
 
 
@@ -83,12 +78,13 @@ public:
 
 TEST_F( NetworkBuilderTest, Create )
 {
-  NetworkBuilderPointer networkBuilder = NetworkBuilderPointer( new NetworkBuilder<TypeList<>>( new Blueprint() ) );
+  NetworkBuilderPointer networkBuilderA = NetworkBuilderPointer(new NetworkBuilder<CustomComponentList>());
+  NetworkBuilderPointer networkBuilderB = NetworkBuilderPointer(new NetworkBuilder<CustomComponentList>(new Blueprint()));
 }
 
 TEST_F( NetworkBuilderTest, Configure )
 {
-  NetworkBuilderPointer networkBuilder = NetworkBuilderPointer(new NetworkBuilder<TypeList<>>(blueprint));
+  NetworkBuilderPointer networkBuilder = NetworkBuilderPointer(new NetworkBuilder<CustomComponentList>(blueprint));
   bool allUniqueComponents;
   EXPECT_NO_THROW( allUniqueComponents = networkBuilder->Configure() );
   EXPECT_TRUE( allUniqueComponents );
@@ -96,7 +92,7 @@ TEST_F( NetworkBuilderTest, Configure )
 
 TEST_F( NetworkBuilderTest, Connect )
 {
-  std::unique_ptr< NetworkBuilderBase > networkBuilder(new NetworkBuilder<TypeList<>>(blueprint));
+  std::unique_ptr< NetworkBuilderBase > networkBuilder(new NetworkBuilder<CustomComponentList>(blueprint));
   EXPECT_NO_THROW( bool allUniqueComponents = networkBuilder->Configure() );
   bool success;
   EXPECT_NO_THROW(success = networkBuilder->ConnectComponents());
@@ -127,8 +123,6 @@ TEST_F( NetworkBuilderTest, DeduceComponentsFromConnections )
     ItkResampleFilterComponent< 3, double, double >>;
 
   using RegisterComponents = list_append< DefaultComponents, CustomRegisterComponents >::type;
-
-  RegisterFactoriesByTypeList< RegisterComponents >::Register();
 
   BlueprintPointer blueprint = BlueprintPointer( new Blueprint() ); // override old blueprint
 
@@ -217,7 +211,7 @@ TEST_F( NetworkBuilderTest, DeduceComponentsFromConnections )
   blueprint->SetConnection( "ResampleFilter", "Controller", { {} } );              //ReconnectTransformInterface
   blueprint->SetConnection( "TransformDisplacementFilter", "Controller", { {} } ); //ReconnectTransformInterface
 
-  std::unique_ptr< NetworkBuilderBase > networkBuilder(new NetworkBuilder<CustomRegisterComponents>(blueprint));
+  std::unique_ptr< NetworkBuilderBase > networkBuilder(new NetworkBuilder<RegisterComponents>(blueprint));
   bool allUniqueComponents;
   EXPECT_NO_THROW(allUniqueComponents = networkBuilder->Configure());
   EXPECT_TRUE( allUniqueComponents );
