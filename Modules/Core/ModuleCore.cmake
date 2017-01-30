@@ -48,7 +48,7 @@ set( ${MODULE}_SOURCE_FILES
 # Export tests
 set( ${MODULE}_TEST_SOURCE_FILES
   ${${MODULE}_SOURCE_DIR}/Blueprints/test/selxBlueprintTest.cxx
-  ${${MODULE}_SOURCE_DIR}/ComponentInterface/test/selxComponentFactoryTest.cxx
+  ${${MODULE}_SOURCE_DIR}/ComponentInterface/test/selxComponentSelectorTest.cxx
   ${${MODULE}_SOURCE_DIR}/ComponentInterface/test/selxComponentInterfaceTest.cxx
   ${${MODULE}_SOURCE_DIR}/ComponentInterface/test/selxNetworkBuilderTest.cxx
   ${${MODULE}_SOURCE_DIR}/ConfigurationReader/test/selxConfigurationReaderTest.cxx
