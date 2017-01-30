@@ -115,7 +115,8 @@ SuperElastixFilter
       {
         msg << unusedInput << std::endl;
       }
-      itkExceptionMacro( << msg.str() )
+      //itkExceptionMacro( << msg.str() )
+      throw std::runtime_error(msg.str());
     }
   }
 
@@ -143,7 +144,8 @@ SuperElastixFilter
       {
         msg << unusedOutput << std::endl;
       }
-      itkExceptionMacro( << msg.str() )
+      //itkExceptionMacro( << msg.str() )
+      throw std::runtime_error(msg.str());
     }
   }
 

@@ -35,7 +35,6 @@
 #include "selxMacro.h"
 #include "selxBlueprint.h"
 #include "selxNetworkContainer.h"
-#include "selxComponentFactory.h"
 #include "selxInterfaces.h"
 #include "selxInterfaceTraits.h"
 

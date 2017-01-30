@@ -20,8 +20,6 @@
 #ifndef NetworkBuilderBase_h
 #define NetworkBuilderBase_h
 
-#include "selxAnyFileReader.h"
-#include "selxAnyFileWriter.h"
 
 #include <list>
 #include <vector>
@@ -31,12 +29,15 @@
 #include <cstring>
 #include <map>
 
+#include "selxComponentSelector.h"
+#include "selxComponentBase.h"
+#include "selxInterfaces.h"
+#include "selxInterfaceTraits.h"
 #include "selxMacro.h"
 #include "selxBlueprint.h"
 #include "selxNetworkContainer.h"
-#include "selxComponentFactory.h"
-#include "selxInterfaces.h"
-#include "selxInterfaceTraits.h"
+#include "selxAnyFileReader.h"
+#include "selxAnyFileWriter.h"
 
 namespace selx
 {
