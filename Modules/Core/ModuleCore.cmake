@@ -24,7 +24,6 @@ set( ${MODULE}_INCLUDE_DIRS
   ${${MODULE}_SOURCE_DIR}/ComponentRegistration/include
   ${${MODULE}_SOURCE_DIR}/ConfigurationReader/include
   ${${MODULE}_SOURCE_DIR}/FileIO/include
-  ${${MODULE}_SOURCE_DIR}/ComponentRegistration/include
   ${${MODULE}_SOURCE_DIR}/Filter/include
   ${${MODULE}_SOURCE_DIR}/Logger/include
   ${${MODULE}_SOURCE_DIR}/ParameterObject/include
