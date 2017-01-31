@@ -134,7 +134,7 @@ option( BUILD_EXPRESS "Use express build." OFF )
 # Do not change and do not call anywhere else.
 include( selxModules )
 _selxmodules_initialize()
-_selxmodule_enable( ModuleCore "SuperElastix" )
+_selxmodule_enable( ModuleFilter "SuperElastix" )
 
 # Build applications
 if( ${BUILD_APPLICATIONS} AND NOT ${BUILD_EXPRESS} )
