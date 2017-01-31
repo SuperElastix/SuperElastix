@@ -102,6 +102,14 @@ Blueprint
 }
 
 
+bool
+Blueprint
+::ComposeWith(std::unique_ptr<Blueprint> const &other )
+{
+  return this->m_Pimple->ComposeWith(other);
+}
+
+
 Blueprint::ComponentNamesType
 Blueprint
 ::GetOutputNames( const ComponentNameType name ) const

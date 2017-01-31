@@ -60,6 +60,9 @@ public:
 
   bool ConnectionExists( ComponentNameType upstream, ComponentNameType downstream ) const;
 
+  // "functional" composition of blueprints is done by adding settings of other to this blueprint. Redefining/overwriting properties is not allowed and returns false.
+  bool ComposeWith(std::unique_ptr<Blueprint> const &other);
+
   // Returns a vector of the Component names at the incoming direction
   ComponentNamesType GetInputNames( const ComponentNameType name ) const;
   

@@ -93,7 +93,16 @@ inline edge_label_writer< ParameterMapType >
   return edge_label_writer< ParameterMapType >(p);
 }
 
-  
+//Used in CloneGraph
+struct Blueprint::BlueprintImpl::vertex_copier {
+  ComponentPropertyType& from;
+  ComponentPropertyType& to;
+    void operator()(Blueprint::BlueprintImpl::GraphType::vertex_descriptor input, Blueprint::BlueprintImpl::GraphType::vertex_descriptor output) const {
+    //TODO !
+    //to[output] = { from[input]};
+  }
+};
+
 bool
 Blueprint::BlueprintImpl
 ::SetComponent( ComponentNameType name, ParameterMapType parameterMap )
@@ -217,6 +226,82 @@ Blueprint::BlueprintImpl
   }
 
   return boost::edge_by_label( upstream, downstream, this->m_Graph ).second;
+}
+
+Blueprint::BlueprintImpl::GraphType
+Blueprint::BlueprintImpl
+::CloneGraph(void) const
+{
+  GraphType clone;
+  // TODO!
+  // boost::copy_graph(this->m_Graph, clone, boost::vertex_copy(vertex_copier()));
+
+  return clone;
+}
+
+
+bool 
+Blueprint::BlueprintImpl
+::ComposeWith(std::unique_ptr<Blueprint> const &other)
+{
+  // Make a backup of the current blueprint status in case composition fails
+  GraphType graph_backup = this->CloneGraph();
+
+  for (auto const & componentName : other->GetComponentNames())
+  {
+    // Does other blueprint use component with a name that already exists?
+    if (this->ComponentExists(componentName))
+    {
+      // Component exists, check if properties can be merged
+      auto ownProperties = this->GetComponent(componentName);
+      auto othersProperties = other->GetComponent(componentName);
+
+      for (auto const & othersEntry : othersProperties)
+      {
+        // Does other use a property key that already exists in this component?
+        if (ownProperties.count(othersEntry.first))
+        {
+          auto && ownValues = ownProperties[othersEntry.first];
+          auto && otherValues = othersEntry.second;
+          // Are the property values equal?
+          if (ownValues.size() != otherValues.size())
+          {
+            // No, based on the number of values we see that it is different. Blueprints cannot be Composed
+            this->m_Graph = graph_backup;
+            return false;
+          } 
+          else
+          {
+            ParameterValueType::const_iterator ownValue;
+            ParameterValueType::const_iterator otherValue;
+            for (ownValue = ownValues.begin(), otherValue = otherValues.begin(); ownValue != ownValues.end(); ++ownValue, ++otherValue)
+            {
+              if (*otherValue != *ownValue)
+              {
+                // No, at least one value is different. Blueprints cannot be Composed
+                this->m_Graph = graph_backup;
+                return false;
+              }
+            }
+          }
+        }
+        else
+        {
+          // Property key doesn't exist yet, add entry to this component
+          auto ownProperties = this->GetComponent(componentName);
+          ownProperties[othersEntry.first] = othersEntry.second;
+          this->SetComponent(componentName, ownProperties);
+        }
+      }
+    }
+    else
+    {
+      // Create Component copying properties of other
+      this->SetComponent(componentName, other->GetComponent(componentName));
+    }
+    
+  }
+  return true;
 }
 
 

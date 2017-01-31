@@ -25,6 +25,8 @@
 #include "boost/graph/directed_graph.hpp"
 #include "boost/graph/labeled_graph.hpp"
 
+#include "boost/graph/copy.hpp" // for ComposeWith
+
 #include "selxBlueprint.h"
 
 namespace selx {
@@ -45,6 +47,8 @@ struct Blueprint::BlueprintImpl {
   {
     ParameterMapType parameterMap;
   };
+
+  struct vertex_copier;
 
   typedef boost::labeled_graph< 
     boost::adjacency_list<
@@ -89,6 +93,8 @@ struct Blueprint::BlueprintImpl {
 
   bool ConnectionExists( ComponentNameType upstream, ComponentNameType downstream ) const;
 
+  bool ComposeWith(std::unique_ptr<Blueprint> const &other);
+
   // Returns a vector of the Component names at the incoming direction
   ComponentNamesType GetInputNames( const ComponentNameType name ) const;
   
@@ -99,6 +105,8 @@ struct Blueprint::BlueprintImpl {
   
   ConnectionIndexType GetConnectionIndex( ComponentNameType upsteam, ComponentNameType downstream ) const;
   
+  GraphType CloneGraph(void ) const;
+
   GraphType m_Graph;
   
 };
