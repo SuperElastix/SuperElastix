@@ -182,7 +182,7 @@ TEST_F( SuperElastixFilterTest, TooManyInputs )
   std::cout << "Create blueprint " << std::endl;
   BlueprintPointer blueprint = BlueprintPointer( new Blueprint() );
 
-  blueprint->SetComponent( "Source_A", { { "NameOfClass", { "ItkImageSourceComponent" } } } );
+  blueprint->SetComponent("Source_A", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "double" } } });
 
   // Instantiate SuperElastixFilter before each test and
   // register the components we want to have available in SuperElastix
@@ -208,8 +208,8 @@ TEST_F( SuperElastixFilterTest, TooManySources )
 
   BlueprintPointer blueprint = BlueprintPointer( new Blueprint() );
 
-  blueprint->SetComponent( "Source_A", { { "NameOfClass", { "ItkImageSourceComponent" } } } );
-  blueprint->SetComponent( "Source_B", { { "NameOfClass", { "ItkImageSourceComponent" } } } );
+  blueprint->SetComponent("Source_A", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "double" } } });
+  blueprint->SetComponent("Source_B", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "double" } } });
 
   // Instantiate SuperElastixFilter before each test and
   // register the components we want to have available in SuperElastix
@@ -233,7 +233,7 @@ TEST_F( SuperElastixFilterTest, TooManyOutputs )
 
   BlueprintPointer blueprint = BlueprintPointer( new Blueprint() );
 
-  blueprint->SetComponent( "Sink_A", { { "NameOfClass", { "ItkImageSinkComponent" } } } );
+  blueprint->SetComponent("Sink_A", { { "NameOfClass", { "ItkImageSinkComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "double" } } });
 
   // Instantiate SuperElastixFilter before each test and
   // register the components we want to have available in SuperElastix
@@ -256,8 +256,8 @@ TEST_F( SuperElastixFilterTest, TooManySinks )
 
   BlueprintPointer blueprint = BlueprintPointer( new Blueprint() );
 
-  blueprint->SetComponent( "Sink_A", { { "NameOfClass", { "ItkImageSinkComponent" } } } );
-  blueprint->SetComponent( "Sink_B", { { "NameOfClass", { "ItkImageSinkComponent" } } } );
+  blueprint->SetComponent("Sink_A", { { "NameOfClass", { "ItkImageSinkComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "double" } } });
+  blueprint->SetComponent("Sink_B", { { "NameOfClass", { "ItkImageSinkComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "double" } } });
 
   // Instantiate SuperElastixFilter before each test and
   // register the components we want to have available in SuperElastix
