@@ -59,8 +59,6 @@ public:
   typedef std::map<
     std::string, RegistrationControllerStartInterface * > RegistrationControllerStartInterfaceMapType;
 
-  NetworkBuilder( std::shared_ptr< Blueprint > blueprint );
-  NetworkBuilder( Blueprint * blueprint );
   NetworkBuilder();
   virtual ~NetworkBuilder() {};
 

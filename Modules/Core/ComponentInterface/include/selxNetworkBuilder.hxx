@@ -23,15 +23,6 @@
 
 namespace selx
 {
-  template< typename ComponentList >
-  NetworkBuilder<ComponentList>::NetworkBuilder(std::shared_ptr< Blueprint > blueprint) : m_Blueprint(blueprint), m_isConfigured(false)
-{
-}
-
-  template< typename ComponentList >
-  NetworkBuilder<ComponentList>::NetworkBuilder(Blueprint * blueprint) : m_Blueprint(blueprint), m_isConfigured(false)
-{
-}
 
 template< typename ComponentList >
 NetworkBuilder<ComponentList>::NetworkBuilder() : m_isConfigured(false)

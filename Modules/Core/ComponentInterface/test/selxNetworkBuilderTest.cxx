@@ -77,12 +77,13 @@ public:
 TEST_F( NetworkBuilderTest, Create )
 {
   NetworkBuilderPointer networkBuilderA = NetworkBuilderPointer(new NetworkBuilder<CustomComponentList>());
-  NetworkBuilderPointer networkBuilderB = NetworkBuilderPointer(new NetworkBuilder<CustomComponentList>(new Blueprint()));
 }
 
 TEST_F( NetworkBuilderTest, Configure )
 {
-  NetworkBuilderPointer networkBuilder = NetworkBuilderPointer(new NetworkBuilder<CustomComponentList>(blueprint));
+  NetworkBuilderPointer networkBuilder = NetworkBuilderPointer(new NetworkBuilder<CustomComponentList>());
+  networkBuilder->AddBlueprint(blueprint);
+
   bool allUniqueComponents;
   EXPECT_NO_THROW( allUniqueComponents = networkBuilder->Configure() );
   EXPECT_TRUE( allUniqueComponents );
@@ -90,7 +91,8 @@ TEST_F( NetworkBuilderTest, Configure )
 
 TEST_F( NetworkBuilderTest, Connect )
 {
-  std::unique_ptr< NetworkBuilderBase > networkBuilder(new NetworkBuilder<CustomComponentList>(blueprint));
+  NetworkBuilderPointer networkBuilder = NetworkBuilderPointer(new NetworkBuilder<CustomComponentList>());
+  networkBuilder->AddBlueprint(blueprint);
   EXPECT_NO_THROW( bool allUniqueComponents = networkBuilder->Configure() );
   bool success;
   EXPECT_NO_THROW(success = networkBuilder->ConnectComponents());
@@ -209,7 +211,8 @@ TEST_F( NetworkBuilderTest, DeduceComponentsFromConnections )
   blueprint->SetConnection( "ResampleFilter", "Controller", { {} } );              //ReconnectTransformInterface
   blueprint->SetConnection( "TransformDisplacementFilter", "Controller", { {} } ); //ReconnectTransformInterface
 
-  std::unique_ptr< NetworkBuilderBase > networkBuilder(new NetworkBuilder<RegisterComponents>(blueprint));
+  std::unique_ptr< NetworkBuilderBase > networkBuilder(new NetworkBuilder<RegisterComponents>());
+  networkBuilder->AddBlueprint(blueprint);
   bool allUniqueComponents;
   EXPECT_NO_THROW(allUniqueComponents = networkBuilder->Configure());
   EXPECT_TRUE( allUniqueComponents );
