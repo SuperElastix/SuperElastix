@@ -27,8 +27,6 @@
 #include "selxSSDMetric3rdPartyComponent.h"
 #include "selxSSDMetric4thPartyComponent.h"
 
-#include "selxRegisterComponentFactoriesByTypeList.h"
-
 #include "selxDefaultComponents.h"
 
 #include "gtest/gtest.h"

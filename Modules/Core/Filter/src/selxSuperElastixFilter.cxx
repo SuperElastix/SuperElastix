@@ -22,8 +22,6 @@
 
 #include "selxSuperElastixFilter.h"
 #include "selxNetworkBuilder.h"
-
-#include "selxRegisterComponentFactoriesByTypeList.h"
 #include "selxDefaultComponents.h"
 
 namespace selx

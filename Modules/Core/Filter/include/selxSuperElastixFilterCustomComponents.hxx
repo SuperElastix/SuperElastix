@@ -21,7 +21,6 @@
 #define selxSuperElastixFilterCustomComponents_hxx
 
 #include "selxSuperElastixFilterCustomComponents.h"
-#include "selxRegisterComponentFactoriesByTypeList.h"
 #include "selxNetworkBuilder.h"
 
 
