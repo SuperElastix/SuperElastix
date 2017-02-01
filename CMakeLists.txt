@@ -189,5 +189,6 @@ option( BUILD_READTHEDOCS "Enable building readthedocs.org documentation." OFF )
 set( SUPERELASTIX_CONFIG_DIR ${CMAKE_CURRENT_BINARY_DIR} )
 set( SUPERELASTIX_BINARY_DIR ${CMAKE_LIBRARY_OUTPUT_DIRECTORY} )
 
+get_directory_property( SUPERELASTIX_INCLUDE_DIRS INCLUDE_DIRECTORIES )
 configure_file( SuperElastixConfig.cmake.in SuperElastixConfig.cmake @ONLY IMMEDIATE )
 configure_file( UseSuperElastix.cmake.in UseSuperElastix.cmake COPYONLY IMMEDIATE )

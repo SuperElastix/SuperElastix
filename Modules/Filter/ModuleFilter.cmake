@@ -17,9 +17,6 @@
 #
 #=========================================================================
 
-message( STATUS "FIRST LINE IN ModuleFilter CMAKE FILE")
-message( STATUS "MODULE CMAKE VAR IS ${MODULE}")
-
 set( ${MODULE}_INCLUDE_DIRS
   ${${MODULE}_SOURCE_DIR}/include
 )
@@ -39,7 +36,8 @@ set( ${MODULE}_LIBRARIES
   ${MODULE}
 )
 
-set( ${MODULE}_MODULE_DEPENDENCIES 
+set( ${MODULE}_MODULE_DEPENDENCIES
+  ModuleBlueprints
   ModuleController
   ModuleElastix
   ModuleExamples
@@ -48,5 +46,3 @@ set( ${MODULE}_MODULE_DEPENDENCIES
   ModuleSinksAndSources
   ModuleNiftyreg
 )
-
-message( STATUS "LAST LINE IN ModuleFilter CMAKE FILE")

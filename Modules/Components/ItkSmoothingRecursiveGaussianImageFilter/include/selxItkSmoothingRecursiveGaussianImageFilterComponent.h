@@ -40,7 +40,17 @@ class ItkSmoothingRecursiveGaussianImageFilterComponent :
 {
 public:
 
-  selxNewMacro( ItkSmoothingRecursiveGaussianImageFilterComponent, ComponentBase );
+  /** Standard ITK typedefs. */
+  typedef ItkSmoothingRecursiveGaussianImageFilterComponent          Self;
+  typedef ComponentBase                       Superclass;
+  typedef itk::SmartPointer< Self >           Pointer;
+  typedef itk::SmartPointer< const Self >     ConstPointer;
+
+  /** Method for creation through the object factory. */
+  itkNewMacro( Self );
+
+  /** Run-time type information (and related methods). */
+  itkTypeMacro( Self, ComponentBase );
 
   // itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
 

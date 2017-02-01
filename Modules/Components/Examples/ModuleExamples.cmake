@@ -19,6 +19,7 @@
 
 set( ${MODULE}_INCLUDE_DIRS
   ${${MODULE}_SOURCE_DIR}/include
+  ${${MODULE}_SOURCE_DIR}/interfaces
 )
 
 set( ${MODULE}_SOURCE_FILES
@@ -36,4 +37,8 @@ set( ${MODULE}_SOURCE_FILES
 
 set( ${MODULE}_LIBRARIES 
   ${MODULE}
+)
+
+set( ${MODULE}_MODULE_DEPENDENCIES 
+  ModuleComponentInterface
 )

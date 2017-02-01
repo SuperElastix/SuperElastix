@@ -25,7 +25,6 @@
 
 #include <string.h>
 #include <set>
-#include "selxMacro.h"
 
 namespace selx
 {
@@ -43,7 +42,17 @@ class RegistrationControllerComponent :
 
 public:
 
-  selxNewMacro( RegistrationControllerComponent, ComponentBase );
+  /** Standard ITK typedefs. */
+  typedef RegistrationControllerComponent          Self;
+  typedef ComponentBase                       Superclass;
+  typedef itk::SmartPointer< Self >           Pointer;
+  typedef itk::SmartPointer< const Self >     ConstPointer;
+
+  /** Method for creation through the object factory. */
+  itkNewMacro( Self );
+
+  /** Run-time type information (and related methods). */
+  itkTypeMacro( Self, ComponentBase );
 
   //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
 

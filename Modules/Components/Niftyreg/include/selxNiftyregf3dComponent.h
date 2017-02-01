@@ -26,7 +26,6 @@
 #include "_reg_f3d.h"
 
 #include <string.h>
-#include "selxMacro.h"
 namespace selx
 {
 template< class TPixel >
@@ -38,7 +37,17 @@ class Niftyregf3dComponent :
 {
 public:
 
-  selxNewMacro( Niftyregf3dComponent, ComponentBase );
+  /** Standard ITK typedefs. */
+  typedef Niftyregf3dComponent          Self;
+  typedef ComponentBase                       Superclass;
+  typedef itk::SmartPointer< Self >           Pointer;
+  typedef itk::SmartPointer< const Self >     ConstPointer;
+
+  /** Method for creation through the object factory. */
+  itkNewMacro( Self );
+
+  /** Run-time type information (and related methods). */
+  itkTypeMacro( Self, ComponentBase );
 
   // itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
 

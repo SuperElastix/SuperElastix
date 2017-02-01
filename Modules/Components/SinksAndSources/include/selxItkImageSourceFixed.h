@@ -25,7 +25,6 @@
 #include "selxItkObjectInterfaces.h"
 
 #include <string.h>
-#include "selxMacro.h"
 #include "itkImageFileReader.h"
 #include "selxAnyFileReader.h"
 #include "selxFileReaderDecorator.h"
@@ -42,7 +41,17 @@ class ItkImageSourceFixedComponent :
 {
 public:
 
-  selxNewMacro( ItkImageSourceFixedComponent, ComponentBase );
+  /** Standard ITK typedefs. */
+  typedef ItkImageSourceFixedComponent          Self;
+  typedef ComponentBase                       Superclass;
+  typedef itk::SmartPointer< Self >           Pointer;
+  typedef itk::SmartPointer< const Self >     ConstPointer;
+
+  /** Method for creation through the object factory. */
+  itkNewMacro( Self );
+
+  /** Run-time type information (and related methods). */
+  itkTypeMacro( Self, ComponentBase );
 
   //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
 

@@ -38,7 +38,17 @@ class ItkGradientDescentOptimizerv4Component :
 {
 public:
 
-  selxNewMacro( ItkGradientDescentOptimizerv4Component, ComponentBase );
+  /** Standard ITK typedefs. */
+  typedef ItkGradientDescentOptimizerv4Component          Self;
+  typedef ComponentBase                       Superclass;
+  typedef itk::SmartPointer< Self >           Pointer;
+  typedef itk::SmartPointer< const Self >     ConstPointer;
+
+  /** Method for creation through the object factory. */
+  itkNewMacro( Self );
+
+  /** Run-time type information (and related methods). */
+  itkTypeMacro( Self, ComponentBase );
 
   //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
 

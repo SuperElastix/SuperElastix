@@ -32,7 +32,6 @@
 #include <cstring>
 #include <map>
 
-#include "selxMacro.h"
 #include "selxBlueprint.h"
 #include "selxNetworkContainer.h"
 #include "selxInterfaces.h"

@@ -33,7 +33,6 @@
 #include "selxComponentBase.h"
 #include "selxInterfaces.h"
 #include "selxInterfaceTraits.h"
-#include "selxMacro.h"
 #include "selxBlueprint.h"
 #include "selxNetworkContainer.h"
 #include "selxAnyFileReader.h"
@@ -57,8 +56,6 @@ public:
 
   typedef std::map<
     std::string, RegistrationControllerStartInterface * > RegistrationControllerStartInterfaceMapType;
-
-  typedef Blueprint::ComponentNamesType                           ComponentNamesType;
   
   NetworkBuilderBase() {};
 
