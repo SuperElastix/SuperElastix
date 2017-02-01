@@ -90,7 +90,7 @@ protected:
   typedef ComponentBase::CriterionType      CriterionType;
   typedef ComponentBase::ParameterValueType ParameterValueType;
 
-  typedef typename ComponentSelector<ComponentList> ComponentSelectorType;
+  typedef ComponentSelector<ComponentList> ComponentSelectorType;
   typedef typename ComponentSelectorType::Pointer ComponentSelectorPointer;
 
   typedef std::map< ComponentNameType, ComponentSelectorPointer > ComponentSelectorContainerType;
