@@ -20,17 +20,3 @@
 set( ${MODULE}_INCLUDE_DIRS
   ${${MODULE}_SOURCE_DIR}/include
 )
-
-# Module source files
-set( ${MODULE}_SOURCE_FILES
-)
-
-# Export tests
-set( ${MODULE}_TEST_SOURCE_FILES
-)
-
-set( ${MODULE}_LIBRARIES 
-)
-
-set( ${MODULE}_MODULE_DEPENDENCIES 
-)

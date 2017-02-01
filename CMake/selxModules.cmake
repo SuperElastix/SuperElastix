@@ -62,11 +62,6 @@ macro( _selxmodules_initialize )
     set( ${MODULE}_SOURCE_DIR ${CMAKE_SOURCE_DIR}/${${MODULE}_PATH} )
     set( ${MODULE}_BINARY_DIR ${CMAKE_BINARY_DIR}/${${MODULE}_PATH} )
 
-    # Find interface header files
-    if( EXISTS "${CMAKE_SOURCE_DIR}/${${MODULE}_PATH}/interfaces/" )
-      list( APPEND SUPERELASTIX_INTERFACE_DIRS "${CMAKE_SOURCE_DIR}/${${MODULE}_PATH}/interfaces" )
-    endif()
-
     # Collect header files for Visual Studio 
     # http://stackoverflow.com/questions/8316104/specify-how-cmake-creates-visual-studio-project
     file( GLOB ${MODULE}_HEADER_FILES "${${MODULE}_SOURCE_DIR}/*/include/*.*" )
@@ -91,7 +86,26 @@ macro( _selxmodule_enable MODULE UPSTREAM )
 
   if( NOT ${MODULE}_IS_ENABLED )    
     set( ${MODULE}_IS_ENABLED TRUE )
+    message( STATUS "BEFORE ${MODULE} CMAKE FILE")
     include( ${${MODULE}_CMAKE_FILE} )
+    message( STATUS "AFTER ${MODULE} CMAKE FILE")
+
+    if( ${MODULE}_INCLUDE_DIRS )
+      include_directories( ${${MODULE}_INCLUDE_DIRS} )
+      list( APPEND SUPERELASTIX_INCLUDE_DIRS ${${MODULE}_INCLUDE_DIRS} )
+    endif()
+
+    if( BUILD_TESTING AND ${MODULE}_TEST_SOURCE_FILES )
+      list( APPEND SUPERELASTIX_TEST_SOURCE_FILES ${${MODULE}_TEST_SOURCE_FILES} )
+    endif()
+
+    if( ${MODULE}_MODULE_DEPENDENCIES )
+      _selxmodule_enable_dependencies( ${MODULE} ${MODULE}_MODULE_DEPENDENCIES )
+    endif()
+
+    if( ${MODULE}_LIBRARIES )
+      list( APPEND SUPERELASTIX_LIBRARIES ${${MODULE}_LIBRARIES} )
+    endif()
 
     # Header-only modules should not be compiled
     if( ${MODULE}_SOURCE_FILES )
@@ -104,64 +118,18 @@ macro( _selxmodule_enable MODULE UPSTREAM )
       endif()
 
       add_library( ${MODULE} "${${MODULE}_HEADER_FILES}" "${${MODULE}_SOURCE_FILES}" )
-
-      # Include module headers
-      if( ${MODULE}_INCLUDE_DIRS )
-        target_include_directories( ${MODULE} PUBLIC ${${MODULE}_INCLUDE_DIRS} )
-      endif()
-
-      # Include interface headers
-      target_include_directories( ${MODULE} PUBLIC ${SUPERELASTIX_INTERFACE_DIRS} )
-
-      if( NOT ${MODULE} STREQUAL ModuleCore )
-        target_include_directories( ${MODULE} PUBLIC ${ModuleCore_INCLUDE_DIRS} )
-        target_link_libraries( ${MODULE} ModuleCore )
-      endif()
     endif()
 	
-    if( BUILD_TESTING AND ${MODULE}_TEST_SOURCE_FILES )
-      list( APPEND SUPERELASTIX_TEST_SOURCE_FILES ${${MODULE}_TEST_SOURCE_FILES} )
-    endif()
-
-    if( ${MODULE}_MODULE_DEPENDENCIES )
-      _selxmodule_enable_dependencies( ${MODULE} ${MODULE}_MODULE_DEPENDENCIES )
-
-      # Header-only modules should not be linked against dependencies
-      if( ${MODULE}_SOURCE_FILES )
-        # Macro for including and linking all dependencies
-        _selxmodule_include_directories( ${MODULE} ${MODULE}_MODULE_DEPENDENCIES ) 
-        _selxmodule_link_libraries( ${MODULE} ${MODULE}_MODULE_DEPENDENCIES )
-      endif()
-
-      # TODO: Resolve cylic dependency graph. SuperElastix compiles only because 
-      # CMake is not aware of dependencies and because of the specific order in 
-      # which modules are compiled
-      # add_dependencies( ${MODULE} ${${MODULE}_MODULE_DEPENDENCIES} )
-    endif()
-
-    if( ${MODULE}_LINK_LIBARIES )
-      _selxmodule_link_libraries( ${MODULE} ${MODULE}_LINK_LIBARIES )
-    endif()
-
     message( STATUS "${MODULE} enabled." ) 
-
-    # SUPERELASTIX_INCLUDE_DIRS and SUPERELASTIX_LIBRARIES are convenience 
-    # variables that should only be used when absolutely necessary,  e.g. when
-    # compiling tests from a central place in Testing/Unit/CMakeLists.txt
-    if( ${MODULE}_INCLUDE_DIRS )
-      list( APPEND SUPERELASTIX_INCLUDE_DIRS ${${MODULE}_INCLUDE_DIRS} )
-    endif()
-
-    if( ${MODULE}_LIBRARIES )
-      list( APPEND SUPERELASTIX_LIBRARIES ${${MODULE}_LIBRARIES} )
-    endif()
   else()
     message( STATUS "${MODULE} already enabled." )
   endif()
 endmacro()
 
 macro( _selxmodule_enable_dependencies UPSTREAM MODULES )
+  message( STATUS "ENABLNG ${MODOULES}")
   foreach( MODULE ${${MODULES}} )
+    message( STATUS "ENABLNG ${MODULE}")
     _selxmodule_enable( ${MODULE} ${UPSTREAM} )
   endforeach()
 endmacro()
@@ -174,24 +142,6 @@ macro( _selxmodule_disable MODULE )
   list( FILTER SUPERELASTIX_TEST_SOURCE_FILES MATCHES EXCLUDE REGEX "(.*)${MODULE}(.*)" )
 endmacro()
 
-macro( _selxmodule_include_directory TARGET DEPENDENCY )
-  target_include_directories( ${TARGET} PUBLIC ${${DEPENDENCY}_INCLUDE_DIRS} )
-endmacro()
-
-macro( _selxmodule_include_directories TARGET DEPENDENCIES )
-  foreach( DEPENDENCY ${${DEPENDENCIES}} )
-    _selxmodule_include_directory( ${TARGET} ${DEPENDENCY} )
-  endforeach()
-endmacro()
-
-macro( _selxmodule_link_libraries TARGET DEPENDENCIES )
-  foreach( DEPENDENCY ${${DEPENDENCIES}} )
-    if( TARGET ${DEPENDENCY} )
-      target_link_libraries( ${TARGET} ${DEPENDENCY} )
-    endif()
-  endforeach()
-endmacro()
-
 # ---------------------------------------------------------------------
 # Public macros
 
@@ -202,16 +152,6 @@ endmacro()
 macro( enable_modules MODULES )
   foreach( MODULE ${${MODULES}} )
     enable_module( ${MODULE} )
-  endforeach()
-endmacro()
-
-macro( disable_module MODULE )
-  _selxmodule_disable( ${MODULE} )
-endmacro()
-
-macro( disable_modules MODULES )
-  foreach( MODULE ${${MODULES}} )
-    disable_module( ${MODULE} "user" )
   endforeach()
 endmacro()
 
