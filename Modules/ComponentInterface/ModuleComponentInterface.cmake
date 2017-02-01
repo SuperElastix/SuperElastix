@@ -35,7 +35,8 @@ set( ${MODULE}_TEST_SOURCE_FILES
   ${${MODULE}_SOURCE_DIR}/test/selxNetworkBuilderTest.cxx
 )
 
-set( ${MODULE}_LIBRARIES 
+set( ${MODULE}_LIBRARIES
+  ModuleComponentInterface
 )
 
 set( ${MODULE}_MODULE_DEPENDENCIES

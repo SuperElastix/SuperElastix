@@ -49,7 +49,8 @@ template <class ComponentList>
   ComponentSelector<ComponentList>::ComponentSelector()
 {
   m_PossibleComponents = std::list<ComponentBase::Pointer>();
-  m_PossibleComponents = ContructComponentsFromTypeList<ComponentList>::fill(m_PossibleComponents,std::string(""));
+  std::string name = "name";
+  m_PossibleComponents = ContructComponentsFromTypeList<ComponentList>::fill(m_PossibleComponents, name);
   //std::list< itk::LightObject::Pointer > allobjects
   //  = itk::ObjectFactoryBase::CreateAllInstance( "ComponentBase" );
 

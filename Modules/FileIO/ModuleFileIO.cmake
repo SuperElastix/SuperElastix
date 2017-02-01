@@ -30,9 +30,5 @@ set( ${MODULE}_TEST_SOURCE_FILES
   ${${MODULE}_SOURCE_DIR}/test/selxAnyFileIOTest.cxx
 )
 
-set( ${MODULE}_LIBRARIES 
-  ${MODULE}
-)
-
 set( ${MODULE}_MODULE_DEPENDENCIES 
 )
