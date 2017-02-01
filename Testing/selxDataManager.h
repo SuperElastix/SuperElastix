@@ -21,10 +21,6 @@
 #define __DataManager_h
 
 #include <string>
-#include <itkSimpleDataObjectDecorator.h>
-
-#include "selxMacro.h"
-#include "itkObjectFactory.h"
 #include "itkLightObject.h"
 #include "selxDataDirectories.h"
 
@@ -32,7 +28,11 @@ class DataManager : public itk::LightObject
 {
 public:
 
-  selxNewMacro( DataManager, itk::LightObject );
+  typedef DataManager                       Self;
+  typedef itk::SmartPointer< Self >       Pointer;
+  typedef itk::SmartPointer< const Self > ConstPointer;
+  itkNewMacro( Self );
+  itkTypeMacro( DataManager, itk::LightObject );
 
   DataManager()
   {
@@ -41,7 +41,6 @@ public:
     this->m_BaselineDirectory      = SUPERELASTIX_BASELINE_DATA_DIR;
     this->m_ConfigurationDirectory = SUPERELASTIX_CONFIGURATION_DATA_DIR;
   }
-
 
   std::string GetInputDirectory( void ) const { return this->m_InputDirectory; }
   std::string GetOutputDirectory( void ) const { return this->m_OutputDirectory; }

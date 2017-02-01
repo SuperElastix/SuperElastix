@@ -72,12 +72,10 @@ configure_file(
   ESCAPE_QUOTES
 )
 
+include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
 add_library( DataManager selxDataManager.cxx )
 
-# TODO: move Common dir?
-set (COMMON_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/Modules/Core/Common/include" )
 
-target_include_directories( DataManager PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${SUPERELASTIX_INCLUDE_DIRS} ${COMMON_INCLUDE_DIR} )
 list( APPEND TEST_LIBRARIES DataManager )
 
 # ---------------------------------------------------------------------
