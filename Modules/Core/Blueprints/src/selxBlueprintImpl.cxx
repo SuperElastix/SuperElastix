@@ -93,13 +93,25 @@ inline edge_label_writer< ParameterMapType >
   return edge_label_writer< ParameterMapType >(p);
 }
 
+
+struct Blueprint::BlueprintImpl::do_nothing
+{
+  template <typename VertexOrEdge1, typename VertexOrEdge2>
+  void operator()(const VertexOrEdge1&, VertexOrEdge2&) const
+  {
+  }
+};
+
 //Used in CloneGraph
-struct Blueprint::BlueprintImpl::vertex_copier {
+struct Blueprint::BlueprintImpl::vertex_copier 
+{
   ComponentPropertyType& from;
   ComponentPropertyType& to;
-    void operator()(Blueprint::BlueprintImpl::GraphType::vertex_descriptor input, Blueprint::BlueprintImpl::GraphType::vertex_descriptor output) const {
+    void operator()(GraphType::vertex_descriptor input, GraphType::vertex_descriptor output) const {
     //TODO !
     //to[output] = { from[input]};
+      //to.name = from.name ;
+      //to.name = from.name;
   }
 };
 
@@ -232,9 +244,12 @@ Blueprint::BlueprintImpl::GraphType
 Blueprint::BlueprintImpl
 ::CloneGraph(void) const
 {
-  GraphType clone;
+  GraphType clone = GraphType(this->m_Graph);
   // TODO!
-  // boost::copy_graph(this->m_Graph, clone, boost::vertex_copy(vertex_copier()));
+  //boost::copy_graph(this->m_Graph, clone, boost::vertex_copy(do_nothing()).edge_copy(do_nothing()));
+  //boost::copy_graph(this->m_Graph, clone, boost::vertex_copy(vertex_copier( this->m_Graph, clone )));
+  //boost::copy_graph(this->m_Graph, clone);
+
 
   return clone;
 }

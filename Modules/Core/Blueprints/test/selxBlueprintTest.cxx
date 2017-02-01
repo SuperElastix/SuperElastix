@@ -105,6 +105,24 @@ TEST_F( BlueprintTest, SetGetDeleteConnection )
 
 }
 
+TEST_F(BlueprintTest, CopyConstuctor)
+{
+  std::unique_ptr< Blueprint > baseBlueprint;
+  EXPECT_NO_THROW(baseBlueprint = std::unique_ptr< Blueprint >(new Blueprint()));
+
+  baseBlueprint->SetComponent("Component0", { { "OperationType", { "Transform" } } });
+  std::unique_ptr< Blueprint > clonedBaseBlueprint;
+  EXPECT_NO_THROW(clonedBaseBlueprint = std::make_unique<Blueprint>(*baseBlueprint.get()));
+
+  EXPECT_NO_THROW(clonedBaseBlueprint->SetComponent("Component1", { { "OperationType", { "Source" } }, { "Dimensionality", { "3" } } }));
+  
+  Blueprint::ParameterMapType clonedComponent0;
+  EXPECT_NO_THROW(clonedComponent0 = clonedBaseBlueprint->GetComponent("Component0"));
+
+  Blueprint::ParameterMapType component1;
+  EXPECT_THROW(component1 = baseBlueprint->GetComponent("Component1"), std::runtime_error);
+}
+
 TEST_F(BlueprintTest, Compose)
 {
   std::unique_ptr< Blueprint > baseBlueprint;
@@ -121,7 +139,7 @@ TEST_F(BlueprintTest, Compose)
   nonConflictingBlueprint0->SetComponent("Component2", { { "OperationType", { "Sink" } } });
 
   EXPECT_TRUE(baseBlueprint->ComposeWith(nonConflictingBlueprint0));
-
+  EXPECT_STREQ("Sink", baseBlueprint->GetComponent("Component2")["OperationType"][0].c_str());
 
   // compose-in additional properties of Component0 and Component1
   std::unique_ptr< Blueprint > nonConflictingBlueprint1;
@@ -131,7 +149,9 @@ TEST_F(BlueprintTest, Compose)
   nonConflictingBlueprint1->SetComponent("Component1", { { "NameOfClass", { "ImageSourceClass" } } });
 
   EXPECT_TRUE( baseBlueprint->ComposeWith(nonConflictingBlueprint1) );
-
+  EXPECT_STREQ("Transform", baseBlueprint->GetComponent("Component0")["OperationType"][0].c_str());
+  EXPECT_STREQ("Diffeomorphic", baseBlueprint->GetComponent("Component0")["TranformationGroup"][0].c_str());
+  EXPECT_STREQ("ImageSourceClass", baseBlueprint->GetComponent("Component1")["NameOfClass"][0].c_str());
 
   // compose-in existing component with existing property key, but equal property value(s). Nothing happens actually (i.e. idempotency)
   std::unique_ptr< Blueprint > nonConflictingBlueprint2;
@@ -145,10 +165,15 @@ TEST_F(BlueprintTest, Compose)
   // trying to overwrite properties fails
   std::unique_ptr< Blueprint > conflictingBlueprint0;
   EXPECT_NO_THROW(conflictingBlueprint0 = std::unique_ptr< Blueprint >(new Blueprint()));
-  conflictingBlueprint0->SetComponent("Component1", { { "Dimensionality", { "2" } }, { "PixelType", { "float" } } });
+  conflictingBlueprint0->SetComponent("Component1", { { "Dimensionality", { "2" } }, { "InternalComputationValueType", { "float" } } });
 
+  // Compose fails and returns false
   EXPECT_FALSE(baseBlueprint->ComposeWith(conflictingBlueprint0));
 
+  //baseBlueprint should not have been altered by a failing compose operation
+  EXPECT_STREQ("3", baseBlueprint->GetComponent("Component1")["Dimensionality"][0].c_str());
+ 
+  EXPECT_EQ(0,baseBlueprint->GetComponent("Component1").count("InternalComputationValueType"));
 }
 //TEST_F( BlueprintTest, WriteBlueprint )
 //{

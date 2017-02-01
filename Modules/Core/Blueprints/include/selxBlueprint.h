@@ -39,6 +39,10 @@ public:
   typedef std::vector< ComponentNameType >                 ComponentNamesType;
 
   Blueprint( void );
+  Blueprint(const Blueprint& other);                   // copyable
+  Blueprint& operator=(const Blueprint& other);        //
+
+  //Blueprint(Blueprint&&);
   ~Blueprint( void );
   
   bool SetComponent( ComponentNameType, ParameterMapType parameterMap );
@@ -59,6 +63,8 @@ public:
   bool DeleteConnection( ComponentNameType upstream, ComponentNameType downstream );
 
   bool ConnectionExists( ComponentNameType upstream, ComponentNameType downstream ) const;
+
+  //std::unique_ptr<Blueprint> Clone(Blueprint const &other );
 
   // "functional" composition of blueprints is done by adding settings of other to this blueprint. Redefining/overwriting properties is not allowed and returns false.
   bool ComposeWith(std::unique_ptr<Blueprint> const &other);

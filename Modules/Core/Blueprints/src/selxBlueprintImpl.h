@@ -37,6 +37,7 @@ struct Blueprint::BlueprintImpl {
   // and holds component configuration settings
   struct ComponentPropertyType
   {
+    ComponentPropertyType(ComponentNameType name = "", ParameterMapType parameterMap = {}) : name(name), parameterMap(parameterMap) {}
     ComponentNameType name;
     ParameterMapType  parameterMap;
   };
@@ -45,10 +46,12 @@ struct Blueprint::BlueprintImpl {
   // and holds component connection configuration settings
   struct ConnectionPropertyType
   {
+    ConnectionPropertyType(ParameterMapType parameterMap = {}) :  parameterMap(parameterMap) {}
     ParameterMapType parameterMap;
   };
 
   struct vertex_copier;
+  struct do_nothing;
 
   typedef boost::labeled_graph< 
     boost::adjacency_list<
