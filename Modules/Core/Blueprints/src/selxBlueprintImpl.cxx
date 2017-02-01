@@ -94,27 +94,6 @@ inline edge_label_writer< ParameterMapType >
 }
 
 
-struct Blueprint::BlueprintImpl::do_nothing
-{
-  template <typename VertexOrEdge1, typename VertexOrEdge2>
-  void operator()(const VertexOrEdge1&, VertexOrEdge2&) const
-  {
-  }
-};
-
-//Used in CloneGraph
-struct Blueprint::BlueprintImpl::vertex_copier 
-{
-  ComponentPropertyType& from;
-  ComponentPropertyType& to;
-    void operator()(GraphType::vertex_descriptor input, GraphType::vertex_descriptor output) const {
-    //TODO !
-    //to[output] = { from[input]};
-      //to.name = from.name ;
-      //to.name = from.name;
-  }
-};
-
 bool
 Blueprint::BlueprintImpl
 ::SetComponent( ComponentNameType name, ParameterMapType parameterMap )
@@ -240,27 +219,12 @@ Blueprint::BlueprintImpl
   return boost::edge_by_label( upstream, downstream, this->m_Graph ).second;
 }
 
-Blueprint::BlueprintImpl::GraphType
-Blueprint::BlueprintImpl
-::CloneGraph(void) const
-{
-  GraphType clone = GraphType(this->m_Graph);
-  // TODO!
-  //boost::copy_graph(this->m_Graph, clone, boost::vertex_copy(do_nothing()).edge_copy(do_nothing()));
-  //boost::copy_graph(this->m_Graph, clone, boost::vertex_copy(vertex_copier( this->m_Graph, clone )));
-  //boost::copy_graph(this->m_Graph, clone);
-
-
-  return clone;
-}
-
-
 bool 
 Blueprint::BlueprintImpl
 ::ComposeWith(std::unique_ptr<Blueprint> const &other)
 {
   // Make a backup of the current blueprint status in case composition fails
-  GraphType graph_backup = this->CloneGraph();
+  GraphType graph_backup = GraphType(this->m_Graph);
 
   for (auto const & componentName : other->GetComponentNames())
   {

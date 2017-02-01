@@ -50,9 +50,6 @@ struct Blueprint::BlueprintImpl {
     ParameterMapType parameterMap;
   };
 
-  struct vertex_copier;
-  struct do_nothing;
-
   typedef boost::labeled_graph< 
     boost::adjacency_list<
       boost::vecS,
@@ -107,8 +104,6 @@ struct Blueprint::BlueprintImpl {
   void Write( const std::string filename );
   
   ConnectionIndexType GetConnectionIndex( ComponentNameType upsteam, ComponentNameType downstream ) const;
-  
-  GraphType CloneGraph(void ) const;
 
   GraphType m_Graph;
   
