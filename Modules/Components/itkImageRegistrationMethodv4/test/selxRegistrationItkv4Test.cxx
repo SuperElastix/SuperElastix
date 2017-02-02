@@ -103,8 +103,8 @@ public:
     ItkCompositeTransformComponent<double, 3>,
     ItkCompositeTransformComponent<double, 2 >> RegisterComponents;
 
-  typedef std::shared_ptr< Blueprint >                        BlueprintPointer;
-  typedef itk::SharedPointerDataObjectDecorator< Blueprint >  BlueprintITKType;
+  typedef std::unique_ptr< Blueprint >                        BlueprintPointer;
+  typedef itk::UniquePointerDataObjectDecorator< Blueprint >  BlueprintITKType;
   typedef BlueprintITKType::Pointer                           BlueprintITKPointer;
 
   typedef SuperElastixFilter::BlueprintType SuperElastixFilterBlueprintType;

@@ -25,7 +25,8 @@
 
 #include "selxAnyFileReader.h"
 #include "selxAnyFileWriter.h"
-#include "itkSharedPointerDataObjectDecorator.h"
+//#include "itkSharedPointerDataObjectDecorator.h"
+#include "itkUniquePointerDataObjectDecorator.h"
 
 /**
  * \class SuperElastixFilter
@@ -58,7 +59,7 @@ public:
   typedef AnyFileReader AnyFileReaderType;
   typedef AnyFileWriter AnyFileWriterType;
 
-  typedef itk::SharedPointerDataObjectDecorator< Blueprint > BlueprintType;
+  typedef itk::UniquePointerDataObjectDecorator< Blueprint > BlueprintType;
   typedef BlueprintType::Pointer                                      BlueprintPointer;
   typedef BlueprintType::ConstPointer                                 BlueprintConstPointer;
 

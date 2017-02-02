@@ -62,7 +62,7 @@ public:
   NetworkBuilder();
   virtual ~NetworkBuilder() {};
 
-  virtual bool AddBlueprint(const std::shared_ptr<Blueprint> &blueprint);
+  virtual bool AddBlueprint(const std::unique_ptr<Blueprint> &blueprint);
 
   /** Read configuration at the blueprints nodes and edges and return true if all components could be uniquely selected*/
   virtual bool Configure();
@@ -110,7 +110,7 @@ protected:
   //NetworkBuilder should be constructed with a blueprint.
   //Blueprint::ConstPointer m_Blueprint;
   //Blueprint const * m_Blueprint;
-  std::shared_ptr< Blueprint > m_Blueprint;
+  std::unique_ptr< Blueprint > m_Blueprint;
 
   // A selector for each node, that each can hold multiple instantiated components. Ultimately is should be 1 component each.
   ComponentSelectorContainerType m_ComponentSelectorContainer;

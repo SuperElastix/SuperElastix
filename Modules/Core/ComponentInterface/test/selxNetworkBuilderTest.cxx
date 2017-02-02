@@ -38,7 +38,7 @@ class NetworkBuilderTest : public ::testing::Test
 public:
 
   typedef std::unique_ptr< NetworkBuilderBase >         NetworkBuilderPointer;
-  typedef std::shared_ptr< Blueprint >        BlueprintPointer;
+  typedef std::unique_ptr< Blueprint >        BlueprintPointer;
   typedef Blueprint::ParameterMapType         ParameterMapType;
   typedef Blueprint::ParameterValueType       ParameterValueType;
 
