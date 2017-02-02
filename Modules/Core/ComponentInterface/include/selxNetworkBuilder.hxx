@@ -31,9 +31,9 @@ NetworkBuilder<ComponentList>::NetworkBuilder() : m_isConfigured(false)
 
 template< typename ComponentList >
 bool
-NetworkBuilder<ComponentList>::AddBlueprint(std::shared_ptr< Blueprint > blueprint)
+NetworkBuilder<ComponentList>::AddBlueprint(const std::shared_ptr<Blueprint> &blueprint)
 {
-  m_Blueprint = blueprint;
+  m_Blueprint = std::make_shared< Blueprint >(*blueprint);
   return true;
 }
 
