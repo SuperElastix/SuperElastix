@@ -226,6 +226,7 @@ Blueprint::BlueprintImpl
   // Make a backup of the current blueprint status in case composition fails
   GraphType graph_backup = GraphType(this->m_Graph);
 
+  // Copy-in all components (Nodes)
   for (auto const & componentName : other->GetComponentNames())
   {
     // Does other blueprint use component with a name that already exists?
@@ -280,6 +281,66 @@ Blueprint::BlueprintImpl
     }
     
   }
+  // Copy-in all connections (Edges)
+  for (auto const & componentName : other->GetComponentNames())
+  {
+    for( auto incomingName : other->GetInputNames(componentName))
+    {
+      
+      // Does other blueprint have a connection that already exists?
+      if (this->ConnectionExists(incomingName, componentName))
+      {
+        // Connection exists, check if properties can be merged
+        auto ownProperties = this->GetConnection(incomingName, componentName);
+        auto othersProperties = other->GetConnection(incomingName, componentName);
+
+        for (auto const & othersEntry : othersProperties)
+        {
+          // Does other use a property key that already exists in this component?
+          if (ownProperties.count(othersEntry.first))
+          {
+            auto && ownValues = ownProperties[othersEntry.first];
+            auto && otherValues = othersEntry.second;
+            // Are the property values equal?
+            if (ownValues.size() != otherValues.size())
+            {
+              // No, based on the number of values we see that it is different. Blueprints cannot be Composed
+              this->m_Graph = graph_backup;
+              return false;
+            }
+            else
+            {
+              ParameterValueType::const_iterator ownValue;
+              ParameterValueType::const_iterator otherValue;
+              for (ownValue = ownValues.begin(), otherValue = otherValues.begin(); ownValue != ownValues.end(); ++ownValue, ++otherValue)
+              {
+                if (*otherValue != *ownValue)
+                {
+                  // No, at least one value is different. Blueprints cannot be Composed
+                  this->m_Graph = graph_backup;
+                  return false;
+                }
+              }
+            }
+          }
+          else
+          {
+            // Property key doesn't exist yet, add entry to this component
+            auto ownProperties = this->GetConnection(incomingName, componentName);
+            ownProperties[othersEntry.first] = othersEntry.second;
+            this->SetConnection(incomingName, componentName, ownProperties);
+          }
+        }
+      }
+      else
+      {
+        // Create Component copying properties of other
+        this->SetConnection(incomingName, componentName, other->GetConnection(incomingName, componentName));
+      }
+    }
+    
+  }
+
   return true;
 }
 

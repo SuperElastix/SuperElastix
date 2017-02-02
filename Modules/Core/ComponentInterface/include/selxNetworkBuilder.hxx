@@ -25,7 +25,7 @@ namespace selx
 {
 
 template< typename ComponentList >
-NetworkBuilder<ComponentList>::NetworkBuilder() : m_isConfigured(false)
+NetworkBuilder<ComponentList>::NetworkBuilder() : m_isConfigured(false), m_Blueprint(new Blueprint)
 {
 }
 
@@ -33,7 +33,7 @@ template< typename ComponentList >
 bool
 NetworkBuilder<ComponentList>::AddBlueprint(const std::unique_ptr<Blueprint> &blueprint)
 {
-  m_Blueprint->ComposeWith(blueprint);
+  this->m_Blueprint->ComposeWith(blueprint);
   //m_Blueprint = std::make_shared< Blueprint >(*blueprint);
   return true;
 }
