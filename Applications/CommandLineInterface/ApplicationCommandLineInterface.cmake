@@ -19,8 +19,12 @@
 
 set( ${APPLICATION}_TARGET_NAME SuperElastix )
 
+set( ${APPLICATION}_INCLUDE_DIRS 
+  ${${APPLICATION}_SOURCE_DIR}/include
+)
 set( ${APPLICATION}_SOURCE_FILES
   ${${APPLICATION}_SOURCE_DIR}/src/selxSuperElastix.cxx
+  ${${APPLICATION}_SOURCE_DIR}/src/selxConfigurationReader.cxx
 )
 
 set( ${APPLICATION}_LINK_LIBRARIES
@@ -30,7 +34,11 @@ set( ${APPLICATION}_LINK_LIBRARIES
 )
 
 set( ${APPLICATION}_MODULE_DEPENDENCIES
-  ModuleCore
+  ModuleFilter
+)
+
+set( ${MODULE}_TEST_SOURCE_FILES
+  ${${MODULE}_SOURCE_DIR}/test/selxConfigurationReader.cxx
 )
 
 set( ${APPLICATION}_INTEGRATION_TEST_SOURCE_FILES 

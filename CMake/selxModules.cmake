@@ -88,6 +88,10 @@ macro( _selxmodule_enable MODULE UPSTREAM )
     set( ${MODULE}_IS_ENABLED TRUE )
     include( ${${MODULE}_CMAKE_FILE} )
 
+    if( ${MODULE}_MODULE_DEPENDENCIES )
+      _selxmodule_enable_dependencies( ${MODULE} ${MODULE}_MODULE_DEPENDENCIES )
+    endif()
+
     if( ${MODULE}_INCLUDE_DIRS )
       include_directories( ${${MODULE}_INCLUDE_DIRS} )
       list( APPEND SUPERELASTIX_INCLUDE_DIRS ${${MODULE}_INCLUDE_DIRS} )
@@ -95,10 +99,6 @@ macro( _selxmodule_enable MODULE UPSTREAM )
 
     if( BUILD_TESTING AND ${MODULE}_TEST_SOURCE_FILES )
       list( APPEND SUPERELASTIX_TEST_SOURCE_FILES ${${MODULE}_TEST_SOURCE_FILES} )
-    endif()
-
-    if( ${MODULE}_MODULE_DEPENDENCIES )
-      _selxmodule_enable_dependencies( ${MODULE} ${MODULE}_MODULE_DEPENDENCIES )
     endif()
 
     if( ${MODULE}_LIBRARIES )

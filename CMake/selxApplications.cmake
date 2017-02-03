@@ -80,37 +80,29 @@ macro( _selxapplication_enable APPLICATION UPSTREAM )
   message( STATUS "Enabling ${APPLICATION} requested by ${UPSTREAM}.")
 
   if( NOT ${APPLICATION}_IS_ENABLED )   
-    include( ${${APPLICATION}_CMAKE_FILE} )
-    set( ${APPLICATION}_IS_ENABLED TRUE ) 
+    set( ${APPLICATION}_IS_ENABLED TRUE )
+    include( ${${APPLICATION}_CMAKE_FILE} ) 
+
+    if( ${APPLICATION}_MODULE_DEPENDENCIES )
+      _selxmodule_enable_dependencies( ${APPLICATION}_MODULE_DEPENDENCIES ${APPLICATION} )
+    endif()
     
     if( NOT ${APPLICATION}_TARGET_NAME )
       set( ${APPLICATION}_TARGET_NAME ${APPLICATION} )
     endif()
 
-    # TODO: Add check for source files
+    if( ${APPLICATION}_INCLUDE_DIRS )
+      include_directories( ${${APPLICATION}_INCLUDE_DIRS} )
+    endif()
 
     add_executable( ${${APPLICATION}_TARGET_NAME} "${${APPLICATION}_HEADER_FILES}" "${${APPLICATION}_SOURCE_FILES}" )
  
-    if( ${APPLICATION}_INCLUDE_DIRS )
-      _selxmodule_include_directories( ${${APPLICATION}_TARGET_NAME} ${APPLICATION} )
-    endif()
-
-    if( ${APPLICATION}_MODULE_DEPENDENCIES )
-      _selxmodule_enable_dependencies( ${APPLICATION}_MODULE_DEPENDENCIES ${APPLICATION} )
-
-      # Include directories
-      target_include_directories( ${${APPLICATION}_TARGET_NAME} PUBLIC ${${DEPENDENCY}_INCLUDE_DIRS} )
-
-      # Link if the dependency is a library (as opposed to header-only)
-      foreach( DEPENDENCY ${${APPLICATION}_MODULE_DEPENDENCIES} )
-        if( TARGET ${DEPENDENCY} )
-          target_link_libraries( ${${APPLICATION}_TARGET_NAME} ${DEPENDENCY} )
-        endif()
-      endforeach()
-    endif()
-
-    if( ${APPLICATION}_LINK_LIBRARIES )
+     if( ${APPLICATION}_LINK_LIBRARIES )
       target_link_libraries( ${${APPLICATION}_TARGET_NAME} ${${APPLICATION}_LINK_LIBRARIES} ) 
+    endif()
+
+    if( BUILD_TESTING AND ${MODULE}_TEST_SOURCE_FILES )
+      list( APPEND SUPERELASTIX_TEST_SOURCE_FILES ${${MODULE}_TEST_SOURCE_FILES} )
     endif()
 
     message( STATUS "${APPLICATION} enabled." ) 
