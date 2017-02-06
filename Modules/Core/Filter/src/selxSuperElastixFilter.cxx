@@ -52,7 +52,14 @@ m_AllUniqueComponents(false)
   this->SetRequiredInputNames({});
 } // end Constructor
 
-
+void
+SuperElastixFilter
+::AddBlueprint(BlueprintPointer otherBlueprint)
+{
+  auto blueprint_internals = this->m_Blueprint->Get();
+  blueprint_internals->ComposeWith(otherBlueprint->Get());
+  this->m_Blueprint->Set(blueprint_internals);
+}
 /**
 * ********************* GenerateOutputInformation *********************
 */
@@ -76,13 +83,20 @@ SuperElastixFilter
   // are passed further down stream.
   // Eventually configuration boils down to a while loop that repeatedly tries to narrow down
   // the component selectors until no more unique components can be found.
-    if (!this->m_Blueprint)
-    {
-      itkExceptionMacro(<< "Setting a Blueprint is required first.")
-    }
+  if (!this->m_Blueprint)
+  {
+    itkExceptionMacro(<< "Setting a Blueprint is required first.")
+  }
+  if (this->m_Blueprint->Modified())
+  {
+    // Was m_Blueprint modified by Set() or by AddBlueprint?
+
+  }
+
 
     this->m_NetworkBuilder->AddBlueprint(this->m_Blueprint->Get());
     this->m_AllUniqueComponents = this->m_NetworkBuilder->Configure();
+    
   if (this->m_BlueprintConnectionModified == true)
   {
 //TODO: 
