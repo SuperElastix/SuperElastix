@@ -85,22 +85,19 @@ SuperElastixFilter
   // the component selectors until no more unique components can be found.
   if (!this->m_Blueprint)
   {
+    //TODO: remove this check here by making m_Blueprint primary input
     itkExceptionMacro(<< "Setting a Blueprint is required first.")
   }
-  if (this->m_Blueprint->Modified())
+  if (this->m_Blueprint->GetMTime() > this->GetMTime())
   {
-    // Was m_Blueprint modified by Set() or by AddBlueprint?
-
+    // Was Blueprint modified by Set() or by AddBlueprint?
+    // delete previous blueprint and start all over with new one
+    m_NetworkBuilder = m_NetworkBuilder->ConstructNewDerivedInstance();
+    this->m_NetworkBuilder->AddBlueprint(this->m_Blueprint->Get());
   }
 
-
-    this->m_NetworkBuilder->AddBlueprint(this->m_Blueprint->Get());
     this->m_AllUniqueComponents = this->m_NetworkBuilder->Configure();
     
-  if (this->m_BlueprintConnectionModified == true)
-  {
-//TODO: 
-  }
 
   if( ( m_InputConnectionModified == true ) || ( this->m_BlueprintConnectionModified == true ) )
   {

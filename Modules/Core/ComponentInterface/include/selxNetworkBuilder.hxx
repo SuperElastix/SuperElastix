@@ -30,6 +30,15 @@ NetworkBuilder<ComponentList>::NetworkBuilder() : m_isConfigured(false), m_Bluep
 }
 
 template< typename ComponentList >
+std::unique_ptr<NetworkBuilderBase>
+NetworkBuilder<ComponentList>::ConstructNewDerivedInstance(void)
+{
+  return std::unique_ptr<NetworkBuilderBase>(new NetworkBuilder<ComponentList>);
+}
+
+
+
+template< typename ComponentList >
 bool
 NetworkBuilder<ComponentList>::AddBlueprint(const std::unique_ptr<Blueprint> &blueprint)
 {

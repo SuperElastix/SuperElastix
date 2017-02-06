@@ -62,6 +62,9 @@ public:
   NetworkBuilder();
   virtual ~NetworkBuilder() {};
 
+  
+  virtual std::unique_ptr<NetworkBuilderBase> ConstructNewDerivedInstance(void);
+
   virtual bool AddBlueprint(const std::unique_ptr<Blueprint> &blueprint);
 
   /** Read configuration at the blueprints nodes and edges and return true if all components could be uniquely selected*/
