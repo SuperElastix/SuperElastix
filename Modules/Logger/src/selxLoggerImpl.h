@@ -37,8 +37,10 @@ public:
   ~LoggerImpl();
 
   void AddConsole( FormatType format );
-  void AddFile( Logger::FileNameType fileName, Logger::ChannelType channel, Logger::RotationSizeType rotationSize, Logger::FormatType format );
-  void AddFile( Logger::FileNameType fileName, Logger::RotationSizeType rotationSize, Logger::FormatType format );
+
+  void AddFile( Logger::FileNameType fileName, Logger::FormatType format );
+
+  // void AddFile( Logger::FileNameType fileName, Logger::ChannelType channel, ðLogger::FormatType format );
 
   void Log( SeverityType severity, Logger::MessageType message );
   void Log( Logger::ChannelType channel, SeverityType severity, Logger::MessageType message );

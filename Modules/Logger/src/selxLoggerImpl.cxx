@@ -56,26 +56,24 @@ Logger::LoggerImpl
 
 void
 Logger::LoggerImpl
-::AddFile( FileNameType fileName, RotationSizeType rotationSize, FormatType format )
+::AddFile( FileNameType fileName, FormatType format )
 {
   boost::log::add_file_log(
     boost::log::keywords::file_name = fileName,
-    boost::log::keywords::rotation_size = rotationSize, // 1GB
     boost::log::keywords::format = format
   );
 }
 
-void
-Logger::LoggerImpl
-::AddFile( FileNameType fileName, ChannelType channel, RotationSizeType rotationSize, FormatType format )
-{
-  boost::log::add_file_log(
-    boost::log::keywords::file_name = fileName,
-    //boost::log::keywords::filter = channel_filter == channel,
-    boost::log::keywords::rotation_size = rotationSize, // 1GB
-    boost::log::keywords::format = format
-  );
-}
+// void
+// Logger::LoggerImpl
+// ::AddFile( FileNameType fileName, ChannelType channel, FormatType format )
+// {
+//   boost::log::add_file_log(
+//     boost::log::keywords::file_name = fileName,
+//     boost::log::keywords::filter = channel_filter == channel,
+//     boost::log::keywords::format = format
+//   );
+// }
 
 void
 Logger::LoggerImpl
@@ -88,6 +86,10 @@ Logger::LoggerImpl
     strm << message;
     strm.flush();
     this->m_Logger.push_record( boost::move( record ) );
+  }
+  else 
+  {
+    assert( false );
   }
 }
 
@@ -102,6 +104,10 @@ Logger::LoggerImpl
     strm << message;
     strm.flush();
     this->m_Logger.push_record( boost::move( record ) );
+  }
+  else
+  {
+    assert( false );
   }
 }
 

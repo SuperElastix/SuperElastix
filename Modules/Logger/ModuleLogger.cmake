@@ -37,6 +37,3 @@ set( ${MODULE}_LIBRARIES
   ${Boost_LIBRARIES} # log filesystem system time_date thread
   ${MODULE}
 )
-
-set( ${MODULE}_MODULE_DEPENDENCIES 
-)

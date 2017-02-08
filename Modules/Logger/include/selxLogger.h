@@ -50,9 +50,13 @@ public:
   ~Logger();
 
   void AddConsole( FormatType format = "[%TimeStamp% %ComponentName% %Channel% %SeverityLevel%]: %Message%" );
-  void AddFile( FileNameType fileName = "SuperElastix_%Y-%m-%d_%H-%M-%S.%N.log", 
-                RotationSizeType rotationSize = 1024 * 1024 * 1024,
+
+  void AddFile( FileNameType fileName = "SuperElastix_%Y-%m-%d_%H-%M-%S.%N.log",
                 FormatType format = "[%LineID% %TimeStamp% %ComponentName% %Channel% %SeverityLevel%]: %Message%" );
+
+  // void AddFile( FileNameType fileName = "SuperElastix_%Y-%m-%d_%H-%M-%S.%N.log",
+  //               Logger::ChannelType channel = "SuperElastix",  
+  //               FormatType format = "[%LineID% %TimeStamp% %ComponentName% %Channel% %SeverityLevel%]: %Message%" );
 
   void Log( SeverityType severity, MessageType message );
   void Log( ChannelType channel, SeverityType severity, MessageType message );

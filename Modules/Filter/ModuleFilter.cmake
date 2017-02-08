@@ -17,6 +17,9 @@
 #
 #=========================================================================
 
+# TODO: This variable is overwritten by the Logger 
+set( MODULE ModuleFilter )
+
 set( ${MODULE}_INCLUDE_DIRS
   ${${MODULE}_SOURCE_DIR}/include
 )
@@ -45,4 +48,5 @@ set( ${MODULE}_MODULE_DEPENDENCIES
   ModuleItkSmoothingRecursiveGaussianImageFilter
   ModuleSinksAndSources
   ModuleNiftyreg
+  ModuleLogger
 )

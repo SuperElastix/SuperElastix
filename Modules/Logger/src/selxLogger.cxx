@@ -37,10 +37,17 @@ Logger
 
 void
 Logger
-:: AddFile( FileNameType fileName, RotationSizeType rotationSize, FormatType format )
+:: AddFile( FileNameType fileName, FormatType format )
 {
-  this->m_Pimple->AddFile( fileName, rotationSize, format );
+  this->m_Pimple->AddFile( fileName, format );
 }
+
+// void
+// Logger
+// :: AddFile( FileNameType fileName, Logger::ChannelType channel, FormatType format )
+// {
+//   this->m_Pimple->AddFile( fileName, channel, format );
+// }
                
 void
 Logger

@@ -58,7 +58,7 @@ macro( _selxmodules_initialize )
     option( USE_${MODULE} OFF )
     set( ${MODULE}_IS_ENABLED FALSE )
 
-    set( ${MODULE}_CMAKE_FILE ${CMAKE_SOURCE_DIR}/${MODULE_CMAKE_FILE} )
+    set( ${MODULE}_CMAKE_FILE ${CMAKE_SOURCE_DIR}/${${MODULE}_PATH}/${MODULE}.cmake )
     set( ${MODULE}_SOURCE_DIR ${CMAKE_SOURCE_DIR}/${${MODULE}_PATH} )
     set( ${MODULE}_BINARY_DIR ${CMAKE_BINARY_DIR}/${${MODULE}_PATH} )
 
@@ -87,7 +87,7 @@ macro( _selxmodule_enable MODULE UPSTREAM )
   if( NOT ${MODULE}_IS_ENABLED )    
     set( ${MODULE}_IS_ENABLED TRUE )
     include( ${${MODULE}_CMAKE_FILE} )
-
+    
     if( ${MODULE}_MODULE_DEPENDENCIES )
       _selxmodule_enable_dependencies( ${MODULE} ${MODULE}_MODULE_DEPENDENCIES )
     endif()
@@ -115,7 +115,7 @@ macro( _selxmodule_enable MODULE UPSTREAM )
         endif()
       endif()
 
-      add_library( ${MODULE} "${${MODULE}_HEADER_FILES}" "${${MODULE}_SOURCE_FILES}" )
+      add_library( ${MODULE} ${${MODULE}_HEADER_FILES} ${${MODULE}_SOURCE_FILES} )
     endif()
 	
     message( STATUS "${MODULE} enabled." ) 
