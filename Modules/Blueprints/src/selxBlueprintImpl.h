@@ -25,6 +25,8 @@
 #include "boost/graph/directed_graph.hpp"
 #include "boost/graph/labeled_graph.hpp"
 
+#include "boost/graph/copy.hpp" // for ComposeWith
+
 #include "selxBlueprint.h"
 
 namespace selx {
@@ -35,6 +37,7 @@ struct Blueprint::BlueprintImpl {
   // and holds component configuration settings
   struct ComponentPropertyType
   {
+    ComponentPropertyType(ComponentNameType name = "", ParameterMapType parameterMap = {}) : name(name), parameterMap(parameterMap) {}
     ComponentNameType name;
     ParameterMapType  parameterMap;
   };
@@ -43,6 +46,7 @@ struct Blueprint::BlueprintImpl {
   // and holds component connection configuration settings
   struct ConnectionPropertyType
   {
+    ConnectionPropertyType(ParameterMapType parameterMap = {}) :  parameterMap(parameterMap) {}
     ParameterMapType parameterMap;
   };
 
@@ -89,6 +93,8 @@ struct Blueprint::BlueprintImpl {
 
   bool ConnectionExists( ComponentNameType upstream, ComponentNameType downstream ) const;
 
+  bool ComposeWith(std::unique_ptr<Blueprint> const &other);
+
   // Returns a vector of the Component names at the incoming direction
   ComponentNamesType GetInputNames( const ComponentNameType name ) const;
   
@@ -98,7 +104,7 @@ struct Blueprint::BlueprintImpl {
   void Write( const std::string filename );
   
   ConnectionIndexType GetConnectionIndex( ComponentNameType upsteam, ComponentNameType downstream ) const;
-  
+
   GraphType m_Graph;
   
 };

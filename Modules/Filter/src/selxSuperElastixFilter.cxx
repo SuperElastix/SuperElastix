@@ -41,17 +41,42 @@ SuperElastixFilter
 // 
 SuperElastixFilter
 ::SuperElastixFilter(bool InitializeEmptyComponentList) :
-m_InputConnectionModified(true),
-m_OutputConnectionModified(true),
-m_BlueprintConnectionModified(true),
 m_IsConnected(false),
-m_AllUniqueComponents(false)
+m_AllUniqueComponents(false),
+m_IsBlueprintParsedOnce(false)
 {
    // Disable "Primary" as required input
   // TODO: Blueprint should become primary
   this->SetRequiredInputNames({});
 } // end Constructor
 
+/*
+void
+SuperElastixFilter
+::AddBlueprint(BlueprintPointer otherBlueprint)
+{
+  auto blueprint_internals = this->m_Blueprint->Get();
+  blueprint_internals->ComposeWith(otherBlueprint->Get());
+  this->m_Blueprint->Set(blueprint_internals);
+}
+*/
+
+bool
+SuperElastixFilter
+::ParseBlueprint()
+{
+  if ((!this->m_IsBlueprintParsedOnce) || (this->m_Blueprint->GetMTime() > this->GetMTime()))
+    {
+      // Was Blueprint modified by Set() or by AddBlueprint?
+      // delete previous blueprint and start all over with new one
+      m_NetworkBuilder = m_NetworkBuilder->ConstructNewDerivedInstance();
+      this->m_NetworkBuilder->AddBlueprint(this->m_Blueprint->Get());
+      this->m_AllUniqueComponents = this->m_NetworkBuilder->Configure();
+      this->m_IsBlueprintParsedOnce = true;
+      this->Modified();
+    }
+  return this->m_AllUniqueComponents;
+}
 
 /**
 * ********************* GenerateOutputInformation *********************
@@ -76,20 +101,16 @@ SuperElastixFilter
   // are passed further down stream.
   // Eventually configuration boils down to a while loop that repeatedly tries to narrow down
   // the component selectors until no more unique components can be found.
-    if (!this->m_Blueprint)
-    {
-      itkExceptionMacro(<< "Setting a Blueprint is required first.")
-    }
-
-    this->m_NetworkBuilder->AddBlueprint(this->m_Blueprint->Get());
-    this->m_AllUniqueComponents = this->m_NetworkBuilder->Configure();
-  if (this->m_BlueprintConnectionModified == true)
+  if (!this->m_Blueprint)
   {
-//TODO: 
+    //TODO: remove this check here by making m_Blueprint primary input
+    itkExceptionMacro(<< "Setting a Blueprint is required first.")
   }
 
-  if( ( m_InputConnectionModified == true ) || ( this->m_BlueprintConnectionModified == true ) )
-  {
+  this->ParseBlueprint();
+
+  
+ // Handle inputs:
     auto                             usedInputs = this->GetInputNames();
     NetworkBuilderBase::SourceInterfaceMapType sources = this->m_NetworkBuilder->GetSourceInterfaces();
     for( const auto & nameAndInterface : sources )
@@ -117,10 +138,9 @@ SuperElastixFilter
       itkExceptionMacro( << msg.str() )
       //throw std::runtime_error(msg.str());
     }
-  }
 
-  if( ( m_OutputConnectionModified == true ) || ( this->m_BlueprintConnectionModified == true ) )
-  {
+
+  // Handle outputs:
     auto                           usedOutputs = this->GetOutputNames();
     NetworkBuilderBase::SinkInterfaceMapType sinks = this->m_NetworkBuilder->GetSinkInterfaces();
     for( const auto & nameAndInterface : sinks )
@@ -145,22 +165,13 @@ SuperElastixFilter
       }
       itkExceptionMacro( << msg.str() )
     }
-  }
 
-  if (this->m_AllUniqueComponents == false) // by setting inputs and outputs, settings could be derived to uniquely select the other components
-  {
-    this->m_AllUniqueComponents = this->m_NetworkBuilder->Configure();
-  }
+  this->m_IsConnected =  this->m_NetworkBuilder->ConnectComponents();
 
-  if (this->m_AllUniqueComponents  && !this->m_IsConnected)
-  {
-    this->m_IsConnected = this->m_NetworkBuilder->ConnectComponents();
-    std::cout << "Connecting Components: " << (this->m_IsConnected ? "succeeded" : "failed") << std::endl << std::endl;
-  }
+  std::cout << "Connecting Components: " << (this->m_IsConnected ? "succeeded" : "failed") << std::endl << std::endl;
+  
 
-  if( ( m_OutputConnectionModified == true ) || ( this->m_BlueprintConnectionModified == true ) )
-  {
-    NetworkBuilderBase::SinkInterfaceMapType sinks = this->m_NetworkBuilder->GetSinkInterfaces();
+    
     for( const auto & nameAndInterface : sinks )
     {
       // Update information: ask the mini pipeline what the size of the data will be
@@ -168,11 +179,7 @@ SuperElastixFilter
       // Put the information into the Filter's output Objects by grafting
       this->GetOutput( nameAndInterface.first )->Graft( nameAndInterface.second->GetMiniPipelineOutput() );
     }
-  }
 
-  this->m_BlueprintConnectionModified = false;
-  this->m_InputConnectionModified     = false;
-  this->m_OutputConnectionModified    = false;
 }
 
 
@@ -212,16 +219,7 @@ SuperElastixFilter
 {
   //TODO: Before we can get the reader the Blueprint needs to set and applied in the NetworkBuilder.
   // This is not like the itk pipeline philosophy
-  if (!this->m_NetworkBuilder)
-  {
-    if (!this->m_Blueprint)
-    {
-      itkExceptionMacro(<< "Setting a Blueprint is required first.")
-    }
-    this->m_NetworkBuilder->AddBlueprint(this->m_Blueprint->Get());
-    this->m_AllUniqueComponents = this->m_NetworkBuilder->Configure();
-  }
-  if (!this->m_AllUniqueComponents)
+  if (!this->ParseBlueprint())
   {
     itkExceptionMacro(<< "Blueprint was not sufficiently specified to build a network.")
   }
@@ -235,17 +233,7 @@ SuperElastixFilter
 {
   //TODO: Before we can get the reader the Blueprint needs to set and applied in the NetworkBuilder.
   // This is not like the itk pipeline philosophy
-  if (!this->m_NetworkBuilder)
-  {
-    if (!this->m_Blueprint)
-    {
-      itkExceptionMacro(<< "Setting a Blueprint is required first.")
-    }
-
-    this->m_NetworkBuilder->AddBlueprint(this->m_Blueprint->Get());
-    this->m_AllUniqueComponents = this->m_NetworkBuilder->Configure();
-  }
-  if (!this->m_AllUniqueComponents)
+  if (!this->ParseBlueprint())
   {
     itkExceptionMacro(<< "Blueprint was not sufficiently specified to build a network.")
   }
@@ -259,7 +247,7 @@ SuperElastixFilter
 ::SetInput( const DataObjectIdentifierType & inputName, itk::DataObject * input )
 {
   Superclass::SetInput( inputName, input );
-  this->m_InputConnectionModified = true;
+  this->Modified();
 }
 
 
@@ -274,19 +262,12 @@ SuperElastixFilter::OutputDataType
   }
   else  // otherwise ask the sink component to initialize an output of the right type (the sink knows what type that is).
   {
-    if (!this->m_NetworkBuilder)
+    if (!this->ParseBlueprint())
     {
-      if (!this->m_Blueprint) // to ask the sink it must be configured by a blueprint.
-      {
-        itkExceptionMacro(<< "Setting a Blueprint is required first.")
-      }
-
-      this->m_NetworkBuilder->AddBlueprint(this->m_Blueprint->Get());
-      this->m_AllUniqueComponents = this->m_NetworkBuilder->Configure();
-      this->m_BlueprintConnectionModified = false;
+      itkExceptionMacro(<< "Blueprint was not sufficiently specified to build a network.")
     }
     OutputDataType::Pointer newOutput = this->m_NetworkBuilder->GetInitializedOutput( outputName );
-    this->m_OutputConnectionModified           = true;
+    this->Modified();
 
     Superclass::SetOutput( outputName, newOutput );
 

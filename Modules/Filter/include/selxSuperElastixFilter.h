@@ -25,7 +25,8 @@
 
 #include "selxAnyFileReader.h"
 #include "selxAnyFileWriter.h"
-#include "itkSharedPointerDataObjectDecorator.h"
+//#include "itkSharedPointerDataObjectDecorator.h"
+#include "itkUniquePointerDataObjectDecorator.h"
 
 /**
  * \class SuperElastixFilter
@@ -58,12 +59,17 @@ public:
   typedef AnyFileReader AnyFileReaderType;
   typedef AnyFileWriter AnyFileWriterType;
 
-  typedef itk::SharedPointerDataObjectDecorator< Blueprint > BlueprintType;
+  typedef itk::UniquePointerDataObjectDecorator< Blueprint > BlueprintType;
   typedef BlueprintType::Pointer                                      BlueprintPointer;
   typedef BlueprintType::ConstPointer                                 BlueprintConstPointer;
 
-  // TODO: Make const-correct
-  itkSetObjectMacro( Blueprint, BlueprintType )
+  // Setting a Blueprint creates a pipeline such that when SuperElastixFilter is updated it checks if the blueprint has been modified and if so, SuperElastixFilter resets its internals and start building the blueprint from scratch
+  itkSetObjectMacro(Blueprint, BlueprintType);
+
+  // Adding a Blueprint composes SuperElastixFilter' internal blueprint (accessible by Set/Get Blueprint) with the otherBlueprint.
+  // void AddBlueprint(BlueprintPointer otherBlueprint);
+
+  bool ParseBlueprint(void);
 
   AnyFileReaderType::Pointer GetInputFileReader( const DataObjectIdentifierType & );
 
@@ -95,7 +101,7 @@ public:
 
   Superclass::SetOutput( outputName, newOutput );
 
-  this->m_OutputConnectionModified = true;
+  this->Modified();
   return newOutput;
   };
 
@@ -118,12 +124,10 @@ private:
 
   //TODO make const correct
   BlueprintType::Pointer      m_Blueprint;
-  
-  bool                        m_InputConnectionModified;
-  bool                        m_OutputConnectionModified;
-  bool                        m_BlueprintConnectionModified;
+ 
   bool                        m_IsConnected;
   bool                        m_AllUniqueComponents;
+  bool                        m_IsBlueprintParsedOnce;
 };
 } // namespace elx
 

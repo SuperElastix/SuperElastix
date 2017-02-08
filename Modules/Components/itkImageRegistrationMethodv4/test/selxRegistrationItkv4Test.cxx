@@ -103,8 +103,8 @@ public:
     ItkCompositeTransformComponent<double, 3>,
     ItkCompositeTransformComponent<double, 2 >> RegisterComponents;
 
-  typedef std::shared_ptr< Blueprint >                        BlueprintPointer;
-  typedef itk::SharedPointerDataObjectDecorator< Blueprint >  BlueprintITKType;
+  typedef std::unique_ptr< Blueprint >                        BlueprintPointer;
+  typedef itk::UniquePointerDataObjectDecorator< Blueprint >  BlueprintITKType;
   typedef BlueprintITKType::Pointer                           BlueprintITKPointer;
 
   typedef SuperElastixFilter::BlueprintType SuperElastixFilterBlueprintType;
@@ -476,6 +476,8 @@ TEST_F( RegistrationItkv4Test, FullyConfigured3d )
   blueprint->SetConnection( "ResampleFilter", "Controller", { {} } );              //ReconnectTransformInterface
   blueprint->SetConnection( "TransformDisplacementFilter", "Controller", { {} } ); //ReconnectTransformInterface
 
+  blueprint->Write(dataManager->GetOutputFile("RegistrationItkv4Test_DisplacementField_network.dot"));
+
   // Set up the readers and writers
   ImageReader3DType::Pointer fixedImageReader = ImageReader3DType::New();
   fixedImageReader->SetFileName( dataManager->GetInputFile( "sphereA3d.mhd" ) );
@@ -506,7 +508,6 @@ TEST_F( RegistrationItkv4Test, FullyConfigured3d )
   EXPECT_NO_THROW( resultImageWriter->Update() );
   EXPECT_NO_THROW( resultDisplacementWriter->Update() );
 
-  blueprint->Write( dataManager->GetOutputFile( "RegistrationItkv4Test_DisplacementField_network.dot" ) );
 }
 TEST_F( RegistrationItkv4Test, FullyConfigured3dAffine )
 {
@@ -594,6 +595,8 @@ TEST_F( RegistrationItkv4Test, FullyConfigured3dAffine )
   blueprint->SetConnection( "ResampleFilter", "Controller", { {} } );              //ReconnectTransformInterface
   blueprint->SetConnection( "TransformDisplacementFilter", "Controller", { {} } ); //ReconnectTransformInterface
 
+  blueprint->Write(dataManager->GetOutputFile("RegistrationItkv4Test_DisplacementField_network.dot"));
+
   // Set up the readers and writers
   ImageReader3DType::Pointer fixedImageReader = ImageReader3DType::New();
   fixedImageReader->SetFileName( dataManager->GetInputFile( "sphereA3d.mhd" ) );
@@ -623,8 +626,6 @@ TEST_F( RegistrationItkv4Test, FullyConfigured3dAffine )
   // Update call on the writers triggers SuperElastix to configure and execute
   EXPECT_NO_THROW( resultImageWriter->Update() );
   EXPECT_NO_THROW( resultDisplacementWriter->Update() );
-
-  blueprint->Write( dataManager->GetOutputFile( "RegistrationItkv4Test_DisplacementField_network.dot" ) );
 }
 
 TEST_F(RegistrationItkv4Test, CompositeTransform)

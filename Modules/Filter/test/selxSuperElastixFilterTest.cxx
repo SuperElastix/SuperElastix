@@ -19,7 +19,7 @@
 
 #include "selxSuperElastixFilterCustomComponents.h"
 
-#include "itkSharedPointerDataObjectDecorator.h"
+#include "itkUniquePointerDataObjectDecorator.h"
 
 #include "selxItkSmoothingRecursiveGaussianImageFilterComponent.h"
 #include "selxItkImageSink.h"
@@ -69,7 +69,7 @@ public:
 
   using RegisterComponents = list_append<CustomComponents,DefaultComponents >::type;
 
-  typedef std::shared_ptr< Blueprint >                  BlueprintPointer;
+  typedef std::unique_ptr< Blueprint >                  BlueprintPointer;
 
   typedef SuperElastixFilter::BlueprintType         SuperElastixFilterBlueprintType;
   typedef SuperElastixFilter::BlueprintPointer      SuperElastixFilterBlueprintPointer;

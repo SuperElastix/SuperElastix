@@ -46,10 +46,10 @@ namespace selx
 class itkImageFilterTest : public ::testing::Test
 {
 public:
-  using BlueprintITKType = itk::SharedPointerDataObjectDecorator< Blueprint >;
+  using BlueprintITKType = itk::UniquePointerDataObjectDecorator< Blueprint >;
   typedef BlueprintITKType::Pointer                                 BlueprintITKPointer;
 
-  typedef std::shared_ptr< Blueprint >        BlueprintPointer;
+  typedef std::unique_ptr< Blueprint >        BlueprintPointer;
   typedef Blueprint::ParameterMapType         ParameterMapType;
   typedef Blueprint::ParameterValueType       ParameterValueType;
   typedef DataManager                         DataManagerType;

@@ -61,7 +61,10 @@ public:
 
   virtual ~NetworkBuilderBase() {};
 
-  virtual bool AddBlueprint(std::shared_ptr< Blueprint > blueprint) = 0;
+  /** To create a derived NetworkBuilder from a NetworkBuilderBase pointer without knowing the template arguments of the derived*/
+  virtual std::unique_ptr<NetworkBuilderBase> ConstructNewDerivedInstance(void) = 0;
+
+  virtual bool AddBlueprint(const std::unique_ptr<Blueprint> &blueprint) = 0;
 
   /** Read configuration at the blueprints nodes and edges and return true if all components could be uniquely selected*/
   virtual bool Configure() = 0;

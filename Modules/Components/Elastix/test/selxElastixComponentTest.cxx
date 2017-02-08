@@ -42,8 +42,8 @@ class ElastixComponentTest : public ::testing::Test
 {
 public:
 
-  typedef std::shared_ptr< Blueprint >                        BlueprintPointer;
-  typedef itk::SharedPointerDataObjectDecorator< Blueprint >  BlueprintITKType;
+  typedef std::unique_ptr< Blueprint >                        BlueprintPointer;
+  typedef itk::UniquePointerDataObjectDecorator< Blueprint >  BlueprintITKType;
   typedef BlueprintITKType::Pointer                           BlueprintITKPointer;
   typedef Blueprint::ParameterMapType                         ParameterMapType;
   typedef Blueprint::ParameterValueType                       ParameterValueType;
@@ -82,7 +82,6 @@ public:
     superElastixFilter = nullptr;
   }
   // Blueprint holds a configuration for SuperElastix
-  BlueprintPointer blueprint;
   SuperElastixFilterCustomComponents<RegisterComponents>::Pointer superElastixFilter;
   // Data manager provides the paths to the input and output data for unit tests
   DataManagerType::Pointer dataManager;
@@ -91,7 +90,7 @@ public:
 TEST_F( ElastixComponentTest, ImagesOnly )
 {
   /** make example blueprint configuration */
-  blueprint = BlueprintPointer( new Blueprint() );
+  BlueprintPointer blueprint = BlueprintPointer(new Blueprint());
 
   ParameterMapType component0Parameters;
   component0Parameters[ "NameOfClass" ]               = { "ElastixComponent" };
@@ -163,7 +162,7 @@ TEST_F( ElastixComponentTest, ImagesOnly )
 TEST_F(ElastixComponentTest, MonolithicElastixTransformix)
 {
   /** make example blueprint configuration */
-  blueprint = BlueprintPointer(new Blueprint());
+  BlueprintPointer blueprint = BlueprintPointer(new Blueprint());
 
   blueprint->SetComponent("RegistrationMethod", { { "NameOfClass", { "MonolithicElastixComponent" } },
   { "RegistrationSettings", { "rigid" } }, { "MaximumNumberOfIterations", { "2" } },

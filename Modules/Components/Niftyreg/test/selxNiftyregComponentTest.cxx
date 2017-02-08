@@ -33,8 +33,8 @@ class NiftyregComponentTest : public ::testing::Test
 {
 public:
   
-  typedef std::shared_ptr< Blueprint >                        BlueprintPointer;
-  typedef itk::SharedPointerDataObjectDecorator< Blueprint >  BlueprintITKType;
+  typedef std::unique_ptr< Blueprint >                        BlueprintPointer;
+  typedef itk::UniquePointerDataObjectDecorator< Blueprint >  BlueprintITKType;
   typedef BlueprintITKType::Pointer                           BlueprintITKPointer;
   typedef Blueprint::ParameterMapType   ParameterMapType;
   typedef Blueprint::ParameterValueType ParameterValueType;
