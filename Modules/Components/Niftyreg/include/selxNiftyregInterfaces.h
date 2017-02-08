@@ -22,7 +22,6 @@
 #include "selxSuperElastixComponent.h"
 #include "selxInterfaces.h"
 #include <string.h>
-#include "selxMacro.h"
 //#include "_reg_f3d.h"
 #include "_reg_ReadWriteImage.h"
 #include "_reg_ReadWriteMatrix.h"

@@ -1,5 +1,3 @@
-set( SUPERELASTIX_USE_FILE ${CMAKE_BINARY_DIR}/UseSuperElastix.cmake )
-
 # Add include directories needed to use SuperElastix
 set( SUPERELASTIX_INCLUDE_DIRS @SUPERELASTIX_INCLUDE_DIRS@ )
 

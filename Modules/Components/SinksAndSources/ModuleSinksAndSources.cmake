@@ -19,6 +19,7 @@
 
 set( ${MODULE}_INCLUDE_DIRS
   ${${MODULE}_SOURCE_DIR}/include
+  ${${MODULE}_SOURCE_DIR}/interfaces
 )
 
 # This module is header-only and does not contain any source files

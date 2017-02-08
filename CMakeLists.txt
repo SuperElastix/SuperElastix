@@ -134,7 +134,7 @@ option( BUILD_EXPRESS "Use express build." OFF )
 # Do not change and do not call anywhere else.
 include( selxModules )
 _selxmodules_initialize()
-_selxmodule_enable( ModuleCore "SuperElastix" )
+_selxmodule_enable( ModuleFilter "SuperElastix" )
 
 # Build applications
 if( ${BUILD_APPLICATIONS} AND NOT ${BUILD_EXPRESS} )
@@ -189,5 +189,6 @@ option( BUILD_READTHEDOCS "Enable building readthedocs.org documentation." OFF )
 set( SUPERELASTIX_CONFIG_DIR ${CMAKE_CURRENT_BINARY_DIR} )
 set( SUPERELASTIX_BINARY_DIR ${CMAKE_LIBRARY_OUTPUT_DIRECTORY} )
 
+get_directory_property( SUPERELASTIX_INCLUDE_DIRS INCLUDE_DIRECTORIES )
 configure_file( SuperElastixConfig.cmake.in SuperElastixConfig.cmake @ONLY IMMEDIATE )
 configure_file( UseSuperElastix.cmake.in UseSuperElastix.cmake COPYONLY IMMEDIATE )

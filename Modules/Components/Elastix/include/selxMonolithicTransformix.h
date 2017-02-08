@@ -31,7 +31,7 @@
 #include "elxTransformixFilter.h"
 
 #include <string.h>
-#include "selxMacro.h"
+
 namespace selx
 {
 template< int Dimensionality, class TPixel >
@@ -50,7 +50,17 @@ class MonolithicTransformixComponent :
 {
 public:
 
-  selxNewMacro( MonolithicTransformixComponent, ComponentBase );
+  /** Standard ITK typedefs. */
+  typedef MonolithicTransformixComponent          Self;
+  typedef ComponentBase                       Superclass;
+  typedef itk::SmartPointer< Self >           Pointer;
+  typedef itk::SmartPointer< const Self >     ConstPointer;
+
+  /** Method for creation through the object factory. */
+  itkNewMacro( Self );
+
+  /** Run-time type information (and related methods). */
+  itkTypeMacro( Self, ComponentBase );
 
   //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
 

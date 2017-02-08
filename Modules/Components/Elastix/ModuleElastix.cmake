@@ -40,6 +40,7 @@ include( ${ELASTIX_USE_FILE} )
 
 set( ${MODULE}_INCLUDE_DIRS
   ${${MODULE}_SOURCE_DIR}/include
+  ${${MODULE}_SOURCE_DIR}/interfaces
 )
 
 set( ${MODULE}_SOURCE_FILES

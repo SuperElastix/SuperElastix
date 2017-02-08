@@ -25,7 +25,6 @@
 #include "selxItkObjectInterfaces.h"
 
 #include <string.h>
-#include "selxMacro.h"
 #include "itkMeshFileReader.h"
 #include "selxAnyFileReader.h"
 #include "selxFileReaderDecorator.h"
@@ -41,7 +40,17 @@ class ItkMeshSourceComponent :
 {
 public:
 
-  selxNewMacro( ItkMeshSourceComponent, ComponentBase );
+  /** Standard ITK typedefs. */
+  typedef ItkMeshSourceComponent          Self;
+  typedef ComponentBase                       Superclass;
+  typedef itk::SmartPointer< Self >           Pointer;
+  typedef itk::SmartPointer< const Self >     ConstPointer;
+
+  /** Method for creation through the object factory. */
+  itkNewMacro( Self );
+
+  /** Run-time type information (and related methods). */
+  itkTypeMacro( Self, ComponentBase );
 
   ItkMeshSourceComponent();
   virtual ~ItkMeshSourceComponent();

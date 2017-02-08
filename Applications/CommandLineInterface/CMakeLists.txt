@@ -28,6 +28,7 @@ file(GLOB COMMANDLINE_HEADER_FILES "${COMMANDLINE_SOURCE_DIR}/*/include/*.*")
 
 set( COMMANDLINE_SOURCE_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/selxSuperElastix.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/selxConfigurationReader.cxx
 )
 
 #set(Boost_DEBUG ON )
@@ -40,9 +41,10 @@ set(BOOST_INCLUDEDIR ${BOOST_ROOT}/boost )
 set(BOOST_LIBRARYDIR ${BOOST_ROOT}/stage/lib)
 
 find_package(Boost COMPONENTS program_options system filesystem REQUIRED QUIET ) 
-include_directories(${Boost_INCLUDE_DIR})
+include_directories( ${Boost_INCLUDE_DIR} )
 
 # Compile executable
+include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/include" )
 add_executable( SuperElastix ${COMMANDLINE_SOURCE_FILES} ${COMMANDLINE_HEADER_FILES} )
 target_link_libraries( SuperElastix ${SUPERELASTIX_LIBRARIES} ${Boost_LIBRARIES})
 

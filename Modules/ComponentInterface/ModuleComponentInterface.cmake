@@ -19,26 +19,27 @@
 
 set( ${MODULE}_INCLUDE_DIRS
   ${${MODULE}_SOURCE_DIR}/include
-  ${${MODULE}_SOURCE_DIR}/interfaces
 )
 
+# Module source files
 set( ${MODULE}_SOURCE_FILES
-  ${${MODULE}_SOURCE_DIR}/src/selxExample3rdPartyCode.cxx
-  ${${MODULE}_SOURCE_DIR}/src/selxExample4thPartyCode.cxx
-  ${${MODULE}_SOURCE_DIR}/src/selxGDOptimizer3rdPartyComponent.cxx
-  ${${MODULE}_SOURCE_DIR}/src/selxGDOptimizer4thPartyComponent.cxx
-  ${${MODULE}_SOURCE_DIR}/src/selxMetric3rdPartyWrapper.cxx
-  ${${MODULE}_SOURCE_DIR}/src/selxMetric4thPartyWrapper.cxx
-  ${${MODULE}_SOURCE_DIR}/src/selxSSDMetric3rdPartyComponent.cxx
-  ${${MODULE}_SOURCE_DIR}/src/selxSSDMetric4thPartyComponent.cxx
-  ${${MODULE}_SOURCE_DIR}/src/selxTransformComponent1.cxx
-  ${${MODULE}_SOURCE_DIR}/src/selxMetricComponent1.cxx
+  ${${MODULE}_SOURCE_DIR}/src/selxComponentBase.cxx
+  ${${MODULE}_SOURCE_DIR}/src/selxCheckTemplateProperties.cxx
+  ${${MODULE}_SOURCE_DIR}/src/selxNetworkContainer.cxx
 )
 
-set( ${MODULE}_LIBRARIES 
-  ${MODULE}
+# Export tests
+set( ${MODULE}_TEST_SOURCE_FILES
+  ${${MODULE}_SOURCE_DIR}/test/selxComponentSelectorTest.cxx
+  ${${MODULE}_SOURCE_DIR}/test/selxComponentInterfaceTest.cxx
+  ${${MODULE}_SOURCE_DIR}/test/selxNetworkBuilderTest.cxx
 )
 
-set( ${MODULE}_MODULE_DEPENDENCIES 
+set( ${MODULE}_LIBRARIES
   ModuleComponentInterface
+)
+
+set( ${MODULE}_MODULE_DEPENDENCIES
+  ModuleCommon
+  ModuleFileIO
 )

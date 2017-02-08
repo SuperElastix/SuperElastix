@@ -25,7 +25,6 @@
 #include "selxItkObjectInterfaces.h"
 
 #include <string.h>
-#include "selxMacro.h"
 #include "itkImageFileWriter.h"
 #include "selxAnyFileWriter.h"
 #include "selxFileWriterDecorator.h"
@@ -41,7 +40,17 @@ class DisplacementFieldItkImageFilterSinkComponent :
 {
 public:
 
-  selxNewMacro( DisplacementFieldItkImageFilterSinkComponent, ComponentBase );
+  /** Standard ITK typedefs. */
+  typedef DisplacementFieldItkImageFilterSinkComponent          Self;
+  typedef ComponentBase                       Superclass;
+  typedef itk::SmartPointer< Self >           Pointer;
+  typedef itk::SmartPointer< const Self >     ConstPointer;
+
+  /** Method for creation through the object factory. */
+  itkNewMacro( Self );
+
+  /** Run-time type information (and related methods). */
+  itkTypeMacro( Self, ComponentBase );
 
   //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
 
