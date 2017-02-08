@@ -67,7 +67,9 @@ public:
   itkSetObjectMacro(Blueprint, BlueprintType);
 
   // Adding a Blueprint composes SuperElastixFilter' internal blueprint (accessible by Set/Get Blueprint) with the otherBlueprint.
-  void AddBlueprint(BlueprintPointer otherBlueprint);
+  // void AddBlueprint(BlueprintPointer otherBlueprint);
+
+  bool ParseBlueprint(void);
 
   AnyFileReaderType::Pointer GetInputFileReader( const DataObjectIdentifierType & );
 
@@ -99,7 +101,7 @@ public:
 
   Superclass::SetOutput( outputName, newOutput );
 
-  this->m_OutputConnectionModified = true;
+  this->Modified();
   return newOutput;
   };
 
@@ -122,12 +124,10 @@ private:
 
   //TODO make const correct
   BlueprintType::Pointer      m_Blueprint;
-  
-  bool                        m_InputConnectionModified;
-  bool                        m_OutputConnectionModified;
-  bool                        m_BlueprintConnectionModified;
+ 
   bool                        m_IsConnected;
   bool                        m_AllUniqueComponents;
+  bool                        m_IsBlueprintParsedOnce;
 };
 } // namespace elx
 
