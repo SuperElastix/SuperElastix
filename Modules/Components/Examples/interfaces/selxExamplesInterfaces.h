@@ -26,35 +26,40 @@ namespace selx
 class MetricDerivativeInterface
 {
 public:
-  using Pointer = std::shared_ptr<MetricDerivativeInterface>;
+
+  using Pointer               = std::shared_ptr< MetricDerivativeInterface >;
   virtual int GetDerivative() = 0;
 };
 
 class MetricValueInterface
 {
 public:
-  using Pointer = std::shared_ptr<MetricValueInterface>;
+
+  using Pointer          = std::shared_ptr< MetricValueInterface >;
   virtual int GetValue() = 0;
 };
 
 class OptimizerUpdateInterface
 {
 public:
-  using Pointer = std::shared_ptr<OptimizerUpdateInterface>;
+
+  using Pointer        = std::shared_ptr< OptimizerUpdateInterface >;
   virtual int Update() = 0;
 };
 
 class TransformedImageInterface
 {
 public:
-  using Pointer = std::shared_ptr<TransformedImageInterface>;
+
+  using Pointer                     = std::shared_ptr< TransformedImageInterface >;
   virtual int GetTransformedImage() = 0;
 };
 
 class ConflictinUpdateInterface
 {
 public:
-  using Pointer = std::shared_ptr<ConflictinUpdateInterface>;
+
+  using Pointer = std::shared_ptr< ConflictinUpdateInterface >;
 
   // "error" : member function templates cannot be virtual
   // template <class ConflictinUpdateInterface> virtual int Update() = 0;
@@ -64,8 +69,6 @@ public:
   //TODO better?: http://stackoverflow.com/questions/18398409/c-inherit-from-multiple-base-classes-with-the-same-virtual-function-name
   virtual int Update( ConflictinUpdateInterface::Pointer ) = 0;
 };
-
-
 
 template< >
 struct Properties< MetricValueInterface >
@@ -109,8 +112,6 @@ struct Properties< TransformedImageInterface >
     return { { keys::NameOfInterface, "TransformedImageInterface" } };
   }
 };
-
-
 } // end namespace selx
 
 #endif // #define selxExamplesInterfaces_h

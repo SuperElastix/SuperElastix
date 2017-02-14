@@ -31,44 +31,43 @@ namespace selx
 template< class TPixel >
 class Niftyregf3dComponent :
   public SuperElastixComponent<
-  Accepting< NiftyregReferenceImageInterface<TPixel >, NiftyregFloatingImageInterface<TPixel > >,
+  Accepting< NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >>,
   Providing< RunRegistrationInterface >
   >
 {
 public:
 
   /** Standard ITK typedefs. */
-  typedef Niftyregf3dComponent<TPixel>          Self;
-  typedef ComponentBase                       Superclass;
-  typedef std::shared_ptr< Self >           Pointer;
-  typedef std::shared_ptr< const Self >     ConstPointer;
+  typedef Niftyregf3dComponent< TPixel > Self;
+  typedef ComponentBase                  Superclass;
+  typedef std::shared_ptr< Self >        Pointer;
+  typedef std::shared_ptr< const Self >  ConstPointer;
 
-  Niftyregf3dComponent(const std::string & name);
+  Niftyregf3dComponent( const std::string & name );
   virtual ~Niftyregf3dComponent();
 
+  virtual int Set( typename NiftyregReferenceImageInterface< TPixel >::Pointer ) override;
 
-  virtual int Set(typename NiftyregReferenceImageInterface< TPixel >::Pointer ) override;
-  virtual int Set(typename NiftyregFloatingImageInterface< TPixel >::Pointer ) override;
-  
+  virtual int Set( typename NiftyregFloatingImageInterface< TPixel >::Pointer ) override;
+
   virtual void RunRegistration() override;
-  
+
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
 
   static const char * GetDescription() { return "Niftyregf3d Component"; }
 
 private:
 
-  reg_f3d<TPixel>* m_reg_f3d;
+  reg_f3d< TPixel > * m_reg_f3d;
 
 protected:
 
   // return the class name and the template arguments to uniquely identify this component.
   static inline const std::map< std::string, std::string > TemplateProperties()
   {
-    return{ { keys::NameOfClass, "Niftyregf3dComponent" }, { keys::PixelType, PodString< TPixel >::Get() } };
+    return { { keys::NameOfClass, "Niftyregf3dComponent" }, { keys::PixelType, PodString< TPixel >::Get() } };
   }
 };
-
 } //end namespace selx
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "selxNiftyregf3dComponent.hxx"

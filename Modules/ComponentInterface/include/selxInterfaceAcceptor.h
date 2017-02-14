@@ -1,4 +1,4 @@
- /*=========================================================================
+/*=========================================================================
  *
  *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
@@ -32,7 +32,8 @@ template< class InterfaceT >
 class InterfaceAcceptor
 {
 public:
-  using Pointer = std::shared_ptr<InterfaceAcceptor<InterfaceT>>;
+
+  using Pointer = std::shared_ptr< InterfaceAcceptor< InterfaceT >>;
   // Set() is called by a succesfull Connect()
   // The implementation of Set() must be provided by component developers.
   virtual int Set( typename InterfaceT::Pointer ) = 0;
@@ -46,7 +47,6 @@ private:
 
   bool isSet;
 };
-
 } //end namespace selx
 
 #ifndef ITK_MANUAL_INSTANTIATION

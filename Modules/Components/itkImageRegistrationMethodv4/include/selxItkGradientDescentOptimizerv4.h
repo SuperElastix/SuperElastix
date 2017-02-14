@@ -33,18 +33,18 @@ template< class InternalComputationValueType >
 class ItkGradientDescentOptimizerv4Component :
   public SuperElastixComponent<
   Accepting< >,
-  Providing< itkOptimizerv4Interface< InternalComputationValueType > >
+  Providing< itkOptimizerv4Interface< InternalComputationValueType >>
   >
 {
 public:
 
   /** Standard ITK typedefs. */
-  typedef ItkGradientDescentOptimizerv4Component          Self;
-  typedef ComponentBase                       Superclass;
-  typedef std::shared_ptr< Self >           Pointer;
-  typedef std::shared_ptr< const Self >     ConstPointer;
+  typedef ItkGradientDescentOptimizerv4Component Self;
+  typedef ComponentBase                          Superclass;
+  typedef std::shared_ptr< Self >                Pointer;
+  typedef std::shared_ptr< const Self >          ConstPointer;
 
-  ItkGradientDescentOptimizerv4Component(const std::string & name);
+  ItkGradientDescentOptimizerv4Component( const std::string & name );
   virtual ~ItkGradientDescentOptimizerv4Component();
 
   /**  Type of the optimizer. */

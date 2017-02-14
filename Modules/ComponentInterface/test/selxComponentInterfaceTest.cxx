@@ -32,11 +32,11 @@ public:
 
   virtual void SetUp()
   {
-    metric3p    = std::make_shared<SSDMetric3rdPartyComponent>("nameless");
-    optimizer3p = std::make_shared<GDOptimizer3rdPartyComponent>("nameless");
+    metric3p    = std::make_shared< SSDMetric3rdPartyComponent >( "nameless" );
+    optimizer3p = std::make_shared< GDOptimizer3rdPartyComponent >( "nameless" );
 
-    metric4p = std::make_shared<SSDMetric4thPartyComponent>("nameless");
-    optimizer4p = std::make_shared<GDOptimizer4thPartyComponent>("nameless");
+    metric4p    = std::make_shared< SSDMetric4thPartyComponent >( "nameless" );
+    optimizer4p = std::make_shared< GDOptimizer4thPartyComponent >( "nameless" );
   }
 
 
@@ -71,22 +71,23 @@ TEST_F( InterfaceTest, DynamicCast )
   EXPECT_NO_THROW( returnval = valueIF->GetValue() );
 
   //metric3p should have a MetricDerivativeInterface
-  MetricDerivativeInterface::Pointer derivativeIF = std::dynamic_pointer_cast< MetricDerivativeInterface >(metric3p);
+  MetricDerivativeInterface::Pointer derivativeIF = std::dynamic_pointer_cast< MetricDerivativeInterface >( metric3p );
   ASSERT_NE( derivativeIF, nullptr );
   EXPECT_NO_THROW( returnval = derivativeIF->GetDerivative() );
 
   //optimizer3p should have a OptimizerUpdateInterface
-  OptimizerUpdateInterface::Pointer updateIF = std::dynamic_pointer_cast< OptimizerUpdateInterface >(optimizer3p);
+  OptimizerUpdateInterface::Pointer updateIF = std::dynamic_pointer_cast< OptimizerUpdateInterface >( optimizer3p );
   ASSERT_NE( updateIF, nullptr );
   //EXPECT_NO_THROW(returnval = updateIF->Update()); // Update can only be called if metric and optimizer are connected
 
   //optimizer3p should have a InterfaceAcceptor<MetricValueInterface>
-  InterfaceAcceptor< MetricValueInterface >::Pointer valueAcceptorIF = std::dynamic_pointer_cast< InterfaceAcceptor< MetricValueInterface > >(optimizer3p);
+  InterfaceAcceptor< MetricValueInterface >::Pointer valueAcceptorIF = std::dynamic_pointer_cast< InterfaceAcceptor< MetricValueInterface >>(
+    optimizer3p );
   ASSERT_NE( valueAcceptorIF, nullptr );
 
   //optimizer3p should have a InterfaceAcceptor<MetricDerivativeInterface>
   InterfaceAcceptor< MetricDerivativeInterface >::Pointer derivativeAcceptorIF
-    = std::dynamic_pointer_cast< InterfaceAcceptor< MetricDerivativeInterface > >(optimizer3p);
+    = std::dynamic_pointer_cast< InterfaceAcceptor< MetricDerivativeInterface >>( optimizer3p );
   ASSERT_NE( derivativeAcceptorIF, nullptr );
 }
 
@@ -120,8 +121,8 @@ TEST_F( InterfaceTest, ConnectByName )
 
 TEST_F( InterfaceTest, ConnectAll )
 {
-  int                        connectionCount = 0;
-  int                        returnval;
+  int                               connectionCount = 0;
+  int                               returnval;
   OptimizerUpdateInterface::Pointer updateIF;
   EXPECT_NO_THROW( connectionCount = optimizer3p->AcceptConnectionFrom( metric3p ) );
   EXPECT_EQ( connectionCount, 2 ); // both MetricValueInterface and MetricDerivativeInterface are connected
@@ -139,21 +140,21 @@ TEST_F( InterfaceTest, ConnectAll )
   EXPECT_NO_THROW( connectionCount = optimizer4p->AcceptConnectionFrom( metric3p ) );
   EXPECT_EQ( connectionCount, 1 ); // only MetricValueInterface is connected
 
-  updateIF = std::dynamic_pointer_cast< OptimizerUpdateInterface >(optimizer4p);
+  updateIF = std::dynamic_pointer_cast< OptimizerUpdateInterface >( optimizer4p );
   ASSERT_NE( updateIF, nullptr );
   EXPECT_NO_THROW( returnval = updateIF->Update() );
 
   EXPECT_NO_THROW( connectionCount = optimizer4p->AcceptConnectionFrom( metric4p ) );
   EXPECT_EQ( connectionCount, 1 ); // only MetricValueInterface is connected
 
-  updateIF = std::dynamic_pointer_cast< OptimizerUpdateInterface >(optimizer4p);
+  updateIF = std::dynamic_pointer_cast< OptimizerUpdateInterface >( optimizer4p );
   ASSERT_NE( updateIF, nullptr );
   EXPECT_NO_THROW( returnval = updateIF->Update() );
 
   EXPECT_NO_THROW( connectionCount = metric4p->AcceptConnectionFrom( optimizer4p ) );
   EXPECT_EQ( connectionCount, 0 ); // cannot connect in this direction
 
-  ConflictinUpdateInterface::Pointer update2IF = std::dynamic_pointer_cast< ConflictinUpdateInterface >(optimizer4p);
+  ConflictinUpdateInterface::Pointer update2IF = std::dynamic_pointer_cast< ConflictinUpdateInterface >( optimizer4p );
   ASSERT_NE( update2IF, nullptr );
   EXPECT_NO_THROW( returnval = update2IF->Update( update2IF ) );
 }

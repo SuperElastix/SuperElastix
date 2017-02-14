@@ -23,15 +23,14 @@
 
 namespace selx
 {
-
 // Declared outside of the class body, so it is a free function
 std::ostream &
-  operator<<(std::ostream & out, const Blueprint::ParameterMapType & val)
+operator<<( std::ostream & out, const Blueprint::ParameterMapType & val )
 {
-  for (auto const & mapPair : val)
+  for( auto const & mapPair : val )
   {
     out << mapPair.first << " : [ ";
-    for (auto const & value : mapPair.second)
+    for( auto const & value : mapPair.second )
     {
       out << value << " ";
     }
@@ -46,11 +45,11 @@ class vertex_label_writer
 {
 public:
 
-  vertex_label_writer(NameType _name, ParameterMapType _parameterMap) : name(_name), parameterMap(_parameterMap) {}
+  vertex_label_writer( NameType _name, ParameterMapType _parameterMap ) : name( _name ), parameterMap( _parameterMap ) {}
   template< class VertexOrEdge >
-  void operator()(std::ostream & out, const VertexOrEdge & v) const
+  void operator()( std::ostream & out, const VertexOrEdge & v ) const
   {
-    out << "[label=\"" << name[v] << "\n" << parameterMap[v] << "\"]";
+    out << "[label=\"" << name[ v ] << "\n" << parameterMap[ v ] << "\"]";
   }
 
 
@@ -62,9 +61,9 @@ private:
 
 template< class NameType, class ParameterMapType >
 inline vertex_label_writer< NameType, ParameterMapType >
-  make_vertex_label_writer(NameType n, ParameterMapType p)
+make_vertex_label_writer( NameType n, ParameterMapType p )
 {
-  return vertex_label_writer< NameType, ParameterMapType >(n, p);
+  return vertex_label_writer< NameType, ParameterMapType >( n, p );
 }
 
 
@@ -73,11 +72,11 @@ class edge_label_writer
 {
 public:
 
-  edge_label_writer(ParameterMapType _parameterMap) : parameterMap(_parameterMap) {}
+  edge_label_writer( ParameterMapType _parameterMap ) : parameterMap( _parameterMap ) {}
   template< class VertexOrEdge >
-  void operator()(std::ostream & out, const VertexOrEdge & v) const
+  void operator()( std::ostream & out, const VertexOrEdge & v ) const
   {
-    out << "[label=\"" << parameterMap[v] << "\"]";
+    out << "[label=\"" << parameterMap[ v ] << "\"]";
   }
 
 
@@ -88,9 +87,9 @@ private:
 
 template< class ParameterMapType >
 inline edge_label_writer< ParameterMapType >
-  make_edge_label_writer(ParameterMapType p)
+make_edge_label_writer( ParameterMapType p )
 {
-  return edge_label_writer< ParameterMapType >(p);
+  return edge_label_writer< ParameterMapType >( p );
 }
 
 
@@ -109,7 +108,7 @@ Blueprint::BlueprintImpl
   }
 }
 
-  
+
 Blueprint::ParameterMapType
 Blueprint::BlueprintImpl
 ::GetComponent( ComponentNameType name ) const
@@ -134,9 +133,10 @@ Blueprint::BlueprintImpl
     this->m_Graph.remove_vertex( name );
     return true;
   }
-  
+
   return false;
 }
+
 
 Blueprint::ComponentNamesType
 Blueprint::BlueprintImpl
@@ -159,7 +159,7 @@ Blueprint::BlueprintImpl
   {
     return false;
   }
-  
+
   if( !this->ConnectionExists( upstream, downstream ) )
   {
     boost::add_edge_by_label( upstream, downstream,  { parameterMap }, this->m_Graph );
@@ -168,7 +168,7 @@ Blueprint::BlueprintImpl
   {
     this->m_Graph[ this->GetConnectionIndex( upstream, downstream ) ].parameterMap = parameterMap;
   }
-  
+
   return true;
 }
 
@@ -219,44 +219,45 @@ Blueprint::BlueprintImpl
   return boost::edge_by_label( upstream, downstream, this->m_Graph ).second;
 }
 
-bool 
+
+bool
 Blueprint::BlueprintImpl
-::ComposeWith(std::unique_ptr<Blueprint> const &other)
+::ComposeWith( std::unique_ptr< Blueprint > const & other )
 {
   // Make a backup of the current blueprint status in case composition fails
-  GraphType graph_backup = GraphType(this->m_Graph);
+  GraphType graph_backup = GraphType( this->m_Graph );
 
   // Copy-in all components (Nodes)
-  for (auto const & componentName : other->GetComponentNames())
+  for( auto const & componentName : other->GetComponentNames() )
   {
     // Does other blueprint use component with a name that already exists?
-    if (this->ComponentExists(componentName))
+    if( this->ComponentExists( componentName ) )
     {
       // Component exists, check if properties can be merged
-      auto ownProperties = this->GetComponent(componentName);
-      auto othersProperties = other->GetComponent(componentName);
+      auto ownProperties    = this->GetComponent( componentName );
+      auto othersProperties = other->GetComponent( componentName );
 
-      for (auto const & othersEntry : othersProperties)
+      for( auto const & othersEntry : othersProperties )
       {
         // Does other use a property key that already exists in this component?
-        if (ownProperties.count(othersEntry.first))
+        if( ownProperties.count( othersEntry.first ) )
         {
-          auto && ownValues = ownProperties[othersEntry.first];
+          auto && ownValues   = ownProperties[ othersEntry.first ];
           auto && otherValues = othersEntry.second;
           // Are the property values equal?
-          if (ownValues.size() != otherValues.size())
+          if( ownValues.size() != otherValues.size() )
           {
             // No, based on the number of values we see that it is different. Blueprints cannot be Composed
             this->m_Graph = graph_backup;
             return false;
-          } 
+          }
           else
           {
             ParameterValueType::const_iterator ownValue;
             ParameterValueType::const_iterator otherValue;
-            for (ownValue = ownValues.begin(), otherValue = otherValues.begin(); ownValue != ownValues.end(); ++ownValue, ++otherValue)
+            for( ownValue = ownValues.begin(), otherValue = otherValues.begin(); ownValue != ownValues.end(); ++ownValue, ++otherValue )
             {
-              if (*otherValue != *ownValue)
+              if( *otherValue != *ownValue )
               {
                 // No, at least one value is different. Blueprints cannot be Composed
                 this->m_Graph = graph_backup;
@@ -268,41 +269,39 @@ Blueprint::BlueprintImpl
         else
         {
           // Property key doesn't exist yet, add entry to this component
-          auto ownProperties = this->GetComponent(componentName);
-          ownProperties[othersEntry.first] = othersEntry.second;
-          this->SetComponent(componentName, ownProperties);
+          auto ownProperties = this->GetComponent( componentName );
+          ownProperties[ othersEntry.first ] = othersEntry.second;
+          this->SetComponent( componentName, ownProperties );
         }
       }
     }
     else
     {
       // Create Component copying properties of other
-      this->SetComponent(componentName, other->GetComponent(componentName));
+      this->SetComponent( componentName, other->GetComponent( componentName ) );
     }
-    
   }
   // Copy-in all connections (Edges)
-  for (auto const & componentName : other->GetComponentNames())
+  for( auto const & componentName : other->GetComponentNames() )
   {
-    for( auto incomingName : other->GetInputNames(componentName))
+    for( auto incomingName : other->GetInputNames( componentName ) )
     {
-      
       // Does other blueprint have a connection that already exists?
-      if (this->ConnectionExists(incomingName, componentName))
+      if( this->ConnectionExists( incomingName, componentName ) )
       {
         // Connection exists, check if properties can be merged
-        auto ownProperties = this->GetConnection(incomingName, componentName);
-        auto othersProperties = other->GetConnection(incomingName, componentName);
+        auto ownProperties    = this->GetConnection( incomingName, componentName );
+        auto othersProperties = other->GetConnection( incomingName, componentName );
 
-        for (auto const & othersEntry : othersProperties)
+        for( auto const & othersEntry : othersProperties )
         {
           // Does other use a property key that already exists in this component?
-          if (ownProperties.count(othersEntry.first))
+          if( ownProperties.count( othersEntry.first ) )
           {
-            auto && ownValues = ownProperties[othersEntry.first];
+            auto && ownValues   = ownProperties[ othersEntry.first ];
             auto && otherValues = othersEntry.second;
             // Are the property values equal?
-            if (ownValues.size() != otherValues.size())
+            if( ownValues.size() != otherValues.size() )
             {
               // No, based on the number of values we see that it is different. Blueprints cannot be Composed
               this->m_Graph = graph_backup;
@@ -312,9 +311,9 @@ Blueprint::BlueprintImpl
             {
               ParameterValueType::const_iterator ownValue;
               ParameterValueType::const_iterator otherValue;
-              for (ownValue = ownValues.begin(), otherValue = otherValues.begin(); ownValue != ownValues.end(); ++ownValue, ++otherValue)
+              for( ownValue = ownValues.begin(), otherValue = otherValues.begin(); ownValue != ownValues.end(); ++ownValue, ++otherValue )
               {
-                if (*otherValue != *ownValue)
+                if( *otherValue != *ownValue )
                 {
                   // No, at least one value is different. Blueprints cannot be Composed
                   this->m_Graph = graph_backup;
@@ -326,19 +325,18 @@ Blueprint::BlueprintImpl
           else
           {
             // Property key doesn't exist yet, add entry to this component
-            auto ownProperties = this->GetConnection(incomingName, componentName);
-            ownProperties[othersEntry.first] = othersEntry.second;
-            this->SetConnection(incomingName, componentName, ownProperties);
+            auto ownProperties = this->GetConnection( incomingName, componentName );
+            ownProperties[ othersEntry.first ] = othersEntry.second;
+            this->SetConnection( incomingName, componentName, ownProperties );
           }
         }
       }
       else
       {
         // Create Component copying properties of other
-        this->SetConnection(incomingName, componentName, other->GetConnection(incomingName, componentName));
+        this->SetConnection( incomingName, componentName, other->GetConnection( incomingName, componentName ) );
       }
     }
-    
   }
 
   return true;
@@ -397,9 +395,8 @@ Blueprint::BlueprintImpl
 {
   std::ofstream dotfile( filename.c_str() );
   boost::write_graphviz( dotfile, this->m_Graph,
-  make_vertex_label_writer( boost::get( &ComponentPropertyType::name, this->m_Graph ),
-  boost::get( &ComponentPropertyType::parameterMap, this->m_Graph ) ),
-  make_edge_label_writer( boost::get( &ConnectionPropertyType::parameterMap, this->m_Graph ) ) );
+    make_vertex_label_writer( boost::get( &ComponentPropertyType::name, this->m_Graph ),
+    boost::get( &ComponentPropertyType::parameterMap, this->m_Graph ) ),
+    make_edge_label_writer( boost::get( &ConnectionPropertyType::parameterMap, this->m_Graph ) ) );
 }
-
 } // namespace selx

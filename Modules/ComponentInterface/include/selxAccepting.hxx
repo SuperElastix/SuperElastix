@@ -1,4 +1,4 @@
- /*=========================================================================
+/*=========================================================================
  *
  *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
@@ -24,8 +24,6 @@
 
 namespace selx
 {
-
-
 template< typename FirstInterface, typename ... RestInterfaces >
 int
 Accepting< FirstInterface, RestInterfaces ... >::ConnectFromImpl( ComponentBase::Pointer other,
@@ -48,7 +46,7 @@ Accepting< FirstInterface, RestInterfaces ... >::ConnectFromImpl( ComponentBase:
 
 template< typename FirstInterface, typename ... RestInterfaces >
 int
-Accepting< FirstInterface, RestInterfaces ... >::ConnectFromImpl( ComponentBase::Pointer other)
+Accepting< FirstInterface, RestInterfaces ... >::ConnectFromImpl( ComponentBase::Pointer other )
 {
   // cast always succeeds since we know via the template arguments of the component which InterfaceAcceptors its base classes are.
   InterfaceAcceptor< FirstInterface > * acceptIF = ( this );
@@ -110,6 +108,5 @@ Accepting< FirstInterface, RestInterfaces ... >::CountMeetsCriteria( const Compo
 {
   return Count< FirstInterface, RestInterfaces ... >::MeetsCriteria( interfaceCriteria );
 }
-
 } //end namespace selx
 #endif // Accepting_hxx

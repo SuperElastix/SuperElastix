@@ -45,10 +45,10 @@ namespace itk
  *
  * The decorator provides two methods Set() and Get() to access the
  * decorated object (referred internally as the component).
- * Using Set() will std::move the unique_ptr argument to the 
- * UniquePointerDataObjectDecorator component and invalidates the unique_ptr 
+ * Using Set() will std::move the unique_ptr argument to the
+ * UniquePointerDataObjectDecorator component and invalidates the unique_ptr
  * argument at the caller.
- * Using Get() will std::move the UniquePointerDataObjectDecorator component 
+ * Using Get() will std::move the UniquePointerDataObjectDecorator component
  * and invalidates internal unique_ptr component.
  *
  * Note that when an instance of UniquePointerDataObjectDecorator is created,
@@ -62,46 +62,49 @@ namespace itk
  *
  * \ingroup ITKCommon
  */
-  template< typename T >
-  class UniquePointerDataObjectDecorator:public DataObject
-  {
-  public:
-    /** Standard typedefs. */
-    typedef UniquePointerDataObjectDecorator Self;
-    typedef DataObject                     Superclass;
-    typedef SmartPointer< Self >           Pointer;
-    typedef SmartPointer< const Self >     ConstPointer;
+template< typename T >
+class UniquePointerDataObjectDecorator : public DataObject
+{
+public:
 
-    /** Typedef for the component type (object being decorated) */
-    typedef T                  ComponentType;
-    typedef std::unique_ptr< T > ComponentPointer;
+  /** Standard typedefs. */
+  typedef UniquePointerDataObjectDecorator Self;
+  typedef DataObject                       Superclass;
+  typedef SmartPointer< Self >             Pointer;
+  typedef SmartPointer< const Self >       ConstPointer;
 
-    /** Method for creation through the object factory. */
-    itkNewMacro(Self);
+  /** Typedef for the component type (object being decorated) */
+  typedef T                    ComponentType;
+  typedef std::unique_ptr< T > ComponentPointer;
 
-    /** Run-time type information (and related methods). */
-    itkTypeMacro(UniquePointerDataObjectDecorator, DataObject);
+  /** Method for creation through the object factory. */
+  itkNewMacro( Self );
 
-    /** Set the contained object */
-    virtual void Set(std::unique_ptr< T > & val);
+  /** Run-time type information (and related methods). */
+  itkTypeMacro( UniquePointerDataObjectDecorator, DataObject );
 
-    /** Get the contained object */
-    virtual std::unique_ptr< T > Get() { return std::move(m_Component); }
-    // Get() const cannot exist, since getting a unique_ptr to the component invalides the m_Component and alters the Decorator.
-    //virtual const std::unique_ptr< T > Get() const { return std::move(m_Component); }
+  /** Set the contained object */
+  virtual void Set( std::unique_ptr< T > & val );
 
-  protected:
-    UniquePointerDataObjectDecorator();
-    ~UniquePointerDataObjectDecorator();
-    virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
+  /** Get the contained object */
+  virtual std::unique_ptr< T > Get() { return std::move( m_Component ); }
+  // Get() const cannot exist, since getting a unique_ptr to the component invalides the m_Component and alters the Decorator.
+  //virtual const std::unique_ptr< T > Get() const { return std::move(m_Component); }
 
-  protected:
+protected:
 
-  private:
-    // ITK_DISALLOW_COPY_AND_ASSIGN(UniquePointerDataObjectDecorator);
+  UniquePointerDataObjectDecorator();
+  ~UniquePointerDataObjectDecorator();
+  virtual void PrintSelf( std::ostream & os, Indent indent ) const ITK_OVERRIDE;
 
-    ComponentPointer m_Component;
-  };
+protected:
+
+private:
+
+  // ITK_DISALLOW_COPY_AND_ASSIGN(UniquePointerDataObjectDecorator);
+
+  ComponentPointer m_Component;
+};
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION

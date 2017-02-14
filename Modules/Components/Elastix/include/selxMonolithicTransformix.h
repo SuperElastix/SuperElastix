@@ -40,7 +40,7 @@ class MonolithicTransformixComponent :
   Accepting<
   itkImageDomainFixedInterface< Dimensionality >,
   itkImageMovingInterface< Dimensionality, TPixel >,
-  elastixTransformParameterObjectInterface< itk::Image< TPixel, Dimensionality >, itk::Image< TPixel, Dimensionality > >
+  elastixTransformParameterObjectInterface< itk::Image< TPixel, Dimensionality >, itk::Image< TPixel, Dimensionality >>
   >,
   Providing<
   itkImageInterface< Dimensionality, TPixel >,
@@ -51,12 +51,12 @@ class MonolithicTransformixComponent :
 public:
 
   /** Standard ITK typedefs. */
-  typedef MonolithicTransformixComponent          Self;
-  typedef ComponentBase                       Superclass;
-  typedef std::shared_ptr< Self >           Pointer;
-  typedef std::shared_ptr< const Self >     ConstPointer;
+  typedef MonolithicTransformixComponent Self;
+  typedef ComponentBase                  Superclass;
+  typedef std::shared_ptr< Self >        Pointer;
+  typedef std::shared_ptr< const Self >  ConstPointer;
 
-  MonolithicTransformixComponent(const std::string & name);
+  MonolithicTransformixComponent( const std::string & name );
   virtual ~MonolithicTransformixComponent();
 
   typedef typename ComponentBase::CriterionType CriterionType;
@@ -72,13 +72,13 @@ public:
   typedef elastix::TransformixFilter< MovingImageType > TransformixFilterType;
 
   typedef elastixTransformParameterObjectInterface< itk::Image< TPixel, Dimensionality >,
-    itk::Image< TPixel, Dimensionality > > elastixTransformParameterObjectInterfaceType;
+    itk::Image< TPixel, Dimensionality >> elastixTransformParameterObjectInterfaceType;
   // Accepting Interfaces:
-  virtual int Set(typename itkImageDomainFixedInterface< Dimensionality >::Pointer ) override;
+  virtual int Set( typename itkImageDomainFixedInterface< Dimensionality >::Pointer ) override;
 
-  virtual int Set(typename itkImageMovingInterface< Dimensionality, TPixel >::Pointer) override;
+  virtual int Set( typename itkImageMovingInterface< Dimensionality, TPixel >::Pointer ) override;
 
-  virtual int Set(typename elastixTransformParameterObjectInterfaceType::Pointer) override;
+  virtual int Set( typename elastixTransformParameterObjectInterfaceType::Pointer ) override;
 
   // Providing Interfaces:
   virtual typename ResultImageType::Pointer GetItkImage() override;

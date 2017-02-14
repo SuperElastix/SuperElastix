@@ -50,12 +50,12 @@ class ItkResampleFilterComponent :
 public:
 
   /** Standard ITK typedefs. */
-  typedef ItkResampleFilterComponent          Self;
-  typedef ComponentBase                       Superclass;
-  typedef std::shared_ptr< Self >           Pointer;
-  typedef std::shared_ptr< const Self >     ConstPointer;
+  typedef ItkResampleFilterComponent    Self;
+  typedef ComponentBase                 Superclass;
+  typedef std::shared_ptr< Self >       Pointer;
+  typedef std::shared_ptr< const Self > ConstPointer;
 
-  ItkResampleFilterComponent(const std::string & name);
+  ItkResampleFilterComponent( const std::string & name );
   virtual ~ItkResampleFilterComponent();
 
   typedef TPixel PixelType;
@@ -68,11 +68,11 @@ public:
   typedef itk::ResampleImageFilter< MovingImageType, ResultImageType > ResampleFilterType;
 
   //Accepting Interfaces:
-  virtual int Set(typename itkImageDomainFixedInterface< Dimensionality >::Pointer ) override;
+  virtual int Set( typename itkImageDomainFixedInterface< Dimensionality >::Pointer ) override;
 
-  virtual int Set(typename itkImageMovingInterface< Dimensionality, TPixel >::Pointer) override;
+  virtual int Set( typename itkImageMovingInterface< Dimensionality, TPixel >::Pointer ) override;
 
-  virtual int Set(typename itkTransformInterface< TInternalComputationValue, Dimensionality >::Pointer) override;
+  virtual int Set( typename itkTransformInterface< TInternalComputationValue, Dimensionality >::Pointer ) override;
 
   //Providing Interfaces:
   virtual typename ResultImageType::Pointer GetItkImage() override;

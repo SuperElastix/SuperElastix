@@ -37,19 +37,20 @@ class NetworkBuilderTest : public ::testing::Test
 {
 public:
 
-  typedef std::unique_ptr< NetworkBuilderBase >         NetworkBuilderPointer;
-  typedef std::unique_ptr< Blueprint >        BlueprintPointer;
-  typedef Blueprint::ParameterMapType         ParameterMapType;
-  typedef Blueprint::ParameterValueType       ParameterValueType;
+  typedef std::unique_ptr< NetworkBuilderBase > NetworkBuilderPointer;
+  typedef std::unique_ptr< Blueprint >          BlueprintPointer;
+  typedef Blueprint::ParameterMapType           ParameterMapType;
+  typedef Blueprint::ParameterValueType         ParameterValueType;
 
   /** register all example components */
-  using CustomComponentList = TypeList<TransformComponent1, MetricComponent1, GDOptimizer3rdPartyComponent, GDOptimizer4thPartyComponent, SSDMetric3rdPartyComponent, SSDMetric4thPartyComponent>;
+  using CustomComponentList
+      = TypeList< TransformComponent1, MetricComponent1, GDOptimizer3rdPartyComponent, GDOptimizer4thPartyComponent, SSDMetric3rdPartyComponent,
+    SSDMetric4thPartyComponent >;
 
   virtual void SetUp()
   {
-
     /** make example blueprint configuration */
-    blueprint = BlueprintPointer( new Blueprint( ) );
+    blueprint = BlueprintPointer( new Blueprint() );
     ParameterMapType metricComponentParameters;
     metricComponentParameters[ "NameOfClass" ] = { "MetricComponent1" };
 
@@ -76,13 +77,13 @@ public:
 
 TEST_F( NetworkBuilderTest, Create )
 {
-  NetworkBuilderPointer networkBuilderA = NetworkBuilderPointer(new NetworkBuilder<CustomComponentList>());
+  NetworkBuilderPointer networkBuilderA = NetworkBuilderPointer( new NetworkBuilder< CustomComponentList >() );
 }
 
 TEST_F( NetworkBuilderTest, Configure )
 {
-  NetworkBuilderPointer networkBuilder = NetworkBuilderPointer(new NetworkBuilder<CustomComponentList>());
-  networkBuilder->AddBlueprint(blueprint);
+  NetworkBuilderPointer networkBuilder = NetworkBuilderPointer( new NetworkBuilder< CustomComponentList >() );
+  networkBuilder->AddBlueprint( blueprint );
 
   bool allUniqueComponents;
   EXPECT_NO_THROW( allUniqueComponents = networkBuilder->Configure() );
@@ -91,11 +92,11 @@ TEST_F( NetworkBuilderTest, Configure )
 
 TEST_F( NetworkBuilderTest, Connect )
 {
-  NetworkBuilderPointer networkBuilder = NetworkBuilderPointer(new NetworkBuilder<CustomComponentList>());
-  networkBuilder->AddBlueprint(blueprint);
+  NetworkBuilderPointer networkBuilder = NetworkBuilderPointer( new NetworkBuilder< CustomComponentList >() );
+  networkBuilder->AddBlueprint( blueprint );
   EXPECT_NO_THROW( bool allUniqueComponents = networkBuilder->Configure() );
   bool success;
-  EXPECT_NO_THROW(success = networkBuilder->ConnectComponents());
+  EXPECT_NO_THROW( success = networkBuilder->ConnectComponents() );
 }
 TEST_F( NetworkBuilderTest, DeduceComponentsFromConnections )
 {
@@ -169,9 +170,10 @@ TEST_F( NetworkBuilderTest, DeduceComponentsFromConnections )
   blueprint->SetComponent( "Transform", { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformComponent" } },
                                           { "Dimensionality", { "3" } } } );
 
-  blueprint->SetComponent( "TransformResolutionAdaptor", { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent" } },
-                                                           { "Dimensionality", { "3" } },
-                                                           { "ShrinkFactorsPerLevel", { "2", "1" } } } );
+  blueprint->SetComponent( "TransformResolutionAdaptor",
+    { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent" } },
+        { "Dimensionality", { "3" } },
+        { "ShrinkFactorsPerLevel", { "2", "1" } } } );
 
   blueprint->SetComponent( "Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } } );
 
@@ -211,10 +213,10 @@ TEST_F( NetworkBuilderTest, DeduceComponentsFromConnections )
   blueprint->SetConnection( "ResampleFilter", "Controller", { {} } );              //ReconnectTransformInterface
   blueprint->SetConnection( "TransformDisplacementFilter", "Controller", { {} } ); //ReconnectTransformInterface
 
-  std::unique_ptr< NetworkBuilderBase > networkBuilder(new NetworkBuilder<RegisterComponents>());
-  networkBuilder->AddBlueprint(blueprint);
+  std::unique_ptr< NetworkBuilderBase > networkBuilder( new NetworkBuilder< RegisterComponents >() );
+  networkBuilder->AddBlueprint( blueprint );
   bool allUniqueComponents;
-  EXPECT_NO_THROW(allUniqueComponents = networkBuilder->Configure());
+  EXPECT_NO_THROW( allUniqueComponents = networkBuilder->Configure() );
   EXPECT_TRUE( allUniqueComponents );
 }
 } // namespace selx

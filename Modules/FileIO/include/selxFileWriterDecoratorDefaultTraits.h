@@ -39,13 +39,13 @@ struct FileWriterDecoratorDefaultTraits
 };
 
 template< typename T1 >
-struct FileWriterDecoratorDefaultTraits< itk::ImageFileWriter< T1 > >
+struct FileWriterDecoratorDefaultTraits< itk::ImageFileWriter< T1 >>
 {
   typedef typename itk::ImageFileWriter< T1 >::InputImageType DerivedInputDataType;
 };
 
 template< typename T1 >
-struct FileWriterDecoratorDefaultTraits< itk::MeshFileWriter< T1 > >
+struct FileWriterDecoratorDefaultTraits< itk::MeshFileWriter< T1 >>
 {
   typedef typename itk::MeshFileWriter< T1 >::InputMeshType DerivedInputDataType;
 };

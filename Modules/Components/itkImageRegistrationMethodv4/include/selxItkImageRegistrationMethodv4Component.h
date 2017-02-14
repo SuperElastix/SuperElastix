@@ -53,12 +53,12 @@ class ItkImageRegistrationMethodv4Component :
 public:
 
   /** Standard ITK typedefs. */
-  typedef ItkImageRegistrationMethodv4Component          Self;
-  typedef ComponentBase                       Superclass;
-  typedef std::shared_ptr< Self >           Pointer;
-  typedef std::shared_ptr< const Self >     ConstPointer;
+  typedef ItkImageRegistrationMethodv4Component Self;
+  typedef ComponentBase                         Superclass;
+  typedef std::shared_ptr< Self >               Pointer;
+  typedef std::shared_ptr< const Self >         ConstPointer;
 
-  ItkImageRegistrationMethodv4Component(const std::string & name);
+  ItkImageRegistrationMethodv4Component( const std::string & name );
   virtual ~ItkImageRegistrationMethodv4Component();
 
   // Get the type definitions from the interfaces
@@ -77,11 +77,11 @@ public:
   typedef itk::RegistrationParameterScalesFromPhysicalShift< ImageMetricType >             ScalesEstimatorType;
 
   //Accepting Interfaces:
-  virtual int Set(typename itkImageFixedInterface< Dimensionality, PixelType >::Pointer) override;
+  virtual int Set( typename itkImageFixedInterface< Dimensionality, PixelType >::Pointer ) override;
 
-  virtual int Set(typename itkImageMovingInterface< Dimensionality, PixelType >::Pointer) override;
+  virtual int Set( typename itkImageMovingInterface< Dimensionality, PixelType >::Pointer ) override;
 
-  virtual int Set(typename itkTransformInterface< InternalComputationValueType, Dimensionality >::Pointer) override;
+  virtual int Set( typename itkTransformInterface< InternalComputationValueType, Dimensionality >::Pointer ) override;
 
   virtual int Set( typename TransformParametersAdaptorsContainerInterfaceType::Pointer ) override;
 
@@ -94,8 +94,9 @@ public:
 
   virtual void RunRegistration() override;
 
-  virtual void SetFixedInitialTransform(typename CompositeTransformType::Pointer fixedInitialTransform) override;
-  virtual void SetMovingInitialTransform(typename CompositeTransformType::Pointer movingInitialTransform) override;
+  virtual void SetFixedInitialTransform( typename CompositeTransformType::Pointer fixedInitialTransform ) override;
+
+  virtual void SetMovingInitialTransform( typename CompositeTransformType::Pointer movingInitialTransform ) override;
 
   virtual const typename std::string GetComponentName() override;
 
@@ -111,7 +112,7 @@ private:
 
   // The settings SmoothingSigmas and ShrinkFactors imply NumberOfLevels, if the user
   // provides inconsistent numbers we should detect that and report about it.
-  std::string                                         m_NumberOfLevelsLastSetBy;
+  std::string m_NumberOfLevelsLastSetBy;
   typename TransformParametersAdaptorsContainerInterfaceType::Pointer m_TransformAdaptorsContainerInterface;
 
 protected:

@@ -34,18 +34,18 @@ template< int Dimensionality, class TPixel >
 class ItkImageSourceMovingComponent :
   public SuperElastixComponent<
   Accepting< >,
-  Providing< SourceInterface, itkImageMovingInterface< Dimensionality, TPixel > >
+  Providing< SourceInterface, itkImageMovingInterface< Dimensionality, TPixel >>
   >
 {
 public:
 
   /** Standard ITK typedefs. */
-  typedef ItkImageSourceMovingComponent          Self;
-  typedef ComponentBase                       Superclass;
-  typedef itk::SmartPointer< Self >           Pointer;
-  typedef itk::SmartPointer< const Self >     ConstPointer;
+  typedef ItkImageSourceMovingComponent   Self;
+  typedef ComponentBase                   Superclass;
+  typedef itk::SmartPointer< Self >       Pointer;
+  typedef itk::SmartPointer< const Self > ConstPointer;
 
-  ItkImageSourceMovingComponent(const std::string & name);
+  ItkImageSourceMovingComponent( const std::string & name );
   virtual ~ItkImageSourceMovingComponent();
 
   typedef typename itkImageMovingInterface< Dimensionality, TPixel >::ItkImageType ItkImageType;

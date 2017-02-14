@@ -23,7 +23,7 @@ namespace selx
 {
 template< class InternalComputationValueType, int Dimensionality >
 ItkGaussianExponentialDiffeomorphicTransformComponent< InternalComputationValueType,
-  Dimensionality >::ItkGaussianExponentialDiffeomorphicTransformComponent(const std::string & name) : SuperElastixComponent(name)
+Dimensionality >::ItkGaussianExponentialDiffeomorphicTransformComponent( const std::string & name ) : SuperElastixComponent( name )
 {
   m_Transform = GaussianExponentialDiffeomorphicTransformType::New();
 
@@ -85,14 +85,14 @@ bool
 ItkGaussianExponentialDiffeomorphicTransformComponent< InternalComputationValueType, Dimensionality >
 ::MeetsCriterion( const ComponentBase::CriterionType & criterion )
 {
-  bool hasUndefinedCriteria(false);
-  bool meetsCriteria(false);
-  auto status = CheckTemplateProperties(this->TemplateProperties(), criterion);
-  if (status == CriterionStatus::Satisfied)
+  bool hasUndefinedCriteria( false );
+  bool meetsCriteria( false );
+  auto status = CheckTemplateProperties( this->TemplateProperties(), criterion );
+  if( status == CriterionStatus::Satisfied )
   {
     return true;
   }
-  else if (status == CriterionStatus::Failed)
+  else if( status == CriterionStatus::Failed )
   {
     return false;
   } // else: CriterionStatus::Unknown

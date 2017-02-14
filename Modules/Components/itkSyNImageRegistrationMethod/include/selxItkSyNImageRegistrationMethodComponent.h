@@ -50,10 +50,10 @@ class ItkSyNImageRegistrationMethodComponent :
 public:
 
   /** Standard ITK typedefs. */
-  typedef ItkSyNImageRegistrationMethodComponent          Self;
-  typedef ComponentBase                       Superclass;
-  typedef itk::SmartPointer< Self >           Pointer;
-  typedef itk::SmartPointer< const Self >     ConstPointer;
+  typedef ItkSyNImageRegistrationMethodComponent Self;
+  typedef ComponentBase                          Superclass;
+  typedef itk::SmartPointer< Self >              Pointer;
+  typedef itk::SmartPointer< const Self >        ConstPointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro( Self );
@@ -70,23 +70,24 @@ public:
   typedef double InternalComputationValueType;
 
   // Get the type definitions from the interfaces
-  typedef typename itkImageFixedInterface< Dimensionality, TPixel >::ItkImageType    FixedImageType;
-  typedef typename itkImageMovingInterface< Dimensionality, TPixel >::ItkImageType   MovingImageType;
+  typedef typename itkImageFixedInterface< Dimensionality, TPixel >::ItkImageType                          FixedImageType;
+  typedef typename itkImageMovingInterface< Dimensionality, TPixel >::ItkImageType                         MovingImageType;
   typedef typename itkTransformInterface< InternalComputationValueType, Dimensionality >::TransformType    TransformType;
   typedef typename itkTransformInterface< InternalComputationValueType, Dimensionality >::TransformPointer TransformPointer;
 
-  typedef typename itkTransformInterface< InternalComputationValueType, Dimensionality >::InternalComputationValueType TransformInternalComputationValueType; //should be from class template
+  typedef typename itkTransformInterface< InternalComputationValueType,
+    Dimensionality >::InternalComputationValueType TransformInternalComputationValueType;                                                                     //should be from class template
 
   typedef itk::SyNImageRegistrationMethod< FixedImageType, MovingImageType >   TheItkFilterType;
   typedef typename TheItkFilterType::ImageMetricType                           ImageMetricType;
   typedef itk::RegistrationParameterScalesFromPhysicalShift< ImageMetricType > ScalesEstimatorType;
 
   //Accepting Interfaces:
-  virtual int Set(itkImageFixedInterface< Dimensionality, TPixel > *) override;
+  virtual int Set( itkImageFixedInterface< Dimensionality, TPixel > * ) override;
 
-  virtual int Set(itkImageMovingInterface< Dimensionality, TPixel > *) override;
+  virtual int Set( itkImageMovingInterface< Dimensionality, TPixel > * ) override;
 
-  virtual int Set(itkMetricv4Interface< Dimensionality, TPixel, double > *) override;
+  virtual int Set( itkMetricv4Interface< Dimensionality, TPixel, double > * ) override;
 
   //Providing Interfaces:
   virtual TransformPointer GetItkTransform() override;
@@ -94,7 +95,7 @@ public:
   virtual void RunRegistration() override;
 
   //BaseClass methods
-  virtual bool MeetsCriterion(const ComponentBase::CriterionType & criterion) override;
+  virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
 
   //static const char * GetName() { return "ItkSyNImageRegistrationMethod"; } ;
   static const char * GetDescription() { return "ItkSyNImageRegistrationMethod Component"; }
@@ -104,10 +105,13 @@ private:
   typename TheItkFilterType::Pointer m_theItkFilter;
 
 protected:
+
   // return the class name and the template arguments to uniquely identify this component.
   static inline const std::map< std::string, std::string > TemplateProperties()
   {
-    return{ { keys::NameOfClass, "ItkSyNImageRegistrationMethodComponent" }, { keys::PixelType, PodString< PixelType >::Get() }, { keys::InternalComputationValueType, PodString< InternalComputationValueType >::Get() }, { keys::Dimensionality, std::to_string(Dimensionality) } };
+    return { { keys::NameOfClass, "ItkSyNImageRegistrationMethodComponent" }, { keys::PixelType, PodString< PixelType >::Get() },
+             { keys::InternalComputationValueType, PodString< InternalComputationValueType >::Get() }, { keys::Dimensionality, std::to_string(
+                                                                                                           Dimensionality ) } };
   }
 };
 } //end namespace selx

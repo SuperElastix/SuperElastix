@@ -30,7 +30,7 @@
 #include "elxTransformixFilter.h"
 
 #include <string.h>
- 
+
 namespace selx
 {
 template< int Dimensionality, class TPixel >
@@ -49,12 +49,12 @@ class ElastixComponent :
 public:
 
   /** Standard ITK typedefs. */
-  typedef ElastixComponent          Self;
-  typedef ComponentBase                       Superclass;
-  typedef std::shared_ptr< Self >           Pointer;
-  typedef std::shared_ptr< const Self >     ConstPointer;
+  typedef ElastixComponent              Self;
+  typedef ComponentBase                 Superclass;
+  typedef std::shared_ptr< Self >       Pointer;
+  typedef std::shared_ptr< const Self > ConstPointer;
 
-  ElastixComponent(const std::string & name);
+  ElastixComponent( const std::string & name );
   virtual ~ElastixComponent();
 
   typedef typename ComponentBase::CriterionType CriterionType;

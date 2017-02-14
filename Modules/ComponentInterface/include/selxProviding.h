@@ -1,4 +1,4 @@
- /*=========================================================================
+/*=========================================================================
  *
  *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
@@ -22,8 +22,6 @@
 
 namespace selx
 {
-
-
 template< typename ... Interfaces >
 class Providing;
 
@@ -46,7 +44,6 @@ public:
 
 protected:
 };
-
 } //end namespace selx
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "selxProviding.hxx"

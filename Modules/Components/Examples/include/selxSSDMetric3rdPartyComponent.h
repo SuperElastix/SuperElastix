@@ -36,12 +36,12 @@ class SSDMetric3rdPartyComponent :
 public:
 
   /** Standard class typedefs. */
-  typedef SSDMetric3rdPartyComponent      Self;
-  typedef ComponentBase                   Superclass;
+  typedef SSDMetric3rdPartyComponent    Self;
+  typedef ComponentBase                 Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
 
-  SSDMetric3rdPartyComponent(const std::string & name);
+  SSDMetric3rdPartyComponent( const std::string & name );
   virtual ~SSDMetric3rdPartyComponent();
   Example3rdParty::SSDMetric3rdParty * theImplementation;
   virtual int GetValue() override;

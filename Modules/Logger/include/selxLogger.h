@@ -23,10 +23,9 @@
 #include <string>
 #include <memory>
 
-namespace selx {
-
-enum SeverityType
+namespace selx
 {
+enum SeverityType {
   TRACE,
   DEBUG,
   INFO,
@@ -52,22 +51,21 @@ public:
   void AddConsole( FormatType format = "[%TimeStamp% %ComponentName% %Channel% %SeverityLevel%]: %Message%" );
 
   void AddFile( FileNameType fileName = "SuperElastix_%Y-%m-%d_%H-%M-%S.%N.log",
-                FormatType format = "[%LineID% %TimeStamp% %ComponentName% %Channel% %SeverityLevel%]: %Message%" );
+    FormatType format = "[%LineID% %TimeStamp% %ComponentName% %Channel% %SeverityLevel%]: %Message%" );
 
   // void AddFile( FileNameType fileName = "SuperElastix_%Y-%m-%d_%H-%M-%S.%N.log",
-  //               Logger::ChannelType channel = "SuperElastix",  
+  //               Logger::ChannelType channel = "SuperElastix",
   //               FormatType format = "[%LineID% %TimeStamp% %ComponentName% %Channel% %SeverityLevel%]: %Message%" );
 
   void Log( SeverityType severity, MessageType message );
+
   void Log( ChannelType channel, SeverityType severity, MessageType message );
 
 private:
 
   class LoggerImpl;
   std::unique_ptr< LoggerImpl > m_Pimple;
-
 };
-
 } // namespace
 
 #endif // Logger_h

@@ -25,34 +25,33 @@ using namespace selx;
 
 TEST( LoggerTest, Initialization )
 {
-  Logger* logger = new Logger();
+  Logger * logger = new Logger();
 }
 
 TEST( LoggerTest, Console )
 {
-  Logger* logger = new Logger();
+  Logger * logger = new Logger();
   logger->AddConsole();
-  logger->Log( INFO, "Console INFO message");
+  logger->Log( INFO, "Console INFO message" );
 }
 
 TEST( LoggerTest, File )
 {
-  Logger* logger = new Logger();
+  Logger * logger = new Logger();
   logger->AddFile( "/Users/kasper/Development/build/SuperElastix.txt" );
-  logger->Log( INFO, "test.log INFO message");
+  logger->Log( INFO, "test.log INFO message" );
 }
 
 TEST( LoggerTest, DefaultChannelFile )
 {
-  Logger* logger = new Logger();
+  Logger * logger = new Logger();
   logger->AddFile( "/Users/kasper/Development/build/SuperElastix.txt" );
-  logger->Log( "SuperElastix", INFO, "test.log INFO message");
+  logger->Log( "SuperElastix", INFO, "test.log INFO message" );
 }
-
 
 TEST( LoggerTest, ChannelFile )
 {
-  Logger* logger = new Logger();
+  Logger * logger = new Logger();
   logger->AddFile( "/Users/kasper/Development/build/SuperElastix.txt", "OtherChannel" );
-  logger->Log( "OtherChannel", INFO, "test.log INFO message");
+  logger->Log( "OtherChannel", INFO, "test.log INFO message" );
 }

@@ -31,13 +31,12 @@
 #include <string>
 #include <vector>
 
-
 namespace selx
 {
 enum class CriterionStatus { Satisfied, Failed, Unknown };
 
 CriterionStatus
-CheckTemplateProperties(const std::map< std::string, std::string > templateProperties,
-const std::pair< std::string, std::vector< std::string >> criterion);
+CheckTemplateProperties( const std::map< std::string, std::string > templateProperties,
+  const std::pair< std::string, std::vector< std::string >> criterion );
 }
 #endif //selxCheckTemplateProperties_h

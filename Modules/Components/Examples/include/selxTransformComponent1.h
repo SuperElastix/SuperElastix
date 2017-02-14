@@ -35,12 +35,12 @@ class TransformComponent1 :
 public:
 
   /** Standard class typedefs. */
-  typedef TransformComponent1             Self;
-  typedef ComponentBase                   Superclass;
+  typedef TransformComponent1           Self;
+  typedef ComponentBase                 Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
 
-  TransformComponent1(const std::string & name) : SuperElastixComponent(name){}
+  TransformComponent1( const std::string & name ) : SuperElastixComponent( name ){}
   virtual ~TransformComponent1(){}
 
   typedef Superclass::CriteriaType  CriteriaType;
@@ -54,8 +54,6 @@ public:
 protected:
 
   TransformComponent1();
-
-
 
 private:
 

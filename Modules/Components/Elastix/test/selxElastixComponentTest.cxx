@@ -42,12 +42,12 @@ class ElastixComponentTest : public ::testing::Test
 {
 public:
 
-  typedef std::unique_ptr< Blueprint >                        BlueprintPointer;
-  typedef itk::UniquePointerDataObjectDecorator< Blueprint >  BlueprintITKType;
-  typedef BlueprintITKType::Pointer                           BlueprintITKPointer;
-  typedef Blueprint::ParameterMapType                         ParameterMapType;
-  typedef Blueprint::ParameterValueType                       ParameterValueType;
-  typedef DataManager                                         DataManagerType;
+  typedef std::unique_ptr< Blueprint >                       BlueprintPointer;
+  typedef itk::UniquePointerDataObjectDecorator< Blueprint > BlueprintITKType;
+  typedef BlueprintITKType::Pointer                          BlueprintITKPointer;
+  typedef Blueprint::ParameterMapType                        ParameterMapType;
+  typedef Blueprint::ParameterValueType                      ParameterValueType;
+  typedef DataManager                                        DataManagerType;
 
   /** Make a list of components to be registered for this test*/
   typedef TypeList< ElastixComponent< 2, float >,
@@ -58,7 +58,7 @@ public:
     ItkImageSourceMovingComponent< 2, float >,
     ItkImageSourceFixedComponent< 3, double >,
     ItkImageSourceMovingComponent< 3, double >,
-    RegistrationControllerComponent< > > RegisterComponents;
+    RegistrationControllerComponent< >> RegisterComponents;
 
   typedef itk::Image< float, 2 >              Image2DType;
   typedef itk::ImageFileReader< Image2DType > ImageReader2DType;
@@ -68,7 +68,7 @@ public:
   {
     // Instantiate SuperElastixFilter before each test
     // Register the components we want to have available in SuperElastix
-    superElastixFilter = SuperElastixFilterCustomComponents<RegisterComponents>::New();
+    superElastixFilter = SuperElastixFilterCustomComponents< RegisterComponents >::New();
 
     dataManager = DataManagerType::New();
   }
@@ -76,13 +76,15 @@ public:
 
   virtual void TearDown()
   {
-    // Unregister all components after each test 
+    // Unregister all components after each test
     itk::ObjectFactoryBase::UnRegisterAllFactories();
-    // Delete the SuperElastixFilter after each test 
+    // Delete the SuperElastixFilter after each test
     superElastixFilter = nullptr;
   }
+
+
   // Blueprint holds a configuration for SuperElastix
-  SuperElastixFilterCustomComponents<RegisterComponents>::Pointer superElastixFilter;
+  SuperElastixFilterCustomComponents< RegisterComponents >::Pointer superElastixFilter;
   // Data manager provides the paths to the input and output data for unit tests
   DataManagerType::Pointer dataManager;
 };
@@ -90,15 +92,15 @@ public:
 TEST_F( ElastixComponentTest, ImagesOnly )
 {
   /** make example blueprint configuration */
-  BlueprintPointer blueprint = BlueprintPointer(new Blueprint());
+  BlueprintPointer blueprint = BlueprintPointer( new Blueprint() );
 
   ParameterMapType component0Parameters;
   component0Parameters[ "NameOfClass" ]               = { "ElastixComponent" };
   component0Parameters[ "RegistrationSettings" ]      = { "rigid" };
   component0Parameters[ "MaximumNumberOfIterations" ] = { "2" };
-  component0Parameters[ "Dimensionality" ] = { "2" };
-  component0Parameters[ "PixelType" ] = { "float" };
-  component0Parameters[ "ResultImagePixelType" ] = { "float" };
+  component0Parameters[ "Dimensionality" ]            = { "2" };
+  component0Parameters[ "PixelType" ]                 = { "float" };
+  component0Parameters[ "ResultImagePixelType" ]      = { "float" };
 
   blueprint->SetComponent( "RegistrationMethod", component0Parameters );
 
@@ -159,17 +161,16 @@ TEST_F( ElastixComponentTest, ImagesOnly )
   // Update call on the writers triggers SuperElastix to configure and execute
   EXPECT_NO_THROW( resultImageWriter->Update() );
 }
-TEST_F(ElastixComponentTest, MonolithicElastixTransformix)
+TEST_F( ElastixComponentTest, MonolithicElastixTransformix )
 {
   /** make example blueprint configuration */
-  BlueprintPointer blueprint = BlueprintPointer(new Blueprint());
+  BlueprintPointer blueprint = BlueprintPointer( new Blueprint() );
 
-  blueprint->SetComponent("RegistrationMethod", { { "NameOfClass", { "MonolithicElastixComponent" } },
-  { "RegistrationSettings", { "rigid" } }, { "MaximumNumberOfIterations", { "2" } },
-  {"Dimensionality", { "2" } },
-  { "PixelType", { "float" } },
-  { "ResultImagePixelType", { "float" } }
-});
+  blueprint->SetComponent( "RegistrationMethod", { { "NameOfClass", { "MonolithicElastixComponent" } },
+                                                   { "RegistrationSettings", { "rigid" } }, { "MaximumNumberOfIterations", { "2" } },
+                                                   { "Dimensionality", { "2" } },
+                                                   { "PixelType", { "float" } },
+                                                   { "ResultImagePixelType", { "float" } } } );
   blueprint->SetComponent( "TransformDisplacementField", { { "NameOfClass", { "MonolithicTransformixComponent" } } } );
 
   blueprint->SetComponent( "FixedImageSource", { { "NameOfClass", { "ItkImageSourceFixedComponent" } }, { "Dimensionality", { "2" } } } );

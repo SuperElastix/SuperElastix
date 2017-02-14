@@ -35,15 +35,16 @@ namespace selx
 class ComponentBase
 {
 public:
+
   //ComponentBase() = delete;
   ComponentBase();
-  ComponentBase(const std::string & name);
+  ComponentBase( const std::string & name );
   virtual ~ComponentBase() {}
 
-  typedef std::shared_ptr<ComponentBase> Pointer;
-  typedef std::shared_ptr<const ComponentBase> ConstPointer;
-  typedef std::string                ParameterKeyType;
-  typedef std::vector< std::string > ParameterValueType;
+  typedef std::shared_ptr< ComponentBase >       Pointer;
+  typedef std::shared_ptr< const ComponentBase > ConstPointer;
+  typedef std::string                            ParameterKeyType;
+  typedef std::vector< std::string >             ParameterValueType;
   //typedef std::map< ParameterKeyType, ParameterValueType >           ParameterMapType;
   //TODO choose uniform naming for Typedefs
   typedef std::map< ParameterKeyType, ParameterValueType >  CriteriaType;
@@ -51,20 +52,20 @@ public:
 
   typedef std::map< std::string, std::string > InterfaceCriteriaType;
 
-  virtual int AcceptConnectionFrom( Pointer, const InterfaceCriteriaType) = 0;
+  virtual int AcceptConnectionFrom( Pointer, const InterfaceCriteriaType ) = 0;
 
   virtual int AcceptConnectionFrom( Pointer ) = 0;
 
   virtual bool MeetsCriterion( const CriterionType & criterion ) = 0;
 
-  virtual InterfaceStatus CanAcceptConnectionFrom(ConstPointer, const InterfaceCriteriaType) = 0;
+  virtual InterfaceStatus CanAcceptConnectionFrom( ConstPointer, const InterfaceCriteriaType ) = 0;
 
   virtual unsigned int CountAcceptingInterfaces( const InterfaceCriteriaType ) = 0;
 
   virtual unsigned int CountProvidingInterfaces( const InterfaceCriteriaType ) = 0;
 
   //virtual const std::map< std::string, std::string >  TemplateProperties(); //TODO should be overridden
-   
+
   const std::string m_Name;
 };
 } // end namespace selx

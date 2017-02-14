@@ -34,29 +34,29 @@ namespace selx
 template< int Dimensionality, class TPixel >
 class ItkSmoothingRecursiveGaussianImageFilterComponent :
   public SuperElastixComponent<
-  Accepting< itkImageInterface< Dimensionality, TPixel > >,
-  Providing< itkImageInterface< Dimensionality, TPixel > >
+  Accepting< itkImageInterface< Dimensionality, TPixel >>,
+  Providing< itkImageInterface< Dimensionality, TPixel >>
   >
 {
 public:
 
   /** Standard ITK typedefs. */
-  typedef ItkSmoothingRecursiveGaussianImageFilterComponent          Self;
-  typedef ComponentBase                       Superclass;
-  typedef std::shared_ptr< Self >           Pointer;
-  typedef std::shared_ptr< const Self >     ConstPointer;
+  typedef ItkSmoothingRecursiveGaussianImageFilterComponent Self;
+  typedef ComponentBase                                     Superclass;
+  typedef std::shared_ptr< Self >                           Pointer;
+  typedef std::shared_ptr< const Self >                     ConstPointer;
 
-  ItkSmoothingRecursiveGaussianImageFilterComponent(const std::string & name);
+  ItkSmoothingRecursiveGaussianImageFilterComponent( const std::string & name );
   virtual ~ItkSmoothingRecursiveGaussianImageFilterComponent();
 
   typedef TPixel PixelType;
   typedef itk::SmoothingRecursiveGaussianImageFilter< itk::Image< PixelType, Dimensionality >,
-    itk::Image< PixelType, Dimensionality > > TheItkFilterType;
+    itk::Image< PixelType, Dimensionality >> TheItkFilterType;
   typedef itk::Image< PixelType, Dimensionality > ItkImageType;
   typedef typename ItkImageType::Pointer
     ItkImagePointer;
 
-  virtual int Set(typename itkImageInterface< Dimensionality, TPixel >::Pointer) override;
+  virtual int Set( typename itkImageInterface< Dimensionality, TPixel >::Pointer ) override;
 
   virtual ItkImagePointer GetItkImage() override;
 
@@ -74,10 +74,9 @@ protected:
   // return the class name and the template arguments to uniquely identify this component.
   static inline const std::map< std::string, std::string > TemplateProperties()
   {
-    return{ { keys::NameOfClass, "ItkSmoothingRecursiveGaussianImageFilterComponent" }, { keys::PixelType, PodString< TPixel >::Get() }, { keys::Dimensionality, std::to_string(Dimensionality) } };
+    return { { keys::NameOfClass, "ItkSmoothingRecursiveGaussianImageFilterComponent" }, { keys::PixelType, PodString< TPixel >::Get() }, { keys::Dimensionality, std::to_string( Dimensionality ) } };
   }
 };
-
 } //end namespace selx
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "selxItkSmoothingRecursiveGaussianImageFilterComponent.hxx"

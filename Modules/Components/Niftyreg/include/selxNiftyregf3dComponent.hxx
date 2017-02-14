@@ -23,16 +23,16 @@
 namespace selx
 {
 template< class TPixel >
-Niftyregf3dComponent< TPixel >::Niftyregf3dComponent(const std::string & name) : SuperElastixComponent(name)
+Niftyregf3dComponent< TPixel >::Niftyregf3dComponent( const std::string & name ) : SuperElastixComponent( name )
 {
-  m_reg_f3d = new reg_f3d<TPixel>(1,1);
+  m_reg_f3d = new reg_f3d< TPixel >( 1, 1 );
 }
 
 
 template< class TPixel >
 Niftyregf3dComponent< TPixel >::~Niftyregf3dComponent()
 {
-    delete m_reg_f3d;
+  delete m_reg_f3d;
 }
 
 
@@ -47,10 +47,11 @@ Niftyregf3dComponent< TPixel >
   return 0;
 }
 
+
 template< class TPixel >
 int
 Niftyregf3dComponent< TPixel >
-::Set( typename NiftyregFloatingImageInterface< TPixel >::Pointer component)
+::Set( typename NiftyregFloatingImageInterface< TPixel >::Pointer component )
 {
   auto floatingimage = component->GetFloatingNiftiImage();
   // connect the itk pipeline
@@ -59,31 +60,30 @@ Niftyregf3dComponent< TPixel >
 }
 
 
-
 template< class TPixel >
 void
 Niftyregf3dComponent<  TPixel >
 ::RunRegistration()
 {
-  this->m_reg_f3d->UseSSD(0, true);
+  this->m_reg_f3d->UseSSD( 0, true );
   this->m_reg_f3d->UseCubicSplineInterpolation();
   this->m_reg_f3d->Run();
-  
 }
-  
+
+
 template< class TPixel >
 bool
 Niftyregf3dComponent<  TPixel >
 ::MeetsCriterion( const ComponentBase::CriterionType & criterion )
 {
-  bool hasUndefinedCriteria(false);
-  bool meetsCriteria(false);
-  auto status = CheckTemplateProperties(this->TemplateProperties(), criterion);
-  if (status == CriterionStatus::Satisfied)
+  bool hasUndefinedCriteria( false );
+  bool meetsCriteria( false );
+  auto status = CheckTemplateProperties( this->TemplateProperties(), criterion );
+  if( status == CriterionStatus::Satisfied )
   {
     return true;
   }
-  else if (status == CriterionStatus::Failed)
+  else if( status == CriterionStatus::Failed )
   {
     return false;
   } // else: CriterionStatus::Unknown

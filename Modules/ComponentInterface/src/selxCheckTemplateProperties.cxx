@@ -31,7 +31,6 @@
 
 namespace selx
 {
-
 CriterionStatus
 CheckTemplateProperties( const std::map< std::string, std::string > templateProperties,
   const std::pair< std::string, std::vector< std::string >> criterion )
@@ -57,4 +56,3 @@ CheckTemplateProperties( const std::map< std::string, std::string > templateProp
   return CriterionStatus::Unknown;
 }
 }
-

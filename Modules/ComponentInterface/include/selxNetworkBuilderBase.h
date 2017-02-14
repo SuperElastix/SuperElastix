@@ -20,7 +20,6 @@
 #ifndef NetworkBuilderBase_h
 #define NetworkBuilderBase_h
 
-
 #include <list>
 #include <vector>
 #include <iostream>
@@ -43,12 +42,13 @@ namespace selx
 class NetworkBuilderBase
 {
   // The NetworkBuilderBase takes care of the at run time realization of the algorithm network that is described by the Blueprint.
-  // The output, GetRealizedNetwork(), is a (light weight) ComponentContainer with 1 Execute button that is self-contained to run the registration algorithm. 
+  // The output, GetRealizedNetwork(), is a (light weight) ComponentContainer with 1 Execute button that is self-contained to run the registration algorithm.
   // After obtaining the RealizedNetwork(), the NetworkBuilderBase object can be deleted in order to free memory, releasing all internal/intermediate data of the configuration process.
+
 public:
 
-  typedef Blueprint::ComponentNameType ComponentNameType;
-  typedef Blueprint::ComponentNamesType                           ComponentNamesType;
+  typedef Blueprint::ComponentNameType  ComponentNameType;
+  typedef Blueprint::ComponentNamesType ComponentNamesType;
   typedef std::map<
     std::string, SourceInterface::Pointer > SourceInterfaceMapType;
   typedef std::map<
@@ -56,15 +56,15 @@ public:
 
   typedef std::map<
     std::string, RegistrationControllerStartInterface * > RegistrationControllerStartInterfaceMapType;
-  
-  NetworkBuilderBase() {};
 
-  virtual ~NetworkBuilderBase() {};
+  NetworkBuilderBase() {}
+
+  virtual ~NetworkBuilderBase() {}
 
   /** To create a derived NetworkBuilder from a NetworkBuilderBase pointer without knowing the template arguments of the derived*/
-  virtual std::unique_ptr<NetworkBuilderBase> ConstructNewDerivedInstance(void) = 0;
+  virtual std::unique_ptr< NetworkBuilderBase > ConstructNewDerivedInstance( void ) = 0;
 
-  virtual bool AddBlueprint(const std::unique_ptr<Blueprint> &blueprint) = 0;
+  virtual bool AddBlueprint( const std::unique_ptr< Blueprint > & blueprint ) = 0;
 
   /** Read configuration at the blueprints nodes and edges and return true if all components could be uniquely selected*/
   virtual bool Configure() = 0;
@@ -78,14 +78,13 @@ public:
 
   virtual SinkInterfaceMapType GetSinkInterfaces() = 0;
 
-  virtual AnyFileReader::Pointer GetInputFileReader(const ComponentNameType &) = 0;
+  virtual AnyFileReader::Pointer GetInputFileReader( const ComponentNameType & ) = 0;
 
-  virtual AnyFileWriter::Pointer GetOutputFileWriter(const ComponentNameType &) = 0;
+  virtual AnyFileWriter::Pointer GetOutputFileWriter( const ComponentNameType & ) = 0;
 
-  virtual SinkInterface::DataObjectPointer GetInitializedOutput(const NetworkBuilderBase::ComponentNameType &) = 0;
+  virtual SinkInterface::DataObjectPointer GetInitializedOutput( const NetworkBuilderBase::ComponentNameType & ) = 0;
 
 private:
-
 };
 } // end namespace selx
 

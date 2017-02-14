@@ -34,17 +34,16 @@ class MetricComponent1 :
 public:
 
   /** Standard class typedefs. */
-  typedef MetricComponent1                Self;
-  typedef ComponentBase                   Superclass;
+  typedef MetricComponent1              Self;
+  typedef ComponentBase                 Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
 
   typedef Superclass::CriteriaType  CriteriaType;
   typedef Superclass::CriterionType CriterionType;
 
-
-  MetricComponent1(const std::string & name) : SuperElastixComponent(name) {}
-  virtual ~MetricComponent1(){};
+  MetricComponent1( const std::string & name ) : SuperElastixComponent( name ) {}
+  virtual ~MetricComponent1(){}
   virtual int Set( TransformedImageInterface::Pointer ) override;
 
   virtual int GetValue() override { return 0; }

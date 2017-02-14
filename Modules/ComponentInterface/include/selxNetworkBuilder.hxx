@@ -23,33 +23,33 @@
 
 namespace selx
 {
-
 template< typename ComponentList >
-NetworkBuilder<ComponentList>::NetworkBuilder() : m_isConfigured(false), m_Blueprint(new Blueprint)
+NetworkBuilder< ComponentList >::NetworkBuilder() : m_isConfigured( false ), m_Blueprint( new Blueprint )
 {
 }
 
-template< typename ComponentList >
-std::unique_ptr<NetworkBuilderBase>
-NetworkBuilder<ComponentList>::ConstructNewDerivedInstance(void)
-{
-  return std::unique_ptr<NetworkBuilderBase>(new NetworkBuilder<ComponentList>);
-}
 
+template< typename ComponentList >
+std::unique_ptr< NetworkBuilderBase >
+NetworkBuilder< ComponentList >::ConstructNewDerivedInstance( void )
+{
+  return std::unique_ptr< NetworkBuilderBase >( new NetworkBuilder< ComponentList > );
+}
 
 
 template< typename ComponentList >
 bool
-NetworkBuilder<ComponentList>::AddBlueprint(const std::unique_ptr<Blueprint> &blueprint)
+NetworkBuilder< ComponentList >::AddBlueprint( const std::unique_ptr< Blueprint > & blueprint )
 {
-  this->m_Blueprint->ComposeWith(blueprint);
+  this->m_Blueprint->ComposeWith( blueprint );
   //m_Blueprint = std::make_shared< Blueprint >(*blueprint);
   return true;
 }
 
-  template< typename ComponentList >
+
+template< typename ComponentList >
 bool
-NetworkBuilder<ComponentList>::Configure()
+NetworkBuilder< ComponentList >::Configure()
 {
   // Instantiates all the components as described in the blueprint. Returns true
   // if all components could be uniquely selected.
@@ -75,15 +75,14 @@ NetworkBuilder<ComponentList>::Configure()
 
     std::cout << "===== Performing Handshakes between unique and non-unique Components =====" << std::endl;
     this->PropagateConnectionsWithUniqueComponents();
-    
 
     nonUniqueComponentNames = this->GetNonUniqueComponentNames();
     std::cout << nonUniqueComponentNames.size() << " out of " << m_Blueprint->GetComponentNames().size()
-      << " Components could not be uniquely selected" << std::endl << std::endl;
+              << " Components could not be uniquely selected" << std::endl << std::endl;
     this->m_isConfigured = true;
   }
   auto nonUniqueComponentNames = this->GetNonUniqueComponentNames();
-  
+
   if( nonUniqueComponentNames.size() > 0 )
   {
     std::cout << std::endl << "These Nodes need more criteria: " << std::endl;
@@ -104,13 +103,14 @@ NetworkBuilder<ComponentList>::Configure()
     this->m_ComponentSelectorContainer[componentName]->PrintComponents();
   }
   */
-  
+
   return true;
 }
 
+
 template< typename ComponentList >
 NetworkBuilderBase::ComponentNamesType
-NetworkBuilder<ComponentList>::GetNonUniqueComponentNames()
+NetworkBuilder< ComponentList >::GetNonUniqueComponentNames()
 {
   ComponentNamesType                  nonUniqueComponentNames;
   const Blueprint::ComponentNamesType componentNames = m_Blueprint->GetComponentNames();
@@ -130,9 +130,10 @@ NetworkBuilder<ComponentList>::GetNonUniqueComponentNames()
   return nonUniqueComponentNames;
 }
 
+
 template< typename ComponentList >
 void
-NetworkBuilder<ComponentList>::ApplyComponentConfiguration()
+NetworkBuilder< ComponentList >::ApplyComponentConfiguration()
 {
   // Creates a ComponentSelector for each node of the graph and apply
   // the criteria/properties at each node to narrow the Component selection.
@@ -158,9 +159,9 @@ NetworkBuilder<ComponentList>::ApplyComponentConfiguration()
   for( auto const & name : componentNames )
   {
     std::cout << " Blueprint Node: " << name << std::endl;
-    ComponentSelectorPointer    currentComponentSelector = std::make_shared<ComponentSelectorType>(name);
+    ComponentSelectorPointer currentComponentSelector = std::make_shared< ComponentSelectorType >( name );
 
-    Blueprint::ParameterMapType currentProperty          = this->m_Blueprint->GetComponent( name );
+    Blueprint::ParameterMapType currentProperty = this->m_Blueprint->GetComponent( name );
     for( auto const & criterion : currentProperty )
     {
       currentComponentSelector->AddCriterion( criterion );
@@ -195,9 +196,10 @@ NetworkBuilder<ComponentList>::ApplyComponentConfiguration()
   return;
 }
 
+
 template< typename ComponentList >
 void
-NetworkBuilder<ComponentList>::ApplyConnectionConfiguration()
+NetworkBuilder< ComponentList >::ApplyConnectionConfiguration()
 {
   // Read the criteria/properties at each Connection and narrow the selection of
   // components.
@@ -255,9 +257,10 @@ NetworkBuilder<ComponentList>::ApplyConnectionConfiguration()
   return;
 }
 
+
 template< typename ComponentList >
 void
-NetworkBuilder<ComponentList>::PropagateConnectionsWithUniqueComponents()
+NetworkBuilder< ComponentList >::PropagateConnectionsWithUniqueComponents()
 {
   // Narrow down the selection of non-uniquely selected components by finding all
   // connections to a component that is uniquely selected and verifying the matching interface types.
@@ -338,9 +341,10 @@ NetworkBuilder<ComponentList>::PropagateConnectionsWithUniqueComponents()
   }
 }
 
+
 template< typename ComponentList >
 bool
-NetworkBuilder<ComponentList>::ConnectComponents()
+NetworkBuilder< ComponentList >::ConnectComponents()
 {
   bool isAllSuccess = true;
 
@@ -382,9 +386,10 @@ NetworkBuilder<ComponentList>::ConnectComponents()
   return isAllSuccess;
 }
 
+
 template< typename ComponentList >
 NetworkBuilderBase::SourceInterfaceMapType
-NetworkBuilder<ComponentList>::GetSourceInterfaces()
+NetworkBuilder< ComponentList >::GetSourceInterfaces()
 {
   /** Scans all Components to find those with Sourcing capability and store them in SourceComponents list */
 
@@ -396,7 +401,7 @@ NetworkBuilder<ComponentList>::GetSourceInterfaces()
     if( component->CountProvidingInterfaces( { { keys::NameOfInterface, keys::SourceInterface } } ) == 1 )
     {
       SourceInterface::Pointer provingSourceInterface = std::dynamic_pointer_cast< SourceInterface >( component );
-      if(!provingSourceInterface)  // is actually a double-check for sanity: based on criterion cast should be successful
+      if( !provingSourceInterface )  // is actually a double-check for sanity: based on criterion cast should be successful
       {
         throw std::runtime_error( "dynamic_cast<SourceInterface*> fails, but based on component criterion it shouldn't" );
       }
@@ -406,9 +411,10 @@ NetworkBuilder<ComponentList>::GetSourceInterfaces()
   return sourceInterfaceMap;
 }
 
+
 template< typename ComponentList >
 NetworkBuilderBase::SinkInterfaceMapType
-NetworkBuilder<ComponentList>::GetSinkInterfaces()
+NetworkBuilder< ComponentList >::GetSinkInterfaces()
 {
   /** Scans all Components to find those with Sinking capability and store them in SinkComponents list */
 
@@ -418,8 +424,8 @@ NetworkBuilder<ComponentList>::GetSinkInterfaces()
     ComponentBase::Pointer component = componentSelector.second->GetComponent();
     if( component->CountProvidingInterfaces( { { keys::NameOfInterface, keys::SinkInterface } } ) == 1 )
     {
-      SinkInterface::Pointer provingSinkInterface = std::dynamic_pointer_cast< SinkInterface>( component );
-      if(!provingSinkInterface )  // is actually a double-check for sanity: based on criterion cast should be successful
+      SinkInterface::Pointer provingSinkInterface = std::dynamic_pointer_cast< SinkInterface >( component );
+      if( !provingSinkInterface )  // is actually a double-check for sanity: based on criterion cast should be successful
       {
         throw std::runtime_error( "dynamic_cast<SinkInterface*> fails, but based on component criterion it shouldn't" );
       }
@@ -429,9 +435,10 @@ NetworkBuilder<ComponentList>::GetSinkInterfaces()
   return sinkInterfaceMap;
 }
 
+
 template< typename ComponentList >
 AnyFileReader::Pointer
-NetworkBuilder<ComponentList>::GetInputFileReader(const NetworkBuilderBase::ComponentNameType & inputName)
+NetworkBuilder< ComponentList >::GetInputFileReader( const NetworkBuilderBase::ComponentNameType & inputName )
 {
   SourceInterfaceMapType sources = this->GetSourceInterfaces();
   if( sources.count( inputName ) != 1 )
@@ -444,9 +451,10 @@ NetworkBuilder<ComponentList>::GetInputFileReader(const NetworkBuilderBase::Comp
   return sources[ inputName ]->GetInputFileReader();
 }
 
+
 template< typename ComponentList >
 AnyFileWriter::Pointer
-NetworkBuilder<ComponentList>::GetOutputFileWriter(const NetworkBuilderBase::ComponentNameType & outputName)
+NetworkBuilder< ComponentList >::GetOutputFileWriter( const NetworkBuilderBase::ComponentNameType & outputName )
 {
   SinkInterfaceMapType sinks = this->GetSinkInterfaces();
   if( sinks.count( outputName ) != 1 )
@@ -459,9 +467,10 @@ NetworkBuilder<ComponentList>::GetOutputFileWriter(const NetworkBuilderBase::Com
   return sinks[ outputName ]->GetOutputFileWriter();
 }
 
+
 template< typename ComponentList >
 SinkInterface::DataObjectPointer
-NetworkBuilder<ComponentList>::GetInitializedOutput(const NetworkBuilderBase::ComponentNameType & outputName)
+NetworkBuilder< ComponentList >::GetInitializedOutput( const NetworkBuilderBase::ComponentNameType & outputName )
 {
   SinkInterfaceMapType sinks = this->GetSinkInterfaces();
   if( sinks.count( outputName ) != 1 )
@@ -474,46 +483,44 @@ NetworkBuilder<ComponentList>::GetInitializedOutput(const NetworkBuilderBase::Co
   return sinks[ outputName ]->GetInitializedOutput();
 }
 
+
 template< typename ComponentList >
-NetworkContainer 
-NetworkBuilder<ComponentList>::GetRealizedNetwork()
+NetworkContainer
+NetworkBuilder< ComponentList >::GetRealizedNetwork()
 {
   // vector that stores all components
-  std::vector<ComponentBase::Pointer> components;
+  std::vector< ComponentBase::Pointer > components;
 
-  std::map<std::string, itk::DataObject::Pointer> outputObjectsMap;
+  std::map< std::string, itk::DataObject::Pointer > outputObjectsMap;
 
-  if (this->Configure())
+  if( this->Configure() )
   {
-    for (const auto & componentSelector : this->m_ComponentSelectorContainer)
+    for( const auto & componentSelector : this->m_ComponentSelectorContainer )
     {
       //store all components
       ComponentBase::Pointer component = componentSelector.second->GetComponent();
-      components.push_back(component);
+      components.push_back( component );
 
-      /** Scans all Components to find those with Sinking capability and store the outputs in outputObjectsMap */      
-        if (component->CountProvidingInterfaces({ { keys::NameOfInterface, keys::SinkInterface } }) == 1)
+      /** Scans all Components to find those with Sinking capability and store the outputs in outputObjectsMap */
+      if( component->CountProvidingInterfaces( { { keys::NameOfInterface, keys::SinkInterface } } ) == 1 )
+      {
+        SinkInterface::Pointer provingSinkInterface = std::dynamic_pointer_cast< SinkInterface >( component );
+        if( !provingSinkInterface )   // is actually a double-check for sanity: based on criterion cast should be successful
         {
-          SinkInterface::Pointer provingSinkInterface = std::dynamic_pointer_cast<SinkInterface>(component);
-          if (!provingSinkInterface)  // is actually a double-check for sanity: based on criterion cast should be successful
-          {
-            throw std::runtime_error("dynamic_cast<SinkInterface*> fails, but based on component criterion it shouldn't");
-          }
-          outputObjectsMap[componentSelector.first] = provingSinkInterface->GetMiniPipelineOutput();
+          throw std::runtime_error( "dynamic_cast<SinkInterface*> fails, but based on component criterion it shouldn't" );
         }
+        outputObjectsMap[ componentSelector.first ] = provingSinkInterface->GetMiniPipelineOutput();
       }
+    }
 
-    return NetworkContainer(components, outputObjectsMap );
+    return NetworkContainer( components, outputObjectsMap );
   }
   else
   {
     std::stringstream msg;
     msg << "Network is not realized yet";
-    throw std::runtime_error(msg.str());
-    return NetworkContainer(components, outputObjectsMap);
+    throw std::runtime_error( msg.str() );
+    return NetworkContainer( components, outputObjectsMap );
   }
-
 }
-
-
 } // end namespace selx

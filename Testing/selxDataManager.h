@@ -28,7 +28,7 @@ class DataManager : public itk::LightObject
 {
 public:
 
-  typedef DataManager                       Self;
+  typedef DataManager                     Self;
   typedef itk::SmartPointer< Self >       Pointer;
   typedef itk::SmartPointer< const Self > ConstPointer;
   itkNewMacro( Self );
@@ -41,6 +41,7 @@ public:
     this->m_BaselineDirectory      = SUPERELASTIX_BASELINE_DATA_DIR;
     this->m_ConfigurationDirectory = SUPERELASTIX_CONFIGURATION_DATA_DIR;
   }
+
 
   std::string GetInputDirectory( void ) const { return this->m_InputDirectory; }
   std::string GetOutputDirectory( void ) const { return this->m_OutputDirectory; }

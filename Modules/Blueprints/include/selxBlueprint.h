@@ -27,11 +27,10 @@
 
 namespace selx
 {
-
 class Blueprint
 {
 public:
-  
+
   typedef std::string                                      ParameterKeyType;
   typedef std::vector< std::string >                       ParameterValueType;
   typedef std::map< ParameterKeyType, ParameterValueType > ParameterMapType;
@@ -39,18 +38,18 @@ public:
   typedef std::vector< ComponentNameType >                 ComponentNamesType;
 
   Blueprint( void );
-  Blueprint(const Blueprint& other);                   // copyable
-  Blueprint& operator=(const Blueprint& other);        //
+  Blueprint( const Blueprint & other );                   // copyable
+  Blueprint & operator=( const Blueprint & other );       //
 
   //Blueprint(Blueprint&&);
   ~Blueprint( void );
-  
+
   bool SetComponent( ComponentNameType, ParameterMapType parameterMap );
 
   ParameterMapType GetComponent( ComponentNameType componentName ) const;
 
   bool DeleteComponent( ComponentNameType componentName );
-  
+
   bool ComponentExists( ComponentNameType componentName ) const;
 
   // Returns a vector of the all Component names in the graph.
@@ -67,21 +66,20 @@ public:
   //std::unique_ptr<Blueprint> Clone(Blueprint const &other );
 
   // "functional" composition of blueprints is done by adding settings of other to this blueprint. Redefining/overwriting properties is not allowed and returns false.
-  bool ComposeWith(std::unique_ptr<Blueprint> const &other);
+  bool ComposeWith( std::unique_ptr< Blueprint > const & other );
 
   // Returns a vector of the Component names at the incoming direction
   ComponentNamesType GetInputNames( const ComponentNameType name ) const;
-  
+
   // Returns a vector of the Component names at the outgoing direction
   ComponentNamesType GetOutputNames( const ComponentNameType name ) const;
 
   void Write( const std::string filename );
 
 private:
-  
+
   struct BlueprintImpl;
   std::unique_ptr< BlueprintImpl > m_Pimple;
-
 };
 }
 

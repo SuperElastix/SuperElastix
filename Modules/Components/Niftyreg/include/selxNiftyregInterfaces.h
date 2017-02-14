@@ -28,14 +28,15 @@
 
 #include "selxInterfaceTraits.h"
 
-namespace selx 
+namespace selx
 {
 template< class TPixel >
 class NiftyregReferenceImageInterface
 {
 public:
-  using Type = NiftyregReferenceImageInterface<TPixel>;
-  using Pointer = std::shared_ptr<Type>;
+
+  using Type                                     = NiftyregReferenceImageInterface< TPixel >;
+  using Pointer                                  = std::shared_ptr< Type >;
   virtual nifti_image * GetReferenceNiftiImage() = 0;
 };
 
@@ -43,11 +44,11 @@ template< class TPixel >
 class NiftyregFloatingImageInterface
 {
 public:
-  using Type = NiftyregFloatingImageInterface<TPixel>;
-  using Pointer = std::shared_ptr<Type>;
+
+  using Type                                    = NiftyregFloatingImageInterface< TPixel >;
+  using Pointer                                 = std::shared_ptr< Type >;
   virtual nifti_image * GetFloatingNiftiImage() = 0;
 };
-
 
 template< class TPixel >
 struct Properties< NiftyregReferenceImageInterface< TPixel >>
@@ -66,7 +67,6 @@ struct Properties< NiftyregFloatingImageInterface< TPixel >>
     return { { keys::NameOfInterface, "NiftyregFloatingImageInterface" }, { keys::PixelType, PodString< TPixel >::Get() }  };
   }
 };
-
 }
 
 #endif // #define selxNiftyregInterfaces_h

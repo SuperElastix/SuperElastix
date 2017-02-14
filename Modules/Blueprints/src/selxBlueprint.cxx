@@ -20,29 +20,31 @@
 #include "selxBlueprint.h"
 #include "selxBlueprintImpl.h"
 
-namespace selx {
-
-  
+namespace selx
+{
 Blueprint
-::Blueprint( void ) : m_Pimple( new Blueprint::BlueprintImpl ) {}; 
+::Blueprint( void ) : m_Pimple( new Blueprint::BlueprintImpl ) {}
 
-Blueprint::Blueprint(const Blueprint& other)
-  : m_Pimple(new BlueprintImpl(*other.m_Pimple))
+Blueprint::Blueprint( const Blueprint & other )
+  : m_Pimple( new BlueprintImpl( *other.m_Pimple ) )
 {}
 
-Blueprint& Blueprint::operator=(const Blueprint& other) {
-  if (this != &other) {
-    m_Pimple.reset(new BlueprintImpl(*other.m_Pimple));
+Blueprint &
+Blueprint::operator=( const Blueprint & other )
+{
+  if( this != &other )
+  {
+    m_Pimple.reset( new BlueprintImpl( *other.m_Pimple ) );
   }
   return *this;
 }
+
 
 //Blueprint
 //::Blueprint(Blueprint&&) = default;
 
 Blueprint
 ::~Blueprint( void ) = default;
-
 
 bool
 Blueprint
@@ -114,18 +116,19 @@ Blueprint
   return this->m_Pimple->ConnectionExists( upstream, downstream );
 }
 
+
 //std::unique_ptr<Blueprint>
 //Blueprint
 //::Clone(Blueprint const &other)
 //{
- // return std::make_unique<Blueprint>(other);
+// return std::make_unique<Blueprint>(other);
 //}
 
 bool
 Blueprint
-::ComposeWith(std::unique_ptr<Blueprint> const &other )
+::ComposeWith( std::unique_ptr< Blueprint > const & other )
 {
-  return this->m_Pimple->ComposeWith(other);
+  return this->m_Pimple->ComposeWith( other );
 }
 
 
@@ -151,5 +154,4 @@ Blueprint
 {
   this->m_Pimple->Write( filename );
 }
-
 } // namespace selx

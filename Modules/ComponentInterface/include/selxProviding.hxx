@@ -1,4 +1,4 @@
- /*=========================================================================
+/*=========================================================================
  *
  *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
@@ -22,13 +22,11 @@
 
 namespace selx
 {
-
 template< typename FirstInterface, typename ... RestInterfaces >
 unsigned int
 Providing< FirstInterface, RestInterfaces ... >::CountMeetsCriteria( const ComponentBase::InterfaceCriteriaType interfaceCriteria )
 {
   return Count< FirstInterface, RestInterfaces ... >::MeetsCriteria( interfaceCriteria );
 }
-
 } //end namespace selx
 #endif // Providing_hxx

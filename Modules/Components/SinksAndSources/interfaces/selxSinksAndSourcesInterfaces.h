@@ -24,8 +24,7 @@ namespace selx
 {
 // Define the providing interfaces abstractly
 
-  //TODO: remove this file. These interfaces moved to Core, since they are too fundamental to our design
-
+//TODO: remove this file. These interfaces moved to Core, since they are too fundamental to our design
 } // end namespace selx
 
 #endif // #define selxSinksAndSourcesInterfaces_h

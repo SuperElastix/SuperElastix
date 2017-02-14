@@ -43,20 +43,20 @@ class RegistrationControllerComponent :
 public:
 
   /** Standard ITK typedefs. */
-  typedef RegistrationControllerComponent          Self;
-  typedef ComponentBase                       Superclass;
-  typedef std::shared_ptr< Self >           Pointer;
-  typedef std::shared_ptr< const Self >     ConstPointer;
+  typedef RegistrationControllerComponent Self;
+  typedef ComponentBase                   Superclass;
+  typedef std::shared_ptr< Self >         Pointer;
+  typedef std::shared_ptr< const Self >   ConstPointer;
 
-  RegistrationControllerComponent(const std::string & name);
+  RegistrationControllerComponent( const std::string & name );
   virtual ~RegistrationControllerComponent();
 
   // Accepting Interfaces:
-  virtual int Set(RunRegistrationInterface::Pointer ) override;
+  virtual int Set( RunRegistrationInterface::Pointer ) override;
 
-  virtual int Set(ReconnectTransformInterface::Pointer) override;
+  virtual int Set( ReconnectTransformInterface::Pointer ) override;
 
-  virtual int Set(AfterRegistrationInterface::Pointer) override;
+  virtual int Set( AfterRegistrationInterface::Pointer ) override;
 
   // Providing Interfaces:
   virtual void RegistrationControllerStart( void ) override;
@@ -72,10 +72,11 @@ private:
   std::set< AfterRegistrationInterface::Pointer >  m_AfterRegistrationInterfaces;
 
 protected:
+
   // return the class name and the template arguments to uniquely identify this component.
   static inline const std::map< std::string, std::string > TemplateProperties()
   {
-    return{ { keys::NameOfClass, "RegistrationControllerComponent" } };
+    return { { keys::NameOfClass, "RegistrationControllerComponent" } };
   }
 };
 } //end namespace selx

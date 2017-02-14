@@ -1,6 +1,6 @@
 /*=========================================================================
  *
- *  Copyright Leiden University Medical Center, Erasmus University Medical 
+ *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,7 +29,6 @@
 
 namespace selx
 {
-
 Logger::LoggerImpl
 ::LoggerImpl()
 {
@@ -39,20 +38,23 @@ Logger::LoggerImpl
   boost::log::add_common_attributes();
 }
 
+
 Logger::LoggerImpl
 ::~LoggerImpl()
 {
 }
+
 
 void
 Logger::LoggerImpl
 ::AddConsole( FormatType format )
 {
   boost::log::add_console_log(
-    std::cout, 
+    std::cout,
     boost::log::keywords::format = format
-  ); 
-} 
+    );
+}
+
 
 void
 Logger::LoggerImpl
@@ -61,8 +63,9 @@ Logger::LoggerImpl
   boost::log::add_file_log(
     boost::log::keywords::file_name = fileName,
     boost::log::keywords::format = format
-  );
+    );
 }
+
 
 // void
 // Logger::LoggerImpl
@@ -87,11 +90,12 @@ Logger::LoggerImpl
     strm.flush();
     this->m_Logger.push_record( boost::move( record ) );
   }
-  else 
+  else
   {
     assert( false );
   }
 }
+
 
 void
 Logger::LoggerImpl
@@ -110,7 +114,6 @@ Logger::LoggerImpl
     assert( false );
   }
 }
-
 }
 
 #endif // Logger_cxx

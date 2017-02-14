@@ -39,12 +39,12 @@ class ItkMeanSquaresImageToImageMetricv4Component :
 public:
 
   /** Standard ITK typedefs. */
-  typedef ItkMeanSquaresImageToImageMetricv4Component          Self;
-  typedef ComponentBase                       Superclass;
-  typedef std::shared_ptr< Self >           Pointer;
-  typedef std::shared_ptr< const Self >     ConstPointer;
+  typedef ItkMeanSquaresImageToImageMetricv4Component Self;
+  typedef ComponentBase                               Superclass;
+  typedef std::shared_ptr< Self >                     Pointer;
+  typedef std::shared_ptr< const Self >               ConstPointer;
 
-  ItkMeanSquaresImageToImageMetricv4Component(const std::string & name);
+  ItkMeanSquaresImageToImageMetricv4Component( const std::string & name );
   virtual ~ItkMeanSquaresImageToImageMetricv4Component();
 
   typedef TPixel PixelType;

@@ -36,19 +36,18 @@ class ItkImageSourceFixedComponent :
   Accepting< >,
   Providing< SourceInterface,
   itkImageFixedInterface< Dimensionality, TPixel >,
-  itkImageDomainFixedInterface< Dimensionality > >
+  itkImageDomainFixedInterface< Dimensionality >>
   >
 {
 public:
 
   /** Standard ITK typedefs. */
-  typedef ItkImageSourceFixedComponent          Self;
-  typedef ComponentBase                       Superclass;
-  typedef std::shared_ptr< Self >           Pointer;
-  typedef std::shared_ptr< const Self >     ConstPointer;
+  typedef ItkImageSourceFixedComponent  Self;
+  typedef ComponentBase                 Superclass;
+  typedef std::shared_ptr< Self >       Pointer;
+  typedef std::shared_ptr< const Self > ConstPointer;
 
-
-  ItkImageSourceFixedComponent(const std::string & name);
+  ItkImageSourceFixedComponent( const std::string & name );
   virtual ~ItkImageSourceFixedComponent();
 
   typedef typename itkImageFixedInterface< Dimensionality, TPixel >::ItkImageType     ItkImageType;

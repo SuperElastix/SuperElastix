@@ -39,15 +39,14 @@
 
 namespace selx
 {
-  template<class ComponentList>
-  class NetworkBuilder : public NetworkBuilderBase
+template< class ComponentList >
+class NetworkBuilder : public NetworkBuilderBase
 {
   // The NetworkBuilder takes care of the at run time realization of the algorithm network that is described by the Blueprint.
-  // The output, GetRealizedNetwork(), is a (light weight) ComponentContainer with 1 Execute button that is self-contained to run the registration algorithm. 
+  // The output, GetRealizedNetwork(), is a (light weight) ComponentContainer with 1 Execute button that is self-contained to run the registration algorithm.
   // After obtaining the RealizedNetwork(), the NetworkBuilder object can be deleted in order to free memory, releasing all internal/intermediate data of the configuration process.
+
 public:
-
-
 
   typedef Blueprint::ComponentNameType ComponentNameType;
   typedef std::map<
@@ -59,12 +58,11 @@ public:
     std::string, RegistrationControllerStartInterface::Pointer > RegistrationControllerStartInterfaceMapType;
 
   NetworkBuilder();
-  virtual ~NetworkBuilder() {};
+  virtual ~NetworkBuilder() {}
 
-  
-  virtual std::unique_ptr<NetworkBuilderBase> ConstructNewDerivedInstance(void);
+  virtual std::unique_ptr< NetworkBuilderBase > ConstructNewDerivedInstance( void );
 
-  virtual bool AddBlueprint(const std::unique_ptr<Blueprint> &blueprint);
+  virtual bool AddBlueprint( const std::unique_ptr< Blueprint > & blueprint );
 
   /** Read configuration at the blueprints nodes and edges and return true if all components could be uniquely selected*/
   virtual bool Configure();
@@ -78,11 +76,11 @@ public:
 
   virtual SinkInterfaceMapType GetSinkInterfaces();
 
-  virtual AnyFileReader::Pointer GetInputFileReader(const ComponentNameType &);
+  virtual AnyFileReader::Pointer GetInputFileReader( const ComponentNameType & );
 
-  virtual AnyFileWriter::Pointer GetOutputFileWriter(const ComponentNameType &);
+  virtual AnyFileWriter::Pointer GetOutputFileWriter( const ComponentNameType & );
 
-  virtual SinkInterface::DataObjectPointer GetInitializedOutput(const NetworkBuilderBase::ComponentNameType &);
+  virtual SinkInterface::DataObjectPointer GetInitializedOutput( const NetworkBuilderBase::ComponentNameType & );
 
 protected:
 
@@ -90,11 +88,11 @@ protected:
   typedef ComponentBase::CriterionType      CriterionType;
   typedef ComponentBase::ParameterValueType ParameterValueType;
 
-  typedef ComponentSelector<ComponentList> ComponentSelectorType;
+  typedef ComponentSelector< ComponentList >      ComponentSelectorType;
   typedef typename ComponentSelectorType::Pointer ComponentSelectorPointer;
 
   typedef std::map< ComponentNameType, ComponentSelectorPointer > ComponentSelectorContainerType;
-  typedef typename ComponentSelectorContainerType::iterator                ComponentSelectorIteratorType;
+  typedef typename ComponentSelectorContainerType::iterator       ComponentSelectorIteratorType;
 
   /** Read configuration at the blueprints nodes and try to find instantiated components */
   virtual void ApplyComponentConfiguration();
@@ -119,7 +117,6 @@ protected:
   bool                           m_isConfigured;
 
 private:
-
 };
 } // end namespace selx
 

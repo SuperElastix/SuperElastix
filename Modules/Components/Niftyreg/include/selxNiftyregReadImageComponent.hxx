@@ -23,27 +23,30 @@
 namespace selx
 {
 template< class TPixel >
-NiftyregReadImageComponent< TPixel >::NiftyregReadImageComponent(const std::string & name) : SuperElastixComponent(name)
+NiftyregReadImageComponent< TPixel >::NiftyregReadImageComponent( const std::string & name ) : SuperElastixComponent( name )
 {
 }
+
 
 template< class TPixel >
 NiftyregReadImageComponent< TPixel >::~NiftyregReadImageComponent()
 {
 }
 
+
 template< class TPixel >
 nifti_image *
-NiftyregReadImageComponent<  TPixel >::GetReferenceNiftiImage( )
+NiftyregReadImageComponent<  TPixel >::GetReferenceNiftiImage()
 {
-    return reg_io_ReadImageFile(this->m_ImageFileName.c_str());
+  return reg_io_ReadImageFile( this->m_ImageFileName.c_str() );
 }
+
 
 template< class TPixel >
 nifti_image *
 NiftyregReadImageComponent<  TPixel >::GetFloatingNiftiImage()
 {
-    return reg_io_ReadImageFile(this->m_ImageFileName.c_str());
+  return reg_io_ReadImageFile( this->m_ImageFileName.c_str() );
 }
 
 
@@ -67,12 +70,10 @@ NiftyregReadImageComponent<  TPixel >::MeetsCriterion( const ComponentBase::Crit
     meetsCriteria = true;
     if( criterion.second.size() == 1 )
     {
-        //TODO check if file exists
-        this->m_ImageFileName = criterion.second[ 0 ];
-
+      //TODO check if file exists
+      this->m_ImageFileName = criterion.second[ 0 ];
     }
   }
   return meetsCriteria;
 }
-
-} //end namespace selx 
+} //end namespace selx

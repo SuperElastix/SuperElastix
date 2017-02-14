@@ -58,45 +58,48 @@ namespace itk
  *
  * \ingroup ITKCommon
  */
-  template< typename T >
-  class SharedPointerDataObjectDecorator:public DataObject
-  {
-  public:
-    /** Standard typedefs. */
-    typedef SharedPointerDataObjectDecorator Self;
-    typedef DataObject                     Superclass;
-    typedef SmartPointer< Self >           Pointer;
-    typedef SmartPointer< const Self >     ConstPointer;
+template< typename T >
+class SharedPointerDataObjectDecorator : public DataObject
+{
+public:
 
-    /** Typedef for the component type (object being decorated) */
-    typedef T                  ComponentType;
-    typedef std::shared_ptr< T > ComponentPointer;
+  /** Standard typedefs. */
+  typedef SharedPointerDataObjectDecorator Self;
+  typedef DataObject                       Superclass;
+  typedef SmartPointer< Self >             Pointer;
+  typedef SmartPointer< const Self >       ConstPointer;
 
-    /** Method for creation through the object factory. */
-    itkNewMacro(Self);
+  /** Typedef for the component type (object being decorated) */
+  typedef T                    ComponentType;
+  typedef std::shared_ptr< T > ComponentPointer;
 
-    /** Run-time type information (and related methods). */
-    itkTypeMacro(SharedPointerDataObjectDecorator, DataObject);
+  /** Method for creation through the object factory. */
+  itkNewMacro( Self );
 
-    /** Set the contained object */
-    virtual void Set(std::shared_ptr< T > val);
+  /** Run-time type information (and related methods). */
+  itkTypeMacro( SharedPointerDataObjectDecorator, DataObject );
 
-    /** Get the contained object */
-    virtual std::shared_ptr< T > Get() { return m_Component; }
-    virtual const std::shared_ptr< T > Get() const { return m_Component; }
+  /** Set the contained object */
+  virtual void Set( std::shared_ptr< T > val );
 
-  protected:
-    SharedPointerDataObjectDecorator();
-    ~SharedPointerDataObjectDecorator();
-    virtual void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
+  /** Get the contained object */
+  virtual std::shared_ptr< T > Get() { return m_Component; }
+  virtual const std::shared_ptr< T > Get() const { return m_Component; }
 
-  protected:
+protected:
 
-  private:
-    // ITK_DISALLOW_COPY_AND_ASSIGN(SharedPointerDataObjectDecorator);
+  SharedPointerDataObjectDecorator();
+  ~SharedPointerDataObjectDecorator();
+  virtual void PrintSelf( std::ostream & os, Indent indent ) const ITK_OVERRIDE;
 
-    ComponentPointer m_Component;
-  };
+protected:
+
+private:
+
+  // ITK_DISALLOW_COPY_AND_ASSIGN(SharedPointerDataObjectDecorator);
+
+  ComponentPointer m_Component;
+};
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION

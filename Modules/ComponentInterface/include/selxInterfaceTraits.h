@@ -58,7 +58,7 @@ struct Properties< SourceInterface >
 {
   static const std::map< std::string, std::string > Get()
   {
-    return{ { keys::NameOfInterface, "SourceInterface" } };
+    return { { keys::NameOfInterface, "SourceInterface" } };
   }
 };
 
@@ -67,7 +67,7 @@ struct Properties< SinkInterface >
 {
   static const std::map< std::string, std::string > Get()
   {
-    return{ { keys::NameOfInterface, "SinkInterface" } };
+    return { { keys::NameOfInterface, "SinkInterface" } };
   }
 };
 

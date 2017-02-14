@@ -29,15 +29,15 @@
 
 #include "selxBlueprint.h"
 
-namespace selx {
-  
-struct Blueprint::BlueprintImpl {
-
+namespace selx
+{
+struct Blueprint::BlueprintImpl
+{
   // Component parameter map that sits on a node in the graph
   // and holds component configuration settings
   struct ComponentPropertyType
   {
-    ComponentPropertyType(ComponentNameType name = "", ParameterMapType parameterMap = {}) : name(name), parameterMap(parameterMap) {}
+    ComponentPropertyType( ComponentNameType name = "", ParameterMapType parameterMap = {} ) : name( name ), parameterMap( parameterMap ) {}
     ComponentNameType name;
     ParameterMapType  parameterMap;
   };
@@ -46,20 +46,20 @@ struct Blueprint::BlueprintImpl {
   // and holds component connection configuration settings
   struct ConnectionPropertyType
   {
-    ConnectionPropertyType(ParameterMapType parameterMap = {}) :  parameterMap(parameterMap) {}
+    ConnectionPropertyType( ParameterMapType parameterMap = {} ) :  parameterMap( parameterMap ) {}
     ParameterMapType parameterMap;
   };
 
-  typedef boost::labeled_graph< 
+  typedef boost::labeled_graph<
     boost::adjacency_list<
-      boost::vecS,
-      boost::vecS,
-      boost::bidirectionalS,
-      ComponentPropertyType,
-      ConnectionPropertyType
+    boost::vecS,
+    boost::vecS,
+    boost::bidirectionalS,
+    ComponentPropertyType,
+    ConnectionPropertyType
     >,
     ComponentNameType > GraphType;
-    
+
   typedef boost::graph_traits< GraphType >::vertex_descriptor       ComponentIndexType;
   typedef boost::graph_traits< GraphType >::vertex_iterator         ComponentIteratorType;
   typedef std::pair< ComponentIteratorType, ComponentIteratorType > ComponentIteratorPairType;
@@ -79,7 +79,7 @@ struct Blueprint::BlueprintImpl {
   ParameterMapType GetComponent( ComponentNameType componentName ) const;
 
   bool DeleteComponent( ComponentNameType componentName );
-  
+
   bool ComponentExists( ComponentNameType componentName ) const;
 
   // Returns a vector of the all Component names in the graph.
@@ -93,22 +93,20 @@ struct Blueprint::BlueprintImpl {
 
   bool ConnectionExists( ComponentNameType upstream, ComponentNameType downstream ) const;
 
-  bool ComposeWith(std::unique_ptr<Blueprint> const &other);
+  bool ComposeWith( std::unique_ptr< Blueprint > const & other );
 
   // Returns a vector of the Component names at the incoming direction
   ComponentNamesType GetInputNames( const ComponentNameType name ) const;
-  
+
   // Returns a vector of the Component names at the outgoing direction
   ComponentNamesType GetOutputNames( const ComponentNameType name ) const;
 
   void Write( const std::string filename );
-  
+
   ConnectionIndexType GetConnectionIndex( ComponentNameType upsteam, ComponentNameType downstream ) const;
 
   GraphType m_Graph;
-  
 };
-
 } // namespace selx
 
 #endif // #ifndef BlueprintImpl_h

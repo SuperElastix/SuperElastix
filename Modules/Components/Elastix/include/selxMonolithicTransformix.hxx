@@ -24,7 +24,7 @@
 namespace selx
 {
 template< int Dimensionality, class TPixel >
-MonolithicTransformixComponent< Dimensionality, TPixel >::MonolithicTransformixComponent(const std::string & name) : SuperElastixComponent(name)
+MonolithicTransformixComponent< Dimensionality, TPixel >::MonolithicTransformixComponent( const std::string & name ) : SuperElastixComponent( name )
 {
   m_transformixFilter = TransformixFilterType::New();
 

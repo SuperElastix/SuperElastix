@@ -23,7 +23,7 @@
 namespace selx
 {
 template< bool dummy >
-RegistrationControllerComponent< dummy >::RegistrationControllerComponent(const std::string & name) : SuperElastixComponent(name)
+RegistrationControllerComponent< dummy >::RegistrationControllerComponent( const std::string & name ) : SuperElastixComponent( name )
 {
 }
 
@@ -45,7 +45,7 @@ RegistrationControllerComponent< dummy >::Set( RunRegistrationInterface::Pointer
 
 template< bool dummy >
 int
-RegistrationControllerComponent< dummy >::Set(ReconnectTransformInterface::Pointer other)
+RegistrationControllerComponent< dummy >::Set( ReconnectTransformInterface::Pointer other )
 {
   this->m_ReconnectTransformInterfaces.insert( other );
   return 0;
@@ -54,7 +54,7 @@ RegistrationControllerComponent< dummy >::Set(ReconnectTransformInterface::Point
 
 template< bool dummy >
 int
-RegistrationControllerComponent< dummy >::Set(AfterRegistrationInterface::Pointer other)
+RegistrationControllerComponent< dummy >::Set( AfterRegistrationInterface::Pointer other )
 {
   this->m_AfterRegistrationInterfaces.insert( other );
   return 0;
@@ -84,14 +84,14 @@ template< bool dummy >
 bool
 RegistrationControllerComponent< dummy >::MeetsCriterion( const ComponentBase::CriterionType & criterion )
 {
-  bool hasUndefinedCriteria(false);
-  bool meetsCriteria(false);
-  auto status = CheckTemplateProperties(this->TemplateProperties(), criterion);
-  if (status == CriterionStatus::Satisfied)
+  bool hasUndefinedCriteria( false );
+  bool meetsCriteria( false );
+  auto status = CheckTemplateProperties( this->TemplateProperties(), criterion );
+  if( status == CriterionStatus::Satisfied )
   {
     return true;
   }
-  else if (status == CriterionStatus::Failed)
+  else if( status == CriterionStatus::Failed )
   {
     return false;
   } // else: CriterionStatus::Unknown

@@ -28,38 +28,38 @@
 #include "_reg_ReadWriteImage.h"
 #include "_reg_ReadWriteMatrix.h"
 
-         
 namespace selx
 {
 template< class TPixel >
 class NiftyregReadImageComponent :
   public SuperElastixComponent<
-  Accepting<  > ,
-  Providing< NiftyregReferenceImageInterface< TPixel > , NiftyregFloatingImageInterface< TPixel > >
+  Accepting<  >,
+  Providing< NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >>
   >
 {
 public:
 
   /** Standard ITK typedefs. */
-  typedef NiftyregReadImageComponent<TPixel>          Self;
-  typedef ComponentBase                       Superclass;
-  typedef std::shared_ptr< Self >           Pointer;
-  typedef std::shared_ptr< const Self >     ConstPointer;
+  typedef NiftyregReadImageComponent< TPixel > Self;
+  typedef ComponentBase                        Superclass;
+  typedef std::shared_ptr< Self >              Pointer;
+  typedef std::shared_ptr< const Self >        ConstPointer;
 
-  NiftyregReadImageComponent(const std::string & name);
+  NiftyregReadImageComponent( const std::string & name );
   virtual ~NiftyregReadImageComponent();
 
   virtual nifti_image * GetFloatingNiftiImage() override;
+
   virtual nifti_image * GetReferenceNiftiImage() override;
-  
+
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
 
   static const char * GetDescription() { return "NiftyregReadImage Component"; }
 
 private:
-    std::string m_ImageFileName;
-    nifti_image *m_referenceImage;
 
+  std::string   m_ImageFileName;
+  nifti_image * m_referenceImage;
 
 protected:
 
@@ -74,4 +74,3 @@ protected:
 #include "selxNiftyregReadImageComponent.hxx"
 #endif
 #endif // #define selxNiftyregReadImageComponent_h
-

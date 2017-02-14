@@ -23,56 +23,56 @@
 
 namespace selx
 {
-
-
-  template< >
-  struct ContructComponentsFromTypeList< TypeList< > >
-  {
-    static std::list<ComponentBase::Pointer> fill(std::list<ComponentBase::Pointer> &components, const std::string &name)
-    {
-      return components;
-    }
-  };
-
-  template< typename ComponentType, typename ... Rest >
-  struct ContructComponentsFromTypeList< TypeList< ComponentType, Rest ... > >
-  {
-    static std::list<ComponentBase::Pointer> fill(std::list<ComponentBase::Pointer> &components, const std::string &name)
-    {
-      components.push_back(std::make_shared<ComponentType>(name));
-      return ContructComponentsFromTypeList<TypeList< Rest ... >>::fill(components, name);
-    }
-  };
-
-template <class ComponentList>
-  ComponentSelector<ComponentList>::ComponentSelector(const std::string & name)
+template< >
+struct ContructComponentsFromTypeList< TypeList< >>
 {
-  m_PossibleComponents = std::list<ComponentBase::Pointer>();
-  m_PossibleComponents = ContructComponentsFromTypeList<ComponentList>::fill(m_PossibleComponents, name);
+  static std::list< ComponentBase::Pointer > fill( std::list< ComponentBase::Pointer > & components, const std::string & name )
+  {
+    return components;
+  }
+};
 
+template< typename ComponentType, typename ... Rest >
+struct ContructComponentsFromTypeList< TypeList< ComponentType, Rest ... >>
+{
+  static std::list< ComponentBase::Pointer > fill( std::list< ComponentBase::Pointer > & components, const std::string & name )
+  {
+    components.push_back( std::make_shared< ComponentType >( name ) );
+    return ContructComponentsFromTypeList< TypeList< Rest ... >>::fill( components, name );
+  }
+};
+
+template< class ComponentList >
+ComponentSelector< ComponentList >::ComponentSelector( const std::string & name )
+{
+  m_PossibleComponents = std::list< ComponentBase::Pointer >();
+  m_PossibleComponents = ContructComponentsFromTypeList< ComponentList >::fill( m_PossibleComponents, name );
 }
 
-template <class ComponentList>
+
+template< class ComponentList >
 void
-ComponentSelector<ComponentList>::AddCriterion(const CriterionType & criterion)
+ComponentSelector< ComponentList >::AddCriterion( const CriterionType & criterion )
 {
   this->m_PossibleComponents.remove_if([ & ]( ComponentBasePointer component ){
       return !component->MeetsCriterion( criterion );
     } );
 }
 
-template <class ComponentList>
+
+template< class ComponentList >
 void
-ComponentSelector<ComponentList>::AddAcceptingInterfaceCriteria(const InterfaceCriteriaType & interfaceCriteria)
+ComponentSelector< ComponentList >::AddAcceptingInterfaceCriteria( const InterfaceCriteriaType & interfaceCriteria )
 {
   this->m_PossibleComponents.remove_if([ & ]( ComponentBasePointer component ){
       return 0 == component->CountAcceptingInterfaces( interfaceCriteria );
     } );
 }
 
-template <class ComponentList>
+
+template< class ComponentList >
 void
-ComponentSelector<ComponentList>::AddProvidingInterfaceCriteria(const InterfaceCriteriaType & interfaceCriteria)
+ComponentSelector< ComponentList >::AddProvidingInterfaceCriteria( const InterfaceCriteriaType & interfaceCriteria )
 {
   this->m_PossibleComponents.remove_if([ & ]( ComponentBasePointer component ){
       return 0 == component->CountProvidingInterfaces( interfaceCriteria );
@@ -81,9 +81,9 @@ ComponentSelector<ComponentList>::AddProvidingInterfaceCriteria(const InterfaceC
 
 
 // CompatibleInterfaces
-template <class ComponentList>
+template< class ComponentList >
 unsigned int
-ComponentSelector<ComponentList>::RequireAcceptingInterfaceFrom(ComponentBasePointer other, const InterfaceCriteriaType & interfaceCriteria)
+ComponentSelector< ComponentList >::RequireAcceptingInterfaceFrom( ComponentBasePointer other, const InterfaceCriteriaType & interfaceCriteria )
 {
   this->m_PossibleComponents.remove_if([ & ]( ComponentBasePointer component ){
       auto status = component->CanAcceptConnectionFrom( other, interfaceCriteria );
@@ -92,9 +92,10 @@ ComponentSelector<ComponentList>::RequireAcceptingInterfaceFrom(ComponentBasePoi
   return 0;
 }
 
-template <class ComponentList>
+
+template< class ComponentList >
 unsigned int
-ComponentSelector<ComponentList>::RequireProvidingInterfaceTo(ComponentBasePointer other, const InterfaceCriteriaType & interfaceCriteria)
+ComponentSelector< ComponentList >::RequireProvidingInterfaceTo( ComponentBasePointer other, const InterfaceCriteriaType & interfaceCriteria )
 {
   this->m_PossibleComponents.remove_if([ & ]( ComponentBasePointer component ){
       auto status = other->CanAcceptConnectionFrom( component, interfaceCriteria );
@@ -103,9 +104,10 @@ ComponentSelector<ComponentList>::RequireProvidingInterfaceTo(ComponentBasePoint
   return 0;
 }
 
-template <class ComponentList>
-typename ComponentSelector<ComponentList>::ComponentBasePointer
-ComponentSelector<ComponentList>::GetComponent()
+
+template< class ComponentList >
+typename ComponentSelector< ComponentList >::ComponentBasePointer
+ComponentSelector< ComponentList >::GetComponent()
 {
   //TODO check if Modified
   //this->UpdatePossibleComponents();
@@ -120,16 +122,18 @@ ComponentSelector<ComponentList>::GetComponent()
   }
 }
 
-template <class ComponentList>
+
+template< class ComponentList >
 unsigned int
-ComponentSelector<ComponentList>::NumberOfComponents()
+ComponentSelector< ComponentList >::NumberOfComponents()
 {
   return this->m_PossibleComponents.size();
 }
 
-template <class ComponentList>
-void 
-ComponentSelector<ComponentList>::PrintComponents(void)
+
+template< class ComponentList >
+void
+ComponentSelector< ComponentList >::PrintComponents( void )
 {
   /*
   for (auto & component : this->m_PossibleComponents)

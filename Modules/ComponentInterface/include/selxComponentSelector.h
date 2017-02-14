@@ -30,18 +30,18 @@ namespace selx
  * \brief A Component factory that accepts criteria, possibly in multiple passes, to construct and return the right Component
  */
 
-template <class ComponentList>
+template< class ComponentList >
 class ComponentSelector
 {
 public:
 
   /** Standard class typedefs. */
-  typedef ComponentSelector<ComponentList>               Self;
-  typedef std::shared_ptr< Self >       Pointer;
-  typedef std::shared_ptr< const Self > ConstPointer;
+  typedef ComponentSelector< ComponentList > Self;
+  typedef std::shared_ptr< Self >            Pointer;
+  typedef std::shared_ptr< const Self >      ConstPointer;
 
   /** Convenient typedefs. */
-  typedef ComponentBase::Pointer              ComponentBasePointer;
+  typedef ComponentBase::Pointer               ComponentBasePointer;
   typedef ComponentBase::CriteriaType          CriteriaType;
   typedef ComponentBase::CriterionType         CriterionType;
   typedef ComponentBase::InterfaceCriteriaType InterfaceCriteriaType;
@@ -50,7 +50,7 @@ public:
   typedef ComponentListType::size_type      NumberOfComponentsType;
   /** set selection criteria for possibleComponents*/
 
-  ComponentSelector(const std::string & name);
+  ComponentSelector( const std::string & name );
 
   /** Narrow selection criteria*/
   void AddCriterion( const CriterionType & criterion );
@@ -68,9 +68,10 @@ public:
   /** Return Component or Nullptr*/
   ComponentBasePointer GetComponent( void );
 
-  void PrintComponents(void);
+  void PrintComponents( void );
 
 protected:
+
   ComponentListType m_PossibleComponents;
 
 private:
@@ -81,8 +82,6 @@ private:
 
 template< typename >
 struct ContructComponentsFromTypeList;
-
-
 } // end namespace selx
 
 #ifndef ITK_MANUAL_INSTANTIATION

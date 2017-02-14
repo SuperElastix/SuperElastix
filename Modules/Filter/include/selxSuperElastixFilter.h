@@ -36,7 +36,7 @@
 namespace selx
 {
 class NetworkBuilderBase; // forward declaration, hiding implementation details and speeding up compilation time (PIMPL idiom)
-  
+
 class SuperElastixFilter : public itk::ProcessObject
 {
 public:
@@ -60,16 +60,16 @@ public:
   typedef AnyFileWriter AnyFileWriterType;
 
   typedef itk::UniquePointerDataObjectDecorator< Blueprint > BlueprintType;
-  typedef BlueprintType::Pointer                                      BlueprintPointer;
-  typedef BlueprintType::ConstPointer                                 BlueprintConstPointer;
+  typedef BlueprintType::Pointer                             BlueprintPointer;
+  typedef BlueprintType::ConstPointer                        BlueprintConstPointer;
 
   // Setting a Blueprint creates a pipeline such that when SuperElastixFilter is updated it checks if the blueprint has been modified and if so, SuperElastixFilter resets its internals and start building the blueprint from scratch
-  itkSetObjectMacro(Blueprint, BlueprintType);
+  itkSetObjectMacro( Blueprint, BlueprintType );
 
   // Adding a Blueprint composes SuperElastixFilter' internal blueprint (accessible by Set/Get Blueprint) with the otherBlueprint.
   // void AddBlueprint(BlueprintPointer otherBlueprint);
 
-  bool ParseBlueprint(void);
+  bool ParseBlueprint( void );
 
   AnyFileReaderType::Pointer GetInputFileReader( const DataObjectIdentifierType & );
 
@@ -83,31 +83,33 @@ public:
 
   /** GetOutput tries dynamic cast to required output type */
   template< typename ReturnType >
-  ReturnType * GetOutput( const DataObjectIdentifierType & outputName)
+  ReturnType * GetOutput( const DataObjectIdentifierType & outputName )
   {
-      OutputDataType * output = Superclass::GetOutput( outputName );
-  if( output != nullptr ) // if an output already exists, return it
-  {
-    ReturnType * returnOutput = dynamic_cast< ReturnType * >( output );
-    if( returnOutput != nullptr ) // if it is of the same type as requested before
+    OutputDataType * output = Superclass::GetOutput( outputName );
+    if( output != nullptr ) // if an output already exists, return it
     {
-      return returnOutput;
+      ReturnType * returnOutput = dynamic_cast< ReturnType * >( output );
+      if( returnOutput != nullptr ) // if it is of the same type as requested before
+      {
+        return returnOutput;
+      }
+      itkExceptionMacro( << "Output " "" << outputName << "" " was requested before, but the ReturnTypes do not match" )
     }
-    itkExceptionMacro( << "Output " "" << outputName << "" " was requested before, but the ReturnTypes do not match" )
+    // Purposely not checking the outputName, but just create the requested&named data object in the filter.
+    // When connecting the Sinks the selxFilter names and data types are checked.
+    typename ReturnType::Pointer newOutput = ReturnType::New();
+
+    Superclass::SetOutput( outputName, newOutput );
+
+    this->Modified();
+    return newOutput;
   }
-  // Purposely not checking the outputName, but just create the requested&named data object in the filter.
-  // When connecting the Sinks the selxFilter names and data types are checked.
-  typename ReturnType::Pointer newOutput = ReturnType::New();
 
-  Superclass::SetOutput( outputName, newOutput );
-
-  this->Modified();
-  return newOutput;
-  };
 
   void Update( void ) ITK_OVERRIDE;
 
 protected:
+
   // default constructor for API library use
   SuperElastixFilter( void );
 
@@ -118,16 +120,16 @@ protected:
 
   virtual void GenerateData( void ) ITK_OVERRIDE;
 
-  std::unique_ptr< NetworkBuilderBase >   m_NetworkBuilder;
+  std::unique_ptr< NetworkBuilderBase > m_NetworkBuilder;
 
 private:
 
   //TODO make const correct
-  BlueprintType::Pointer      m_Blueprint;
- 
-  bool                        m_IsConnected;
-  bool                        m_AllUniqueComponents;
-  bool                        m_IsBlueprintParsedOnce;
+  BlueprintType::Pointer m_Blueprint;
+
+  bool m_IsConnected;
+  bool m_AllUniqueComponents;
+  bool m_IsBlueprintParsedOnce;
 };
 } // namespace elx
 

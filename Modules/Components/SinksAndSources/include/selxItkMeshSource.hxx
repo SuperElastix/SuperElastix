@@ -24,7 +24,7 @@ namespace selx
 {
 template< int Dimensionality, class TPixel >
 ItkMeshSourceComponent< Dimensionality, TPixel >
-::ItkMeshSourceComponent(const std::string & name) : SuperElastixComponent(name), m_Mesh(nullptr)
+::ItkMeshSourceComponent( const std::string & name ) : SuperElastixComponent( name ), m_Mesh( nullptr )
 {
 }
 

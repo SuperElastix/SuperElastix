@@ -41,7 +41,7 @@ class MonolithicElastixComponent :
   itkImageMovingInterface< Dimensionality, TPixel >
   >,
   Providing<
-  elastixTransformParameterObjectInterface< itk::Image< TPixel, Dimensionality >, itk::Image< TPixel, Dimensionality > >,
+  elastixTransformParameterObjectInterface< itk::Image< TPixel, Dimensionality >, itk::Image< TPixel, Dimensionality >>,
   itkImageInterface< Dimensionality, TPixel >,
   RunRegistrationInterface
   >
@@ -50,13 +50,12 @@ class MonolithicElastixComponent :
 public:
 
   /** Standard ITK typedefs. */
-  typedef MonolithicElastixComponent          Self;
-  typedef ComponentBase                       Superclass;
-  typedef std::shared_ptr< Self >           Pointer;
-  typedef std::shared_ptr< const Self >     ConstPointer;
+  typedef MonolithicElastixComponent    Self;
+  typedef ComponentBase                 Superclass;
+  typedef std::shared_ptr< Self >       Pointer;
+  typedef std::shared_ptr< const Self > ConstPointer;
 
-
-  MonolithicElastixComponent(const std::string & name);
+  MonolithicElastixComponent( const std::string & name );
   virtual ~MonolithicElastixComponent();
 
   typedef typename ComponentBase::CriterionType CriterionType;
@@ -76,13 +75,13 @@ public:
   typedef elxParameterObjectType::Pointer                           elxParameterObjectPointer;
 
   typedef typename elastixTransformParameterObjectInterface< itk::Image< TPixel, Dimensionality >,
-    itk::Image< TPixel, Dimensionality > >::elastixTransformParameterObject elastixTransformParameterObject;
+    itk::Image< TPixel, Dimensionality >>::elastixTransformParameterObject elastixTransformParameterObject;
 
   // Accepting Interfaces:
   virtual int Set( typename itkImageFixedInterface< Dimensionality, TPixel >::Pointer ) override;
 
   virtual int Set( typename itkImageMovingInterface< Dimensionality, TPixel >::Pointer ) override;
- 
+
   // Providing Interfaces:
   virtual elastixTransformParameterObject * GetTransformParameterObject() override;
 

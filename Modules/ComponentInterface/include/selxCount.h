@@ -1,4 +1,4 @@
- /*=========================================================================
+/*=========================================================================
  *
  *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
@@ -22,7 +22,6 @@
 
 namespace selx
 {
-    
 // helper class for SuperElastixComponent::CountAcceptingInterfaces and SuperElastixComponent::CountProvidingInterfaces to loop over a set of interfaces
 
 template< typename ... Interfaces >

@@ -20,10 +20,10 @@
 #include "selxLogger.h"
 #include "selxLoggerImpl.h"
 
-namespace selx {
-
+namespace selx
+{
 Logger
-::Logger( void ) : m_Pimple( new Logger::LoggerImpl ) {};
+::Logger( void ) : m_Pimple( new Logger::LoggerImpl ) {}
 
 Logger
 ::~Logger( void ) = default;
@@ -35,12 +35,14 @@ Logger
   this->m_Pimple->AddConsole( format );
 }
 
+
 void
 Logger
-:: AddFile( FileNameType fileName, FormatType format )
+::AddFile( FileNameType fileName, FormatType format )
 {
   this->m_Pimple->AddFile( fileName, format );
 }
+
 
 // void
 // Logger
@@ -48,7 +50,7 @@ Logger
 // {
 //   this->m_Pimple->AddFile( fileName, channel, format );
 // }
-               
+
 void
 Logger
 ::Log( SeverityType severity, MessageType message )
@@ -56,11 +58,11 @@ Logger
   this->m_Pimple->Log( severity, message );
 }
 
+
 void
 Logger
 ::Log( ChannelType channel, SeverityType severity, MessageType message )
 {
   this->m_Pimple->Log( channel, severity, message );
 }
-
 }

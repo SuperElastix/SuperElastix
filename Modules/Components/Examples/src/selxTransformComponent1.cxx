@@ -23,7 +23,6 @@
 
 namespace selx
 {
-
 bool
 TransformComponent1::MeetsCriterion( const CriterionType & criterion )
 {
@@ -41,12 +40,12 @@ TransformComponent1::MeetsCriterion( const CriterionType & criterion )
       }
     }
   }
-  if (criterion.first == "ComponentProperty")
+  if( criterion.first == "ComponentProperty" )
   {
     meetsCriteria = true;
-    for (auto const & criterionValue : criterion.second) // auto&& preferred?
+    for( auto const & criterionValue : criterion.second ) // auto&& preferred?
     {
-      if (criterionValue != "SomeProperty")  // e.g. "GradientDescent", "SupportsSparseSamples
+      if( criterionValue != "SomeProperty" )  // e.g. "GradientDescent", "SupportsSparseSamples
       {
         meetsCriteria = false;
         return false;

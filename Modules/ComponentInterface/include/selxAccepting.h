@@ -1,4 +1,4 @@
- /*=========================================================================
+/*=========================================================================
  *
  *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
@@ -31,12 +31,14 @@ class Accepting< >
 public:
 
   static unsigned int CountMeetsCriteria( const ComponentBase::InterfaceCriteriaType ) { return 0; }
-  int ConnectFromImpl(ComponentBase::Pointer other, const ComponentBase::InterfaceCriteriaType interfaceCriteria) { return 0; } //no interface called interfacename ;
-  InterfaceStatus CanAcceptConnectionFrom(ComponentBase::ConstPointer, const ComponentBase::InterfaceCriteriaType interfaceCriteria)
+  int ConnectFromImpl( ComponentBase::Pointer other, const ComponentBase::InterfaceCriteriaType interfaceCriteria ) { return 0; } //no interface called interfacename ;
+  InterfaceStatus CanAcceptConnectionFrom( ComponentBase::ConstPointer, const ComponentBase::InterfaceCriteriaType interfaceCriteria )
   {
     return InterfaceStatus::noaccepter;
   }
-  int ConnectFromImpl(ComponentBase::Pointer) { return 0; }                                                                                   //Empty RestInterfaces does 0 successful connects ;
+
+
+  int ConnectFromImpl( ComponentBase::Pointer ) { return 0; }                                                                                   //Empty RestInterfaces does 0 successful connects ;
 
 protected:
 };
@@ -52,7 +54,7 @@ public:
 
   InterfaceStatus CanAcceptConnectionFrom( ComponentBase::ConstPointer other, const ComponentBase::InterfaceCriteriaType interfaceCriteria );
 
-  int ConnectFromImpl(ComponentBase::Pointer);
+  int ConnectFromImpl( ComponentBase::Pointer );
 
 protected:
 };

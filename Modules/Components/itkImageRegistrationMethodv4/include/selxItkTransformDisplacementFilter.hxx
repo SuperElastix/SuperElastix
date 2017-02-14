@@ -23,7 +23,8 @@
 namespace selx
 {
 template< int Dimensionality, class TPixel, class TInternalComputationValue >
-ItkTransformDisplacementFilterComponent< Dimensionality, TPixel, TInternalComputationValue >::ItkTransformDisplacementFilterComponent(const std::string & name) : SuperElastixComponent(name)
+ItkTransformDisplacementFilterComponent< Dimensionality, TPixel, TInternalComputationValue >::ItkTransformDisplacementFilterComponent(
+  const std::string & name ) : SuperElastixComponent( name )
 {
   m_DisplacementFieldFilter = DisplacementFieldFilterType::New();
   //TODO: instantiating the filter in the constructor might be heavy for the use in component selector factory, since all components of the database are created during the selection process.

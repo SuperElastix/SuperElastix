@@ -23,7 +23,7 @@
 namespace selx
 {
 template< int Dimensionality, class TPixel >
-ItkImageSinkComponent< Dimensionality, TPixel >::ItkImageSinkComponent(const std::string & name) : SuperElastixComponent(name),
+ItkImageSinkComponent< Dimensionality, TPixel >::ItkImageSinkComponent( const std::string & name ) : SuperElastixComponent( name ),
   m_MiniPipelineOutputImage( nullptr ), m_NetworkBuilderOutputImage( nullptr )
 {
 }
@@ -37,7 +37,7 @@ ItkImageSinkComponent< Dimensionality, TPixel >::~ItkImageSinkComponent()
 
 template< int Dimensionality, class TPixel >
 int
-ItkImageSinkComponent< Dimensionality, TPixel >::Set( typename itkImageInterface< Dimensionality, TPixel >::Pointer other)
+ItkImageSinkComponent< Dimensionality, TPixel >::Set( typename itkImageInterface< Dimensionality, TPixel >::Pointer other )
 {
   if( this->m_NetworkBuilderOutputImage == nullptr )
   {

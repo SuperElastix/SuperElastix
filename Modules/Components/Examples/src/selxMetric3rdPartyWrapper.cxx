@@ -22,7 +22,7 @@
 namespace selx
 {
 void
-Metric3rdPartyWrapper::SetMetricValueComponent( MetricValueInterface::Pointer metricValueComponent)
+Metric3rdPartyWrapper::SetMetricValueComponent( MetricValueInterface::Pointer metricValueComponent )
 {
   this->metricval = metricValueComponent;
 }
@@ -36,7 +36,7 @@ Metric3rdPartyWrapper::GetValue()
 
 
 void
-Metric3rdPartyWrapper::SetMetricDerivativeComponent( MetricDerivativeInterface::Pointer metricDerivativeComponent)
+Metric3rdPartyWrapper::SetMetricDerivativeComponent( MetricDerivativeInterface::Pointer metricDerivativeComponent )
 {
   this->metricderiv = metricDerivativeComponent;
 }

@@ -32,20 +32,20 @@ namespace selx
 template< class InternalComputationValueType, int Dimensionality >
 class ItkCompositeTransformComponent :
   public SuperElastixComponent<
-  Accepting<MultiStageTransformInterface< InternalComputationValueType, Dimensionality >, ReconnectTransformInterface >,
-  Providing<itkTransformInterface<InternalComputationValueType, Dimensionality>,
-  RegistrationControllerStartInterface>
+  Accepting< MultiStageTransformInterface< InternalComputationValueType, Dimensionality >, ReconnectTransformInterface >,
+  Providing< itkTransformInterface< InternalComputationValueType, Dimensionality >,
+  RegistrationControllerStartInterface >
   >
 {
 public:
 
   /** Standard ITK typedefs. */
-  typedef ItkCompositeTransformComponent<InternalComputationValueType, Dimensionality>          Self;
-  typedef ComponentBase                       Superclass;
-  typedef std::shared_ptr< Self >           Pointer;
-  typedef std::shared_ptr< const Self >     ConstPointer;
+  typedef ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality > Self;
+  typedef ComponentBase                                                                  Superclass;
+  typedef std::shared_ptr< Self >                                                        Pointer;
+  typedef std::shared_ptr< const Self >                                                  ConstPointer;
 
-  ItkCompositeTransformComponent(const std::string & name);
+  ItkCompositeTransformComponent( const std::string & name );
   virtual ~ItkCompositeTransformComponent();
 
   /**  Type of the optimizer. */
@@ -53,10 +53,10 @@ public:
 
   typedef typename itk::CompositeTransform< InternalComputationValueType, Dimensionality > CompositeTransformType;
 
-  virtual int Set(typename MultiStageTransformInterface< InternalComputationValueType, Dimensionality >::Pointer) override;
-  
-  virtual int Set(ReconnectTransformInterface::Pointer ) override;
-  
+  virtual int Set( typename MultiStageTransformInterface< InternalComputationValueType, Dimensionality >::Pointer ) override;
+
+  virtual int Set( ReconnectTransformInterface::Pointer ) override;
+
   virtual void RegistrationControllerStart() override;
 
   virtual typename TransformType::Pointer GetItkTransform() override;
@@ -69,10 +69,11 @@ public:
 private:
 
   typename CompositeTransformType::Pointer m_CompositeTransform;
-  typename std::vector<typename MultiStageTransformInterface< InternalComputationValueType, Dimensionality >::Pointer> m_registrationStages;
+  typename std::vector< typename MultiStageTransformInterface< InternalComputationValueType, Dimensionality >::Pointer > m_registrationStages;
 
   std::set< ReconnectTransformInterface::Pointer > m_ReconnectTransformInterfaces;
-  std::vector<std::string> m_ExecutionOrder;
+  std::vector< std::string >                       m_ExecutionOrder;
+
 protected:
 
   // return the class name and the template arguments to uniquely identify this component.

@@ -24,7 +24,8 @@
 namespace selx
 {
 template< class InternalComputationValueType >
-ItkGradientDescentOptimizerv4Component< InternalComputationValueType >::ItkGradientDescentOptimizerv4Component(const std::string & name) : SuperElastixComponent(name)
+ItkGradientDescentOptimizerv4Component< InternalComputationValueType >::ItkGradientDescentOptimizerv4Component( const std::string & name ) :
+  SuperElastixComponent( name )
 {
   m_Optimizer = GradientDescentOptimizerv4Type::New();
   m_Optimizer->SetNumberOfIterations( 100 );
@@ -54,14 +55,14 @@ bool
 ItkGradientDescentOptimizerv4Component< InternalComputationValueType >
 ::MeetsCriterion( const ComponentBase::CriterionType & criterion )
 {
-  bool hasUndefinedCriteria(false);
-  bool meetsCriteria(false);
-  auto status = CheckTemplateProperties(this->TemplateProperties(), criterion);
-  if (status == CriterionStatus::Satisfied)
+  bool hasUndefinedCriteria( false );
+  bool meetsCriteria( false );
+  auto status = CheckTemplateProperties( this->TemplateProperties(), criterion );
+  if( status == CriterionStatus::Satisfied )
   {
     return true;
   }
-  else if (status == CriterionStatus::Failed)
+  else if( status == CriterionStatus::Failed )
   {
     return false;
   } // else: CriterionStatus::Unknown

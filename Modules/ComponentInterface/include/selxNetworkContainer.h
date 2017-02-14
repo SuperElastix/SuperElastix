@@ -29,28 +29,28 @@
 
 namespace selx
 {
-  class NetworkContainer
-  {
-    // a (light weight) ComponentContainer with 1 Execute button. All other data such as graphs and selectors can be deleted.
-  public:
+class NetworkContainer
+{
+  // a (light weight) ComponentContainer with 1 Execute button. All other data such as graphs and selectors can be deleted.
 
-    using ComponentContainerType = std::vector<std::shared_ptr<ComponentBase>>;
-    using OutputObjectsMapType = std::map<std::string, itk::DataObject::Pointer>;
-    
-    NetworkContainer(ComponentContainerType components, OutputObjectsMapType outputObjectsMap);
-    ~NetworkContainer() {}
+public:
 
+  using ComponentContainerType = std::vector< std::shared_ptr< ComponentBase >>;
+  using OutputObjectsMapType   = std::map< std::string, itk::DataObject::Pointer >;
 
+  NetworkContainer( ComponentContainerType components, OutputObjectsMapType outputObjectsMap );
+  ~NetworkContainer() {}
 
-    /** Run the (registration) algorithm */
-    void Execute();
+  /** Run the (registration) algorithm */
+  void Execute();
 
-    /** Get the Sinking output objects */
-    OutputObjectsMapType GetOutputObjectsMap();
+  /** Get the Sinking output objects */
+  OutputObjectsMapType GetOutputObjectsMap();
 
-  private:
-    const ComponentContainerType m_ComponentContainer;
-    const OutputObjectsMapType m_OutputObjectsMap;
-  };
+private:
+
+  const ComponentContainerType m_ComponentContainer;
+  const OutputObjectsMapType   m_OutputObjectsMap;
+};
 } // end namespace selx
 #endif // selxNetworkContainer_h

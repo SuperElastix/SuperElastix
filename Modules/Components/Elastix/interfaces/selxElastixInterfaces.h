@@ -25,13 +25,13 @@
 
 namespace selx
 {
-
 template< typename TFixedImage, typename TMovingImage >
 class elastixTransformParameterObjectInterface
 {
 public:
-  using Type = elastixTransformParameterObjectInterface<TFixedImage, TMovingImage>;
-  using Pointer = std::shared_ptr<Type>;
+
+  using Type    = elastixTransformParameterObjectInterface< TFixedImage, TMovingImage >;
+  using Pointer = std::shared_ptr< Type >;
   typedef typename elastix::ElastixFilter< TFixedImage, TMovingImage >::ParameterObjectType elastixTransformParameterObject;
   virtual elastixTransformParameterObject * GetTransformParameterObject() = 0;
 };
@@ -44,7 +44,6 @@ struct Properties< elastixTransformParameterObjectInterface< F, M >>
     return { { keys::NameOfInterface, "elastixTransformParameterObjectInterface" } }; // TODO map F and M to strings?
   }
 };
-
 } // end namespace selx
 
 #endif // #define selxElastixInterfaces_h

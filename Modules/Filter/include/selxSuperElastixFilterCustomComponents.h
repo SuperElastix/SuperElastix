@@ -29,16 +29,16 @@
 
 namespace selx
 {
-template <typename ComponentList>  
+template< typename ComponentList >
 class SuperElastixFilterCustomComponents : public SuperElastixFilter
 {
 public:
 
   /** Standard ITK typedefs. */
-  typedef SuperElastixFilterCustomComponents              Self;
-  typedef itk::ProcessObject              Superclass;
-  typedef itk::SmartPointer< Self >       Pointer;
-  typedef itk::SmartPointer< const Self > ConstPointer;
+  typedef SuperElastixFilterCustomComponents Self;
+  typedef itk::ProcessObject                 Superclass;
+  typedef itk::SmartPointer< Self >          Pointer;
+  typedef itk::SmartPointer< const Self >    ConstPointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro( Self );
@@ -46,10 +46,10 @@ public:
   /** Run-time type information (and related methods). */
   itkTypeMacro( Self, itk::ProcessObject );
 
-
 protected:
+
   // default constructor
-  SuperElastixFilterCustomComponents(void);
+  SuperElastixFilterCustomComponents( void );
 
 private:
 };

@@ -30,10 +30,8 @@
 #include "selxProviding.h"
 #include "selxCount.h"
 
-
 namespace selx
 {
-
 template< typename AcceptingInterfaces, typename ProvidingInterfaces >
 class SuperElastixComponent : public AcceptingInterfaces, public ProvidingInterfaces, public ComponentBase
 {
@@ -42,19 +40,21 @@ public:
   using AcceptingInterfacesTypeList = AcceptingInterfaces;
   using ProvidingInterfacesTypeList = ProvidingInterfaces;
 
-  SuperElastixComponent(const std::string & name) : ComponentBase(name) {};
+  SuperElastixComponent( const std::string & name ) : ComponentBase( name ) {}
   virtual int AcceptConnectionFrom( ComponentBase::Pointer other, const InterfaceCriteriaType interfaceCriteria );
 
-  virtual int AcceptConnectionFrom( ComponentBase::Pointer);
+  virtual int AcceptConnectionFrom( ComponentBase::Pointer );
 
 protected:
 
-  virtual InterfaceStatus CanAcceptConnectionFrom( ComponentBase::ConstPointer , const InterfaceCriteriaType interfaceCriteria ) override;
+  virtual InterfaceStatus CanAcceptConnectionFrom( ComponentBase::ConstPointer, const InterfaceCriteriaType interfaceCriteria ) override;
 
   virtual unsigned int CountAcceptingInterfaces( const ComponentBase::InterfaceCriteriaType interfaceCriteria ) override
   {
     return AcceptingInterfaces::CountMeetsCriteria( interfaceCriteria );
   }
+
+
   virtual unsigned int CountProvidingInterfaces( const ComponentBase::InterfaceCriteriaType interfaceCriteria ) override
   {
     return ProvidingInterfaces::CountMeetsCriteria( interfaceCriteria );

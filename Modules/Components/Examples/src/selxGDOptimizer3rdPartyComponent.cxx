@@ -21,7 +21,7 @@
 
 namespace selx
 {
-  GDOptimizer3rdPartyComponent::GDOptimizer3rdPartyComponent(const std::string & name) : SuperElastixComponent(name)
+GDOptimizer3rdPartyComponent::GDOptimizer3rdPartyComponent( const std::string & name ) : SuperElastixComponent( name )
 {
   this->theImplementation = new Example3rdParty::GDOptimizer3rdParty();
   this->MetricObject      = new Metric3rdPartyWrapper();
@@ -44,7 +44,7 @@ GDOptimizer3rdPartyComponent::Set( MetricValueInterface::Pointer component )
 
 
 int
-GDOptimizer3rdPartyComponent::Set(MetricDerivativeInterface::Pointer component)
+GDOptimizer3rdPartyComponent::Set( MetricDerivativeInterface::Pointer component )
 {
   this->MetricObject->SetMetricDerivativeComponent( component );
   return 0;
@@ -76,12 +76,12 @@ GDOptimizer3rdPartyComponent
       }
     }
   }
-  else if (criterion.first == "ComponentProperty")
+  else if( criterion.first == "ComponentProperty" )
   {
     meetsCriteria = true;
-    for (auto const & criterionValue : criterion.second) // auto&& preferred?
+    for( auto const & criterionValue : criterion.second ) // auto&& preferred?
     {
-      if (criterionValue != "SomeProperty")  // e.g. "GradientDescent", "SupportsSparseSamples
+      if( criterionValue != "SomeProperty" )  // e.g. "GradientDescent", "SupportsSparseSamples
       {
         meetsCriteria = false;
       }

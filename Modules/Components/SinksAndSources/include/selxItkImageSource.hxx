@@ -24,7 +24,7 @@ namespace selx
 {
 template< int Dimensionality, class TPixel >
 ItkImageSourceComponent< Dimensionality, TPixel >
-::ItkImageSourceComponent(const std::string & name) : SuperElastixComponent(name), m_Image(nullptr)
+::ItkImageSourceComponent( const std::string & name ) : SuperElastixComponent( name ), m_Image( nullptr )
 {
 }
 

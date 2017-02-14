@@ -51,10 +51,10 @@ public:
   /** Standard ITK typedefs. */
   typedef ItkTransformDisplacementFilterComponent Self;
   typedef ComponentBase                           Superclass;
-  typedef std::shared_ptr< Self >               Pointer;
-  typedef std::shared_ptr< const Self >         ConstPointer;
+  typedef std::shared_ptr< Self >                 Pointer;
+  typedef std::shared_ptr< const Self >           ConstPointer;
 
-  ItkTransformDisplacementFilterComponent(const std::string & name);
+  ItkTransformDisplacementFilterComponent( const std::string & name );
   virtual ~ItkTransformDisplacementFilterComponent();
 
   typedef TPixel PixelType;

@@ -23,7 +23,8 @@
 namespace selx
 {
 template< int Dimensionality, class TPixel >
-ItkSmoothingRecursiveGaussianImageFilterComponent< Dimensionality, TPixel >::ItkSmoothingRecursiveGaussianImageFilterComponent(const std::string & name) : SuperElastixComponent(name)
+ItkSmoothingRecursiveGaussianImageFilterComponent< Dimensionality, TPixel >::ItkSmoothingRecursiveGaussianImageFilterComponent(
+  const std::string & name ) : SuperElastixComponent( name )
 {
   m_theItkFilter = TheItkFilterType::New();
 }
@@ -38,7 +39,7 @@ ItkSmoothingRecursiveGaussianImageFilterComponent< Dimensionality, TPixel >::~It
 template< int Dimensionality, class TPixel >
 int
 ItkSmoothingRecursiveGaussianImageFilterComponent< Dimensionality, TPixel >
-::Set(typename itkImageInterface< Dimensionality, TPixel >::Pointer component)
+::Set( typename itkImageInterface< Dimensionality, TPixel >::Pointer component )
 {
   auto image = component->GetItkImage();
   // connect the itk pipeline
@@ -62,14 +63,14 @@ bool
 ItkSmoothingRecursiveGaussianImageFilterComponent< Dimensionality, TPixel >
 ::MeetsCriterion( const ComponentBase::CriterionType & criterion )
 {
-  bool hasUndefinedCriteria(false);
-  bool meetsCriteria(false);
-  auto status = CheckTemplateProperties(this->TemplateProperties(), criterion);
-  if (status == CriterionStatus::Satisfied)
+  bool hasUndefinedCriteria( false );
+  bool meetsCriteria( false );
+  auto status = CheckTemplateProperties( this->TemplateProperties(), criterion );
+  if( status == CriterionStatus::Satisfied )
   {
     return true;
   }
-  else if (status == CriterionStatus::Failed)
+  else if( status == CriterionStatus::Failed )
   {
     return false;
   } // else: CriterionStatus::Unknown

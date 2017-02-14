@@ -20,7 +20,7 @@
 #include "selxSSDMetric3rdPartyComponent.h"
 namespace selx
 {
-  SSDMetric3rdPartyComponent::SSDMetric3rdPartyComponent(const std::string & name) : SuperElastixComponent(name)
+SSDMetric3rdPartyComponent::SSDMetric3rdPartyComponent( const std::string & name ) : SuperElastixComponent( name )
 {
   this->theImplementation = new Example3rdParty::SSDMetric3rdParty();
 }
@@ -63,12 +63,12 @@ SSDMetric3rdPartyComponent
       }
     }
   }
-  else if (criterion.first == "ComponentProperty")
+  else if( criterion.first == "ComponentProperty" )
   {
     meetsCriteria = true;
-    for (auto const & criterionValue : criterion.second) // auto&& preferred?
+    for( auto const & criterionValue : criterion.second ) // auto&& preferred?
     {
-      if (criterionValue != "SomeProperty")  // e.g. "GradientDescent", "SupportsSparseSamples
+      if( criterionValue != "SomeProperty" )  // e.g. "GradientDescent", "SupportsSparseSamples
       {
         meetsCriteria = false;
         return false;

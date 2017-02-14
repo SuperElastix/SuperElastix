@@ -1,4 +1,4 @@
- /*=========================================================================
+/*=========================================================================
  *
  *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
@@ -24,7 +24,6 @@
 
 namespace selx
 {
-
 template< typename FirstInterface, typename ... RestInterfaces >
 unsigned int
 Count< FirstInterface, RestInterfaces ... >::MeetsCriteria( const ComponentBase::InterfaceCriteriaType interfaceCriteria )
@@ -43,6 +42,5 @@ Count< FirstInterface, RestInterfaces ... >::MeetsCriteria( const ComponentBase:
   // if all criteria are met for this Interface we add 1 to the count and continue with the RestInterfaces
   return 1 + Count< RestInterfaces ... >::MeetsCriteria( interfaceCriteria );
 }
-
 } //end namespace selx
 #endif // Count_hxx

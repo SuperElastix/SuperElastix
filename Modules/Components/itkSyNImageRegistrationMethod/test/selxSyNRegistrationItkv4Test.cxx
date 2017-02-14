@@ -61,12 +61,12 @@ class SyNRegistrationItkv4Test : public ::testing::Test
 {
 public:
 
-  typedef std::shared_ptr< Blueprint >                        BlueprintPointer;
-  typedef itk::SharedPointerDataObjectDecorator< Blueprint >  BlueprintITKType;
-  typedef BlueprintITKType::Pointer                           BlueprintITKPointer;
-  typedef Blueprint::ParameterMapType   ParameterMapType;
-  typedef Blueprint::ParameterValueType ParameterValueType;
-  typedef DataManager                   DataManagerType;
+  typedef std::shared_ptr< Blueprint >                       BlueprintPointer;
+  typedef itk::SharedPointerDataObjectDecorator< Blueprint > BlueprintITKType;
+  typedef BlueprintITKType::Pointer                          BlueprintITKPointer;
+  typedef Blueprint::ParameterMapType                        ParameterMapType;
+  typedef Blueprint::ParameterValueType                      ParameterValueType;
+  typedef DataManager                                        DataManagerType;
 
   /** register all example components */
   typedef TypeList< TransformComponent1,
@@ -99,17 +99,17 @@ public:
     ItkTransformDisplacementFilterComponent< 3, double, double >,
     ItkResampleFilterComponent< 2, float, double >,
     ItkResampleFilterComponent< 3, double, double >,
-    RegistrationControllerComponent< > > RegisterComponents;
+    RegistrationControllerComponent< >> RegisterComponents;
 
-  typedef SuperElastixFilter< RegisterComponents >  SuperElastixFilterType;
+  typedef SuperElastixFilter< RegisterComponents > SuperElastixFilterType;
 
-  typedef itk::Image< float, 2 >                    Image2DType;
-  typedef itk::ImageFileReader< Image2DType >       ImageReader2DType;
-  typedef itk::ImageFileWriter< Image2DType >       ImageWriter2DType;
+  typedef itk::Image< float, 2 >              Image2DType;
+  typedef itk::ImageFileReader< Image2DType > ImageReader2DType;
+  typedef itk::ImageFileWriter< Image2DType > ImageWriter2DType;
 
-  typedef itk::Image< double, 3 >                   Image3DType;
-  typedef itk::ImageFileReader< Image3DType >       ImageReader3DType;
-  typedef itk::ImageFileWriter< Image3DType >       ImageWriter3DType;
+  typedef itk::Image< double, 3 >             Image3DType;
+  typedef itk::ImageFileReader< Image3DType > ImageReader3DType;
+  typedef itk::ImageFileWriter< Image3DType > ImageWriter3DType;
 
   typedef itk::Image< itk::Vector< float, 2 >, 2 >        DisplacementImage2DType;
   typedef itk::ImageFileWriter< DisplacementImage2DType > DisplacementImageWriter2DType;
@@ -237,7 +237,6 @@ TEST_F( SyNRegistrationItkv4Test, FullyConfigured3d )
   BlueprintITKPointer superElastixFilterBlueprint = BlueprintITKType::New();
   superElastixFilterBlueprint->Set( blueprint );
   EXPECT_NO_THROW( superElastixFilter->SetBlueprint( superElastixFilterBlueprint ) );
-
 
   //Optional Update call
   //superElastixFilter->Update();

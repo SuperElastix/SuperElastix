@@ -33,40 +33,41 @@
 namespace itk
 {
 /** Constructor */
-  template< typename T >
-  SharedPointerDataObjectDecorator< T >
-  ::SharedPointerDataObjectDecorator():m_Component()
-  {}
+template< typename T >
+SharedPointerDataObjectDecorator< T >
+::SharedPointerDataObjectDecorator() : m_Component()
+{}
 
 /** Destructor */
-  template< typename T >
-  SharedPointerDataObjectDecorator< T >
-  ::~SharedPointerDataObjectDecorator()
-  {}
+template< typename T >
+SharedPointerDataObjectDecorator< T >
+::~SharedPointerDataObjectDecorator()
+{}
 
 /** Set value */
-  template< typename T >
-  void
-  SharedPointerDataObjectDecorator< T >
-  ::Set(std::shared_ptr< T > val)
+template< typename T >
+void
+SharedPointerDataObjectDecorator< T >
+::Set( std::shared_ptr< T > val )
+{
+  if( m_Component != val )
   {
-    if ( m_Component != val )
-    {
-      m_Component = val;
-      this->Modified();
-    }
+    m_Component = val;
+    this->Modified();
   }
+}
+
 
 /** PrintSelf method */
-  template< typename T >
-  void
-  SharedPointerDataObjectDecorator< T >
-  ::PrintSelf(std::ostream & os, Indent indent) const
-  {
-    Superclass::PrintSelf(os, indent);
+template< typename T >
+void
+SharedPointerDataObjectDecorator< T >
+::PrintSelf( std::ostream & os, Indent indent ) const
+{
+  Superclass::PrintSelf( os, indent );
 
-    os << indent << "Component: " << typeid( m_Component ).name() << std::endl;
-  }
+  os << indent << "Component: " << typeid( m_Component ).name() << std::endl;
+}
 } // end namespace itk
 
 #endif

@@ -33,40 +33,41 @@
 namespace itk
 {
 /** Constructor */
-  template< typename T >
-  UniquePointerDataObjectDecorator< T >
-  ::UniquePointerDataObjectDecorator():m_Component()
-  {}
+template< typename T >
+UniquePointerDataObjectDecorator< T >
+::UniquePointerDataObjectDecorator() : m_Component()
+{}
 
 /** Destructor */
-  template< typename T >
-  UniquePointerDataObjectDecorator< T >
-  ::~UniquePointerDataObjectDecorator()
-  {}
+template< typename T >
+UniquePointerDataObjectDecorator< T >
+::~UniquePointerDataObjectDecorator()
+{}
 
 /** Set value */
-  template< typename T >
-  void
-  UniquePointerDataObjectDecorator< T >
-  ::Set(std::unique_ptr< T > & val)
+template< typename T >
+void
+UniquePointerDataObjectDecorator< T >
+::Set( std::unique_ptr< T > & val )
+{
+  if( m_Component != val )
   {
-    if ( m_Component != val )
-    {
-      m_Component = std::move(val);
-      this->Modified();
-    }
+    m_Component = std::move( val );
+    this->Modified();
   }
+}
+
 
 /** PrintSelf method */
-  template< typename T >
-  void
-  UniquePointerDataObjectDecorator< T >
-  ::PrintSelf(std::ostream & os, Indent indent) const
-  {
-    Superclass::PrintSelf(os, indent);
+template< typename T >
+void
+UniquePointerDataObjectDecorator< T >
+::PrintSelf( std::ostream & os, Indent indent ) const
+{
+  Superclass::PrintSelf( os, indent );
 
-    os << indent << "Component: " << typeid( m_Component ).name() << std::endl;
-  }
+  os << indent << "Component: " << typeid( m_Component ).name() << std::endl;
+}
 } // end namespace itk
 
 #endif

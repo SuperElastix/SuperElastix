@@ -32,18 +32,18 @@ template< class InternalComputationValueType, int Dimensionality >
 class ItkAffineTransformComponent :
   public SuperElastixComponent<
   Accepting< >,
-  Providing< itkTransformInterface< InternalComputationValueType, Dimensionality > >
+  Providing< itkTransformInterface< InternalComputationValueType, Dimensionality >>
   >
 {
 public:
 
   /** Standard ITK typedefs. */
-  typedef ItkAffineTransformComponent          Self;
-  typedef ComponentBase                       Superclass;
-  typedef std::shared_ptr< Self >           Pointer;
-  typedef std::shared_ptr< const Self >     ConstPointer;
+  typedef ItkAffineTransformComponent   Self;
+  typedef ComponentBase                 Superclass;
+  typedef std::shared_ptr< Self >       Pointer;
+  typedef std::shared_ptr< const Self > ConstPointer;
 
-  ItkAffineTransformComponent(const std::string & name);
+  ItkAffineTransformComponent( const std::string & name );
   virtual ~ItkAffineTransformComponent();
 
   //typedef double InternalComputationValueType;

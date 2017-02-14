@@ -21,13 +21,17 @@
 
 namespace selx
 {
-  // TODO delete this constructor
-  ComponentBase::ComponentBase() : m_Name("undefined")
-  {
-  }
-  ComponentBase::ComponentBase(const std::string & name) : m_Name(name)
-  {
-  }
-  //const std::map< std::string, std::string > ComponentBase::TemplateProperties()
- // { return{}; }
+// TODO delete this constructor
+ComponentBase::ComponentBase() : m_Name( "undefined" )
+{
+}
+
+
+ComponentBase::ComponentBase( const std::string & name ) : m_Name( name )
+{
+}
+
+
+//const std::map< std::string, std::string > ComponentBase::TemplateProperties()
+// { return{}; }
 } // end namespace selx

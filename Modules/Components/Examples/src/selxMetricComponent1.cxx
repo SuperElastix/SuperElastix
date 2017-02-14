@@ -23,8 +23,6 @@
 
 namespace selx
 {
-
-
 int
 MetricComponent1::Set( TransformedImageInterface::Pointer providingInterface )
 {
@@ -50,12 +48,12 @@ MetricComponent1
       }
     }
   }
-  else if (criterion.first == "ComponentProperty")
+  else if( criterion.first == "ComponentProperty" )
   {
     meetsCriteria = true;
-    for (auto const & criterionValue : criterion.second) // auto&& preferred?
+    for( auto const & criterionValue : criterion.second ) // auto&& preferred?
     {
-      if (criterionValue != "SomeProperty")  // e.g. "GradientDescent", "SupportsSparseSamples
+      if( criterionValue != "SomeProperty" )  // e.g. "GradientDescent", "SupportsSparseSamples
       {
         meetsCriteria = false;
         return false;

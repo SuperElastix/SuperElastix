@@ -1,4 +1,4 @@
- /*=========================================================================
+/*=========================================================================
  *
  *  Copyright Leiden University Medical Center, Erasmus University Medical
  *  Center and contributors
@@ -26,7 +26,7 @@ template< class InterfaceT >
 int
 InterfaceAcceptor< InterfaceT >::Connect( ComponentBase::Pointer providerComponent )
 {
-  std::shared_ptr<InterfaceT> providerInterface = std::dynamic_pointer_cast< InterfaceT >( providerComponent );
+  std::shared_ptr< InterfaceT > providerInterface = std::dynamic_pointer_cast< InterfaceT >( providerComponent );
   if( !providerInterface )
   {
     //TODO log message?
@@ -43,9 +43,8 @@ template< class InterfaceT >
 bool
 InterfaceAcceptor< InterfaceT >::CanAcceptConnectionFrom( ComponentBase::ConstPointer providerComponent )
 {
-  std::shared_ptr<const InterfaceT> providerInterface = std::dynamic_pointer_cast< const InterfaceT >(providerComponent);
+  std::shared_ptr< const InterfaceT > providerInterface = std::dynamic_pointer_cast< const InterfaceT >( providerComponent );
   return bool(providerInterface);
 }
-
 } //end namespace selx
 #endif // InterfaceAcceptor_hxx

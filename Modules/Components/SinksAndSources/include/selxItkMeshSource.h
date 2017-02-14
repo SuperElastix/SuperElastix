@@ -35,18 +35,18 @@ template< int Dimensionality, class TPixel >
 class ItkMeshSourceComponent :
   public SuperElastixComponent<
   Accepting< >,
-  Providing< SourceInterface, itkMeshInterface< Dimensionality, TPixel > >
+  Providing< SourceInterface, itkMeshInterface< Dimensionality, TPixel >>
   >
 {
 public:
 
   /** Standard ITK typedefs. */
-  typedef ItkMeshSourceComponent          Self;
-  typedef ComponentBase                       Superclass;
-  typedef std::shared_ptr< Self >           Pointer;
-  typedef std::shared_ptr< const Self >     ConstPointer;
+  typedef ItkMeshSourceComponent        Self;
+  typedef ComponentBase                 Superclass;
+  typedef std::shared_ptr< Self >       Pointer;
+  typedef std::shared_ptr< const Self > ConstPointer;
 
-  ItkMeshSourceComponent(const std::string & name);
+  ItkMeshSourceComponent( const std::string & name );
   virtual ~ItkMeshSourceComponent();
 
   typedef itk::Mesh< TPixel, Dimensionality >         ItkMeshType;

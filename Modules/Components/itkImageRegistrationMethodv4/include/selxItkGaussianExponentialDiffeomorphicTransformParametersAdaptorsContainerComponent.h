@@ -48,12 +48,12 @@ class ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerCom
 public:
 
   /** Standard ITK typedefs. */
-  typedef ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent          Self;
-  typedef ComponentBase                       Superclass;
-  typedef std::shared_ptr< Self >           Pointer;
-  typedef std::shared_ptr< const Self >     ConstPointer;
+  typedef ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent Self;
+  typedef ComponentBase                                                                    Superclass;
+  typedef std::shared_ptr< Self >                                                          Pointer;
+  typedef std::shared_ptr< const Self >                                                    ConstPointer;
 
-  ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent(const std::string & name);
+  ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent( const std::string & name );
   virtual ~ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent();
 
   // Get the type definitions from the interfaces

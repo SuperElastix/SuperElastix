@@ -24,13 +24,15 @@
 #include "boost/log/expressions/keyword.hpp"
 #include "boost/log/sources/severity_channel_logger.hpp"
 
-namespace selx {
-
+namespace selx
+{
 BOOST_LOG_ATTRIBUTE_KEYWORD( severity_filter, "Severity", SeverityType );
 BOOST_LOG_ATTRIBUTE_KEYWORD( channel_filter, "Channel", Logger::ChannelType );
 
-class Logger::LoggerImpl {
+class Logger::LoggerImpl
+{
 public:
+
   typedef boost::log::sources::severity_channel_logger< SeverityType, ChannelType > LoggerType;
 
   LoggerImpl();
@@ -43,12 +45,11 @@ public:
   // void AddFile( Logger::FileNameType fileName, Logger::ChannelType channel, ðLogger::FormatType format );
 
   void Log( SeverityType severity, Logger::MessageType message );
+
   void Log( Logger::ChannelType channel, SeverityType severity, Logger::MessageType message );
 
   LoggerType m_Logger;
-
 };
-
 }
 
 #endif // LoggerImpl_h

@@ -118,7 +118,8 @@ public:
 
 template< int Dimensionality, class TPixel, class InternalComputationValueType >
 ItkImageRegistrationMethodv4Component< Dimensionality, TPixel,
-  InternalComputationValueType >::ItkImageRegistrationMethodv4Component(const std::string & name) : SuperElastixComponent(name), m_TransformAdaptorsContainerInterface(
+InternalComputationValueType >::ItkImageRegistrationMethodv4Component( const std::string & name ) : SuperElastixComponent( name ),
+  m_TransformAdaptorsContainerInterface(
     nullptr )
 {
   m_theItkFilter = TheItkFilterType::New();
@@ -184,7 +185,8 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
 
 template< int Dimensionality, class TPixel, class InternalComputationValueType >
 int
-ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >::Set( typename itkMetricv4Interface< Dimensionality, TPixel,
+ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >::Set( typename itkMetricv4Interface< Dimensionality,
+  TPixel,
   InternalComputationValueType >::Pointer component )
 {
   //TODO: The optimizer must be set explicitly, since this is a work-around for a bug in itkRegistrationMethodv4.
@@ -270,21 +272,24 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
   return this->m_theItkFilter->GetModifiableTransform();
 }
 
-template< int Dimensionality, class TPixel, class InternalComputationValueType >
-void
-ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >
-::SetFixedInitialTransform(typename CompositeTransformType::Pointer fixedInitialTransform)
-{
-  return this->m_theItkFilter->SetFixedInitialTransform(fixedInitialTransform);
-}
 
 template< int Dimensionality, class TPixel, class InternalComputationValueType >
 void
 ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >
-::SetMovingInitialTransform(typename CompositeTransformType::Pointer movingInitialTransform)
+::SetFixedInitialTransform( typename CompositeTransformType::Pointer fixedInitialTransform )
 {
-  return this->m_theItkFilter->SetMovingInitialTransform(movingInitialTransform);
+  return this->m_theItkFilter->SetFixedInitialTransform( fixedInitialTransform );
 }
+
+
+template< int Dimensionality, class TPixel, class InternalComputationValueType >
+void
+ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >
+::SetMovingInitialTransform( typename CompositeTransformType::Pointer movingInitialTransform )
+{
+  return this->m_theItkFilter->SetMovingInitialTransform( movingInitialTransform );
+}
+
 
 template< int Dimensionality, class TPixel, class InternalComputationValueType >
 const typename std::string
@@ -293,6 +298,7 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
 {
   return this->m_Name; //from ComponentBase
 }
+
 
 template< int Dimensionality, class TPixel, class InternalComputationValueType >
 bool
