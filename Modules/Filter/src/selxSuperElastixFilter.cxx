@@ -17,9 +17,6 @@
 *
 *=========================================================================*/
 
-#ifndef selxSuperElastixFilter_hxx
-#define selxSuperElastixFilter_hxx
-
 #include "selxSuperElastixFilter.h"
 #include "selxNetworkBuilder.h"
 #include "selxDefaultComponents.h"
@@ -284,4 +281,3 @@ SuperElastixFilter
 }
 } // namespace elx
 
-#endif // selxSuperElastixFilter_hxx
