@@ -23,7 +23,7 @@
 namespace selx
 {
 template< int Dimensionality, class TPixel >
-ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< Dimensionality, TPixel >::ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component()
+ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< Dimensionality, TPixel >::ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component(const std::string & name) : SuperElastixComponent(name)
 {
   m_theItkFilter = TheItkFilterType::New();
 

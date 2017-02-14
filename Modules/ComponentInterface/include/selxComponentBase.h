@@ -20,9 +20,6 @@
 #ifndef ComponentBase_h
 #define ComponentBase_h
 
-#include "itkLightObject.h"
-#include "itkObjectFactory.h"
-#include "itkMacro.h"
 #include "selxInterfaceStatus.h"
 #include <list>
 #include <iostream>
@@ -30,21 +27,21 @@
 #include <string>
 #include <cstring>
 #include <map>
+#include <vector>
+#include <memory>
 
 namespace selx
 {
-class ComponentBase : public itk::LightObject
+class ComponentBase
 {
 public:
+  //ComponentBase() = delete;
+  ComponentBase();
+  ComponentBase(const std::string & name);
+  virtual ~ComponentBase() {}
 
-  /** Standard class typedefs */
-  typedef ComponentBase             Self;
-  typedef itk::LightObject          Superclass;
-  typedef itk::SmartPointer< Self > Pointer;
-
-  /** Run-time type information (and related methods). */
-  itkTypeMacro( ComponentBase, Superclass );
-
+  typedef std::shared_ptr<ComponentBase> Pointer;
+  typedef std::shared_ptr<const ComponentBase> ConstPointer;
   typedef std::string                ParameterKeyType;
   typedef std::vector< std::string > ParameterValueType;
   //typedef std::map< ParameterKeyType, ParameterValueType >           ParameterMapType;
@@ -54,28 +51,21 @@ public:
 
   typedef std::map< std::string, std::string > InterfaceCriteriaType;
 
-  virtual int AcceptConnectionFrom( ComponentBase *, const InterfaceCriteriaType ) = 0;
+  virtual int AcceptConnectionFrom( Pointer, const InterfaceCriteriaType) = 0;
 
-  virtual int AcceptConnectionFrom( ComponentBase * ) = 0;
+  virtual int AcceptConnectionFrom( Pointer ) = 0;
 
   virtual bool MeetsCriterion( const CriterionType & criterion ) = 0;
 
-  virtual InterfaceStatus CanAcceptConnectionFrom( ComponentBase *, const InterfaceCriteriaType ) = 0;
+  virtual InterfaceStatus CanAcceptConnectionFrom(ConstPointer, const InterfaceCriteriaType) = 0;
 
   virtual unsigned int CountAcceptingInterfaces( const InterfaceCriteriaType ) = 0;
 
   virtual unsigned int CountProvidingInterfaces( const InterfaceCriteriaType ) = 0;
 
   //virtual const std::map< std::string, std::string >  TemplateProperties(); //TODO should be overridden
-  
-  void Name(const std::string setName){ m_Name = setName; }; //Setter should be via constructor. We should get rid of itk factory design.
-  //const std::string GetComponentName() { return m_Name; };
-
-protected:
-
-  ComponentBase() {}
-  virtual ~ComponentBase() {}
-  std::string m_Name;
+   
+  const std::string m_Name;
 };
 } // end namespace selx
 

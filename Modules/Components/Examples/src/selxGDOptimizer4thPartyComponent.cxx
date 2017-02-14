@@ -21,7 +21,7 @@
 
 namespace selx
 {
-GDOptimizer4thPartyComponent::GDOptimizer4thPartyComponent()
+  GDOptimizer4thPartyComponent::GDOptimizer4thPartyComponent(const std::string & name) : SuperElastixComponent(name)
 {
   this->theImplementation = new Example4thParty::GDOptimizer4thParty();
   this->MetricObject      = new Metric4thPartyWrapper();
@@ -36,7 +36,7 @@ GDOptimizer4thPartyComponent::~GDOptimizer4thPartyComponent()
 
 
 int
-GDOptimizer4thPartyComponent::Set( MetricValueInterface * component )
+GDOptimizer4thPartyComponent::Set( MetricValueInterface::Pointer component )
 {
   this->MetricObject->SetMetricValueComponent( component );
   return 0;

@@ -41,18 +41,10 @@ public:
   /** Standard ITK typedefs. */
   typedef ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component          Self;
   typedef ComponentBase                       Superclass;
-  typedef itk::SmartPointer< Self >           Pointer;
-  typedef itk::SmartPointer< const Self >     ConstPointer;
+  typedef std::shared_ptr< Self >           Pointer;
+  typedef std::shared_ptr< const Self >     ConstPointer;
 
-  /** Method for creation through the object factory. */
-  itkNewMacro( Self );
-
-  /** Run-time type information (and related methods). */
-  itkTypeMacro( Self, ComponentBase );
-
-  //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
-
-  ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component();
+  ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component(const std::string & name);
   virtual ~ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component();
 
   typedef TPixel PixelType;

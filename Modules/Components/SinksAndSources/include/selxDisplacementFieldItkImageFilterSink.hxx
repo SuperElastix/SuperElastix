@@ -23,8 +23,8 @@
 namespace selx
 {
 template< int Dimensionality, class TPixel >
-DisplacementFieldItkImageFilterSinkComponent< Dimensionality, TPixel >::DisplacementFieldItkImageFilterSinkComponent() :
-  m_MiniPipelineOutputImage( nullptr ), m_NetworkBuilderOutputImage( nullptr )
+DisplacementFieldItkImageFilterSinkComponent< Dimensionality, TPixel >::DisplacementFieldItkImageFilterSinkComponent(const std::string & name) : 
+SuperElastixComponent(name) ,  m_MiniPipelineOutputImage( nullptr ), m_NetworkBuilderOutputImage( nullptr )
 {
 }
 
@@ -37,11 +37,11 @@ DisplacementFieldItkImageFilterSinkComponent< Dimensionality, TPixel >::~Displac
 
 template< int Dimensionality, class TPixel >
 int
-DisplacementFieldItkImageFilterSinkComponent< Dimensionality, TPixel >::Set( AcceptingDisplacementFieldInterfaceType * other )
+DisplacementFieldItkImageFilterSinkComponent< Dimensionality, TPixel >::Set( typename AcceptingDisplacementFieldInterfaceType::Pointer other )
 {
   if( this->m_NetworkBuilderOutputImage == nullptr )
   {
-    itkExceptionMacro( "SinkComponent needs to be initialized by SetMiniPipelineOutput()" );
+    throw std::runtime_error( "SinkComponent needs to be initialized by SetMiniPipelineOutput()" );
   }
 
   // Store pointer to MiniPipelineOutputImage for later grafting onto NetworkBuilder output.
@@ -72,7 +72,7 @@ DisplacementFieldItkImageFilterSinkComponent< Dimensionality, TPixel >::SetMiniP
   this->m_NetworkBuilderOutputImage = dynamic_cast< DeformationFieldImageType * >( NetworkBuilderOutput.GetPointer() );
   if( this->m_NetworkBuilderOutputImage == nullptr )
   {
-    itkExceptionMacro( "SinkComponent cannot cast the NetworkBuilder's Output to the required type" );
+    throw std::runtime_error( "SinkComponent cannot cast the NetworkBuilder's Output to the required type" );
   }
 }
 

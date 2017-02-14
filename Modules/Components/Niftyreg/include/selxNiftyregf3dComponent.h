@@ -38,25 +38,17 @@ class Niftyregf3dComponent :
 public:
 
   /** Standard ITK typedefs. */
-  typedef Niftyregf3dComponent          Self;
+  typedef Niftyregf3dComponent<TPixel>          Self;
   typedef ComponentBase                       Superclass;
-  typedef itk::SmartPointer< Self >           Pointer;
-  typedef itk::SmartPointer< const Self >     ConstPointer;
+  typedef std::shared_ptr< Self >           Pointer;
+  typedef std::shared_ptr< const Self >     ConstPointer;
 
-  /** Method for creation through the object factory. */
-  itkNewMacro( Self );
-
-  /** Run-time type information (and related methods). */
-  itkTypeMacro( Self, ComponentBase );
-
-  // itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
-
-  Niftyregf3dComponent();
+  Niftyregf3dComponent(const std::string & name);
   virtual ~Niftyregf3dComponent();
 
 
-  virtual int Set( NiftyregReferenceImageInterface< TPixel > * ) override;
-  virtual int Set( NiftyregFloatingImageInterface< TPixel > * ) override;
+  virtual int Set(typename NiftyregReferenceImageInterface< TPixel >::Pointer ) override;
+  virtual int Set(typename NiftyregFloatingImageInterface< TPixel >::Pointer ) override;
   
   virtual void RunRegistration() override;
   

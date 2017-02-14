@@ -23,7 +23,7 @@
 namespace selx
 {
 template< int Dimensionality, class TPixel >
-ItkMeshSinkComponent< Dimensionality, TPixel >::ItkMeshSinkComponent() :
+ItkMeshSinkComponent< Dimensionality, TPixel >::ItkMeshSinkComponent(const std::string & name) : SuperElastixComponent(name) ,
   m_MiniPipelineOutputMesh( nullptr ), m_NetworkBuilderOutputMesh( nullptr )
 {
 }
@@ -37,11 +37,11 @@ ItkMeshSinkComponent< Dimensionality, TPixel >::~ItkMeshSinkComponent()
 
 template< int Dimensionality, class TPixel >
 int
-ItkMeshSinkComponent< Dimensionality, TPixel >::Set( itkMeshInterface< Dimensionality, TPixel > * other )
+ItkMeshSinkComponent< Dimensionality, TPixel >::Set( typename itkMeshInterface< Dimensionality, TPixel >::Pointer other )
 {
   if( this->m_NetworkBuilderOutputMesh == nullptr )
   {
-    itkExceptionMacro( "SinkComponent needs to be initialized by ConnectToNetworkBuilderSink()" );
+    throw std::runtime_error( "SinkComponent needs to be initialized by ConnectToNetworkBuilderSink()" );
   }
 
   // Store pointer to MiniPipelineOutputMesh for later grafting onto NetworkBuilder output.
@@ -80,7 +80,7 @@ ItkMeshSinkComponent< Dimensionality, TPixel >::SetMiniPipelineOutput( itk::Data
   this->m_NetworkBuilderOutputMesh = dynamic_cast< ItkMeshType * >( &( *NetworkBuilderOutput ) );
   if( this->m_NetworkBuilderOutputMesh == nullptr )
   {
-    itkExceptionMacro( "SinkComponent cannot cast the NetworkBuilder's Output to the required type" );
+    throw std::runtime_error( "SinkComponent cannot cast the NetworkBuilder's Output to the required type" );
   }
 }
 

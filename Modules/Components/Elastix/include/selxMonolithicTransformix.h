@@ -53,18 +53,10 @@ public:
   /** Standard ITK typedefs. */
   typedef MonolithicTransformixComponent          Self;
   typedef ComponentBase                       Superclass;
-  typedef itk::SmartPointer< Self >           Pointer;
-  typedef itk::SmartPointer< const Self >     ConstPointer;
+  typedef std::shared_ptr< Self >           Pointer;
+  typedef std::shared_ptr< const Self >     ConstPointer;
 
-  /** Method for creation through the object factory. */
-  itkNewMacro( Self );
-
-  /** Run-time type information (and related methods). */
-  itkTypeMacro( Self, ComponentBase );
-
-  //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
-
-  MonolithicTransformixComponent();
+  MonolithicTransformixComponent(const std::string & name);
   virtual ~MonolithicTransformixComponent();
 
   typedef typename ComponentBase::CriterionType CriterionType;
@@ -82,11 +74,11 @@ public:
   typedef elastixTransformParameterObjectInterface< itk::Image< TPixel, Dimensionality >,
     itk::Image< TPixel, Dimensionality > > elastixTransformParameterObjectInterfaceType;
   // Accepting Interfaces:
-  virtual int Set( itkImageDomainFixedInterface< Dimensionality > * ) override;
+  virtual int Set(typename itkImageDomainFixedInterface< Dimensionality >::Pointer ) override;
 
-  virtual int Set( itkImageMovingInterface< Dimensionality, TPixel > * ) override;
+  virtual int Set(typename itkImageMovingInterface< Dimensionality, TPixel >::Pointer) override;
 
-  virtual int Set( elastixTransformParameterObjectInterfaceType * ) override;
+  virtual int Set(typename elastixTransformParameterObjectInterfaceType::Pointer) override;
 
   // Providing Interfaces:
   virtual typename ResultImageType::Pointer GetItkImage() override;
@@ -100,7 +92,7 @@ public:
 private:
 
   typename TransformixFilterType::Pointer m_transformixFilter;
-  elastixTransformParameterObjectInterfaceType * m_TransformParameterObjectInterface;
+  typename elastixTransformParameterObjectInterfaceType::Pointer m_TransformParameterObjectInterface;
 
 protected:
 

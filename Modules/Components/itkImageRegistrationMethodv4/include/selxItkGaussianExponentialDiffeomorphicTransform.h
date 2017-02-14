@@ -42,18 +42,10 @@ public:
   /** Standard ITK typedefs. */
   typedef ItkGaussianExponentialDiffeomorphicTransformComponent          Self;
   typedef ComponentBase                       Superclass;
-  typedef itk::SmartPointer< Self >           Pointer;
-  typedef itk::SmartPointer< const Self >     ConstPointer;
+  typedef std::shared_ptr< Self >           Pointer;
+  typedef std::shared_ptr< const Self >     ConstPointer;
 
-  /** Method for creation through the object factory. */
-  itkNewMacro( Self );
-
-  /** Run-time type information (and related methods). */
-  itkTypeMacro( Self, ComponentBase );
-
-  //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
-
-  ItkGaussianExponentialDiffeomorphicTransformComponent();
+  ItkGaussianExponentialDiffeomorphicTransformComponent(const std::string & name);
   virtual ~ItkGaussianExponentialDiffeomorphicTransformComponent();
 
   /** Get types from interfaces */
@@ -65,7 +57,7 @@ public:
       = typename itk::GaussianExponentialDiffeomorphicTransform< InternalComputationValueType, Dimensionality >;
 
   //Accepting Interfaces:
-  virtual int Set( itkImageDomainFixedInterface< Dimensionality > * ) override;
+  virtual int Set( typename itkImageDomainFixedInterface< Dimensionality >::Pointer ) override;
 
   //Providing Interfaces:
   virtual TransformPointer GetItkTransform() override;

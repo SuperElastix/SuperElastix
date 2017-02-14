@@ -43,18 +43,10 @@ public:
   /** Standard ITK typedefs. */
   typedef ItkSmoothingRecursiveGaussianImageFilterComponent          Self;
   typedef ComponentBase                       Superclass;
-  typedef itk::SmartPointer< Self >           Pointer;
-  typedef itk::SmartPointer< const Self >     ConstPointer;
+  typedef std::shared_ptr< Self >           Pointer;
+  typedef std::shared_ptr< const Self >     ConstPointer;
 
-  /** Method for creation through the object factory. */
-  itkNewMacro( Self );
-
-  /** Run-time type information (and related methods). */
-  itkTypeMacro( Self, ComponentBase );
-
-  // itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
-
-  ItkSmoothingRecursiveGaussianImageFilterComponent();
+  ItkSmoothingRecursiveGaussianImageFilterComponent(const std::string & name);
   virtual ~ItkSmoothingRecursiveGaussianImageFilterComponent();
 
   typedef TPixel PixelType;
@@ -64,7 +56,7 @@ public:
   typedef typename ItkImageType::Pointer
     ItkImagePointer;
 
-  virtual int Set( itkImageInterface< Dimensionality, TPixel > * ) override;
+  virtual int Set(typename itkImageInterface< Dimensionality, TPixel >::Pointer) override;
 
   virtual ItkImagePointer GetItkImage() override;
 

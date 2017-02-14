@@ -41,20 +41,12 @@ class NiftyregReadImageComponent :
 public:
 
   /** Standard ITK typedefs. */
-  typedef NiftyregReadImageComponent          Self;
+  typedef NiftyregReadImageComponent<TPixel>          Self;
   typedef ComponentBase                       Superclass;
-  typedef itk::SmartPointer< Self >           Pointer;
-  typedef itk::SmartPointer< const Self >     ConstPointer;
+  typedef std::shared_ptr< Self >           Pointer;
+  typedef std::shared_ptr< const Self >     ConstPointer;
 
-  /** Method for creation through the object factory. */
-  itkNewMacro( Self );
-
-  /** Run-time type information (and related methods). */
-  itkTypeMacro( Self, ComponentBase );
-  
-  //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
-
-  NiftyregReadImageComponent();
+  NiftyregReadImageComponent(const std::string & name);
   virtual ~NiftyregReadImageComponent();
 
   virtual nifti_image * GetFloatingNiftiImage() override;

@@ -23,7 +23,7 @@
 namespace selx
 {
 template< int Dimensionality, class TPixel >
-ItkSmoothingRecursiveGaussianImageFilterComponent< Dimensionality, TPixel >::ItkSmoothingRecursiveGaussianImageFilterComponent()
+ItkSmoothingRecursiveGaussianImageFilterComponent< Dimensionality, TPixel >::ItkSmoothingRecursiveGaussianImageFilterComponent(const std::string & name) : SuperElastixComponent(name)
 {
   m_theItkFilter = TheItkFilterType::New();
 }
@@ -38,7 +38,7 @@ ItkSmoothingRecursiveGaussianImageFilterComponent< Dimensionality, TPixel >::~It
 template< int Dimensionality, class TPixel >
 int
 ItkSmoothingRecursiveGaussianImageFilterComponent< Dimensionality, TPixel >
-::Set( itkImageInterface< Dimensionality, TPixel > * component )
+::Set(typename itkImageInterface< Dimensionality, TPixel >::Pointer component)
 {
   auto image = component->GetItkImage();
   // connect the itk pipeline

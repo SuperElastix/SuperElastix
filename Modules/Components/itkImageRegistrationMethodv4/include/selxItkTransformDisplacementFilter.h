@@ -51,18 +51,10 @@ public:
   /** Standard ITK typedefs. */
   typedef ItkTransformDisplacementFilterComponent Self;
   typedef ComponentBase                           Superclass;
-  typedef itk::SmartPointer< Self >               Pointer;
-  typedef itk::SmartPointer< const Self >         ConstPointer;
+  typedef std::shared_ptr< Self >               Pointer;
+  typedef std::shared_ptr< const Self >         ConstPointer;
 
-  /** Method for creation through the object factory. */
-  itkNewMacro( Self );
-
-  /** Run-time type information (and related methods). */
-  itkTypeMacro( Self, ComponentBase );
-
-  //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
-
-  ItkTransformDisplacementFilterComponent();
+  ItkTransformDisplacementFilterComponent(const std::string & name);
   virtual ~ItkTransformDisplacementFilterComponent();
 
   typedef TPixel PixelType;
@@ -74,9 +66,9 @@ public:
   using DisplacementFieldFilterType = itk::TransformToDisplacementFieldFilter< DisplacementFieldImageType >;
 
   //Accepting Interfaces:
-  virtual int Set( itkImageDomainFixedInterface< Dimensionality > * ) override;
+  virtual int Set( typename itkImageDomainFixedInterface< Dimensionality >::Pointer ) override;
 
-  virtual int Set( itkTransformInterface< TInternalComputationValue, Dimensionality > * ) override;
+  virtual int Set( typename itkTransformInterface< TInternalComputationValue, Dimensionality >::Pointer ) override;
 
   //Providing Interfaces:
   virtual typename DisplacementFieldImageType::Pointer GetDisplacementFieldItkImage() override;
@@ -92,7 +84,7 @@ public:
 private:
 
   typename DisplacementFieldFilterType::Pointer m_DisplacementFieldFilter;
-  itkTransformInterface< TInternalComputationValue, Dimensionality > * m_TransformComponent;
+  typename itkTransformInterface< TInternalComputationValue, Dimensionality >::Pointer m_TransformComponent;
 
 protected:
 

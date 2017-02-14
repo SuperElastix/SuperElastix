@@ -23,7 +23,7 @@ namespace selx
 {
 template< class InternalComputationValueType, int Dimensionality >
 ItkGaussianExponentialDiffeomorphicTransformComponent< InternalComputationValueType,
-Dimensionality >::ItkGaussianExponentialDiffeomorphicTransformComponent()
+  Dimensionality >::ItkGaussianExponentialDiffeomorphicTransformComponent(const std::string & name) : SuperElastixComponent(name)
 {
   m_Transform = GaussianExponentialDiffeomorphicTransformType::New();
 
@@ -42,7 +42,7 @@ Dimensionality >::~ItkGaussianExponentialDiffeomorphicTransformComponent()
 template< class InternalComputationValueType, int Dimensionality >
 int
 ItkGaussianExponentialDiffeomorphicTransformComponent< InternalComputationValueType, Dimensionality >
-::Set( itkImageDomainFixedInterface< Dimensionality > * component )
+::Set( typename itkImageDomainFixedInterface< Dimensionality >::Pointer component )
 {
   this->m_FixedImageDomain = component->GetItkImageDomainFixed();
 

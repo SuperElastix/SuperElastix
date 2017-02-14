@@ -41,18 +41,10 @@ public:
   /** Standard ITK typedefs. */
   typedef ItkGradientDescentOptimizerv4Component          Self;
   typedef ComponentBase                       Superclass;
-  typedef itk::SmartPointer< Self >           Pointer;
-  typedef itk::SmartPointer< const Self >     ConstPointer;
+  typedef std::shared_ptr< Self >           Pointer;
+  typedef std::shared_ptr< const Self >     ConstPointer;
 
-  /** Method for creation through the object factory. */
-  itkNewMacro( Self );
-
-  /** Run-time type information (and related methods). */
-  itkTypeMacro( Self, ComponentBase );
-
-  //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
-
-  ItkGradientDescentOptimizerv4Component();
+  ItkGradientDescentOptimizerv4Component(const std::string & name);
   virtual ~ItkGradientDescentOptimizerv4Component();
 
   /**  Type of the optimizer. */

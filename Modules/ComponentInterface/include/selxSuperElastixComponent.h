@@ -42,13 +42,14 @@ public:
   using AcceptingInterfacesTypeList = AcceptingInterfaces;
   using ProvidingInterfacesTypeList = ProvidingInterfaces;
 
-  virtual int AcceptConnectionFrom( ComponentBase * other, const InterfaceCriteriaType interfaceCriteria );
+  SuperElastixComponent(const std::string & name) : ComponentBase(name) {};
+  virtual int AcceptConnectionFrom( ComponentBase::Pointer other, const InterfaceCriteriaType interfaceCriteria );
 
-  virtual int AcceptConnectionFrom( ComponentBase * );
+  virtual int AcceptConnectionFrom( ComponentBase::Pointer);
 
 protected:
 
-  virtual InterfaceStatus CanAcceptConnectionFrom( ComponentBase * other, const InterfaceCriteriaType interfaceCriteria ) override;
+  virtual InterfaceStatus CanAcceptConnectionFrom( ComponentBase::ConstPointer , const InterfaceCriteriaType interfaceCriteria ) override;
 
   virtual unsigned int CountAcceptingInterfaces( const ComponentBase::InterfaceCriteriaType interfaceCriteria ) override
   {

@@ -36,8 +36,8 @@ namespace selx
     {
       if (component->CountProvidingInterfaces({ { keys::NameOfInterface, keys::RegistrationControllerStartInterface } }) == 1)
       {
-        RegistrationControllerStartInterface * providingInterface = dynamic_cast<RegistrationControllerStartInterface *>(component.GetPointer());
-        if (providingInterface == nullptr)  // is actually a double-check for sanity: based on criterion cast should be successful
+        std::shared_ptr<RegistrationControllerStartInterface> providingInterface = std::dynamic_pointer_cast<RegistrationControllerStartInterface>(component);
+        if (!providingInterface)  // is actually a double-check for sanity: based on criterion cast should always be successful
         {
           throw std::runtime_error("dynamic_cast<RegistrationControllerStartInterface*> fails, but based on component criterion it shouldn't");
         }

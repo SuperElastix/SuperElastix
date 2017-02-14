@@ -31,9 +31,9 @@ class Metric3rdPartyWrapper : public Example3rdParty::Metric3rdPartyBase
 {
 public:
 
-  void SetMetricValueComponent( MetricValueInterface * );
+  void SetMetricValueComponent( MetricValueInterface::Pointer );
 
-  void SetMetricDerivativeComponent( MetricDerivativeInterface * );
+  void SetMetricDerivativeComponent( MetricDerivativeInterface::Pointer );
 
   virtual int GetValue();
 
@@ -41,8 +41,8 @@ public:
 
 private:
 
-  MetricValueInterface *      metricval;
-  MetricDerivativeInterface * metricderiv;
+  MetricValueInterface::Pointer      metricval;
+  MetricDerivativeInterface::Pointer metricderiv;
 };
 } // end namespace selx
 #endif // #define Metric3rdPartyWrapper_h

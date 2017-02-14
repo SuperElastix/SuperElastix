@@ -24,9 +24,9 @@ namespace selx
 {
 template< class InterfaceT >
 int
-InterfaceAcceptor< InterfaceT >::Connect( ComponentBase * providerComponent )
+InterfaceAcceptor< InterfaceT >::Connect( ComponentBase::Pointer providerComponent )
 {
-  InterfaceT * providerInterface = dynamic_cast< InterfaceT * >( providerComponent );
+  std::shared_ptr<InterfaceT> providerInterface = std::dynamic_pointer_cast< InterfaceT >( providerComponent );
   if( !providerInterface )
   {
     //TODO log message?
@@ -41,9 +41,9 @@ InterfaceAcceptor< InterfaceT >::Connect( ComponentBase * providerComponent )
 
 template< class InterfaceT >
 bool
-InterfaceAcceptor< InterfaceT >::CanAcceptConnectionFrom( ComponentBase * providerComponent )
+InterfaceAcceptor< InterfaceT >::CanAcceptConnectionFrom( ComponentBase::ConstPointer providerComponent )
 {
-  InterfaceT * providerInterface = dynamic_cast< InterfaceT * >( providerComponent );
+  std::shared_ptr<const InterfaceT> providerInterface = std::dynamic_pointer_cast< const InterfaceT >(providerComponent);
   return bool(providerInterface);
 }
 

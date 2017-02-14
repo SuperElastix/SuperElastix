@@ -24,7 +24,7 @@ namespace selx
 {
 template< int Dimensionality, class TPixel >
 ItkImageSourceComponent< Dimensionality, TPixel >
-::ItkImageSourceComponent() : m_Image( nullptr )
+::ItkImageSourceComponent(const std::string & name) : SuperElastixComponent(name), m_Image(nullptr)
 {
 }
 
@@ -43,7 +43,7 @@ ItkImageSourceComponent< Dimensionality, TPixel >
 {
   if( this->m_Image == nullptr )
   {
-    itkExceptionMacro( "SourceComponent needs to be initialized by SetMiniPipelineInput()" );
+    throw std::runtime_error( "SourceComponent needs to be initialized by SetMiniPipelineInput()" );
   }
   return this->m_Image;
 }
@@ -57,7 +57,7 @@ ItkImageSourceComponent< Dimensionality, TPixel >
   this->m_Image = dynamic_cast< ItkImageType * >( object.GetPointer() );
   if( this->m_Image == nullptr )
   {
-    itkExceptionMacro( "DataObject passed by the NetworkBuilder is not of the right ImageType or not at all an ImageType" );
+    throw std::runtime_error( "DataObject passed by the NetworkBuilder is not of the right ImageType or not at all an ImageType" );
   }
   return;
 }

@@ -35,7 +35,7 @@ namespace selx
     // How specific Source Components connect to the graph is up to them, i.e. they might adapt the passed Object to other types.
 
   public:
-
+    using Pointer = std::shared_ptr<SourceInterface>;
     virtual void SetMiniPipelineInput(itk::DataObject::Pointer) = 0;
     virtual AnyFileReader::Pointer GetInputFileReader(void) = 0;
   };
@@ -47,7 +47,7 @@ namespace selx
     // How specific Sink Components connect to the graph is up to them, i.e. they might adapt the passed Object to other types.
 
   public:
-
+    using Pointer = std::shared_ptr<SinkInterface>;
     typedef itk::DataObject::Pointer DataObjectPointer;
     virtual void SetMiniPipelineOutput(DataObjectPointer) = 0;
     virtual DataObjectPointer GetMiniPipelineOutput(void) = 0;
@@ -64,7 +64,7 @@ class RegistrationControllerStartInterface
   // This interface is to control the execution of the network
 
 public:
-
+  using Pointer = std::shared_ptr<RegistrationControllerStartInterface>;
   virtual void RegistrationControllerStart() = 0;
 };
 
@@ -73,7 +73,7 @@ class RunRegistrationInterface
   // This interface is to control the execution of the network
 
 public:
-
+  using Pointer = std::shared_ptr<RunRegistrationInterface>;
   virtual void RunRegistration() = 0;
 };
 
@@ -82,7 +82,7 @@ class AfterRegistrationInterface
   // This interface is to control the execution of the network
 
 public:
-
+  using Pointer = std::shared_ptr<AfterRegistrationInterface>;
   virtual void AfterRegistration() = 0;
 };
 
@@ -91,7 +91,7 @@ class RunResolutionInterface
   // This interface is to control the execution of the network
 
 public:
-
+  using Pointer = std::shared_ptr<RunResolutionInterface>;
   virtual bool RunResolution() = 0;
 };
 
@@ -100,7 +100,7 @@ class ReconnectTransformInterface
   // This interface is to control the execution of the network
 
 public:
-
+  using Pointer = std::shared_ptr<ReconnectTransformInterface>;
   virtual void ReconnectTransform() = 0;
 };
 

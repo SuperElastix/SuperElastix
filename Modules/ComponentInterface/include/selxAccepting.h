@@ -31,12 +31,12 @@ class Accepting< >
 public:
 
   static unsigned int CountMeetsCriteria( const ComponentBase::InterfaceCriteriaType ) { return 0; }
-  int ConnectFromImpl( ComponentBase * other, const ComponentBase::InterfaceCriteriaType interfaceCriteria ) { return 0; } //no interface called interfacename ;
-  InterfaceStatus CanAcceptConnectionFrom( ComponentBase * other, const ComponentBase::InterfaceCriteriaType interfaceCriteria )
+  int ConnectFromImpl(ComponentBase::Pointer other, const ComponentBase::InterfaceCriteriaType interfaceCriteria) { return 0; } //no interface called interfacename ;
+  InterfaceStatus CanAcceptConnectionFrom(ComponentBase::ConstPointer, const ComponentBase::InterfaceCriteriaType interfaceCriteria)
   {
     return InterfaceStatus::noaccepter;
   }
-  int ConnectFromImpl( ComponentBase * ) { return 0; }                                                                                   //Empty RestInterfaces does 0 successful connects ;
+  int ConnectFromImpl(ComponentBase::Pointer) { return 0; }                                                                                   //Empty RestInterfaces does 0 successful connects ;
 
 protected:
 };
@@ -48,11 +48,11 @@ public:
 
   static unsigned int CountMeetsCriteria( const ComponentBase::InterfaceCriteriaType );
 
-  int ConnectFromImpl( ComponentBase * other, const ComponentBase::InterfaceCriteriaType interfaceCriteria );
+  int ConnectFromImpl( ComponentBase::Pointer other, const ComponentBase::InterfaceCriteriaType interfaceCriteria );
 
-  InterfaceStatus CanAcceptConnectionFrom( ComponentBase * other, const ComponentBase::InterfaceCriteriaType interfaceCriteria );
+  InterfaceStatus CanAcceptConnectionFrom( ComponentBase::ConstPointer other, const ComponentBase::InterfaceCriteriaType interfaceCriteria );
 
-  int ConnectFromImpl( ComponentBase * );
+  int ConnectFromImpl(ComponentBase::Pointer);
 
 protected:
 };

@@ -23,7 +23,7 @@
 namespace selx
 {
 template< int Dimensionality, class TPixel, class TInternalComputationValue >
-ItkResampleFilterComponent< Dimensionality, TPixel, TInternalComputationValue >::ItkResampleFilterComponent()
+ItkResampleFilterComponent< Dimensionality, TPixel, TInternalComputationValue >::ItkResampleFilterComponent(const std::string & name) : SuperElastixComponent(name)
 {
   m_ResampleFilter = ResampleFilterType::New();
   //TODO: instantiating the filter in the constructor might be heavy for the use in component selector factory, since all components of the database are created during the selection process.
@@ -40,7 +40,7 @@ ItkResampleFilterComponent< Dimensionality, TPixel, TInternalComputationValue >:
 template< int Dimensionality, class TPixel, class TInternalComputationValue >
 int
 ItkResampleFilterComponent< Dimensionality, TPixel, TInternalComputationValue >
-::Set( itkImageDomainFixedInterface< Dimensionality > * component )
+::Set(typename itkImageDomainFixedInterface< Dimensionality >::Pointer component)
 {
   auto fixedImageDomain = component->GetItkImageDomainFixed();
   // connect the itk pipeline
@@ -58,7 +58,7 @@ ItkResampleFilterComponent< Dimensionality, TPixel, TInternalComputationValue >
 template< int Dimensionality, class TPixel, class TInternalComputationValue >
 int
 ItkResampleFilterComponent< Dimensionality, TPixel, TInternalComputationValue >
-::Set( itkImageMovingInterface< Dimensionality, TPixel > * component )
+::Set(typename itkImageMovingInterface< Dimensionality, TPixel >::Pointer component)
 {
   auto movingImage = component->GetItkImageMoving();
   // connect the itk pipeline
@@ -70,7 +70,7 @@ ItkResampleFilterComponent< Dimensionality, TPixel, TInternalComputationValue >
 template< int Dimensionality, class TPixel, class TInternalComputationValue >
 int
 ItkResampleFilterComponent< Dimensionality, TPixel, TInternalComputationValue >
-::Set( itkTransformInterface< TInternalComputationValue, Dimensionality > * component )
+::Set(typename itkTransformInterface< TInternalComputationValue, Dimensionality >::Pointer component)
 {
   //Store interface for later use
   this->m_TransformComponent = component;

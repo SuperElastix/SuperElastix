@@ -23,7 +23,7 @@
 namespace selx
 {
 template< int Dimensionality, class TPixel, class TInternalComputationValue >
-ItkTransformDisplacementFilterComponent< Dimensionality, TPixel, TInternalComputationValue >::ItkTransformDisplacementFilterComponent()
+ItkTransformDisplacementFilterComponent< Dimensionality, TPixel, TInternalComputationValue >::ItkTransformDisplacementFilterComponent(const std::string & name) : SuperElastixComponent(name)
 {
   m_DisplacementFieldFilter = DisplacementFieldFilterType::New();
   //TODO: instantiating the filter in the constructor might be heavy for the use in component selector factory, since all components of the database are created during the selection process.
@@ -40,7 +40,7 @@ ItkTransformDisplacementFilterComponent< Dimensionality, TPixel, TInternalComput
 template< int Dimensionality, class TPixel, class TInternalComputationValue >
 int
 ItkTransformDisplacementFilterComponent< Dimensionality, TPixel, TInternalComputationValue >
-::Set( itkImageDomainFixedInterface< Dimensionality > * component )
+::Set( typename itkImageDomainFixedInterface< Dimensionality >::Pointer component )
 {
   auto fixedImageDomain = component->GetItkImageDomainFixed();
   // connect the itk pipeline
@@ -58,7 +58,7 @@ ItkTransformDisplacementFilterComponent< Dimensionality, TPixel, TInternalComput
 template< int Dimensionality, class TPixel, class TInternalComputationValue >
 int
 ItkTransformDisplacementFilterComponent< Dimensionality, TPixel, TInternalComputationValue >
-::Set( itkTransformInterface< TInternalComputationValue, Dimensionality > * component )
+::Set( typename itkTransformInterface< TInternalComputationValue, Dimensionality >::Pointer component )
 {
   //Store interface for later use
   this->m_TransformComponent = component;

@@ -158,9 +158,7 @@ NetworkBuilder<ComponentList>::ApplyComponentConfiguration()
   for( auto const & name : componentNames )
   {
     std::cout << " Blueprint Node: " << name << std::endl;
-    typename ComponentSelector<ComponentList>::Pointer currentComponentSelectorA = ComponentSelector<ComponentList>::New();
-    ComponentSelectorPointer    currentComponentSelector = ComponentSelectorType::New();
-    currentComponentSelector->ComponentName(name); // Todo via constructor
+    ComponentSelectorPointer    currentComponentSelector = std::make_shared<ComponentSelectorType>(name);
 
     Blueprint::ParameterMapType currentProperty          = this->m_Blueprint->GetComponent( name );
     for( auto const & criterion : currentProperty )
@@ -397,8 +395,8 @@ NetworkBuilder<ComponentList>::GetSourceInterfaces()
 
     if( component->CountProvidingInterfaces( { { keys::NameOfInterface, keys::SourceInterface } } ) == 1 )
     {
-      SourceInterface * provingSourceInterface = dynamic_cast< SourceInterface * >( component.GetPointer() );
-      if( provingSourceInterface == nullptr )  // is actually a double-check for sanity: based on criterion cast should be successful
+      SourceInterface::Pointer provingSourceInterface = std::dynamic_pointer_cast< SourceInterface >( component );
+      if(!provingSourceInterface)  // is actually a double-check for sanity: based on criterion cast should be successful
       {
         throw std::runtime_error( "dynamic_cast<SourceInterface*> fails, but based on component criterion it shouldn't" );
       }
@@ -420,8 +418,8 @@ NetworkBuilder<ComponentList>::GetSinkInterfaces()
     ComponentBase::Pointer component = componentSelector.second->GetComponent();
     if( component->CountProvidingInterfaces( { { keys::NameOfInterface, keys::SinkInterface } } ) == 1 )
     {
-      SinkInterface * provingSinkInterface = dynamic_cast< SinkInterface * >( component.GetPointer() );
-      if( provingSinkInterface == nullptr )  // is actually a double-check for sanity: based on criterion cast should be successful
+      SinkInterface::Pointer provingSinkInterface = std::dynamic_pointer_cast< SinkInterface>( component );
+      if(!provingSinkInterface )  // is actually a double-check for sanity: based on criterion cast should be successful
       {
         throw std::runtime_error( "dynamic_cast<SinkInterface*> fails, but based on component criterion it shouldn't" );
       }
@@ -496,8 +494,8 @@ NetworkBuilder<ComponentList>::GetRealizedNetwork()
       /** Scans all Components to find those with Sinking capability and store the outputs in outputObjectsMap */      
         if (component->CountProvidingInterfaces({ { keys::NameOfInterface, keys::SinkInterface } }) == 1)
         {
-          SinkInterface * provingSinkInterface = dynamic_cast<SinkInterface *>(component.GetPointer());
-          if (provingSinkInterface == nullptr)  // is actually a double-check for sanity: based on criterion cast should be successful
+          SinkInterface::Pointer provingSinkInterface = std::dynamic_pointer_cast<SinkInterface>(component);
+          if (!provingSinkInterface)  // is actually a double-check for sanity: based on criterion cast should be successful
           {
             throw std::runtime_error("dynamic_cast<SinkInterface*> fails, but based on component criterion it shouldn't");
           }

@@ -37,14 +37,11 @@ public:
   /** Standard class typedefs. */
   typedef TransformComponent1             Self;
   typedef ComponentBase                   Superclass;
-  typedef itk::SmartPointer< Self >       Pointer;
-  typedef itk::SmartPointer< const Self > ConstPointer;
+  typedef std::shared_ptr< Self >       Pointer;
+  typedef std::shared_ptr< const Self > ConstPointer;
 
-  /** New macro for creation of through the object factory. */
-  itkNewMacro( Self );
-
-  /** Run-time type information (and related methods). */
-  itkTypeMacro( TransformComponent1, ComponentBase );
+  TransformComponent1(const std::string & name) : SuperElastixComponent(name){}
+  virtual ~TransformComponent1(){}
 
   typedef Superclass::CriteriaType  CriteriaType;
   typedef Superclass::CriterionType CriterionType;
@@ -57,9 +54,7 @@ public:
 protected:
 
   TransformComponent1();
-  virtual ~TransformComponent1()
-  {
-  }
+
 
 
 private:

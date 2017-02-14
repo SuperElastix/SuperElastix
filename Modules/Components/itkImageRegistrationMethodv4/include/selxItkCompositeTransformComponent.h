@@ -40,20 +40,12 @@ class ItkCompositeTransformComponent :
 public:
 
   /** Standard ITK typedefs. */
-  typedef ItkCompositeTransformComponent          Self;
+  typedef ItkCompositeTransformComponent<InternalComputationValueType, Dimensionality>          Self;
   typedef ComponentBase                       Superclass;
-  typedef itk::SmartPointer< Self >           Pointer;
-  typedef itk::SmartPointer< const Self >     ConstPointer;
+  typedef std::shared_ptr< Self >           Pointer;
+  typedef std::shared_ptr< const Self >     ConstPointer;
 
-  /** Method for creation through the object factory. */
-  itkNewMacro( Self );
-
-  /** Run-time type information (and related methods). */
-  itkTypeMacro( Self, ComponentBase );
-
-  //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
-
-  ItkCompositeTransformComponent();
+  ItkCompositeTransformComponent(const std::string & name);
   virtual ~ItkCompositeTransformComponent();
 
   /**  Type of the optimizer. */
@@ -61,9 +53,9 @@ public:
 
   typedef typename itk::CompositeTransform< InternalComputationValueType, Dimensionality > CompositeTransformType;
 
-  virtual int Set(MultiStageTransformInterface< InternalComputationValueType, Dimensionality > *) override;
+  virtual int Set(typename MultiStageTransformInterface< InternalComputationValueType, Dimensionality >::Pointer) override;
   
-  virtual int Set(ReconnectTransformInterface * ) override;
+  virtual int Set(ReconnectTransformInterface::Pointer ) override;
   
   virtual void RegistrationControllerStart() override;
 
@@ -77,9 +69,9 @@ public:
 private:
 
   typename CompositeTransformType::Pointer m_CompositeTransform;
-  typename std::vector<MultiStageTransformInterface< InternalComputationValueType, Dimensionality >*> m_registrationStages;
+  typename std::vector<typename MultiStageTransformInterface< InternalComputationValueType, Dimensionality >::Pointer> m_registrationStages;
 
-  std::set< ReconnectTransformInterface * > m_ReconnectTransformInterfaces;
+  std::set< ReconnectTransformInterface::Pointer > m_ReconnectTransformInterfaces;
   std::vector<std::string> m_ExecutionOrder;
 protected:
 

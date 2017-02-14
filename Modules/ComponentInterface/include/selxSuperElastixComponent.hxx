@@ -26,7 +26,7 @@ namespace selx
 //////////////////////////////////////////////////////////////////////////
 template< typename AcceptingInterfaces, typename ProvidingInterfaces >
 int
-SuperElastixComponent< AcceptingInterfaces, ProvidingInterfaces >::AcceptConnectionFrom( ComponentBase * other,
+SuperElastixComponent< AcceptingInterfaces, ProvidingInterfaces >::AcceptConnectionFrom( ComponentBase::Pointer other,
   const InterfaceCriteriaType interfaceCriteria )
 {
   return AcceptingInterfaces::ConnectFromImpl( other, interfaceCriteria );
@@ -35,7 +35,7 @@ SuperElastixComponent< AcceptingInterfaces, ProvidingInterfaces >::AcceptConnect
 
 template< typename AcceptingInterfaces, typename ProvidingInterfaces >
 int
-SuperElastixComponent< AcceptingInterfaces, ProvidingInterfaces >::AcceptConnectionFrom( ComponentBase * other )
+SuperElastixComponent< AcceptingInterfaces, ProvidingInterfaces >::AcceptConnectionFrom( ComponentBase::Pointer  other)
 {
   return AcceptingInterfaces::ConnectFromImpl( other );
 }
@@ -44,7 +44,7 @@ SuperElastixComponent< AcceptingInterfaces, ProvidingInterfaces >::AcceptConnect
 template< typename AcceptingInterfaces, typename ProvidingInterfaces >
 InterfaceStatus
 SuperElastixComponent< AcceptingInterfaces, ProvidingInterfaces >
-::CanAcceptConnectionFrom( ComponentBase * other, const InterfaceCriteriaType interfaceCriteria )
+::CanAcceptConnectionFrom( ComponentBase::ConstPointer other, const InterfaceCriteriaType interfaceCriteria )
 {
   return AcceptingInterfaces::CanAcceptConnectionFrom( other, interfaceCriteria );
 }

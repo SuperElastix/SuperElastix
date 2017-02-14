@@ -50,9 +50,9 @@ public:
   typedef Blueprint::ComponentNameType ComponentNameType;
   typedef Blueprint::ComponentNamesType                           ComponentNamesType;
   typedef std::map<
-    std::string, SourceInterface * > SourceInterfaceMapType;
+    std::string, SourceInterface::Pointer > SourceInterfaceMapType;
   typedef std::map<
-    std::string, SinkInterface * > SinkInterfaceMapType;
+    std::string, SinkInterface::Pointer > SinkInterfaceMapType;
 
   typedef std::map<
     std::string, RegistrationControllerStartInterface * > RegistrationControllerStartInterfaceMapType;

@@ -24,7 +24,7 @@
 namespace selx
 {
 template< class InternalComputationValueType >
-ItkGradientDescentOptimizerv4Component< InternalComputationValueType >::ItkGradientDescentOptimizerv4Component()
+ItkGradientDescentOptimizerv4Component< InternalComputationValueType >::ItkGradientDescentOptimizerv4Component(const std::string & name) : SuperElastixComponent(name)
 {
   m_Optimizer = GradientDescentOptimizerv4Type::New();
   m_Optimizer->SetNumberOfIterations( 100 );

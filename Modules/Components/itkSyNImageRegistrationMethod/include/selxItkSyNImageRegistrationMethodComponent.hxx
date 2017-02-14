@@ -125,7 +125,7 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel >::RunRegistratio
   }
   else
   {
-    itkExceptionMacro( "Error casting to ImageMetricv4Type failed" );
+    throw std::runtime_error( "Error casting to ImageMetricv4Type failed" );
   }
 
   //std::cout << "estimated step scale: " << scalesEstimator->EstimateStepScale(1.0);

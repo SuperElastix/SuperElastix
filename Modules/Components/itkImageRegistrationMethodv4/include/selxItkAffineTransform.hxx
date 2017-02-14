@@ -23,7 +23,7 @@
 namespace selx
 {
 template< class InternalComputationValueType, int Dimensionality >
-ItkAffineTransformComponent< InternalComputationValueType, Dimensionality >::ItkAffineTransformComponent()
+ItkAffineTransformComponent< InternalComputationValueType, Dimensionality >::ItkAffineTransformComponent(const std::string & name) : SuperElastixComponent(name)
 {
   m_Transform = AffineTransformType::New();
 

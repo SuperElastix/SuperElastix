@@ -43,16 +43,10 @@ public:
   /** Standard ITK typedefs. */
   typedef ItkMeshSourceComponent          Self;
   typedef ComponentBase                       Superclass;
-  typedef itk::SmartPointer< Self >           Pointer;
-  typedef itk::SmartPointer< const Self >     ConstPointer;
+  typedef std::shared_ptr< Self >           Pointer;
+  typedef std::shared_ptr< const Self >     ConstPointer;
 
-  /** Method for creation through the object factory. */
-  itkNewMacro( Self );
-
-  /** Run-time type information (and related methods). */
-  itkTypeMacro( Self, ComponentBase );
-
-  ItkMeshSourceComponent();
+  ItkMeshSourceComponent(const std::string & name);
   virtual ~ItkMeshSourceComponent();
 
   typedef itk::Mesh< TPixel, Dimensionality >         ItkMeshType;

@@ -30,7 +30,8 @@ template< typename TFixedImage, typename TMovingImage >
 class elastixTransformParameterObjectInterface
 {
 public:
-
+  using Type = elastixTransformParameterObjectInterface<TFixedImage, TMovingImage>;
+  using Pointer = std::shared_ptr<Type>;
   typedef typename elastix::ElastixFilter< TFixedImage, TMovingImage >::ParameterObjectType elastixTransformParameterObject;
   virtual elastixTransformParameterObject * GetTransformParameterObject() = 0;
 };

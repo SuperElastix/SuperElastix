@@ -34,7 +34,7 @@ namespace selx
     // a (light weight) ComponentContainer with 1 Execute button. All other data such as graphs and selectors can be deleted.
   public:
 
-    using ComponentContainerType = std::vector<ComponentBase::Pointer>;
+    using ComponentContainerType = std::vector<std::shared_ptr<ComponentBase>>;
     using OutputObjectsMapType = std::map<std::string, itk::DataObject::Pointer>;
     
     NetworkContainer(ComponentContainerType components, OutputObjectsMapType outputObjectsMap);

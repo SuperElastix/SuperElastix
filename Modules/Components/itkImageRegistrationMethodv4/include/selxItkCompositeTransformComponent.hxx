@@ -23,7 +23,7 @@
 namespace selx
 {
 template< class InternalComputationValueType, int Dimensionality >
-ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >::ItkCompositeTransformComponent()
+ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >::ItkCompositeTransformComponent(const std::string & name) : SuperElastixComponent(name)
 {
   m_CompositeTransform = CompositeTransformType::New();
 
@@ -39,7 +39,7 @@ ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >::
 template< class InternalComputationValueType, int Dimensionality >
 int
 ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >
-::Set(MultiStageTransformInterface< InternalComputationValueType, Dimensionality >* component)
+::Set(typename MultiStageTransformInterface< InternalComputationValueType, Dimensionality >::Pointer component)
 {
   // todo how do we organize the fixedtransforms?
   this->m_registrationStages.push_back(component);
@@ -49,7 +49,7 @@ ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >
 template< class InternalComputationValueType, int Dimensionality >
 int
 ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >
-::Set( ReconnectTransformInterface * other )
+::Set( ReconnectTransformInterface::Pointer other )
 {
   this->m_ReconnectTransformInterfaces.insert( other );
   return 0;
@@ -73,7 +73,7 @@ ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >::
   sortedStageNames.resize(sortedExecutionNames.size()); // allocate space
 
   std::transform(this->m_registrationStages.begin(), this->m_registrationStages.end(), sortedStageNames.begin(),
-    [](MultiStageTransformInterface< InternalComputationValueType, Dimensionality >* stageIterator) { return stageIterator->GetComponentName(); });
+    [](MultiStageTransformInterface< InternalComputationValueType, Dimensionality >::Pointer stageIterator) { return stageIterator->GetComponentName(); });
 
   sort(sortedExecutionNames.begin(), sortedExecutionNames.end());
   sort(sortedStageNames.begin(), sortedStageNames.end());
@@ -98,7 +98,7 @@ ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >::
   {
     auto && stageIterator = std::find_if(this->m_registrationStages.begin(), 
                                  this->m_registrationStages.end(), 
-                                 [stageName](MultiStageTransformInterface< InternalComputationValueType, Dimensionality >* thisStage) { return thisStage->GetComponentName() == stageName; });
+                                 [stageName](MultiStageTransformInterface< InternalComputationValueType, Dimensionality >::Pointer thisStage) { return thisStage->GetComponentName() == stageName; });
     (*stageIterator)->SetMovingInitialTransform(this->m_CompositeTransform);
     (*stageIterator)->RunRegistration();
 

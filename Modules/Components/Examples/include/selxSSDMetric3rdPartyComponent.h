@@ -38,16 +38,10 @@ public:
   /** Standard class typedefs. */
   typedef SSDMetric3rdPartyComponent      Self;
   typedef ComponentBase                   Superclass;
-  typedef itk::SmartPointer< Self >       Pointer;
-  typedef itk::SmartPointer< const Self > ConstPointer;
+  typedef std::shared_ptr< Self >       Pointer;
+  typedef std::shared_ptr< const Self > ConstPointer;
 
-  /** New macro for creation of through the object factory. */
-  itkNewMacro( Self );
-
-  /** Run-time type information (and related methods). */
-  itkTypeMacro( SSDMetric3rdPartyComponent, Superclass );
-
-  SSDMetric3rdPartyComponent();
+  SSDMetric3rdPartyComponent(const std::string & name);
   virtual ~SSDMetric3rdPartyComponent();
   Example3rdParty::SSDMetric3rdParty * theImplementation;
   virtual int GetValue() override;

@@ -31,27 +31,17 @@ namespace selx
  */
 
 template <class ComponentList>
-class ComponentSelector : public itk::Object
+class ComponentSelector
 {
 public:
 
   /** Standard class typedefs. */
-  typedef ComponentSelector               Self;
-  typedef Object                          Superclass;
-  typedef itk::SmartPointer< Self >       Pointer;
-  typedef itk::SmartPointer< const Self > ConstPointer;
-
-  /** Class methods used to interface with the registered factories. */
-  //virtual const char * GetITKSourceVersion() const { return ITK_SOURCE_VERSION; }
-
-  /** Run-time type information (and related methods). */
-  itkTypeMacro( ComponentSelector, Object );
-
-  /** New macro for creation of through the object factory. */
-  itkNewMacro( Self );
+  typedef ComponentSelector<ComponentList>               Self;
+  typedef std::shared_ptr< Self >       Pointer;
+  typedef std::shared_ptr< const Self > ConstPointer;
 
   /** Convenient typedefs. */
-  typedef ComponentBase::Pointer               ComponentBasePointer;
+  typedef ComponentBase::Pointer              ComponentBasePointer;
   typedef ComponentBase::CriteriaType          CriteriaType;
   typedef ComponentBase::CriterionType         CriterionType;
   typedef ComponentBase::InterfaceCriteriaType InterfaceCriteriaType;
@@ -59,6 +49,8 @@ public:
   typedef std::list< ComponentBasePointer > ComponentListType;
   typedef ComponentListType::size_type      NumberOfComponentsType;
   /** set selection criteria for possibleComponents*/
+
+  ComponentSelector(const std::string & name);
 
   /** Narrow selection criteria*/
   void AddCriterion( const CriterionType & criterion );
@@ -78,12 +70,8 @@ public:
 
   void PrintComponents(void);
 
-  void ComponentName(const std::string); //Setter should be via constructor. We should get rid of itk factory design.
-
 protected:
   ComponentListType m_PossibleComponents;
-  ComponentSelector();
-  ~ComponentSelector();
 
 private:
 

@@ -23,7 +23,7 @@
 namespace selx
 {
 template< int Dimensionality, class TPixel, class InternalComputationValueType >
-ItkMeanSquaresImageToImageMetricv4Component< Dimensionality, TPixel, InternalComputationValueType >::ItkMeanSquaresImageToImageMetricv4Component()
+ItkMeanSquaresImageToImageMetricv4Component< Dimensionality, TPixel, InternalComputationValueType >::ItkMeanSquaresImageToImageMetricv4Component(const std::string & name) : SuperElastixComponent(name)
 {
   m_theItkFilter = TheItkFilterType::New();
 

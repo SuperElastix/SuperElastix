@@ -23,10 +23,6 @@
 
 namespace selx
 {
-TransformComponent1::TransformComponent1()
-{
-}
-
 
 bool
 TransformComponent1::MeetsCriterion( const CriterionType & criterion )

@@ -50,18 +50,10 @@ public:
   /** Standard ITK typedefs. */
   typedef ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent          Self;
   typedef ComponentBase                       Superclass;
-  typedef itk::SmartPointer< Self >           Pointer;
-  typedef itk::SmartPointer< const Self >     ConstPointer;
+  typedef std::shared_ptr< Self >           Pointer;
+  typedef std::shared_ptr< const Self >     ConstPointer;
 
-  /** Method for creation through the object factory. */
-  itkNewMacro( Self );
-
-  /** Run-time type information (and related methods). */
-  itkTypeMacro( Self, ComponentBase );
-
-  //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
-
-  ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent();
+  ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent(const std::string & name);
   virtual ~ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent();
 
   // Get the type definitions from the interfaces
@@ -82,7 +74,7 @@ public:
   typedef itk::Array< TransformInternalComputationValueType > SmoothingSigmasArrayType;
 
   //Accepting Interfaces:
-  virtual int Set( itkImageDomainFixedInterface< Dimensionality > * ) override;
+  virtual int Set( typename itkImageDomainFixedInterface< Dimensionality >::Pointer ) override;
 
   //Providing Interfaces:
   virtual TransformParametersAdaptorsContainerType GetItkTransformParametersAdaptorsContainer() override;

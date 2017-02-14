@@ -51,12 +51,12 @@ public:
 
   typedef Blueprint::ComponentNameType ComponentNameType;
   typedef std::map<
-    std::string, SourceInterface * > SourceInterfaceMapType;
+    std::string, SourceInterface::Pointer > SourceInterfaceMapType;
   typedef std::map<
-    std::string, SinkInterface * > SinkInterfaceMapType;
+    std::string, SinkInterface::Pointer > SinkInterfaceMapType;
 
   typedef std::map<
-    std::string, RegistrationControllerStartInterface * > RegistrationControllerStartInterfaceMapType;
+    std::string, RegistrationControllerStartInterface::Pointer > RegistrationControllerStartInterfaceMapType;
 
   NetworkBuilder();
   virtual ~NetworkBuilder() {};

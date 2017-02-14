@@ -28,7 +28,7 @@ namespace selx
   template< >
   struct ContructComponentsFromTypeList< TypeList< > >
   {
-    static std::list<ComponentBase::Pointer> fill(std::list<ComponentBase::Pointer> &components, std::string &name)
+    static std::list<ComponentBase::Pointer> fill(std::list<ComponentBase::Pointer> &components, const std::string &name)
     {
       return components;
     }
@@ -37,47 +37,19 @@ namespace selx
   template< typename ComponentType, typename ... Rest >
   struct ContructComponentsFromTypeList< TypeList< ComponentType, Rest ... > >
   {
-    static std::list<ComponentBase::Pointer> fill(std::list<ComponentBase::Pointer> &components, std::string &name)
+    static std::list<ComponentBase::Pointer> fill(std::list<ComponentBase::Pointer> &components, const std::string &name)
     {
-      //components->push_back(new ComponentType(name));
-      components.push_back(ComponentType::New().GetPointer());
+      components.push_back(std::make_shared<ComponentType>(name));
       return ContructComponentsFromTypeList<TypeList< Rest ... >>::fill(components, name);
     }
   };
 
 template <class ComponentList>
-  ComponentSelector<ComponentList>::ComponentSelector()
+  ComponentSelector<ComponentList>::ComponentSelector(const std::string & name)
 {
   m_PossibleComponents = std::list<ComponentBase::Pointer>();
-  std::string name = "name";
   m_PossibleComponents = ContructComponentsFromTypeList<ComponentList>::fill(m_PossibleComponents, name);
-  //std::list< itk::LightObject::Pointer > allobjects
-  //  = itk::ObjectFactoryBase::CreateAllInstance( "ComponentBase" );
 
-  //for( std::list< itk::LightObject::Pointer >::iterator i = allobjects.begin();
-  //  i != allobjects.end(); ++i )
-  //{
-  //  ComponentBase * component
-  //    = dynamic_cast< ComponentBase * >( i->GetPointer() );
-  //  if (component)
-  //  {
-  //    this->m_PossibleComponents.push_back(component);
-  //  }
-  //}
-}
-
-  template <class ComponentList>
-  ComponentSelector<ComponentList>::~ComponentSelector()
-{
-}
-
-  template <class ComponentList>
-  void ComponentSelector<ComponentList>::ComponentName(const std::string name)
-{
-  for (const auto & component : this->m_PossibleComponents)
-  {
-    component->Name(name);
-  }
 }
 
 template <class ComponentList>

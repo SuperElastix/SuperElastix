@@ -45,7 +45,8 @@ template< int Dimensionality, class TPixel, class InternalComputationValueType >
 class itkMetricv4Interface
 {
 public:
-
+  using Type = itkMetricv4Interface<Dimensionality, TPixel, InternalComputationValueType>;
+  using Pointer = std::shared_ptr<Type>;
   using FixedImageType   = itk::Image< TPixel, Dimensionality >;
   using MovingImageType  = FixedImageType;
   using VirtualImageType = FixedImageType;
@@ -59,6 +60,8 @@ template< class TInternalComputationValueType >
 class itkOptimizerv4Interface
 {
 public:
+  using Type = itkOptimizerv4Interface< TInternalComputationValueType>;
+  using Pointer = std::shared_ptr<Type>;
 
   /**  Type of the optimizer. */
   typedef TInternalComputationValueType                                            InternalComputationValueType;
@@ -71,7 +74,8 @@ template< class TInternalComputationValueType, int Dimensionality >
 class itkTransformInterface
 {
 public:
-
+  using Type = itkTransformInterface< TInternalComputationValueType, Dimensionality>;
+  using Pointer = std::shared_ptr<Type>;
   typedef TInternalComputationValueType                                                            InternalComputationValueType;
   typedef typename itk::Transform< TInternalComputationValueType, Dimensionality, Dimensionality > TransformType;
   typedef typename TransformType::Pointer                                                          TransformPointer;
@@ -83,7 +87,8 @@ template< class TransformInternalComputationValueType, int Dimensionality >
 class itkTransformParametersAdaptorsContainerInterface
 {
 public:
-
+  using Type = itkTransformParametersAdaptorsContainerInterface< TransformInternalComputationValueType, Dimensionality>;
+  using Pointer = std::shared_ptr<Type>;
   // TransformBaseType acts as a container of the types: TParametersValueType, NInputDimensions, NOutputDimensions
   using TransformBaseType                        = itk::Transform< TransformInternalComputationValueType, Dimensionality, Dimensionality >;
   using TransformParametersAdaptorBaseType       = itk::TransformParametersAdaptorBase< TransformBaseType >;
@@ -96,6 +101,8 @@ template< class TransformInternalComputationValueType, int Dimensionality >
 class itkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerInterface
 {
 public:
+  using Type = itkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerInterface< TransformInternalComputationValueType, Dimensionality>;
+  using Pointer = std::shared_ptr<Type>;
 
   using TransformBaseType                  = itk::Transform< TransformInternalComputationValueType, Dimensionality, Dimensionality >;
   using TransformParametersAdaptorBaseType = itk::TransformParametersAdaptorBase< TransformBaseType >;
@@ -119,6 +126,9 @@ template< class InternalComputationValueType, int Dimensionality >
 class MultiStageTransformInterface
 {
 public:
+  using Type = MultiStageTransformInterface< InternalComputationValueType, Dimensionality>;
+  using Pointer = std::shared_ptr<Type>;
+
   using TransformBaseType = itk::Transform< InternalComputationValueType, Dimensionality, Dimensionality >;
   using CompositeTransformType = itk::CompositeTransform<InternalComputationValueType, Dimensionality >;
   virtual void SetFixedInitialTransform(typename CompositeTransformType::Pointer) = 0;

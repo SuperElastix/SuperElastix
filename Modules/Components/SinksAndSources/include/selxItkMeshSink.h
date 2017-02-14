@@ -41,27 +41,19 @@ class ItkMeshSinkComponent :
 public:
 
   /** Standard ITK typedefs. */
-  typedef ItkMeshSinkComponent          Self;
+  typedef ItkMeshSinkComponent<Dimensionality, TPixel>          Self;
   typedef ComponentBase                       Superclass;
-  typedef itk::SmartPointer< Self >           Pointer;
-  typedef itk::SmartPointer< const Self >     ConstPointer;
+  typedef std::shared_ptr< Self >           Pointer;
+  typedef std::shared_ptr< const Self >     ConstPointer;
 
-  /** Method for creation through the object factory. */
-  itkNewMacro( Self );
-
-  /** Run-time type information (and related methods). */
-  itkTypeMacro( Self, ComponentBase );
-
-  //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
-
-  ItkMeshSinkComponent();
+  ItkMeshSinkComponent(const std::string & name);
   virtual ~ItkMeshSinkComponent();
 
   typedef itk::Mesh< TPixel, Dimensionality >         ItkMeshType;
   typedef typename itk::MeshFileWriter< ItkMeshType > ItkMeshWriterType;
   typedef FileWriterDecorator< ItkMeshWriterType >    DecoratedWriterType;
 
-  virtual int Set( itkMeshInterface< Dimensionality, TPixel > * ) override;
+  virtual int Set( typename itkMeshInterface< Dimensionality, TPixel >::Pointer ) override;
 
   virtual void SetMiniPipelineOutput( itk::DataObject::Pointer ) override;
   virtual itk::DataObject::Pointer GetMiniPipelineOutput( void ) override;
@@ -81,7 +73,7 @@ private:
   typename ItkMeshType::Pointer m_MiniPipelineOutputMesh;
   typename ItkMeshType::Pointer m_NetworkBuilderOutputMesh;
 
-  itkMeshInterface< Dimensionality, TPixel > * m_ProvidingGetItkMeshInterface;
+  typename itkMeshInterface< Dimensionality, TPixel >::Pointer m_ProvidingGetItkMeshInterface;
 
 protected:
 

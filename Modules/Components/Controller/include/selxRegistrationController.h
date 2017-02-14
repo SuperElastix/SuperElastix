@@ -45,26 +45,18 @@ public:
   /** Standard ITK typedefs. */
   typedef RegistrationControllerComponent          Self;
   typedef ComponentBase                       Superclass;
-  typedef itk::SmartPointer< Self >           Pointer;
-  typedef itk::SmartPointer< const Self >     ConstPointer;
+  typedef std::shared_ptr< Self >           Pointer;
+  typedef std::shared_ptr< const Self >     ConstPointer;
 
-  /** Method for creation through the object factory. */
-  itkNewMacro( Self );
-
-  /** Run-time type information (and related methods). */
-  itkTypeMacro( Self, ComponentBase );
-
-  //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
-
-  RegistrationControllerComponent();
+  RegistrationControllerComponent(const std::string & name);
   virtual ~RegistrationControllerComponent();
 
   // Accepting Interfaces:
-  virtual int Set( RunRegistrationInterface * ) override;
+  virtual int Set(RunRegistrationInterface::Pointer ) override;
 
-  virtual int Set( ReconnectTransformInterface * ) override;
+  virtual int Set(ReconnectTransformInterface::Pointer) override;
 
-  virtual int Set( AfterRegistrationInterface * ) override;
+  virtual int Set(AfterRegistrationInterface::Pointer) override;
 
   // Providing Interfaces:
   virtual void RegistrationControllerStart( void ) override;
@@ -75,9 +67,9 @@ public:
 
 private:
 
-  std::set< RunRegistrationInterface * >    m_RunRegistrationInterfaces;
-  std::set< ReconnectTransformInterface * > m_ReconnectTransformInterfaces;
-  std::set< AfterRegistrationInterface * >  m_AfterRegistrationInterfaces;
+  std::set< RunRegistrationInterface::Pointer >    m_RunRegistrationInterfaces;
+  std::set< ReconnectTransformInterface::Pointer > m_ReconnectTransformInterfaces;
+  std::set< AfterRegistrationInterface::Pointer >  m_AfterRegistrationInterfaces;
 
 protected:
   // return the class name and the template arguments to uniquely identify this component.

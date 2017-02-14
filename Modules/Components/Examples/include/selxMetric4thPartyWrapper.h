@@ -31,13 +31,13 @@ class Metric4thPartyWrapper : public Example4thParty::Metric4thPartyBase
 {
 public:
 
-  void SetMetricValueComponent( MetricValueInterface * );
+  void SetMetricValueComponent( MetricValueInterface::Pointer );
 
   virtual int GetCost();
 
 private:
 
-  MetricValueInterface * metricval;
+  MetricValueInterface::Pointer metricval;
 };
 } // end namespace selx
 #endif // #define Metric3rdPartyWrapper_h

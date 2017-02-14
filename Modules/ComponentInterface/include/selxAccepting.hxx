@@ -28,7 +28,7 @@ namespace selx
 
 template< typename FirstInterface, typename ... RestInterfaces >
 int
-Accepting< FirstInterface, RestInterfaces ... >::ConnectFromImpl( ComponentBase * other,
+Accepting< FirstInterface, RestInterfaces ... >::ConnectFromImpl( ComponentBase::Pointer other,
   const ComponentBase::InterfaceCriteriaType interfaceCriteria )
 {
   // Does our component have an accepting interface sufficing the right criteria (e.g interfaceName)?
@@ -48,7 +48,7 @@ Accepting< FirstInterface, RestInterfaces ... >::ConnectFromImpl( ComponentBase 
 
 template< typename FirstInterface, typename ... RestInterfaces >
 int
-Accepting< FirstInterface, RestInterfaces ... >::ConnectFromImpl( ComponentBase * other )
+Accepting< FirstInterface, RestInterfaces ... >::ConnectFromImpl( ComponentBase::Pointer other)
 {
   // cast always succeeds since we know via the template arguments of the component which InterfaceAcceptors its base classes are.
   InterfaceAcceptor< FirstInterface > * acceptIF = ( this );
@@ -61,7 +61,7 @@ Accepting< FirstInterface, RestInterfaces ... >::ConnectFromImpl( ComponentBase 
 
 template< typename FirstInterface, typename ... RestInterfaces >
 InterfaceStatus
-Accepting< FirstInterface, RestInterfaces ... >::CanAcceptConnectionFrom( ComponentBase * other,
+Accepting< FirstInterface, RestInterfaces ... >::CanAcceptConnectionFrom( ComponentBase::ConstPointer other,
   const ComponentBase::InterfaceCriteriaType interfaceCriteria )
 {
   InterfaceStatus restInterfacesStatus = Accepting< RestInterfaces ... >::CanAcceptConnectionFrom( other, interfaceCriteria );

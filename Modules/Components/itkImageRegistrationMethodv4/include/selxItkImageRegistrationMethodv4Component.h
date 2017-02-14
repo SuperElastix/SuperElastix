@@ -55,18 +55,10 @@ public:
   /** Standard ITK typedefs. */
   typedef ItkImageRegistrationMethodv4Component          Self;
   typedef ComponentBase                       Superclass;
-  typedef itk::SmartPointer< Self >           Pointer;
-  typedef itk::SmartPointer< const Self >     ConstPointer;
+  typedef std::shared_ptr< Self >           Pointer;
+  typedef std::shared_ptr< const Self >     ConstPointer;
 
-  /** Method for creation through the object factory. */
-  itkNewMacro( Self );
-
-  /** Run-time type information (and related methods). */
-  itkTypeMacro( Self, ComponentBase );
-
-  //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
-
-  ItkImageRegistrationMethodv4Component();
+  ItkImageRegistrationMethodv4Component(const std::string & name);
   virtual ~ItkImageRegistrationMethodv4Component();
 
   // Get the type definitions from the interfaces
@@ -85,17 +77,17 @@ public:
   typedef itk::RegistrationParameterScalesFromPhysicalShift< ImageMetricType >             ScalesEstimatorType;
 
   //Accepting Interfaces:
-  virtual int Set( itkImageFixedInterface< Dimensionality, PixelType > * ) override;
+  virtual int Set(typename itkImageFixedInterface< Dimensionality, PixelType >::Pointer) override;
 
-  virtual int Set( itkImageMovingInterface< Dimensionality, PixelType > * ) override;
+  virtual int Set(typename itkImageMovingInterface< Dimensionality, PixelType >::Pointer) override;
 
-  virtual int Set( itkTransformInterface< InternalComputationValueType, Dimensionality > * ) override;
+  virtual int Set(typename itkTransformInterface< InternalComputationValueType, Dimensionality >::Pointer) override;
 
-  virtual int Set( TransformParametersAdaptorsContainerInterfaceType * ) override;
+  virtual int Set( typename TransformParametersAdaptorsContainerInterfaceType::Pointer ) override;
 
-  virtual int Set( itkMetricv4Interface< Dimensionality, PixelType, InternalComputationValueType > * ) override;
+  virtual int Set( typename itkMetricv4Interface< Dimensionality, PixelType, InternalComputationValueType >::Pointer ) override;
 
-  virtual int Set( itkOptimizerv4Interface< InternalComputationValueType > * ) override;
+  virtual int Set( typename itkOptimizerv4Interface< InternalComputationValueType >::Pointer ) override;
 
   //Providing Interfaces:
   virtual TransformPointer GetItkTransform() override;
@@ -120,7 +112,7 @@ private:
   // The settings SmoothingSigmas and ShrinkFactors imply NumberOfLevels, if the user
   // provides inconsistent numbers we should detect that and report about it.
   std::string                                         m_NumberOfLevelsLastSetBy;
-  TransformParametersAdaptorsContainerInterfaceType * m_TransformAdaptorsContainerInterface;
+  typename TransformParametersAdaptorsContainerInterfaceType::Pointer m_TransformAdaptorsContainerInterface;
 
 protected:
 

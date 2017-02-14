@@ -36,31 +36,24 @@ class GDOptimizer4thPartyComponent :
 
 {
 public:
-
   /** Standard class typedefs. */
-  typedef GDOptimizer4thPartyComponent    Self;
+  typedef GDOptimizer4thPartyComponent      Self;
   typedef ComponentBase                   Superclass;
-  typedef itk::SmartPointer< Self >       Pointer;
-  typedef itk::SmartPointer< const Self > ConstPointer;
+  typedef std::shared_ptr< Self >       Pointer;
+  typedef std::shared_ptr< const Self > ConstPointer;
 
-  /** New macro for creation of through the object factory. */
-  itkNewMacro( Self );
-
-  /** Run-time type information (and related methods). */
-  itkTypeMacro( GDOptimizer4thPartyComponent, Superclass );
-
-  GDOptimizer4thPartyComponent();
+  GDOptimizer4thPartyComponent(const std::string & name);
   virtual ~GDOptimizer4thPartyComponent();
   Example4thParty::GDOptimizer4thParty * theImplementation;
   Metric4thPartyWrapper *                MetricObject;
-  //virtual int ConnectFrom(const char *, ComponentBase*);
-  virtual int Set( MetricValueInterface * ) override;
+  
+  virtual int Set( MetricValueInterface::Pointer ) override;
 
   virtual int Update() override;
 
   //template <class ConflictinUpdateInterface> virtual int Update() { return 5; };
   // "error" : member function templates cannot be virtual
-  virtual int Update( ConflictinUpdateInterface * ) override { return 5; }
+  virtual int Update( ConflictinUpdateInterface::Pointer ) override { return 5; }
   //virtual bool MeetsCriteria(const CriteriaType &criteria);
   virtual bool MeetsCriterion( const CriterionType & criterion ) override;
 

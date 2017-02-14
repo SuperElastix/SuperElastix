@@ -23,7 +23,7 @@
 namespace selx
 {
 template< class TPixel >
-Niftyregf3dComponent< TPixel >::Niftyregf3dComponent()
+Niftyregf3dComponent< TPixel >::Niftyregf3dComponent(const std::string & name) : SuperElastixComponent(name)
 {
   m_reg_f3d = new reg_f3d<TPixel>(1,1);
 }
@@ -39,7 +39,7 @@ Niftyregf3dComponent< TPixel >::~Niftyregf3dComponent()
 template< class TPixel >
 int
 Niftyregf3dComponent< TPixel >
-::Set( NiftyregReferenceImageInterface< TPixel > * component )
+::Set( typename NiftyregReferenceImageInterface< TPixel >::Pointer component )
 {
   auto referenceimage = component->GetReferenceNiftiImage();
   // connect the itk pipeline
@@ -50,7 +50,7 @@ Niftyregf3dComponent< TPixel >
 template< class TPixel >
 int
 Niftyregf3dComponent< TPixel >
-::Set( NiftyregFloatingImageInterface< TPixel > * component )
+::Set( typename NiftyregFloatingImageInterface< TPixel >::Pointer component)
 {
   auto floatingimage = component->GetFloatingNiftiImage();
   // connect the itk pipeline

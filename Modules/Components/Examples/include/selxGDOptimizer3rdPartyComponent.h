@@ -35,27 +35,20 @@ class GDOptimizer3rdPartyComponent :
   >
 {
 public:
-
   /** Standard class typedefs. */
-  typedef GDOptimizer3rdPartyComponent    Self;
+  typedef GDOptimizer3rdPartyComponent      Self;
   typedef ComponentBase                   Superclass;
-  typedef itk::SmartPointer< Self >       Pointer;
-  typedef itk::SmartPointer< const Self > ConstPointer;
+  typedef std::shared_ptr< Self >       Pointer;
+  typedef std::shared_ptr< const Self > ConstPointer;
 
-  /** New macro for creation of through the object factory. */
-  itkNewMacro( Self );
-
-  /** Run-time type information (and related methods). */
-  itkTypeMacro( GDOptimizer3rdPartyComponent, Superclass );
-
-  GDOptimizer3rdPartyComponent();
+  GDOptimizer3rdPartyComponent(const std::string & name);
   virtual ~GDOptimizer3rdPartyComponent();
   Example3rdParty::GDOptimizer3rdParty * theImplementation;
   Metric3rdPartyWrapper *                MetricObject;
-  //virtual int ConnectFrom(const char *, ComponentBase*);
-  virtual int Set( MetricValueInterface * ) override;
 
-  virtual int Set( MetricDerivativeInterface * ) override;
+  virtual int Set( MetricValueInterface::Pointer ) override;
+
+  virtual int Set( MetricDerivativeInterface::Pointer ) override;
 
   virtual int Update() override;
 

@@ -23,7 +23,7 @@
 namespace selx
 {
 template< int Dimensionality, class TPixel >
-MonolithicElastixComponent< Dimensionality, TPixel >::MonolithicElastixComponent()
+MonolithicElastixComponent< Dimensionality, TPixel >::MonolithicElastixComponent(const std::string & name) : SuperElastixComponent(name)
 {
   m_elastixFilter = ElastixFilterType::New();
 
@@ -47,7 +47,7 @@ MonolithicElastixComponent< Dimensionality, TPixel >::~MonolithicElastixComponen
 
 template< int Dimensionality, class TPixel >
 int
-MonolithicElastixComponent< Dimensionality, TPixel >::Set( itkImageFixedInterface< Dimensionality, TPixel > * component )
+MonolithicElastixComponent< Dimensionality, TPixel >::Set( typename itkImageFixedInterface< Dimensionality, TPixel >::Pointer component )
 {
   auto fixedImage = component->GetItkImageFixed();
   // connect the itk pipeline
@@ -58,7 +58,7 @@ MonolithicElastixComponent< Dimensionality, TPixel >::Set( itkImageFixedInterfac
 
 template< int Dimensionality, class TPixel >
 int
-MonolithicElastixComponent< Dimensionality, TPixel >::Set( itkImageMovingInterface< Dimensionality, TPixel > * component )
+MonolithicElastixComponent< Dimensionality, TPixel >::Set( typename itkImageMovingInterface< Dimensionality, TPixel >::Pointer component )
 {
   auto movingImage = component->GetItkImageMoving();
   // connect the itk pipeline

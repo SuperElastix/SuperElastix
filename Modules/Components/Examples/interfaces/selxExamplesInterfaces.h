@@ -26,34 +26,35 @@ namespace selx
 class MetricDerivativeInterface
 {
 public:
-
+  using Pointer = std::shared_ptr<MetricDerivativeInterface>;
   virtual int GetDerivative() = 0;
 };
 
 class MetricValueInterface
 {
 public:
-
+  using Pointer = std::shared_ptr<MetricValueInterface>;
   virtual int GetValue() = 0;
 };
 
 class OptimizerUpdateInterface
 {
 public:
-
+  using Pointer = std::shared_ptr<OptimizerUpdateInterface>;
   virtual int Update() = 0;
 };
 
 class TransformedImageInterface
 {
 public:
-
+  using Pointer = std::shared_ptr<TransformedImageInterface>;
   virtual int GetTransformedImage() = 0;
 };
 
 class ConflictinUpdateInterface
 {
 public:
+  using Pointer = std::shared_ptr<ConflictinUpdateInterface>;
 
   // "error" : member function templates cannot be virtual
   // template <class ConflictinUpdateInterface> virtual int Update() = 0;
@@ -61,7 +62,7 @@ public:
 
   //TODO solution: http://stackoverflow.com/questions/2004820/inherit-interfaces-which-share-a-method-name
   //TODO better?: http://stackoverflow.com/questions/18398409/c-inherit-from-multiple-base-classes-with-the-same-virtual-function-name
-  virtual int Update( ConflictinUpdateInterface * ) = 0;
+  virtual int Update( ConflictinUpdateInterface::Pointer ) = 0;
 };
 
 

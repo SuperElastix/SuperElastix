@@ -23,7 +23,7 @@
 namespace selx
 {
 template< class TPixel >
-NiftyregReadImageComponent< TPixel >::NiftyregReadImageComponent()
+NiftyregReadImageComponent< TPixel >::NiftyregReadImageComponent(const std::string & name) : SuperElastixComponent(name)
 {
 }
 

@@ -22,7 +22,7 @@
 namespace selx
 {
 void
-Metric4thPartyWrapper::SetMetricValueComponent( MetricValueInterface * metricValueComponent )
+Metric4thPartyWrapper::SetMetricValueComponent( MetricValueInterface::Pointer metricValueComponent )
 {
   this->metricval = metricValueComponent;
 }

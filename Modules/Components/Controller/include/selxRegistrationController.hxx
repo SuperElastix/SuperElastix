@@ -23,7 +23,7 @@
 namespace selx
 {
 template< bool dummy >
-RegistrationControllerComponent< dummy >::RegistrationControllerComponent()
+RegistrationControllerComponent< dummy >::RegistrationControllerComponent(const std::string & name) : SuperElastixComponent(name)
 {
 }
 
@@ -36,7 +36,7 @@ RegistrationControllerComponent< dummy >::~RegistrationControllerComponent()
 
 template< bool dummy >
 int
-RegistrationControllerComponent< dummy >::Set( RunRegistrationInterface * other )
+RegistrationControllerComponent< dummy >::Set( RunRegistrationInterface::Pointer other )
 {
   this->m_RunRegistrationInterfaces.insert( other );
   return 0;
@@ -45,7 +45,7 @@ RegistrationControllerComponent< dummy >::Set( RunRegistrationInterface * other 
 
 template< bool dummy >
 int
-RegistrationControllerComponent< dummy >::Set( ReconnectTransformInterface * other )
+RegistrationControllerComponent< dummy >::Set(ReconnectTransformInterface::Pointer other)
 {
   this->m_ReconnectTransformInterfaces.insert( other );
   return 0;
@@ -54,7 +54,7 @@ RegistrationControllerComponent< dummy >::Set( ReconnectTransformInterface * oth
 
 template< bool dummy >
 int
-RegistrationControllerComponent< dummy >::Set( AfterRegistrationInterface * other )
+RegistrationControllerComponent< dummy >::Set(AfterRegistrationInterface::Pointer other)
 {
   this->m_AfterRegistrationInterfaces.insert( other );
   return 0;
