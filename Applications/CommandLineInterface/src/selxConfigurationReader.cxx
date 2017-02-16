@@ -50,27 +50,69 @@ ConfigurationReader::VectorizeValues( const ComponentOrConnectionTreeType & comp
 
 
 ConfigurationReader::BlueprintPointerType
-ConfigurationReader::FromXML( const std::string & filename )
+ConfigurationReader::FromFile(const PathType & filename)
 {
-  // Create empty property tree object
-  using boost::property_tree::ptree;
-  ptree pt;
-
-  read_xml( filename, pt, boost::property_tree::xml_parser::trim_whitespace );
-
-  return FromPropertyTree( pt );
+  auto propertyTree = ReadPropertyTree(filename);
+  auto includesList = FindIncludes(propertyTree);
+  if (includesList.size() == 0)
+  {
+    return FromPropertyTree(propertyTree);
+  }
+  else
+  {
+    BlueprintPointerType baseBlueprint = BlueprintPointerType(new Blueprint());
+    for (auto const & includePath : includesList)
+    {
+      auto blueprint = FromFile(includePath);
+      baseBlueprint->ComposeWith(blueprint);
+    }
+    return baseBlueprint;
+  }
 }
 
-
-ConfigurationReader::BlueprintPointerType
-ConfigurationReader::FromJson( const std::string & filename )
+ConfigurationReader::PropertyTreeType
+ConfigurationReader::ReadPropertyTree(const PathType & filename)
 {
   // Create empty property tree object
-  using boost::property_tree::ptree;
-  ptree pt;
+  PropertyTreeType propertyTree;
+  if (filename.extension() == ".xml")
+  {
+    read_xml(filename.string(), propertyTree, boost::property_tree::xml_parser::trim_whitespace);
+  }
+  else if (filename.extension() == ".json")
+  {
+    read_json(filename.string(), propertyTree);
+  }
+  else
+  {
+    throw std::invalid_argument("Configuration file requires extension .xml or .json");
+  }
 
-  read_json( filename, pt );
-  return FromPropertyTree( pt );
+  return propertyTree;
+}
+
+ConfigurationReader::PathsType 
+ConfigurationReader::FindIncludes(const PropertyTreeType & propertyTree)
+{
+  PathsType paths;
+  bool FoundIncludes = false;
+  BOOST_FOREACH(const PropertyTreeType::value_type & v, propertyTree.equal_range("Include"))
+  {
+    if (FoundIncludes)
+    {
+      std::runtime_error("Only 1 listing of Includes is allowed per Blueprint file");
+    }
+
+
+    FoundIncludes = true;
+    for (auto const & pathLeaf : v.second)
+    {
+      //const std::string pathString(pathChars);
+      //PathType path(pathString);
+      paths.push_back(pathLeaf.second.data());
+    }
+  }
+  return paths;
 }
 
 

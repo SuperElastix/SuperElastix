@@ -27,8 +27,9 @@
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/info_parser.hpp>
 #include <boost/foreach.hpp>
-#include <string>
+#include <boost/filesystem.hpp>
 
+#include <string>
 #include <iostream>
 #include <boost/algorithm/string.hpp>
 #include <vector>
@@ -44,16 +45,22 @@ public:
   typedef Blueprint::ParameterValueType ParameterValueType;
   typedef Blueprint::ParameterMapType   ParameterMapType;
   typedef std::unique_ptr< Blueprint >  BlueprintPointerType;
+  
+  using PathType = boost::filesystem::path;
 
-  static BlueprintPointerType FromXML( const std::string & filename );
-
-  static BlueprintPointerType FromJson( const std::string & filename );
+  static BlueprintPointerType FromFile(const PathType & filename);
 
 private:
 
   typedef boost::property_tree::ptree         PropertyTreeType;
   typedef const boost::property_tree::ptree & ComponentOrConnectionTreeType;
+  
+  using PathType = boost::filesystem::path;
+  using PathsType = std::list<PathType>;
 
+  static PropertyTreeType ReadPropertyTree(const PathType & filename);
+
+  static PathsType FindIncludes(const PropertyTreeType &);
   static ParameterValueType VectorizeValues( ComponentOrConnectionTreeType componentOrConnectionTree );
 
   static BlueprintPointerType FromPropertyTree( const PropertyTreeType & );

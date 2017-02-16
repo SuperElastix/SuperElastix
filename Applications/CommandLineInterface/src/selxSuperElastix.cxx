@@ -85,21 +85,7 @@ main( int ac, char * av[] )
       return 0;
     }
 
-    selx::ConfigurationReader::BlueprintPointerType blueprint;
-    if( configurationPath.extension() == ".xml" )
-    {
-      // TODO: open file here and pass a stream to the ConfigurationReader
-      blueprint = selx::ConfigurationReader::FromXML( configurationPath.string() );
-    }
-    else if( configurationPath.extension() == ".json" )
-    {
-      // TODO: open file here and pass a stream to the ConfigurationReader
-      blueprint = selx::ConfigurationReader::FromJson( configurationPath.string() );
-    }
-    else
-    {
-      throw std::invalid_argument( "Configuration file requires extension .xml or .json" );
-    }
+    selx::ConfigurationReader::BlueprintPointerType blueprint = selx::ConfigurationReader::FromFile(configurationPath);
 
     if( vm.count( "graphout" ) )
     {
