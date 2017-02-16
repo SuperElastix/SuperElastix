@@ -77,7 +77,7 @@ ConfigurationReader::FromJson( const std::string & filename )
 ConfigurationReader::BlueprintPointerType
 ConfigurationReader::FromPropertyTree( const PropertyTreeType & pt )
 {
-  BlueprintPointerType blueprint = std::make_shared< Blueprint >();
+  BlueprintPointerType blueprint = std::unique_ptr< Blueprint >(new Blueprint());
 
   BOOST_FOREACH( const PropertyTreeType::value_type & v, pt.equal_range( "Component" ) )
   {
