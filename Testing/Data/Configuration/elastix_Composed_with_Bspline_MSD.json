@@ -1,0 +1,16 @@
+{
+	"Include": "../Configuration/elastix.json",
+    "Component": {
+        "Name": "RegistrationMethod",
+        "Dimensionality": "2",
+        "Transform": "BSplineTransform",
+        "Metric": "AdvancedMeanSquares",
+        "PixelType": "float",
+        "ResultImagePixelType": "float"
+    },
+    "Component": {
+        "Name": "FixedImage",
+        "Dimensionality": "2",
+        "PixelType": "float"
+    }
+}

@@ -52,10 +52,12 @@ ConfigurationReader::VectorizeValues( const ComponentOrConnectionTreeType & comp
 ConfigurationReader::BlueprintPointerType
 ConfigurationReader::FromFile(const PathType & filename)
 {
+  std::cout << "Scanning for Includes: " << filename << std::endl;
   auto propertyTree = ReadPropertyTree(filename);
   auto includesList = FindIncludes(propertyTree);
   if (includesList.size() == 0)
   {
+    std::cout << "Load: " << filename << std::endl;
     return FromPropertyTree(propertyTree);
   }
   else
@@ -65,6 +67,7 @@ ConfigurationReader::FromFile(const PathType & filename)
     {
       auto blueprint = FromFile(includePath);
       baseBlueprint->ComposeWith(blueprint);
+      std::cout << "Compose with: " << filename << std::endl;
     }
     return baseBlueprint;
   }
@@ -103,14 +106,12 @@ ConfigurationReader::FindIncludes(const PropertyTreeType & propertyTree)
       std::runtime_error("Only 1 listing of Includes is allowed per Blueprint file");
     }
 
-
+    auto const pathsStrings = VectorizeValues(v.second);
+    // convert vector of strings to list of boost::path-s
+    paths.resize(pathsStrings.size());
+    std::transform(pathsStrings.begin(), pathsStrings.end(), paths.begin(),
+      [](std::string p) { return PathType(p); });
     FoundIncludes = true;
-    for (auto const & pathLeaf : v.second)
-    {
-      //const std::string pathString(pathChars);
-      //PathType path(pathString);
-      paths.push_back(pathLeaf.second.data());
-    }
   }
   return paths;
 }
