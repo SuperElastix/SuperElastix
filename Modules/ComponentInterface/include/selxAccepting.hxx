@@ -114,7 +114,7 @@ bool
 Accepting< FirstInterface, RestInterfaces ... >::AreAllAccepted()
 {
   InterfaceAcceptor< FirstInterface > * acceptIF = (this);
-  if (acceptIF->isSet == false)
+  if (acceptIF->isSet() == false)
   {
     return false;
   }

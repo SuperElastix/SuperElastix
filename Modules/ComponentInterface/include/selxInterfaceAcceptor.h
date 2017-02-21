@@ -43,9 +43,12 @@ public:
 
   bool CanAcceptConnectionFrom( ComponentBase::ConstPointer );
 
+  bool isSet()
+  {
+    return m_isSet;
+  };
 private:
-
-  bool isSet;
+  bool m_isSet;
 };
 } //end namespace selx
 
