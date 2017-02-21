@@ -108,5 +108,19 @@ Accepting< FirstInterface, RestInterfaces ... >::CountMeetsCriteria( const Compo
 {
   return Count< FirstInterface, RestInterfaces ... >::MeetsCriteria( interfaceCriteria );
 }
+
+template< typename FirstInterface, typename ... RestInterfaces >
+bool
+Accepting< FirstInterface, RestInterfaces ... >::AreAllAccepted()
+{
+  InterfaceAcceptor< FirstInterface > * acceptIF = (this);
+  if (acceptIF->isSet == false)
+  {
+    return false;
+  }
+  
+  return Accepting<RestInterfaces ...>::AreAllAccepted();
+}
+
 } //end namespace selx
 #endif // Accepting_hxx

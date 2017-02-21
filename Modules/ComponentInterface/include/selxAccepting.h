@@ -31,15 +31,17 @@ class Accepting< >
 public:
 
   static unsigned int CountMeetsCriteria( const ComponentBase::InterfaceCriteriaType ) { return 0; }
-  int ConnectFromImpl( ComponentBase::Pointer other, const ComponentBase::InterfaceCriteriaType interfaceCriteria ) { return 0; } //no interface called interfacename ;
+  //no interface called interfacename ;
+  int ConnectFromImpl( ComponentBase::Pointer other, const ComponentBase::InterfaceCriteriaType interfaceCriteria ) { return 0; }
   InterfaceStatus CanAcceptConnectionFrom( ComponentBase::ConstPointer, const ComponentBase::InterfaceCriteriaType interfaceCriteria )
   {
     return InterfaceStatus::noaccepter;
   }
 
+  //Empty RestInterfaces does 0 successful connects ;
+  int ConnectFromImpl( ComponentBase::Pointer ) { return 0; }                                                                                   
 
-  int ConnectFromImpl( ComponentBase::Pointer ) { return 0; }                                                                                   //Empty RestInterfaces does 0 successful connects ;
-
+  bool AreAllAccepted() { return true; }
 protected:
 };
 
@@ -56,6 +58,8 @@ public:
 
   int ConnectFromImpl( ComponentBase::Pointer );
 
+  // Helper function by which a component can check if all its Accepting interfaces have been set after the handshakes
+  bool AreAllAccepted();
 protected:
 };
 } //end namespace selx
