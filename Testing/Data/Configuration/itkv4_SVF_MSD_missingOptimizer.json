@@ -1,0 +1,143 @@
+{
+    "Component": {
+        "Name": "RegistrationMethod",
+        "NameOfClass": "ItkImageRegistrationMethodv4Component",
+		"NumberOfLevels":  "3" ,
+		"ShrinkFactorsPerLevel": [ "4", "2", "1" ],
+        "SmoothingSigmasPerLevel": [ "4", "2", "1" ] 
+    },
+    "Component": {
+        "Name": "FixedImage",
+        "NameOfClass": "ItkImageSourceFixedComponent",
+        "Dimensionality": "2",
+		"PixelType": "float"
+    },
+    "Component": {
+        "Name": "MovingImage",
+        "NameOfClass": "ItkImageSourceMovingComponent",
+        "Dimensionality": "2",
+		"PixelType": "float"
+    },
+    "Component": {
+        "Name": "ResultImage",
+        "NameOfClass": "ItkImageSinkComponent",
+        "Dimensionality": "2",
+		"PixelType": "float"
+    },
+    "Component": {
+        "Name": "ResultDisplacementField",
+        "NameOfClass": "DisplacementFieldItkImageFilterSinkComponent",
+        "Dimensionality": "2",
+		"PixelType": "float"
+    },
+    "Component": {
+        "Name": "Metric",
+        "NameOfClass": "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component"
+    },
+    "Component": {
+        "Name": "Transform",
+        "NameOfClass": "ItkGaussianExponentialDiffeomorphicTransformComponent",
+  		"InternalComputationValueType": "double"
+    },
+	"Component": {
+        "Name": "TransformResolutionAdaptor",
+        "NameOfClass": "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent",
+  		"ShrinkFactorsPerLevel": [ "4", "2", "1" ]
+    },
+    "Component": {
+        "Name": "ResampleFilter",
+        "NameOfClass": "ItkResampleFilterComponent"
+    },
+    "Component": {
+        "Name": "TransformDisplacementFilter",
+        "NameOfClass": "ItkTransformDisplacementFilterComponent"
+    },
+	"Component": {
+        "Name": "Controller",
+        "NameOfClass": "RegistrationControllerComponent"
+    },  
+    "Connection": {
+        "Out": "FixedImage",
+        "In": "RegistrationMethod",
+        "NameOfInterface": "itkImageFixedInterface"
+    },
+    "Connection": {
+        "Out": "MovingImage",
+        "In": "RegistrationMethod",
+        "NameOfInterface": "itkImageMovingInterface"
+    },
+    "Connection": {
+        "Out": "RegistrationMethod",
+        "In": "ResampleFilter",
+        "NameOfInterface": "itkTransformInterface"
+    },
+    "Connection": {
+        "Out": "RegistrationMethod",
+        "In": "TransformDisplacementFilter",
+        "NameOfInterface": "itkTransformInterface"
+    },
+    "Connection": {
+        "Out": "ResampleFilter",
+        "In": "ResultImage",
+        "NameOfInterface": "itkImageInterface"
+	},
+    "Connection": {
+        "Out": "TransformDisplacementFilter",
+        "In": "ResultDisplacementField",
+        "NameOfInterface": "DisplacementFieldItkImageSourceInterface"
+    },
+    "Connection": {
+        "Out": "Metric",
+        "In": "RegistrationMethod",
+        "NameOfInterface": "itkMetricv4Interface"
+    },
+    "Connection": {
+        "Out": "FixedImage",
+        "In": "Transform",
+        "NameOfInterface": "itkImageDomainFixedInterface"
+    },
+    "Connection": {
+        "Out": "Transform",
+        "In": "RegistrationMethod",
+        "NameOfInterface": "itkTransformInterface"
+    },
+	"Connection": {
+        "Out": "FixedImage",
+        "In": "TransformResolutionAdaptor",
+        "NameOfInterface": "itkImageDomainFixedInterface"
+    },
+	"Connection": {
+        "Out": "TransformResolutionAdaptor",
+        "In": "RegistrationMethod"
+    },
+	"Connection": {
+        "Out": "FixedImage",
+        "In": "TransformDisplacementFilter",
+        "NameOfInterface": "itkImageDomainFixedInterface"
+    },
+	"Connection": {
+        "Out": "FixedImage",
+        "In": "ResampleFilter",
+        "NameOfInterface": "itkImageDomainFixedInterface"
+    },
+	"Connection": {
+        "Out": "MovingImage",
+        "In": "ResampleFilter",
+        "NameOfInterface": "itkImageMovingInterface"
+    },
+	"Connection": {
+        "Out": "RegistrationMethod",
+        "In": "Controller",
+        "NameOfInterface": "RunRegistrationInterface"
+    },
+	"Connection": {
+        "Out": "ResampleFilter",
+        "In": "Controller",
+        "NameOfInterface": "ReconnectTransformInterface"
+    },
+	"Connection": {
+        "Out": "TransformDisplacementFilter",
+        "In": "Controller",
+        "NameOfInterface": "ReconnectTransformInterface"
+    }
+}
