@@ -63,6 +63,8 @@ public:
 
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
 
+  virtual bool ConnectionsSatisfied() override { return true; }
+
   static const char * GetDescription() { return "RegistrationController Component"; }
 
 private:

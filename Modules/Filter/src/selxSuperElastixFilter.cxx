@@ -172,10 +172,10 @@ SuperElastixFilter
   bool connectionSatisfied = this->m_NetworkBuilder->CheckConnectionsSatisfied();
   if (connectionSatisfied == false)
   {
-    // itkExceptionMacro(<< "One or more components has unsatisfied connections" )
+    itkExceptionMacro(<< "One or more components has unsatisfied connections" )
   }
-  std::cout << "All Components are satisfied with their connections" << std::endl << std::endl;
 
+  std::cout << "All Components are satisfied with their connections" << std::endl << std::endl;
 
 
   for( const auto & nameAndInterface : sinks )
