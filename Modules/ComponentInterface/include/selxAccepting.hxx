@@ -116,6 +116,12 @@ Accepting< FirstInterface, RestInterfaces ... >::AreAllAccepted()
   InterfaceAcceptor< FirstInterface > * acceptIF = (this);
   if (acceptIF->isSet() == false)
   {
+    auto const & properties = Properties<FirstInterface>::Get();
+    for (auto const & keyvalue : properties)
+    {
+      std::cout << "{ """ << keyvalue.first << """: """ << keyvalue.second << """}" << std::endl;
+    }
+    //std::cout << std::endl;
     return false;
   }
   

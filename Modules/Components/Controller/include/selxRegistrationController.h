@@ -63,6 +63,8 @@ public:
 
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
 
+  // override default by not checking accepting connections and always return true.
+  // TODO: the controller is a bit odd since it accepts connections, but the providing components require the connections. See if we can reverse the direction of the connection.
   virtual bool ConnectionsSatisfied() override { return true; }
 
   static const char * GetDescription() { return "RegistrationController Component"; }
