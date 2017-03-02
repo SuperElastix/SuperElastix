@@ -26,7 +26,7 @@ namespace selx
 template< >
 struct ContructComponentsFromTypeList< TypeList< >>
 {
-  static std::list< ComponentBase::Pointer > fill( std::list< ComponentBase::Pointer > & components, const std::string & name )
+  static std::list< ComponentBase::Pointer > fill(std::list< ComponentBase::Pointer > & components, const std::string & name )
   {
     return components;
   }
@@ -37,16 +37,16 @@ struct ContructComponentsFromTypeList< TypeList< ComponentType, Rest ... >>
 {
   static std::list< ComponentBase::Pointer > fill( std::list< ComponentBase::Pointer > & components, const std::string & name )
   {
-    components.push_back( std::make_shared< ComponentType >( name ) );
-    return ContructComponentsFromTypeList< TypeList< Rest ... >>::fill( components, name );
+    components.push_back( std::make_shared< ComponentType >( name) );
+    return ContructComponentsFromTypeList< TypeList< Rest ... >>::fill(components, name);
   }
 };
 
 template< class ComponentList >
-ComponentSelector< ComponentList >::ComponentSelector( const std::string & name )
+ComponentSelector< ComponentList >::ComponentSelector(const std::string & name)
 {
   m_PossibleComponents = std::list< ComponentBase::Pointer >();
-  m_PossibleComponents = ContructComponentsFromTypeList< ComponentList >::fill( m_PossibleComponents, name );
+  m_PossibleComponents = ContructComponentsFromTypeList< ComponentList >::fill(m_PossibleComponents, name);
 }
 
 

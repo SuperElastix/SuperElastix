@@ -29,6 +29,7 @@
 #include <map>
 #include <vector>
 #include <memory>
+#include "selxLogger.h"
 
 namespace selx
 {
@@ -70,6 +71,7 @@ public:
   // SuperElastixComponent provides a default implementation which may be overridden by the component developer
   virtual bool ConnectionsSatisfied() = 0 ;
   const std::string m_Name;
+  LoggerInterface* m_Logger;
 };
 } // end namespace selx
 
