@@ -56,15 +56,15 @@ Logger::LoggerImpl
 }
 
 
-void
-Logger::LoggerImpl
-::AddFile( FileNameType fileName, FormatType format )
-{
-  boost::log::add_file_log(
-    boost::log::keywords::file_name = fileName,
-    boost::log::keywords::format = format
-    );
-}
+// void
+// Logger::LoggerImpl
+// ::AddFile( FileNameType fileName, FormatType format )
+// {
+//   boost::log::add_file_log(
+//     boost::log::keywords::file_name = fileName,
+//     boost::log::keywords::format = format
+//   );
+// }
 
 
 // void
@@ -77,6 +77,7 @@ Logger::LoggerImpl
 //     boost::log::keywords::format = format
 //   );
 // }
+
 
 void
 Logger::LoggerImpl
@@ -97,23 +98,25 @@ Logger::LoggerImpl
 }
 
 
-void
-Logger::LoggerImpl
-::Log( Logger::ChannelType channel, SeverityType severity, const std::string message )
-{
-  boost::log::record record = this->m_Logger.open_record( ( boost::log::keywords::channel = channel, boost::log::keywords::severity = severity ) );
-  if( record )
-  {
-    boost::log::record_ostream strm( record );
-    strm << message;
-    strm.flush();
-    this->m_Logger.push_record( boost::move( record ) );
-  }
-  else
-  {
-    assert( false );
-  }
-}
+// void
+// Logger::LoggerImpl
+// ::Log( Logger::ChannelType channel, SeverityType severity, const std::string message )
+// {
+//   boost::log::record record = this->m_Logger.open_record( ( boost::log::keywords::channel = channel, boost::log::keywords::severity = severity ) );
+//   if( record )
+//   {
+//     boost::log::record_ostream strm( record );
+//     strm << message;
+//     strm.flush();
+//     this->m_Logger.push_record( boost::move( record ) );
+//   }
+//   else
+//   {
+//     assert( false );
+//   }
+// }
+
+
 }
 
 #endif // Logger_cxx
