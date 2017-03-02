@@ -38,12 +38,11 @@ public:
 
   void AddConsole( FormatType format );
 
-  void AddFile( Logger::FileNameType fileName, Logger::FormatType format );
-
-  // void AddFile( Logger::FileNameType fileName, Logger::ChannelType channel, ðLogger::FormatType format );
+  // void AddFile( Logger::FileNameType fileName, Logger::FormatType format );
+  // void AddFile( Logger::FileNameType fileName, Logger::ChannelType channel, Logger::FormatType format );
 
   void Log( SeverityType severity, Logger::MessageType message );
-  void Log( Logger::ChannelType channel, SeverityType severity, Logger::MessageType message );
+  // void Log( Logger::ChannelType channel, SeverityType severity, Logger::MessageType message );
 
   LoggerType m_Logger;
 

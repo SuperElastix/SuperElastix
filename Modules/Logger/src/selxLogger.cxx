@@ -35,12 +35,12 @@ Logger
   this->m_Pimple->AddConsole( format );
 }
 
-void
-Logger
-:: AddFile( FileNameType fileName, FormatType format )
-{
-  this->m_Pimple->AddFile( fileName, format );
-}
+// void
+// Logger
+// :: AddFile( FileNameType fileName, FormatType format )
+// {
+//   this->m_Pimple->AddFile( fileName, format );
+// }
 
 // void
 // Logger
@@ -56,11 +56,11 @@ Logger
   this->m_Pimple->Log( severity, message );
 }
 
-void
-Logger
-::Log( ChannelType channel, SeverityType severity, MessageType message )
-{
-  this->m_Pimple->Log( channel, severity, message );
-}
+// void
+// Logger
+// ::Log( ChannelType channel, SeverityType severity, MessageType message )
+// {
+//   this->m_Pimple->Log( channel, severity, message );
+// }
 
 }

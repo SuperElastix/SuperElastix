@@ -39,6 +39,7 @@ class Logger
 {
 public:
 
+  typedef const std::string SourceNameType;
   typedef const std::string ChannelType;
   typedef const std::string MessageType;
 
@@ -49,17 +50,16 @@ public:
   Logger();
   ~Logger();
 
-  void AddConsole( FormatType format = "[%TimeStamp% %ComponentName% %Channel% %SeverityLevel%]: %Message%" );
+  void AddConsole( FormatType format = "[%LineID% %TimeStamp%]: %Message%" );
 
-  void AddFile( FileNameType fileName = "SuperElastix_%Y-%m-%d_%H-%M-%S.%N.log",
-                FormatType format = "[%LineID% %TimeStamp% %ComponentName% %Channel% %SeverityLevel%]: %Message%" );
-
+  // void AddFile( FileNameType fileName = "SuperElastix_%Y-%m-%d_%H-%M-%S.%N.log",
+  //               FormatType format = "[%LineID% %TimeStamp% %ComponentName% %Channel% %SeverityLevel%]: %Message%" );
   // void AddFile( FileNameType fileName = "SuperElastix_%Y-%m-%d_%H-%M-%S.%N.log",
   //               Logger::ChannelType channel = "SuperElastix",  
   //               FormatType format = "[%LineID% %TimeStamp% %ComponentName% %Channel% %SeverityLevel%]: %Message%" );
 
   void Log( SeverityType severity, MessageType message );
-  void Log( ChannelType channel, SeverityType severity, MessageType message );
+  // void Log( ChannelType channel, SeverityType severity, MessageType message );
 
 private:
 
