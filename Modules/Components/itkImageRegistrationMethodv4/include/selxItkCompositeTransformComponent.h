@@ -63,6 +63,8 @@ public:
 
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
 
+  virtual bool ConnectionsSatisfied() override;
+
   //static const char * GetName() { return "ItkCompositeTransform"; } ;
   static const char * GetDescription() { return "ItkCompositeTransform Component"; }
 

@@ -45,6 +45,8 @@ public:
 
   virtual int AcceptConnectionFrom( ComponentBase::Pointer );
 
+  virtual bool ConnectionsSatisfied() override;
+
 protected:
 
   virtual InterfaceStatus CanAcceptConnectionFrom( ComponentBase::ConstPointer, const InterfaceCriteriaType interfaceCriteria ) override;

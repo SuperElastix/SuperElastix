@@ -31,7 +31,7 @@ ComponentBase::ComponentBase( const std::string & name ) : m_Name( name )
 {
 }
 
-
 //const std::map< std::string, std::string > ComponentBase::TemplateProperties()
 // { return{}; }
+
 } // end namespace selx

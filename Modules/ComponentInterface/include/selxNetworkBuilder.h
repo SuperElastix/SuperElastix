@@ -70,6 +70,8 @@ public:
   /** if all components are uniquely selected, they can be connected */
   virtual bool ConnectComponents();
 
+  virtual bool CheckConnectionsSatisfied();
+
   virtual NetworkContainer GetRealizedNetwork();
 
   virtual SourceInterfaceMapType GetSourceInterfaces();

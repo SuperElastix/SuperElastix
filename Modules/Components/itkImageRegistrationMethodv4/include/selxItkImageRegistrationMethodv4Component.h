@@ -53,7 +53,7 @@ class ItkImageRegistrationMethodv4Component :
 public:
 
   /** Standard ITK typedefs. */
-  typedef ItkImageRegistrationMethodv4Component Self;
+  typedef ItkImageRegistrationMethodv4Component< Dimensionality, PixelType, InternalComputationValueType > Self;
   typedef ComponentBase                         Superclass;
   typedef std::shared_ptr< Self >               Pointer;
   typedef std::shared_ptr< const Self >         ConstPointer;
@@ -102,6 +102,8 @@ public:
 
   //BaseClass methods
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
+
+  virtual bool ConnectionsSatisfied() override;
 
   //static const char * GetName() { return "ItkImageRegistrationMethodv4"; } ;
   static const char * GetDescription() { return "ItkImageRegistrationMethodv4 Component"; }

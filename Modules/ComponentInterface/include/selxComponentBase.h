@@ -66,6 +66,9 @@ public:
 
   //virtual const std::map< std::string, std::string >  TemplateProperties(); //TODO should be overridden
 
+  // Each component is checked if its required connections are made after all handshakes.
+  // SuperElastixComponent provides a default implementation which may be overridden by the component developer
+  virtual bool ConnectionsSatisfied() = 0 ;
   const std::string m_Name;
 };
 } // end namespace selx

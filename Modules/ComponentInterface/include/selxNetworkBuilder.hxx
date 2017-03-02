@@ -386,6 +386,25 @@ NetworkBuilder< ComponentList >::ConnectComponents()
   return isAllSuccess;
 }
 
+template< typename ComponentList >
+bool
+NetworkBuilder< ComponentList >::CheckConnectionsSatisfied()
+{
+  bool isAllSatisfied = true;
+
+  Blueprint::ComponentNamesType componentNames = this->m_Blueprint->GetComponentNames();
+  for (auto const & name : componentNames)
+  {
+    ComponentBase::Pointer component = this->m_ComponentSelectorContainer[name]->GetComponent();
+    bool isSatisfied = component->ConnectionsSatisfied();
+    if (isSatisfied == false)
+    {
+      isAllSatisfied = false;
+      std::cout << "Component " << name << " has unsatisfied connections" << std::endl;
+    }
+  }
+  return isAllSatisfied;
+}
 
 template< typename ComponentList >
 NetworkBuilderBase::SourceInterfaceMapType
