@@ -23,7 +23,7 @@ namespace selx
 {
 template< class InternalComputationValueType, int Dimensionality >
 ItkGaussianExponentialDiffeomorphicTransformComponent< InternalComputationValueType,
-Dimensionality >::ItkGaussianExponentialDiffeomorphicTransformComponent( const std::string & name ) : SuperElastixComponent( name )
+Dimensionality >::ItkGaussianExponentialDiffeomorphicTransformComponent( const std::string & name ) : Superclass( name )
 {
   m_Transform = GaussianExponentialDiffeomorphicTransformType::New();
 

@@ -104,9 +104,6 @@ TEST_F( ComponentSelectorTest, SetSufficientCriteria )
   ComponentType::Pointer component;
   EXPECT_NO_THROW( component = componentSelector->GetComponent() );
 
-  //Sufficient criteria means one Component was selected."
-  EXPECT_TRUE( component );
-
   //Based on the criteria MetricComponent1 should be selected
   EXPECT_TRUE( component->MeetsCriterion( { "NameOfClass", { "MetricComponent1" } } ) );
 }
@@ -131,7 +128,7 @@ TEST_F( ComponentSelectorTest, AddCriteria )
 
   //Sufficient criteria means one Component was selected."
   EXPECT_FALSE( componentSelector->NumberOfComponents() > 1 );
-  EXPECT_TRUE( component );
+
   //Based on the criteria TransformComponent1 should be selected
   EXPECT_TRUE( component->MeetsCriterion( { "NameOfClass", { "TransformComponent1" } } ) );
 }

@@ -39,19 +39,24 @@ namespace selx
 template< int Dimensionality, class TransformInternalComputationValueType >
 class ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent :
   public SuperElastixComponent<
-  Accepting< itkImageDomainFixedInterface< Dimensionality >
-  >,
-  Providing< itkTransformParametersAdaptorsContainerInterface< TransformInternalComputationValueType, Dimensionality >
-  >
+    Accepting< itkImageDomainFixedInterface< Dimensionality >>,
+    Providing< itkTransformParametersAdaptorsContainerInterface< TransformInternalComputationValueType, Dimensionality >
+    >
   >
 {
 public:
 
   /** Standard ITK typedefs. */
-  typedef ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent Self;
-  typedef ComponentBase                                                                    Superclass;
-  typedef std::shared_ptr< Self >                                                          Pointer;
-  typedef std::shared_ptr< const Self >                                                    ConstPointer;
+  typedef ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent<
+    Dimensionality, TransformInternalComputationValueType
+  >                                       Self;
+  typedef SuperElastixComponent<
+    Accepting< itkImageDomainFixedInterface< Dimensionality >>,
+    Providing< itkTransformParametersAdaptorsContainerInterface< TransformInternalComputationValueType, Dimensionality >
+    >
+  >                                       Superclass;
+  typedef std::shared_ptr< Self >         Pointer;
+  typedef std::shared_ptr< const Self >   ConstPointer;
 
   ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent( const std::string & name );
   virtual ~ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent();

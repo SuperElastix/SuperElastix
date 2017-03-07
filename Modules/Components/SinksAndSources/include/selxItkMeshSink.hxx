@@ -23,7 +23,7 @@
 namespace selx
 {
 template< int Dimensionality, class TPixel >
-ItkMeshSinkComponent< Dimensionality, TPixel >::ItkMeshSinkComponent( const std::string & name ) : SuperElastixComponent( name ),
+ItkMeshSinkComponent< Dimensionality, TPixel >::ItkMeshSinkComponent( const std::string & name ) : Superclass( name ),
   m_MiniPipelineOutputMesh( nullptr ), m_NetworkBuilderOutputMesh( nullptr )
 {
 }

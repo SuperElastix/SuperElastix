@@ -34,17 +34,23 @@ namespace selx
 template< int Dimensionality, class TPixel >
 class ItkSmoothingRecursiveGaussianImageFilterComponent :
   public SuperElastixComponent<
-  Accepting< itkImageInterface< Dimensionality, TPixel >>,
-  Providing< itkImageInterface< Dimensionality, TPixel >>
+    Accepting< itkImageInterface< Dimensionality, TPixel >>,
+    Providing< itkImageInterface< Dimensionality, TPixel >>
   >
 {
 public:
 
-  /** Standard ITK typedefs. */
-  typedef ItkSmoothingRecursiveGaussianImageFilterComponent Self;
-  typedef ComponentBase                                     Superclass;
-  typedef std::shared_ptr< Self >                           Pointer;
-  typedef std::shared_ptr< const Self >                     ConstPointer;
+  /** Standard typedefs. */
+  typedef ItkSmoothingRecursiveGaussianImageFilterComponent<
+    Dimensionality, TPixel
+  >                                      Self;
+  typedef SuperElastixComponent<
+    Accepting< itkImageInterface< Dimensionality, TPixel >>,
+    Providing< itkImageInterface< Dimensionality, TPixel >>
+  >                                      SuperClass;
+  typedef std::shared_ptr< Self >        Pointer;
+  typedef std::shared_ptr< const Self >  ConstPointer;
+
 
   ItkSmoothingRecursiveGaussianImageFilterComponent( const std::string & name );
   virtual ~ItkSmoothingRecursiveGaussianImageFilterComponent();

@@ -31,15 +31,20 @@ namespace selx
 template< class InternalComputationValueType, int Dimensionality >
 class ItkAffineTransformComponent :
   public SuperElastixComponent<
-  Accepting< >,
-  Providing< itkTransformInterface< InternalComputationValueType, Dimensionality >>
+    Accepting< >,
+    Providing< itkTransformInterface< InternalComputationValueType, Dimensionality >>
   >
 {
 public:
 
   /** Standard ITK typedefs. */
-  typedef ItkAffineTransformComponent   Self;
-  typedef ComponentBase                 Superclass;
+  typedef ItkAffineTransformComponent<
+    InternalComputationValueType, Dimensionality
+  >                                     Self;
+  typedef SuperElastixComponent<
+    Accepting< >,
+    Providing< itkTransformInterface< InternalComputationValueType, Dimensionality >>
+  >                                     Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
 

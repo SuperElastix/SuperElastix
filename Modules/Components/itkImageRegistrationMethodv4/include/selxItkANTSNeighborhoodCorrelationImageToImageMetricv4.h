@@ -32,17 +32,22 @@ namespace selx
 template< int Dimensionality, class TPixel >
 class ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component :
   public SuperElastixComponent<
-  Accepting< >,
-  Providing< itkMetricv4Interface< Dimensionality, TPixel, double >>
+    Accepting< >,
+    Providing< itkMetricv4Interface< Dimensionality, TPixel, double >>
   >
 {
 public:
 
   /** Standard ITK typedefs. */
-  typedef ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component Self;
-  typedef ComponentBase                                               Superclass;
-  typedef std::shared_ptr< Self >                                     Pointer;
-  typedef std::shared_ptr< const Self >                               ConstPointer;
+  typedef ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component<
+    Dimensionality, TPixel
+  >                                      Self;
+  typedef SuperElastixComponent<
+    Accepting< >,
+    Providing< itkMetricv4Interface< Dimensionality, TPixel, double >>
+  >                                      Superclass;
+  typedef std::shared_ptr< Self >        Pointer;
+  typedef std::shared_ptr< const Self >  ConstPointer;
 
   ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component( const std::string & name );
   virtual ~ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component();
