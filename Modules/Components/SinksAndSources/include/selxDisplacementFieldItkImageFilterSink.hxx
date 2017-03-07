@@ -24,7 +24,7 @@ namespace selx
 {
 template< int Dimensionality, class TPixel >
 DisplacementFieldItkImageFilterSinkComponent< Dimensionality, TPixel >::DisplacementFieldItkImageFilterSinkComponent( const std::string & name ) :
-  SuperElastixComponent( name ),  m_MiniPipelineOutputImage( nullptr ), m_NetworkBuilderOutputImage( nullptr )
+  Superclass( name ),  m_MiniPipelineOutputImage( nullptr ), m_NetworkBuilderOutputImage( nullptr )
 {
 }
 

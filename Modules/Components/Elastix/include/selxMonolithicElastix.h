@@ -36,22 +36,34 @@ namespace selx
 template< int Dimensionality, class TPixel >
 class MonolithicElastixComponent :
   public SuperElastixComponent<
-  Accepting<
-  itkImageFixedInterface< Dimensionality, TPixel >,
-  itkImageMovingInterface< Dimensionality, TPixel >
-  >,
-  Providing<
-  elastixTransformParameterObjectInterface< itk::Image< TPixel, Dimensionality >, itk::Image< TPixel, Dimensionality >>,
-  itkImageInterface< Dimensionality, TPixel >,
-  RunRegistrationInterface
-  >
+    Accepting<
+      itkImageFixedInterface< Dimensionality, TPixel >,
+      itkImageMovingInterface< Dimensionality, TPixel >
+    >,
+    Providing<
+      elastixTransformParameterObjectInterface< itk::Image< TPixel, Dimensionality >, itk::Image< TPixel, Dimensionality >>,
+      itkImageInterface< Dimensionality, TPixel >,
+      RunRegistrationInterface
+    >
   >
 {
 public:
 
   /** Standard ITK typedefs. */
-  typedef MonolithicElastixComponent    Self;
-  typedef ComponentBase                 Superclass;
+  typedef MonolithicElastixComponent<
+    Dimensionality, TPixel
+  >                                     Self;
+  typedef SuperElastixComponent<
+    Accepting<
+      itkImageFixedInterface< Dimensionality, TPixel >,
+      itkImageMovingInterface< Dimensionality, TPixel >
+    >,
+    Providing<
+      elastixTransformParameterObjectInterface< itk::Image< TPixel, Dimensionality >, itk::Image< TPixel, Dimensionality >>,
+      itkImageInterface< Dimensionality, TPixel >,
+      RunRegistrationInterface
+    >
+  >                                     Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
 

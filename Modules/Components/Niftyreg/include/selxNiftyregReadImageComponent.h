@@ -33,15 +33,18 @@ namespace selx
 template< class TPixel >
 class NiftyregReadImageComponent :
   public SuperElastixComponent<
-  Accepting<  >,
-  Providing< NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >>
+    Accepting<  >,
+    Providing< NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >>
   >
 {
 public:
 
   /** Standard ITK typedefs. */
   typedef NiftyregReadImageComponent< TPixel > Self;
-  typedef ComponentBase                        Superclass;
+  typedef SuperElastixComponent<
+    Accepting<  >,
+    Providing< NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >>
+  >                                            Superclass;
   typedef std::shared_ptr< Self >              Pointer;
   typedef std::shared_ptr< const Self >        ConstPointer;
 

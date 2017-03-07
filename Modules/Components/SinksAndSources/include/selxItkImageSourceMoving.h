@@ -33,15 +33,20 @@ namespace selx
 template< int Dimensionality, class TPixel >
 class ItkImageSourceMovingComponent :
   public SuperElastixComponent<
-  Accepting< >,
-  Providing< SourceInterface, itkImageMovingInterface< Dimensionality, TPixel >>
+    Accepting< >,
+    Providing< SourceInterface, itkImageMovingInterface< Dimensionality, TPixel >>
   >
 {
 public:
 
   /** Standard ITK typedefs. */
-  typedef ItkImageSourceMovingComponent   Self;
-  typedef ComponentBase                   Superclass;
+  typedef ItkImageSourceMovingComponent<
+    Dimensionality, TPixel
+  >                                       Self;
+  typedef SuperElastixComponent<
+    Accepting< >,
+    Providing< SourceInterface, itkImageMovingInterface< Dimensionality, TPixel >>
+  >                                       Superclass;
   typedef itk::SmartPointer< Self >       Pointer;
   typedef itk::SmartPointer< const Self > ConstPointer;
 

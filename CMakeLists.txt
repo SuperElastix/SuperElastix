@@ -26,10 +26,6 @@ cmake_minimum_required( VERSION 3.0.2 )
 # ---------------------------------------------------------------------
 project( SuperElastix )
 
-enable_language( C )
-enable_language( CXX )
-set( CMAKE_CXX_STANDARD 11 )
-
 # Place executables in the bin directory
 set( CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin" )
 
@@ -45,9 +41,9 @@ list( APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake" )
 # -----------------------------------------------------------------
 # Compilation settings
 
-enable_language(C)
-enable_language(CXX)
-set( CMAKE_CXX_STANDARD 11 )
+enable_language( CXX )
+set( CMAKE_CXX_STANDARD 14 )
+set( CMAKE_CXX_STANDARD_REQUIRED on )
 
 mark_as_advanced( SUPERELASTIX_BUILD_SHARED_LIBS )
 option( SUPERELASTIX_BUILD_SHARED_LIBS "Build SuperElastix with shared libraries." OFF )

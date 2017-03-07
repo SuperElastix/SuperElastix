@@ -118,7 +118,7 @@ public:
 
 template< int Dimensionality, class TPixel, class InternalComputationValueType >
 ItkImageRegistrationMethodv4Component< Dimensionality, TPixel,
-InternalComputationValueType >::ItkImageRegistrationMethodv4Component( const std::string & name ) : SuperElastixComponent( name ),
+InternalComputationValueType >::ItkImageRegistrationMethodv4Component( const std::string & name ) : Superclass( name ),
   m_TransformAdaptorsContainerInterface(
     nullptr )
 {

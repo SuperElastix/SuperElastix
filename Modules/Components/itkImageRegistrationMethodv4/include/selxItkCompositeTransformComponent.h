@@ -32,18 +32,34 @@ namespace selx
 template< class InternalComputationValueType, int Dimensionality >
 class ItkCompositeTransformComponent :
   public SuperElastixComponent<
-  Accepting< MultiStageTransformInterface< InternalComputationValueType, Dimensionality >, ReconnectTransformInterface >,
-  Providing< itkTransformInterface< InternalComputationValueType, Dimensionality >,
-  RegistrationControllerStartInterface >
+    Accepting< MultiStageTransformInterface< 
+      InternalComputationValueType, Dimensionality >, 
+      ReconnectTransformInterface
+    >,
+    Providing< 
+      itkTransformInterface< InternalComputationValueType, Dimensionality 
+    >,
+    RegistrationControllerStartInterface >
   >
 {
 public:
 
   /** Standard ITK typedefs. */
-  typedef ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality > Self;
-  typedef ComponentBase                                                                  Superclass;
-  typedef std::shared_ptr< Self >                                                        Pointer;
-  typedef std::shared_ptr< const Self >                                                  ConstPointer;
+  typedef ItkCompositeTransformComponent< 
+    InternalComputationValueType, Dimensionality 
+  >                                       Self;
+  typedef SuperElastixComponent<
+    Accepting< MultiStageTransformInterface< 
+      InternalComputationValueType, Dimensionality >, 
+      ReconnectTransformInterface
+    >,
+    Providing< 
+      itkTransformInterface< InternalComputationValueType, Dimensionality 
+    >,
+    RegistrationControllerStartInterface >
+  >                                       Superclass;
+  typedef std::shared_ptr< Self >         Pointer;
+  typedef std::shared_ptr< const Self >   ConstPointer;
 
   ItkCompositeTransformComponent( const std::string & name );
   virtual ~ItkCompositeTransformComponent();

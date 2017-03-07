@@ -23,7 +23,7 @@
 namespace selx
 {
 template< class TPixel >
-Niftyregf3dComponent< TPixel >::Niftyregf3dComponent( const std::string & name ) : SuperElastixComponent( name )
+Niftyregf3dComponent< TPixel >::Niftyregf3dComponent( const std::string & name ) : Superclass( name )
 {
   m_reg_f3d = new reg_f3d< TPixel >( 1, 1 );
 }

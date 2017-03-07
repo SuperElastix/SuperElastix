@@ -32,17 +32,27 @@ namespace selx
 template< int Dimensionality, class TPixel, class InternalComputationValueType >
 class ItkMeanSquaresImageToImageMetricv4Component :
   public SuperElastixComponent<
-  Accepting< >,
-  Providing< itkMetricv4Interface< Dimensionality, TPixel, InternalComputationValueType >>
+    Accepting< >,
+    Providing< itkMetricv4Interface< Dimensionality, TPixel, InternalComputationValueType >>
   >
 {
 public:
 
   /** Standard ITK typedefs. */
-  typedef ItkMeanSquaresImageToImageMetricv4Component Self;
-  typedef ComponentBase                               Superclass;
-  typedef std::shared_ptr< Self >                     Pointer;
-  typedef std::shared_ptr< const Self >               ConstPointer;
+  typedef ItkMeanSquaresImageToImageMetricv4Component<
+    Dimensionality, TPixel, InternalComputationValueType
+  >                                     Self;
+  typedef SuperElastixComponent<
+    Accepting< >,
+    Providing< 
+      itkMetricv4Interface< 
+        Dimensionality, 
+        TPixel, 
+        InternalComputationValueType >
+      >
+  >                                     Superclass;
+  typedef std::shared_ptr< Self >       Pointer;
+  typedef std::shared_ptr< const Self > ConstPointer;
 
   ItkMeanSquaresImageToImageMetricv4Component( const std::string & name );
   virtual ~ItkMeanSquaresImageToImageMetricv4Component();

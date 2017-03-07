@@ -24,7 +24,7 @@ namespace selx
 {
 template< class InternalComputationValueType, int Dimensionality >
 ItkCompositeTransformComponent< InternalComputationValueType,
-Dimensionality >::ItkCompositeTransformComponent( const std::string & name ) : SuperElastixComponent( name )
+Dimensionality >::ItkCompositeTransformComponent( const std::string & name ) : Superclass( name )
 {
   m_CompositeTransform = CompositeTransformType::New();
 
@@ -79,7 +79,7 @@ ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >::
   sortedStageNames.resize( sortedExecutionNames.size() );                    // allocate space
 
   std::transform( this->m_registrationStages.begin(), this->m_registrationStages.end(), sortedStageNames.begin(),
-    [ ]( MultiStageTransformInterface< InternalComputationValueType, Dimensionality >::Pointer stageIterator ) {
+    [ ]( typename MultiStageTransformInterface< InternalComputationValueType, Dimensionality >::Pointer stageIterator ) {
       return stageIterator->GetComponentName();
     } );
 
@@ -107,7 +107,7 @@ ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >::
   {
     auto && stageIterator = std::find_if( this->m_registrationStages.begin(),
       this->m_registrationStages.end(),
-      [ stageName ]( MultiStageTransformInterface< InternalComputationValueType, Dimensionality >::Pointer thisStage ) {
+      [ stageName ]( typename MultiStageTransformInterface< InternalComputationValueType, Dimensionality >::Pointer thisStage ) {
         return thisStage->GetComponentName() == stageName;
       } );
     ( *stageIterator )->SetMovingInitialTransform( this->m_CompositeTransform );

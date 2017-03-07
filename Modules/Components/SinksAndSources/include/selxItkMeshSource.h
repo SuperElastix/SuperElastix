@@ -34,15 +34,20 @@ namespace selx
 template< int Dimensionality, class TPixel >
 class ItkMeshSourceComponent :
   public SuperElastixComponent<
-  Accepting< >,
-  Providing< SourceInterface, itkMeshInterface< Dimensionality, TPixel >>
+    Accepting< >,
+    Providing< SourceInterface, itkMeshInterface< Dimensionality, TPixel >>
   >
 {
 public:
 
   /** Standard ITK typedefs. */
-  typedef ItkMeshSourceComponent        Self;
-  typedef ComponentBase                 Superclass;
+  typedef ItkMeshSourceComponent<
+    Dimensionality, TPixel
+  >                                     Self;
+  typedef SuperElastixComponent<
+    Accepting< >,
+    Providing< SourceInterface, itkMeshInterface< Dimensionality, TPixel >>
+  >                                     Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
 
