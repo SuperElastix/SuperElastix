@@ -168,15 +168,13 @@ SuperElastixFilter
 
   std::cout << "Connecting Components: " << ( this->m_IsConnected ? "succeeded" : "failed" ) << std::endl;
 
-
   bool connectionSatisfied = this->m_NetworkBuilder->CheckConnectionsSatisfied();
-  if (connectionSatisfied == false)
+  if( connectionSatisfied == false )
   {
-    itkExceptionMacro(<< "One or more components has unsatisfied connections" )
+    itkExceptionMacro( << "One or more components has unsatisfied connections" )
   }
 
   std::cout << "All Components are satisfied with their connections" << std::endl << std::endl;
-
 
   for( const auto & nameAndInterface : sinks )
   {
@@ -290,4 +288,3 @@ SuperElastixFilter
   this->GenerateData();
 }
 } // namespace elx
-

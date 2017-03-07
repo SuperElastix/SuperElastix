@@ -37,15 +37,15 @@ namespace selx
 template< int Dimensionality, class TPixel >
 class MonolithicTransformixComponent :
   public SuperElastixComponent<
-    Accepting<
-      itkImageDomainFixedInterface< Dimensionality >,
-      itkImageMovingInterface< Dimensionality, TPixel >,
-      elastixTransformParameterObjectInterface< itk::Image< TPixel, Dimensionality >, itk::Image< TPixel, Dimensionality >>
-    >,
-    Providing<
-      itkImageInterface< Dimensionality, TPixel >,
-      ReconnectTransformInterface
-    >
+  Accepting<
+  itkImageDomainFixedInterface< Dimensionality >,
+  itkImageMovingInterface< Dimensionality, TPixel >,
+  elastixTransformParameterObjectInterface< itk::Image< TPixel, Dimensionality >, itk::Image< TPixel, Dimensionality >>
+  >,
+  Providing<
+  itkImageInterface< Dimensionality, TPixel >,
+  ReconnectTransformInterface
+  >
   >
 {
 public:
@@ -53,22 +53,22 @@ public:
   /** Standard ITK typedefs. */
   typedef MonolithicTransformixComponent<
     Dimensionality, TPixel
-  >                                      Self;
+    >                                      Self;
   typedef SuperElastixComponent<
     Accepting<
-      itkImageDomainFixedInterface< Dimensionality >,
-      itkImageMovingInterface< Dimensionality, TPixel >,
-      elastixTransformParameterObjectInterface< itk::Image< TPixel, Dimensionality >, itk::Image< TPixel, Dimensionality >>
+    itkImageDomainFixedInterface< Dimensionality >,
+    itkImageMovingInterface< Dimensionality, TPixel >,
+    elastixTransformParameterObjectInterface< itk::Image< TPixel, Dimensionality >, itk::Image< TPixel, Dimensionality >>
     >,
     Providing<
-      itkImageInterface< Dimensionality, TPixel >,
-      ReconnectTransformInterface
+    itkImageInterface< Dimensionality, TPixel >,
+    ReconnectTransformInterface
     >
-  >                                      Superclass;
-  typedef std::shared_ptr< Self >        Pointer;
-  typedef std::shared_ptr< const Self >  ConstPointer;
+    >                                      Superclass;
+  typedef std::shared_ptr< Self >       Pointer;
+  typedef std::shared_ptr< const Self > ConstPointer;
 
-  MonolithicTransformixComponent( const std::string & name );
+  MonolithicTransformixComponent( const std::string & name, const LoggerInterface & logger );
   virtual ~MonolithicTransformixComponent();
 
   typedef typename ComponentBase::CriterionType CriterionType;

@@ -25,22 +25,22 @@
 
 namespace selx
 {
-
 enum SeverityType {
   TRACE,
   DEBUG,
   INFO,
   WARNING,
-  ERROR,
+//  ERROR,
   FATAL
 };
 
 class LoggerInterface
 {
 public:
+
   typedef const std::string MessageType;
 
-  virtual void Log(SeverityType severity, MessageType message) = 0;
+  virtual void Log( SeverityType severity, MessageType message ) = 0;
 };
 
 class Logger : public LoggerInterface
@@ -58,10 +58,11 @@ public:
   // void AddFile( FileNameType fileName = "SuperElastix_%Y-%m-%d_%H-%M-%S.%N.log",
   //               FormatType format = "[%LineID% %TimeStamp% %ComponentName% %Channel% %SeverityLevel%]: %Message%" );
   // void AddFile( FileNameType fileName = "SuperElastix_%Y-%m-%d_%H-%M-%S.%N.log",
-  //               Logger::ChannelType channel = "SuperElastix",  
+  //               Logger::ChannelType channel = "SuperElastix",
   //               FormatType format = "[%LineID% %TimeStamp% %ComponentName% %Channel% %SeverityLevel%]: %Message%" );
 
-  virtual void Log(SeverityType severity, MessageType message);
+  virtual void Log( SeverityType severity, MessageType message );
+
   // void Log( ChannelType channel, SeverityType severity, MessageType message );
 
 private:

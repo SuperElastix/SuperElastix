@@ -44,11 +44,14 @@ public:
 
   /** Standard ITK typedefs. */
   typedef RegistrationControllerComponent Self;
-  typedef ComponentBase                   Superclass;
-  typedef std::shared_ptr< Self >         Pointer;
-  typedef std::shared_ptr< const Self >   ConstPointer;
+  typedef SuperElastixComponent<
+    Accepting< RunRegistrationInterface, ReconnectTransformInterface, AfterRegistrationInterface >,
+    Providing< RegistrationControllerStartInterface >
+    >                   Superclass;
+  typedef std::shared_ptr< Self >       Pointer;
+  typedef std::shared_ptr< const Self > ConstPointer;
 
-  RegistrationControllerComponent( const std::string & name );
+  RegistrationControllerComponent( const std::string & name, const LoggerInterface & logger );
   virtual ~RegistrationControllerComponent();
 
   // Accepting Interfaces:

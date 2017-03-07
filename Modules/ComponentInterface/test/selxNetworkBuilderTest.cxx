@@ -172,8 +172,8 @@ TEST_F( NetworkBuilderTest, DeduceComponentsFromConnections )
 
   blueprint->SetComponent( "TransformResolutionAdaptor",
     { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent" } },
-        { "Dimensionality", { "3" } },
-        { "ShrinkFactorsPerLevel", { "2", "1" } } } );
+      { "Dimensionality", { "3" } },
+      { "ShrinkFactorsPerLevel", { "2", "1" } } } );
 
   blueprint->SetComponent( "Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } } );
 

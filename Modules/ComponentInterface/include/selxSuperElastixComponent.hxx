@@ -48,6 +48,7 @@ SuperElastixComponent< AcceptingInterfaces, ProvidingInterfaces >
   return AcceptingInterfaces::CanAcceptConnectionFrom( other, interfaceCriteria );
 }
 
+
 template< typename AcceptingInterfaces, typename ProvidingInterfaces >
 bool
 SuperElastixComponent< AcceptingInterfaces, ProvidingInterfaces >
@@ -56,7 +57,6 @@ SuperElastixComponent< AcceptingInterfaces, ProvidingInterfaces >
   // Default implementation. Components that allow unused connections should override this function.
   return AcceptingInterfaces::AreAllAccepted();
 }
-
 } // end namespace selx
 
 #endif // #define selxSuperElastixComponent_hxx

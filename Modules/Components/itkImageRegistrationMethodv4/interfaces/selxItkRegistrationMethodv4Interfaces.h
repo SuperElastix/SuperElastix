@@ -196,7 +196,8 @@ struct Properties< itkTransformParametersAdaptorsContainerInterface< InternalCom
   static const std::map< std::string, std::string > Get()
   {
     return { { keys::NameOfInterface, "itkTransformParametersAdaptorsContainerInterface" },
-          { keys::InternalComputationValueType, PodString< InternalComputationValueType >::Get() }, { keys::Dimensionality, std::to_string( D ) } };
+             { keys::InternalComputationValueType, PodString< InternalComputationValueType >::Get() },
+             { keys::Dimensionality, std::to_string( D ) } };
   }
 };
 
@@ -205,7 +206,9 @@ struct Properties< itkGaussianExponentialDiffeomorphicTransformParametersAdaptor
 {
   static const std::map< std::string, std::string > Get()
   {
-    return { { keys::NameOfInterface, "itkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerInterface" }, { keys::InternalComputationValueType, PodString< InternalComputationValueType >::Get() }, { keys::Dimensionality, std::to_string( D ) } };
+    return { { keys::NameOfInterface, "itkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerInterface" },
+             { keys::InternalComputationValueType, PodString< InternalComputationValueType >::Get() },
+             { keys::Dimensionality, std::to_string( D ) } };
   }
 };
 } // end namespace selx

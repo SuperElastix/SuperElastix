@@ -119,7 +119,8 @@ protected:
   // A selector for each node, that each can hold multiple instantiated components. Ultimately is should be 1 component each.
   ComponentSelectorContainerType m_ComponentSelectorContainer;
   bool                           m_isConfigured;
-  Logger m_Logger;
+  Logger                         m_Logger;
+
 private:
 };
 } // end namespace selx

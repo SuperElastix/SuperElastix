@@ -66,7 +66,6 @@ Logger::LoggerImpl
 //   );
 // }
 
-
 // void
 // Logger::LoggerImpl
 // ::AddFile( FileNameType fileName, ChannelType channel, FormatType format )
@@ -77,7 +76,6 @@ Logger::LoggerImpl
 //     boost::log::keywords::format = format
 //   );
 // }
-
 
 void
 Logger::LoggerImpl
@@ -115,8 +113,6 @@ Logger::LoggerImpl
 //     assert( false );
 //   }
 // }
-
-
 }
 
 #endif // Logger_cxx

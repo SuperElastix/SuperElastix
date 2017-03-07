@@ -109,24 +109,24 @@ Accepting< FirstInterface, RestInterfaces ... >::CountMeetsCriteria( const Compo
   return Count< FirstInterface, RestInterfaces ... >::MeetsCriteria( interfaceCriteria );
 }
 
+
 template< typename FirstInterface, typename ... RestInterfaces >
 bool
 Accepting< FirstInterface, RestInterfaces ... >::AreAllAccepted()
 {
-  InterfaceAcceptor< FirstInterface > * acceptIF = (this);
-  if (acceptIF->isSet() == false)
+  InterfaceAcceptor< FirstInterface > * acceptIF = ( this );
+  if( acceptIF->isSet() == false )
   {
-    auto const & properties = Properties<FirstInterface>::Get();
-    for (auto const & keyvalue : properties)
+    auto const & properties = Properties< FirstInterface >::Get();
+    for( auto const & keyvalue : properties )
     {
-      std::cout << "{ """ << keyvalue.first << """: """ << keyvalue.second << """}" << std::endl;
+      std::cout << "{ " "" << keyvalue.first << "" ": " "" << keyvalue.second << "" "}" << std::endl;
     }
     //std::cout << std::endl;
     return false;
   }
-  
-  return Accepting<RestInterfaces ...>::AreAllAccepted();
-}
 
+  return Accepting< RestInterfaces ... >::AreAllAccepted();
+}
 } //end namespace selx
 #endif // Accepting_hxx

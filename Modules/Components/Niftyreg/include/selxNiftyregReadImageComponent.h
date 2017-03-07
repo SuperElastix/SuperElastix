@@ -33,8 +33,8 @@ namespace selx
 template< class TPixel >
 class NiftyregReadImageComponent :
   public SuperElastixComponent<
-    Accepting<  >,
-    Providing< NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >>
+  Accepting<  >,
+  Providing< NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >>
   >
 {
 public:
@@ -44,11 +44,11 @@ public:
   typedef SuperElastixComponent<
     Accepting<  >,
     Providing< NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >>
-  >                                            Superclass;
-  typedef std::shared_ptr< Self >              Pointer;
-  typedef std::shared_ptr< const Self >        ConstPointer;
+    >                                            Superclass;
+  typedef std::shared_ptr< Self >       Pointer;
+  typedef std::shared_ptr< const Self > ConstPointer;
 
-  NiftyregReadImageComponent( const std::string & name );
+  NiftyregReadImageComponent( const std::string & name, const LoggerInterface & logger );
   virtual ~NiftyregReadImageComponent();
 
   virtual nifti_image * GetFloatingNiftiImage() override;

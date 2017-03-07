@@ -37,44 +37,44 @@ namespace selx
 template< int Dimensionality, class PixelType, class InternalComputationValueType >
 class ItkImageRegistrationMethodv4Component :
   public SuperElastixComponent<
-    Accepting< 
-      itkImageFixedInterface< Dimensionality, PixelType >,
-      itkImageMovingInterface< Dimensionality, PixelType >,
-      itkTransformInterface< InternalComputationValueType, Dimensionality >,
-      itkTransformParametersAdaptorsContainerInterface< InternalComputationValueType, Dimensionality >,
-      itkMetricv4Interface< Dimensionality, PixelType, InternalComputationValueType >,
-      itkOptimizerv4Interface< InternalComputationValueType >
-    >,
-    Providing< itkTransformInterface< InternalComputationValueType, Dimensionality >,
-      MultiStageTransformInterface< InternalComputationValueType, Dimensionality >,
-      RunRegistrationInterface
-    >
+  Accepting<
+  itkImageFixedInterface< Dimensionality, PixelType >,
+  itkImageMovingInterface< Dimensionality, PixelType >,
+  itkTransformInterface< InternalComputationValueType, Dimensionality >,
+  itkTransformParametersAdaptorsContainerInterface< InternalComputationValueType, Dimensionality >,
+  itkMetricv4Interface< Dimensionality, PixelType, InternalComputationValueType >,
+  itkOptimizerv4Interface< InternalComputationValueType >
+  >,
+  Providing< itkTransformInterface< InternalComputationValueType, Dimensionality >,
+  MultiStageTransformInterface< InternalComputationValueType, Dimensionality >,
+  RunRegistrationInterface
+  >
   >
 {
 public:
 
   /** Standard ITK typedefs. */
-  typedef ItkImageRegistrationMethodv4Component< 
-    Dimensionality, PixelType, InternalComputationValueType 
-  >                                     Self;
+  typedef ItkImageRegistrationMethodv4Component<
+    Dimensionality, PixelType, InternalComputationValueType
+    >                                     Self;
   typedef SuperElastixComponent<
-    Accepting< 
-      itkImageFixedInterface< Dimensionality, PixelType >,
-      itkImageMovingInterface< Dimensionality, PixelType >,
-      itkTransformInterface< InternalComputationValueType, Dimensionality >,
-      itkTransformParametersAdaptorsContainerInterface< InternalComputationValueType, Dimensionality >,
-      itkMetricv4Interface< Dimensionality, PixelType, InternalComputationValueType >,
-      itkOptimizerv4Interface< InternalComputationValueType >
+    Accepting<
+    itkImageFixedInterface< Dimensionality, PixelType >,
+    itkImageMovingInterface< Dimensionality, PixelType >,
+    itkTransformInterface< InternalComputationValueType, Dimensionality >,
+    itkTransformParametersAdaptorsContainerInterface< InternalComputationValueType, Dimensionality >,
+    itkMetricv4Interface< Dimensionality, PixelType, InternalComputationValueType >,
+    itkOptimizerv4Interface< InternalComputationValueType >
     >,
     Providing< itkTransformInterface< InternalComputationValueType, Dimensionality >,
-      MultiStageTransformInterface< InternalComputationValueType, Dimensionality >,
-      RunRegistrationInterface
+    MultiStageTransformInterface< InternalComputationValueType, Dimensionality >,
+    RunRegistrationInterface
     >
-  >                                     Superclass;
+    >                                     Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
 
-  ItkImageRegistrationMethodv4Component( const std::string & name );
+  ItkImageRegistrationMethodv4Component( const std::string & name, const LoggerInterface & logger );
   virtual ~ItkImageRegistrationMethodv4Component();
 
   // Get the type definitions from the interfaces

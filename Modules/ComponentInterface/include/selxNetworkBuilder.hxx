@@ -159,7 +159,7 @@ NetworkBuilder< ComponentList >::ApplyComponentConfiguration()
   for( auto const & name : componentNames )
   {
     std::cout << " Blueprint Node: " << name << std::endl;
-    ComponentSelectorPointer currentComponentSelector = std::make_shared< ComponentSelectorType >( name , this->m_Logger );
+    ComponentSelectorPointer currentComponentSelector = std::make_shared< ComponentSelectorType >( name, this->m_Logger );
 
     Blueprint::ParameterMapType currentProperty = this->m_Blueprint->GetComponent( name );
     for( auto const & criterion : currentProperty )
@@ -386,6 +386,7 @@ NetworkBuilder< ComponentList >::ConnectComponents()
   return isAllSuccess;
 }
 
+
 template< typename ComponentList >
 bool
 NetworkBuilder< ComponentList >::CheckConnectionsSatisfied()
@@ -393,11 +394,11 @@ NetworkBuilder< ComponentList >::CheckConnectionsSatisfied()
   bool isAllSatisfied = true;
 
   Blueprint::ComponentNamesType componentNames = this->m_Blueprint->GetComponentNames();
-  for (auto const & name : componentNames)
+  for( auto const & name : componentNames )
   {
-    ComponentBase::Pointer component = this->m_ComponentSelectorContainer[name]->GetComponent();
-    bool isSatisfied = component->ConnectionsSatisfied();
-    if (isSatisfied == false)
+    ComponentBase::Pointer component   = this->m_ComponentSelectorContainer[ name ]->GetComponent();
+    bool                   isSatisfied = component->ConnectionsSatisfied();
+    if( isSatisfied == false )
     {
       isAllSatisfied = false;
       std::cout << "Component " << name << " has unsatisfied connections" << std::endl;
@@ -405,6 +406,7 @@ NetworkBuilder< ComponentList >::CheckConnectionsSatisfied()
   }
   return isAllSatisfied;
 }
+
 
 template< typename ComponentList >
 NetworkBuilderBase::SourceInterfaceMapType

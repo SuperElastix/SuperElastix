@@ -22,16 +22,16 @@
 namespace selx
 {
 // TODO delete this constructor
-ComponentBase::ComponentBase() : m_Name( "undefined" )
+ComponentBase::ComponentBase() : m_Name( "undefined" ), m_Logger( *( new Logger() ) )
 {
 }
 
 
-ComponentBase::ComponentBase( const std::string & name ) : m_Name( name )
+ComponentBase::ComponentBase( const std::string & name, const LoggerInterface & logger ) : m_Logger( logger )
 {
 }
+
 
 //const std::map< std::string, std::string > ComponentBase::TemplateProperties()
 // { return{}; }
-
 } // end namespace selx

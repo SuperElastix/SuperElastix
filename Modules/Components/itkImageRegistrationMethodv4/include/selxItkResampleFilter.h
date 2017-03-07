@@ -38,13 +38,13 @@ namespace selx
 template< int Dimensionality, class TPixel, class TInternalComputationValue >
 class ItkResampleFilterComponent :
   public SuperElastixComponent<
-    Accepting< itkTransformInterface< TInternalComputationValue, Dimensionality >,
-      itkImageDomainFixedInterface< Dimensionality >,
-      itkImageMovingInterface< Dimensionality, TPixel >
-    >,
-    Providing< itkImageInterface< Dimensionality, TPixel >,
-      ReconnectTransformInterface
-    >
+  Accepting< itkTransformInterface< TInternalComputationValue, Dimensionality >,
+  itkImageDomainFixedInterface< Dimensionality >,
+  itkImageMovingInterface< Dimensionality, TPixel >
+  >,
+  Providing< itkImageInterface< Dimensionality, TPixel >,
+  ReconnectTransformInterface
+  >
   >
 {
 public:
@@ -52,20 +52,20 @@ public:
   /** Standard ITK typedefs. */
   typedef ItkResampleFilterComponent<
     Dimensionality, TPixel, TInternalComputationValue
-  >                                     Self;
+    >                                     Self;
   typedef SuperElastixComponent<
     Accepting< itkTransformInterface< TInternalComputationValue, Dimensionality >,
-      itkImageDomainFixedInterface< Dimensionality >,
-      itkImageMovingInterface< Dimensionality, TPixel >
+    itkImageDomainFixedInterface< Dimensionality >,
+    itkImageMovingInterface< Dimensionality, TPixel >
     >,
     Providing< itkImageInterface< Dimensionality, TPixel >,
-      ReconnectTransformInterface
+    ReconnectTransformInterface
     >
-  >                                     Superclass;
+    >                                     Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
 
-  ItkResampleFilterComponent( const std::string & name );
+  ItkResampleFilterComponent( const std::string & name, const LoggerInterface & logger );
   virtual ~ItkResampleFilterComponent();
 
   typedef TPixel PixelType;

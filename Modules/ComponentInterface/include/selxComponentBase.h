@@ -39,7 +39,7 @@ public:
 
   //ComponentBase() = delete;
   ComponentBase();
-  ComponentBase( const std::string & name );
+  ComponentBase( const std::string & name, const LoggerInterface & logger );
   virtual ~ComponentBase() {}
 
   typedef std::shared_ptr< ComponentBase >       Pointer;
@@ -69,9 +69,10 @@ public:
 
   // Each component is checked if its required connections are made after all handshakes.
   // SuperElastixComponent provides a default implementation which may be overridden by the component developer
-  virtual bool ConnectionsSatisfied() = 0 ;
-  const std::string m_Name;
-  LoggerInterface* m_Logger;
+  virtual bool ConnectionsSatisfied() = 0;
+
+  const std::string       m_Name;
+  const LoggerInterface & m_Logger;
 };
 } // end namespace selx
 

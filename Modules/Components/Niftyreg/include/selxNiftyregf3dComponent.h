@@ -31,8 +31,8 @@ namespace selx
 template< class TPixel >
 class Niftyregf3dComponent :
   public SuperElastixComponent<
-    Accepting< NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >>,
-    Providing< RunRegistrationInterface >
+  Accepting< NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >>,
+  Providing< RunRegistrationInterface >
   >
 {
 public:
@@ -42,11 +42,11 @@ public:
   typedef SuperElastixComponent<
     Accepting< NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >>,
     Providing< RunRegistrationInterface >
-  >                                      Superclass;
-  typedef std::shared_ptr< Self >        Pointer;
-  typedef std::shared_ptr< const Self >  ConstPointer;
+    >                                      Superclass;
+  typedef std::shared_ptr< Self >       Pointer;
+  typedef std::shared_ptr< const Self > ConstPointer;
 
-  Niftyregf3dComponent( const std::string & name );
+  Niftyregf3dComponent( const std::string & name, const LoggerInterface & logger );
   virtual ~Niftyregf3dComponent();
 
   virtual int Set( typename NiftyregReferenceImageInterface< TPixel >::Pointer ) override;

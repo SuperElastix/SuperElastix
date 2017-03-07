@@ -38,12 +38,15 @@ class GDOptimizer4thPartyComponent :
 public:
 
   /** Standard class typedefs. */
-  typedef GDOptimizer4thPartyComponent  Self;
-  typedef ComponentBase                 Superclass;
+  typedef GDOptimizer4thPartyComponent Self;
+  typedef SuperElastixComponent<
+    Accepting< MetricValueInterface >,
+    Providing< OptimizerUpdateInterface, ConflictinUpdateInterface >
+    >                 Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
 
-  GDOptimizer4thPartyComponent( const std::string & name );
+  GDOptimizer4thPartyComponent( const std::string & name, const LoggerInterface & logger );
   virtual ~GDOptimizer4thPartyComponent();
   Example4thParty::GDOptimizer4thParty * theImplementation;
   Metric4thPartyWrapper *                MetricObject;
