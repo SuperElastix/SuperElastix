@@ -37,8 +37,6 @@
 #include "selxInterfaces.h"
 #include "selxInterfaceTraits.h"
 
-#include "selxLogger.h"
-
 namespace selx
 {
 template< class ComponentList >
@@ -59,10 +57,8 @@ public:
   typedef std::map<
     std::string, RegistrationControllerStartInterface::Pointer > RegistrationControllerStartInterfaceMapType;
 
-  NetworkBuilder();
+  NetworkBuilder( const Logger & logger );
   virtual ~NetworkBuilder() {}
-
-  virtual std::unique_ptr< NetworkBuilderBase > ConstructNewDerivedInstance( void );
 
   virtual bool AddBlueprint( const std::unique_ptr< Blueprint > & blueprint );
 
@@ -119,7 +115,7 @@ protected:
   // A selector for each node, that each can hold multiple instantiated components. Ultimately is should be 1 component each.
   ComponentSelectorContainerType m_ComponentSelectorContainer;
   bool                           m_isConfigured;
-  Logger                         m_Logger;
+  const Logger &                 m_Logger;
 
 private:
 };

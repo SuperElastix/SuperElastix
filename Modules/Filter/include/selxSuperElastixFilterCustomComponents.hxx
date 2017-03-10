@@ -21,19 +21,21 @@
 #define selxSuperElastixFilterCustomComponents_hxx
 
 #include "selxSuperElastixFilterCustomComponents.h"
-#include "selxNetworkBuilder.h"
+#include "selxNetworkBuilderFactory.h"
 
 namespace selx
 {
 /**
  * ********************* Constructor *********************
  */
+
 template< typename ComponentTypeList >
 SuperElastixFilterCustomComponents< ComponentTypeList >
 ::SuperElastixFilterCustomComponents( void ) : SuperElastixFilter( true )
 {
   //std::make_unique<NetworkBuilder<ComponentTypeList>>();
-  m_NetworkBuilder = std::unique_ptr< NetworkBuilder< ComponentTypeList >>( new NetworkBuilder< ComponentTypeList > );
+  m_NetworkBuilderFactory = std::unique_ptr< NetworkBuilderFactory< ComponentTypeList >>( new NetworkBuilderFactory< ComponentTypeList > );
+  m_Logger = LoggerType::New();
 } // end Constructor
 } // namespace elx
 

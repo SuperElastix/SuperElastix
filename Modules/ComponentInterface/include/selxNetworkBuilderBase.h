@@ -36,6 +36,7 @@
 #include "selxNetworkContainer.h"
 #include "selxAnyFileReader.h"
 #include "selxAnyFileWriter.h"
+#include "selxLogger.h"
 
 namespace selx
 {
@@ -60,9 +61,6 @@ public:
   NetworkBuilderBase() {}
 
   virtual ~NetworkBuilderBase() {}
-
-  /** To create a derived NetworkBuilder from a NetworkBuilderBase pointer without knowing the template arguments of the derived*/
-  virtual std::unique_ptr< NetworkBuilderBase > ConstructNewDerivedInstance( void ) = 0;
 
   virtual bool AddBlueprint( const std::unique_ptr< Blueprint > & blueprint ) = 0;
 

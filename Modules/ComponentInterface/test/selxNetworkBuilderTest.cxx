@@ -18,6 +18,7 @@
  *=========================================================================*/
 
 #include "selxNetworkBuilder.h"
+#include "selxLogger.h"
 
 //#include "ComponentFactory.h"
 #include "selxTransformComponent1.h"
@@ -73,16 +74,17 @@ public:
 
 
   BlueprintPointer blueprint;
+  Logger * logger = new Logger();
 };
 
 TEST_F( NetworkBuilderTest, Create )
 {
-  NetworkBuilderPointer networkBuilderA = NetworkBuilderPointer( new NetworkBuilder< CustomComponentList >() );
+  NetworkBuilderPointer networkBuilderA = NetworkBuilderPointer( new NetworkBuilder< CustomComponentList >( *logger ) );
 }
 
 TEST_F( NetworkBuilderTest, Configure )
 {
-  NetworkBuilderPointer networkBuilder = NetworkBuilderPointer( new NetworkBuilder< CustomComponentList >() );
+  NetworkBuilderPointer networkBuilder = NetworkBuilderPointer( new NetworkBuilder< CustomComponentList >( *logger ) );
   networkBuilder->AddBlueprint( blueprint );
 
   bool allUniqueComponents;
@@ -92,7 +94,7 @@ TEST_F( NetworkBuilderTest, Configure )
 
 TEST_F( NetworkBuilderTest, Connect )
 {
-  NetworkBuilderPointer networkBuilder = NetworkBuilderPointer( new NetworkBuilder< CustomComponentList >() );
+  NetworkBuilderPointer networkBuilder = NetworkBuilderPointer( new NetworkBuilder< CustomComponentList >( *logger ) );
   networkBuilder->AddBlueprint( blueprint );
   EXPECT_NO_THROW( bool allUniqueComponents = networkBuilder->Configure() );
   bool success;
@@ -213,7 +215,7 @@ TEST_F( NetworkBuilderTest, DeduceComponentsFromConnections )
   blueprint->SetConnection( "ResampleFilter", "Controller", { {} } );              //ReconnectTransformInterface
   blueprint->SetConnection( "TransformDisplacementFilter", "Controller", { {} } ); //ReconnectTransformInterface
 
-  std::unique_ptr< NetworkBuilderBase > networkBuilder( new NetworkBuilder< RegisterComponents >() );
+  std::unique_ptr< NetworkBuilderBase > networkBuilder( new NetworkBuilder< RegisterComponents >( *logger ) );
   networkBuilder->AddBlueprint( blueprint );
   bool allUniqueComponents;
   EXPECT_NO_THROW( allUniqueComponents = networkBuilder->Configure() );

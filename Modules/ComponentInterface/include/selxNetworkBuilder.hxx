@@ -20,20 +20,13 @@
 #include "selxNetworkBuilder.h"
 #include "selxKeys.h"
 #include "selxSuperElastixComponent.h"
+#include "selxLogger.h"
 
 namespace selx
 {
 template< typename ComponentList >
-NetworkBuilder< ComponentList >::NetworkBuilder() : m_isConfigured( false ), m_Blueprint( new Blueprint )
+NetworkBuilder< ComponentList >::NetworkBuilder( const Logger & logger ) : m_Logger(logger), m_isConfigured( false ), m_Blueprint( new Blueprint )
 {
-}
-
-
-template< typename ComponentList >
-std::unique_ptr< NetworkBuilderBase >
-NetworkBuilder< ComponentList >::ConstructNewDerivedInstance( void )
-{
-  return std::unique_ptr< NetworkBuilderBase >( new NetworkBuilder< ComponentList > );
 }
 
 
@@ -544,4 +537,5 @@ NetworkBuilder< ComponentList >::GetRealizedNetwork()
     return NetworkContainer( components, outputObjectsMap );
   }
 }
+
 } // end namespace selx
