@@ -82,6 +82,12 @@ if( ${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC )
   # set( MSVC_INCREMENTAL_DEFAULT ON )
 endif()
 
+if( NOT CMAKE_BUILD_TYPE)
+  set( CMAKE_BUILD_TYPE "Release" CACHE STRING 
+  "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel." 
+  FORCE )
+endif()
+
 # ---------------------------------------------------------------------
 # ITK
 
@@ -188,3 +194,19 @@ set( SUPERELASTIX_BINARY_DIR ${CMAKE_LIBRARY_OUTPUT_DIRECTORY} )
 get_directory_property( SUPERELASTIX_INCLUDE_DIRS INCLUDE_DIRECTORIES )
 configure_file( SuperElastixConfig.cmake.in SuperElastixConfig.cmake @ONLY IMMEDIATE )
 configure_file( UseSuperElastix.cmake.in UseSuperElastix.cmake COPYONLY IMMEDIATE )
+
+# ---------------------------------------------------------------------
+# Installation
+
+install( TARGETS ModuleFilter
+         DESTINATION lib )
+
+INSTALL( FILES Modules/Filter/include/selxSuperElastixFilter.h
+               Modules/Filter/include/selxSuperElastixFilterCustomComponents.h
+               Modules/Filter/include/itkUniquePointerDataObjectDecorator.h
+               Modules/Blueprints/include/selxBlueprint.h
+               Modules/Logger/include/selxLogger.h
+               Modules/FileIO/include/selxAnyFileReader.h
+               Modules/FileIO/include/selxAnyFileWriter.h
+               
+         DESTINATION include )

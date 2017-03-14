@@ -48,8 +48,8 @@ include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/include" )
 add_executable( SuperElastix ${COMMANDLINE_SOURCE_FILES} ${COMMANDLINE_HEADER_FILES} )
 target_link_libraries( SuperElastix ${SUPERELASTIX_LIBRARIES} ${Boost_LIBRARIES})
 
-# InstallDemo copies SuperElastix executable, image data, configuration files and bat/bash scripts to the INSTALLDEMO_PREFIX directory
-set( INSTALLDEMO_PREFIX ${PROJECT_BINARY_DIR}/Demo CACHE PATH "Demo files will be copied to this directory" )
+# demo copies SuperElastix executable, image data, configuration files and bat/bash scripts to the DEMO_PREFIX directory
+set( DEMO_PREFIX ${PROJECT_BINARY_DIR}/Demo CACHE PATH "Demo files will be copied to this directory" )
 
 # Download demo data
 include( ExternalData )
@@ -64,30 +64,30 @@ list( APPEND ExternalData_URL_TEMPLATES
 file( GLOB_RECURSE DemoDataContentLinks "*.md5" )
 foreach( DemoDataContentLink ${DemoDataContentLinks} )
   string( REGEX REPLACE "\\.md5$" "" DemoDataContentLink ${DemoDataContentLink} )
-  ExternalData_Expand_Arguments( InstallDemo
-    InstallDemoFileName
+  ExternalData_Expand_Arguments( demo
+    demoFileName
     DATA{${DemoDataContentLink}}
   )
-  list( APPEND InstallDemoFileNames ${InstallDemoFileName} )
+  list( APPEND demoFileNames ${demoFileName} )
 endforeach()
 
 # Create target and reference the external data
-ExternalData_Add_Target( InstallDemo )
-add_dependencies( InstallDemo SuperElastix )
-set_target_properties( InstallDemo PROPERTIES EXCLUDE_FROM_ALL TRUE ) 
+ExternalData_Add_Target( demo )
+add_dependencies( demo SuperElastix )
+set_target_properties( demo PROPERTIES EXCLUDE_FROM_ALL TRUE ) 
 
-foreach(InstallDemoFileName ${InstallDemoFileNames})
+foreach(demoFileName ${demoFileNames})
   add_custom_command(
-    TARGET InstallDemo POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTALLDEMO_PREFIX}/Data
-    COMMAND ${CMAKE_COMMAND} -E copy ${InstallDemoFileName} ${INSTALLDEMO_PREFIX}/Data/
+    TARGET demo POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E make_directory ${DEMO_PREFIX}/Data
+    COMMAND ${CMAKE_COMMAND} -E copy ${demoFileName} ${DEMO_PREFIX}/Data/
   )
 endforeach()
 
 # Copy executable
 add_custom_command(
-  TARGET InstallDemo POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:SuperElastix> ${INSTALLDEMO_PREFIX}/$<TARGET_FILE_NAME:SuperElastix>
+  TARGET demo POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:SuperElastix> ${DEMO_PREFIX}/$<TARGET_FILE_NAME:SuperElastix>
 )
 
 # Copy Configuration files
@@ -100,9 +100,9 @@ set( ConfigFiles
 
 foreach( ConfigFile ${ConfigFiles} )
   add_custom_command(
-    TARGET InstallDemo POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTALLDEMO_PREFIX}/Configuration
-    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_SOURCE_DIR}/../Testing/Data/Configuration/${ConfigFile}" ${INSTALLDEMO_PREFIX}/Configuration/${ConfigFile}
+    TARGET demo POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E make_directory ${DEMO_PREFIX}/Configuration
+    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_SOURCE_DIR}/../Testing/Data/Configuration/${ConfigFile}" ${DEMO_PREFIX}/Configuration/${ConfigFile}
   )
 endforeach()
 
@@ -117,15 +117,15 @@ set( ScriptFiles
 if(WIN32)
   foreach( ScriptFile ${ScriptFiles} )
     add_custom_command(
-      TARGET InstallDemo POST_BUILD
-			COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTALLDEMO_PREFIX}/Scripts
-      COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/Demo/Scripts_Windows/${ScriptFile}.bat" "${INSTALLDEMO_PREFIX}/Scripts/${ScriptFile}.bat")
+      TARGET demo POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E make_directory ${DEMO_PREFIX}/Scripts
+      COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/Demo/Scripts_Windows/${ScriptFile}.bat" "${DEMO_PREFIX}/Scripts/${ScriptFile}.bat")
   endforeach()
 else( WIN32 )
   foreach( ScriptFile ${ScriptFiles} )
     add_custom_command(
-      TARGET InstallDemo PRE_BUILD
-			COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTALLDEMO_PREFIX}/Scripts
-      COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/Demo/Scripts_Linux/${ScriptFile}.sh" "${INSTALLDEMO_PREFIX}/Scripts/${ScriptFile}.sh")
+      TARGET demo PRE_BUILD
+			COMMAND ${CMAKE_COMMAND} -E make_directory ${DEMO_PREFIX}/Scripts
+      COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/Demo/Scripts_Linux/${ScriptFile}.sh" "${DEMO_PREFIX}/Scripts/${ScriptFile}.sh")
   endforeach()
 endif(WIN32)
