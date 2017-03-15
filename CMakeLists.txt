@@ -19,12 +19,13 @@
 
 cmake_minimum_required( VERSION 3.0.2 )
 
-# Explicitly add INCREMENTAL linking option to command lines.
-# http://www.cmake.org/pipermail/cmake/2010-February/035174.html
-#set( MSVC_INCREMENTAL_DEFAULT ON )
-
 # ---------------------------------------------------------------------
 project( SuperElastix )
+
+set( SUPERELATIX_MAJOR_VERSION 0)
+set( SUPERELATIX_MINOR_VERSION 1)
+set( SUPERELATIX_PATCH_VERSION 0)
+set( SUPERELATIX_VERSION ${SUPERELATIX_MAJOR_VERSION}.${SUPERELATIX_MINOR_VERSION}.${SUPERELATIX_PATCH_VERSION})
 
 # Place executables in the bin directory
 set( CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin" )
@@ -82,7 +83,7 @@ if( ${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC )
   # set( MSVC_INCREMENTAL_DEFAULT ON )
 endif()
 
-if( NOT CMAKE_BUILD_TYPE)
+if( NOT CMAKE_BUILD_TYPE )
   set( CMAKE_BUILD_TYPE "Release" CACHE STRING 
   "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel." 
   FORCE )
@@ -107,13 +108,12 @@ endforeach()
 # ---------------------------------------------------------------------
 # Boost Library
 
-set(Boost_USE_STATIC_LIBS        ON) # only find static libs
-set(Boost_USE_MULTITHREADED      ON)
-set(Boost_USE_STATIC_RUNTIME    OFF)
-#set( Boost_DEBUG ON )
-set(BOOST_INCLUDEDIR "${BOOST_ROOT}/BOOST-prefix/src/Boost/boost/" )
-set(BOOST_LIBRARYDIR "${BOOST_ROOT}/BOOST-prefix/src/Boost/stage/lib/" )
-set(BOOST_ROOT "${BOOST_ROOT}/BOOST-prefix/src/Boost/" )
+set( Boost_USE_STATIC_LIBS ON ) # only find static libs
+set( Boost_USE_MULTITHREADED ON )
+set( Boost_USE_STATIC_RUNTIME OFF )
+set( BOOST_INCLUDEDIR "${BOOST_ROOT}/BOOST-prefix/src/Boost/boost/" )
+set( BOOST_LIBRARYDIR "${BOOST_ROOT}/BOOST-prefix/src/Boost/stage/lib/" )
+set( BOOST_ROOT "${BOOST_ROOT}/BOOST-prefix/src/Boost/" )
 
 find_package( Boost COMPONENTS filesystem system log date_time thread regex REQUIRED QUIET ) # graph ?
 include_directories( ${Boost_INCLUDE_DIRS} )
@@ -150,10 +150,10 @@ endif()
 # ---------------------------------------------------------------------
 # Testing
 
-set( SUPERELASTIX_INPUT_DATA_DIR ${CMAKE_CURRENT_BINARY_DIR}/Testing/Data/Input )
-set( SUPERELASTIX_OUTPUT_DATA_DIR ${CMAKE_CURRENT_BINARY_DIR}/Testing/Data/Output )
-set( SUPERELASTIX_BASELINE_DATA_DIR ${CMAKE_CURRENT_BINARY_DIR}/Testing/Data/Baseline )
-set( SUPERELASTIX_CONFIGURATION_DATA_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Testing/Data/Configuration )
+set( SUPERELASTIX_INPUT_DATA_DIR ${PROJECT_BINARY_DIR}/Testing/Data/Input )
+set( SUPERELASTIX_OUTPUT_DATA_DIR ${PROJECT_BINARY_DIR}/Testing/Data/Output )
+set( SUPERELASTIX_BASELINE_DATA_DIR ${PROJECT_BINARY_DIR}/Testing/Data/Baseline )
+set( SUPERELASTIX_CONFIGURATION_DATA_DIR ${PROJECT_BINARY_DIR}/Testing/Data/Configuration )
 
 if( NOT EXISTS ${SUPERELASTIX_OUTPUT_DATA_DIR} )
   file( MAKE_DIRECTORY ${SUPERELASTIX_OUTPUT_DATA_DIR} )
@@ -198,15 +198,50 @@ configure_file( UseSuperElastix.cmake.in UseSuperElastix.cmake COPYONLY IMMEDIAT
 # ---------------------------------------------------------------------
 # Installation
 
+set( CMAKE_INSTALL_DIR "" )
+if( WIN32 AND NOT CYGWIN )
+  set( CMAKE_INSTALL_DIR CMake )
+else()
+  set( CMAKE_INSTALL_DIR lib/CMake/SuperElastix )
+endif()
+
+# Add all targets to the build-tree export set
+export( TARGETS ModuleFilter FILE "${PROJECT_BINARY_DIR}/SuperElastixTargets.cmake" )
+ 
+# Register the build-tree with a global CMake-registry
+export( PACKAGE SuperElastix )
+ 
+# Create the SuperElastix.cmake files
+# ... for the build tree
+set( SUPERELASTIX_CONF_INCLUDE_DIRS ${SUPERELASTIX_INCLUDE_DIRS} )
+set( SUPERELASTIX_CONF_LIBRARY_DIRS ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY} )
+set( SUPERELASTIX_CONF_LIBRARIES ${SUPERELASTIX_LIBRARIES} )
+configure_file( SuperElastixConfig.cmake.in "${PROJECT_BINARY_DIR}/SuperElastixConfig.cmake" @ONLY)
+
+# ... for the install tree
+set( SUPERELASTIX_CONF_INCLUDE_DIRS include )
+set( SUPERELASTIX_CONF_LIBRARY_DIRS lib )
+set( SUPERELASTIX_CONF_LIBRARIES "ModuleFilter" )
+configure_file( SuperElastixConfig.cmake.in "${PROJECT_BINARY_DIR}/install/SuperElastixConfig.cmake" @ONLY)
+
+# Create the SuperElastixVersion.cmake file
+configure_file( SuperElastixConfigVersion.cmake.in "${PROJECT_BINARY_DIR}/SuperElastixConfigVersion.cmake" @ONLY)
+ 
+# Install the SuperElastix.cmake and SuperElastixConfigVersion.cmake
+install( FILES
+         "${PROJECT_BINARY_DIR}/install/SuperElastixConfig.cmake"
+         "${PROJECT_BINARY_DIR}/SuperElastixConfigVersion.cmake"
+          DESTINATION "${CMAKE_INSTALL_DIR}" )
+
+install( FILES 
+         Modules/Filter/include/selxSuperElastixFilter.h
+         Modules/Filter/include/selxSuperElastixFilterCustomComponents.h
+         Modules/Filter/include/itkUniquePointerDataObjectDecorator.h
+         Modules/Blueprints/include/selxBlueprint.h
+         Modules/Logger/include/selxLogger.h
+         Modules/FileIO/include/selxAnyFileReader.h
+         Modules/FileIO/include/selxAnyFileWriter.h
+         DESTINATION include )
+
 install( TARGETS ModuleFilter
          DESTINATION lib )
-
-INSTALL( FILES Modules/Filter/include/selxSuperElastixFilter.h
-               Modules/Filter/include/selxSuperElastixFilterCustomComponents.h
-               Modules/Filter/include/itkUniquePointerDataObjectDecorator.h
-               Modules/Blueprints/include/selxBlueprint.h
-               Modules/Logger/include/selxLogger.h
-               Modules/FileIO/include/selxAnyFileReader.h
-               Modules/FileIO/include/selxAnyFileWriter.h
-               
-         DESTINATION include )

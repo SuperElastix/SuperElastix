@@ -58,9 +58,9 @@ macro( _selxmodules_initialize )
     option( USE_${MODULE} OFF )
     set( ${MODULE}_IS_ENABLED FALSE )
 
-    set( ${MODULE}_CMAKE_FILE ${CMAKE_SOURCE_DIR}/${${MODULE}_PATH}/${MODULE}.cmake )
-    set( ${MODULE}_SOURCE_DIR ${CMAKE_SOURCE_DIR}/${${MODULE}_PATH} )
-    set( ${MODULE}_BINARY_DIR ${CMAKE_BINARY_DIR}/${${MODULE}_PATH} )
+    set( ${MODULE}_CMAKE_FILE ${PROJECT_SOURCE_DIR}/${${MODULE}_PATH}/${MODULE}.cmake )
+    set( ${MODULE}_SOURCE_DIR ${PROJECT_SOURCE_DIR}/${${MODULE}_PATH} )
+    set( ${MODULE}_BINARY_DIR ${PROJECT_BINARY_DIR}/${${MODULE}_PATH} )
 
     # Collect header files for Visual Studio 
     # http://stackoverflow.com/questions/8316104/specify-how-cmake-creates-visual-studio-project
@@ -71,7 +71,6 @@ macro( _selxmodules_initialize )
     set( ${MODULE}_SOURCE_FILES )
     set( ${MODULE}_TEST_SOURCE_FILES )
     set( ${MODULE}_MODULE_DEPENDENCIES )
-    set( ${MODULE}_LIBRARY_DIRS )
     set( ${MODULE}_LIBRARIES )
 
     list( APPEND SUPERELASTIX_MODULES ${MODULE} )

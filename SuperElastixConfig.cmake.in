@@ -1,11 +1,13 @@
-# Add include directories needed to use SuperElastix
-set( SUPERELASTIX_INCLUDE_DIRS @SUPERELASTIX_INCLUDE_DIRS@ )
+get_filename_component( SUPERELASTIX_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH )
 
-# Add link directories needed to use SuperElastix
-set( SUPERELASTIX_LIBRARY_DIRS @SUPERELASTIX_BINARY_DIR@ )
+# Add include directories needed to use SuperElastix
+set( SUPERELASTIX_INCLUDE_DIRS @SUPERELASTIX_CONF_INCLUDE_DIRS@ )
+
+# Add include directories needed to use libraries
+set( SUPERELASTIX_LIBRARY_DIRS @SUPERELASTIX_CONF_LIBRARY_DIRS@ )
 
 # Add list of SuperElastix libraries
-set( SUPERELASTIX_LIBRARIES @SUPERELASTIX_LIBRARIES@ )
+set( SUPERELASTIX_LIBRARIES @SUPERELASTIX_CONF_LIBRARIES@ )
 
 # The location of the SuperElastix use-file
-set( SUPERELASTIX_USE_FILE "@SUPERELASTIX_CONFIG_DIR@/UseSuperElastix.cmake")
+set( SUPERELASTIX_USE_FILE "${SUPERELASTIX_DIR}/UseSuperElastix.cmake")
