@@ -51,6 +51,16 @@ public:
 };
 
 template< class TPixel >
+class NiftyregWarpedImageInterface
+{
+public:
+
+  using Type = NiftyregWarpedImageInterface< TPixel >;
+  using Pointer = std::shared_ptr< Type >;
+  virtual std::shared_ptr<nifti_image> GetWarpedNiftiImage() = 0;
+};
+
+template< class TPixel >
 struct Properties< NiftyregReferenceImageInterface< TPixel >>
 {
   static const std::map< std::string, std::string > Get()
@@ -65,6 +75,15 @@ struct Properties< NiftyregFloatingImageInterface< TPixel >>
   static const std::map< std::string, std::string > Get()
   {
     return { { keys::NameOfInterface, "NiftyregFloatingImageInterface" }, { keys::PixelType, PodString< TPixel >::Get() }  };
+  }
+};
+
+template< class TPixel >
+struct Properties< NiftyregWarpedImageInterface< TPixel >>
+{
+  static const std::map< std::string, std::string > Get()
+  {
+    return{ { keys::NameOfInterface, "NiftyregWarpedImageInterface" }, { keys::PixelType, PodString< TPixel >::Get() } };
   }
 };
 }

@@ -26,13 +26,15 @@
 #include "_reg_f3d.h"
 
 #include <string.h>
+#include <array>
+
 namespace selx
 {
 template< class TPixel >
 class Niftyregf3dComponent :
   public SuperElastixComponent<
     Accepting< NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >>,
-    Providing< RunRegistrationInterface >
+    Providing< NiftyregWarpedImageInterface< TPixel >, RunRegistrationInterface >
   >
 {
 public:
@@ -41,7 +43,7 @@ public:
   typedef Niftyregf3dComponent< TPixel > Self;
   typedef SuperElastixComponent<
     Accepting< NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >>,
-    Providing< RunRegistrationInterface >
+    Providing< NiftyregWarpedImageInterface< TPixel >, RunRegistrationInterface >
   >                                      Superclass;
   typedef std::shared_ptr< Self >        Pointer;
   typedef std::shared_ptr< const Self >  ConstPointer;
@@ -53,6 +55,8 @@ public:
 
   virtual int Set( typename NiftyregFloatingImageInterface< TPixel >::Pointer ) override;
 
+  virtual std::shared_ptr<nifti_image> GetWarpedNiftiImage() override;
+
   virtual void RunRegistration() override;
 
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
@@ -62,6 +66,9 @@ public:
 private:
 
   reg_f3d< TPixel > * m_reg_f3d;
+
+  // m_warped_images is an array of 2 nifti images. Depending on the use case, typically only [0] is a valid image
+  std::unique_ptr< std::array<std::shared_ptr<nifti_image>,2>> m_warped_images;
 
 protected:
 
