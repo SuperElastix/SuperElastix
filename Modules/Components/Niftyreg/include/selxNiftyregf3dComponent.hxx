@@ -43,7 +43,7 @@ Niftyregf3dComponent< TPixel >
 {
   auto referenceimage = component->GetReferenceNiftiImage();
   // connect the itk pipeline
-  this->m_reg_f3d->SetReferenceImage( referenceimage );
+  this->m_reg_f3d->SetReferenceImage( referenceimage.get() );
   return 0;
 }
 
@@ -55,7 +55,7 @@ Niftyregf3dComponent< TPixel >
 {
   auto floatingimage = component->GetFloatingNiftiImage();
   // connect the itk pipeline
-  this->m_reg_f3d->SetFloatingImage( floatingimage );
+  this->m_reg_f3d->SetFloatingImage( floatingimage.get() );
   return 0;
 }
 
@@ -68,6 +68,7 @@ Niftyregf3dComponent<  TPixel >
   this->m_reg_f3d->UseSSD( 0, true );
   this->m_reg_f3d->UseCubicSplineInterpolation();
   this->m_reg_f3d->Run();
+  nifti_image** outputWarpedImage = m_reg_f3d->GetWarpedImage();
 }
 
 

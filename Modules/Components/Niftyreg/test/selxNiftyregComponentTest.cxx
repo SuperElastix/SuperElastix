@@ -72,8 +72,8 @@ TEST_F( NiftyregComponentTest, Register2d )
 {
   /** make example blueprint configuration */
   BlueprintPointer blueprint = BlueprintPointer( new Blueprint() );
-  blueprint->SetComponent( "FixedImage", { { "NameOfClass", { "NiftyregReadImageComponent" } }, { "FileName", { this->dataManager->GetInputFile( "BrainProtonDensitySliceBorder20.png" ) } } } );
-  blueprint->SetComponent( "MovingImage", { { "NameOfClass", { "NiftyregReadImageComponent" } }, { "FileName", { this->dataManager->GetInputFile( "BrainProtonDensitySliceR10X13Y17.png" ) } } } );
+  blueprint->SetComponent( "FixedImage", { { "NameOfClass", { "NiftyregReadImageComponent" } }, { "FileName", { this->dataManager->GetInputFile( "BrainProtonDensitySliceBorder20.nii" ) } } } );
+  blueprint->SetComponent( "MovingImage", { { "NameOfClass", { "NiftyregReadImageComponent" } }, { "FileName", { this->dataManager->GetInputFile( "BrainProtonDensitySliceR10X13Y17.nii" ) } } } );
   blueprint->SetComponent( "RegistrationMethod", { { "NameOfClass", { "Niftyregf3dComponent" } } } );
   blueprint->SetComponent( "Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } } );
 

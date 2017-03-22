@@ -37,7 +37,7 @@ public:
 
   using Type                                     = NiftyregReferenceImageInterface< TPixel >;
   using Pointer                                  = std::shared_ptr< Type >;
-  virtual nifti_image * GetReferenceNiftiImage() = 0;
+  virtual std::shared_ptr<nifti_image> GetReferenceNiftiImage() = 0;
 };
 
 template< class TPixel >
@@ -47,7 +47,7 @@ public:
 
   using Type                                    = NiftyregFloatingImageInterface< TPixel >;
   using Pointer                                 = std::shared_ptr< Type >;
-  virtual nifti_image * GetFloatingNiftiImage() = 0;
+  virtual std::shared_ptr<nifti_image> GetFloatingNiftiImage() = 0;
 };
 
 template< class TPixel >

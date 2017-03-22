@@ -35,18 +35,20 @@ NiftyregReadImageComponent< TPixel >::~NiftyregReadImageComponent()
 
 
 template< class TPixel >
-nifti_image *
+std::shared_ptr<nifti_image>
 NiftyregReadImageComponent<  TPixel >::GetReferenceNiftiImage()
 {
-  return reg_io_ReadImageFile( this->m_ImageFileName.c_str() );
+  std::shared_ptr<nifti_image> ptr(reg_io_ReadImageFile(this->m_ImageFileName.c_str()), nifti_image_free);
+  return ptr;
 }
 
 
 template< class TPixel >
-nifti_image *
+std::shared_ptr<nifti_image>
 NiftyregReadImageComponent<  TPixel >::GetFloatingNiftiImage()
 {
-  return reg_io_ReadImageFile( this->m_ImageFileName.c_str() );
+  std::shared_ptr<nifti_image> ptr(reg_io_ReadImageFile(this->m_ImageFileName.c_str()), nifti_image_free);
+  return ptr;
 }
 
 
