@@ -73,10 +73,10 @@ RegistrationControllerComponent< dummy >::RegistrationControllerStart()
   {
     reconnectTransformInterface->ReconnectTransform();
   }
-  //for (auto && afterRegistrationInterface : this->m_AfterRegistrationInterfaces)
-  //{
-  //  afterRegistrationInterface->AfterRegistration();
-  //}
+  for (auto && afterRegistrationInterface : this->m_AfterRegistrationInterfaces)
+  {
+    afterRegistrationInterface->AfterRegistration();
+  }
 }
 
 

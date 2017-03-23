@@ -41,9 +41,10 @@ int
 Niftyregf3dComponent< TPixel >
 ::Set( typename NiftyregReferenceImageInterface< TPixel >::Pointer component )
 {
-  auto referenceimage = component->GetReferenceNiftiImage();
+  // store the shared_ptr to the data, otherwise it gets freed
+  this->m_reference_image = component->GetReferenceNiftiImage();
   // connect the itk pipeline
-  this->m_reg_f3d->SetReferenceImage( referenceimage.get() );
+  this->m_reg_f3d->SetReferenceImage(this->m_reference_image.get());
   return 0;
 }
 
@@ -53,9 +54,10 @@ int
 Niftyregf3dComponent< TPixel >
 ::Set( typename NiftyregFloatingImageInterface< TPixel >::Pointer component )
 {
-  auto floatingimage = component->GetFloatingNiftiImage();
+  // store the shared_ptr to the data, otherwise it gets freed
+  this->m_floating_image = component->GetFloatingNiftiImage();
   // connect the itk pipeline
-  this->m_reg_f3d->SetFloatingImage( floatingimage.get() );
+  this->m_reg_f3d->SetFloatingImage(this->m_floating_image.get());
   return 0;
 }
 
@@ -86,6 +88,7 @@ Niftyregf3dComponent<  TPixel >
   (*(this->m_warped_images.get()))[0] = std::shared_ptr<nifti_image>(outputWarpedImage[0], nifti_image_free);
   (*(this->m_warped_images.get()))[1] = std::shared_ptr<nifti_image>(outputWarpedImage[1], nifti_image_free);
 
+  // m_reg_f3d->GetWarpedImage() malloc-ed the container which we must free ourselves.
   free(outputWarpedImage);
   outputWarpedImage = NULL;
 

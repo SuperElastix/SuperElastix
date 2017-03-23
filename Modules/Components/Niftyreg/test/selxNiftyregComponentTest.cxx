@@ -22,6 +22,7 @@
 #include "selxRegistrationController.h"
 
 #include "selxNiftyregReadImageComponent.h"
+#include "selxNiftyregWriteImageComponent.h"
 #include "selxNiftyregf3dComponent.h"
 #include "selxDataManager.h"
 #include "gtest/gtest.h"
@@ -41,7 +42,7 @@ public:
 
   /** register all example components */
   typedef TypeList< Niftyregf3dComponent< float >, NiftyregReadImageComponent< float >,
-    RegistrationControllerComponent< >> RegisterComponents;
+    NiftyregWriteImageComponent< float >, RegistrationControllerComponent< >> RegisterComponents;
 
   virtual void SetUp()
   {
@@ -75,15 +76,15 @@ TEST_F( NiftyregComponentTest, Register2d )
   blueprint->SetComponent( "FixedImage", { { "NameOfClass", { "NiftyregReadImageComponent" } }, { "FileName", { this->dataManager->GetInputFile( "BrainProtonDensitySliceBorder20.nii" ) } } } );
   blueprint->SetComponent( "MovingImage", { { "NameOfClass", { "NiftyregReadImageComponent" } }, { "FileName", { this->dataManager->GetInputFile( "BrainProtonDensitySliceR10X13Y17.nii" ) } } } );
   blueprint->SetComponent( "RegistrationMethod", { { "NameOfClass", { "Niftyregf3dComponent" } } } );
+  blueprint->SetComponent( "ResultImage", { { "NameOfClass", { "NiftyregWriteImageComponent" } }, { "FileName", { this->dataManager->GetOutputFile("Nifty_warped.nii") } } });
   blueprint->SetComponent( "Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } } );
 
-  ParameterMapType connection5Parameters;
-  connection5Parameters[ "NameOfInterface" ] = { "itkMetricv4Interface" };
-  blueprint->SetConnection( "Metric", "RegistrationMethod", connection5Parameters );
 
   blueprint->SetConnection( "FixedImage", "RegistrationMethod", { {} } );  //{ { "NameOfInterface", { "NiftyregReferenceImageInterface" } } }
   blueprint->SetConnection( "MovingImage", "RegistrationMethod", { {} } ); //{ { "NameOfInterface", { "NiftyregFloatingImageInterface" } } }
+  blueprint->SetConnection("RegistrationMethod", "ResultImage", { {} }); //{ { "NameOfInterface", { "NiftyregWarpedImageInterface" } } }
   blueprint->SetConnection( "RegistrationMethod", "Controller", { {} } );
+  blueprint->SetConnection("ResultImage", "Controller", { {} });
 
   BlueprintITKPointer superElastixFilterBlueprint = BlueprintITKType::New();
   superElastixFilterBlueprint->Set( blueprint );

@@ -66,7 +66,8 @@ public:
 private:
 
   reg_f3d< TPixel > * m_reg_f3d;
-
+  std::shared_ptr<nifti_image> m_reference_image;
+  std::shared_ptr<nifti_image> m_floating_image;
   // m_warped_images is an array of 2 nifti images. Depending on the use case, typically only [0] is a valid image
   std::unique_ptr< std::array<std::shared_ptr<nifti_image>,2>> m_warped_images;
 
