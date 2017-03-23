@@ -65,10 +65,7 @@ macro( _selxmodules_initialize )
     # Collect header files for Visual Studio 
     # http://stackoverflow.com/questions/8316104/specify-how-cmake-creates-visual-studio-project
     file( GLOB ${MODULE}_HEADER_FILES "${${MODULE}_SOURCE_DIR}/include/*.*" )
-	message(STATUS "  scanning: ${${MODULE}_SOURCE_DIR}/include/*.*")
-	message(STATUS "  found: ${${MODULE}_HEADER_FILES}")
-    # Collect header files for Visual Studio 
-    # http://stackoverflow.com/questions/8316104/specify-how-cmake-creates-visual-studio-project
+    # Collect interface files for Visual Studio 
     file( GLOB ${MODULE}_INTERFACE_FILES "${${MODULE}_SOURCE_DIR}/interfaces/*.*" )
 	message( STATUS "  Interfaces: ${${MODULE}_INTERFACE_FILES}")
     # These variables are defined in the module's .cmake file
