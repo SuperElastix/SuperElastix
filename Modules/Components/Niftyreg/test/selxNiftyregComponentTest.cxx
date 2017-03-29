@@ -80,9 +80,9 @@ TEST_F( NiftyregComponentTest, Register2d )
   blueprint->SetComponent( "Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } } );
 
 
-  blueprint->SetConnection( "FixedImage", "RegistrationMethod", { {} } );  //{ { "NameOfInterface", { "NiftyregReferenceImageInterface" } } }
-  blueprint->SetConnection( "MovingImage", "RegistrationMethod", { {} } ); //{ { "NameOfInterface", { "NiftyregFloatingImageInterface" } } }
-  blueprint->SetConnection("RegistrationMethod", "ResultImage", { {} }); //{ { "NameOfInterface", { "NiftyregWarpedImageInterface" } } }
+  blueprint->SetConnection("FixedImage", "RegistrationMethod", { { "NameOfInterface", { "NiftyregReferenceImageInterface" } } });
+  blueprint->SetConnection( "MovingImage", "RegistrationMethod", { { "NameOfInterface", { "NiftyregFloatingImageInterface" } } });
+  blueprint->SetConnection("RegistrationMethod", "ResultImage", { {} }); //{ { "NameOfInterface", { "NiftyregWarpedImageInterface" } } });
   blueprint->SetConnection( "RegistrationMethod", "Controller", { {} } );
   blueprint->SetConnection("ResultImage", "Controller", { {} });
 

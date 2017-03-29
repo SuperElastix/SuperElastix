@@ -19,8 +19,8 @@
 
 set( proj Niftyreg )
 
-set( NIFTYREG_GIT_REPOSITORY http://git.code.sf.net/p/niftyreg/git )
-set( NIFTYREG_GIT_TAG d9c6607f254443ed72767e057da8e7f911dd5deb )
+set( NIFTYREG_GIT_REPOSITORY https://cmiclab.cs.ucl.ac.uk/mmodat/niftyreg.git )
+set( NIFTYREG_GIT_TAG fc526c152fd5eaced271d1d6de7c16661b2abd3e )
 
 ExternalProject_Add( ${proj} 
   GIT_REPOSITORY ${NIFTYREG_GIT_REPOSITORY}

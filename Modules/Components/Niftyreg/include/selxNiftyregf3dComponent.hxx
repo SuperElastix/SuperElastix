@@ -75,8 +75,8 @@ void
 Niftyregf3dComponent<  TPixel >
 ::RunRegistration()
 {
-  this->m_reg_f3d->UseSSD( 0, true );
-  this->m_reg_f3d->UseCubicSplineInterpolation();
+  //this->m_reg_f3d->UseSSD( 0, true );
+  //this->m_reg_f3d->UseCubicSplineInterpolation();
 
   this->m_reg_f3d->Run();
   nifti_image** outputWarpedImage = m_reg_f3d->GetWarpedImage();
