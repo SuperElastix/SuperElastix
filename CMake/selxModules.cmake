@@ -64,8 +64,11 @@ macro( _selxmodules_initialize )
 
     # Collect header files for Visual Studio 
     # http://stackoverflow.com/questions/8316104/specify-how-cmake-creates-visual-studio-project
-    file( GLOB ${MODULE}_HEADER_FILES "${${MODULE}_SOURCE_DIR}/*/include/*.*" )
-
+    file( GLOB ${MODULE}_HEADER_FILES "${${MODULE}_SOURCE_DIR}/include/*.*" )
+    
+    # Collect interface files for Visual Studio 
+    file( GLOB ${MODULE}_INTERFACE_FILES "${${MODULE}_SOURCE_DIR}/interfaces/*.*" )
+    
     # These variables are defined in the module's .cmake file
     set( ${MODULE}_INCLUDE_DIRS )
     set( ${MODULE}_SOURCE_FILES )
@@ -77,6 +80,11 @@ macro( _selxmodules_initialize )
     list( APPEND SUPERELASTIX_MODULES ${MODULE} )
 
   endforeach()
+  
+  # Create dummy targets to show header-only Components and Interfaces in the Solution Explorer of Visual Studio
+  add_library(HeaderOnlyComponents "${CMAKE_SOURCE_DIR}/Modules/Components/HeaderOnlyComponents.cxx")
+  add_library(Interfaces "${CMAKE_SOURCE_DIR}/Modules/Components/Interfaces.cxx")
+  
 endmacro()
 
 macro( _selxmodule_enable MODULE UPSTREAM )
@@ -116,6 +124,14 @@ macro( _selxmodule_enable MODULE UPSTREAM )
       endif()
 
       add_library( ${MODULE} ${${MODULE}_HEADER_FILES} ${${MODULE}_SOURCE_FILES} )
+    else()
+    # Aggregate all header-only Components in a separate target for Visual Studio IDE.
+      target_sources( HeaderOnlyComponents PUBLIC ${${MODULE}_HEADER_FILES} )
+    endif()
+	
+    # Aggregate all interface headers in a separate target for Visual Studio IDE.
+    if( ${MODULE}_INTERFACE_FILES )
+        target_sources( Interfaces PUBLIC ${${MODULE}_INTERFACE_FILES} )
     endif()
 	
     message( STATUS "${MODULE} enabled." ) 
