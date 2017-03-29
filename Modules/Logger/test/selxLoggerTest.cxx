@@ -36,6 +36,6 @@ TEST( LoggerTest, Console )
   logger->Log( DEBUG, "Console DEBUG message" );
   logger->Log( INFO, "Console INFO message" );
   logger->Log( WARNING, "Console WARNING message" );
-  //logger->Log( ERROR, "Console ERROR message");
+  // logger->Log( ERROR, "Console ERROR message");
   logger->Log( FATAL, "Console FATAL message" );
 }

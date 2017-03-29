@@ -22,10 +22,10 @@ cmake_minimum_required( VERSION 3.0.2 )
 # ---------------------------------------------------------------------
 project( SuperElastix )
 
-set( SUPERELATIX_MAJOR_VERSION 0)
-set( SUPERELATIX_MINOR_VERSION 1)
-set( SUPERELATIX_PATCH_VERSION 0)
-set( SUPERELATIX_VERSION ${SUPERELATIX_MAJOR_VERSION}.${SUPERELATIX_MINOR_VERSION}.${SUPERELATIX_PATCH_VERSION})
+set( SUPERELASTIX_MAJOR_VERSION 0)
+set( SUPERELASTIX_MINOR_VERSION 1)
+set( SUPERELASTIX_PATCH_VERSION 0)
+set( SUPERELASTIX_VERSION ${SUPERELASTIX_MAJOR_VERSION}.${SUPERELASTIX_MINOR_VERSION}.${SUPERELASTIX_PATCH_VERSION})
 
 # Place executables in the bin directory
 set( CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin" )
@@ -90,20 +90,22 @@ if( NOT CMAKE_BUILD_TYPE )
 endif()
 
 # ---------------------------------------------------------------------
+# Load SuperBuild settings. Use all system libraries by setting 
+# USE_SYSTEM_DEPENDENCIES to ON, or use individual system libraries by
+# setting USE_SYSTEM_DEPENDENCIES to OFF _and_ USE_SYSTEM_ITK to ON, 
+# USE_SYSTEM_BOOST to ON, USE_SYSTEM_GTEST to ON or USE_SYSTEM_ELASTIX
+# to ON.
+
+if( NOT USE_SYSTEM_DEPENDENCIES )
+  find_package( SuperElastixSuperBuild REQUIRED )
+  include( ${SUPERELASTIXSUPERBUILD_USE_FILE} )
+endif()
+
+# ---------------------------------------------------------------------
 # ITK
 
 find_package( ITK REQUIRED )
 include( ${ITK_USE_FILE} )
-
-list( APPEND RequiredITKModules
-  ITKReview
-)
-
-foreach( ITKModule ${RequiredITKModules} )
-  if( NOT ${ITKModule}_LOADED )
-    message( FATAL_ERROR "elastix requires that ITK is build with ${ITKModule}. Please rebuild ITK with Module_${ITKModule} set to ON." )
-  endif()
-endforeach()
 
 # ---------------------------------------------------------------------
 # Boost Library
@@ -188,12 +190,8 @@ option( BUILD_READTHEDOCS "Enable building readthedocs.org documentation." OFF )
 # ---------------------------------------------------------------------
 # Enable other projects to use SuperElastix via CMake's find_packge() and a use-file
 
-set( SUPERELASTIX_CONFIG_DIR ${CMAKE_CURRENT_BINARY_DIR} )
-set( SUPERELASTIX_BINARY_DIR ${CMAKE_LIBRARY_OUTPUT_DIRECTORY} )
-
-get_directory_property( SUPERELASTIX_INCLUDE_DIRS INCLUDE_DIRECTORIES )
-configure_file( SuperElastixConfig.cmake.in SuperElastixConfig.cmake @ONLY IMMEDIATE )
-configure_file( UseSuperElastix.cmake.in UseSuperElastix.cmake COPYONLY IMMEDIATE )
+# set( SUPERELASTIX_CONFIG_DIR ${CMAKE_CURRENT_BINARY_DIR} )
+# set( SUPERELASTIX_BINARY_DIR ${CMAKE_LIBRARY_OUTPUT_DIRECTORY} )
 
 # ---------------------------------------------------------------------
 # Installation
@@ -204,25 +202,26 @@ if( WIN32 AND NOT CYGWIN )
 else()
   set( CMAKE_INSTALL_DIR lib/CMake/SuperElastix )
 endif()
-
-# Add all targets to the build-tree export set
-export( TARGETS ModuleFilter FILE "${PROJECT_BINARY_DIR}/SuperElastixTargets.cmake" )
  
 # Register the build-tree with a global CMake-registry
 export( PACKAGE SuperElastix )
  
 # Create the SuperElastix.cmake files
 # ... for the build tree
-set( SUPERELASTIX_CONF_INCLUDE_DIRS ${SUPERELASTIX_INCLUDE_DIRS} )
-set( SUPERELASTIX_CONF_LIBRARY_DIRS ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY} )
-set( SUPERELASTIX_CONF_LIBRARIES ${SUPERELASTIX_LIBRARIES} )
+set( SUPERELASTIX_INSTALL_INCLUDE_DIRS ${SUPERELASTIX_INCLUDE_DIRS} )
+set( SUPERELASTIX_INSTALL_LIBRARY_DIRS ${SUPERELASTIX_LIBRARY_DIRS} )
+set( SUPERELASTIX_INSTALL_LIBRARIES ${SUPERELASTIX_LIBRARIES} )
+set( SUPERELASTIX_INSTALL_USE_FILE "${PROJECT_BINARY_DIR}/UseSuperElastix.cmake" )
 configure_file( SuperElastixConfig.cmake.in "${PROJECT_BINARY_DIR}/SuperElastixConfig.cmake" @ONLY)
+configure_file( UseSuperElastix.cmake.in "${SUPERELATIX_USE_FILE}" @ONLY )
 
 # ... for the install tree
-set( SUPERELASTIX_CONF_INCLUDE_DIRS include )
-set( SUPERELASTIX_CONF_LIBRARY_DIRS lib )
-set( SUPERELASTIX_CONF_LIBRARIES "ModuleFilter" )
+set( SUPERELASTIX_INSTALL_INCLUDE_DIRS include )
+set( SUPERELASTIX_INSTALL_LIBRARY_DIRS lib )
+set( SUPERELASTIX_INSTALL_LIBRARIES ModuleFilter ModuleBlueprints ModuleLogger )
+set( SUPERELASTIX_INSTALL_USE_FILE "${CMAKE_INSTALL_DIR}/UseSuperElastix.cmake" )
 configure_file( SuperElastixConfig.cmake.in "${PROJECT_BINARY_DIR}/install/SuperElastixConfig.cmake" @ONLY)
+configure_file( UseSuperElastix.cmake.in "${PROJECT_BINARY_DIR}/install/UserSuperElastix.cmake" @ONLY )
 
 # Create the SuperElastixVersion.cmake file
 configure_file( SuperElastixConfigVersion.cmake.in "${PROJECT_BINARY_DIR}/SuperElastixConfigVersion.cmake" @ONLY)
@@ -231,17 +230,19 @@ configure_file( SuperElastixConfigVersion.cmake.in "${PROJECT_BINARY_DIR}/SuperE
 install( FILES
          "${PROJECT_BINARY_DIR}/install/SuperElastixConfig.cmake"
          "${PROJECT_BINARY_DIR}/SuperElastixConfigVersion.cmake"
+         "${PROJECT_BINARY_DIR}/install/UserSuperElastix.cmake"
           DESTINATION "${CMAKE_INSTALL_DIR}" )
 
 install( FILES 
          Modules/Filter/include/selxSuperElastixFilter.h
          Modules/Filter/include/selxSuperElastixFilterCustomComponents.h
          Modules/Filter/include/itkUniquePointerDataObjectDecorator.h
+         Modules/Filter/include/itkUniquePointerDataObjectDecorator.hxx
          Modules/Blueprints/include/selxBlueprint.h
          Modules/Logger/include/selxLogger.h
          Modules/FileIO/include/selxAnyFileReader.h
          Modules/FileIO/include/selxAnyFileWriter.h
          DESTINATION include )
 
-install( TARGETS ModuleFilter
+install( TARGETS ModuleFilter ModuleBlueprints ModuleLogger
          DESTINATION lib )

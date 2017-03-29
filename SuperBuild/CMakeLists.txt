@@ -22,6 +22,11 @@ cmake_minimum_required( VERSION 3.0.2 )
 # ---------------------------------------------------------------------
 project( SuperElastixSuperBuild )
 
+set( SUPERELASTIXSUPERBUILD_MAJOR_VERSION 0)
+set( SUPERELASTIXSUPERBUILD_MINOR_VERSION 1)
+set( SUPERELASTIXSUPERBUILD_PATCH_VERSION 0)
+set( SUPERELASTIXSUPERBUILD_VERSION ${SUPERELASTIXSUPERBUILD_MAJOR_VERSION}.${SUPERELASTIXSUPERBUILD_MINOR_VERSION}.${SUPERELASTIXSUPERBUILD_PATCH_VERSION})
+
 find_package( Git REQUIRED )
 
 include( ExternalProject )
@@ -31,8 +36,6 @@ set( CMAKE_MODULE_PATH
   ${CMAKE_CURRENT_SOURCE_DIR}/../CMake
   ${CMAKE_MODULE_PATH}
 )
-
-set( CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR} CACHE PATH "SuperBuild install directory" FORC )
 
 # ---------------------------------------------------------------------
 # SuperElastix SuperBuild configuration
@@ -129,7 +132,25 @@ else()
 endif() 
 
 # ---------------------------------------------------------------------
+# Installation
+
+set( CMAKE_INSTALL_DIR "" )
+if( WIN32 AND NOT CYGWIN )
+  set( CMAKE_INSTALL_DIR CMake )
+else()
+  set( CMAKE_INSTALL_DIR lib/CMake/SuperElastix )
+endif()
+
+set( SUPERELASTIXSUPERBUILD_USE_FILE "${PROJECT_BINARY_DIR}/UseSuperElastixSuperBuild.cmake" )
+configure_file( SuperElastixSuperBuildConfig.cmake.in "${PROJECT_BINARY_DIR}/SuperElastixSuperBuildConfig.cmake" @ONLY)
+configure_file( SuperElastixSuperBuildConfigVersion.cmake.in "${PROJECT_BINARY_DIR}/SuperElastixSuperBuildConfigVersion.cmake.in" @ONLY)
+configure_file( UseSuperElastixSuperBuild.cmake.in "${SUPERELASTIXSUPERBUILD_USE_FILE}" @ONLY )
+
+# ---------------------------------------------------------------------
 # Build SuperElastix
+
+# configure_file( SuperElastixSuperBuildConfig.cmake.in "${PROJECT_BINARY_DIR}/SuperElastixConfig.cmake" @ONLY)
+# configure_file( UseSuperElastix.cmake.in "${SUPERELATIX_USE_FILE}" @ONLY )
 
 include( SuperElastix )
 
@@ -139,6 +160,7 @@ include( SuperElastix )
 if( ${BUILD_APPLICATIONS_EXTERNAL_PROJECT} )
   include( ExternalApplications )
 endif()
+
 
 
 

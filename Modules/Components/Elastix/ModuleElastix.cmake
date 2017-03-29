@@ -54,3 +54,14 @@ set( ${MODULE}_LIBRARIES
   elastix
   transformix
 )
+
+set( ${MODULE}_LIBRARY_DIRS 
+  ${ELASTIX_LINK_DIRECTORIES}
+)
+
+# https://public.kitware.com/Bug/view.php?id=14311
+# add_library( elastix STATIC IMPORTED )
+# set_property( TARGET elastix PROPERTY IMPORTED_LOCATION ${ELASTIX_DIR}/src/bin/elastix.a )
+#
+# add_library( transformix STATIC IMPORTED )
+# set_property( TARGET transformix PROPERTY IMPORTED_LOCATION ${ELASTIX_DIR}/src/bin/transformix.a )

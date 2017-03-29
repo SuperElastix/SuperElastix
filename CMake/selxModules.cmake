@@ -41,6 +41,7 @@ macro( _selxmodules_initialize )
   set( SUPERELASTIX_MODULES )
   set( SUPERELASTIX_INCLUDE_DIRS )
   set( SUPERELASTIX_LIBRARIES )
+  set( SUPERELASTIX_LIBRARIY_DIRS )
   set( SUPERELASTIX_TEST_SOURCE_FILES )
   set( SUPERELASTIX_INTERFACE_DIRS )
 
@@ -100,21 +101,17 @@ macro( _selxmodule_enable MODULE UPSTREAM )
       list( APPEND SUPERELASTIX_TEST_SOURCE_FILES ${${MODULE}_TEST_SOURCE_FILES} )
     endif()
 
+    # Header-only modules should not be compiled
+    if( ${MODULE}_SOURCE_FILES )
+      add_library( ${MODULE} ${${MODULE}_HEADER_FILES} ${${MODULE}_SOURCE_FILES} )
+    endif()
+
     if( ${MODULE}_LIBRARIES )
       list( APPEND SUPERELASTIX_LIBRARIES ${${MODULE}_LIBRARIES} )
     endif()
 
-    # Header-only modules should not be compiled
-    if( ${MODULE}_SOURCE_FILES )
-      # Check if user accidentally tries to compile header-only library
-      if( ${MODULE}_LIBRARIES )
-        list( FIND "${MODULE}" ${MODULE}_LIBRARIES _index )
-        if( _index GREATER -1 AND NOT ${MODULE}_SOURCE_FILES )
-          message( FATAL_ERROR "Compilation of header-only module ${MODULE} requested. Remove ${MODULE} from \$\{MODULE\}_LIBRARIES in ${${MODULE}_CMAKE_FILE}" )
-        endif()
-      endif()
-
-      add_library( ${MODULE} ${${MODULE}_HEADER_FILES} ${${MODULE}_SOURCE_FILES} )
+    if( ${MODULE}_LIBRARY_DIRS )
+      list( APPEND SUPERELASTIX_LIBRARY_DIRS ${${MODULE}_LIBRARY_DIRS} )
     endif()
 	
     message( STATUS "${MODULE} enabled." ) 
@@ -126,6 +123,12 @@ endmacro()
 macro( _selxmodule_enable_dependencies UPSTREAM MODULES )
   foreach( MODULE ${${MODULES}} )
     _selxmodule_enable( ${MODULE} ${UPSTREAM} )
+  endforeach()
+endmacro()
+
+macro( _selxmodule_target_file TARGETS )
+  foreach( TARGET ${${TARGETS}} )
+    set( ${TARGET}_FILE $<TARGET_FILE:TARGET> )
   endforeach()
 endmacro()
 

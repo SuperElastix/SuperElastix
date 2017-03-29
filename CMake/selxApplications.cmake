@@ -84,6 +84,7 @@ macro( _selxapplication_enable APPLICATION UPSTREAM )
     include( ${${APPLICATION}_CMAKE_FILE} ) 
 
     if( ${APPLICATION}_MODULE_DEPENDENCIES )
+      # TODO: If we are building as a standalone directory we should just check if enabled instead of enabling
       _selxmodule_enable_dependencies( ${APPLICATION}_MODULE_DEPENDENCIES ${APPLICATION} )
     endif()
     
