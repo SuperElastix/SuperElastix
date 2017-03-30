@@ -36,7 +36,7 @@ ExternalProject_Add( ${proj}
   INSTALL_COMMAND ""
 )
 
-ExternalProject_Get_Property( SuperElastix binary_dir )
+ExternalProject_Get_Property( ${proj} binary_dir )
 set( SuperElastix_DIR "${binary_dir}" )
 
 list( APPEND SUPERELASTIX_DEPENDENCIES ${proj} )

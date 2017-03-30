@@ -6,7 +6,7 @@ if( NOT USE_SYSTEM_BOOST )
   set( BOOST_ROOT @BOOST_ROOT@ )
 endif()
 
-if( NOT USE_SYSTEM_GTEST)
+if( NOT USE_SYSTEM_GTEST )
   set( GTEST_ROOT @GTEST_ROOT@ )
 endif()
 

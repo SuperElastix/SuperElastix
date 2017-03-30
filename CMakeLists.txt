@@ -196,12 +196,6 @@ mark_as_advanced( BUILD_READTHEDOCS )
 option( BUILD_READTHEDOCS "Enable building readthedocs.org documentation." OFF )
 
 # ---------------------------------------------------------------------
-# Enable other projects to use SuperElastix via CMake's find_packge() and a use-file
-
-# set( SUPERELASTIX_CONFIG_DIR ${CMAKE_CURRENT_BINARY_DIR} )
-# set( SUPERELASTIX_BINARY_DIR ${CMAKE_LIBRARY_OUTPUT_DIRECTORY} )
-
-# ---------------------------------------------------------------------
 # Installation
 
 set( CMAKE_INSTALL_DIR "" )
@@ -216,10 +210,13 @@ export( PACKAGE SuperElastix )
  
 # Create the SuperElastix.cmake files
 # ... for the build tree
-set( SUPERELASTIX_USE_FILE "${PROJECT_BINARY_DIR}/UseSuperElastix.cmake" )
+set( SUPERELASTIX_INSTALL_INCLUDE_DIRS ${SUPERELASTIX_INCLUDE_DIRS} )
+set( SUPERELASTIX_INSTALL_LIBRARY_DIRS ${SUPERELASTIX_LIBRARY_DIRS} )
+set( SUPERELASTIX_INSTALL_LIBRARIES ${SUPERELASTIX_LIBRARIES} )
+set( SUPERELASTIX_INSTALL_USE_FILE "${PROJECT_BINARY_DIR}/UseSuperElastix.cmake" )
 configure_file( SuperElastixConfig.cmake.in "${PROJECT_BINARY_DIR}/SuperElastixConfig.cmake" @ONLY)
 configure_file( SuperElastixConfigVersion.cmake.in "${PROJECT_BINARY_DIR}/SuperElastixConfigVersion.cmake" @ONLY)
-configure_file( UseSuperElastix.cmake.in "${SUPERELASTIX_USE_FILE}" @ONLY )
+configure_file( UseSuperElastix.cmake.in "${SUPERELASTIX_INSTALL_USE_FILE}" @ONLY )
 
 # ... for the install tree
 install(CODE "set( SUPERELASTIX_INSTALL_INCLUDE_DIRS include )" ) 
@@ -241,5 +238,5 @@ install( FILES
          Modules/FileIO/include/selxAnyFileWriter.h
          DESTINATION include )
 
-install( TARGETS ModuleFilter ModuleBlueprints ModuleLogger
+install( TARGETS ModuleFilter ModuleBlueprints ModuleLogger ModuleComponentInterface
          DESTINATION lib )

@@ -134,6 +134,9 @@ endif()
 # ---------------------------------------------------------------------
 # Installation
 
+# Register the build-tree with a global CMake-registry
+export( PACKAGE SuperElastixSuperBuild )
+
 set( CMAKE_INSTALL_DIR "" )
 if( WIN32 AND NOT CYGWIN )
   set( CMAKE_INSTALL_DIR CMake )
@@ -145,8 +148,6 @@ set( SUPERELASTIXSUPERBUILD_USE_FILE "${PROJECT_BINARY_DIR}/UseSuperElastixSuper
 configure_file( SuperElastixSuperBuildConfig.cmake.in "${PROJECT_BINARY_DIR}/SuperElastixSuperBuildConfig.cmake" @ONLY)
 configure_file( SuperElastixSuperBuildConfigVersion.cmake.in "${PROJECT_BINARY_DIR}/SuperElastixSuperBuildConfigVersion.cmake" @ONLY)
 configure_file( UseSuperElastixSuperBuild.cmake.in "${SUPERELASTIXSUPERBUILD_USE_FILE}" @ONLY )
-
-# TODO: Install to system
 
 # ---------------------------------------------------------------------
 # Build SuperElastix
