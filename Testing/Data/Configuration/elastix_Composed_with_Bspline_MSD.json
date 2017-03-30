@@ -9,7 +9,7 @@
         "ResultImagePixelType": "float"
     },
     "Component": {
-        "Name": "FixedImage",
+        "Name": "ResultImage",
         "Dimensionality": "2",
         "PixelType": "float"
     }

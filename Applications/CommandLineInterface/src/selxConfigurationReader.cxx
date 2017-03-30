@@ -69,6 +69,7 @@ ConfigurationReader::FromFile(const PathType & filename)
       baseBlueprint->ComposeWith(blueprint);
       std::cout << "Compose with: " << filename << std::endl;
     }
+    baseBlueprint->ComposeWith(FromPropertyTree(propertyTree));
     return baseBlueprint;
   }
 }
