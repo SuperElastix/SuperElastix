@@ -52,11 +52,14 @@ main( int ac, char * av[] )
   try
   {
     typedef std::vector< std::string > VectorOfStringsType;
+    typedef std::vector< boost::filesystem::path > VectorOfPathsType;
 
     // instantiate a SuperElastixFilter that is loaded with default components
     selx::SuperElastixFilter::Pointer superElastixFilter = selx::SuperElastixFilter::New();
 
-    fs::path            configurationPath;
+    boost::filesystem::path            configurationPath;
+    VectorOfPathsType                   configurationPaths;
+
     VectorOfStringsType inputPairs;
     VectorOfStringsType outputPairs;
 
@@ -66,11 +69,11 @@ main( int ac, char * av[] )
     //vector<ImageWriter2DType::Pointer> fileWriters;
     std::vector< selx::AnyFileWriter::Pointer > fileWriters;
 
-    po::options_description desc( "Allowed options" );
+    boost::program_options::options_description desc("Allowed options");
     desc.add_options()
       ( "help", "produce help message" )
-      ( "conf", po::value< fs::path >( &configurationPath )->required(), "Configuration file" )
-      ( "in", po::value< VectorOfStringsType >( &inputPairs )->multitoken(), "Input data: images, labels, meshes, etc. Usage <name>=<path>" )
+      ("conf", boost::program_options::value< VectorOfPathsType >(&configurationPaths)->required()->multitoken(), "Configuration file")
+      ("in", boost::program_options::value< VectorOfStringsType >(&inputPairs)->multitoken(), "Input data: images, labels, meshes, etc. Usage <name>=<path>")
       ( "out", po::value< VectorOfStringsType >( &outputPairs )->multitoken(), "Output data: images, labels, meshes, etc. Usage <name>=<path>" )
       ( "graphout", po::value< fs::path >(), "Output Graphviz dot file" )
     ;
@@ -84,8 +87,14 @@ main( int ac, char * av[] )
       std::cout << desc << "\n";
       return 0;
     }
+    VectorOfPathsType::iterator configurationPathIterator = configurationPaths.begin();
 
-    selx::ConfigurationReader::BlueprintPointerType blueprint = selx::ConfigurationReader::FromFile(configurationPath);
+    selx::ConfigurationReader::BlueprintPointerType blueprint = selx::ConfigurationReader::FromFile(*configurationPathIterator);
+    ++configurationPathIterator;
+    for (; configurationPathIterator < configurationPaths.end(); ++configurationPathIterator)
+    {
+      blueprint->ComposeWith(selx::ConfigurationReader::FromFile(*configurationPathIterator));
+    }
 
     if( vm.count( "graphout" ) )
     {
