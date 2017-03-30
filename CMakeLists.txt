@@ -219,13 +219,19 @@ configure_file( SuperElastixConfigVersion.cmake.in "${PROJECT_BINARY_DIR}/SuperE
 configure_file( UseSuperElastix.cmake.in "${SUPERELASTIX_INSTALL_USE_FILE}" @ONLY )
 
 # ... for the install tree
-install(CODE "set( SUPERELASTIX_INSTALL_INCLUDE_DIRS include )" ) 
-install(CODE "set( SUPERELASTIX_INSTALL_LIBRARY_DIRS lib )" ) 
-install(CODE "set( SUPERELASTIX_INSTALL_LIBRARIES ModuleFilter ModuleBlueprints ModuleLogger )" ) 
-install(CODE "set( SUPERELASTIX_INSTALL_USE_FILE ${CMAKE_INSTALL_DIR}/UseSuperElastix.cmake )" ) 
-install(CODE "configure_file( SuperElastixConfig.cmake.in ${CMAKE_INSTALL_DIR}/SuperElastixConfig.cmake @ONLY)" ) 
-install(CODE "configure_file( SuperElastixConfigVersion.cmake.in ${CMAKE_INSTALL_DIR}/SuperElastixConfigVersion.cmake @ONLY)" ) 
-install(CODE "configure_file( UseSuperElastix.cmake.in ${SUPERELASTIX_INSTALL_USE_FILE} @ONLY )" ) 
+set( SUPERELASTIX_INSTALL_INCLUDE_DIRS include )
+set( SUPERELASTIX_INSTALL_LIBRARY_DIRS lib )
+set( SUPERELASTIX_INSTALL_LIBRARIES ModuleFilter ModuleBlueprints ModuleLogger )
+set( SUPERELASTIX_INSTALL_USE_FILE ${CMAKE_INSTALL_DIR}/UseSuperElastix.cmake )
+configure_file( SuperElastixConfig.cmake.in install/SuperElastixConfig.cmake @ONLY)
+configure_file( SuperElastixConfigVersion.cmake.in install/SuperElastixConfigVersion.cmake @ONLY)
+configure_file( UseSuperElastix.cmake.in install/UseSuperElastix.cmake @ONLY ) 
+
+install( FILES 
+         ${PROJECT_BINARY_DIR}/install/SuperElastixConfig.cmake
+         ${PROJECT_BINARY_DIR}/install/SuperElastixConfigVersion.cmake
+         ${PROJECT_BINARY_DIR}/install/UseSuperElastix.cmake
+         DESTINATION ${CMAKE_INSTALL_DIR} )
 
 install( FILES 
          Modules/Filter/include/selxSuperElastixFilter.h
