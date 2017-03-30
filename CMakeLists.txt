@@ -90,13 +90,19 @@ if( NOT CMAKE_BUILD_TYPE )
 endif()
 
 # ---------------------------------------------------------------------
-# Load SuperBuild settings. Use all system libraries by setting 
-# USE_SYSTEM_DEPENDENCIES to ON, or use individual system libraries by
-# setting USE_SYSTEM_DEPENDENCIES to OFF _and_ USE_SYSTEM_ITK to ON, 
-# USE_SYSTEM_BOOST to ON, USE_SYSTEM_GTEST to ON or USE_SYSTEM_ELASTIX
-# to ON.
+# Use SuperBuild. 
 
-if( NOT USE_SYSTEM_DEPENDENCIES )
+# The SuperBuild is typically used to build dependencies. Should
+# you wish to build them yourself (e.g. if you need a specific
+# version of ITK), set USE_SUPERBUILD to OFF _and_ USE_SYSTEM_ITK to ON, 
+# USE_SYSTEM_BOOST to ON, USE_SYSTEM_GTEST to ON or USE_SYSTEM_ELASTIX
+# to ON. The find_package() command will then load your system libraries
+# instead.
+
+option( USE_SUPERBUILD "Use dependencies built by SuperBuild." ON )
+mark_as_advanced( USE_SUPERBUILD )
+
+if( USE_SUPERBUILD )
   find_package( SuperElastixSuperBuild REQUIRED )
   include( ${SUPERELASTIXSUPERBUILD_USE_FILE} )
 endif()
@@ -113,6 +119,8 @@ include( ${ITK_USE_FILE} )
 set( Boost_USE_STATIC_LIBS ON ) # only find static libs
 set( Boost_USE_MULTITHREADED ON )
 set( Boost_USE_STATIC_RUNTIME OFF )
+
+# TODO: These are hardcoded for the SuperBuild
 set( BOOST_INCLUDEDIR "${BOOST_ROOT}/BOOST-prefix/src/Boost/boost/" )
 set( BOOST_LIBRARYDIR "${BOOST_ROOT}/BOOST-prefix/src/Boost/stage/lib/" )
 set( BOOST_ROOT "${BOOST_ROOT}/BOOST-prefix/src/Boost/" )
@@ -208,30 +216,19 @@ export( PACKAGE SuperElastix )
  
 # Create the SuperElastix.cmake files
 # ... for the build tree
-set( SUPERELASTIX_INSTALL_INCLUDE_DIRS ${SUPERELASTIX_INCLUDE_DIRS} )
-set( SUPERELASTIX_INSTALL_LIBRARY_DIRS ${SUPERELASTIX_LIBRARY_DIRS} )
-set( SUPERELASTIX_INSTALL_LIBRARIES ${SUPERELASTIX_LIBRARIES} )
-set( SUPERELASTIX_INSTALL_USE_FILE "${PROJECT_BINARY_DIR}/UseSuperElastix.cmake" )
+set( SUPERELASTIX_USE_FILE "${PROJECT_BINARY_DIR}/UseSuperElastix.cmake" )
 configure_file( SuperElastixConfig.cmake.in "${PROJECT_BINARY_DIR}/SuperElastixConfig.cmake" @ONLY)
-configure_file( UseSuperElastix.cmake.in "${SUPERELATIX_USE_FILE}" @ONLY )
+configure_file( SuperElastixConfigVersion.cmake.in "${PROJECT_BINARY_DIR}/SuperElastixConfigVersion.cmake" @ONLY)
+configure_file( UseSuperElastix.cmake.in "${SUPERELASTIX_USE_FILE}" @ONLY )
 
 # ... for the install tree
-set( SUPERELASTIX_INSTALL_INCLUDE_DIRS include )
-set( SUPERELASTIX_INSTALL_LIBRARY_DIRS lib )
-set( SUPERELASTIX_INSTALL_LIBRARIES ModuleFilter ModuleBlueprints ModuleLogger )
-set( SUPERELASTIX_INSTALL_USE_FILE "${CMAKE_INSTALL_DIR}/UseSuperElastix.cmake" )
-configure_file( SuperElastixConfig.cmake.in "${PROJECT_BINARY_DIR}/install/SuperElastixConfig.cmake" @ONLY)
-configure_file( UseSuperElastix.cmake.in "${PROJECT_BINARY_DIR}/install/UserSuperElastix.cmake" @ONLY )
-
-# Create the SuperElastixVersion.cmake file
-configure_file( SuperElastixConfigVersion.cmake.in "${PROJECT_BINARY_DIR}/SuperElastixConfigVersion.cmake" @ONLY)
- 
-# Install the SuperElastix.cmake and SuperElastixConfigVersion.cmake
-install( FILES
-         "${PROJECT_BINARY_DIR}/install/SuperElastixConfig.cmake"
-         "${PROJECT_BINARY_DIR}/SuperElastixConfigVersion.cmake"
-         "${PROJECT_BINARY_DIR}/install/UserSuperElastix.cmake"
-          DESTINATION "${CMAKE_INSTALL_DIR}" )
+install(CODE "set( SUPERELASTIX_INSTALL_INCLUDE_DIRS include )" ) 
+install(CODE "set( SUPERELASTIX_INSTALL_LIBRARY_DIRS lib )" ) 
+install(CODE "set( SUPERELASTIX_INSTALL_LIBRARIES ModuleFilter ModuleBlueprints ModuleLogger )" ) 
+install(CODE "set( SUPERELASTIX_INSTALL_USE_FILE ${CMAKE_INSTALL_DIR}/UseSuperElastix.cmake )" ) 
+install(CODE "configure_file( SuperElastixConfig.cmake.in ${CMAKE_INSTALL_DIR}/SuperElastixConfig.cmake @ONLY)" ) 
+install(CODE "configure_file( SuperElastixConfigVersion.cmake.in ${CMAKE_INSTALL_DIR}/SuperElastixConfigVersion.cmake @ONLY)" ) 
+install(CODE "configure_file( UseSuperElastix.cmake.in ${SUPERELASTIX_INSTALL_USE_FILE} @ONLY )" ) 
 
 install( FILES 
          Modules/Filter/include/selxSuperElastixFilter.h

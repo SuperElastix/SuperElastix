@@ -47,6 +47,9 @@ if (OPENMP_FOUND)
   set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}" )
 endif()
 
+find_package( SuperElastixSuperBuild )
+include( ${SUPERELASTIXSUPERBUILD_USE_FILE} )
+
 find_package( SuperElastix )
 include( ${SUPERELASTIX_USE_FILE} )
 

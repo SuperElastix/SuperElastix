@@ -141,16 +141,15 @@ else()
   set( CMAKE_INSTALL_DIR lib/CMake/SuperElastix )
 endif()
 
-set( SUPERELASTIXSUPERBUILD_USE_FILE "${PROJECT_BINARY_DIR}/UseSuperElastixSuperBuild.cmake" )
+set( SUPERELASTIXSUPERBUILD_USE_FILE "${PROJECT_BINARY_DIR}/UseSuperElastixSuperBuild.cmake")
 configure_file( SuperElastixSuperBuildConfig.cmake.in "${PROJECT_BINARY_DIR}/SuperElastixSuperBuildConfig.cmake" @ONLY)
-configure_file( SuperElastixSuperBuildConfigVersion.cmake.in "${PROJECT_BINARY_DIR}/SuperElastixSuperBuildConfigVersion.cmake.in" @ONLY)
+configure_file( SuperElastixSuperBuildConfigVersion.cmake.in "${PROJECT_BINARY_DIR}/SuperElastixSuperBuildConfigVersion.cmake" @ONLY)
 configure_file( UseSuperElastixSuperBuild.cmake.in "${SUPERELASTIXSUPERBUILD_USE_FILE}" @ONLY )
+
+# TODO: Install to system
 
 # ---------------------------------------------------------------------
 # Build SuperElastix
-
-# configure_file( SuperElastixSuperBuildConfig.cmake.in "${PROJECT_BINARY_DIR}/SuperElastixConfig.cmake" @ONLY)
-# configure_file( UseSuperElastix.cmake.in "${SUPERELATIX_USE_FILE}" @ONLY )
 
 include( SuperElastix )
 
