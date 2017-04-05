@@ -87,13 +87,12 @@ main( int ac, char * av[] )
       std::cout << desc << "\n";
       return 0;
     }
-    VectorOfPathsType::iterator configurationPathIterator = configurationPaths.begin();
 
-    selx::ConfigurationReader::BlueprintPointerType blueprint = selx::ConfigurationReader::FromFile(*configurationPathIterator);
-    ++configurationPathIterator;
-    for (; configurationPathIterator < configurationPaths.end(); ++configurationPathIterator)
+    // create empty blueprint
+    selx::Blueprint::Pointer blueprint = selx::Blueprint::Pointer(new selx::Blueprint());
+    for (const auto & configurationPath : configurationPaths)
     {
-      blueprint->ComposeWith(selx::ConfigurationReader::FromFile(*configurationPathIterator));
+      selx::ConfigurationReader::MergeFromFile(blueprint, configurationPath);
     }
 
     if( vm.count( "graphout" ) )

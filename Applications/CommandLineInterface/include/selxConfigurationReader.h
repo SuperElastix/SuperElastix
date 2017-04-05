@@ -49,7 +49,8 @@ public:
   using PathType = boost::filesystem::path;
   using PathsType = std::list<PathType>;
   static BlueprintPointerType FromFile(const PathType & filename);
-
+  static void MergeFromFile(BlueprintPointerType & blueprint, const PathType & filename);
+  
 private:
 
   typedef boost::property_tree::ptree         PropertyTreeType;
@@ -61,6 +62,10 @@ private:
   static ParameterValueType VectorizeValues( ComponentOrConnectionTreeType componentOrConnectionTree );
 
   static BlueprintPointerType FromPropertyTree( const PropertyTreeType & );
+  static void MergeProperties(BlueprintPointerType&, const PropertyTreeType &);
+
+
+  
 };
 }
 
