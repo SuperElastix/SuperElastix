@@ -17,21 +17,29 @@
  *
  *=========================================================================*/
 
-#include "selxComponentBase.h"
+#ifndef NetworkBuilderFactory_h
+#define NetworkBuilderFactory_h
+
+#include "selxNetworkBuilderFactoryBase.h"
 
 namespace selx
 {
-// TODO delete this constructor
-ComponentBase::ComponentBase() : m_Name( "undefined" ), m_Logger( *( new Logger() ) )
+template< class ComponentList >
+class NetworkBuilderFactory : public NetworkBuilderFactoryBase
 {
-}
 
+public:
 
-ComponentBase::ComponentBase( const std::string & name, const LoggerInterface & logger ) : m_Logger( logger )
-{
-}
+  NetworkBuilderFactory() {}
+  virtual ~NetworkBuilderFactory() {}
 
+  virtual std::unique_ptr< NetworkBuilderBase > New( const Logger & logger );
 
-//const std::map< std::string, std::string > ComponentBase::TemplateProperties()
-// { return{}; }
+};
 } // end namespace selx
+
+#ifndef ITK_MANUAL_INSTANTIATION
+#include "selxNetworkBuilderFactory.hxx"
+#endif
+
+#endif // NetworkBuilderFactory_h

@@ -19,6 +19,7 @@
 
 #include "selxSuperElastixFilter.h"
 #include "selxNetworkBuilder.h"
+#include "selxNetworkBuilderFactory.h"
 #include "selxDefaultComponents.h"
 
 namespace selx
@@ -32,7 +33,8 @@ SuperElastixFilter
 {
   // The default constructor registers the default components.
   //std::make_unique<NetworkBuilder<DefaultComponents>>();
-  m_NetworkBuilder = std::unique_ptr< NetworkBuilder< DefaultComponents >>( new NetworkBuilder< DefaultComponents > );
+  m_NetworkBuilderFactory = std::unique_ptr< NetworkBuilderFactory< DefaultComponents >>( new NetworkBuilderFactory< DefaultComponents > );
+  m_Logger = LoggerType::New();
 } // end Constructor
 
 
@@ -68,7 +70,7 @@ SuperElastixFilter
   {
     // Was Blueprint modified by Set() or by AddBlueprint?
     // delete previous blueprint and start all over with new one
-    m_NetworkBuilder = m_NetworkBuilder->ConstructNewDerivedInstance();
+    m_NetworkBuilder = m_NetworkBuilderFactory->New( *this->m_Logger->Get() );
     this->m_NetworkBuilder->AddBlueprint( this->m_Blueprint->Get() );
     this->m_AllUniqueComponents   = this->m_NetworkBuilder->Configure();
     this->m_IsBlueprintParsedOnce = true;
@@ -168,15 +170,13 @@ SuperElastixFilter
 
   std::cout << "Connecting Components: " << ( this->m_IsConnected ? "succeeded" : "failed" ) << std::endl;
 
-
   bool connectionSatisfied = this->m_NetworkBuilder->CheckConnectionsSatisfied();
-  if (connectionSatisfied == false)
+  if( connectionSatisfied == false )
   {
-    itkExceptionMacro(<< "One or more components has unsatisfied connections" )
+    itkExceptionMacro( << "One or more components has unsatisfied connections" )
   }
 
   std::cout << "All Components are satisfied with their connections" << std::endl << std::endl;
-
 
   for( const auto & nameAndInterface : sinks )
   {
@@ -289,5 +289,21 @@ SuperElastixFilter
   this->GenerateOutputInformation();
   this->GenerateData();
 }
-} // namespace elx
 
+
+void
+SuperElastixFilter
+::SetLogger( LoggerPointer logger ) 
+{
+  this->m_Logger = logger;
+}
+
+
+SuperElastixFilter::LoggerPointer
+SuperElastixFilter
+::GetLogger( void ) 
+{
+  return m_Logger;
+}
+
+} // namespace elx

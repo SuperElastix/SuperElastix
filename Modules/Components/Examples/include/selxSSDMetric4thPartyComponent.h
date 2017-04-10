@@ -36,12 +36,15 @@ class SSDMetric4thPartyComponent :
 public:
 
   /** Standard class typedefs. */
-  typedef SSDMetric4thPartyComponent    Self;
-  typedef ComponentBase                 Superclass;
+  typedef SSDMetric4thPartyComponent Self;
+  typedef SuperElastixComponent<
+    Accepting< >,
+    Providing< MetricValueInterface >
+    >                 Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
 
-  SSDMetric4thPartyComponent( const std::string & name );
+  SSDMetric4thPartyComponent( const std::string & name, const LoggerInterface & logger );
   virtual ~SSDMetric4thPartyComponent();
   Example4thParty::SSDMetric4thParty * theImplementation;
   virtual int GetValue() override;

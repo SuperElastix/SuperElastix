@@ -22,6 +22,7 @@
 
 #include "itkProcessObject.h"
 #include "selxBlueprint.h"
+#include "selxLogger.h"
 
 #include "selxAnyFileReader.h"
 #include "selxAnyFileWriter.h"
@@ -35,7 +36,10 @@
 
 namespace selx
 {
-class NetworkBuilderBase; // forward declaration, hiding implementation details and speeding up compilation time (PIMPL idiom)
+
+// Forward declaration, hiding implementation details and speeding up compilation time (PIMPL idiom)
+class NetworkBuilderBase; 
+class NetworkBuilderFactoryBase;
 
 class SuperElastixFilter : public itk::ProcessObject
 {
@@ -63,8 +67,13 @@ public:
   typedef BlueprintType::Pointer                             BlueprintPointer;
   typedef BlueprintType::ConstPointer                        BlueprintConstPointer;
 
+  typedef itk::UniquePointerDataObjectDecorator< Logger >    LoggerType;
+  typedef LoggerType::Pointer                                LoggerPointer;
+  typedef LoggerType::ConstPointer                           LoggerConstPointer;
+
   // Setting a Blueprint creates a pipeline such that when SuperElastixFilter is updated it checks if the blueprint has been modified and if so, SuperElastixFilter resets its internals and start building the blueprint from scratch
   itkSetObjectMacro( Blueprint, BlueprintType );
+  itkSetObjectMacro( Logger, LoggerType );
 
   // Adding a Blueprint composes SuperElastixFilter' internal blueprint (accessible by Set/Get Blueprint) with the otherBlueprint.
   // void AddBlueprint(BlueprintPointer otherBlueprint);
@@ -108,6 +117,10 @@ public:
 
   void Update( void ) ITK_OVERRIDE;
 
+  void SetLogger( LoggerPointer logger );
+
+  LoggerPointer GetLogger();
+
 protected:
 
   // default constructor for API library use
@@ -120,7 +133,10 @@ protected:
 
   virtual void GenerateData( void ) ITK_OVERRIDE;
 
+  std::unique_ptr< NetworkBuilderFactoryBase > m_NetworkBuilderFactory;
   std::unique_ptr< NetworkBuilderBase > m_NetworkBuilder;
+
+  LoggerPointer m_Logger;
 
 private:
 

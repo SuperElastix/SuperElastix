@@ -36,15 +36,15 @@ namespace selx
 template< int Dimensionality, class TPixel >
 class MonolithicElastixComponent :
   public SuperElastixComponent<
-    Accepting<
-      itkImageFixedInterface< Dimensionality, TPixel >,
-      itkImageMovingInterface< Dimensionality, TPixel >
-    >,
-    Providing<
-      elastixTransformParameterObjectInterface< itk::Image< TPixel, Dimensionality >, itk::Image< TPixel, Dimensionality >>,
-      itkImageInterface< Dimensionality, TPixel >,
-      RunRegistrationInterface
-    >
+  Accepting<
+  itkImageFixedInterface< Dimensionality, TPixel >,
+  itkImageMovingInterface< Dimensionality, TPixel >
+  >,
+  Providing<
+  elastixTransformParameterObjectInterface< itk::Image< TPixel, Dimensionality >, itk::Image< TPixel, Dimensionality >>,
+  itkImageInterface< Dimensionality, TPixel >,
+  RunRegistrationInterface
+  >
   >
 {
 public:
@@ -52,22 +52,22 @@ public:
   /** Standard ITK typedefs. */
   typedef MonolithicElastixComponent<
     Dimensionality, TPixel
-  >                                     Self;
+    >                                     Self;
   typedef SuperElastixComponent<
     Accepting<
-      itkImageFixedInterface< Dimensionality, TPixel >,
-      itkImageMovingInterface< Dimensionality, TPixel >
+    itkImageFixedInterface< Dimensionality, TPixel >,
+    itkImageMovingInterface< Dimensionality, TPixel >
     >,
     Providing<
-      elastixTransformParameterObjectInterface< itk::Image< TPixel, Dimensionality >, itk::Image< TPixel, Dimensionality >>,
-      itkImageInterface< Dimensionality, TPixel >,
-      RunRegistrationInterface
+    elastixTransformParameterObjectInterface< itk::Image< TPixel, Dimensionality >, itk::Image< TPixel, Dimensionality >>,
+    itkImageInterface< Dimensionality, TPixel >,
+    RunRegistrationInterface
     >
-  >                                     Superclass;
+    >                                     Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
 
-  MonolithicElastixComponent( const std::string & name );
+  MonolithicElastixComponent( const std::string & name, const LoggerInterface & logger );
   virtual ~MonolithicElastixComponent();
 
   typedef typename ComponentBase::CriterionType CriterionType;

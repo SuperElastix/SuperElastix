@@ -32,11 +32,12 @@ public:
 
   virtual void SetUp()
   {
-    metric3p    = std::make_shared< SSDMetric3rdPartyComponent >( "nameless" );
-    optimizer3p = std::make_shared< GDOptimizer3rdPartyComponent >( "nameless" );
+    Logger * logger = new Logger();
+    metric3p    = std::make_shared< SSDMetric3rdPartyComponent >( "nameless", *logger );
+    optimizer3p = std::make_shared< GDOptimizer3rdPartyComponent >( "nameless", *logger );
 
-    metric4p    = std::make_shared< SSDMetric4thPartyComponent >( "nameless" );
-    optimizer4p = std::make_shared< GDOptimizer4thPartyComponent >( "nameless" );
+    metric4p    = std::make_shared< SSDMetric4thPartyComponent >( "nameless", *logger );
+    optimizer4p = std::make_shared< GDOptimizer4thPartyComponent >( "nameless", *logger );
   }
 
 

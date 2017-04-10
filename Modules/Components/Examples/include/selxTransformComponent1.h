@@ -40,7 +40,7 @@ public:
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
 
-  TransformComponent1( const std::string & name ) : SuperElastixComponent( name ){}
+  TransformComponent1( const std::string & name, const LoggerInterface & logger ) : SuperElastixComponent( name, logger ){}
   virtual ~TransformComponent1(){}
 
   typedef Superclass::CriteriaType  CriteriaType;

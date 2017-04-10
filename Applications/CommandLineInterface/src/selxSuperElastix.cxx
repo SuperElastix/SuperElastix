@@ -22,6 +22,7 @@
 #include "selxConfigurationReader.h"
 #include "selxAnyFileReader.h"
 #include "selxAnyFileWriter.h"
+#include "selxLogger.h"
 
 #include <boost/algorithm/string.hpp>
 
@@ -55,6 +56,11 @@ main( int ac, char * av[] )
 
     // instantiate a SuperElastixFilter that is loaded with default components
     selx::SuperElastixFilter::Pointer superElastixFilter = selx::SuperElastixFilter::New();
+
+    // add logger
+    selx::SuperElastixFilter::LoggerPointer itkLogger = selx::SuperElastixFilter::LoggerType::New();
+    itkLogger->Get()->AddConsole();
+    superElastixFilter->SetLogger( itkLogger );
 
     fs::path            configurationPath;
     VectorOfStringsType inputPairs;

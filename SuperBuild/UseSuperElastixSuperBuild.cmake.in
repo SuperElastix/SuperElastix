@@ -1,0 +1,15 @@
+if( NOT USE_SYSTEM_ITK )
+  set( ITK_DIR @ITK_DIR@ )
+endif()
+
+if( NOT USE_SYSTEM_BOOST )
+  set( BOOST_ROOT @BOOST_ROOT@ )
+endif()
+
+if( NOT USE_SYSTEM_GTEST )
+  set( GTEST_ROOT @GTEST_ROOT@ )
+endif()
+
+if( NOT USE_SYSTEM_ELASTIX )
+  set( ELASTIX_USE_FILE @ELASTIX_USE_FILE@ )
+endif()

@@ -41,6 +41,7 @@ macro( _selxmodules_initialize )
   set( SUPERELASTIX_MODULES )
   set( SUPERELASTIX_INCLUDE_DIRS )
   set( SUPERELASTIX_LIBRARIES )
+  set( SUPERELASTIX_LIBRARY_DIRS ${CMAKE_LIBRARY_OUTPUT_DIRECTORY} ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY} )
   set( SUPERELASTIX_TEST_SOURCE_FILES )
   set( SUPERELASTIX_INTERFACE_DIRS )
 
@@ -58,9 +59,9 @@ macro( _selxmodules_initialize )
     option( USE_${MODULE} OFF )
     set( ${MODULE}_IS_ENABLED FALSE )
 
-    set( ${MODULE}_CMAKE_FILE ${CMAKE_SOURCE_DIR}/${${MODULE}_PATH}/${MODULE}.cmake )
-    set( ${MODULE}_SOURCE_DIR ${CMAKE_SOURCE_DIR}/${${MODULE}_PATH} )
-    set( ${MODULE}_BINARY_DIR ${CMAKE_BINARY_DIR}/${${MODULE}_PATH} )
+    set( ${MODULE}_CMAKE_FILE ${PROJECT_SOURCE_DIR}/${${MODULE}_PATH}/${MODULE}.cmake )
+    set( ${MODULE}_SOURCE_DIR ${PROJECT_SOURCE_DIR}/${${MODULE}_PATH} )
+    set( ${MODULE}_BINARY_DIR ${PROJECT_BINARY_DIR}/${${MODULE}_PATH} )
 
     # Collect header files for Visual Studio 
     # http://stackoverflow.com/questions/8316104/specify-how-cmake-creates-visual-studio-project
@@ -74,7 +75,6 @@ macro( _selxmodules_initialize )
     set( ${MODULE}_SOURCE_FILES )
     set( ${MODULE}_TEST_SOURCE_FILES )
     set( ${MODULE}_MODULE_DEPENDENCIES )
-    set( ${MODULE}_LIBRARY_DIRS )
     set( ${MODULE}_LIBRARIES )
 
     list( APPEND SUPERELASTIX_MODULES ${MODULE} )
@@ -109,6 +109,11 @@ macro( _selxmodule_enable MODULE UPSTREAM )
       list( APPEND SUPERELASTIX_TEST_SOURCE_FILES ${${MODULE}_TEST_SOURCE_FILES} )
     endif()
 
+    # Header-only modules should not be compiled
+    if( ${MODULE}_SOURCE_FILES )
+      add_library( ${MODULE} ${${MODULE}_HEADER_FILES} ${${MODULE}_SOURCE_FILES} )
+    endif()
+
     if( ${MODULE}_LIBRARIES )
       list( APPEND SUPERELASTIX_LIBRARIES ${${MODULE}_LIBRARIES} )
     endif()
@@ -132,6 +137,8 @@ macro( _selxmodule_enable MODULE UPSTREAM )
     # Aggregate all interface headers in a separate target for Visual Studio IDE.
     if( ${MODULE}_INTERFACE_FILES )
         target_sources( Interfaces PUBLIC ${${MODULE}_INTERFACE_FILES} )
+    if( ${MODULE}_LIBRARY_DIRS )
+      list( APPEND SUPERELASTIX_LIBRARY_DIRS ${${MODULE}_LIBRARY_DIRS} )
     endif()
 	
     message( STATUS "${MODULE} enabled." ) 
@@ -143,6 +150,12 @@ endmacro()
 macro( _selxmodule_enable_dependencies UPSTREAM MODULES )
   foreach( MODULE ${${MODULES}} )
     _selxmodule_enable( ${MODULE} ${UPSTREAM} )
+  endforeach()
+endmacro()
+
+macro( _selxmodule_target_file TARGETS )
+  foreach( TARGET ${${TARGETS}} )
+    set( ${TARGET}_FILE $<TARGET_FILE:TARGET> )
   endforeach()
 endmacro()
 

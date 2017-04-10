@@ -38,12 +38,12 @@ namespace selx
 template< int Dimensionality, class TPixel, class TInternalComputationValue >
 class ItkTransformDisplacementFilterComponent :
   public SuperElastixComponent<
-    Accepting< itkTransformInterface< TInternalComputationValue, Dimensionality >,
-      itkImageDomainFixedInterface< Dimensionality >
-    >,
-    Providing< DisplacementFieldItkImageSourceInterface< Dimensionality, TPixel >,
-      ReconnectTransformInterface
-    >
+  Accepting< itkTransformInterface< TInternalComputationValue, Dimensionality >,
+  itkImageDomainFixedInterface< Dimensionality >
+  >,
+  Providing< DisplacementFieldItkImageSourceInterface< Dimensionality, TPixel >,
+  ReconnectTransformInterface
+  >
   >
 {
 public:
@@ -51,19 +51,19 @@ public:
   /** Standard ITK typedefs. */
   typedef ItkTransformDisplacementFilterComponent<
     Dimensionality, TPixel, TInternalComputationValue
-  >                                     Self;
+    >                                     Self;
   typedef SuperElastixComponent<
     Accepting< itkTransformInterface< TInternalComputationValue, Dimensionality >,
-      itkImageDomainFixedInterface< Dimensionality >
+    itkImageDomainFixedInterface< Dimensionality >
     >,
     Providing< DisplacementFieldItkImageSourceInterface< Dimensionality, TPixel >,
-      ReconnectTransformInterface
+    ReconnectTransformInterface
     >
-  >                                     Superclass;
+    >                                     Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
 
-  ItkTransformDisplacementFilterComponent( const std::string & name );
+  ItkTransformDisplacementFilterComponent( const std::string & name, const LoggerInterface & logger );
   virtual ~ItkTransformDisplacementFilterComponent();
 
   typedef TPixel PixelType;

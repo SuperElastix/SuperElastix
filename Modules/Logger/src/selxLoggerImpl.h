@@ -44,6 +44,7 @@ public:
   // void AddFile( Logger::FileNameType fileName, Logger::ChannelType channel, Logger::FormatType format );
 
   void Log( SeverityType severity, Logger::MessageType message );
+
   // void Log( Logger::ChannelType channel, SeverityType severity, Logger::MessageType message );
 
   LoggerType m_Logger;

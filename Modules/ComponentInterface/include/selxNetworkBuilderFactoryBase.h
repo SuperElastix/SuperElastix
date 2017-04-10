@@ -17,21 +17,25 @@
  *
  *=========================================================================*/
 
-#include "selxComponentBase.h"
+#ifndef NetworkBuilderFactoryBase_h
+#define NetworkBuilderFactoryBase_h
 
 namespace selx
 {
-// TODO delete this constructor
-ComponentBase::ComponentBase() : m_Name( "undefined" ), m_Logger( *( new Logger() ) )
+class NetworkBuilderFactoryBase
 {
-}
 
+public:
 
-ComponentBase::ComponentBase( const std::string & name, const LoggerInterface & logger ) : m_Logger( logger )
-{
-}
+  NetworkBuilderFactoryBase() {}
 
+  virtual ~NetworkBuilderFactoryBase() {}
 
-//const std::map< std::string, std::string > ComponentBase::TemplateProperties()
-// { return{}; }
+  /** To create a derived NetworkBuilderFactory from a NetworkBuilderFactoryBase pointer without knowing the template arguments of the derived*/
+  virtual std::unique_ptr< NetworkBuilderBase > New( const Logger & logger ) = 0;
+
+private:
+};
 } // end namespace selx
+
+#endif // NetworkBuilderBase_h

@@ -38,10 +38,12 @@ public:
     return InterfaceStatus::noaccepter;
   }
 
+
   //Empty RestInterfaces does 0 successful connects ;
-  int ConnectFromImpl( ComponentBase::Pointer ) { return 0; }                                                                                   
+  int ConnectFromImpl( ComponentBase::Pointer ) { return 0; }
 
   bool AreAllAccepted() { return true; }
+
 protected:
 };
 
@@ -60,6 +62,7 @@ public:
 
   // Helper function by which a component can check if all its Accepting interfaces have been set after the handshakes
   bool AreAllAccepted();
+
 protected:
 };
 } //end namespace selx

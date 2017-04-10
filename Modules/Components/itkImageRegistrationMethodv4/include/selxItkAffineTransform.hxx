@@ -24,7 +24,7 @@ namespace selx
 {
 template< class InternalComputationValueType, int Dimensionality >
 ItkAffineTransformComponent< InternalComputationValueType,
-Dimensionality >::ItkAffineTransformComponent( const std::string & name ) : Superclass( name )
+Dimensionality >::ItkAffineTransformComponent( const std::string & name, const LoggerInterface & logger ) : Superclass( name, logger )
 {
   m_Transform = AffineTransformType::New();
 

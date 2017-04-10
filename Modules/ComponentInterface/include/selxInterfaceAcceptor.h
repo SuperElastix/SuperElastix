@@ -46,8 +46,11 @@ public:
   bool isSet()
   {
     return m_isSet;
-  };
+  }
+
+
 private:
+
   bool m_isSet = false;
 };
 } //end namespace selx

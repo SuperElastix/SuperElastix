@@ -30,22 +30,26 @@ enum SeverityType {
   DEBUG,
   INFO,
   WARNING,
-  ERROR,
+//  ERROR,
   FATAL
 };
 
-class Logger
+class LoggerInterface
 {
 public:
 
-  typedef const std::string SourceNameType;
-  typedef const std::string ChannelType;
   typedef const std::string MessageType;
 
-  typedef const std::string FormatType;
-  typedef const std::string FileNameType;
-  typedef const int         RotationSizeType;
+  virtual void Log( SeverityType severity, MessageType message ) = 0;
+};
 
+class Logger : public LoggerInterface
+{
+public:
+
+  typedef const std::string ChannelType;
+  typedef const std::string FormatType;
+  using LoggerInterface::MessageType;
   Logger();
   ~Logger();
 
@@ -54,10 +58,11 @@ public:
   // void AddFile( FileNameType fileName = "SuperElastix_%Y-%m-%d_%H-%M-%S.%N.log",
   //               FormatType format = "[%LineID% %TimeStamp% %ComponentName% %Channel% %SeverityLevel%]: %Message%" );
   // void AddFile( FileNameType fileName = "SuperElastix_%Y-%m-%d_%H-%M-%S.%N.log",
-  //               Logger::ChannelType channel = "SuperElastix",  
+  //               Logger::ChannelType channel = "SuperElastix",
   //               FormatType format = "[%LineID% %TimeStamp% %ComponentName% %Channel% %SeverityLevel%]: %Message%" );
 
-  void Log( SeverityType severity, MessageType message );
+  virtual void Log( SeverityType severity, MessageType message );
+
   // void Log( ChannelType channel, SeverityType severity, MessageType message );
 
 private:

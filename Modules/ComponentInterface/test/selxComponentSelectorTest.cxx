@@ -64,7 +64,7 @@ public:
 
 TEST_F( ComponentSelectorTest, EmptyComponentList )
 {
-  auto componentSelector = std::make_shared< ComponentSelector< EmptyComponentList >>( "nameless" );
+  auto componentSelector = std::make_shared< ComponentSelector< EmptyComponentList >>( "nameless", *( new Logger() ) );
 
   // " 0 Component objects available to the NetworkBuilder."
   EXPECT_EQ( componentSelector->NumberOfComponents(), 0 );
@@ -73,7 +73,7 @@ TEST_F( ComponentSelectorTest, EmptyComponentList )
 TEST_F( ComponentSelectorTest, FilledComponentList )
 {
   // In this test we manually register 2 dummy modules: itkTransformComponent1 and itkMetricComponent1.
-  auto componentSelector = std::make_shared< ComponentSelector< TypeList< TransformComponent1, MetricComponent1 >>>( "nameless" );
+  auto componentSelector = std::make_shared< ComponentSelector< TypeList< TransformComponent1, MetricComponent1 >>>( "nameless", *( new Logger() ) );
 
   // After registering the TransformComponent1 and MetricComponent1object, there are
   // " 2 Component objects available to the NetworkBuilder."
@@ -82,7 +82,7 @@ TEST_F( ComponentSelectorTest, FilledComponentList )
 
 TEST_F( ComponentSelectorTest, SetEmptyCriteria )
 {
-  auto componentSelector = std::make_shared< ComponentSelector< SmallComponentList >>( "nameless" );
+  auto componentSelector = std::make_shared< ComponentSelector< SmallComponentList >>( "nameless", *( new Logger() ) );
 
   CriterionType emptyCriterion; // = CriterionType();
 
@@ -96,7 +96,7 @@ TEST_F( ComponentSelectorTest, SetEmptyCriteria )
 
 TEST_F( ComponentSelectorTest, SetSufficientCriteria )
 {
-  auto componentSelector = std::make_shared< ComponentSelector< SmallComponentList >>( "nameless" );
+  auto componentSelector = std::make_shared< ComponentSelector< SmallComponentList >>( "nameless", *( new Logger() ) );
 
   CriterionType criterion = { "ComponentInput", { "Transform" } };
 
@@ -109,7 +109,7 @@ TEST_F( ComponentSelectorTest, SetSufficientCriteria )
 }
 TEST_F( ComponentSelectorTest, AddCriteria )
 {
-  auto componentSelector = std::make_shared< ComponentSelector< SmallComponentList >>( "nameless" );
+  auto componentSelector = std::make_shared< ComponentSelector< SmallComponentList >>( "nameless", *( new Logger() ) );
 
   CriterionType nonSelectiveCriterion( { "ComponentProperty", { "SomeProperty" } } );
 
@@ -135,7 +135,7 @@ TEST_F( ComponentSelectorTest, AddCriteria )
 
 TEST_F( ComponentSelectorTest, InterfacedObjects )
 {
-  auto componentSelectorA = std::make_shared< ComponentSelector< BigComponentList >>( "nameless" );
+  auto componentSelectorA = std::make_shared< ComponentSelector< BigComponentList >>( "nameless", *( new Logger() ) );
   // " 6 Component objects available to the NetworkBuilder."
   EXPECT_EQ( componentSelectorA->NumberOfComponents(), 6 );
 
@@ -145,7 +145,7 @@ TEST_F( ComponentSelectorTest, InterfacedObjects )
   EXPECT_NO_THROW( componentA = componentSelectorA->GetComponent() );
   EXPECT_TRUE( componentA->MeetsCriterion( { "NameOfClass", { "GDOptimizer3rdPartyComponent" } } ) );
 
-  auto componentSelectorB = std::make_shared< ComponentSelector< BigComponentList >>( "nameless" );
+  auto componentSelectorB = std::make_shared< ComponentSelector< BigComponentList >>( "nameless", *( new Logger() ) );
   componentSelectorB->AddProvidingInterfaceCriteria( { { "NameOfInterface", "MetricDerivativeInterface" } } );
   ComponentType::Pointer componentB;
   EXPECT_NO_THROW( componentB = componentSelectorB->GetComponent() );
@@ -155,7 +155,7 @@ TEST_F( ComponentSelectorTest, InterfacedObjects )
 TEST_F( ComponentSelectorTest, UnknownComponent )
 {
   // Fill our component database with some components
-  auto componentSelector = std::make_shared< ComponentSelector< BigComponentList >>( "nameless" );
+  auto componentSelector = std::make_shared< ComponentSelector< BigComponentList >>( "nameless", *( new Logger() ) );
 
   // Setup the criterion for a component that does not exist in our data base
   CriterionType criterion( { "NameOfClass", { "DoYouHaveThisComponent?" } } );

@@ -29,7 +29,7 @@
 
 namespace selx
 {
-template< typename ComponentList >
+template< typename ComponentTypeList >
 class SuperElastixFilterCustomComponents : public SuperElastixFilter
 {
 public:

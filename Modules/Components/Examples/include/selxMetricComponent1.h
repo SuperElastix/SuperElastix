@@ -42,7 +42,7 @@ public:
   typedef Superclass::CriteriaType  CriteriaType;
   typedef Superclass::CriterionType CriterionType;
 
-  MetricComponent1( const std::string & name ) : SuperElastixComponent( name ) {}
+  MetricComponent1( const std::string & name, const LoggerInterface & logger ) : SuperElastixComponent( name, logger ) {}
   virtual ~MetricComponent1(){}
   virtual int Set( TransformedImageInterface::Pointer ) override;
 

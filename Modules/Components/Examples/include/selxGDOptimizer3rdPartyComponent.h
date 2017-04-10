@@ -37,12 +37,13 @@ class GDOptimizer3rdPartyComponent :
 public:
 
   /** Standard class typedefs. */
-  typedef GDOptimizer3rdPartyComponent  Self;
-  typedef ComponentBase                 Superclass;
-  typedef std::shared_ptr< Self >       Pointer;
-  typedef std::shared_ptr< const Self > ConstPointer;
+  typedef GDOptimizer3rdPartyComponent Self;
 
-  GDOptimizer3rdPartyComponent( const std::string & name );
+  typedef SuperElastixComponent< Accepting< MetricValueInterface, MetricDerivativeInterface >, Providing< OptimizerUpdateInterface   >> Superclass;
+  typedef std::shared_ptr< Self >                                                                                                       Pointer;
+  typedef std::shared_ptr< const Self >                                                                                                 ConstPointer;
+
+  GDOptimizer3rdPartyComponent( const std::string & name, const LoggerInterface & logger );
   virtual ~GDOptimizer3rdPartyComponent();
   Example3rdParty::GDOptimizer3rdParty * theImplementation;
   Metric3rdPartyWrapper *                MetricObject;

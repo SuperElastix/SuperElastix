@@ -25,10 +25,9 @@ ExternalProject_Add( ${proj}
   BINARY_DIR ${proj}-build
   CMAKE_ARGS
     --no-warn-unused-cli
+    -DSuperElastixSuperBuild_DIR:PATH=${PROJECT_BINARY_DIR}
     -DSuperElastix_DIR:PATH=${SuperElastix_DIR}
     -DITK_DIR:PATH=${ITK_DIR}
-    -DELASTIX_USE_FILE:PATH=${ELASTIX_USE_FILE}
-	-DBOOST_ROOT:PATH=${BOOST_ROOT}
   DEPENDS ${SUPERELASTIX_DEPENDENCIES}
   INSTALL_COMMAND ""
 )

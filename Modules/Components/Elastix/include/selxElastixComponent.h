@@ -36,36 +36,36 @@ namespace selx
 template< int Dimensionality, class TPixel >
 class ElastixComponent :
   public SuperElastixComponent<
-    Accepting<
-      itkImageFixedInterface< Dimensionality, TPixel >,
-      itkImageMovingInterface< Dimensionality, TPixel >
-    >,
-    Providing<
-      itkImageInterface< Dimensionality, TPixel >,
-      RunRegistrationInterface
-    >
+  Accepting<
+  itkImageFixedInterface< Dimensionality, TPixel >,
+  itkImageMovingInterface< Dimensionality, TPixel >
+  >,
+  Providing<
+  itkImageInterface< Dimensionality, TPixel >,
+  RunRegistrationInterface
+  >
   >
 {
 public:
 
   /** Standard ITK typedefs. */
-  typedef ElastixComponent< 
-    Dimensionality, TPixel 
-  >                                     Self;
+  typedef ElastixComponent<
+    Dimensionality, TPixel
+    >                                     Self;
   typedef SuperElastixComponent<
     Accepting<
-      itkImageFixedInterface< Dimensionality, TPixel >,
-      itkImageMovingInterface< Dimensionality, TPixel >
+    itkImageFixedInterface< Dimensionality, TPixel >,
+    itkImageMovingInterface< Dimensionality, TPixel >
     >,
     Providing<
-      itkImageInterface< Dimensionality, TPixel >,
-      RunRegistrationInterface
+    itkImageInterface< Dimensionality, TPixel >,
+    RunRegistrationInterface
     >
-  >                                     Superclass;
+    >                                     Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
 
-  ElastixComponent( const std::string & name );
+  ElastixComponent( const std::string & name, const LoggerInterface & logger );
   virtual ~ElastixComponent();
 
   typedef typename ComponentBase::CriterionType CriterionType;

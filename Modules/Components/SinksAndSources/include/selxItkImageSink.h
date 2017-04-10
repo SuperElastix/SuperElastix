@@ -35,8 +35,8 @@ namespace selx
 template< int Dimensionality, class TPixel >
 class ItkImageSinkComponent :
   public SuperElastixComponent<
-    Accepting< itkImageInterface< Dimensionality, TPixel >>,
-    Providing< SinkInterface >
+  Accepting< itkImageInterface< Dimensionality, TPixel >>,
+  Providing< SinkInterface >
   >
 {
 public:
@@ -44,15 +44,15 @@ public:
   /** Standard ITK typedefs. */
   typedef ItkImageSinkComponent<
     Dimensionality, TPixel
-  >                                     Self;
+    >                                     Self;
   typedef SuperElastixComponent<
     Accepting< itkImageInterface< Dimensionality, TPixel >>,
     Providing< SinkInterface >
-  >                                     Superclass;
+    >                                     Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
 
-  ItkImageSinkComponent( const std::string & name );
+  ItkImageSinkComponent( const std::string & name, const LoggerInterface & logger );
   virtual ~ItkImageSinkComponent();
 
   typedef itkImageInterface< Dimensionality, TPixel >        AcceptingImageInterfaceType;

@@ -17,21 +17,18 @@
  *
  *=========================================================================*/
 
-#include "selxComponentBase.h"
+#include "selxNetworkBuilder.h"
+#include "selxNetworkBuilderFactory.h"
 
 namespace selx
 {
-// TODO delete this constructor
-ComponentBase::ComponentBase() : m_Name( "undefined" ), m_Logger( *( new Logger() ) )
+
+template< typename ComponentList >
+std::unique_ptr< NetworkBuilderBase >
+NetworkBuilderFactory< ComponentList >::New( const Logger & logger )
 {
+  return std::unique_ptr< NetworkBuilderBase >( new NetworkBuilder< ComponentList >( logger ) );
 }
 
 
-ComponentBase::ComponentBase( const std::string & name, const LoggerInterface & logger ) : m_Logger( logger )
-{
-}
-
-
-//const std::map< std::string, std::string > ComponentBase::TemplateProperties()
-// { return{}; }
 } // end namespace selx

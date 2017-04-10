@@ -46,8 +46,6 @@ else()
   endif()
 endif()
 
-set( BOOST_BUILD_DIR "${CMAKE_INSTALL_PREFIX}/${proj}-build/" )
-
 ExternalProject_Add( BOOST
   BUILD_IN_SOURCE 1
   URL "${BOOST_URL}"
@@ -58,7 +56,7 @@ ExternalProject_Add( BOOST
   INSTALL_COMMAND ""
 )
 
-set( BOOST_ROOT "${CMAKE_INSTALL_PREFIX}/${proj}-prefix/src/BOOST" )
+set( BOOST_ROOT "${PROJECT_BINARY_DIR}/${proj}-prefix/src/BOOST" )
 set( BOOST_LIBRARYDIR "${BOOST_ROOT}/stage/lib/" )
 
 list( APPEND SUPERELASTIX_DEPENDENCIES ${proj} )

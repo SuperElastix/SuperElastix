@@ -24,7 +24,7 @@ namespace selx
 {
 template< class InternalComputationValueType, int Dimensionality >
 ItkCompositeTransformComponent< InternalComputationValueType,
-Dimensionality >::ItkCompositeTransformComponent( const std::string & name ) : Superclass( name )
+Dimensionality >::ItkCompositeTransformComponent( const std::string & name, const LoggerInterface & logger ) : Superclass( name, logger )
 {
   m_CompositeTransform = CompositeTransformType::New();
 
@@ -149,6 +149,7 @@ ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >
   return hasUndefinedCriteria;
 }
 
+
 template< class InternalComputationValueType, int Dimensionality >
 bool
 ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >
@@ -156,13 +157,11 @@ ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >
 {
   // This function overrides the default behavior, in which all accepting interfaces must be set, by allowing the some interfaces not being set.
   // TODO: see I we can reduce the amount of code with helper (meta-)functions
-  if (((InterfaceAcceptor<MultiStageTransformInterface< InternalComputationValueType, Dimensionality >>*) this)->isSet() == false)
+  if( ( ( InterfaceAcceptor< MultiStageTransformInterface< InternalComputationValueType, Dimensionality >> * ) this )->isSet() == false )
   {
     return false;
   }
   // Allow unconnected ReconnectTransformInterface
   return true;
 }
-
-
 } //end namespace selx

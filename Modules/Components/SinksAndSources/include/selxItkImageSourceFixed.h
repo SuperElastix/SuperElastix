@@ -33,10 +33,10 @@ namespace selx
 template< int Dimensionality, class TPixel >
 class ItkImageSourceFixedComponent :
   public SuperElastixComponent<
-    Accepting< >,
-    Providing< SourceInterface,
-      itkImageFixedInterface< Dimensionality, TPixel >,
-      itkImageDomainFixedInterface< Dimensionality >>
+  Accepting< >,
+  Providing< SourceInterface,
+  itkImageFixedInterface< Dimensionality, TPixel >,
+  itkImageDomainFixedInterface< Dimensionality >>
   >
 {
 public:
@@ -44,17 +44,17 @@ public:
   /** Standard ITK typedefs. */
   typedef ItkImageSourceFixedComponent<
     Dimensionality, TPixel
-  >                                     Self;
+    >                                     Self;
   typedef SuperElastixComponent<
     Accepting< >,
     Providing< SourceInterface,
-      itkImageFixedInterface< Dimensionality, TPixel >,
-      itkImageDomainFixedInterface< Dimensionality >>
-  >                                     Superclass;
+    itkImageFixedInterface< Dimensionality, TPixel >,
+    itkImageDomainFixedInterface< Dimensionality >>
+    >                                     Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
 
-  ItkImageSourceFixedComponent( const std::string & name );
+  ItkImageSourceFixedComponent( const std::string & name, const LoggerInterface & logger );
   virtual ~ItkImageSourceFixedComponent();
 
   typedef typename itkImageFixedInterface< Dimensionality, TPixel >::ItkImageType     ItkImageType;

@@ -29,7 +29,6 @@ set( ${APPLICATION}_SOURCE_FILES
 
 set( ${APPLICATION}_LINK_LIBRARIES
   ${ITK_LIBRARIES}
-  elastix transformix
   ${Boost_LIBRARIES}
 )
 

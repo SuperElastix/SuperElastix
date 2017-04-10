@@ -23,7 +23,9 @@
 namespace selx
 {
 template< bool dummy >
-RegistrationControllerComponent< dummy >::RegistrationControllerComponent( const std::string & name ) : SuperElastixComponent( name )
+RegistrationControllerComponent< dummy >::RegistrationControllerComponent( const std::string & name, const LoggerInterface & logger ) : Superclass(
+    name,
+    logger )
 {
 }
 

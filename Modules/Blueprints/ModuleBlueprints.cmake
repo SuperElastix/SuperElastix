@@ -37,7 +37,3 @@ set( ${MODULE}_LIBRARIES
   ${Boost_LIBRARIES} # graph? 
   ${MODULE}
 )
-
-set( ${MODULE}_MODULE_DEPENDENCIES 
-
-)

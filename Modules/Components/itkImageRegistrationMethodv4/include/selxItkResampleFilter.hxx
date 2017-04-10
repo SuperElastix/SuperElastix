@@ -24,7 +24,7 @@ namespace selx
 {
 template< int Dimensionality, class TPixel, class TInternalComputationValue >
 ItkResampleFilterComponent< Dimensionality, TPixel,
-TInternalComputationValue >::ItkResampleFilterComponent( const std::string & name ) : Superclass( name )
+TInternalComputationValue >::ItkResampleFilterComponent( const std::string & name, const LoggerInterface & logger ) : Superclass( name, logger )
 {
   m_ResampleFilter = ResampleFilterType::New();
   //TODO: instantiating the filter in the constructor might be heavy for the use in component selector factory, since all components of the database are created during the selection process.

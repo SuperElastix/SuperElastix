@@ -32,36 +32,36 @@ namespace selx
 template< class InternalComputationValueType, int Dimensionality >
 class ItkCompositeTransformComponent :
   public SuperElastixComponent<
-    Accepting< MultiStageTransformInterface< 
-      InternalComputationValueType, Dimensionality >, 
-      ReconnectTransformInterface
-    >,
-    Providing< 
-      itkTransformInterface< InternalComputationValueType, Dimensionality 
-    >,
-    RegistrationControllerStartInterface >
+  Accepting< MultiStageTransformInterface<
+  InternalComputationValueType, Dimensionality >,
+  ReconnectTransformInterface
+  >,
+  Providing<
+  itkTransformInterface< InternalComputationValueType, Dimensionality
+  >,
+  RegistrationControllerStartInterface >
   >
 {
 public:
 
   /** Standard ITK typedefs. */
-  typedef ItkCompositeTransformComponent< 
-    InternalComputationValueType, Dimensionality 
-  >                                       Self;
+  typedef ItkCompositeTransformComponent<
+    InternalComputationValueType, Dimensionality
+    >                                       Self;
   typedef SuperElastixComponent<
-    Accepting< MultiStageTransformInterface< 
-      InternalComputationValueType, Dimensionality >, 
-      ReconnectTransformInterface
+    Accepting< MultiStageTransformInterface<
+    InternalComputationValueType, Dimensionality >,
+    ReconnectTransformInterface
     >,
-    Providing< 
-      itkTransformInterface< InternalComputationValueType, Dimensionality 
+    Providing<
+    itkTransformInterface< InternalComputationValueType, Dimensionality
     >,
     RegistrationControllerStartInterface >
-  >                                       Superclass;
-  typedef std::shared_ptr< Self >         Pointer;
-  typedef std::shared_ptr< const Self >   ConstPointer;
+    >                                       Superclass;
+  typedef std::shared_ptr< Self >       Pointer;
+  typedef std::shared_ptr< const Self > ConstPointer;
 
-  ItkCompositeTransformComponent( const std::string & name );
+  ItkCompositeTransformComponent( const std::string & name, const LoggerInterface & logger );
   virtual ~ItkCompositeTransformComponent();
 
   /**  Type of the optimizer. */
