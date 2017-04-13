@@ -137,6 +137,7 @@ macro( _selxmodule_enable MODULE UPSTREAM )
     # Aggregate all interface headers in a separate target for Visual Studio IDE.
     if( ${MODULE}_INTERFACE_FILES )
         target_sources( Interfaces PUBLIC ${${MODULE}_INTERFACE_FILES} )
+    endif()
     if( ${MODULE}_LIBRARY_DIRS )
       list( APPEND SUPERELASTIX_LIBRARY_DIRS ${${MODULE}_LIBRARY_DIRS} )
     endif()
