@@ -120,11 +120,6 @@ set( Boost_USE_STATIC_LIBS ON ) # only find static libs
 set( Boost_USE_MULTITHREADED ON )
 set( Boost_USE_STATIC_RUNTIME OFF )
 
-# TODO: These are hardcoded for the SuperBuild
-# set( BOOST_INCLUDEDIR "${BOOST_ROOT}/BOOST-prefix/src/Boost/boost/" )
-# set( BOOST_LIBRARYDIR "${BOOST_ROOT}/BOOST-prefix/src/Boost/stage/lib/" )
-# set( BOOST_ROOT "${BOOST_ROOT}/BOOST-prefix/src/Boost/" )
-
 find_package( Boost COMPONENTS filesystem system log date_time thread regex REQUIRED QUIET ) # graph ?
 include_directories( ${Boost_INCLUDE_DIRS} )
 

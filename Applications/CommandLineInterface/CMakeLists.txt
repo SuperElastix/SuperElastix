@@ -36,10 +36,6 @@ set(Boost_USE_STATIC_LIBS ON)
 set(Boost_USE_MULTITHREADED ON)  
 set(Boost_USE_STATIC_RUNTIME    OFF)
 
-set(BOOST_ROOT ${BOOST_ROOT}/BOOST-prefix/src/Boost )
-set(BOOST_INCLUDEDIR ${BOOST_ROOT}/boost )
-set(BOOST_LIBRARYDIR ${BOOST_ROOT}/stage/lib)
-
 find_package(Boost COMPONENTS program_options system filesystem REQUIRED QUIET ) 
 include_directories( ${Boost_INCLUDE_DIR} )
 
