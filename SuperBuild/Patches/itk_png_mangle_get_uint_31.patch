@@ -17,3 +17,4 @@
  #define png_get_unknown_chunks itk_png_get_unknown_chunks
  #define png_get_user_chunk_ptr itk_png_get_user_chunk_ptr
  #define png_get_user_height_max itk_png_get_user_height_max
+ 
