@@ -1,0 +1,10 @@
+--- a/reg-io/png/CMakeLists.txt
++++ b/reg-io/png/CMakeLists.txt
+@@ -45,7 +45,6 @@ if(BUILD_INTERNAL_PNG OR BUILD_ALL_DEP)
+ 				lpng1510/pngrtran.c
+ 				lpng1510/pngrutil.c
+ 				lpng1510/pngset.c
+-				lpng1510/pngtest.c
+ 				lpng1510/pngtrans.c
+ 				lpng1510/pngwio.c
+ 				lpng1510/pngwrite.c

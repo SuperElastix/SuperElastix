@@ -26,6 +26,7 @@ ExternalProject_Add( ${proj}
   GIT_REPOSITORY ${NIFTYREG_GIT_REPOSITORY}
   GIT_TAG ${NIFTYREG_GIT_TAG}
   UPDATE_COMMAND ""
+  PATCH_COMMAND "${GIT_EXECUTABLE}" reset --hard && "${GIT_EXECUTABLE}" apply --whitespace=fix "${CMAKE_SOURCE_DIR}/Patches/Niftyreg_remove_pngtest.patch"
   SOURCE_DIR ${proj}
   BINARY_DIR ${proj}-build
   CMAKE_GENERATOR ${gen}
