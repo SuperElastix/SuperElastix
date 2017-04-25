@@ -40,7 +40,7 @@ public:
   using AcceptingInterfacesTypeList = AcceptingInterfaces;
   using ProvidingInterfacesTypeList = ProvidingInterfaces;
 
-  SuperElastixComponent( const std::string & name, const LoggerInterface & logger ) : ComponentBase( name, logger ) {}
+  SuperElastixComponent(const std::string & name, const LoggerInterface & logger) : AcceptingInterfaces(logger), ComponentBase(name, logger) {}
 
   virtual int AcceptConnectionFrom( ComponentBase::Pointer other, const InterfaceCriteriaType interfaceCriteria );
 
