@@ -8,7 +8,7 @@ node('lkeb-vm-test') {
 			checkout scm
 			sh 'mkdir -p build'
 			sh 'cd build'
-			sh 'cmake ../SuperBuild'
+			sh '${ tool 'CMake 3.8.0' } ../SuperBuild'
 			sh 'make'
 		}
 	}
