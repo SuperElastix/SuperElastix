@@ -66,6 +66,22 @@ if( BUILD_TESTING )
   option( BUILD_LONG_UNIT_TESTS "Also build tests that take a long time to run." OFF )
 endif()
 
+set(SELX_SUPERBUILD_COMMAND "") 
+
+if (MSVC)
+  set(SELX_PROGRAM_FILES_X86 "ProgramFiles(x86)") 
+  find_program(SELX_INCREDIBUILD_EXE BuildConsole.exe PATHS
+    "$ENV{ProgramFiles}/Xoreax/IncrediBuild"
+    "$ENV{${SELX_PROGRAM_FILES_X86}}/Xoreax/IncrediBuild"
+  )
+endif()
+
+function(UPDATE_SELX_SUPERBUILD_COMMAND proj)
+  if (SELX_INCREDIBUILD_EXE)
+    set(SELX_SUPERBUILD_COMMAND "${SELX_INCREDIBUILD_EXE}" ${proj}.sln "/build" "$(Configuration)|$(Platform)" "/UseIDEMonitor" PARENT_SCOPE) 
+  endif()
+endfunction()
+
 # ---------------------------------------------------------------------
 # Build ITK
 

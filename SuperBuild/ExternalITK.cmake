@@ -21,6 +21,8 @@ set( proj ITK )
 set( ITK_REPOSITORY https://github.com/InsightSoftwareConsortium/ITK.git )
 set( ITK_TAG "v${ITK_VERSION_STRING}")
 
+UPDATE_SELX_SUPERBUILD_COMMAND(${proj})
+
 ExternalProject_Add( ${proj}
   GIT_REPOSITORY ${ITK_REPOSITORY}
   GIT_TAG ${ITK_TAG}
@@ -37,6 +39,7 @@ ExternalProject_Add( ${proj}
     -DITK_LEGACY_REMOVE:BOOL=ON
     -DBUILD_SHARED_LIBS:BOOL=${SUPERELASTIX_BUILD_SHARED_LIBS}
     -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+  BUILD_COMMAND ${SELX_SUPERBUILD_COMMAND}
 )
 
 ExternalProject_Get_Property( ${proj} install_dir )

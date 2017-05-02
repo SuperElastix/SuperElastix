@@ -19,6 +19,8 @@
 
 set( proj Applications )
 
+UPDATE_SELX_SUPERBUILD_COMMAND(${proj})
+
 ExternalProject_Add( ${proj}
   DOWNLOAD_COMMAND ""
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../Applications
@@ -30,4 +32,5 @@ ExternalProject_Add( ${proj}
     -DITK_DIR:PATH=${ITK_DIR}
   DEPENDS ${SUPERELASTIX_DEPENDENCIES}
   INSTALL_COMMAND ""
+  BUILD_COMMAND ${SELX_SUPERBUILD_COMMAND}
 )
