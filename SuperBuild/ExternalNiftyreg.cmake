@@ -32,6 +32,7 @@ ExternalProject_Add( ${proj}
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS
    --no-warn-unused-cli
+   -DBUILD_ALL_DEP:BOOL=ON
    -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
 )
 
