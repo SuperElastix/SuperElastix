@@ -4,12 +4,12 @@ node('lkeb-vm-test') {
 		sh 'mkdir -p build'
 	}
 
-	timeout(45) {
+	timeout(120) {
 		dir('build') {
 			stage('Checkout and build') {
 				checkout scm
 				sh "${ tool 'CMake 3.8.0' } ../SuperBuild"
-				sh 'make'
+				sh 'make -j4'
 			}
 		}
 	}
