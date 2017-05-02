@@ -23,6 +23,8 @@
 
 #include "selxNiftyregReadImageComponent.h"
 #include "selxNiftyregWriteImageComponent.h"
+#include "selxNiftyregWriteImageComponent.h"
+#include "selxItkToNiftiImageSourceReferenceComponent.h"
 #include "selxNiftyregf3dComponent.h"
 #include "selxDataManager.h"
 #include "gtest/gtest.h"
