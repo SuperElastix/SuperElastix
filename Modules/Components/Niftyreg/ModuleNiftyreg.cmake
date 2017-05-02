@@ -41,12 +41,12 @@ set( ${MODULE}_INCLUDE_DIRS
 )
 
 # *NIX OSes use system png and zlib, for Windows OS Niftyreg is configured to build these libraries
-if (NOT WIN32)
-  find_package( PNG REQUIRED)
-  list(APPEND ${MODULE}_INCLUDE_DIRS ${PNG_INCLUDE_DIRS} )  
-  find_package( ZLIB REQUIRED)
-  list(APPEND ${MODULE}_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS} )
-endif(NOT WIN32)
+#if (NOT WIN32)
+#  find_package( PNG REQUIRED)
+#  list(APPEND ${MODULE}_INCLUDE_DIRS ${PNG_INCLUDE_DIRS} )  
+#  find_package( ZLIB REQUIRED)
+#  list(APPEND ${MODULE}_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS} )
+#endif(NOT WIN32)
 
 set( ${MODULE}_SOURCE_FILES
   )
