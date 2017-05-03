@@ -19,7 +19,7 @@
 
 set( proj Applications )
 
-UPDATE_SELX_SUPERBUILD_COMMAND(${proj})
+UPDATE_SELX_SUPERBUILD_COMMAND(SuperElastix${proj})
 
 ExternalProject_Add( ${proj}
   DOWNLOAD_COMMAND ""
