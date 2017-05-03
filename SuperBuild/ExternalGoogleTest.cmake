@@ -40,8 +40,6 @@ if( MSVC)
   set( MSVS_ARGS ${MSVS_ARGS} -D gtest_force_shared_crt:BOOL=ON )
 endif()
 
-UPDATE_SELX_SUPERBUILD_COMMAND(gtest)
-
 ExternalProject_Add(${proj}
   URL http://midas3.kitware.com/midas/api/rest?method=midas.bitstream.download&checksum=${GTEST_DOWNLOAD_SOURCE_HASH}&name=swig-${GTEST_TARGET_VERSION}.zip
   URL_MD5 ${GTEST_DOWNLOAD_SOURCE_HASH}
@@ -52,7 +50,6 @@ ExternalProject_Add(${proj}
     ${MSVS_ARGS}
     -D BUILD_SHARED_LIBS:BOOL=OFF
     -D CMAKE_ARCHIVE_OUTPUT_DIRECTORY:PATH=<BINARY_DIR>/lib
-  BUILD_COMMAND ${SELX_SUPERBUILD_COMMAND}
   INSTALL_COMMAND
       ${CMAKE_COMMAND} -E copy_directory ${${proj}_ARCHIVE_OUTPUT_DIRECTORY} <INSTALL_DIR>/lib
     COMMAND
