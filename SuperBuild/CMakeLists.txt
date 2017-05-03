@@ -73,6 +73,7 @@ if (MSVC)
   find_program(SELX_INCREDIBUILD_EXE BuildConsole.exe PATHS
     "$ENV{ProgramFiles}/Xoreax/IncrediBuild"
     "$ENV{${SELX_PROGRAM_FILES_X86}}/Xoreax/IncrediBuild"
+    DOC "Optional file path of IncrediBuild BuildConsole, used by the SuperBuild"
   )
 endif()
 
