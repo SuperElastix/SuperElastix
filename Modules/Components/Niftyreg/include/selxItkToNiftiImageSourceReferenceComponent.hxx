@@ -24,7 +24,7 @@ namespace selx
 {
 template< class TPixel >
 ItkToNiftiImageSourceReferenceComponent< TPixel >::ItkToNiftiImageSourceReferenceComponent( const std::string & name, const LoggerInterface & logger ) : Superclass( name,
-    logger )
+  logger), m_Image(nullptr)
 {
 }
 
@@ -45,7 +45,8 @@ ItkToNiftiImageSourceReferenceComponent<  TPixel >::GetReferenceNiftiImage()
     throw std::runtime_error( "SourceComponent needs to be initialized by SetMiniPipelineInput()" );
   }
   // TODO
-  std::shared_ptr<nifti_image> ptr(reg_io_ReadImageFile(this->m_ImageFileName.c_str()), nifti_image_free);
+  ItkToNiftiImage<ItkImageType, TPixel>* converter = new ItkToNiftiImage<ItkImageType, TPixel>;
+  std::shared_ptr<nifti_image> ptr;// (reg_io_ReadImageFile(this->m_ImageFileName.c_str()), nifti_image_free);
   return ptr;
 }
 

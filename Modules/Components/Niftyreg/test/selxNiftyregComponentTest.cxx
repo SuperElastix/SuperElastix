@@ -44,7 +44,7 @@ public:
 
   /** register all example components */
   typedef TypeList< Niftyregf3dComponent< float >, NiftyregReadImageComponent< float >,
-    NiftyregWriteImageComponent< float >, RegistrationControllerComponent< >> RegisterComponents;
+    NiftyregWriteImageComponent< float >, ItkToNiftiImageSourceReferenceComponent< float > , RegistrationControllerComponent< >> RegisterComponents;
 
   virtual void SetUp()
   {

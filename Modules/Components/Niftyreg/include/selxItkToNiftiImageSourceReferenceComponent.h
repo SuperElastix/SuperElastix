@@ -24,10 +24,13 @@
 #include "selxInterfaces.h"
 #include "selxNiftyregInterfaces.h"
 #include "selxItkToNiftiImage.h"
+#include "selxSinksAndSourcesInterfaces.h"
+#include "selxItkObjectInterfaces.h"
+
 #include <string.h>
-//#include "_reg_f3d.h"
-#include "_reg_ReadWriteImage.h"
-#include "_reg_ReadWriteMatrix.h"
+#include "itkImageFileReader.h"
+#include "selxAnyFileReader.h"
+#include "selxFileReaderDecorator.h"
 
 namespace selx
 {
@@ -72,6 +75,8 @@ public:
 private:
 
   nifti_image * m_referenceImage;
+
+  typename ItkImageType::Pointer m_Image;
 
 protected:
 

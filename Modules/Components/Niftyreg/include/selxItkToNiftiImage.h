@@ -22,6 +22,7 @@
 
 #include <fstream>
 #include <nifti1_io.h>
+#include "itkMacro.h"
 
 namespace selx
 {
@@ -37,6 +38,7 @@ namespace selx
  * \ingroup IOFilters
  * \ingroup ITKIONIFTI
  */
+template<class ItkImageType, class NiftiPixelType>
 class ItkToNiftiImage
 {
 public:
@@ -85,7 +87,11 @@ private:
   
   const unsigned int m_NumberOfDimensions;
 
+  unsigned int GetDimensions(int);
 };
 } // end namespace itk
+#ifndef ITK_MANUAL_INSTANTIATION
+#include "selxItkToNiftiImage.hxx"
+#endif
+#endif // selxItkToNiftiImage_h
 
-#endif // itkNiftiImageIO_h

@@ -118,8 +118,8 @@ int SymMatDim(int count)
   return dim;
 }
 
-
-ItkToNiftiImage::ItkToNiftiImage():
+template<class ItkImageType, class NiftiPixelType>
+ItkToNiftiImage< ItkImageType, NiftiPixelType >::ItkToNiftiImage() :
   m_NiftiImage(ITK_NULLPTR),
   m_RescaleSlope(1.0),
   m_RescaleIntercept(0.0),
@@ -127,15 +127,15 @@ ItkToNiftiImage::ItkToNiftiImage():
 {
   nifti_set_debug_level(0); // suppress error messages
 }
-
-ItkToNiftiImage::~ItkToNiftiImage()
+template<class ItkImageType, class NiftiPixelType>
+ItkToNiftiImage< ItkImageType, NiftiPixelType >::~ItkToNiftiImage()
 {
   nifti_image_free(this->m_NiftiImage);
 }
 
-
+template<class ItkImageType, class NiftiPixelType>
 bool
-ItkToNiftiImage::MustRescale()
+ItkToNiftiImage< ItkImageType, NiftiPixelType >::MustRescale()
 {
   return std::abs(this->m_RescaleSlope) > std::numeric_limits< double >::epsilon()
          && ( std::abs(this->m_RescaleSlope - 1.0) > std::numeric_limits< double >::epsilon()
@@ -186,8 +186,9 @@ inline mat44 mat44_transpose(mat44 in)
   return out;
 }
 }
+template<class ItkImageType, class NiftiPixelType>
 void
-ItkToNiftiImage
+ItkToNiftiImage< ItkImageType, NiftiPixelType >
 ::WriteImageInformation(void)
 {
   //  MetaDataDictionary &thisDic=this->GetMetaDataDictionary();
@@ -461,9 +462,9 @@ ItkToNiftiImage
   this->SetNIfTIOrientationFromImageIO( this->m_NumberOfDimensions, this->m_NumberOfDimensions );
 }
 
-
+template<class ItkImageType, class NiftiPixelType>
 void
-ItkToNiftiImage::SetNIfTIOrientationFromImageIO(unsigned short int origdims, unsigned short int dims)
+ItkToNiftiImage< ItkImageType, NiftiPixelType >::SetNIfTIOrientationFromImageIO(unsigned short int origdims, unsigned short int dims)
 {
   //
   // use NIFTI method 2
@@ -564,8 +565,9 @@ ItkToNiftiImage::SetNIfTIOrientationFromImageIO(unsigned short int origdims, uns
   //  this->m_NiftiImage->sform_code = 0;
 }
 
+template<class ItkImageType, class NiftiPixelType>
 void
-ItkToNiftiImage
+ItkToNiftiImage< ItkImageType, NiftiPixelType >
 ::Write(const void *buffer)
 {
   // Write the image Information before writing data
