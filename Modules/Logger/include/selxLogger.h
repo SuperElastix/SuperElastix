@@ -30,7 +30,7 @@ enum SeverityType {
   DEBUG,
   INFO,
   WARNING,
-//  ERROR,
+  ERROR,
   FATAL
 };
 
