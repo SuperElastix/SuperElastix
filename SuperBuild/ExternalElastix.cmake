@@ -22,8 +22,6 @@ set( proj Elastix )
 set( ELASTIX_GIT_REPOSITORY http://github.com/mstaring/elastix )
 set( ELASTIX_GIT_TAG fd5cde3060ca4093d4c904ead36b3a0dd2f63360 )
 
-UPDATE_SELX_SUPERBUILD_COMMAND(Project)
-
 ExternalProject_Add( ${proj} 
   GIT_REPOSITORY ${ELASTIX_GIT_REPOSITORY}
   GIT_TAG ${ELASTIX_GIT_TAG}
@@ -115,7 +113,6 @@ ExternalProject_Add( ${proj}
   -DUSE_ViolaWellsMutualInformationMetric:BOOL=ON                                           
   -DUSE_WeightedCombinationTransformElastix:BOOL=ON
   DEPENDS ITK
-  BUILD_COMMAND ${SELX_SUPERBUILD_COMMAND}
 )
 
 ExternalProject_Get_Property( Elastix binary_dir )
