@@ -123,7 +123,7 @@ ItkToNiftiImage< ItkImageType, NiftiPixelType >::ItkToNiftiImage() :
   m_NiftiImage(ITK_NULLPTR),
   m_RescaleSlope(1.0),
   m_RescaleIntercept(0.0),
-  m_NumberOfDimensions(3)
+  m_NumberOfDimensions(ItkImageType::ImageDimension)
 {
   nifti_set_debug_level(0); // suppress error messages
 }
@@ -132,6 +132,53 @@ ItkToNiftiImage< ItkImageType, NiftiPixelType >::~ItkToNiftiImage()
 {
   nifti_image_free(this->m_NiftiImage);
 }
+
+template<class ItkImageType, class NiftiPixelType>
+bool
+ItkToNiftiImage< ItkImageType, NiftiPixelType >::Convert(typename ItkImageType::Pointer input, nifti_image *output)
+{
+  ImageType::RegionType region = input->GetLargestPossibleRegion();
+
+  ImageType::SizeType size = region.GetSize();
+
+  m_NumberOfDimensions = size;
+
+
+  // Make sure that the image is the right type
+  // configure pixel type
+
+    if (strcmp(input->GetNameOfClass(), "VectorImage") == 0)
+    {
+      typedef typename InputImageType::InternalPixelType VectorImageScalarType;
+      m_ImageIO->SetPixelTypeInfo(static_cast<const VectorImageScalarType *>(ITK_NULLPTR));
+      typedef typename InputImageType::AccessorFunctorType AccessorFunctorType;
+      m_ImageIO->SetNumberOfComponents(AccessorFunctorType::GetVectorLength(input));
+    }
+    else
+    {
+      // Set the pixel and component type; the number of components.
+      m_ImageIO->SetPixelTypeInfo(static_cast<const InputImagePixelType *>(ITK_NULLPTR));
+    }
+
+}
+
+template<class ItkImageType, class NiftiPixelType>
+void
+ItkToNiftiImage< ItkImageType, NiftiPixelType >
+::SetDirection(const typename ItkImageType::DirectionType & direction)
+{
+  for (unsigned int r = 0; r < ItkImageType::Dimension; r++)
+  {
+    for (unsigned int c = 0; c < ItkImageType::Dimension; c++)
+    {
+      if (Math::NotExactlyEquals(this->m_Direction[r][c], direction[r][c]))
+      {
+        this->m_Direction[r][c] = direction[r][c];
+      }
+    }
+  }
+}
+
 
 template<class ItkImageType, class NiftiPixelType>
 bool
@@ -199,11 +246,11 @@ ItkToNiftiImage< ItkImageType, NiftiPixelType >
   for ( unsigned int i = 0; i < this->m_NumberOfDimensions; i++ )
     {
     unsigned int curdim( this->GetDimensions(i) );
-    if ( curdim > static_cast< unsigned int >( NumericTraits< short >::max() ) )
+    if ( curdim > static_cast< unsigned int >( itk::NumericTraits< short >::max() ) )
       {
-      itkExceptionMacro( << "Dimension(" << i << ") = " << curdim
+        itkGenericExceptionMacro(<< "Dimension(" << i << ") = " << curdim
                          << " is greater than maximum possible dimension "
-                         << NumericTraits< short >::max() );
+                         << itk::NumericTraits< short >::max() );
       }
     }
 
@@ -216,7 +263,7 @@ ItkToNiftiImage< ItkImageType, NiftiPixelType >
   // set the filename
   //std::string FName( "selxItkToNiftiImage.nii" );
   const std::string BaseName("selxItkToNiftiImage"); 
-  const bool                   IsCompressed  = false
+  const bool                   IsCompressed = false;
   this->m_NiftiImage->nifti_type = NIFTI_FTYPE_NIFTI1_1;
  
   this->m_NiftiImage->fname = nifti_makehdrname(BaseName.c_str(), this->m_NiftiImage->nifti_type, false, IsCompressed);
@@ -312,14 +359,14 @@ ItkToNiftiImage< ItkImageType, NiftiPixelType >
                                     // images.
     if ( this->m_NumberOfDimensions > 4 )
       {
-      itkExceptionMacro(
+        itkGenericExceptionMacro(
          << "Can not store a vector image of more than 4 dimensions in a Nifti file. Dimension="
          << this->m_NumberOfDimensions );
       }
     //
     // support symmetric matrix type
-    if ( this->GetPixelType() == ImageIOBase::DIFFUSIONTENSOR3D
-         || this->GetPixelType() == ImageIOBase::SYMMETRICSECONDRANKTENSOR )
+    if ( this->GetPixelType() == DIFFUSIONTENSOR3D
+         || this->GetPixelType() == SYMMETRICSECONDRANKTENSOR )
       {
       this->m_NiftiImage->intent_code = NIFTI_INTENT_SYMMATRIX;
       }
@@ -403,7 +450,7 @@ ItkToNiftiImage< ItkImageType, NiftiPixelType >
     case UNKNOWNCOMPONENTTYPE:
     default:
       {
-      itkExceptionMacro(
+        itkGenericExceptionMacro(
         << "More than one component per pixel not supported");
       }
     }
@@ -433,7 +480,7 @@ ItkToNiftiImage< ItkImageType, NiftiPixelType >
           break;
         default:
           {
-          itkExceptionMacro(
+            itkGenericExceptionMacro(
             << "Only float or double precision complex type supported");
           }
         }
@@ -448,7 +495,7 @@ ItkToNiftiImage< ItkImageType, NiftiPixelType >
     case MATRIX:
     case UNKNOWNPIXELTYPE:
     default:
-      itkExceptionMacro(
+      itkGenericExceptionMacro(
         << "Can not process this pixel type for writing into nifti");
     }
   //     -----------------------------------------------------
@@ -623,8 +670,8 @@ ItkToNiftiImage< ItkImageType, NiftiPixelType >
     // so on read, step sequentially through the source vector, but
     // reverse the order of vec[2] and vec[3]
     int *vecOrder;
-    if ( this->GetPixelType() == ImageIOBase::DIFFUSIONTENSOR3D
-         || this->GetPixelType() == ImageIOBase::SYMMETRICSECONDRANKTENSOR )
+    if ( this->GetPixelType() == DIFFUSIONTENSOR3D
+         || this->GetPixelType() == SYMMETRICSECONDRANKTENSOR )
       {
       vecOrder = UpperToLowerOrder( SymMatDim(numComponents) );
       }
@@ -662,7 +709,7 @@ ItkToNiftiImage< ItkImageType, NiftiPixelType >
         }
       }
     delete[] vecOrder;
-    dumpdata(buffer);
+    //dumpdata(buffer);
     //Need a const cast here so that we don't have to copy the memory for
     //writing.
     this->m_NiftiImage->data = (void *)nifti_buf;
