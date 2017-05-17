@@ -41,10 +41,6 @@ namespace selx
   {
   public:
 
-    ItkImageProperties();
-    ~ItkImageProperties();
-
-
     /** Enums used to manipulate the pixel type. The pixel type provides
     * context for automatic data conversions (for instance, RGB to
     * SCALAR, VECTOR to SCALAR). */
@@ -64,89 +60,72 @@ namespace selx
     {
       return std::make_tuple(1, IOPixelType::SCALAR, MapPixelType<TPixel>::CType);
     }
+
     template <typename TPixel>
     static const  std::tuple<unsigned int, IOPixelType, IOComponentType> GetPixelTypeInfo(const itk::RGBPixel< TPixel > *)
     {
       return std::make_tuple(3, IOPixelType::RGB, MapPixelType<TPixel>::CType);
     }
-    /*
 
-  template <typename TPixel>
-  void SetPixelTypeInfo(const itk::RGBAPixel< TPixel > *)
-  {
-  this->SetNumberOfComponents(4);
-  this->SetPixelType(IOPixelType::RGBA);
-  this->SetComponentType(MapPixelType<TPixel>::CType);
-  }
-  template <typename TPixel, unsigned VLength>
-  void SetPixelTypeInfo(const itk::Vector< TPixel, VLength > *)
-  {
-  this->SetNumberOfComponents(VLength);
-  this->SetPixelType(IOPixelType::VECTOR);
-  this->SetComponentType(MapPixelType<TPixel>::CType);
-  }
-  template <typename TPixel>
-  void SetPixelTypeInfo(const itk::VariableLengthVector< TPixel > *)
-  {
-  this->SetNumberOfComponents(1);
-  this->SetPixelType(IOPixelType::VECTOR);
-  this->SetComponentType(MapPixelType<TPixel>::CType);
-  }
-  template <typename TPixel, unsigned VLength>
-  void SetPixelTypeInfo(const itk::CovariantVector< TPixel, VLength > *)
-  {
-  this->SetNumberOfComponents(VLength);
-  this->SetPixelType(IOPixelType::COVARIANTVECTOR);
-  this->SetComponentType(MapPixelType<TPixel>::CType);
-  }
-  template <typename TPixel, unsigned VLength>
-  void SetPixelTypeInfo(const itk::FixedArray< TPixel, VLength > *)
-  {
-  this->SetNumberOfComponents(VLength);
-  this->SetPixelType(IOPixelType::COVARIANTVECTOR);
-  this->SetComponentType(MapPixelType<TPixel>::CType);
-  }
+    template <typename TPixel>
+    static const  std::tuple<unsigned int, IOPixelType, IOComponentType> GetPixelTypeInfo(const itk::RGBAPixel< TPixel > *)
+    {
+      return std::make_tuple(4, IOPixelType::RGBA, MapPixelType<TPixel>::CType);
+    }
 
-  template <typename TPixel, unsigned VLength>
-  void SetPixelTypeInfo(const itk::SymmetricSecondRankTensor<TPixel, VLength> *)
-  {
-  this->SetNumberOfComponents(VLength * (VLength + 1) / 2);
-  this->SetPixelType(IOPixelType::SYMMETRICSECONDRANKTENSOR);
-  this->SetComponentType(MapPixelType<TPixel>::CType);
-  }
+    template <typename TPixel, unsigned VLength>
+    static const  std::tuple<unsigned int, IOPixelType, IOComponentType> GetPixelTypeInfo(const itk::Vector< TPixel, VLength > *)
+    {
+      return std::make_tuple(VLength, IOPixelType::VECTOR, MapPixelType<TPixel>::CType);
+    }
 
-  template <typename TPixel>
-  inline void SetPixelTypeInfo(const itk::DiffusionTensor3D< TPixel > *)
-  {
-  this->SetNumberOfComponents(6);
-  this->SetPixelType(IOPixelType::DIFFUSIONTENSOR3D);
-  this->SetComponentType(MapPixelType<TPixel>::CType);
-  }
+    template <typename TPixel>
+    static const  std::tuple<unsigned int, IOPixelType, IOComponentType> GetPixelTypeInfo(const itk::VariableLengthVector< TPixel > *)
+    {
+      return std::make_tuple(1, IOPixelType::VECTOR, MapPixelType<TPixel>::CType);
+    }
 
-  template <typename TPixel, unsigned VLength>
-  void SetPixelTypeInfo(const itk::Matrix< TPixel, VLength, VLength > *)
-  {
-  this->SetNumberOfComponents(VLength * VLength);
-  this->SetPixelType(IOPixelType::MATRIX);
-  this->SetComponentType(MapPixelType<TPixel>::CType);
-  }
+    template <typename TPixel, unsigned VLength>
+    static const  std::tuple<unsigned int, IOPixelType, IOComponentType> GetPixelTypeInfo(const itk::CovariantVector< TPixel, VLength > *)
+    {
+      return std::make_tuple(VLength, IOPixelType::COVARIANTVECTOR, MapPixelType<TPixel>::CType);
+    }
 
-  template <typename TPixel>
-  void SetPixelTypeInfo(const std::complex< TPixel > *)
-  {
-  this->SetNumberOfComponents(2);
-  this->SetPixelType(IOPixelType::COMPLEX);
-  this->SetComponentType(MapPixelType<TPixel>::CType);
-  }
+    template <typename TPixel, unsigned VLength>
+    static const  std::tuple<unsigned int, IOPixelType, IOComponentType> GetPixelTypeInfo(const itk::FixedArray< TPixel, VLength > *)
+    {
+      return std::make_tuple(VLength, IOPixelType::COVARIANTVECTOR, MapPixelType<TPixel>::CType);
+    }
 
-  template <unsigned VLength>
-  void SetPixelTypeInfo(const itk::Offset< VLength > *)
-  {
-  this->SetNumberOfComponents(VLength);
-  this->SetPixelType(IOPixelType::::OFFSET);
-  this->SetComponentType(ImageIOBase::LONG);
-  }
-    */
+    template <typename TPixel, unsigned VLength>
+    static const  std::tuple<unsigned int, IOPixelType, IOComponentType> GetPixelTypeInfo(const itk::SymmetricSecondRankTensor< TPixel, VLength > *)
+    {
+      return std::make_tuple(VLength * (VLength + 1) / 2, IOPixelType::SYMMETRICSECONDRANKTENSOR, MapPixelType<TPixel>::CType);
+    }
+
+    template <typename TPixel>
+    static const  std::tuple<unsigned int, IOPixelType, IOComponentType> GetPixelTypeInfo(const itk::DiffusionTensor3D< TPixel > *)
+    {
+      return std::make_tuple(6, IOPixelType::DIFFUSIONTENSOR3D, MapPixelType<TPixel>::CType);
+    }
+
+    template <typename TPixel, unsigned VLength>
+    static const  std::tuple<unsigned int, IOPixelType, IOComponentType> GetPixelTypeInfo(const itk::Matrix< TPixel, VLength, VLength > *)
+    {
+      return std::make_tuple(VLength * VLength, IOPixelType::MATRIX, MapPixelType<TPixel>::CType);
+    }
+
+    template <typename TPixel>
+    static const  std::tuple<unsigned int, IOPixelType, IOComponentType> GetPixelTypeInfo(const std::complex< TPixel > *)
+    {
+      return std::make_tuple(2, IOPixelType::COMPLEX, MapPixelType<TPixel>::CType);
+    }
+
+    template <unsigned VLength>
+    static const  std::tuple<unsigned int, IOPixelType, IOComponentType> GetPixelTypeInfo(const itk::Offset< VLength > *)
+    {
+      return std::make_tuple(VLength, IOPixelType::OFFSET, ImageIOBase::LONG);
+    }
     
     static const  unsigned int GetNumberOfComponents()
     {
@@ -202,69 +181,46 @@ namespace selx
       return size[i];
     }
 
+    private:
+      // This is a class with static methods only, so construction is not needed.
+      ItkImageProperties(){};
+
 
 
   };
-/** \class NiftiImageIO
- *
- * \author Hans J. Johnson, The University of Iowa 2002
- * \brief Class that defines how to read Nifti file format.
- * Nifti IMAGE FILE FORMAT - As much information as I can determine from sourceforge.net/projects/Niftilib
- *
- * The specification for this file format is taken from the
- * web site http://analyzedirect.com/support/10.0Documents/Analyze_Resource_01.pdf
- *
- * \ingroup IOFilters
- * \ingroup ITKIONIFTI
+/** \class ItkToNiftiImage
+ * Convert an itk image to an nifti image object.
+ * Adapted from itkNiftiImageIO that is originally by Hans J. Johnson, The University of Iowa 2002
  */
 template<class ItkImageType, class NiftiPixelType>
 class ItkToNiftiImage
 {
 public:
 
-ItkToNiftiImage();
-~ItkToNiftiImage();
-
-nifti_image * Convert(typename ItkImageType::Pointer input);
-
-typedef ::itk::SizeValueType   SizeValueType;
-typedef typename ItkImageType::SpacingType SpacingType;
-  //-------- This part of the interfaces deals with writing data. -----
-
-  /** Determine if the file can be written with this ImageIO implementation.
-   * \param FileNameToWrite The name of the file to test for writing.
-   * \author Hans J. Johnson
-   * \post Sets classes ImageIOBase::m_FileName variable to be FileNameToWrite
-   * \return Returns true if this ImageIO can write the file specified.
-   */
-
-
-  /** Set the spacing and dimension information for the set filename.
-   *
-   * For Nifti this does not write a file, it only fills in the
-   * appropriate header information.
-   */
-void WriteImageInformation(typename ItkImageType::Pointer input, nifti_image* output);
-
-  /** Calculate the region of the image that can be efficiently read
-   *  in response to a given requested region. */
+static nifti_image * Convert(typename ItkImageType::Pointer input);
 
 protected:
 
 private:
+  // This is a class with static methods only, so construction is not needed.
+  ItkToNiftiImage(){};
+
+
+  /** Set the spacing and dimension information.
+  *
+  * For Nifti this does not write a file, it only fills in the
+  * appropriate header information.
+  */
+  static void SetHeaderInformation(typename ItkImageType::Pointer input, nifti_image* output);
+
   /** Converts the image data from the memory buffer provided. Make sure
   * that the IORegions has been set properly. */
-  const void*  GetImageBuffer(typename ItkImageType::Pointer input);
+  static const void*  GetImageBuffer(typename ItkImageType::Pointer input);
 
-  void TransferImageData(const void* buffer, nifti_image* output);
+  static void TransferImageData(const void* buffer, nifti_image* output);
 
-  bool  MustRescale();
+  static void  SetNIfTIOrientationFromImageIO(typename ItkImageType::Pointer input, nifti_image* output, unsigned short int origdims, unsigned short int dims);
 
-  void  SetNIfTIOrientationFromImageIO(typename ItkImageType::Pointer input, nifti_image* output, unsigned short int origdims, unsigned short int dims);
-
-  void  SetImageIOOrientationFromNIfTI(unsigned short int dims);
-
-  void  SetImageIOMetadataFromNIfTI();
   
   /** Enums used to manipulate the pixel type. The pixel type provides
   * context for automatic data conversions (for instance, RGB to
@@ -277,8 +233,6 @@ private:
   */
   typedef itk::ImageIOBase::IOComponentType IOComponentType;
 
-  double m_RescaleSlope;
-  double m_RescaleIntercept;
 };
 
 

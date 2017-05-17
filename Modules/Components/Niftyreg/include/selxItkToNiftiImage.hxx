@@ -120,22 +120,10 @@ int SymMatDim(int count)
 }
 
 template<class ItkImageType, class NiftiPixelType>
-ItkToNiftiImage< ItkImageType, NiftiPixelType >::ItkToNiftiImage() :
-  m_RescaleSlope(1.0),
-  m_RescaleIntercept(0.0)
-{
-  nifti_set_debug_level(0); // suppress error messages
-}
-template<class ItkImageType, class NiftiPixelType>
-ItkToNiftiImage< ItkImageType, NiftiPixelType >::~ItkToNiftiImage()
-{
-  //nifti_image_free(this->m_NiftiImage);
-}
-
-template<class ItkImageType, class NiftiPixelType>
 nifti_image *
 ItkToNiftiImage< ItkImageType, NiftiPixelType >::Convert(typename ItkImageType::Pointer input)
 {
+  nifti_set_debug_level(0); // suppress error messages
 
   // Make sure that the image is the right type
   // configure pixel type
@@ -157,50 +145,14 @@ ItkToNiftiImage< ItkImageType, NiftiPixelType >::Convert(typename ItkImageType::
    
     auto nifti_image = nifti_simple_init_nim();
 
-    // Write the image Information before writing data
-    this->WriteImageInformation(input, nifti_image);
+    // Set the image Information before passing data
+    SetHeaderInformation(input, nifti_image);
 
-    auto buffer = GetImageBuffer( input);
+    auto buffer = GetImageBuffer(input);
 
     TransferImageData(buffer, nifti_image);
 
     return nifti_image;
-}
-
-template<class ItkImageType, class NiftiPixelType>
-bool
-ItkToNiftiImage< ItkImageType, NiftiPixelType >::MustRescale()
-{
-  return std::abs(this->m_RescaleSlope) > std::numeric_limits< double >::epsilon()
-         && ( std::abs(this->m_RescaleSlope - 1.0) > std::numeric_limits< double >::epsilon()
-              || std::abs(this->m_RescaleIntercept) > std::numeric_limits< double >::epsilon() );
-}
-
-// Internal function to rescale pixel according to Rescale Slope/Intercept
-template< typename TBuffer >
-void RescaleFunction(TBuffer *buffer,
-                     double slope,
-                     double intercept,
-                     size_t size)
-{
-  for ( size_t i = 0; i < size; i++ )
-    {
-    double tmp = static_cast< double >( buffer[i] ) * slope;
-    tmp += intercept;
-    buffer[i] = static_cast< TBuffer >( tmp );
-    }
-}
-
-template< typename PixelType >
-void
-CastCopy(float *to, void *from, size_t pixelcount)
-{
-  PixelType *_from = static_cast< PixelType * >( from );
-
-  for ( unsigned i = 0; i < pixelcount; i++ )
-    {
-    to[i] = static_cast< float >( _from[i] );
-    }
 }
 
 
@@ -223,8 +175,11 @@ inline mat44 mat44_transpose(mat44 in)
 template<class ItkImageType, class NiftiPixelType>
 void
 ItkToNiftiImage< ItkImageType, NiftiPixelType >
-::WriteImageInformation(typename ItkImageType::Pointer input, nifti_image* output)
+::SetHeaderInformation(typename ItkImageType::Pointer input, nifti_image* output)
 {
+  
+  // Adapted from iktNiftiImageIO::WriteImageInformation
+
   //  MetaDataDictionary &thisDic=this->GetMetaDataDictionary();
   //
   //
@@ -493,7 +448,7 @@ ItkToNiftiImage< ItkImageType, NiftiPixelType >
   output->scl_slope = 1.0f;
   output->scl_inter = 0.0f;
   //TODO: Note both arguments are the same, no need to distinguish between them.
-  this->SetNIfTIOrientationFromImageIO( input, output, ItkImageType::ImageDimension , ItkImageType::ImageDimension  );
+  SetNIfTIOrientationFromImageIO( input, output, ItkImageType::ImageDimension , ItkImageType::ImageDimension  );
 }
 
 template<class ItkImageType, class NiftiPixelType>
