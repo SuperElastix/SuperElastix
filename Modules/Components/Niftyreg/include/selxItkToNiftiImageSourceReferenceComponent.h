@@ -38,7 +38,7 @@ template< class TPixel >
 class ItkToNiftiImageSourceReferenceComponent :
   public SuperElastixComponent<
   Accepting<  >,
-  Providing< SourceInterface, NiftyregReferenceImageInterface< TPixel > >
+  Providing< SourceInterface, NiftyregReferenceImageInterface< TPixel >, NiftyregWarpedImageInterface< TPixel > >
   >
 {
 public:
@@ -47,7 +47,7 @@ public:
   typedef ItkToNiftiImageSourceReferenceComponent< TPixel > Self;
   typedef SuperElastixComponent<
     Accepting<  >,
-    Providing< SourceInterface, NiftyregReferenceImageInterface< TPixel > >
+    Providing< SourceInterface, NiftyregReferenceImageInterface< TPixel >, NiftyregWarpedImageInterface< TPixel > >
     >                                            Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
@@ -64,6 +64,8 @@ public:
   //virtual std::shared_ptr<nifti_image> GetFloatingNiftiImage() override;
 
   virtual std::shared_ptr<nifti_image> GetReferenceNiftiImage() override;
+
+  virtual std::shared_ptr<nifti_image> GetWarpedNiftiImage() override;
 
   virtual void SetMiniPipelineInput( itk::DataObject::Pointer ) override;
   virtual AnyFileReader::Pointer GetInputFileReader( void ) override;

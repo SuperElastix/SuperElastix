@@ -46,7 +46,8 @@ ItkToNiftiImageSourceReferenceComponent<  TPixel >::GetReferenceNiftiImage()
   }
   // TODO
   ItkToNiftiImage<ItkImageType, TPixel>* converter = new ItkToNiftiImage<ItkImageType, TPixel>;
-  std::shared_ptr<nifti_image> ptr;// (reg_io_ReadImageFile(this->m_ImageFileName.c_str()), nifti_image_free);
+  this->m_Image->GetSource()->UpdateLargestPossibleRegion();
+  std::shared_ptr<nifti_image> ptr(converter->Convert(this->m_Image), nifti_image_free);
   return ptr;
 }
 
@@ -59,6 +60,15 @@ ItkToNiftiImageSourceReferenceComponent<  TPixel >::GetFloatingNiftiImage()
   return ptr;
 }
 */
+
+
+template< class TPixel >
+std::shared_ptr<nifti_image>
+ItkToNiftiImageSourceReferenceComponent<  TPixel >::GetWarpedNiftiImage()
+{
+  return this->GetReferenceNiftiImage();
+}
+
 
 template< class TPixel >
 void

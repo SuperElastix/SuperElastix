@@ -16,6 +16,7 @@
  *
  *=========================================================================*/
 #include "selxItkToNiftiImage.h"
+#include "itkMath.h"
 //#include "itkIOCommon.h"
 //#include "itkMetaDataObject.h"
 //#include "itkSpatialOrientationAdapter.h"
@@ -130,36 +131,42 @@ ItkToNiftiImage< ItkImageType, NiftiPixelType >::ItkToNiftiImage() :
 template<class ItkImageType, class NiftiPixelType>
 ItkToNiftiImage< ItkImageType, NiftiPixelType >::~ItkToNiftiImage()
 {
-  nifti_image_free(this->m_NiftiImage);
+  //nifti_image_free(this->m_NiftiImage);
 }
 
 template<class ItkImageType, class NiftiPixelType>
-bool
-ItkToNiftiImage< ItkImageType, NiftiPixelType >::Convert(typename ItkImageType::Pointer input, nifti_image *output)
+nifti_image *
+ItkToNiftiImage< ItkImageType, NiftiPixelType >::Convert(typename ItkImageType::Pointer input)
 {
-  ImageType::RegionType region = input->GetLargestPossibleRegion();
 
-  ImageType::SizeType size = region.GetSize();
-
-  m_NumberOfDimensions = size;
-
+  this->SetDirection(input->GetDirection());
 
   // Make sure that the image is the right type
   // configure pixel type
 
+  this->SetPixelTypeInfo(static_cast<const ItkImageType::PixelType *>(ITK_NULLPTR));
+
+  /*
     if (strcmp(input->GetNameOfClass(), "VectorImage") == 0)
     {
-      typedef typename InputImageType::InternalPixelType VectorImageScalarType;
-      m_ImageIO->SetPixelTypeInfo(static_cast<const VectorImageScalarType *>(ITK_NULLPTR));
-      typedef typename InputImageType::AccessorFunctorType AccessorFunctorType;
-      m_ImageIO->SetNumberOfComponents(AccessorFunctorType::GetVectorLength(input));
+      typedef typename ItkImageType::InternalPixelType VectorImageScalarType;
+      this->SetPixelTypeInfo(static_cast<const VectorImageScalarType *>(ITK_NULLPTR));
+      typedef typename ItkImageType::AccessorFunctorType AccessorFunctorType;
+      this->SetNumberOfComponents(AccessorFunctorType::GetVectorLength(input));
     }
     else
     {
       // Set the pixel and component type; the number of components.
-      m_ImageIO->SetPixelTypeInfo(static_cast<const InputImagePixelType *>(ITK_NULLPTR));
+      this->SetPixelTypeInfo(static_cast<const ItkImageType *>(ITK_NULLPTR));
     }
+    */
+    this->m_ItkImage = input;
+    this->WriteImageInformation();
+    auto buffer = GetImageBuffer( input);
 
+    auto dummy_nifti_image = TransferImageData(buffer);
+
+    return this->m_NiftiImage;
 }
 
 template<class ItkImageType, class NiftiPixelType>
@@ -167,15 +174,14 @@ void
 ItkToNiftiImage< ItkImageType, NiftiPixelType >
 ::SetDirection(const typename ItkImageType::DirectionType & direction)
 {
-  for (unsigned int r = 0; r < ItkImageType::Dimension; r++)
+  for (unsigned int r = 0; r < ItkImageType::ImageDimension; r++)
   {
-    for (unsigned int c = 0; c < ItkImageType::Dimension; c++)
+    std::vector<double> v(ItkImageType::ImageDimension);
+    for (unsigned int c = 0; c < ItkImageType::ImageDimension; c++)
     {
-      if (Math::NotExactlyEquals(this->m_Direction[r][c], direction[r][c]))
-      {
-        this->m_Direction[r][c] = direction[r][c];
-      }
+      v[r]=direction[r][c];
     }
+    this->m_Direction.push_back(v);
   }
 }
 
@@ -346,11 +352,11 @@ ItkToNiftiImage< ItkImageType, NiftiPixelType >
 
   //TODO:  Also need to check for RGB images where numComponets=3
   if ( numComponents > 1
-       && !( this->GetPixelType() == COMPLEX
+    && !(this->GetPixelType() == IOPixelType::COMPLEX
              &&  numComponents == 2 )
-       && !( this->GetPixelType() == RGB
+             && !(this->GetPixelType() == IOPixelType::RGB
              && numComponents == 3 )
-       && !( this->GetPixelType() == RGBA
+             && !(this->GetPixelType() == IOPixelType::RGBA
              && numComponents == 4 ) )
     {
     this->m_NiftiImage->ndim = 5;   //This must be 5 for NIFTI_INTENT_VECTOR
@@ -365,8 +371,8 @@ ItkToNiftiImage< ItkImageType, NiftiPixelType >
       }
     //
     // support symmetric matrix type
-    if ( this->GetPixelType() == DIFFUSIONTENSOR3D
-         || this->GetPixelType() == SYMMETRICSECONDRANKTENSOR )
+    if (this->GetPixelType() == IOPixelType::DIFFUSIONTENSOR3D
+      || this->GetPixelType() == IOPixelType::SYMMETRICSECONDRANKTENSOR)
       {
       this->m_NiftiImage->intent_code = NIFTI_INTENT_SYMMATRIX;
       }
@@ -413,41 +419,41 @@ ItkToNiftiImage< ItkImageType, NiftiPixelType >
   //     -----------------------------------------------------
   switch ( this->GetComponentType() )
     {
-    case UCHAR:
+    case IOComponentType::UCHAR:
       this->m_NiftiImage->datatype = NIFTI_TYPE_UINT8;
       this->m_NiftiImage->nbyper = 1;
       break;
-    case CHAR:
+    case IOComponentType::CHAR:
       this->m_NiftiImage->datatype = NIFTI_TYPE_INT8;
       this->m_NiftiImage->nbyper = 1;
       break;
-    case USHORT:
+    case IOComponentType::USHORT:
       this->m_NiftiImage->datatype = NIFTI_TYPE_UINT16;
       this->m_NiftiImage->nbyper = 2;
       break;
-    case SHORT:
+    case IOComponentType::SHORT:
       this->m_NiftiImage->datatype = NIFTI_TYPE_INT16;
       this->m_NiftiImage->nbyper = 2;
       break;
-    case ULONG:
-    case UINT:
+    case IOComponentType::ULONG:
+    case IOComponentType::UINT:
       this->m_NiftiImage->datatype = NIFTI_TYPE_UINT32;
       this->m_NiftiImage->nbyper = 4;
       break;
-    case LONG:
-    case INT:
+    case IOComponentType::LONG:
+    case IOComponentType::INT:
       this->m_NiftiImage->datatype = NIFTI_TYPE_INT32;
       this->m_NiftiImage->nbyper = 4;
       break;
-    case FLOAT:
+    case IOComponentType::FLOAT:
       this->m_NiftiImage->datatype = NIFTI_TYPE_FLOAT32;
       this->m_NiftiImage->nbyper = 4;
       break;
-    case DOUBLE:
+    case IOComponentType::DOUBLE:
       this->m_NiftiImage->datatype = NIFTI_TYPE_FLOAT64;
       this->m_NiftiImage->nbyper = 8;
       break;
-    case UNKNOWNCOMPONENTTYPE:
+    case IOComponentType::UNKNOWNCOMPONENTTYPE:
     default:
       {
         itkGenericExceptionMacro(
@@ -456,26 +462,26 @@ ItkToNiftiImage< ItkImageType, NiftiPixelType >
     }
   switch ( this->GetPixelType() )
     {
-    case VECTOR: //NOTE: VECTOR is un-rolled by nifti to look like a
+    case IOPixelType::VECTOR: //NOTE: VECTOR is un-rolled by nifti to look like a
                  // multi-dimensional scalar image
-    case SCALAR:
+    case IOPixelType::SCALAR:
       break;
-    case RGB:
+    case IOPixelType::RGB:
       this->m_NiftiImage->nbyper *= 3;
       this->m_NiftiImage->datatype = NIFTI_TYPE_RGB24;
       break;
-    case RGBA:
+    case IOPixelType::RGBA:
       this->m_NiftiImage->nbyper *= 4;
       this->m_NiftiImage->datatype = NIFTI_TYPE_RGBA32;
       break;
-    case COMPLEX:
+    case IOPixelType::COMPLEX:
       this->m_NiftiImage->nbyper *= 2;
       switch ( this->GetComponentType() )
         {
-        case FLOAT:
+        case IOComponentType::FLOAT:
           this->m_NiftiImage->datatype = NIFTI_TYPE_COMPLEX64;
           break;
-        case DOUBLE:
+        case IOComponentType::DOUBLE:
           this->m_NiftiImage->datatype = NIFTI_TYPE_COMPLEX128;
           break;
         default:
@@ -485,15 +491,15 @@ ItkToNiftiImage< ItkImageType, NiftiPixelType >
           }
         }
       break;
-    case SYMMETRICSECONDRANKTENSOR:
-    case DIFFUSIONTENSOR3D:
+    case IOPixelType::SYMMETRICSECONDRANKTENSOR:
+    case IOPixelType::DIFFUSIONTENSOR3D:
       break;
-    case OFFSET:
-    case POINT:
-    case COVARIANTVECTOR:
-    case FIXEDARRAY:
-    case MATRIX:
-    case UNKNOWNPIXELTYPE:
+    case IOPixelType::OFFSET:
+    case IOPixelType::POINT:
+    case IOPixelType::COVARIANTVECTOR:
+    case IOPixelType::FIXEDARRAY:
+    case IOPixelType::MATRIX:
+    case IOPixelType::UNKNOWNPIXELTYPE:
     default:
       itkGenericExceptionMacro(
         << "Can not process this pixel type for writing into nifti");
@@ -613,23 +619,79 @@ ItkToNiftiImage< ItkImageType, NiftiPixelType >::SetNIfTIOrientationFromImageIO(
 }
 
 template<class ItkImageType, class NiftiPixelType>
-void
+const void *
 ItkToNiftiImage< ItkImageType, NiftiPixelType >
-::Write(const void *buffer)
+::GetImageBuffer(typename ItkImageType::Pointer input)
 {
+  // Adapted from itk::ImageFileWriter< TInputImage >::GenerateData(void)
+
+  //const InputImageType *input = this->GetInput();
+  typename ItkImageType::RegionType  largestRegion = input->GetLargestPossibleRegion();
+  typename ItkImageType::Pointer     cacheImage;
+
+  // now extract the data as a raw buffer pointer
+  const void *dataPtr = (const void *)input->GetBufferPointer();
+
+  // check that the image's buffered region is the same as
+  // ImageIO is expecting and we requested
+  ItkImageType::RegionType ioRegion;
+  //itk::ImageIORegionAdaptor< ItkImageType::ImageDimension >::Convert(m_ImageIO->GetIORegion(), ioRegion, largestRegion.GetIndex());
+  ItkImageType::RegionType bufferedRegion = input->GetBufferedRegion();
+
+  // before this test, bad stuff would happened when they don't match
+  /*if (bufferedRegion != ioRegion)
+  {
+    if (m_NumberOfStreamDivisions > 1 || m_UserSpecifiedIORegion)
+    {
+      itkDebugMacro("Requested stream region does not match generated output");
+      itkDebugMacro("input filter may not support streaming well");
+
+      cacheImage = InputImageType::New();
+      cacheImage->CopyInformation(input);
+      cacheImage->SetBufferedRegion(ioRegion);
+      cacheImage->Allocate();
+
+      itk::ImageAlgorithm::Copy(input, cacheImage.GetPointer(), ioRegion, ioRegion);
+
+      dataPtr = (const void *)cacheImage->GetBufferPointer();
+    }
+    else
+    {
+      itk::ImageFileWriterException e(__FILE__, __LINE__);
+      std::ostringstream       msg;
+      msg << "Did not get requested region!" << std::endl;
+      msg << "Requested:" << std::endl;
+      msg << ioRegion;
+      msg << "Actual:" << std::endl;
+      msg << bufferedRegion;
+      e.SetDescription(msg.str().c_str());
+      e.SetLocation(ITK_LOCATION);
+      throw e;
+    }
+  }*/
+  return dataPtr;
+}
+
+template<class ItkImageType, class NiftiPixelType>
+nifti_image*
+ItkToNiftiImage< ItkImageType, NiftiPixelType >
+::TransferImageData(const void* buffer)
+{
+  // Adapted from void NiftiImageIO::Write(const void *buffer)
+  
   // Write the image Information before writing data
   this->WriteImageInformation();
   unsigned int numComponents = this->GetNumberOfComponents();
   if ( numComponents == 1
-       || ( numComponents == 2 && this->GetPixelType() == COMPLEX )
-       || ( numComponents == 3 && this->GetPixelType() == RGB )
-       || ( numComponents == 4 && this->GetPixelType() == RGBA ) )
+      || (numComponents == 2 && this->GetPixelType() == IOPixelType::COMPLEX)
+      || (numComponents == 3 && this->GetPixelType() == IOPixelType::RGB)
+      || (numComponents == 4 && this->GetPixelType() == IOPixelType::RGBA))
     {
     // Need a const cast here so that we don't have to copy the memory
     // for writing.
     this->m_NiftiImage->data = const_cast< void * >( buffer );
-    nifti_image_write(this->m_NiftiImage);
-    this->m_NiftiImage->data = ITK_NULLPTR; // if left pointing to data buffer
+    //nifti_image_write(this->m_NiftiImage);
+    //this->m_NiftiImage->data = ITK_NULLPTR; // if left pointing to data buffer
     // nifti_image_free will try and free this memory
     }
   else  ///Image intent is vector image
@@ -670,8 +732,8 @@ ItkToNiftiImage< ItkImageType, NiftiPixelType >
     // so on read, step sequentially through the source vector, but
     // reverse the order of vec[2] and vec[3]
     int *vecOrder;
-    if ( this->GetPixelType() == DIFFUSIONTENSOR3D
-         || this->GetPixelType() == SYMMETRICSECONDRANKTENSOR )
+    if (this->GetPixelType() == IOPixelType::DIFFUSIONTENSOR3D
+      || this->GetPixelType() == IOPixelType::SYMMETRICSECONDRANKTENSOR)
       {
       vecOrder = UpperToLowerOrder( SymMatDim(numComponents) );
       }
@@ -713,9 +775,10 @@ ItkToNiftiImage< ItkImageType, NiftiPixelType >
     //Need a const cast here so that we don't have to copy the memory for
     //writing.
     this->m_NiftiImage->data = (void *)nifti_buf;
-    nifti_image_write(this->m_NiftiImage);
-    this->m_NiftiImage->data = ITK_NULLPTR; // if left pointing to data buffer
-    delete[] nifti_buf;
+    //nifti_image_write(this->m_NiftiImage);
+    //this->m_NiftiImage->data = ITK_NULLPTR; // if left pointing to data buffer
+    //delete[] nifti_buf;
     }
+  return this->m_NiftiImage;
 }
 } // end namespace itk
