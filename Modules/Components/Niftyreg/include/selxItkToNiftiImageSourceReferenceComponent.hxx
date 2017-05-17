@@ -44,10 +44,15 @@ ItkToNiftiImageSourceReferenceComponent<  TPixel >::GetReferenceNiftiImage()
   {
     throw std::runtime_error( "SourceComponent needs to be initialized by SetMiniPipelineInput()" );
   }
-  // TODO
+
   ItkToNiftiImage<ItkImageType, TPixel>* converter = new ItkToNiftiImage<ItkImageType, TPixel>;
   this->m_Image->GetSource()->UpdateLargestPossibleRegion();
-  std::shared_ptr<nifti_image> ptr(converter->Convert(this->m_Image), nifti_image_free);
+
+  // TODO memory management issue: we want to return a shared_ptr that frees the memory after out of scope (nifti_image_free), but the data buffer is owned by the itk image. (Only) if the itk image goes out of scope the memory is released, however there might still be some nifti container that needs to be freed as well but isn't at the moment 
+  //this->m_Image->DisconnectPipeline();
+  //ImportFilterType::Pointer importFilter = ImportFilterType::New();
+  //std::shared_ptr<nifti_image> ptr(converter->Convert(this->m_Image), nifti_image_free);
+  std::shared_ptr<nifti_image> ptr(converter->Convert(this->m_Image));
   return ptr;
 }
 

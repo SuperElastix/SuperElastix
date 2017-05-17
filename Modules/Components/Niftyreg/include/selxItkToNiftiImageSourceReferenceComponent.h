@@ -29,6 +29,8 @@
 
 #include <string.h>
 #include "itkImageFileReader.h"
+#include "itkImportImageFilter.h"
+
 #include "selxAnyFileReader.h"
 #include "selxFileReaderDecorator.h"
 
@@ -54,6 +56,7 @@ public:
 
   typedef typename itk::Image< TPixel, 3 > ItkImageType;
   typedef typename itk::ImageFileReader< ItkImageType > ItkImageReaderType;
+  typedef typename itk::ImportImageFilter< TPixel, 3 > ImportFilterType;
   typedef FileReaderDecorator< ItkImageReaderType >     DecoratedReaderType;
 
   

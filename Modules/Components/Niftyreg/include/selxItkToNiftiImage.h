@@ -35,6 +35,176 @@
   
 namespace selx
 {
+
+  template<class ItkImageType>
+  class ItkImageProperties
+  {
+  public:
+
+    ItkImageProperties();
+    ~ItkImageProperties();
+
+
+    /** Enums used to manipulate the pixel type. The pixel type provides
+    * context for automatic data conversions (for instance, RGB to
+    * SCALAR, VECTOR to SCALAR). */
+    typedef itk::ImageIOBase::IOPixelType IOPixelType;
+
+    /** Enums used to manipulate the component type. The component type
+    * refers to the actual storage class associated with either a
+    * SCALAR pixel type or elements of a compound pixel.
+    */
+    typedef itk::ImageIOBase::IOComponentType IOComponentType;
+
+    template<class TPixel>
+    using MapPixelType = itk::ImageIOBase::MapPixelType<TPixel>;
+
+    template <typename TPixel>
+    static const std::tuple<unsigned int, IOPixelType, IOComponentType> GetPixelTypeInfo(const TPixel *)
+    {
+      return std::make_tuple(1, IOPixelType::SCALAR, MapPixelType<TPixel>::CType);
+    }
+    template <typename TPixel>
+    static const  std::tuple<unsigned int, IOPixelType, IOComponentType> GetPixelTypeInfo(const itk::RGBPixel< TPixel > *)
+    {
+      return std::make_tuple(3, IOPixelType::RGB, MapPixelType<TPixel>::CType);
+    }
+    /*
+
+  template <typename TPixel>
+  void SetPixelTypeInfo(const itk::RGBAPixel< TPixel > *)
+  {
+  this->SetNumberOfComponents(4);
+  this->SetPixelType(IOPixelType::RGBA);
+  this->SetComponentType(MapPixelType<TPixel>::CType);
+  }
+  template <typename TPixel, unsigned VLength>
+  void SetPixelTypeInfo(const itk::Vector< TPixel, VLength > *)
+  {
+  this->SetNumberOfComponents(VLength);
+  this->SetPixelType(IOPixelType::VECTOR);
+  this->SetComponentType(MapPixelType<TPixel>::CType);
+  }
+  template <typename TPixel>
+  void SetPixelTypeInfo(const itk::VariableLengthVector< TPixel > *)
+  {
+  this->SetNumberOfComponents(1);
+  this->SetPixelType(IOPixelType::VECTOR);
+  this->SetComponentType(MapPixelType<TPixel>::CType);
+  }
+  template <typename TPixel, unsigned VLength>
+  void SetPixelTypeInfo(const itk::CovariantVector< TPixel, VLength > *)
+  {
+  this->SetNumberOfComponents(VLength);
+  this->SetPixelType(IOPixelType::COVARIANTVECTOR);
+  this->SetComponentType(MapPixelType<TPixel>::CType);
+  }
+  template <typename TPixel, unsigned VLength>
+  void SetPixelTypeInfo(const itk::FixedArray< TPixel, VLength > *)
+  {
+  this->SetNumberOfComponents(VLength);
+  this->SetPixelType(IOPixelType::COVARIANTVECTOR);
+  this->SetComponentType(MapPixelType<TPixel>::CType);
+  }
+
+  template <typename TPixel, unsigned VLength>
+  void SetPixelTypeInfo(const itk::SymmetricSecondRankTensor<TPixel, VLength> *)
+  {
+  this->SetNumberOfComponents(VLength * (VLength + 1) / 2);
+  this->SetPixelType(IOPixelType::SYMMETRICSECONDRANKTENSOR);
+  this->SetComponentType(MapPixelType<TPixel>::CType);
+  }
+
+  template <typename TPixel>
+  inline void SetPixelTypeInfo(const itk::DiffusionTensor3D< TPixel > *)
+  {
+  this->SetNumberOfComponents(6);
+  this->SetPixelType(IOPixelType::DIFFUSIONTENSOR3D);
+  this->SetComponentType(MapPixelType<TPixel>::CType);
+  }
+
+  template <typename TPixel, unsigned VLength>
+  void SetPixelTypeInfo(const itk::Matrix< TPixel, VLength, VLength > *)
+  {
+  this->SetNumberOfComponents(VLength * VLength);
+  this->SetPixelType(IOPixelType::MATRIX);
+  this->SetComponentType(MapPixelType<TPixel>::CType);
+  }
+
+  template <typename TPixel>
+  void SetPixelTypeInfo(const std::complex< TPixel > *)
+  {
+  this->SetNumberOfComponents(2);
+  this->SetPixelType(IOPixelType::COMPLEX);
+  this->SetComponentType(MapPixelType<TPixel>::CType);
+  }
+
+  template <unsigned VLength>
+  void SetPixelTypeInfo(const itk::Offset< VLength > *)
+  {
+  this->SetNumberOfComponents(VLength);
+  this->SetPixelType(IOPixelType::::OFFSET);
+  this->SetComponentType(ImageIOBase::LONG);
+  }
+    */
+    
+    static const  unsigned int GetNumberOfComponents()
+    {
+      return std::get<0>(GetPixelTypeInfo(static_cast<const ItkImageType::PixelType *>(ITK_NULLPTR)));
+    }
+    
+    static const  IOPixelType GetPixelType()
+    {
+      return std::get<1>(GetPixelTypeInfo(static_cast<const ItkImageType::PixelType *>(ITK_NULLPTR)));
+    }
+    
+    static const IOComponentType GetComponentType()
+    {
+      return std::get<2>(GetPixelTypeInfo(static_cast<const ItkImageType::PixelType *>(ITK_NULLPTR)));
+    }
+
+
+
+    /** Set/Get the image origin on a axis-by-axis basis. */
+    
+    static const double GetOrigin(typename ItkImageType::Pointer input, unsigned int i)
+    {
+      return input->GetOrigin()[i];
+    }
+
+    /** Set/Get the image spacing on an axis-by-axis basis. The
+    * SetSpacing() method is required when writing the image. */
+    //virtual void SetSpacing(unsigned int i, double spacing);
+    
+    static const double GetSpacing(typename ItkImageType::Pointer input, unsigned int i)
+    {
+      return input->GetSpacing()[i];
+    }
+
+
+    /** Set/Get the image direction on an axis-by-axis basis. */
+    
+    static const std::vector< double > GetDirection(typename ItkImageType::Pointer input, unsigned int i)
+    {
+      std::vector<double> v(ItkImageType::ImageDimension);
+      for (unsigned int c = 0; c < ItkImageType::ImageDimension; c++)
+      {
+        v[c] = input->GetDirection()[i][c];
+      }
+
+      return v;
+    }
+
+    static const itk::SizeValueType GetDimensions(typename ItkImageType::Pointer input, unsigned int i)
+    {
+      ItkImageType::RegionType region = input->GetLargestPossibleRegion();
+      ItkImageType::SizeType size = region.GetSize();
+      return size[i];
+    }
+
+
+
+  };
 /** \class NiftiImageIO
  *
  * \author Hans J. Johnson, The University of Iowa 2002
@@ -74,9 +244,7 @@ typedef typename ItkImageType::SpacingType SpacingType;
    * For Nifti this does not write a file, it only fills in the
    * appropriate header information.
    */
-  virtual void WriteImageInformation();
-
-
+void WriteImageInformation(typename ItkImageType::Pointer input, nifti_image* output);
 
   /** Calculate the region of the image that can be efficiently read
    *  in response to a given requested region. */
@@ -88,20 +256,16 @@ private:
   * that the IORegions has been set properly. */
   const void*  GetImageBuffer(typename ItkImageType::Pointer input);
 
-  nifti_image* TransferImageData(const void* buffer);
+  void TransferImageData(const void* buffer, nifti_image* output);
 
   bool  MustRescale();
 
-  void  SetNIfTIOrientationFromImageIO(unsigned short int origdims, unsigned short int dims);
+  void  SetNIfTIOrientationFromImageIO(typename ItkImageType::Pointer input, nifti_image* output, unsigned short int origdims, unsigned short int dims);
 
   void  SetImageIOOrientationFromNIfTI(unsigned short int dims);
 
   void  SetImageIOMetadataFromNIfTI();
-
-  nifti_image *m_NiftiImage;
   
-  typename ItkImageType::Pointer m_ItkImage;
-
   /** Enums used to manipulate the pixel type. The pixel type provides
   * context for automatic data conversions (for instance, RGB to
   * SCALAR, VECTOR to SCALAR). */
@@ -113,197 +277,8 @@ private:
   */
   typedef itk::ImageIOBase::IOComponentType IOComponentType;
 
-  template<class TPixel>
-  using MapPixelType = itk::ImageIOBase::MapPixelType<TPixel>;
-
   double m_RescaleSlope;
   double m_RescaleIntercept;
-  
-  const unsigned int m_NumberOfDimensions;
-  unsigned int m_NumberOfComponents;
-
-
-  /** The array which stores the number of pixels in the x, y, z directions. */
-  std::vector< SizeValueType > m_Dimensions;
-
-  /** The array which stores the spacing of pixels in the
-  * x, y, z directions. */
-  std::vector< double > m_Spacing;
-
-  /** The array which stores the origin of the image. */
-  std::vector< double > m_Origin;
-
-  /** The arrays which store the direction cosines of the image. */
-  std::vector< std::vector< double > > m_Direction;
-
-
-
-  /** Set/Get the type of the pixel. The PixelTypes provides context
-  * to the IO mechanisms for data conversions.  PixelTypes can be
-  * SCALAR, RGB, RGBA, VECTOR, COVARIANTVECTOR, POINT, INDEX. If
-  * the PIXELTYPE is SCALAR, then the NumberOfComponents should be 1.
-  * Any other of PIXELTYPE will have more than one component. */
-  IOPixelType m_PixelType;
-  
-  void SetPixelType(const IOPixelType pixelType)
-  {
-    this->m_PixelType = pixelType;
-  }
-
-  const IOPixelType GetPixelType() const
-  {
-    return this->m_PixelType;
-  }
-
-  /** Set/Get the component type of the image. This is always a native
-  * type. */
-  IOComponentType m_ComponentType;
-  void SetComponentType(const IOComponentType componentType)
-  {
-    this->m_ComponentType = componentType;
-  }
-
-  const IOComponentType GetComponentType() const
-  {
-    return this->m_ComponentType;
-  }
-
-
-  SizeValueType GetDimensions(unsigned int i) const
-  {
-    ItkImageType::RegionType region = this->m_ItkImage->GetLargestPossibleRegion();
-    ItkImageType::SizeType size = region.GetSize();
-    return size[i];
-  }
-
-  
-  template <typename TPixel>
-  void SetTypeInfo(const TPixel *);
-
-
-  template <typename TPixel>
-  void SetPixelTypeInfo(const TPixel *)
-  {
-    this->SetNumberOfComponents(1);
-    this->SetPixelType(IOPixelType::SCALAR);
-    this->SetComponentType(MapPixelType<TPixel>::CType);
-  }
-  template <typename TPixel>
-  void SetPixelTypeInfo(const itk::RGBPixel< TPixel > *)
-  {
-    this->SetNumberOfComponents(3);
-    this->SetPixelType(IOPixelType::RGB);
-    this->SetComponentType(MapPixelType<TPixel>::CType);
-  }
-  template <typename TPixel>
-  void SetPixelTypeInfo(const itk::RGBAPixel< TPixel > *)
-  {
-    this->SetNumberOfComponents(4);
-    this->SetPixelType(IOPixelType::RGBA);
-    this->SetComponentType(MapPixelType<TPixel>::CType);
-  }
-  template <typename TPixel, unsigned VLength>
-  void SetPixelTypeInfo(const itk::Vector< TPixel, VLength > *)
-  {
-    this->SetNumberOfComponents(VLength);
-    this->SetPixelType(IOPixelType::VECTOR);
-    this->SetComponentType(MapPixelType<TPixel>::CType);
-  }
-  template <typename TPixel>
-  void SetPixelTypeInfo(const itk::VariableLengthVector< TPixel > *)
-  {
-    this->SetNumberOfComponents(1);
-    this->SetPixelType(IOPixelType::VECTOR);
-    this->SetComponentType(MapPixelType<TPixel>::CType);
-  }
-  template <typename TPixel, unsigned VLength>
-  void SetPixelTypeInfo(const itk::CovariantVector< TPixel, VLength > *)
-  {
-    this->SetNumberOfComponents(VLength);
-    this->SetPixelType(IOPixelType::COVARIANTVECTOR);
-    this->SetComponentType(MapPixelType<TPixel>::CType);
-  }
-  template <typename TPixel, unsigned VLength>
-  void SetPixelTypeInfo(const itk::FixedArray< TPixel, VLength > *)
-  {
-    this->SetNumberOfComponents(VLength);
-    this->SetPixelType(IOPixelType::COVARIANTVECTOR);
-    this->SetComponentType(MapPixelType<TPixel>::CType);
-  }
-
-  template <typename TPixel, unsigned VLength>
-  void SetPixelTypeInfo(const itk::SymmetricSecondRankTensor<TPixel, VLength> *)
-  {
-    this->SetNumberOfComponents(VLength * (VLength + 1) / 2);
-    this->SetPixelType(IOPixelType::SYMMETRICSECONDRANKTENSOR);
-    this->SetComponentType(MapPixelType<TPixel>::CType);
-  }
-
-  template <typename TPixel>
-  inline void SetPixelTypeInfo(const itk::DiffusionTensor3D< TPixel > *)
-  {
-    this->SetNumberOfComponents(6);
-    this->SetPixelType(IOPixelType::DIFFUSIONTENSOR3D);
-    this->SetComponentType(MapPixelType<TPixel>::CType);
-  }
-
-  template <typename TPixel, unsigned VLength>
-  void SetPixelTypeInfo(const itk::Matrix< TPixel, VLength, VLength > *)
-  {
-    this->SetNumberOfComponents(VLength * VLength);
-    this->SetPixelType(IOPixelType::MATRIX);
-    this->SetComponentType(MapPixelType<TPixel>::CType);
-  }
-
-  template <typename TPixel>
-  void SetPixelTypeInfo(const std::complex< TPixel > *)
-  {
-    this->SetNumberOfComponents(2);
-    this->SetPixelType(IOPixelType::COMPLEX);
-    this->SetComponentType(MapPixelType<TPixel>::CType);
-  }
-
-  template <unsigned VLength>
-  void SetPixelTypeInfo(const itk::Offset< VLength > *)
-  {
-    this->SetNumberOfComponents(VLength);
-    this->SetPixelType(IOPixelType::::OFFSET);
-    this->SetComponentType(ImageIOBase::LONG);
-  }
-
-  /** Set/Get the image origin on a axis-by-axis basis. */
-
-  double GetOrigin(unsigned int i) const
-  {
-    return this->m_ItkImage->GetOrigin()[i];
-  }
-
-  /** Set/Get the image spacing on an axis-by-axis basis. The
-  * SetSpacing() method is required when writing the image. */
-  //virtual void SetSpacing(unsigned int i, double spacing);
-
-  const double GetSpacing(unsigned int i) const
-  {
-    return this->m_ItkImage->GetSpacing()[i];
-  }
-
-
-  /** Set/Get the image direction on an axis-by-axis basis. The
-  * SetDirection() method is required when writing the image. */
-  void SetDirection(const typename ItkImageType::DirectionType & direction);
-
-  virtual std::vector< double > GetDirection(unsigned int i) const
-  {
-    return m_Direction[i];
-  }
-
-  // TODo remove
-  void SetNumberOfComponents(unsigned int){};
-
-  const unsigned int GetNumberOfComponents()
-  {
-    return this->m_ItkImage->GetNumberOfComponentsPerPixel();
-  }
 };
 
 

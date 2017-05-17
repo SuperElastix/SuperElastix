@@ -113,7 +113,7 @@ TEST_F(NiftyregComponentTest, ItkToNiftiImage)
 
   // Set up the readers and writers
   auto fixedImageReader = itk::ImageFileReader<itk::Image<float, 3>>::New();
-  fixedImageReader->SetFileName(dataManager->GetInputFile("coneA2d64.mhd"));
+  fixedImageReader->SetFileName(dataManager->GetInputFile("sphereA3d.mhd"));
 
   // Connect SuperElastix in an itk pipeline
   superElastixFilter->SetInput("FixedImage", fixedImageReader->GetOutput());
