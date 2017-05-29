@@ -197,7 +197,7 @@ class ItkToNiftiImage
 {
 public:
 
-static nifti_image * Convert(typename ItkImageType::Pointer input);
+   static std::shared_ptr<nifti_image> Convert(typename ItkImageType::Pointer input);
 
 protected:
 
@@ -215,9 +215,9 @@ private:
 
   /** Converts the image data from the memory buffer provided. Make sure
   * that the IORegions has been set properly. */
-  static const void*  GetImageBuffer(typename ItkImageType::Pointer input);
+  //static const void*  GetImageBuffer(typename ItkImageType::Pointer input);
 
-  static void TransferImageData(const void* buffer, nifti_image* output);
+  static bool TransferImageData(typename ItkImageType::PixelType* buffer, nifti_image* output);
 
   static void  SetNIfTIOrientationFromImageIO(typename ItkImageType::Pointer input, nifti_image* output, unsigned short int origdims, unsigned short int dims);
 

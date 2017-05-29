@@ -51,8 +51,9 @@ ItkToNiftiImageSourceReferenceComponent<  TPixel >::GetReferenceNiftiImage()
   //this->m_Image->DisconnectPipeline();
   //ImportFilterType::Pointer importFilter = ImportFilterType::New();
   //std::shared_ptr<nifti_image> ptr(converter->Convert(this->m_Image), nifti_image_free);
-  std::shared_ptr<nifti_image> ptr(ItkToNiftiImage<ItkImageType, TPixel>::Convert(this->m_Image));
-  return ptr;
+  //std::shared_ptr<nifti_image> ptr(ItkToNiftiImage<ItkImageType, TPixel>::Convert(this->m_Image));
+  //return ptr;
+  return ItkToNiftiImage<ItkImageType, TPixel>::Convert(this->m_Image);
 }
 
 /*

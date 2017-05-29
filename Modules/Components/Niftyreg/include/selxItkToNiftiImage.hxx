@@ -120,7 +120,7 @@ int SymMatDim(int count)
 }
 
 template<class ItkImageType, class NiftiPixelType>
-nifti_image *
+std::shared_ptr<nifti_image>
 ItkToNiftiImage< ItkImageType, NiftiPixelType >::Convert(typename ItkImageType::Pointer input)
 {
   nifti_set_debug_level(0); // suppress error messages
@@ -143,16 +143,34 @@ ItkToNiftiImage< ItkImageType, NiftiPixelType >::Convert(typename ItkImageType::
     }
     */
    
-    auto nifti_image = nifti_simple_init_nim();
+    auto output = nifti_simple_init_nim();
+
 
     // Set the image Information before passing data
-    SetHeaderInformation(input, nifti_image);
+    SetHeaderInformation(input, output);
 
-    auto buffer = GetImageBuffer(input);
+    // Get itkImage buffer
+    typename ItkImageType::RegionType  largestRegion = input->GetLargestPossibleRegion();
+    typename ItkImageType::RegionType bufferedRegion = input->GetBufferedRegion();
+    if (bufferedRegion != largestRegion)
+    {
+      std::stringstream msg;
+      msg << "Input ItkImage must be fully loaded in memory. E.g. use m_ItkImage->GetSource()->UpdateLargestPossibleRegion() before calling this function." << std::endl;
+      throw std::runtime_error(msg.str());
+    }
 
-    TransferImageData(buffer, nifti_image);
+    ItkImageType::PixelContainerPointer pixelContainer = input->GetPixelContainer();
 
-    return nifti_image;
+    bool wasCopied = TransferImageData(pixelContainer->GetBufferPointer(), output);
+
+    if (!wasCopied)
+    {
+      // Take ownership of the pixelbuffer
+      pixelContainer->ContainerManageMemoryOff();
+    }
+
+    std::shared_ptr<nifti_image> ptr(output, nifti_image_free);
+    return ptr;
 }
 
 
@@ -555,31 +573,9 @@ ItkToNiftiImage< ItkImageType, NiftiPixelType >::SetNIfTIOrientationFromImageIO(
 }
 
 template<class ItkImageType, class NiftiPixelType>
-const void *
+bool
 ItkToNiftiImage< ItkImageType, NiftiPixelType >
-::GetImageBuffer(typename ItkImageType::Pointer input)
-{
-  // Adapted from itk::ImageFileWriter< TInputImage >::GenerateData(void)
-  
-
-  typename ItkImageType::RegionType  largestRegion = input->GetLargestPossibleRegion();
-  typename ItkImageType::RegionType bufferedRegion = input->GetBufferedRegion();
-  if (bufferedRegion != largestRegion)
-  {
-    std::stringstream msg;
-    msg << "Input ItkImage must be fully loaded in memory. E.g. use m_ItkImage->GetSource()->UpdateLargestPossibleRegion() before calling this function." << std::endl;
-    throw std::runtime_error(msg.str());
-  }
-
-  // now extract the data as a raw buffer pointer
-  const void *dataPtr = (const void *)input->GetBufferPointer();
-  return dataPtr;
-}
-
-template<class ItkImageType, class NiftiPixelType>
-void
-ItkToNiftiImage< ItkImageType, NiftiPixelType >
-::TransferImageData(const void* buffer, nifti_image* output )
+::TransferImageData(typename ItkImageType::PixelType* buffer, nifti_image* output)
 {
   // Adapted from void NiftiImageIO::Write(const void *buffer)
   
@@ -591,10 +587,11 @@ ItkToNiftiImage< ItkImageType, NiftiPixelType >
     {
     // Need a const cast here so that we don't have to copy the memory
     // for writing.
-      output->data = const_cast< void * >(buffer);
+      output->data = (void*) buffer;
     //nifti_image_write(output);
     //output->data = ITK_NULLPTR; // if left pointing to data buffer
     // nifti_image_free will try and free this memory
+      return false;
     }
   else  ///Image intent is vector image
     {
@@ -680,6 +677,7 @@ ItkToNiftiImage< ItkImageType, NiftiPixelType >
     //nifti_image_write(output);
     //output->data = ITK_NULLPTR; // if left pointing to data buffer
     //delete[] nifti_buf;
+    return true;
     }
 }
 } // end namespace itk
