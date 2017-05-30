@@ -47,12 +47,12 @@ ItkToNiftiImageSourceReferenceComponent<  TPixel >::GetReferenceNiftiImage()
 
   this->m_Image->GetSource()->UpdateLargestPossibleRegion();
 
-  // TODO memory management issue: we want to return a shared_ptr that frees the memory after out of scope (nifti_image_free), but the data buffer is owned by the itk image. (Only) if the itk image goes out of scope the memory is released, however there might still be some nifti container that needs to be freed as well but isn't at the moment 
-  //this->m_Image->DisconnectPipeline();
-  //ImportFilterType::Pointer importFilter = ImportFilterType::New();
-  //std::shared_ptr<nifti_image> ptr(converter->Convert(this->m_Image), nifti_image_free);
-  //std::shared_ptr<nifti_image> ptr(ItkToNiftiImage<ItkImageType, TPixel>::Convert(this->m_Image));
-  //return ptr;
+  // TODO memory management issue: the Convert function passes the ownership 
+  // of the data buffer from the itk image to the nifti image. This means that 
+  // as soon as the shared_ptr<nifti_image> goes out of scope the buffer is freed 
+  // and the itk image is invalidated. However, subsequently destructing the itk 
+  // image should be without memory leaks.
+
   return ItkToNiftiImage<ItkImageType, TPixel>::Convert(this->m_Image);
 }
 
