@@ -19,8 +19,8 @@
 
 set( proj Elastix )
 
-set( ELASTIX_GIT_REPOSITORY http://github.com/mstaring/elastix )
-set( ELASTIX_GIT_TAG 67e87e57b0dc90ff838de1c0cd6126b950dc12a1 )
+set( ELASTIX_GIT_REPOSITORY https://github.com/SuperElastix/elastix )
+set( ELASTIX_GIT_TAG 522843d90ff586be051c480514cd14a88db45dbf )
 
 ExternalProject_Add( ${proj} 
   GIT_REPOSITORY ${ELASTIX_GIT_REPOSITORY}
