@@ -13,3 +13,7 @@ endif()
 if( NOT USE_SYSTEM_ELASTIX )
   set( ELASTIX_USE_FILE @ELASTIX_USE_FILE@ )
 endif()
+
+if( NOT USE_SYSTEM_NIFTIREG )
+  set( NIFTYREG_DIR @NIFTYREG_DIR@ )
+endif()
