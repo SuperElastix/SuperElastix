@@ -20,13 +20,13 @@
 set( proj Niftyreg )
 
 set( NIFTYREG_GIT_REPOSITORY https://cmiclab.cs.ucl.ac.uk/mmodat/niftyreg.git )
-set( NIFTYREG_GIT_TAG fc526c152fd5eaced271d1d6de7c16661b2abd3e )
+set( NIFTYREG_GIT_TAG 88b369becb6bdbda22ea96a0bef2b83bee85b219 )
 
 ExternalProject_Add( ${proj} 
   GIT_REPOSITORY ${NIFTYREG_GIT_REPOSITORY}
   GIT_TAG ${NIFTYREG_GIT_TAG}
   UPDATE_COMMAND ""
-  PATCH_COMMAND "${GIT_EXECUTABLE}" reset --hard && "${GIT_EXECUTABLE}" apply --whitespace=fix "${CMAKE_SOURCE_DIR}/Patches/Niftyreg_remove_pngtest.patch"
+  PATCH_COMMAND ""
   SOURCE_DIR ${proj}
   BINARY_DIR ${proj}-build
   CMAKE_GENERATOR ${gen}
