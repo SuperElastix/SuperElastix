@@ -37,7 +37,7 @@ node('lkeb-vm-test') {
 
 	timeout(120) {
 		stage('Checkout') {
-			sh 'mkdir -p src
+			sh 'mkdir -p src'
 			dir('src') {
 				checkout scm
 			}
