@@ -22,7 +22,7 @@
 
 macro( _selxmodule_check_name MODULE )
   # "No funny stuff" - Karl Hungus
-  if( NOT "${_name}" MATCHES "^[a-zA-Z_]*$" )
+  if( NOT "${MODULE}" MATCHES "^[a-zA-Z0-9]+$" )
     message( FATAL_ERROR "Invalid module name: ${MODULE}" )
   endif()
 
