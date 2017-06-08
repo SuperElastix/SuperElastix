@@ -52,7 +52,7 @@ Logger
 
 void
 Logger
-::Log( SeverityType severity, MessageType message )
+::Log( SeverityType severity, MessageType message ) const
 {
   this->m_Pimple->Log( severity, message );
 }

@@ -20,6 +20,8 @@
 #ifndef Accepting_h
 #define Accepting_h
 
+#include "selxLogger.h"
+
 namespace selx
 {
 template< typename ... Interfaces >
@@ -29,6 +31,10 @@ template< >
 class Accepting< >
 {
 public:
+  //Accepting() = delete;
+  Accepting() {};
+
+  Accepting(const LoggerInterface & logger) {};// : m_Logger(logger){};
 
   static unsigned int CountMeetsCriteria( const ComponentBase::InterfaceCriteriaType ) { return 0; }
   //no interface called interfacename ;
@@ -45,12 +51,20 @@ public:
   bool AreAllAccepted() { return true; }
 
 protected:
+
+private:
+  //const LoggerInterface & m_Logger;
 };
 
 template< typename FirstInterface, typename ... RestInterfaces >
 class Accepting< FirstInterface, RestInterfaces ... > : public InterfaceAcceptor< FirstInterface >, public Accepting< RestInterfaces ... >
 {
 public:
+  
+  //Accepting() = delete;
+  Accepting();
+
+  Accepting(const LoggerInterface & logger);
 
   static unsigned int CountMeetsCriteria( const ComponentBase::InterfaceCriteriaType );
 
@@ -64,6 +78,9 @@ public:
   bool AreAllAccepted();
 
 protected:
+
+private:
+  const LoggerInterface & m_Logger;
 };
 } //end namespace selx
 #ifndef ITK_MANUAL_INSTANTIATION

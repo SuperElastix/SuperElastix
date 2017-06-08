@@ -61,7 +61,7 @@ public:
     itkImageInterface< Dimensionality, TPixel >,
     RunRegistrationInterface
     >
-    >                                     Superclass;
+    >                                   Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
 

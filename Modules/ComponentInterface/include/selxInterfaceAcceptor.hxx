@@ -29,8 +29,8 @@ InterfaceAcceptor< InterfaceT >::Connect( ComponentBase::Pointer providerCompone
   std::shared_ptr< InterfaceT > providerInterface = std::dynamic_pointer_cast< InterfaceT >( providerComponent );
   if( !providerInterface )
   {
-    //TODO log message?
-    //std::cout << "providerComponent does not have required " << InterfaceName < InterfaceT >::Get() << std::endl;
+    // TODO: Make logger available here and give name of reqeusted interface InterfaceName < InterfaceT >::Get()
+    // this->m_Logger.Log( ERROR, "Provider does not implement the requested interface.");
     return 0;
   }
   // connect value interfaces
