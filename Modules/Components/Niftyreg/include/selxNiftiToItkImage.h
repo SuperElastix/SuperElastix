@@ -16,8 +16,8 @@
  *
  *=========================================================================*/
 
-#ifndef selxItkToNiftiImage_h
-#define selxItkToNiftiImage_h
+#ifndef selxNiftiToItkImage_h
+#define selxNiftiToItkImage_h
 
 
 #include <fstream>
@@ -30,39 +30,22 @@
 namespace selx
 {
 
-
-/** \class ItkToNiftiImage
- * Convert an itk image to an nifti image object.
+/** \class NiftiToItkImage
+ * Convert a nifti image to an itk image object.
  * Adapted from itkNiftiImageIO that is originally by Hans J. Johnson, The University of Iowa 2002
  */
 template<class ItkImageType, class NiftiPixelType>
-class ItkToNiftiImage
+class NiftiToItkImage
 {
 public:
 
-   static std::shared_ptr<nifti_image> Convert(typename ItkImageType::Pointer input);
+  static typename ItkImageType::Pointer Convert(std::shared_ptr<nifti_image> input );
 
 protected:
 
 private:
   // This is a class with static methods only, so construction is not needed.
-  ItkToNiftiImage(){};
-
-
-  /** Set the spacing and dimension information.
-  *
-  * For Nifti this does not write a file, it only fills in the
-  * appropriate header information.
-  */
-  static void SetHeaderInformation(typename ItkImageType::Pointer input, nifti_image* output);
-
-  /** Converts the image data from the memory buffer provided. Make sure
-  * that the IORegions has been set properly. */
-  //static const void*  GetImageBuffer(typename ItkImageType::Pointer input);
-
-  static bool TransferImageData(typename ItkImageType::PixelType* buffer, nifti_image* output);
-
-  static void  SetNIfTIOrientationFromImageIO(typename ItkImageType::Pointer input, nifti_image* output, unsigned short int origdims, unsigned short int dims);
+  NiftiToItkImage(){};
 
   
   /** Enums used to manipulate the pixel type. The pixel type provides
@@ -76,11 +59,34 @@ private:
   */
   typedef itk::ImageIOBase::IOComponentType IOComponentType;
 
+  struct TargetProperties
+  {
+    unsigned int numberOfDimensions;
+    unsigned int numberOfComponents;
+    IOPixelType pixelType;
+    IOComponentType componentType;
+  };
+
+  /** Set the spacing and dimension information */
+  std::pair<double, double> ReadImageInformation(std::shared_ptr<nifti_image> input);
+
+  /** Reads the data from disk into the memory buffer provided. */
+  void Read(void *buffer, typename ItkImageType::Pointer output_image, std::shared_ptr<nifti_image> input_image);
+
+  bool  MustRescale(double rescaleSlope, double rescaleIntercept);
+
+  void  DefineHeaderObjectDataType();
+
+  void  SetImageIOOrientationFromNIfTI(unsigned short int dims);
+
+  void  SetImageIOMetadataFromNIfTI();
 };
+
+
 
 } // end namespace selx
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "selxItkToNiftiImage.hxx"
+#include "selxNiftiToItkImage.hxx"
 #endif
-#endif // selxItkToNiftiImage_h
+#endif // selxNiftiToItkImage_h
 
