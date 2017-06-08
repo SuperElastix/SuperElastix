@@ -27,7 +27,7 @@ ComponentBase::ComponentBase() : m_Name( "undefined" ), m_Logger( *( new Logger(
 }
 
 
-ComponentBase::ComponentBase( const std::string & name, const LoggerInterface & logger ) : m_Logger( logger )
+ComponentBase::ComponentBase(const std::string & name, const LoggerInterface & logger) : m_Logger(logger), m_Name( name )
 {
 }
 
