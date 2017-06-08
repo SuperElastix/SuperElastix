@@ -48,7 +48,7 @@ node('lkeb-vm-test') {
 				sh 'make -j4'
 			}
 		}
-		updateGithubCommitStatus(SuperElastix)
+		updateGithubCommitStatus(currentBuild)
 	}
 
 	timeout(45) {
