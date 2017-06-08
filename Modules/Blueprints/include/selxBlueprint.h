@@ -36,6 +36,8 @@ public:
   typedef std::map< ParameterKeyType, ParameterValueType > ParameterMapType;
   typedef std::string                                      ComponentNameType;
   typedef std::vector< ComponentNameType >                 ComponentNamesType;
+  typedef std::unique_ptr< Blueprint >                     Pointer;
+  typedef std::unique_ptr< const Blueprint >               ConstPointer;
 
   Blueprint( void );
   Blueprint( const Blueprint & other );                   // copyable
