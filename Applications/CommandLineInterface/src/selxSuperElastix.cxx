@@ -59,11 +59,11 @@ main( int ac, char * av[] )
 
     // add logger
     selx::SuperElastixFilter::LoggerPointer itkLogger = selx::SuperElastixFilter::LoggerType::New();
-	std::unique_ptr<selx::Logger> selxLogger(new selx::Logger());
-	selxLogger->AddConsole();
-	itkLogger->Set( selxLogger);
+    std::unique_ptr<selx::Logger> selxLogger(new selx::Logger());
+    selxLogger->AddConsole();
+    itkLogger->Set( selxLogger);
 
-	superElastixFilter->SetLogger(itkLogger);
+    superElastixFilter->SetLogger(itkLogger);
 
     fs::path            configurationPath;
     VectorOfStringsType inputPairs;
