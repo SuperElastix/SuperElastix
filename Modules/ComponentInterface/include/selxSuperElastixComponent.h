@@ -40,6 +40,9 @@ public:
   using AcceptingInterfacesTypeList = AcceptingInterfaces;
   using ProvidingInterfacesTypeList = ProvidingInterfaces;
 
+  // Logger are present in multiple base classes
+  using ComponentBase::m_Logger;
+
   SuperElastixComponent(const std::string & name, const LoggerInterface & logger) : AcceptingInterfaces(logger), ComponentBase(name, logger) {}
 
   virtual int AcceptConnectionFrom( ComponentBase::Pointer other, const InterfaceCriteriaType interfaceCriteria );
