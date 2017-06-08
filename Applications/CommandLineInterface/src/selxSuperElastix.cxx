@@ -53,6 +53,7 @@ main( int ac, char * av[] )
   try
   {
     typedef std::vector< std::string > VectorOfStringsType;
+    typedef std::vector< boost::filesystem::path > VectorOfPathsType;
 
     // instantiate a SuperElastixFilter that is loaded with default components
     selx::SuperElastixFilter::Pointer superElastixFilter = selx::SuperElastixFilter::New();
@@ -65,7 +66,9 @@ main( int ac, char * av[] )
 
     superElastixFilter->SetLogger(itkLogger);
 
-    fs::path            configurationPath;
+    boost::filesystem::path            configurationPath;
+    VectorOfPathsType                   configurationPaths;
+
     VectorOfStringsType inputPairs;
     VectorOfStringsType outputPairs;
 
@@ -75,11 +78,11 @@ main( int ac, char * av[] )
     //vector<ImageWriter2DType::Pointer> fileWriters;
     std::vector< selx::AnyFileWriter::Pointer > fileWriters;
 
-    po::options_description desc( "Allowed options" );
+    boost::program_options::options_description desc("Allowed options");
     desc.add_options()
       ( "help", "produce help message" )
-      ( "conf", po::value< fs::path >( &configurationPath )->required(), "Configuration file" )
-      ( "in", po::value< VectorOfStringsType >( &inputPairs )->multitoken(), "Input data: images, labels, meshes, etc. Usage <name>=<path>" )
+      ("conf", boost::program_options::value< VectorOfPathsType >(&configurationPaths)->required()->multitoken(), "Configuration file")
+      ("in", boost::program_options::value< VectorOfStringsType >(&inputPairs)->multitoken(), "Input data: images, labels, meshes, etc. Usage <name>=<path>")
       ( "out", po::value< VectorOfStringsType >( &outputPairs )->multitoken(), "Output data: images, labels, meshes, etc. Usage <name>=<path>" )
       ( "graphout", po::value< fs::path >(), "Output Graphviz dot file" )
     ;
@@ -94,7 +97,12 @@ main( int ac, char * av[] )
       return 0;
     }
 
-    selx::ConfigurationReader::BlueprintPointerType blueprint = selx::ConfigurationReader::FromFile(configurationPath);
+    // create empty blueprint
+    selx::Blueprint::Pointer blueprint = selx::Blueprint::Pointer(new selx::Blueprint());
+    for (const auto & configurationPath : configurationPaths)
+    {
+      selx::ConfigurationReader::MergeFromFile(blueprint, configurationPath);
+    }
 
     if( vm.count( "graphout" ) )
     {
