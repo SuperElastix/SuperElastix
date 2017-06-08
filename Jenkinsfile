@@ -48,7 +48,9 @@ node('lkeb-vm-test') {
 				sh 'make -j4'
 			}
 		}
-		updateGithubCommitStatus(currentBuild)
+		dir('src') {
+			updateGithubCommitStatus(currentBuild)
+		}
 	}
 
 	timeout(45) {
