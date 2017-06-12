@@ -20,9 +20,9 @@
 set(Niftyreg_FIND_COMPONENTS _reg_aladin _reg_blockMatching _reg_f3d _reg_femTrans _reg_globalTrans _reg_localTrans _reg_maths _reg_measure _reg_ReadWriteImage _reg_resampling _reg_tools reg_nifti reg_png)
 
 # *NIX OSes use system png and zlib, for Windows OS Niftyreg is configured to build these libraries
-if( WIN32)
+#if( WIN32)
 	list(APPEND Niftyreg_FIND_COMPONENTS png z)
-endif (WIN32)
+#endif (WIN32)
 
 set(Niftyreg_INCLUDE_DIR ${NIFTYREG_DIR}/include CACHE PATH "Installed Include Directory of NiftyReg" )
 #set(Niftyreg_LIBRARIES "" CACHE STRING "Found libraries NiftyReg" )

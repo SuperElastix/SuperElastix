@@ -25,14 +25,11 @@ if (OPENMP_FOUND)
   set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}" )
 endif()
 
-set(NIFTYREG_DIR ${CMAKE_BINARY_DIR}/../Niftyreg-prefix)
-#message(STATUS ${NIFTYREG_DIR})
-
 find_package( Niftyreg REQUIRED )
-#mark_as_advanced(Niftyreg_DIR)
-if (NOT Niftyreg_FOUND)
-  #set( NIFTYREG_DIR "" CACHE PATH "Path to Niftyreg build folder" )
-  message(FATAL_ERROR "Could not find Niftyreg. Point NIFTYREG_DIR to its install folder.")
+if( NOT Niftyreg_FOUND )
+  mark_as_advanced( NIFTYREG_DIR )
+  set( NIFTYREG_DIR "" CACHE PATH "Path to Niftyreg build folder." )
+  message( FATAL_ERROR "Could not find Niftyreg. Point NIFTYREG_DIR to its install folder." )
 endif()
 
 set( ${MODULE}_INCLUDE_DIRS
@@ -41,12 +38,12 @@ set( ${MODULE}_INCLUDE_DIRS
 )
 
 # *NIX OSes use system png and zlib, for Windows OS Niftyreg is configured to build these libraries
-if (NOT WIN32)
-  find_package( PNG REQUIRED)
-  list(APPEND ${MODULE}_INCLUDE_DIRS ${PNG_INCLUDE_DIRS} )  
-  find_package( ZLIB REQUIRED)
-  list(APPEND ${MODULE}_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS} )
-endif(NOT WIN32)
+#if (NOT WIN32)
+#  find_package( PNG REQUIRED)
+#  list(APPEND ${MODULE}_INCLUDE_DIRS ${PNG_INCLUDE_DIRS} )  
+#  find_package( ZLIB REQUIRED)
+#  list(APPEND ${MODULE}_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS} )
+#endif(NOT WIN32)
 
 set( ${MODULE}_SOURCE_FILES
   )

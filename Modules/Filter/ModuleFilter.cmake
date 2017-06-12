@@ -26,6 +26,7 @@ set( ${MODULE}_INCLUDE_DIRS
 
 # Module source files
 set( ${MODULE}_SOURCE_FILES
+  ${${MODULE}_SOURCE_DIR}/src/selxSuperElastixFilterBase.cxx
   ${${MODULE}_SOURCE_DIR}/src/selxSuperElastixFilter.cxx
 )
 

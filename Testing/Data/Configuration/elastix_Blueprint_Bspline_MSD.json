@@ -1,5 +1,4 @@
 {
-	"Include": "../Configuration/elastix.json",
     "Component": {
         "Name": "RegistrationMethod",
         "Dimensionality": "2",

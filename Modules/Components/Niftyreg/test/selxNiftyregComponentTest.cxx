@@ -53,11 +53,12 @@ public:
     NiftiToItkImageSinkComponent<3,float>,
     RegistrationControllerComponent< >> RegisterComponents;
 
+  typedef SuperElastixFilterCustomComponents< RegisterComponents > SuperElastixFilterType;
   virtual void SetUp()
   {
     // Instantiate SuperElastixFilter before each test and
     // register the components we want to have available in SuperElastix
-    superElastixFilter = SuperElastixFilterCustomComponents< RegisterComponents >::New();
+    superElastixFilter = SuperElastixFilterType::New();
     dataManager        = DataManagerType::New();
   }
 
@@ -73,7 +74,7 @@ public:
 
   // Blueprint holds a configuration for SuperElastix
   BlueprintPointer            blueprint;
-  SuperElastixFilter::Pointer superElastixFilter;
+  SuperElastixFilterBase::Pointer superElastixFilter;
   // Data manager provides the paths to the input and output data for unit tests
   DataManagerType::Pointer dataManager;
 };

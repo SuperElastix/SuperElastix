@@ -71,8 +71,8 @@ public:
 
   typedef std::unique_ptr< Blueprint > BlueprintPointer;
 
-  typedef SuperElastixFilter::BlueprintType    SuperElastixFilterBlueprintType;
-  typedef SuperElastixFilter::BlueprintPointer SuperElastixFilterBlueprintPointer;
+  typedef SuperElastixFilterBase::BlueprintType    SuperElastixFilterBlueprintType;
+  typedef SuperElastixFilterBase::BlueprintPointer SuperElastixFilterBlueprintPointer;
 
   typedef itk::Mesh< float, 2 >           MeshType;
   typedef itk::MeshFileReader< MeshType > MeshReaderType;
