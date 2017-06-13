@@ -25,13 +25,13 @@
 
 namespace selx
 {
-enum SeverityType {
-  TRACE,
-  DEBUG,
-  INFO,
-  WARNING,
-  ERROR,
-  FATAL
+enum class SeverityType {
+  SELX_TRACE,
+  SELX_DEBUG,
+  SELX_INFO,
+  SELX_WARNING,
+  SELX_ERROR,
+  SELX_FATAL
 };
 
 class LoggerInterface
