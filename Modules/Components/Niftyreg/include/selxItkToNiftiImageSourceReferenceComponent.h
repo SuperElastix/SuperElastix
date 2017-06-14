@@ -36,30 +36,32 @@
 
 namespace selx
 {
-template< class TPixel >
+  template<  int Dimensionality, class TPixel >
 class ItkToNiftiImageSourceReferenceComponent :
   public SuperElastixComponent<
   Accepting<  >,
-  Providing< SourceInterface, NiftyregReferenceImageInterface< TPixel >, NiftyregWarpedImageInterface< TPixel > >
+  Providing< SourceInterface, NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >, NiftyregWarpedImageInterface< TPixel >, itkImageDomainFixedInterface<Dimensionality> >
   >
 {
 public:
 
   /** Standard ITK typedefs. */
-  typedef ItkToNiftiImageSourceReferenceComponent< TPixel > Self;
+  typedef ItkToNiftiImageSourceReferenceComponent< Dimensionality, TPixel > Self;
   typedef SuperElastixComponent<
     Accepting<  >,
-    Providing< SourceInterface, NiftyregReferenceImageInterface< TPixel >, NiftyregWarpedImageInterface< TPixel > >
+    Providing< SourceInterface, NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >, NiftyregWarpedImageInterface< TPixel >, itkImageDomainFixedInterface<Dimensionality> >
     >                                            Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
 
-  typedef typename itk::Image< TPixel, 3 > ItkImageType;
+  typedef typename itk::Image< TPixel, Dimensionality > ItkImageType;
   typedef typename itk::ImageFileReader< ItkImageType > ItkImageReaderType;
-  typedef typename itk::ImportImageFilter< TPixel, 3 > ImportFilterType;
+  typedef typename itk::ImportImageFilter< TPixel, Dimensionality > ImportFilterType;
   typedef FileReaderDecorator< ItkImageReaderType >     DecoratedReaderType;
+   
+  using ItkImageDomainType = typename itkImageDomainFixedInterface<Dimensionality>::ItkImageDomainType;
 
-  
+
   ItkToNiftiImageSourceReferenceComponent( const std::string & name, const LoggerInterface & logger );
   virtual ~ItkToNiftiImageSourceReferenceComponent();
 
@@ -68,7 +70,11 @@ public:
 
   virtual std::shared_ptr<nifti_image> GetReferenceNiftiImage() override;
 
+  virtual std::shared_ptr<nifti_image> GetFloatingNiftiImage() override;
+
   virtual std::shared_ptr<nifti_image> GetWarpedNiftiImage() override;
+
+  virtual typename ItkImageDomainType::Pointer GetItkImageDomainFixed() override;
 
   virtual void SetMiniPipelineInput( itk::DataObject::Pointer ) override;
   virtual AnyFileReader::Pointer GetInputFileReader( void ) override;
@@ -79,8 +85,6 @@ public:
 
 private:
 
-  nifti_image * m_referenceImage;
-
   typename ItkImageType::Pointer m_Image;
 
 protected:
@@ -88,7 +92,7 @@ protected:
   // return the class name and the template arguments to uniquely identify this component.
   static inline const std::map< std::string, std::string > TemplateProperties()
   {
-    return { { keys::NameOfClass, "ItkToNiftiImageSourceReferenceComponent" }, { keys::PixelType, PodString< TPixel >::Get() }, { keys::Dimensionality, "3" } };
+    return{ { keys::NameOfClass, "ItkToNiftiImageSourceReferenceComponent" }, { keys::PixelType, PodString< TPixel >::Get() }, { keys::Dimensionality, std::to_string(Dimensionality) } };
   }
 };
 } //end namespace selx

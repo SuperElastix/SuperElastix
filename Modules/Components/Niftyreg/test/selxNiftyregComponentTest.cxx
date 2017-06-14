@@ -49,7 +49,7 @@ public:
   typedef TypeList< Niftyregf3dComponent< float >, 
     NiftyregReadImageComponent< float >,
     NiftyregWriteImageComponent< float >, 
-    ItkToNiftiImageSourceReferenceComponent< float > , 
+    ItkToNiftiImageSourceReferenceComponent< 3, float > , 
     NiftiToItkImageSinkComponent<3,float>,
     RegistrationControllerComponent< >> RegisterComponents;
 

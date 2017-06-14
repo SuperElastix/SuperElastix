@@ -37,16 +37,12 @@ NiftiToItkImageSinkComponent< Dimensionality, TPixel >::~NiftiToItkImageSinkComp
 
 template< int Dimensionality, class TPixel >
 int
-NiftiToItkImageSinkComponent< Dimensionality, TPixel >::Set(  typename AcceptingImageInterfaceType::Pointer other )
+NiftiToItkImageSinkComponent< Dimensionality, TPixel >::Set(typename WarpedImageInterfaceType::Pointer other)
 {
-  if( this->m_NetworkBuilderOutputImage == nullptr )
-  {
-    throw std::runtime_error( "SinkComponent needs to be initialized by SetMiniPipelineOutput()" );
-  }
-
-  // Store pointer to MiniPipelineOutputImage for later grafting onto NetworkBuilder output.
-  this->m_MiniPipelineOutputImage = other->GetWarpedNiftiImage();
-
+ 
+  // Store pointer to the m_WarpedImageInterface for getting the result image after in has been generated (registration).
+  // TODO: sanity check that m_AcceptingImageInterface was Null to detect if Set was called more than once erroneously.
+  this->m_WarpedImageInterface = other;
   return 0;
 }
 
@@ -64,6 +60,7 @@ NiftiToItkImageSinkComponent< Dimensionality, TPixel >::SetMiniPipelineOutput(it
   {
     throw std::runtime_error("NiftiToItkImageSinkComponent cannot cast the NetworkBuilder's Output to the required type");
   }
+  this->m_MiniPipelineOutputImage = this->m_NetworkBuilderOutputImage;
 }
 
 
@@ -71,10 +68,7 @@ template< int Dimensionality, class TPixel >
 typename itk::DataObject::Pointer
 NiftiToItkImageSinkComponent< Dimensionality, TPixel >::GetMiniPipelineOutput()
 {
-  //return this->m_MiniPipelineOutputImage.GetPointer();
-  // TODO convert
-  
-  return NiftiToItkImage<ItkImageType, TPixel>::Convert(m_MiniPipelineOutputImage);
+  return this->m_MiniPipelineOutputImage.GetPointer();
 }
 
 template< int Dimensionality, class TPixel >
@@ -91,6 +85,16 @@ typename itk::DataObject::Pointer
 NiftiToItkImageSinkComponent< Dimensionality, TPixel >::GetInitializedOutput()
 {
   return ItkImageType::New().GetPointer();
+}
+
+template< int Dimensionality, class TPixel >
+void
+NiftiToItkImageSinkComponent< Dimensionality, TPixel >::AfterRegistration()
+{
+  
+  auto warpedNiftiImage = this->m_WarpedImageInterface->GetWarpedNiftiImage();
+  auto warpedItkImage = NiftiToItkImage<ItkImageType, TPixel>::Convert(warpedNiftiImage);
+  this->m_MiniPipelineOutputImage->Graft(warpedItkImage);
 }
 
 template< int Dimensionality, class TPixel >

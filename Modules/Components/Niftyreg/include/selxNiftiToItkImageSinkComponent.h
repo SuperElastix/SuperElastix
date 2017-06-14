@@ -38,7 +38,7 @@ template< int Dimensionality, class TPixel >
 class NiftiToItkImageSinkComponent :
   public SuperElastixComponent<
   Accepting< NiftyregWarpedImageInterface< TPixel > >,
-  Providing< SinkInterface >
+  Providing< SinkInterface, AfterRegistrationInterface >
   >
 {
 public:
@@ -47,12 +47,12 @@ public:
   typedef NiftiToItkImageSinkComponent< Dimensionality, TPixel > Self;
   typedef SuperElastixComponent<
     Accepting< NiftyregWarpedImageInterface< TPixel > >,
-    Providing< SinkInterface >
+    Providing< SinkInterface, AfterRegistrationInterface >
     >                                            Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
 
-  typedef NiftyregWarpedImageInterface< TPixel >      AcceptingImageInterfaceType;
+  typedef NiftyregWarpedImageInterface< TPixel >      WarpedImageInterfaceType;
   typedef std::shared_ptr<nifti_image> NiftiImagePointer;
   
   typedef typename itk::Image< TPixel, Dimensionality > ItkImageType;
@@ -64,7 +64,7 @@ public:
   virtual ~NiftiToItkImageSinkComponent();
 
   // accepting interfaces
-  virtual int Set( typename AcceptingImageInterfaceType::Pointer ) override;
+  virtual int Set(typename WarpedImageInterfaceType::Pointer) override;
 
   // prodiving interfaces
   virtual void SetMiniPipelineOutput( itk::DataObject::Pointer ) override;
@@ -74,14 +74,18 @@ public:
 
   virtual itk::DataObject::Pointer GetInitializedOutput( void ) override;
   
+  virtual void AfterRegistration() override;
+
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
 
   static const char * GetDescription() { return "NiftiToItkImageSink Component"; }
 
 private:
-
-  NiftiImagePointer m_MiniPipelineOutputImage;
+  typename WarpedImageInterfaceType::Pointer m_WarpedImageInterface;
+  typename ItkImageType::Pointer m_MiniPipelineOutputImage;
   typename ItkImageType::Pointer m_NetworkBuilderOutputImage;
+
+  //NiftiImagePointer m_MiniPipelineOutputImage;
 
 protected:
 
