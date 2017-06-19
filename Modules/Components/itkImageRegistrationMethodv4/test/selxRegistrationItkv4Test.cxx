@@ -107,9 +107,9 @@ public:
   typedef itk::UniquePointerDataObjectDecorator< Blueprint > BlueprintITKType;
   typedef BlueprintITKType::Pointer                          BlueprintITKPointer;
 
-  typedef SuperElastixFilter::BlueprintType SuperElastixFilterBlueprintType;
-  typedef SuperElastixFilter::Pointer       SuperElastixFilterBlueprintPointer;
-  typedef SuperElastixFilter::ConstPointer  SuperElastixFilterBlueprintConstPointer;
+  typedef SuperElastixFilterBase::BlueprintType SuperElastixFilterBlueprintType;
+  typedef SuperElastixFilterBase::Pointer       SuperElastixFilterBlueprintPointer;
+  typedef SuperElastixFilterBase::ConstPointer  SuperElastixFilterBlueprintConstPointer;
   typedef Blueprint::ParameterMapType       ParameterMapType;
   typedef Blueprint::ParameterValueType     ParameterValueType;
   typedef DataManager                       DataManagerType;
@@ -145,7 +145,7 @@ public:
 
   // Blueprint holds a configuration for SuperElastix
   BlueprintPointer            blueprint;
-  SuperElastixFilter::Pointer superElastixFilter;
+  SuperElastixFilterBase::Pointer superElastixFilter;
   // Data manager provides the paths to the input and output data for unit tests
   DataManagerType::Pointer dataManager;
 };

@@ -25,13 +25,13 @@
 
 namespace selx
 {
-enum SeverityType {
-  TRACE,
-  DEBUG,
-  INFO,
-  WARNING,
-//  ERROR,
-  FATAL
+enum class SeverityType {
+  SELX_TRACE,
+  SELX_DEBUG,
+  SELX_INFO,
+  SELX_WARNING,
+  SELX_ERROR,
+  SELX_FATAL
 };
 
 class LoggerInterface
@@ -40,7 +40,7 @@ public:
 
   typedef const std::string MessageType;
 
-  virtual void Log( SeverityType severity, MessageType message ) = 0;
+  virtual void Log( SeverityType severity, MessageType message ) const = 0;
 };
 
 class Logger : public LoggerInterface
@@ -61,7 +61,7 @@ public:
   //               Logger::ChannelType channel = "SuperElastix",
   //               FormatType format = "[%LineID% %TimeStamp% %ComponentName% %Channel% %SeverityLevel%]: %Message%" );
 
-  virtual void Log( SeverityType severity, MessageType message );
+  virtual void Log( SeverityType severity, MessageType message ) const;
 
   // void Log( ChannelType channel, SeverityType severity, MessageType message );
 

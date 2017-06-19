@@ -22,7 +22,7 @@
 
 macro( _selxmodule_check_name MODULE )
   # "No funny stuff" - Karl Hungus
-  if( NOT "${_name}" MATCHES "^[a-zA-Z_]*$" )
+  if( NOT "${MODULE}" MATCHES "^[a-zA-Z0-9]+$" )
     message( FATAL_ERROR "Invalid module name: ${MODULE}" )
   endif()
 
@@ -106,7 +106,7 @@ macro( _selxmodule_enable MODULE UPSTREAM )
     endif()
 
     if( BUILD_TESTING AND ${MODULE}_TEST_SOURCE_FILES )
-      list( APPEND SUPERELASTIX_TEST_SOURCE_FILES ${${MODULE}_TEST_SOURCE_FILES} )
+      list( APPEND SUPERELASTIX_TEST_SOURCE_FILES ${MODULE}_TEST_SOURCE_FILES )
     endif()
 
     if( ${MODULE}_LIBRARIES )

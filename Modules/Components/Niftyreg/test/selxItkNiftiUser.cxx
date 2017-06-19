@@ -17,25 +17,20 @@
 *
 *=========================================================================*/
 
-#include "selxSuperElastixFilter.h"
-#include "selxNetworkBuilder.h"
-#include "selxNetworkBuilderFactory.h"
-#include "selxDefaultComponents.h"
+// Its own header file.
+#include "selxItkNiftiUser.h"
+
+// Note: The unit test NiftiNameManglingTest.AddressesOfFunctionsFromDifferentNiftiLibsAreDifferent
+// should fail when you uncomment the next line:
+// #define itk_nifti_mangle_h
+
+#include "../ITK-4.10/nifti1_io.h"
 
 namespace selx
 {
-/**
- * ********************* Constructor *********************
- */
-
-SuperElastixFilter
-::SuperElastixFilter(void) : SuperElastixFilterBase()
-{
-  // The default constructor registers the default components.
-  //std::make_unique<NetworkBuilder<DefaultComponents>>();
-  m_NetworkBuilderFactory = std::unique_ptr< NetworkBuilderFactory< DefaultComponents >>( new NetworkBuilderFactory< DefaultComponents > );
-  m_Logger = LoggerType::New();
-} // end Constructor
-
-
-} // namespace elx
+	NiftiFunctionPtrs ItkNiftiUser::GetNiftiFunctionPtrs()
+	{
+		const NiftiFunctionPtrs result = { &nifti_get_filesize, &nifti_swap_2bytes };
+		return result;
+	}
+}

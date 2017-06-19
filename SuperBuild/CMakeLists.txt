@@ -121,8 +121,13 @@ endif()
 mark_as_advanced( SUPERELASTIX_BUILD_NIFTYREG )
 option( SUPERELASTIX_BUILD_NIFTYREG "Build support for Niftyreg." ON )
 if( SUPERELASTIX_BUILD_NIFTYREG )
-#TODO add USE_SYSTEM_NIFTYREG option
-  include( ExternalNiftyreg )
+  mark_as_advanced( USE_SYSTEM_NIFTYREG )
+  option( USE_SYSTEM_NIFTYREG "Use an installed version of Niftyreg." OFF )
+  if( USE_SYSTEM_NIFTYREG )
+  set( NIFTYREG_DIR "NOT_FOUND" CACHE PATH "Absolute path to NiftyReg install directory." )
+  else()
+    include( ExternalNiftyreg )
+  endif()
 endif()
 
 # ---------------------------------------------------------------------

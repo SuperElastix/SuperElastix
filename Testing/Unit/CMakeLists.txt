@@ -32,13 +32,16 @@ endif()
 # ---------------------------------------------------------------------
 # Build tests
 
-foreach( SuperElastixTestFileName ${SUPERELASTIX_TEST_SOURCE_FILES} )
-  # Build tests executables
-  get_filename_component( SuperElastixTest ${SuperElastixTestFileName} NAME_WE )
-  add_executable( ${SuperElastixTest} ${SuperElastixTestFileName} )
-  target_include_directories( ${SuperElastixTest} PUBLIC {SUPERELASTIX_INCLUDE_DIRS} )
-  target_link_libraries( "${SuperElastixTest}" ${SUPERELASTIX_LIBRARIES} ${ITK_LIBRARIES} ${TEST_LIBRARIES} )
+foreach( ModuleTestSourceFileNames ${SUPERELASTIX_TEST_SOURCE_FILES} )
+  # Get module name
+  string( FIND ${ModuleTestSourceFileNames} "_" FIRST_UNDERSCORE_POS )
+  string( SUBSTRING ${ModuleTestSourceFileNames} 0 ${FIRST_UNDERSCORE_POS} ModuleName )
+
+  # Build module test driver
+  add_executable( ${ModuleName}TestDriver ${${ModuleTestSourceFileNames}} )
+  target_include_directories( ${ModuleName}TestDriver PUBLIC {SUPERELASTIX_INCLUDE_DIRS} )
+  target_link_libraries( ${ModuleName}TestDriver ${SUPERELASTIX_LIBRARIES} ${ITK_LIBRARIES} ${TEST_LIBRARIES} )
 
   # Add GoogleTest to CTest
-  GTEST_ADD_TESTS( ${SuperElastixTest} "--gtest_output=xml:${CMAKE_BINARY_DIR}/Testing/Unit/${SuperElastixTest}.xml" ${SuperElastixTestFileName} )
+  GTEST_ADD_TESTS( ${ModuleName}TestDriver "--gtest_output=xml:${CMAKE_BINARY_DIR}/Testing/Unit/${ModuleName}.xml" AUTO )
 endforeach()

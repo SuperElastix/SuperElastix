@@ -128,7 +128,7 @@ MonolithicElastixComponent< Dimensionality, TPixel >
       }
       catch( itk::ExceptionObject & err )
       {
-        std::cout << err;
+        this->m_Logger.Log(SeverityType::SELX_ERROR, err.what());
         //TODO log the error message?
         meetsCriteria = false;
       }

@@ -20,7 +20,7 @@
 #ifndef selxSuperElastixFilterCustomComponents_h
 #define selxSuperElastixFilterCustomComponents_h
 
-#include "selxSuperElastixFilter.h"
+#include "selxSuperElastixFilterBase.h"
 
 /**
  * \class SuperElastixFilter
@@ -30,7 +30,7 @@
 namespace selx
 {
 template< typename ComponentTypeList >
-class SuperElastixFilterCustomComponents : public SuperElastixFilter
+class SuperElastixFilterCustomComponents : public SuperElastixFilterBase
 {
 public:
 
@@ -48,7 +48,7 @@ public:
 
 protected:
 
-  // default constructor
+  /** Constructor with NetworkBuilder filled with custom ComponentTypeList for SDK library use. */
   SuperElastixFilterCustomComponents( void );
 
 private:

@@ -17,25 +17,16 @@
 *
 *=========================================================================*/
 
-#include "selxSuperElastixFilter.h"
-#include "selxNetworkBuilder.h"
-#include "selxNetworkBuilderFactory.h"
-#include "selxDefaultComponents.h"
+
+#include "selxNiftyregNiftiUser.h"
+
+#include "../../Niftyreg/reg-io/nifti/nifti1_io.h"
 
 namespace selx
 {
-/**
- * ********************* Constructor *********************
- */
-
-SuperElastixFilter
-::SuperElastixFilter(void) : SuperElastixFilterBase()
-{
-  // The default constructor registers the default components.
-  //std::make_unique<NetworkBuilder<DefaultComponents>>();
-  m_NetworkBuilderFactory = std::unique_ptr< NetworkBuilderFactory< DefaultComponents >>( new NetworkBuilderFactory< DefaultComponents > );
-  m_Logger = LoggerType::New();
-} // end Constructor
-
-
-} // namespace elx
+	NiftiFunctionPtrs NiftyregNiftiUser::GetNiftiFunctionPtrs()
+	{
+		const NiftiFunctionPtrs result = { &nifti_get_filesize, &nifti_swap_2bytes };
+		return result;
+	}
+}

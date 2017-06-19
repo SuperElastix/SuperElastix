@@ -1,3 +1,6 @@
+#ifndef selxCommonNiftiFunctionTypes_h
+#define selxCommonNiftiFunctionTypes_h
+
 /*=========================================================================
 *
 *  Copyright Leiden University Medical Center, Erasmus University Medical
@@ -17,25 +20,19 @@
 *
 *=========================================================================*/
 
-#include "selxSuperElastixFilter.h"
-#include "selxNetworkBuilder.h"
-#include "selxNetworkBuilderFactory.h"
-#include "selxDefaultComponents.h"
+#include <stdlib.h>  // For size_t.
+
+// Meant to store the pointers to a few functions common to the ITK version and the Niftyreg version of nifti, 
+// that are included with the SuperBuild of SuperElastix.
+// (The list is not meant to be complete.)
 
 namespace selx
 {
-/**
- * ********************* Constructor *********************
- */
+	struct NiftiFunctionPtrs
+	{
+		int(*get_filesize_FunctionPtr)(const char *);
+		void(*swap_2bytes_FunctionPtr)(size_t, void *);
+	};
+}
 
-SuperElastixFilter
-::SuperElastixFilter(void) : SuperElastixFilterBase()
-{
-  // The default constructor registers the default components.
-  //std::make_unique<NetworkBuilder<DefaultComponents>>();
-  m_NetworkBuilderFactory = std::unique_ptr< NetworkBuilderFactory< DefaultComponents >>( new NetworkBuilderFactory< DefaultComponents > );
-  m_Logger = LoggerType::New();
-} // end Constructor
-
-
-} // namespace elx
+#endif

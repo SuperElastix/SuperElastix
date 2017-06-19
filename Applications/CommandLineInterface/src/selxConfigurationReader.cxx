@@ -69,8 +69,27 @@ ConfigurationReader::FromFile(const PathType & filename)
       baseBlueprint->ComposeWith(blueprint);
       std::cout << "Compose with: " << filename << std::endl;
     }
+    baseBlueprint->ComposeWith(FromPropertyTree(propertyTree));
     return baseBlueprint;
   }
+}
+
+void
+ConfigurationReader::MergeFromFile(BlueprintPointerType & blueprint, const PathType & filename)
+{
+  std::cout << "Scanning for Includes: " << filename << std::endl;
+  auto propertyTree = ReadPropertyTree(filename);
+  auto includesList = FindIncludes(propertyTree);
+  if (includesList.size() > 0)
+  {
+    for (auto const & includePath : includesList)
+    {
+      MergeFromFile(blueprint, includePath);
+    }
+  }
+  std::cout << "Load: " << filename << std::endl;
+  MergeProperties(blueprint, propertyTree);
+  return;
 }
 
 ConfigurationReader::PropertyTreeType
@@ -184,6 +203,165 @@ ConfigurationReader::FromPropertyTree( const PropertyTreeType & pt )
     blueprint->SetConnection( outName, inName, componentPropertyMap );
   }
   return blueprint;
+}
+
+void
+ConfigurationReader::MergeProperties(BlueprintPointerType & blueprint, const PropertyTreeType & pt)
+{
+  BOOST_FOREACH(const PropertyTreeType::value_type & v, pt.equal_range("Component"))
+  {
+    std::string      componentName;
+    ParameterMapType newProperties;
+    for (auto const & elm : v.second)
+    {
+      const std::string & componentKey = elm.first;
+      if (componentKey == "Name")
+      {
+        componentName = elm.second.data();
+        continue;
+      }
+
+      ParameterValueType propertyMultiValue = VectorizeValues(elm.second);
+      std::string        propertyKey = elm.first;
+      newProperties[propertyKey] = propertyMultiValue;
+    }
+
+    // Merge newProperies into current blueprint properties
+    // Does blueprint use component with a name that already exists?
+    if (blueprint->ComponentExists(componentName))
+    {
+      // Component exists, check if properties can be merged
+      auto currentProperties = blueprint->GetComponent(componentName);
+
+      for (auto const & othersEntry : newProperties)
+      {
+        // Does other use a property key that already exists in this component?
+        if (currentProperties.count(othersEntry.first))
+        {
+          auto && ownValues = currentProperties[othersEntry.first];
+          auto && otherValues = othersEntry.second;
+          // Are the property values equal?
+          if (ownValues.size() != otherValues.size())
+          {
+            // No, based on the number of values we see that it is different. Blueprints cannot be Composed
+            throw std::invalid_argument("Merging blueprints failed : Component properties cannot be redefined");
+          }
+          else
+          {
+            ParameterValueType::const_iterator ownValue;
+            ParameterValueType::const_iterator otherValue;
+            for (ownValue = ownValues.begin(), otherValue = otherValues.begin(); ownValue != ownValues.end(); ++ownValue, ++otherValue)
+            {
+              if (*otherValue != *ownValue)
+              {
+                // No, at least one value is different. Blueprints cannot be Composed
+                throw std::invalid_argument("Merging blueprints failed: Component properties cannot be redefined");
+              }
+            }
+          }
+        }
+        else
+        {
+          // Property key doesn't exist yet, add entry to this component
+          auto ownProperties = blueprint->GetComponent(componentName);
+          ownProperties[othersEntry.first] = othersEntry.second;
+          blueprint->SetComponent(componentName, ownProperties);
+        }
+      }
+    }
+    else
+    {
+      // Create Component and with the new properties
+      blueprint->SetComponent(componentName, newProperties);
+    }
+  }
+
+  BOOST_FOREACH(const PropertyTreeType::value_type & v, pt.equal_range("Connection"))
+  {
+    std::string connectionName = v.second.data();
+    if (connectionName != "")
+    {
+      std::cout << "warning connectionName " "" << connectionName << "" " is ignored" << std::endl;
+    }
+    std::string      outName;
+    std::string      inName;
+    ParameterMapType newProperties;
+
+    for (auto const & elm : v.second)
+    {
+      const std::string & connectionKey = elm.first;
+
+      if (connectionKey == "Out")
+      {
+        outName = elm.second.data();
+        continue;
+      }
+      else if (connectionKey == "In")
+      {
+        inName = elm.second.data();
+        continue;
+      }
+      else if (connectionKey == "Name")
+      {
+        std::cout << "Warning: connection 'Name'-s are ignored." << std::endl;
+        continue;
+      }
+      else
+      {
+        ParameterValueType propertyMultiValue = VectorizeValues(elm.second);
+        std::string        propertyKey = elm.first;
+        newProperties[propertyKey] = propertyMultiValue;
+      }
+    }
+
+  // Does the blueprint have a connection that already exists?
+    if (blueprint->ConnectionExists(outName, inName))
+    {
+      // Connection exists, check if properties can be merged
+      auto ownProperties = blueprint->GetConnection(outName, inName);
+
+      for (auto const & othersEntry : newProperties)
+      {
+        // Does newProperties use a key that already exists in this component?
+        if (ownProperties.count(othersEntry.first))
+        {
+          auto && ownValues = ownProperties[othersEntry.first];
+          auto && otherValues = othersEntry.second;
+          // Are the property values equal?
+          if (ownValues.size() != otherValues.size())
+          {
+            // No, based on the number of values we see that it is different. Blueprints cannot be Composed
+            throw std::invalid_argument("Merging blueprints failed: Component properties cannot be redefined");
+          }
+          else
+          {
+            ParameterValueType::const_iterator ownValue;
+            ParameterValueType::const_iterator otherValue;
+            for (ownValue = ownValues.begin(), otherValue = otherValues.begin(); ownValue != ownValues.end(); ++ownValue, ++otherValue)
+            {
+              if (*otherValue != *ownValue)
+              {
+                // No, at least one value is different. Blueprints cannot be Composed
+                throw std::invalid_argument("Merging blueprints failed: Component properties cannot be redefined");
+              }
+            }
+          }
+        }
+        else
+        {
+          // Property key doesn't exist yet, add entry to this component
+          //auto ownProperties = this->GetConnection(incomingName, componentName);
+          ownProperties[othersEntry.first] = othersEntry.second;
+          blueprint->SetConnection(outName, inName, ownProperties);
+        }
+      }
+    }
+    else
+    {
+      // Create Component copying properties of other
+      blueprint->SetConnection(outName, inName, newProperties);
+    }
+  }
 }
 } // namespace selx
 
