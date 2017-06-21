@@ -24,8 +24,9 @@ namespace selx
 {
 template< int Dimensionality, class TPixel >
 NiftiToItkImageSinkComponent< Dimensionality, TPixel >::NiftiToItkImageSinkComponent( const std::string & name, const LoggerInterface & logger ) : Superclass( name,
-  logger), m_MiniPipelineOutputImage( nullptr ), m_NetworkBuilderOutputImage( nullptr )
+  logger), m_MiniPipelineOutputImage(nullptr), m_NetworkBuilderOutputImage(nullptr), m_WarpedImageInterface(nullptr), m_ImageDomainInterface(nullptr)
 {
+  m_ImportFilter = ImportFilterType::New();
 }
 
 
@@ -41,11 +42,21 @@ NiftiToItkImageSinkComponent< Dimensionality, TPixel >::Set(typename WarpedImage
 {
  
   // Store pointer to the m_WarpedImageInterface for getting the result image after in has been generated (registration).
-  // TODO: sanity check that m_AcceptingImageInterface was Null to detect if Set was called more than once erroneously.
+  // TODO: sanity check that m_WarpedImageInterface was Null to detect if Set was called more than once erroneously.
   this->m_WarpedImageInterface = other;
   return 0;
 }
 
+template< int Dimensionality, class TPixel >
+int
+NiftiToItkImageSinkComponent< Dimensionality, TPixel >::Set(typename ImageDomainInterfaceType::Pointer other)
+{
+
+  // Store pointer to the m_ImageDomainInterface for getting the result image after in has been generated (registration).
+  // TODO: sanity check that m_ImageDomainInterface was Null to detect if Set was called more than once erroneously.
+  this->m_ImageDomainInterface = other;
+  return 0;
+}
 
 template< int Dimensionality, class TPixel >
 void
@@ -68,7 +79,15 @@ template< int Dimensionality, class TPixel >
 typename itk::DataObject::Pointer
 NiftiToItkImageSinkComponent< Dimensionality, TPixel >::GetMiniPipelineOutput()
 {
-  return this->m_MiniPipelineOutputImage.GetPointer();
+  auto fixedImageDomain = this->m_ImageDomainInterface->GetItkImageDomainFixed();
+  fixedImageDomain->UpdateOutputInformation();
+  //this->m_MiniPipelineOutputImage->S
+  this->m_ImportFilter->SetRegion(fixedImageDomain->GetLargestPossibleRegion());
+  this->m_ImportFilter->SetOrigin(fixedImageDomain->GetOrigin());
+  this->m_ImportFilter->SetSpacing(fixedImageDomain->GetSpacing());
+  this->m_ImportFilter->SetDirection(fixedImageDomain->GetDirection());
+  this->m_ImportFilter->UpdateOutputInformation();
+  return this->m_ImportFilter->GetOutput();
 }
 
 template< int Dimensionality, class TPixel >
@@ -94,7 +113,12 @@ NiftiToItkImageSinkComponent< Dimensionality, TPixel >::AfterRegistration()
   
   auto warpedNiftiImage = this->m_WarpedImageInterface->GetWarpedNiftiImage();
   auto warpedItkImage = NiftiToItkImage<ItkImageType, TPixel>::Convert(warpedNiftiImage);
-  this->m_MiniPipelineOutputImage->Graft(warpedItkImage);
+  //TPixel *  	ptr;
+  //SizeValueType  num;
+  //std:tie(ptr,num) = NiftiToItkImage<ItkImageType, TPixel>::Convert(warpedNiftiImage);
+
+  //this->m_ImportFilter->SetImportPointer(ptr, num, true);
+  //this->m_MiniPipelineOutputImage->Graft(warpedItkImage);
 }
 
 template< int Dimensionality, class TPixel >

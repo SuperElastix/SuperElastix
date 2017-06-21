@@ -20,7 +20,7 @@
 //#include "itkIOCommon.h"
 //#include "itkMetaDataObject.h"
 //#include "itkSpatialOrientationAdapter.h"
-
+#include "itkImportImageFilter.h"
 namespace selx
 {
 
@@ -30,7 +30,16 @@ namespace selx
     NiftiToItkImage< ItkImageType, NiftiPixelType >
     ::Convert(std::shared_ptr<nifti_image> input_image)
   {
-    return ItkImageType::New();
+    auto importImageFilter = itk::ImportImageFilter<ItkImageType::PixelType, ItkImageType::ImageDimension>::New();
+    
+    //importImageFilter->SetRegion(fixedImageDomain->GetLargestPossibleRegion());
+    //importImageFilter->SetOrigin(fixedImageDomain->GetOrigin());
+    //importImageFilter->SetSpacing(fixedImageDomain->GetSpacing());
+    //importImageFilter->SetDirection(fixedImageDomain->GetDirection());
+    //importImageFilter->UpdateOutputInformation();
+
+
+    return importImageFilter->GetOutput();
 
   }
   template<class ItkImageType, class NiftiPixelType>

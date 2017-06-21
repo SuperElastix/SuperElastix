@@ -26,6 +26,7 @@
 #include "selxNiftyregWriteImageComponent.h"
 #include "selxItkToNiftiImageSourceReferenceComponent.h"
 #include "selxNiftiToItkImageSinkComponent.h"
+#include "selxItkImageSourceFixed.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 #include "selxNiftyregf3dComponent.h"
@@ -46,11 +47,12 @@ public:
   typedef DataManager                                        DataManagerType;
 
   /** register all example components */
-  typedef TypeList< Niftyregf3dComponent< float >, 
+  typedef TypeList < Niftyregf3dComponent< float >,
     NiftyregReadImageComponent< float >,
-    NiftyregWriteImageComponent< float >, 
-    ItkToNiftiImageSourceReferenceComponent< 3, float > , 
-    NiftiToItkImageSinkComponent<3,float>,
+    NiftyregWriteImageComponent< float >,
+    ItkToNiftiImageSourceReferenceComponent< 3, float >,
+    NiftiToItkImageSinkComponent<3, float>,
+    ItkImageSourceFixedComponent<3, float>,
     RegistrationControllerComponent< >> RegisterComponents;
 
   typedef SuperElastixFilterCustomComponents< RegisterComponents > SuperElastixFilterType;
@@ -136,10 +138,12 @@ TEST_F(NiftyregComponentTest, NiftiToItkImage)
   // TODO proper 3d nii.gz input data
   //blueprint->SetComponent("FixedImage", { { "NameOfClass", { "NiftyregReadImageComponent" } }, { "FileName", { this->dataManager->GetInputFile("r16slice.nii.gz") } } });
   blueprint->SetComponent("FixedImage", { { "NameOfClass", { "NiftyregReadImageComponent" } }, { "FileName", { this->dataManager->GetOutputFile("ItkToNiftiImage_converted.nii.gz") } } });
+  blueprint->SetComponent("ResultDomainImage", { { "NameOfClass", { "ItkImageSourceFixedComponent" } } });
   blueprint->SetComponent("ResultImage", { { "NameOfClass", { "NiftiToItkImageSinkComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } });
   blueprint->SetComponent("Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } });
 
   blueprint->SetConnection("FixedImage", "ResultImage", { { "NameOfInterface", { "NiftyregWarpedImageInterface" } } });
+  blueprint->SetConnection("ResultDomainImage", "ResultImage", { { "NameOfInterface", { "itkImageDomainFixedInterface" } } });
   blueprint->SetConnection("ResultImage", "Controller", { { "NameOfInterface", { "AfterRegistrationInterface" } } });
 
 
@@ -148,6 +152,11 @@ TEST_F(NiftyregComponentTest, NiftiToItkImage)
   EXPECT_NO_THROW(superElastixFilter->SetBlueprint(superElastixFilterBlueprint));
 
   // Set up the readers and writers
+  auto fixedDomainImageReader = itk::ImageFileReader<itk::Image<float, 3>>::New();
+  fixedDomainImageReader->SetFileName(this->dataManager->GetOutputFile("ItkToNiftiImage_converted.nii.gz"));
+
+  superElastixFilter->SetInput("ResultDomainImage", fixedDomainImageReader->GetOutput());
+
   auto fixedImageWriter = itk::ImageFileWriter<itk::Image<float, 3>>::New();
   fixedImageWriter->SetFileName(dataManager->GetOutputFile("NiftiToItkImage_converted.mhd"));
 
@@ -156,5 +165,6 @@ TEST_F(NiftyregComponentTest, NiftiToItkImage)
 
   //EXPECT_NO_THROW(superElastixFilter->Update());
   fixedImageWriter->Update();
+  
 }
 }
