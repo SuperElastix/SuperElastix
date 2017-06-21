@@ -118,7 +118,7 @@ NiftiToItkImageSinkComponent< Dimensionality, TPixel >::AfterRegistration()
   //std:tie(ptr,num) = NiftiToItkImage<ItkImageType, TPixel>::Convert(warpedNiftiImage);
 
   //this->m_ImportFilter->SetImportPointer(ptr, num, true);
-  //this->m_MiniPipelineOutputImage->Graft(warpedItkImage);
+  this->m_MiniPipelineOutputImage->Graft(warpedItkImage);
 }
 
 template< int Dimensionality, class TPixel >
