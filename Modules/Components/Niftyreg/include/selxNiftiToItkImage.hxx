@@ -18,9 +18,10 @@
 #include "selxNiftiToItkImage.h"
 #include "itkMath.h"
 //#include "itkIOCommon.h"
-//#include "itkMetaDataObject.h"
-//#include "itkSpatialOrientationAdapter.h"
+#include "itkMetaDataObject.h"
+#include "itkSpatialOrientationAdapter.h"
 #include "itkImportImageFilter.h"
+
 namespace selx
 {
 
@@ -32,14 +33,40 @@ namespace selx
   {
 
     auto imageInformationFromNifti = NiftiToItkImage< ItkImageType, NiftiPixelType >::ReadImageInformation(input_image);
+    //TODO: check if the nifti image properties found are compatible with the template arguments of itkImageType.
+
+
+    // Get the image orientation
+    auto orientationFromNifti = NiftiToItkImage< ItkImageType, NiftiPixelType >::GetImageIOOrientationFromNIfTI(imageInformationFromNifti.numberOfDimensions, input_image);
 
     auto importImageFilter = itk::ImportImageFilter<ItkImageType::PixelType, ItkImageType::ImageDimension>::New();
+
+    ItkImageType::RegionType region;
+    ItkImageType::IndexType index;
+    ItkImageType::SizeType size;
+    ItkImageType::PointType origin;
+    ItkImageType::SpacingType spacing;
+    ItkImageType::DirectionType direction;
     
-    //importImageFilter->SetRegion(fixedImageDomain->GetLargestPossibleRegion());
-    //importImageFilter->SetOrigin(fixedImageDomain->GetOrigin());
-    //importImageFilter->SetSpacing(fixedImageDomain->GetSpacing());
-    //importImageFilter->SetDirection(fixedImageDomain->GetDirection());
-    //importImageFilter->UpdateOutputInformation();
+    for (unsigned int d=0; d < imageInformationFromNifti.numberOfDimensions; ++d)
+    {
+      size[d] = imageInformationFromNifti.dimensions[d];
+      origin[d] = orientationFromNifti.origin[d];
+      spacing[d] = imageInformationFromNifti.spacing[d];
+      for (unsigned int e=0; e < imageInformationFromNifti.numberOfDimensions; ++e)
+      {
+        direction[d][e] = orientationFromNifti.direction[d][e];
+      }
+    }
+
+    index.Fill(0);
+    region.SetIndex(index);
+    region.SetSize(size);
+    importImageFilter->SetRegion(region);
+    importImageFilter->SetOrigin(origin);
+    importImageFilter->SetSpacing(spacing);
+    importImageFilter->SetDirection(direction);
+    importImageFilter->UpdateOutputInformation();
 
 
     return importImageFilter->GetOutput();
@@ -83,9 +110,9 @@ namespace selx
   }
 
   template<class ItkImageType, class NiftiPixelType>
-  void
+    DataFromNifti<typename ItkImageType::PixelType>
     NiftiToItkImage< ItkImageType, NiftiPixelType >
-    ::Read(void *buffer, typename ItkImageType::Pointer output_image, std::shared_ptr<nifti_image> input_image )
+    ::Read(void *buffer, std::shared_ptr<nifti_image> input_image, ImageInformationFromNifti const& imageInformationFromNifti)
   {
     void *data = ITK_NULLPTR;
 
@@ -123,44 +150,10 @@ namespace selx
       _size[4] = numComponents;
     }
 
-    if (input_image == ITK_NULLPTR)
-    {
 
-    }
 
-    //
-    // decide whether to read whole region or subregion, by stepping
-    // thru dims and comparing them to requested sizes
-    for (i = 0; i < ItkImageProperties<ItkImageType>::GetNumberOfDimensions(); i++)
-    {
-      if (input_image->dim[i + 1] != _size[i])
-      {
-        break;
-      }
-    }
-    // if all dimensions match requested size, just read in
-    // all data as a block
-    if (i == ItkImageProperties<ItkImageType>::GetNumberOfDimensions())
-    {
-      if (nifti_image_load(input_image) == -1)
-      {
-        itkExceptionMacro(<< "nifti_image_load failed for file: "
-          << this->GetFileName());
-      }
-      data = input_image->data;
-    }
-    else
-    {
-      // read in a subregion
-      if (nifti_read_subregion_image(input_image,
-        _origin,
-        _size,
-        &data) == -1)
-      {
-        itkExceptionMacro(<< "nifti_read_subregion_image failed for file: "
-          << this->GetFileName());
-      }
-    }
+    data = input_image->data;
+
     unsigned int pixelSize = input_image->nbyper;
     //
     // if we're going to have to rescale pixels, and the on-disk
@@ -168,16 +161,25 @@ namespace selx
     // ImageFileReader, we have to up-promote the data to float
     // before doing the rescale.
     //
-    if (MustRescale(rescaleSlope, rescaleIntercept)
-      && imageBaseProperties.componentType != this->m_OnDiskComponentType)
+    if (MustRescale(imageInformationFromNifti.rescaleSlope, imageInformationFromNifti.rescaleIntercept)
+      && (ItkImageProperties<ItkImageType>::IOComponentType != imageInformationFromNifti.componentType))
     {
       pixelSize =
         static_cast<unsigned int>(ItkImageProperties<ItkImageType>::GetNumberOfComponents())
         * static_cast<unsigned int>(sizeof(float));
 
       // Deal with correct management of 64bits platforms
-      const size_t imageSizeInComponents =
-        static_cast<size_t>(this->GetImageSizeInComponents());
+      //const size_t imageSizeInComponents =
+      //  static_cast<size_t>(this->GetImageSizeInComponents());
+
+      ItkImageType::SizeType     numPixels = 1;
+
+      for (unsigned int d = 0; d < imageInformationFromNifti.numberOfDimensions; d++)
+      {
+        numPixels *= imageInformationFromNifti.dimensions[d];
+      }
+
+      const size_t imageSizeInComponents = numPixels * imageInformationFromNifti.numberOfComponents;
 
       //
       // allocate new buffer for floats. Malloc instead of new to
@@ -185,7 +187,7 @@ namespace selx
       float *_data =
         static_cast<float *>
         (malloc(imageSizeInComponents * sizeof(float)));
-      switch (this->m_OnDiskComponentType)
+      switch (imageInformationFromNifti.componentType)
       {
       case CHAR:
         CastCopy< char >(_data, data, imageSizeInComponents);
@@ -236,15 +238,8 @@ namespace selx
     {
       const size_t NumBytes = numElts * pixelSize;
       memcpy(buffer, data, NumBytes);
-      //
-      // if read_subregion was called it allocates a buffer that needs to be
-      // freed.
-      if (data != input_image->data)
-      {
-        free(data);
-      }
     }
-    else
+    else 
     {
       // otherwise nifti is x y z t vec l m 0, itk is
       // vec x y z t l m o
@@ -299,70 +294,65 @@ namespace selx
       delete[] vecOrder;
       dumpdata(data);
       dumpdata(buffer);
-      // if read_subregion was called it allocates a buffer that needs to be
-      // freed.
-      if (data != input_image->data)
-      {
-        free(data);
-      }
+
     }
 
     // If the scl_slope field is nonzero, then rescale each voxel value in the
     // dataset.
     // Complete description of can be found in nifti1.h under "DATA SCALING"
-    if (MustRescale(rescaleSlope, rescaleIntercept))
+    if (MustRescale(imageInformationFromNifti.rescaleSlope, imageInformationFromNifti.rescaleIntercept))
     {
       switch (ItkImageProperties<ItkImageType>::GetComponentType())
       {
       case CHAR:
         RescaleFunction(static_cast<char *>(buffer),
-          rescaleSlope,
-          rescaleIntercept, numElts);
+          imageInformationFromNifti.rescaleSlope,
+          imageInformationFromNifti.rescaleIntercept, numElts);
         break;
       case UCHAR:
         RescaleFunction(static_cast<unsigned char *>(buffer),
-          rescaleSlope,
-          rescaleIntercept, numElts);
+          imageInformationFromNifti.rescaleSlope,
+          imageInformationFromNifti.rescaleIntercept, numElts);
         break;
       case SHORT:
         RescaleFunction(static_cast<short *>(buffer),
-          rescaleSlope,
-          rescaleIntercept, numElts);
+          imageInformationFromNifti.rescaleSlope,
+          imageInformationFromNifti.rescaleIntercept, numElts);
         break;
       case USHORT:
         RescaleFunction(static_cast<unsigned short *>(buffer),
-          rescaleSlope,
-          rescaleIntercept, numElts);
+          imageInformationFromNifti.rescaleSlope,
+          imageInformationFromNifti.rescaleIntercept, numElts);
         break;
       case INT:
         RescaleFunction(static_cast<int *>(buffer),
-          rescaleSlope,
-          rescaleIntercept, numElts);
+          imageInformationFromNifti.rescaleSlope,
+          imageInformationFromNifti.rescaleIntercept, numElts);
         break;
       case UINT:
         RescaleFunction(static_cast<unsigned int *>(buffer),
-          rescaleSlope,
-          rescaleIntercept, numElts);
+          imageInformationFromNifti.rescaleSlope,
+          imageInformationFromNifti.rescaleIntercept, numElts);
         break;
       case LONG:
         RescaleFunction(static_cast<long *>(buffer),
-          rescaleSlope,
-          rescaleIntercept, numElts);
+          imageInformationFromNifti.rescaleSlope,
+          imageInformationFromNifti.rescaleIntercept, numElts);
         break;
       case ULONG:
         RescaleFunction(static_cast<unsigned long *>(buffer),
-          rescaleSlope,
-          rescaleIntercept, numElts);
+          imageInformationFromNifti.rescaleSlope,
+          imageInformationFromNifti.rescaleIntercept, numElts);
         break;
       case FLOAT:
         RescaleFunction(static_cast<float *>(buffer),
-          rescaleSlope,
-          rescaleIntercept, numElts);
+          imageInformationFromNifti.rescaleSlope,
+          imageInformationFromNifti.rescaleIntercept, numElts);
         break;
       case DOUBLE:
         RescaleFunction(static_cast<double *>(buffer),
-          rescaleSlope,
-          rescaleIntercept, numElts);
+          imageInformationFromNifti.rescaleSlope,
+          imageInformationFromNifti.rescaleIntercept, numElts);
         break;
       default:
         if (this->GetPixelType() == SCALAR)
@@ -373,12 +363,13 @@ namespace selx
         }
       }
     }
+    return { buffer, numElts };
   }
 
   // This method adds the available header information to the
   // metadata dictionary.
   template<class ItkImageType, class NiftiPixelType>
-  static void
+  void
     NiftiToItkImage< ItkImageType, NiftiPixelType >
     ::SetImageIOMetadataFromNIfTI(std::shared_ptr<nifti_image> input, itk::MetaDataDictionary& thisDic)
   {
@@ -387,10 +378,11 @@ namespace selx
       // Necessary to clear dict if ImageIO object is re-used
       // thisDic.Clear();
 
+      /* only available in nifti_header
       std::ostringstream dim_info;
       dim_info << input->dim_info;
       itk::EncapsulateMetaData< std::string >(thisDic, "dim_info", dim_info.str());
-
+      */
       for (int idx = 0; idx < 8; idx++)
       {
         std::ostringstream dim;
@@ -420,9 +412,11 @@ namespace selx
       datatype << input->datatype;
       itk::EncapsulateMetaData< std::string >(thisDic, "datatype", datatype.str());
 
+      /* only available in nifti_header
       std::ostringstream bitpix;
       bitpix << input->bitpix;
       itk::EncapsulateMetaData< std::string >(thisDic, "bitpix", bitpix.str());
+      */
 
       std::ostringstream slice_start;
       slice_start << input->slice_start;
@@ -437,9 +431,11 @@ namespace selx
         itk::EncapsulateMetaData< std::string >(thisDic, pixdimKey.str(), pixdim.str());
       }
 
+      /* only available in nifti_header
       std::ostringstream vox_offset;
       vox_offset << input->vox_offset;
       itk::EncapsulateMetaData< std::string >(thisDic, "vox_offset", vox_offset.str());
+      */
 
       std::ostringstream scl_slope;
       scl_slope << input->scl_slope;
@@ -457,9 +453,11 @@ namespace selx
       slice_code << input->slice_code;
       itk::EncapsulateMetaData< std::string >(thisDic, "slice_code", slice_code.str());
 
+      /* only available in nifti_header
       std::ostringstream xyzt_units;
       xyzt_units << input->xyzt_units;
       itk::EncapsulateMetaData< std::string >(thisDic, "xyzt_units", xyzt_units.str());
+      */
 
       std::ostringstream cal_max;
       cal_max << input->cal_max;
@@ -517,6 +515,7 @@ namespace selx
       qoffset_z << input->qoffset_z;
       itk::EncapsulateMetaData< std::string >(thisDic, "qoffset_z", qoffset_z.str());
 
+      /* only available in nifti_header
       std::ostringstream srow_x;
       srow_x << input->srow_x[0] << " " << input->srow_x[1] << " " << input->srow_x[2] << " " << input->srow_x[3];
       itk::EncapsulateMetaData< std::string >(thisDic, "srow_x", srow_x.str());
@@ -528,12 +527,12 @@ namespace selx
       std::ostringstream srow_z;
       srow_z << input->srow_z[0] << " " << input->srow_z[1] << " " << input->srow_z[2] << " " << input->srow_z[3];
       itk::EncapsulateMetaData< std::string >(thisDic, "srow_z", srow_z.str());
+      */
 
       std::ostringstream intent_name;
       intent_name << input->intent_name;
       itk::EncapsulateMetaData< std::string >(thisDic, "intent_name", intent_name.str());
-    
-      return thisDic;
+
   }
 
   template<class ItkImageType, class NiftiPixelType>
@@ -849,7 +848,7 @@ namespace selx
     */
 
     //Create Dictionary Information
-    MetaDataDictionary thisDic = std::make_unique< itk::MetaDataDictionary>;
+    auto thisDic = std::unique_ptr<itk::MetaDataDictionary>(new itk::MetaDataDictionary);
 
     // Set the metadata.
     std::string          classname("selxNiftiToItkImage");
@@ -857,9 +856,6 @@ namespace selx
 
     //Need to encapsulate as much Nifti information as possible here.
     SetImageIOMetadataFromNIfTI(input, *thisDic);
-
-    // set the image orientation
-    SetImageIOOrientationFromNIfTI(dims, input, *thisDic);
 
     //Important hist fields
     std::string description(input->descrip);
@@ -895,10 +891,14 @@ namespace selx
   }
 
   template<class ItkImageType, class NiftiPixelType>
-  void
-    NiftiToItkImage< ItkImageType, NiftiPixelType >::SetImageIOOrientationFromNIfTI(unsigned short int dims, std::shared_ptr<nifti_image> input_NiftiImage, itk::MetaDataDictionary& dict)
+  OrientationFromNifti
+    NiftiToItkImage< ItkImageType, NiftiPixelType >::GetImageIOOrientationFromNIfTI(unsigned short int dims, std::shared_ptr<nifti_image> input_NiftiImage)
   {
     typedef itk::SpatialOrientationAdapter OrientAdapterType;
+    OrientationFromNifti orientationFromNifti = {
+      std::vector<double>(dims), //origin
+      std::vector<std::vector<double>>(dims, std::vector<double>(dims)) //direction
+    };
 
     //
     // in the case of an Analyze75 file, use old analyze orient method.
@@ -910,38 +910,40 @@ namespace selx
       switch (input_NiftiImage->analyze75_orient)
       {
       case a75_transverse_unflipped:
-        orient = SpatialOrientation::ITK_COORDINATE_ORIENTATION_RPI;
+        orient = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RPI;
         break;
       case a75_sagittal_unflipped:
-        orient = SpatialOrientation::ITK_COORDINATE_ORIENTATION_PIR;
+        orient = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_PIR;
         break;
       case a75_coronal_unflipped:
-        orient = SpatialOrientation::ITK_COORDINATE_ORIENTATION_RIP;
+        orient = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RIP;
         break;
       case a75_transverse_flipped:
-        orient = SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI;
+        orient = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI;
         break;
       case a75_sagittal_flipped:
-        orient = SpatialOrientation::ITK_COORDINATE_ORIENTATION_PIL;
+        orient = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_PIL;
         break;
       case a75_coronal_flipped:
-        orient = SpatialOrientation::ITK_COORDINATE_ORIENTATION_RSP;
+        orient = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RSP;
         break;
       case a75_orient_unknown:
-        orient = SpatialOrientation::ITK_COORDINATE_ORIENTATION_RIP;
+        orient = itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RIP;
         break;
       }
+      // Copied from itk code, but is seems that dir is not used at all
       dir = OrientAdapterType().ToDirectionCosines(orient);
-      m_Origin[0] = 0;
+      orientationFromNifti.origin[0] = 0;
       if (dims > 1)
       {
-        m_Origin[1] = 0;
+        orientationFromNifti.origin[1] = 0;
       }
       if (dims > 2)
       {
-        m_Origin[2] = 0;
+        orientationFromNifti.origin[2] = 0;
       }
-      return;
+      // ?? orientationFromNifti.direction = dir;
+      return orientationFromNifti;
     }
 
     // not an Analyze file.
@@ -962,14 +964,14 @@ namespace selx
 
     //
     // set origin
-    m_Origin[0] = -theMat.m[0][3];
+    orientationFromNifti.origin[0] = -theMat.m[0][3];
     if (dims > 1)
     {
-      m_Origin[1] = -theMat.m[1][3];
+      orientationFromNifti.origin[1] = -theMat.m[1][3];
     }
     if (dims > 2)
     {
-      m_Origin[2] = theMat.m[2][3];
+      orientationFromNifti.origin[2] = theMat.m[2][3];
     }
 
     const int             max_defined_orientation_dims = (dims > 3) ? 3 : dims;
@@ -983,7 +985,7 @@ namespace selx
       }
     }
     Normalize(xDirection);
-    this->SetDirection(0, xDirection);
+    orientationFromNifti.direction[0] = xDirection;
 
     if (max_defined_orientation_dims > 1)
     {
@@ -997,7 +999,7 @@ namespace selx
         }
       }
       Normalize(yDirection);
-      this->SetDirection(1, yDirection);
+      orientationFromNifti.direction[1] = yDirection;
     }
 
     if (max_defined_orientation_dims > 2)
@@ -1012,7 +1014,8 @@ namespace selx
         }
       }
       Normalize(zDirection);
-      this->SetDirection(2, zDirection);
+      orientationFromNifti.direction[2] = zDirection;
     }
+    return orientationFromNifti;
   }
 } // end namespace itk

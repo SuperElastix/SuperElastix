@@ -27,6 +27,8 @@
 #include "itkImageIOBase.h"
 #include "selxItkImageProperties.h"
 
+#include "itkMetaDataDictionary.h"
+
 #include <tuple>
 
 namespace selx
@@ -40,10 +42,22 @@ namespace selx
     unsigned int numberOfComponents;
     itk::ImageIOBase::IOPixelType pixelType;
     itk::ImageIOBase::IOComponentType componentType;
-    std::vector<double> dimensions;
+    std::vector<size_t> dimensions;
     std::vector<double> spacing;
   };
 
+  struct OrientationFromNifti
+  {
+    std::vector<double> origin;
+    std::vector<std::vector<double>> direction;
+  };
+
+  template<class PixelType>
+  struct DataFromNifti
+  {
+    PixelType * buffer;
+    size_t numberOfElements;
+  };
 /** \class NiftiToItkImage
  * Convert a nifti image to an itk image object.
  * Adapted from itkNiftiImageIO that is originally by Hans J. Johnson, The University of Iowa 2002
@@ -87,13 +101,13 @@ private:
   static ImageInformationFromNifti ReadImageInformation(std::shared_ptr<nifti_image> input);
 
   /** Reads the data from disk into the memory buffer provided. */
-  void Read(void *buffer, typename ItkImageType::Pointer output_image, std::shared_ptr<nifti_image> input_image);
+  static DataFromNifti<typename ItkImageType::PixelType> Read(void *buffer, std::shared_ptr<nifti_image> input_image, ImageInformationFromNifti const& imageInformationFromNifti);
 
   bool  MustRescale(double rescaleSlope, double rescaleIntercept);
 
   void  DefineHeaderObjectDataType();
 
-  static void SetImageIOOrientationFromNIfTI(unsigned short int dims, std::shared_ptr<nifti_image> input, itk::MetaDataDictionary& dict);
+  static OrientationFromNifti GetImageIOOrientationFromNIfTI(unsigned short int dims, std::shared_ptr<nifti_image> input);
 
   static void SetImageIOMetadataFromNIfTI(std::shared_ptr<nifti_image> input, itk::MetaDataDictionary& dict);
 
