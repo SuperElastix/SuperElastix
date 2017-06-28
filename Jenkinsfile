@@ -45,6 +45,7 @@ node('lkeb-vm-test') {
 		stage('Build') {
 			dir('build') {
 				sh "${ tool 'CMake 3.8.0' } ../src/SuperBuild"
+				sh 'make clean'
 				sh 'make -j4'
 			}
 		}
