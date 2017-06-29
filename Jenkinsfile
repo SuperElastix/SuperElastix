@@ -57,7 +57,8 @@ node('lkeb-vm-test') {
 
 	timeout(45) {
 		stage('Test') {
-		
+			dir('build/SuperElastix-build') {
+				ctest
 		}
 	}
 }
