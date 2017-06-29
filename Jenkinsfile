@@ -59,6 +59,7 @@ node('lkeb-vm-test') {
 		stage('Test') {
 			dir('build/SuperElastix-build') {
 				sh 'ctest'
+			}
 		}
 	}
 }
