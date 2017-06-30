@@ -1,4 +1,22 @@
 /*=========================================================================
+*
+*  Copyright Leiden University Medical Center, Erasmus University Medical
+*  Center and contributors
+*
+*  Licensed under the Apache License, Version 2.0 (the "License");
+*  you may not use this file except in compliance with the License.
+*  You may obtain a copy of the License at
+*
+*        http://www.apache.org/licenses/LICENSE-2.0.txt
+*
+*  Unless required by applicable law or agreed to in writing, software
+*  distributed under the License is distributed on an "AS IS" BASIS,
+*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+*  See the License for the specific language governing permissions and
+*  limitations under the License.
+*
+*=========================================================================*/
+/*=========================================================================
  *
  *  Copyright Insight Software Consortium
  *
@@ -67,8 +85,17 @@ namespace selx
     importImageFilter->SetSpacing(spacing);
     importImageFilter->SetDirection(direction);
     importImageFilter->UpdateOutputInformation();
+    
 
+    
+    // Get data pointer
+    auto dataFromNifti = NiftiToItkImage< ItkImageType, NiftiPixelType >::Read(input_image, imageInformationFromNifti);
 
+    importImageFilter->SetImportPointer(dataFromNifti.buffer, dataFromNifti.numberOfElements, false);
+
+    importImageFilter->UpdateOutputInformation();
+    auto resultImage = importImageFilter->GetOutput();
+    resultImage->Update();
     return importImageFilter->GetOutput();
 
   }
@@ -112,10 +139,16 @@ namespace selx
   template<class ItkImageType, class NiftiPixelType>
     DataFromNifti<typename ItkImageType::PixelType>
     NiftiToItkImage< ItkImageType, NiftiPixelType >
-    ::Read(void *buffer, std::shared_ptr<nifti_image> input_image, ImageInformationFromNifti const& imageInformationFromNifti)
+    ::Read(std::shared_ptr<nifti_image> input_image, ImageInformationFromNifti const& imageInformationFromNifti)
   {
-    void *data = ITK_NULLPTR;
 
+    
+    size_t       imageSizeInComponents = 1;
+    for (size_t dimsize : imageInformationFromNifti.dimensions)
+    {
+      imageSizeInComponents *= dimsize;
+    }
+    /*
     ImageIORegion            regionToRead = output_image->GetIORegion();
     ImageIORegion::SizeType  size = regionToRead.GetSize();
     ImageIORegion::IndexType start = regionToRead.GetIndex();
@@ -136,10 +169,11 @@ namespace selx
       _origin[i] = 0;
       _size[i] = 1;
     }
-
+    */
     unsigned int numComponents = ItkImageProperties<ItkImageType>::GetNumberOfComponents();
     //
     // special case for images of vector pixels
+    /*
     if (numComponents > 1 && ItkImageProperties<ItkImageType>::GetPixelType() != COMPLEX)
     {
       // nifti always sticks vec size in dim 4, so have to shove
@@ -149,10 +183,10 @@ namespace selx
       // sizes = x y z t vecsize
       _size[4] = numComponents;
     }
+    */
 
 
-
-    data = input_image->data;
+    void* data = input_image->data;
 
     unsigned int pixelSize = input_image->nbyper;
     //
@@ -162,7 +196,7 @@ namespace selx
     // before doing the rescale.
     //
     if (MustRescale(imageInformationFromNifti.rescaleSlope, imageInformationFromNifti.rescaleIntercept)
-      && (ItkImageProperties<ItkImageType>::IOComponentType != imageInformationFromNifti.componentType))
+      && (ItkImageProperties<ItkImageType>::GetComponentType() != imageInformationFromNifti.componentType))
     {
       pixelSize =
         static_cast<unsigned int>(ItkImageProperties<ItkImageType>::GetNumberOfComponents())
@@ -171,73 +205,58 @@ namespace selx
       // Deal with correct management of 64bits platforms
       //const size_t imageSizeInComponents =
       //  static_cast<size_t>(this->GetImageSizeInComponents());
-
-      ItkImageType::SizeType     numPixels = 1;
-
-      for (unsigned int d = 0; d < imageInformationFromNifti.numberOfDimensions; d++)
-      {
-        numPixels *= imageInformationFromNifti.dimensions[d];
-      }
-
-      const size_t imageSizeInComponents = numPixels * imageInformationFromNifti.numberOfComponents;
-
       //
       // allocate new buffer for floats. Malloc instead of new to
       // be consistent with allocation used in niftilib
-      float *_data =
-        static_cast<float *>
-        (malloc(imageSizeInComponents * sizeof(float)));
+       float* _data = static_cast<float *>(malloc(imageSizeInComponents * sizeof(float)));
+        
       switch (imageInformationFromNifti.componentType)
       {
-      case CHAR:
+      case IOComponentType::CHAR :
         CastCopy< char >(_data, data, imageSizeInComponents);
         break;
-      case UCHAR:
+      case IOComponentType::UCHAR:
         CastCopy< unsigned char >(_data, data, imageSizeInComponents);
         break;
-      case SHORT:
+      case IOComponentType::SHORT:
         CastCopy< short >(_data, data, imageSizeInComponents);
         break;
-      case USHORT:
+      case IOComponentType::USHORT:
         CastCopy< unsigned short >(_data, data, imageSizeInComponents);
         break;
-      case INT:
+      case IOComponentType::INT:
         CastCopy< int >(_data, data, imageSizeInComponents);
         break;
-      case UINT:
+      case IOComponentType::UINT:
         CastCopy< unsigned int >(_data, data, imageSizeInComponents);
         break;
-      case LONG:
+      case IOComponentType::LONG:
         CastCopy< long >(_data, data, imageSizeInComponents);
         break;
-      case ULONG:
+      case IOComponentType::ULONG:
         CastCopy< unsigned long >(_data, data, imageSizeInComponents);
         break;
-      case FLOAT:
-        itkExceptionMacro(<< "FLOAT pixels do not need Casting to float");
-      case DOUBLE:
-        itkExceptionMacro(<< "DOUBLE pixels do not need Casting to float");
-      case UNKNOWNCOMPONENTTYPE:
-        itkExceptionMacro(<< "Bad OnDiskComponentType UNKNOWNCOMPONENTTYPE");
-      }
-      //
-      // we're replacing the data pointer, so if it was allocated
-      // in nifti_read_subregion_image, free the old data here
-      if (data != input_image->data)
-      {
-        free(data);
+      case IOComponentType::FLOAT:
+        itkGenericExceptionMacro(<< "FLOAT pixels do not need Casting to float");
+      case IOComponentType::DOUBLE:
+        itkGenericExceptionMacro(<< "DOUBLE pixels do not need Casting to float");
+      case IOComponentType::UNKNOWNCOMPONENTTYPE:
+        itkGenericExceptionMacro(<< "Bad OnDiskComponentType UNKNOWNCOMPONENTTYPE");
       }
       data = _data;
     }
+    
+    //void* buffer = (void*) new char[NumBytes];
+    ItkImageType::PixelType* buffer = new ItkImageType::PixelType[imageSizeInComponents];
     //
     // if single or complex, nifti layout == itk layout
     if (numComponents == 1
-      || ItkImageProperties<ItkImageType>::GetPixelType() == COMPLEX
-      || ItkImageProperties<ItkImageType>::GetPixelType() == RGB
-      || ItkImageProperties<ItkImageType>::GetPixelType() == RGBA)
+      || ItkImageProperties<ItkImageType>::GetPixelType() == IOPixelType::COMPLEX
+      || ItkImageProperties<ItkImageType>::GetPixelType() == IOPixelType::RGB
+      || ItkImageProperties<ItkImageType>::GetPixelType() == IOPixelType::RGBA)
     {
-      const size_t NumBytes = numElts * pixelSize;
-      memcpy(buffer, data, NumBytes);
+      const size_t NumBytes = imageSizeInComponents * pixelSize;
+      memcpy((void*)buffer, data, NumBytes);
     }
     else 
     {
@@ -253,8 +272,8 @@ namespace selx
       // as per ITK bug 0007485
       // NIfTI is lower triangular, ITK is upper triangular.
       int *vecOrder;
-      if (ItkImageProperties<ItkImageType>::GetPixelType() == ImageIOBase::DIFFUSIONTENSOR3D
-        || ItkImageProperties<ItkImageType>::GetPixelType() == ImageIOBase::SYMMETRICSECONDRANKTENSOR)
+      if (ItkImageProperties<ItkImageType>::GetPixelType() == IOPixelType::DIFFUSIONTENSOR3D
+        || ItkImageProperties<ItkImageType>::GetPixelType() == IOPixelType::SYMMETRICSECONDRANKTENSOR)
       {
         //      vecOrder = LowerToUpperOrder(SymMatDim(numComponents));
         vecOrder = UpperToLowerOrder(SymMatDim(numComponents));
@@ -262,7 +281,7 @@ namespace selx
       else
       {
         vecOrder = new int[numComponents];
-        for (i = 0; i < numComponents; i++)
+        for (unsigned int i = 0; i < numComponents; i++)
         {
           vecOrder[i] = i;
         }
@@ -292,8 +311,12 @@ namespace selx
         }
       }
       delete[] vecOrder;
-      dumpdata(data);
-      dumpdata(buffer);
+      if (data != input_image->data)
+      {
+        free(data);
+      }
+      //dumpdata(data);
+      //dumpdata(buffer);
 
     }
 
@@ -302,68 +325,11 @@ namespace selx
     // Complete description of can be found in nifti1.h under "DATA SCALING"
     if (MustRescale(imageInformationFromNifti.rescaleSlope, imageInformationFromNifti.rescaleIntercept))
     {
-      switch (ItkImageProperties<ItkImageType>::GetComponentType())
-      {
-      case CHAR:
-        RescaleFunction(static_cast<char *>(buffer),
+        RescaleFunction(buffer,
           imageInformationFromNifti.rescaleSlope,
-          imageInformationFromNifti.rescaleIntercept, numElts);
-        break;
-      case UCHAR:
-        RescaleFunction(static_cast<unsigned char *>(buffer),
-          imageInformationFromNifti.rescaleSlope,
-          imageInformationFromNifti.rescaleIntercept, numElts);
-        break;
-      case SHORT:
-        RescaleFunction(static_cast<short *>(buffer),
-          imageInformationFromNifti.rescaleSlope,
-          imageInformationFromNifti.rescaleIntercept, numElts);
-        break;
-      case USHORT:
-        RescaleFunction(static_cast<unsigned short *>(buffer),
-          imageInformationFromNifti.rescaleSlope,
-          imageInformationFromNifti.rescaleIntercept, numElts);
-        break;
-      case INT:
-        RescaleFunction(static_cast<int *>(buffer),
-          imageInformationFromNifti.rescaleSlope,
-          imageInformationFromNifti.rescaleIntercept, numElts);
-        break;
-      case UINT:
-        RescaleFunction(static_cast<unsigned int *>(buffer),
-          imageInformationFromNifti.rescaleSlope,
-          imageInformationFromNifti.rescaleIntercept, numElts);
-        break;
-      case LONG:
-        RescaleFunction(static_cast<long *>(buffer),
-          imageInformationFromNifti.rescaleSlope,
-          imageInformationFromNifti.rescaleIntercept, numElts);
-        break;
-      case ULONG:
-        RescaleFunction(static_cast<unsigned long *>(buffer),
-          imageInformationFromNifti.rescaleSlope,
-          imageInformationFromNifti.rescaleIntercept, numElts);
-        break;
-      case FLOAT:
-        RescaleFunction(static_cast<float *>(buffer),
-          imageInformationFromNifti.rescaleSlope,
-          imageInformationFromNifti.rescaleIntercept, numElts);
-        break;
-      case DOUBLE:
-        RescaleFunction(static_cast<double *>(buffer),
-          imageInformationFromNifti.rescaleSlope,
-          imageInformationFromNifti.rescaleIntercept, numElts);
-        break;
-      default:
-        if (this->GetPixelType() == SCALAR)
-        {
-          itkExceptionMacro(<< "Datatype: "
-            << itk::ImageIOBase::GetComponentTypeAsString(ItkImageProperties<ItkImageType>::GetComponentType())
-            << " not supported");
-        }
-      }
+          imageInformationFromNifti.rescaleIntercept, imageSizeInComponents);
     }
-    return { buffer, numElts };
+    return{ buffer, imageSizeInComponents };
   }
 
   // This method adds the available header information to the

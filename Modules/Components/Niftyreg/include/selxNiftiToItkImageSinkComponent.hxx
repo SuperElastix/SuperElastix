@@ -24,8 +24,9 @@ namespace selx
 {
 template< int Dimensionality, class TPixel >
 NiftiToItkImageSinkComponent< Dimensionality, TPixel >::NiftiToItkImageSinkComponent( const std::string & name, const LoggerInterface & logger ) : Superclass( name,
-  logger), m_MiniPipelineOutputImage(nullptr), m_NetworkBuilderOutputImage(nullptr), m_WarpedImageInterface(nullptr), m_ImageDomainInterface(nullptr)
+  logger), m_NetworkBuilderOutputImage(nullptr), m_WarpedImageInterface(nullptr), m_ImageDomainInterface(nullptr)
 {
+  m_MiniPipelineOutputImage = ItkImageType::New(); // this is just an empty image for we have a SmartPointer we can pass around downstream. The actual image data will be grafted into this image.
   m_ImportFilter = ImportFilterType::New();
 }
 
@@ -66,12 +67,14 @@ NiftiToItkImageSinkComponent< Dimensionality, TPixel >::SetMiniPipelineOutput(it
   *  The resulting output image will be grafted into when the sink component is connected to an other component.
   * */
   //
+  /*
   this->m_NetworkBuilderOutputImage = dynamic_cast< ItkImageType * >(NetworkBuilderOutput.GetPointer());
   if (this->m_NetworkBuilderOutputImage == nullptr)
   {
     throw std::runtime_error("NiftiToItkImageSinkComponent cannot cast the NetworkBuilder's Output to the required type");
   }
   this->m_MiniPipelineOutputImage = this->m_NetworkBuilderOutputImage;
+  */
 }
 
 
@@ -79,15 +82,7 @@ template< int Dimensionality, class TPixel >
 typename itk::DataObject::Pointer
 NiftiToItkImageSinkComponent< Dimensionality, TPixel >::GetMiniPipelineOutput()
 {
-  auto fixedImageDomain = this->m_ImageDomainInterface->GetItkImageDomainFixed();
-  fixedImageDomain->UpdateOutputInformation();
-  //this->m_MiniPipelineOutputImage->S
-  this->m_ImportFilter->SetRegion(fixedImageDomain->GetLargestPossibleRegion());
-  this->m_ImportFilter->SetOrigin(fixedImageDomain->GetOrigin());
-  this->m_ImportFilter->SetSpacing(fixedImageDomain->GetSpacing());
-  this->m_ImportFilter->SetDirection(fixedImageDomain->GetDirection());
-  this->m_ImportFilter->UpdateOutputInformation();
-  return this->m_ImportFilter->GetOutput();
+  return this->m_MiniPipelineOutputImage.GetPointer();
 }
 
 template< int Dimensionality, class TPixel >
