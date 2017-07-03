@@ -22,6 +22,23 @@ cmake_minimum_required( VERSION 3.0.2 )
 # ---------------------------------------------------------------------
 project( SuperElastixSuperBuild )
 
+if(CMAKE_CONFIGURATION_TYPES)
+  option(SUPERELASTIX_SUPERBUILD_DEBUG_CONFIGURATION "Generate Debug configuration for SuperElastix SuperBuild" OFF)
+  
+  if (SUPERELASTIX_SUPERBUILD_DEBUG_CONFIGURATION)
+    # Modify project name to ease distinguising between a Debug and a non-Debug Visual Studio solution file:
+    project(SuperElastixSuperBuild-Debug)
+    set(CMAKE_CONFIGURATION_TYPES Debug)
+  else()
+    project(SuperElastixSuperBuild)
+    set(CMAKE_CONFIGURATION_TYPES Release)
+  endif()
+
+  set(CMAKE_CONFIGURATION_TYPES "${CMAKE_CONFIGURATION_TYPES}" CACHE STRING
+  "SuperElastix SuperBuild allows CMake to generate only one configuration at a time: Debug or Release (controlled by SUPERELASTIX_SUPERBUILD_DEBUG_CONFIGURATION)"
+  FORCE)
+endif()
+
 set( SUPERELASTIXSUPERBUILD_MAJOR_VERSION 0)
 set( SUPERELASTIXSUPERBUILD_MINOR_VERSION 1)
 set( SUPERELASTIXSUPERBUILD_PATCH_VERSION 0)
