@@ -36,6 +36,8 @@ if(CMAKE_CONFIGURATION_TYPES)
   set(CMAKE_CONFIGURATION_TYPES "${CMAKE_CONFIGURATION_TYPES}" CACHE STRING
   "SuperElastix SuperBuild allows CMake to generate only one configuration at a time: Debug or Release (controlled by SUPERELASTIX_SUPERBUILD_DEBUG_CONFIGURATION)"
   FORCE)
+  
+  message(STATUS "Selected configuration as indicated by SUPERELASTIX_SUPERBUILD_DEBUG_CONFIGURATION: " ${CMAKE_CONFIGURATION_TYPES})
 endif()
 
 set( SUPERELASTIXSUPERBUILD_MAJOR_VERSION 0)
