@@ -26,13 +26,12 @@ if(CMAKE_CONFIGURATION_TYPES)
   option(SUPERELASTIX_SUPERBUILD_DEBUG_CONFIGURATION "Generate Debug configuration for SuperElastix SuperBuild" OFF)
   
   if (SUPERELASTIX_SUPERBUILD_DEBUG_CONFIGURATION)
-    # Modify project name to ease distinguising between a Debug and a non-Debug Visual Studio solution file:
-    project(SuperElastixSuperBuild-Debug)
     set(CMAKE_CONFIGURATION_TYPES Debug)
   else()
-    project(SuperElastixSuperBuild)
     set(CMAKE_CONFIGURATION_TYPES Release)
   endif()
+  # Modify project name to ease distinguising between a Debug and a Release Visual Studio solution file:
+  project(SuperElastixSuperBuild-${CMAKE_CONFIGURATION_TYPES})
 
   set(CMAKE_CONFIGURATION_TYPES "${CMAKE_CONFIGURATION_TYPES}" CACHE STRING
   "SuperElastix SuperBuild allows CMake to generate only one configuration at a time: Debug or Release (controlled by SUPERELASTIX_SUPERBUILD_DEBUG_CONFIGURATION)"
