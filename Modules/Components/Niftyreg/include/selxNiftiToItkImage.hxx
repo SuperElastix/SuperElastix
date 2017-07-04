@@ -53,9 +53,11 @@ namespace selx
     auto imageInformationFromNifti = NiftiToItkImage< ItkImageType, NiftiPixelType >::ReadImageInformation(input_image);
     //TODO: check if the nifti image properties found are compatible with the template arguments of itkImageType.
 
-
     // Get the image orientation
     auto orientationFromNifti = NiftiToItkImage< ItkImageType, NiftiPixelType >::GetImageIOOrientationFromNIfTI(imageInformationFromNifti.numberOfDimensions, input_image);
+
+    // Get data pointer
+    auto dataFromNifti = NiftiToItkImage< ItkImageType, NiftiPixelType >::Read(input_image, imageInformationFromNifti);
 
     auto importImageFilter = itk::ImportImageFilter<ItkImageType::PixelType, ItkImageType::ImageDimension>::New();
 
@@ -84,13 +86,7 @@ namespace selx
     importImageFilter->SetOrigin(origin);
     importImageFilter->SetSpacing(spacing);
     importImageFilter->SetDirection(direction);
-    importImageFilter->UpdateOutputInformation();
-    
-
-    
-    // Get data pointer
-    auto dataFromNifti = NiftiToItkImage< ItkImageType, NiftiPixelType >::Read(input_image, imageInformationFromNifti);
-
+    //importImageFilter->UpdateOutputInformation();  
     importImageFilter->SetImportPointer(dataFromNifti.buffer, dataFromNifti.numberOfElements, false);
 
     importImageFilter->UpdateOutputInformation();
