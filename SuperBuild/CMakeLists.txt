@@ -63,13 +63,6 @@ option( BUILD_SHARED_LIBS "Build shared libraries." OFF )
 mark_as_advanced( BUILD_EXPRESS )
 option( BUILD_EXPRESS "" OFF )
 
-# Build release by default
-if( NOT CMAKE_BUILD_TYPE)
-  set( CMAKE_BUILD_TYPE "Release" CACHE STRING 
-  "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel." 
-  FORCE )
-endif()
-
 # Build examples by default
 # Examples will be build as an external project to verify the installation of SuperElastix
 option( BUILD_APPLICATIONS_EXTERNAL_PROJECT "Enable building examples." ON )
