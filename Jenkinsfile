@@ -32,6 +32,7 @@ def updateGithubCommitStatus(build) {
 node('lkeb-vm-test') {
 	stage('Init') {
 		tool 'CMake 3.8.0'
+		sh 'rm -rf build'
 		sh 'mkdir -p build'
 	}
 
@@ -45,6 +46,7 @@ node('lkeb-vm-test') {
 		stage('Build') {
 			dir('build') {
 				sh "${ tool 'CMake 3.8.0' } ../src/SuperBuild"
+				sh 'make clean'
 				sh 'make -j4'
 			}
 		}

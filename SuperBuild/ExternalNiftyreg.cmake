@@ -22,6 +22,8 @@ set( proj Niftyreg )
 set( NIFTYREG_GIT_REPOSITORY https://cmiclab.cs.ucl.ac.uk/mmodat/niftyreg.git )
 set( NIFTYREG_GIT_TAG 88b369becb6bdbda22ea96a0bef2b83bee85b219 )
 
+UPDATE_SELX_SUPERBUILD_COMMAND(${proj})
+
 ExternalProject_Add( ${proj} 
   GIT_REPOSITORY ${NIFTYREG_GIT_REPOSITORY}
   GIT_TAG ${NIFTYREG_GIT_TAG}
@@ -34,6 +36,7 @@ ExternalProject_Add( ${proj}
    --no-warn-unused-cli
    -DBUILD_ALL_DEP:BOOL=ON
    -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+  BUILD_COMMAND ${SELX_SUPERBUILD_COMMAND}
 )
 
 ExternalProject_Get_Property( ${proj} install_dir )
