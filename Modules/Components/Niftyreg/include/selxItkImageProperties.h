@@ -120,22 +120,22 @@ namespace selx
     template <unsigned VLength>
     static const  std::tuple<unsigned int, IOPixelType, IOComponentType> GetPixelTypeInfo(const itk::Offset< VLength > *)
     {
-      return std::make_tuple(VLength, IOPixelType::OFFSET, ImageIOBase::LONG);
+      return std::make_tuple(VLength, IOPixelType::OFFSET, IOComponentType::LONG);
     }
     
     static const  unsigned int GetNumberOfComponents()
     {
-      return std::get<0>(GetPixelTypeInfo(static_cast<const ItkImageType::PixelType *>(ITK_NULLPTR)));
+      return std::get<0>(GetPixelTypeInfo(static_cast<const typename ItkImageType::PixelType *>(ITK_NULLPTR)));
     }
     
     static const  IOPixelType GetPixelType()
     {
-      return std::get<1>(GetPixelTypeInfo(static_cast<const ItkImageType::PixelType *>(ITK_NULLPTR)));
+      return std::get<1>(GetPixelTypeInfo(static_cast<const typename ItkImageType::PixelType *>(ITK_NULLPTR)));
     }
     
     static const IOComponentType GetComponentType()
     {
-      return std::get<2>(GetPixelTypeInfo(static_cast<const ItkImageType::PixelType *>(ITK_NULLPTR)));
+      return std::get<2>(GetPixelTypeInfo(static_cast<const typename ItkImageType::PixelType *>(ITK_NULLPTR)));
     }
 
 
@@ -172,8 +172,8 @@ namespace selx
 
     static const itk::SizeValueType GetDimensions(typename ItkImageType::Pointer input, unsigned int i)
     {
-      ItkImageType::RegionType region = input->GetLargestPossibleRegion();
-      ItkImageType::SizeType size = region.GetSize();
+      typename ItkImageType::RegionType region = input->GetLargestPossibleRegion();
+      typename ItkImageType::SizeType size = region.GetSize();
       return size[i];
     }
 
