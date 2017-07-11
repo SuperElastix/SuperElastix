@@ -24,6 +24,7 @@
 #include "selxMonolithicElastix.h"
 #include "selxMonolithicTransformix.h"
 #include "selxItkImageSink.h"
+#include "selxItkImageSource.h"
 #include "selxItkImageSourceFixed.h"
 #include "selxItkImageSourceMoving.h"
 #include "selxRegistrationController.h"
@@ -54,10 +55,8 @@ public:
     MonolithicElastixComponent< 2, float >,
     MonolithicTransformixComponent< 2, float >,
     ItkImageSinkComponent< 2, float >,
-    ItkImageSourceFixedComponent< 2, float >,
-    ItkImageSourceMovingComponent< 2, float >,
-    ItkImageSourceFixedComponent< 3, double >,
-    ItkImageSourceMovingComponent< 3, double >,
+    ItkImageSourceComponent< 2, float >,
+    ItkImageSourceComponent< 3, double >,
     RegistrationControllerComponent< >> RegisterComponents;
 
   typedef itk::Image< float, 2 >              Image2DType;
@@ -105,12 +104,12 @@ TEST_F( ElastixComponentTest, ImagesOnly )
   blueprint->SetComponent( "RegistrationMethod", component0Parameters );
 
   ParameterMapType component1Parameters;
-  component1Parameters[ "NameOfClass" ]    = { "ItkImageSourceFixedComponent" };
+  component1Parameters[ "NameOfClass" ]    = { "ItkImageSourceComponent" };
   component1Parameters[ "Dimensionality" ] = { "2" }; // should be derived from the inputs
   blueprint->SetComponent( "FixedImageSource", component1Parameters );
 
   ParameterMapType component2Parameters;
-  component2Parameters[ "NameOfClass" ]    = { "ItkImageSourceMovingComponent" };
+  component2Parameters[ "NameOfClass" ]    = { "ItkImageSourceComponent" };
   component2Parameters[ "Dimensionality" ] = { "2" }; // should be derived from the inputs
   blueprint->SetComponent( "MovingImageSource", component2Parameters );
 
@@ -173,9 +172,9 @@ TEST_F( ElastixComponentTest, MonolithicElastixTransformix )
                                                    { "ResultImagePixelType", { "float" } } } );
   blueprint->SetComponent( "TransformDisplacementField", { { "NameOfClass", { "MonolithicTransformixComponent" } } } );
 
-  blueprint->SetComponent( "FixedImageSource", { { "NameOfClass", { "ItkImageSourceFixedComponent" } }, { "Dimensionality", { "2" } } } );
+  blueprint->SetComponent( "FixedImageSource", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "Dimensionality", { "2" } } } );
 
-  blueprint->SetComponent( "MovingImageSource", { { "NameOfClass", { "ItkImageSourceMovingComponent" } }, { "Dimensionality", { "2" } } } );
+  blueprint->SetComponent( "MovingImageSource", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "Dimensionality", { "2" } } } );
 
   blueprint->SetComponent( "ResultImageSink", { { "NameOfClass", { "ItkImageSinkComponent" } }, { "Dimensionality", { "2" } } } );
 

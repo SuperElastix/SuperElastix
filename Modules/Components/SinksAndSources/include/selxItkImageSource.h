@@ -34,7 +34,10 @@ template< int Dimensionality, class TPixel >
 class ItkImageSourceComponent :
   public SuperElastixComponent<
   Accepting< >,
-  Providing< SourceInterface, itkImageInterface< Dimensionality, TPixel >>
+  Providing< SourceInterface, itkImageInterface< Dimensionality, TPixel >, 
+             itkImageFixedInterface< Dimensionality, TPixel >,
+             itkImageMovingInterface< Dimensionality, TPixel >,
+             itkImageDomainFixedInterface< Dimensionality >>
   >
 {
 public:
@@ -45,7 +48,10 @@ public:
     >                                       Self;
   typedef SuperElastixComponent<
     Accepting< >,
-    Providing< SourceInterface, itkImageInterface< Dimensionality, TPixel >>
+    Providing < SourceInterface, itkImageInterface< Dimensionality, TPixel >,
+    itkImageFixedInterface< Dimensionality, TPixel >,
+    itkImageMovingInterface< Dimensionality, TPixel >,
+    itkImageDomainFixedInterface< Dimensionality >>
     >                                       Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
@@ -54,11 +60,16 @@ public:
   virtual ~ItkImageSourceComponent();
 
   typedef itk::Image< TPixel, Dimensionality > ItkImageType;
+  typedef typename itkImageDomainFixedInterface< Dimensionality >::ItkImageDomainType ItkImageDomainType;
 
   typedef typename itk::ImageFileReader< ItkImageType > ItkImageReaderType;
   typedef FileReaderDecorator< ItkImageReaderType >     DecoratedReaderType;
 
+  // providing interfaces
   virtual typename ItkImageType::Pointer GetItkImage() override;
+  virtual typename ItkImageType::Pointer GetItkImageFixed() override;
+  virtual typename ItkImageType::Pointer GetItkImageMoving() override;
+  virtual typename ItkImageDomainType::Pointer GetItkImageDomainFixed() override;
 
   virtual void SetMiniPipelineInput( itk::DataObject::Pointer ) override;
   virtual AnyFileReader::Pointer GetInputFileReader( void ) override;

@@ -26,7 +26,7 @@
 #include "selxNiftyregWriteImageComponent.h"
 #include "selxItkToNiftiImageSourceReferenceComponent.h"
 #include "selxNiftiToItkImageSinkComponent.h"
-#include "selxItkImageSourceFixed.h"
+#include "selxItkImageSource.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 #include "selxNiftyregf3dComponent.h"
@@ -52,7 +52,7 @@ public:
     NiftyregWriteImageComponent< float >,
     ItkToNiftiImageSourceReferenceComponent< 3, float >,
     NiftiToItkImageSinkComponent<3, float>,
-    ItkImageSourceFixedComponent<3, float>,
+    ItkImageSourceComponent<3, float>,
     RegistrationControllerComponent< >> RegisterComponents;
 
   typedef SuperElastixFilterCustomComponents< RegisterComponents > SuperElastixFilterType;
@@ -138,7 +138,7 @@ TEST_F(NiftyregComponentTest, NiftiToItkImage)
   // TODO proper 3d nii.gz input data
   //blueprint->SetComponent("FixedImage", { { "NameOfClass", { "NiftyregReadImageComponent" } }, { "FileName", { this->dataManager->GetInputFile("r16slice.nii.gz") } } });
   blueprint->SetComponent("FixedImage", { { "NameOfClass", { "NiftyregReadImageComponent" } }, { "FileName", { this->dataManager->GetOutputFile("ItkToNiftiImage_converted.nii.gz") } } });
-  blueprint->SetComponent("ResultDomainImage", { { "NameOfClass", { "ItkImageSourceFixedComponent" } } });
+  blueprint->SetComponent("ResultDomainImage", { { "NameOfClass", { "ItkImageSourceComponent" } } });
   blueprint->SetComponent("ResultImage", { { "NameOfClass", { "NiftiToItkImageSinkComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } });
   blueprint->SetComponent("Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } });
 

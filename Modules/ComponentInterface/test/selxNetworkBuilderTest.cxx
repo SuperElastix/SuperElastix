@@ -107,10 +107,8 @@ TEST_F( NetworkBuilderTest, DeduceComponentsFromConnections )
     DisplacementFieldItkImageFilterSinkComponent< 3, float >,
     ItkImageSinkComponent< 3, double >,
     ItkImageSinkComponent< 3, float >,
-    ItkImageSourceFixedComponent< 3, float >,
-    ItkImageSourceMovingComponent< 3, float >,
-    ItkImageSourceFixedComponent< 3, double >,
-    ItkImageSourceMovingComponent< 3, double >,
+    ItkImageSourceComponent< 3, float >,
+    ItkImageSourceComponent< 3, double >,
     ItkImageRegistrationMethodv4Component< 3, double, double >,
     ItkImageRegistrationMethodv4Component< 3, float, double >,
     ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< 3, double >,
@@ -134,11 +132,11 @@ TEST_F( NetworkBuilderTest, DeduceComponentsFromConnections )
                                                    { "NumberOfLevels", { "2" } },
                                                    { "ShrinkFactorsPerLevel", { "2", "1" } } } );
 
-  blueprint->SetComponent( "FixedImageSource", { { "NameOfClass", { "ItkImageSourceFixedComponent" } },
+  blueprint->SetComponent( "FixedImageSource", { { "NameOfClass", { "ItkImageSourceComponent" } },
                                                  { "Dimensionality", { "3" } },
                                                  { "PixelType", { "float" } } } );
 
-  blueprint->SetComponent( "MovingImageSource", { { "NameOfClass", { "ItkImageSourceMovingComponent" } },
+  blueprint->SetComponent( "MovingImageSource", { { "NameOfClass", { "ItkImageSourceComponent" } },
                                                   { "Dimensionality", { "3" } },
                                                   { "PixelType", { "float" } } } );
 
