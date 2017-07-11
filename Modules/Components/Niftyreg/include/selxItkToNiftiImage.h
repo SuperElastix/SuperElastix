@@ -21,7 +21,9 @@
 
 
 #include <fstream>
-#include <nifti1_io.h>
+// explicitly include Niftyreg's version of nifti1_io, since it differs from 
+// ITK's version and we want to be able to communicate the nifti_image pointer with Niftyreg.
+#include "../../Niftyreg/reg-io/nifti/nifti1_io.h" 
 #include "itkMacro.h"
 
 #include "itkImageIOBase.h"
