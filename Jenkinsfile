@@ -30,11 +30,6 @@ def updateGithubCommitStatus(build) {
 }
 
 
-import static groovy.io.FileType.FILES
-def dir = new File(".");
-def files = [];
-dir.traverse(type: FILES, maxDepth: 0) { files.add(it) };
-
 node('lkeb-vm-test') {
 	stage('Init') {
 		tool 'CMake 3.8.0'
