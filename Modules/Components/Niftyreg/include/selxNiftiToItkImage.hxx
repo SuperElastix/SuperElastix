@@ -59,14 +59,14 @@ namespace selx
     // Get data pointer
     auto dataFromNifti = NiftiToItkImage< ItkImageType, NiftiPixelType >::Read(input_image, imageInformationFromNifti);
 
-    auto importImageFilter = itk::ImportImageFilter<ItkImageType::PixelType, ItkImageType::ImageDimension>::New();
+    auto importImageFilter = itk::ImportImageFilter<typename ItkImageType::PixelType, ItkImageType::ImageDimension>::New();
 
-    ItkImageType::RegionType region;
-    ItkImageType::IndexType index;
-    ItkImageType::SizeType size;
-    ItkImageType::PointType origin;
-    ItkImageType::SpacingType spacing;
-    ItkImageType::DirectionType direction;
+    typename ItkImageType::RegionType region;
+    typename ItkImageType::IndexType index;
+    typename ItkImageType::SizeType size;
+    typename ItkImageType::PointType origin;
+    typename ItkImageType::SpacingType spacing;
+    typename ItkImageType::DirectionType direction;
     
     for (unsigned int d=0; d < imageInformationFromNifti.numberOfDimensions; ++d)
     {
@@ -243,7 +243,7 @@ namespace selx
     }
     
     //void* buffer = (void*) new char[NumBytes];
-    ItkImageType::PixelType* buffer = new ItkImageType::PixelType[imageSizeInComponents];
+    typename ItkImageType::PixelType* buffer = new typename ItkImageType::PixelType[imageSizeInComponents];
     //
     // if single or complex, nifti layout == itk layout
     if (numComponents == 1

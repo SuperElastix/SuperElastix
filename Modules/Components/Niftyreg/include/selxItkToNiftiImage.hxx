@@ -159,7 +159,7 @@ ItkToNiftiImage< ItkImageType, NiftiPixelType >::Convert(typename ItkImageType::
       throw std::runtime_error(msg.str());
     }
 
-    ItkImageType::PixelContainerPointer pixelContainer = input->GetPixelContainer();
+    typename ItkImageType::PixelContainerPointer pixelContainer = input->GetPixelContainer();
 
     bool wasCopied = TransferImageData(pixelContainer->GetBufferPointer(), output);
 
