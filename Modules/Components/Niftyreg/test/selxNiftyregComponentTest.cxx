@@ -174,7 +174,63 @@ TEST_F(NiftyregComponentTest, NiftiToItkImage)
 TEST_F(NiftyregComponentTest, Register2d_itkImages)
 {
   /** make example blueprint configuration */
-  // todo: like WBIRDEMO, but set max iterations to 1 for speedy tests.
+  // Set max iterations to 1 for speedy tests.
+  BlueprintPointer blueprint = BlueprintPointer(new Blueprint());
+
+
+  blueprint->SetComponent("RegistrationMethod", { { "NameOfClass", { "Niftyregf3dComponent" } }, 
+                                                  { "Metric", { "LNCC" } },
+                                                  { "NumberOfResolutions", { "1" } }, 
+                                                  { "NumberOfIterations", { "1" } }, 
+                                                  { "Optimizer", { "Gradient" } },
+                                                  { "GridSpacingInVoxels", { "8", "8" } } });
+  
+  blueprint->SetComponent("FixedImage", { { "NameOfClass", { "ItkToNiftiImageSourceReferenceComponent" } }, { "Dimensionality", { "2" } }, { "PixelType", { "float" } } });
+  blueprint->SetComponent("MovingImage", { { "NameOfClass", { "ItkToNiftiImageSourceReferenceComponent" } }, { "Dimensionality", { "2" } }, { "PixelType", { "float" } } });
+  blueprint->SetComponent("ResultImage", { { "NameOfClass", { "NiftiToItkImageSinkComponent" } }, { "Dimensionality", { "2" } }, { "PixelType", { "float" } } });
+  blueprint->SetComponent("Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } });
+
+  blueprint->SetConnection("FixedImage", "RegistrationMethod", { { "NameOfInterface", { "NiftyregReferenceImageInterface" } } });
+  blueprint->SetConnection("MovingImage", "RegistrationMethod", { { "NameOfInterface", { "NiftyregFloatingImageInterface" } } });
+  blueprint->SetConnection("FixedImage", "ResultImage", { { "NameOfInterface", { "itkImageDomainFixedInterface" } } });
+  blueprint->SetConnection("RegistrationMethod", "ResultImage", { { "NameOfInterface", { "NiftyregWarpedImageInterface" } } });
+  blueprint->SetConnection("RegistrationMethod", "Controller", { {} });
+  blueprint->SetConnection("ResultImage", "Controller", { {} });
+
+  blueprint->Write(dataManager->GetOutputFile("Niftyreg_WBIR.dot"));
+
+  // Set up the readers and writers
+  typedef itk::Image< float, 2 >              Image2DType;
+  typedef itk::ImageFileReader< Image2DType > ImageReader2DType;
+  typedef itk::ImageFileWriter< Image2DType > ImageWriter2DType;
+
+  ImageReader2DType::Pointer fixedImageReader = ImageReader2DType::New();
+  fixedImageReader->SetFileName(dataManager->GetInputFile("coneA2d64.mhd"));
+
+  ImageReader2DType::Pointer movingImageReader = ImageReader2DType::New();
+  movingImageReader->SetFileName(dataManager->GetInputFile("coneB2d64.mhd"));
+
+  ImageWriter2DType::Pointer resultImageWriter = ImageWriter2DType::New();
+  resultImageWriter->SetFileName(dataManager->GetOutputFile("Niftyreg_WBIR_Image.mhd"));
+
+  //DisplacementImageWriter2DType::Pointer resultDisplacementWriter = DisplacementImageWriter2DType::New();
+  //resultDisplacementWriter->SetFileName(dataManager->GetOutputFile("Niftyreg_WBIR_Displacement.mhd"));
+
+  // Connect SuperElastix in an itk pipeline
+  superElastixFilter->SetInput("FixedImage", fixedImageReader->GetOutput());
+  superElastixFilter->SetInput("MovingImage", movingImageReader->GetOutput());
+  resultImageWriter->SetInput(superElastixFilter->GetOutput< Image2DType >("ResultImage"));
+  //resultDisplacementWriter->SetInput(superElastixFilter->GetOutput< DisplacementImage2DType >("ResultDisplacementFieldSink"));
+
+  BlueprintITKPointer superElastixFilterBlueprint = BlueprintITKType::New();
+  superElastixFilterBlueprint->Set(blueprint);
+  EXPECT_NO_THROW(superElastixFilter->SetBlueprint(superElastixFilterBlueprint));
+
+  //Optional Update call
+  //superElastixFilter->Update();
+
+  // Update call on the writers triggers SuperElastix to configure and execute
+  EXPECT_NO_THROW(resultImageWriter->Update());
 }
 
 TEST_F(NiftyregComponentTest, WBIRDemo)
