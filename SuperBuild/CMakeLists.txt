@@ -22,6 +22,24 @@ cmake_minimum_required( VERSION 3.0.2 )
 # ---------------------------------------------------------------------
 project( SuperElastixSuperBuild )
 
+if(CMAKE_CONFIGURATION_TYPES)
+  option(SUPERELASTIX_SUPERBUILD_DEBUG_CONFIGURATION "Generate Debug configuration for SuperElastix SuperBuild" OFF)
+  
+  if (SUPERELASTIX_SUPERBUILD_DEBUG_CONFIGURATION)
+    set(CMAKE_CONFIGURATION_TYPES Debug)
+  else()
+    set(CMAKE_CONFIGURATION_TYPES Release)
+  endif()
+  # Modify project name to ease distinguising between a Debug and a Release Visual Studio solution file:
+  project(SuperElastixSuperBuild-${CMAKE_CONFIGURATION_TYPES})
+
+  set(CMAKE_CONFIGURATION_TYPES "${CMAKE_CONFIGURATION_TYPES}" CACHE STRING
+  "SuperElastix SuperBuild allows CMake to generate only one configuration at a time: Debug or Release (controlled by SUPERELASTIX_SUPERBUILD_DEBUG_CONFIGURATION)"
+  FORCE)
+  
+  message(STATUS "Selected configuration as indicated by SUPERELASTIX_SUPERBUILD_DEBUG_CONFIGURATION: " ${CMAKE_CONFIGURATION_TYPES})
+endif()
+
 set( SUPERELASTIXSUPERBUILD_MAJOR_VERSION 0)
 set( SUPERELASTIXSUPERBUILD_MINOR_VERSION 1)
 set( SUPERELASTIXSUPERBUILD_PATCH_VERSION 0)
@@ -45,13 +63,6 @@ option( BUILD_SHARED_LIBS "Build shared libraries." OFF )
 
 mark_as_advanced( BUILD_EXPRESS )
 option( BUILD_EXPRESS "" OFF )
-
-# Build release by default
-if( NOT CMAKE_BUILD_TYPE)
-  set( CMAKE_BUILD_TYPE "Release" CACHE STRING 
-  "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel." 
-  FORCE )
-endif()
 
 # Build examples by default
 # Examples will be build as an external project to verify the installation of SuperElastix

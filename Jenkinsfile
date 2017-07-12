@@ -29,9 +29,11 @@ def updateGithubCommitStatus(build) {
   ])
 }
 
+
 node('lkeb-vm-test') {
 	stage('Init') {
 		tool 'CMake 3.8.0'
+		//tool 'CTest 3.8.0' does not exist, TODO find proper way
 		sh 'rm -rf build'
 		sh 'mkdir -p build'
 	}
@@ -57,7 +59,9 @@ node('lkeb-vm-test') {
 
 	timeout(45) {
 		stage('Test') {
-		
+			dir('build/SuperElastix-build') {
+				sh '../../../../tools/cmake/bin/ctest' //tool 'CTest 3.8.0' does not exist, TODO find proper way
+			}
 		}
 	}
 }
