@@ -26,7 +26,13 @@ namespace selx
 {
 	NiftiFunctionPtrs NiftyregNiftiUser::GetNiftiFunctionPtrs()
 	{
-		const NiftiFunctionPtrs result = { &nifti_get_filesize, &nifti_swap_2bytes };
+		const NiftiFunctionPtrs result =
+		{
+			&nifti_disp_lib_hist,
+			&nifti_disp_lib_version,
+			&nifti_get_filesize,
+			&nifti_swap_2bytes
+		};
 		return result;
 	}
 }

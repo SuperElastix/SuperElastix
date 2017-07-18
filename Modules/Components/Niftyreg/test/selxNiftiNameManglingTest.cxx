@@ -51,12 +51,18 @@ namespace selx
 	// (either fromn ITK or Niftyreg) can de distinguished by their function address.
 	TEST_F(NiftiNameManglingTest, AddressesOfFunctionsFromDifferentNiftiLibsAreDifferent)
 	{
-		// The main test: the function addresses should be different.
-		ASSERT_NE(itkNiftiFunctionPtrs.get_filesize_FunctionPtr, 
-			niftyregNiftiFunctionPtrs.get_filesize_FunctionPtr);
+		// Sanity checks to see if the function pointers are properly initialized.
+		ASSERT_NE(nullptr, itkNiftiFunctionPtrs.disp_lib_hist_FunctionPtr);
+		ASSERT_NE(nullptr, itkNiftiFunctionPtrs.disp_lib_version_FunctionPtr);
+		ASSERT_NE(nullptr, niftyregNiftiFunctionPtrs.disp_lib_hist_FunctionPtr);
+		ASSERT_NE(nullptr, niftyregNiftiFunctionPtrs.disp_lib_version_FunctionPtr);
 
-		ASSERT_NE(itkNiftiFunctionPtrs.swap_2bytes_FunctionPtr, 
-			niftyregNiftiFunctionPtrs.swap_2bytes_FunctionPtr);
+		// The main test: the function addresses should be different.
+		ASSERT_NE(itkNiftiFunctionPtrs.disp_lib_hist_FunctionPtr,
+			niftyregNiftiFunctionPtrs.disp_lib_hist_FunctionPtr);
+
+		ASSERT_NE(itkNiftiFunctionPtrs.disp_lib_version_FunctionPtr,
+			niftyregNiftiFunctionPtrs.disp_lib_version_FunctionPtr);
 	}
 
 
