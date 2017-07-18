@@ -42,6 +42,7 @@
 #include "selxItkResampleFilter.h"
 #include "selxItkImageSourceFixed.h"
 #include "selxItkImageSourceMoving.h"
+#include "selxItkTransformSinkComponent.h"
 
 #include "selxRegistrationController.h"
 #include "selxItkCompositeTransformComponent.h"
@@ -101,7 +102,8 @@ public:
     ItkResampleFilterComponent< 3, double, double >,
     RegistrationControllerComponent< >,
     ItkCompositeTransformComponent< double, 3 >,
-    ItkCompositeTransformComponent< double, 2 >> RegisterComponents;
+    ItkCompositeTransformComponent< double, 2 >,
+    ItkTransformSinkComponent<2,double>> RegisterComponents;
 
   typedef std::unique_ptr< Blueprint >                       BlueprintPointer;
   typedef itk::UniquePointerDataObjectDecorator< Blueprint > BlueprintITKType;
