@@ -28,7 +28,7 @@ ExternalProject_Add( ${proj}
   GIT_REPOSITORY ${NIFTYREG_GIT_REPOSITORY}
   GIT_TAG ${NIFTYREG_GIT_TAG}
   UPDATE_COMMAND ""
-  PATCH_COMMAND ""
+  PATCH_COMMAND "${GIT_EXECUTABLE}" apply "${CMAKE_SOURCE_DIR}/Patches/nifty_strtof.patch"
   SOURCE_DIR ${proj}
   BINARY_DIR ${proj}-build
   CMAKE_GENERATOR ${gen}
