@@ -54,67 +54,67 @@ namespace selx
     template <typename TPixel>
     static const std::tuple<unsigned int, IOPixelType, IOComponentType> GetPixelTypeInfo(const TPixel *)
     {
-      return std::make_tuple(1, IOPixelType::SCALAR, MapPixelType<TPixel>::CType);
+      return std::make_tuple(1, IOPixelType::SCALAR, static_cast<IOComponentType>(MapPixelType<TPixel>::CType));
     }
 
     template <typename TPixel>
     static const  std::tuple<unsigned int, IOPixelType, IOComponentType> GetPixelTypeInfo(const itk::RGBPixel< TPixel > *)
     {
-      return std::make_tuple(3, IOPixelType::RGB, MapPixelType<TPixel>::CType);
+      return std::make_tuple(3, IOPixelType::RGB, static_cast<IOComponentType>(MapPixelType<TPixel>::CType));
     }
 
     template <typename TPixel>
     static const  std::tuple<unsigned int, IOPixelType, IOComponentType> GetPixelTypeInfo(const itk::RGBAPixel< TPixel > *)
     {
-      return std::make_tuple(4, IOPixelType::RGBA, MapPixelType<TPixel>::CType);
+      return std::make_tuple(4, IOPixelType::RGBA, static_cast<IOComponentType>(MapPixelType<TPixel>::CType));
     }
 
     template <typename TPixel, unsigned VLength>
     static const  std::tuple<unsigned int, IOPixelType, IOComponentType> GetPixelTypeInfo(const itk::Vector< TPixel, VLength > *)
     {
-      return std::make_tuple(VLength, IOPixelType::VECTOR, MapPixelType<TPixel>::CType);
+      return std::make_tuple(VLength, IOPixelType::VECTOR, static_cast<IOComponentType>(MapPixelType<TPixel>::CType));
     }
 
     template <typename TPixel>
     static const  std::tuple<unsigned int, IOPixelType, IOComponentType> GetPixelTypeInfo(const itk::VariableLengthVector< TPixel > *)
     {
-      return std::make_tuple(1, IOPixelType::VECTOR, MapPixelType<TPixel>::CType);
+      return std::make_tuple(1, IOPixelType::VECTOR, static_cast<IOComponentType>(MapPixelType<TPixel>::CType));
     }
 
     template <typename TPixel, unsigned VLength>
     static const  std::tuple<unsigned int, IOPixelType, IOComponentType> GetPixelTypeInfo(const itk::CovariantVector< TPixel, VLength > *)
     {
-      return std::make_tuple(VLength, IOPixelType::COVARIANTVECTOR, MapPixelType<TPixel>::CType);
+      return std::make_tuple(VLength, IOPixelType::COVARIANTVECTOR, static_cast<IOComponentType>(MapPixelType<TPixel>::CType));
     }
 
     template <typename TPixel, unsigned VLength>
     static const  std::tuple<unsigned int, IOPixelType, IOComponentType> GetPixelTypeInfo(const itk::FixedArray< TPixel, VLength > *)
     {
-      return std::make_tuple(VLength, IOPixelType::COVARIANTVECTOR, MapPixelType<TPixel>::CType);
+      return std::make_tuple(VLength, IOPixelType::COVARIANTVECTOR, static_cast<IOComponentType>(MapPixelType<TPixel>::CType));
     }
 
     template <typename TPixel, unsigned VLength>
     static const  std::tuple<unsigned int, IOPixelType, IOComponentType> GetPixelTypeInfo(const itk::SymmetricSecondRankTensor< TPixel, VLength > *)
     {
-      return std::make_tuple(VLength * (VLength + 1) / 2, IOPixelType::SYMMETRICSECONDRANKTENSOR, MapPixelType<TPixel>::CType);
+      return std::make_tuple(VLength * (VLength + 1) / 2, IOPixelType::SYMMETRICSECONDRANKTENSOR, static_cast<IOComponentType>(MapPixelType<TPixel>::CType));
     }
 
     template <typename TPixel>
     static const  std::tuple<unsigned int, IOPixelType, IOComponentType> GetPixelTypeInfo(const itk::DiffusionTensor3D< TPixel > *)
     {
-      return std::make_tuple(6, IOPixelType::DIFFUSIONTENSOR3D, MapPixelType<TPixel>::CType);
+      return std::make_tuple(6, IOPixelType::DIFFUSIONTENSOR3D, static_cast<IOComponentType>(MapPixelType<TPixel>::CType));
     }
 
     template <typename TPixel, unsigned VLength>
     static const  std::tuple<unsigned int, IOPixelType, IOComponentType> GetPixelTypeInfo(const itk::Matrix< TPixel, VLength, VLength > *)
     {
-      return std::make_tuple(VLength * VLength, IOPixelType::MATRIX, MapPixelType<TPixel>::CType);
+      return std::make_tuple(VLength * VLength, IOPixelType::MATRIX, static_cast<IOComponentType>(MapPixelType<TPixel>::CType));
     }
 
     template <typename TPixel>
     static const  std::tuple<unsigned int, IOPixelType, IOComponentType> GetPixelTypeInfo(const std::complex< TPixel > *)
     {
-      return std::make_tuple(2, IOPixelType::COMPLEX, MapPixelType<TPixel>::CType);
+      return std::make_tuple(2, IOPixelType::COMPLEX, static_cast<IOComponentType>(MapPixelType<TPixel>::CType));
     }
 
     template <unsigned VLength>
