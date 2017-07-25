@@ -102,33 +102,68 @@ TEST_F( NetworkBuilderTest, Connect )
 }
 TEST_F( NetworkBuilderTest, DeduceComponentsFromConnections )
 {
-  using CustomRegisterComponents = TypeList<
+  // Fill the component database with all combinations of Dimensionality:[2,3], PixelType:[float,double] and InternalComputationValueType:[float,double]
+  using RegisterComponents = TypeList<
+    DisplacementFieldItkImageFilterSinkComponent< 2, double >,
+    DisplacementFieldItkImageFilterSinkComponent< 2, float >,
     DisplacementFieldItkImageFilterSinkComponent< 3, double >,
     DisplacementFieldItkImageFilterSinkComponent< 3, float >,
+    ItkImageSinkComponent< 2, double >,
+    ItkImageSinkComponent< 2, float >,
     ItkImageSinkComponent< 3, double >,
     ItkImageSinkComponent< 3, float >,
+    ItkImageSourceComponent< 2, float >,
+    ItkImageSourceComponent< 2, double >,
     ItkImageSourceComponent< 3, float >,
     ItkImageSourceComponent< 3, double >,
+    ItkImageRegistrationMethodv4Component< 2, double, double >,
+    ItkImageRegistrationMethodv4Component< 2, float, double >,
+    ItkImageRegistrationMethodv4Component< 2, float, float >,
     ItkImageRegistrationMethodv4Component< 3, double, double >,
     ItkImageRegistrationMethodv4Component< 3, float, double >,
+    ItkImageRegistrationMethodv4Component< 3, float, float >,
+    ItkGradientDescentOptimizerv4Component< double >,
+    ItkGradientDescentOptimizerv4Component< float >,
+    RegistrationControllerComponent< >,
+    ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< 2, double >,
+    ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< 2, float >,
     ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< 3, double >,
-    ItkMeanSquaresImageToImageMetricv4Component< 3, double, double >,
     ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< 3, float >,
+    ItkMeanSquaresImageToImageMetricv4Component< 2, double, double >,
+    ItkMeanSquaresImageToImageMetricv4Component< 2, float, double >,
+    //ItkMeanSquaresImageToImageMetricv4Component< 2, float, float >,
+    ItkMeanSquaresImageToImageMetricv4Component< 3, double, double >,
     ItkMeanSquaresImageToImageMetricv4Component< 3, float, double >,
+    //ItkMeanSquaresImageToImageMetricv4Component< 3, float, float >,
+    ItkAffineTransformComponent< double, 2 >,
+    ItkAffineTransformComponent< float, 2 >,
     ItkAffineTransformComponent< double, 3 >,
+    ItkAffineTransformComponent< float, 3 >,
+    ItkGaussianExponentialDiffeomorphicTransformComponent< double, 2 >,
+    ItkGaussianExponentialDiffeomorphicTransformComponent< float, 2 >,
     ItkGaussianExponentialDiffeomorphicTransformComponent< double, 3 >,
+    ItkGaussianExponentialDiffeomorphicTransformComponent< float, 3 >,
+    ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent< 2, double >,
+    ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent< 2, float >,
     ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent< 3, double >,
-    ItkTransformDisplacementFilterComponent< 3, float, double >,
+    ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent< 3, float >,
+    ItkTransformDisplacementFilterComponent< 2, double, double >,
+    ItkTransformDisplacementFilterComponent< 2, float, double >,
+   // ItkTransformDisplacementFilterComponent< 2, float, float >,
     ItkTransformDisplacementFilterComponent< 3, double, double >,
-    ItkResampleFilterComponent< 3, float, double >,
-    ItkResampleFilterComponent< 3, double, double >>;
-
-  using RegisterComponents = list_append< DefaultComponents, CustomRegisterComponents >::type;
+    ItkTransformDisplacementFilterComponent< 3, float, double >,
+    //ItkTransformDisplacementFilterComponent< 3, float, float >,
+    ItkResampleFilterComponent< 2, double, double >,
+    ItkResampleFilterComponent< 2, float, double >,
+    //ItkResampleFilterComponent< 2, float, float >,
+    ItkResampleFilterComponent< 3, double, double >,
+    ItkResampleFilterComponent< 3, float, double >
+   // ItkResampleFilterComponent< 3, float, float >
+  >;
 
   BlueprintPointer blueprint = BlueprintPointer( new Blueprint() ); // override old blueprint
 
   blueprint->SetComponent( "RegistrationMethod", { { "NameOfClass", { "ItkImageRegistrationMethodv4Component" } },
-                                                   { "Dimensionality", { "3" } },
                                                    { "NumberOfLevels", { "2" } },
                                                    { "ShrinkFactorsPerLevel", { "2", "1" } } } );
 
@@ -164,15 +199,12 @@ TEST_F( NetworkBuilderTest, DeduceComponentsFromConnections )
   component7Parameters[ "NumberOfIterations" ] = { "1" };
   blueprint->SetComponent( "Optimizer", component7Parameters );
 
-  blueprint->SetComponent( "ResampleFilter", { { "NameOfClass", { "ItkResampleFilterComponent" } },
-                                               { "Dimensionality", { "3" } } } );
+  blueprint->SetComponent("ResampleFilter", { { "NameOfClass", { "ItkResampleFilterComponent" } } });
 
-  blueprint->SetComponent( "Transform", { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformComponent" } },
-                                          { "Dimensionality", { "3" } } } );
+  blueprint->SetComponent("Transform", { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformComponent" } } });
 
   blueprint->SetComponent( "TransformResolutionAdaptor",
     { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent" } },
-      { "Dimensionality", { "3" } },
       { "ShrinkFactorsPerLevel", { "2", "1" } } } );
 
   blueprint->SetComponent( "Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } } );
@@ -207,7 +239,7 @@ TEST_F( NetworkBuilderTest, DeduceComponentsFromConnections )
   blueprint->SetConnection( "FixedImageSource", "TransformDisplacementFilter", { {} } );
   blueprint->SetConnection( "RegistrationMethod", "ResampleFilter", { {} } );
   blueprint->SetConnection( "FixedImageSource", "ResampleFilter", { {} } );
-  blueprint->SetConnection( "MovingImageSource", "ResampleFilter", { {} } );
+  blueprint->SetConnection("MovingImageSource", "ResampleFilter", { { keys::NameOfInterface, { "itkImageMovingInterface" } } });
 
   blueprint->SetConnection( "RegistrationMethod", "Controller", { {} } );          //RunRegistrationInterface
   blueprint->SetConnection( "ResampleFilter", "Controller", { {} } );              //ReconnectTransformInterface
