@@ -40,10 +40,10 @@ template< int Dimensionality, class TPixel >
 int
 DisplacementFieldItkImageFilterSinkComponent< Dimensionality, TPixel >::Set( typename AcceptingDisplacementFieldInterfaceType::Pointer other )
 {
-  if( this->m_NetworkBuilderOutputImage == nullptr )
-  {
-    throw std::runtime_error( "SinkComponent needs to be initialized by SetMiniPipelineOutput()" );
-  }
+  //if( this->m_NetworkBuilderOutputImage == nullptr )
+  //{
+  //  throw std::runtime_error( "SinkComponent needs to be initialized by SetMiniPipelineOutput()" );
+  //}
 
   // Store pointer to MiniPipelineOutputImage for later grafting onto NetworkBuilder output.
   this->m_MiniPipelineOutputImage = other->GetDisplacementFieldItkImage();
