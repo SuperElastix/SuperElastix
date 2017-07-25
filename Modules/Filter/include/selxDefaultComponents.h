@@ -44,8 +44,7 @@ namespace selx
 using DefaultComponents = selx::TypeList<
   DisplacementFieldItkImageFilterSinkComponent< 2, float >,
   ItkImageSinkComponent< 2, float >,
-  ItkImageSourceFixedComponent< 2, float >,
-  ItkImageSourceMovingComponent< 2, float >,
+  ItkImageSourceComponent< 2, float >,
   ElastixComponent< 2, float >,
   MonolithicElastixComponent< 2, float >,
   MonolithicTransformixComponent< 2, float >,

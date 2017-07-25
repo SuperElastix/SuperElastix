@@ -94,7 +94,67 @@ Niftyregf3dComponent<  TPixel >
 
 }
 
+/* Niftyreg member functions:
+void SetControlPointGridImage(nifti_image *);
+void SetBendingEnergyWeight(T);
+void SetLinearEnergyWeight(T);
+void SetJacobianLogWeight(T);
+void ApproximateJacobianLog();
+void DoNotApproximateJacobianLog();
+void SetSpacing(unsigned int, T);
+void NoGridRefinement()
+void SetMaximalIterationNumber(unsigned int);
+void NoOptimisationAlongX()
+void NoOptimisationAlongY()
+void NoOptimisationAlongZ()
+void SetPerturbationNumber(size_t v)
+void UseConjugateGradient();
+void DoNotUseConjugateGradient();
+void UseApproximatedGradient();
+void DoNotUseApproximatedGradient();
+// Measure of similarity related functions
+//    void ApproximateParzenWindow();
+//    void DoNotApproximateParzenWindow();
+virtual void UseNMISetReferenceBinNumber(int, int);
+virtual void UseNMISetFloatingBinNumber(int, int);
+virtual void UseSSD(int timepoint, bool normalize);
+virtual void UseMIND(int timepoint, int offset);
+virtual void UseMINDSSC(int timepoint, int offset);
+virtual void UseKLDivergence(int timepoint);
+virtual void UseDTI(bool *timepoint);
+virtual void UseLNCC(int timepoint, float stdDevKernel);
+virtual void SetLNCCKernelType(int type);
+void SetLocalWeightSim(nifti_image *);
 
+void SetNMIWeight(int, double);
+void SetSSDWeight(int, double);
+void SetKLDWeight(int, double);
+void SetLNCCWeight(int, double);
+
+void SetReferenceImage(nifti_image *);
+void SetFloatingImage(nifti_image *);
+void SetReferenceMask(nifti_image *);
+void SetAffineTransformation(mat44 *);
+void SetReferenceSmoothingSigma(T);
+void SetFloatingSmoothingSigma(T);
+void SetGradientSmoothingSigma(T);
+void SetReferenceThresholdUp(unsigned int, T);
+void SetReferenceThresholdLow(unsigned int, T);
+void SetFloatingThresholdUp(unsigned int, T);
+void SetFloatingThresholdLow(unsigned int, T);
+void UseRobustRange();
+void DoNotUseRobustRange();
+void SetWarpedPaddingValue(T);
+void SetLevelNumber(unsigned int);
+void SetLevelToPerform(unsigned int);
+void PrintOutInformation();
+void DoNotPrintOutInformation();
+void DoNotUsePyramidalApproach();
+void UseNeareatNeighborInterpolation();
+void UseLinearInterpolation();
+void UseCubicSplineInterpolation();
+void SetLandmarkRegularisationParam(size_t, float *, float*, float);
+*/
 template< class TPixel >
 bool
 Niftyregf3dComponent<  TPixel >
@@ -111,7 +171,116 @@ Niftyregf3dComponent<  TPixel >
   {
     return false;
   } // else: CriterionStatus::Unknown
+  
+  else if (criterion.first == "Metric") //Supports this?
+  {
+    meetsCriteria = true;
+    if (criterion.second.size() == 1)
+    {
+      if (criterion.second[0] == "SumOfSquaredDifferences" || criterion.second[0] == "SSD")
+      {
+        this->m_reg_f3d->UseSSD(0, false);// try catch? TODO normalize argument?
 
+      }
+      else if (criterion.second[0] == "MIND")
+      {
+        this->m_reg_f3d->UseMIND(0,0);// try catch? TODO timepoint, offset arguments?
+      }
+      else if (criterion.second[0] == "MINDSCC")
+      {
+        this->m_reg_f3d->UseMINDSSC(0, 0);// try catch? TODO timepoint, offset arguments?
+      }
+      else if (criterion.second[0] == "KLDivergence")
+      {
+        this->m_reg_f3d->UseKLDivergence(0);// try catch?
+      }
+      else if (criterion.second[0] == "DTI")
+      {
+        this->m_reg_f3d->UseDTI(0);// try catch?
+      }
+      else if (criterion.second[0] == "LNCC")
+      {
+        this->m_reg_f3d->UseLNCC(0, 5.0);// try catch? TODO stdDevKernel;
+      }
+      else
+      {
+        std::cout << "The key " << criterion.first << " is recognized, but not with value " << criterion.second[0] << std::endl;
+        return false;
+      }
+    }
+    else
+    {
+      // TODO log error?
+      std::cout << criterion.first << " accepts one number only" << std::endl;
+      return false;
+    }
+  }
+  else if (criterion.first == "NumberOfIterations" || criterion.first == "MaximalIterationNumber") //Supports this?
+  {
+    meetsCriteria = true;
+    if (criterion.second.size() == 1)
+    {
+      // try catch?
+      this->m_reg_f3d->SetMaximalIterationNumber(std::stoi(criterion.second[0]));
+    }
+    else
+    {
+      // TODO log error?
+      std::cout << "NumberOfIterations accepts one number only" << std::endl;
+      return false;
+    }
+  }
+
+  else if (criterion.first == "Optimizer") //Supports this?
+  {
+    meetsCriteria = true;
+    if (criterion.second.size() == 1)
+    {
+      if (criterion.second[0] == "ConjugateGradient")
+      {
+        this->m_reg_f3d->UseConjugateGradient();// try catch?
+      }
+      else if (criterion.second[0] == "Gradient")
+      {
+        this->m_reg_f3d->DoNotUseConjugateGradient();// try catch?
+      }
+      else
+      {
+        std::cout << "The key " << criterion.first << " is recognized, but not with value " << criterion.second[0]  << std::endl;
+        return false;
+      }
+    }
+    else
+    {
+      // TODO log error?
+      std::cout << criterion.first << " accepts one number only" << std::endl;
+      return false;
+    }
+  }
+
+  else if (criterion.first == "NumberOfResolutions") //Supports this?
+  {
+    meetsCriteria = true;
+    if (criterion.second.size() == 1)
+    {
+      // try catch?
+      this->m_reg_f3d->SetLevelNumber(std::stoi(criterion.second[0]));
+    }
+    else
+    {
+      // TODO log error?
+      std::cout << criterion.first << " accepts one number only" << std::endl;
+      return false;
+    }
+  }
+  else if (criterion.first == "GridSpacingInVoxels") //Supports this?
+  {
+    for (unsigned int d = 0; d < criterion.second.size(); ++d)
+    {
+      this->m_reg_f3d->SetSpacing(d, std::stof(criterion.second[d]));
+    }
+    meetsCriteria = true;
+  }
   return meetsCriteria;
 }
 } //end namespace selx

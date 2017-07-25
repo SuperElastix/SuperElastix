@@ -40,10 +40,10 @@ template< int Dimensionality, class TPixel >
 int
 ItkMeshSinkComponent< Dimensionality, TPixel >::Set( typename itkMeshInterface< Dimensionality, TPixel >::Pointer other )
 {
-  if( this->m_NetworkBuilderOutputMesh == nullptr )
-  {
-    throw std::runtime_error( "SinkComponent needs to be initialized by ConnectToNetworkBuilderSink()" );
-  }
+  //if( this->m_NetworkBuilderOutputMesh == nullptr )
+  //{
+  //  throw std::runtime_error( "SinkComponent needs to be initialized by ConnectToNetworkBuilderSink()" );
+  //}
 
   // Store pointer to MiniPipelineOutputMesh for later grafting onto NetworkBuilder output.
   this->m_MiniPipelineOutputMesh = other->GetItkMesh();

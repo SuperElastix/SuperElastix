@@ -34,7 +34,7 @@ template< class TPixel >
 class NiftyregReadImageComponent :
   public SuperElastixComponent<
   Accepting<  >,
-  Providing< NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >>
+  Providing< NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >, NiftyregWarpedImageInterface< TPixel >>
   >
 {
 public:
@@ -43,7 +43,7 @@ public:
   typedef NiftyregReadImageComponent< TPixel > Self;
   typedef SuperElastixComponent<
     Accepting<  >,
-    Providing< NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >>
+    Providing< NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >, NiftyregWarpedImageInterface< TPixel >>
     >                                            Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
@@ -54,6 +54,8 @@ public:
   virtual std::shared_ptr<nifti_image> GetFloatingNiftiImage() override;
 
   virtual std::shared_ptr<nifti_image> GetReferenceNiftiImage() override;
+
+  virtual std::shared_ptr<nifti_image> GetWarpedNiftiImage() override;
 
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
 
