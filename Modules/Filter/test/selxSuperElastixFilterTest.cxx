@@ -110,9 +110,9 @@ TEST_F( SuperElastixFilterTest, ImageOnly )
 
   BlueprintPointer blueprint = BlueprintPointer( new Blueprint() );
 
-  blueprint->SetComponent( "InputImage", { { "NameOfClass", { "ItkImageSourceComponent" } } } );
+  blueprint->SetComponent("InputImage", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "double" } } });
   blueprint->SetComponent( "ImageFilter", { { "NameOfClass", { "ItkSmoothingRecursiveGaussianImageFilterComponent" } } } );
-  blueprint->SetComponent( "OutputImage", { { "NameOfClass", { "ItkImageSinkComponent" } } } );
+  blueprint->SetComponent("OutputImage", { { "NameOfClass", { "ItkImageSinkComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "double" } } });
   blueprint->SetConnection( "InputImage", "ImageFilter", { {} } ); //
   blueprint->SetConnection( "ImageFilter", "OutputImage", { {} } );
 
@@ -146,7 +146,7 @@ TEST_F( SuperElastixFilterTest, ImageAndMesh )
 
   BlueprintPointer blueprint = BlueprintPointer( new Blueprint() );
 
-  blueprint->SetComponent( "InputImage", { { "NameOfClass", { "ItkImageSourceComponent" } } } );
+  blueprint->SetComponent("InputImage", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "double" } } });
   blueprint->SetComponent( "ImageFilter", { { "NameOfClass", { "ItkSmoothingRecursiveGaussianImageFilterComponent" } } } );
   blueprint->SetComponent( "OutputImage", { { "NameOfClass", { "ItkImageSinkComponent" } } } );
   blueprint->SetConnection( "InputImage", "ImageFilter", Blueprint::ParameterMapType() ); //
