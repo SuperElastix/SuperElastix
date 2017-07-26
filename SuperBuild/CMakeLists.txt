@@ -23,21 +23,22 @@ cmake_minimum_required( VERSION 3.0.2 )
 project( SuperElastixSuperBuild )
 
 if(CMAKE_CONFIGURATION_TYPES)
-  option(SUPERELASTIX_SUPERBUILD_DEBUG_CONFIGURATION "Generate Debug configuration for SuperElastix SuperBuild" OFF)
-  
-  if (SUPERELASTIX_SUPERBUILD_DEBUG_CONFIGURATION)
-    set(CMAKE_CONFIGURATION_TYPES Debug)
-  else()
+
+  list(LENGTH CMAKE_CONFIGURATION_TYPES SELX_NUMBER_OF_CONFIGURATION_TYPES)
+  if ( NOT ${SELX_NUMBER_OF_CONFIGURATION_TYPES} EQUAL 1 )
+    message(STATUS "CMAKE_CONFIGURATION_TYPES had ${SELX_NUMBER_OF_CONFIGURATION_TYPES} configuration types (${CMAKE_CONFIGURATION_TYPES}), but SuperElastix SuperBuild only supports exactly one configuration type at a time! It is now reset to Release.\n"
+    "  Please modify CMAKE_CONFIGURATION_TYPES if you want to configure a different configuration type (Debug, MinSizeRel, or RelWithDebInfo).")
     set(CMAKE_CONFIGURATION_TYPES Release)
   endif()
-  # Modify project name to ease distinguising between a Debug and a Release Visual Studio solution file:
+  
+  # Modify project name to ease distinguishing between Visual Studio solution files of different configuration types:
   project(SuperElastixSuperBuild-${CMAKE_CONFIGURATION_TYPES})
 
   set(CMAKE_CONFIGURATION_TYPES "${CMAKE_CONFIGURATION_TYPES}" CACHE STRING
-  "SuperElastix SuperBuild allows CMake to generate only one configuration at a time: Debug or Release (controlled by SUPERELASTIX_SUPERBUILD_DEBUG_CONFIGURATION)"
+  "SuperElastix SuperBuild allows CMake to generate only one configuration at a time (Debug, Release, MinSizeRel, or RelWithDebInfo)"
   FORCE)
   
-  message(STATUS "Selected configuration as indicated by SUPERELASTIX_SUPERBUILD_DEBUG_CONFIGURATION: " ${CMAKE_CONFIGURATION_TYPES})
+  message(STATUS "Selected configuration type (CMAKE_CONFIGURATION_TYPES): " ${CMAKE_CONFIGURATION_TYPES})
 endif()
 
 set( SUPERELASTIXSUPERBUILD_MAJOR_VERSION 0)
