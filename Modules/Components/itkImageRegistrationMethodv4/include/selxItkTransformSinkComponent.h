@@ -30,7 +30,7 @@
 #include "itkTransformFileWriter.h"
 #include "itkSmartPointer.h"
 #include "selxAnyFileWriter.h"
-#include "selxFileWriterDecorator.h"
+#include "selxItkTransfromDataObjectFileWriter.h"
 
 namespace selx
 {
@@ -61,8 +61,8 @@ public:
   typedef typename AcceptingTransformInterfaceType::TransformType TransformType;
   typedef typename itk::DataObjectDecorator<TransformType> DecoratedTransformType;
   typedef typename TransformType::Pointer                     ItkTransformPointer;
-  typedef typename itk::TransformFileWriterTemplate< InternalComputationValueType >      ItkTransformWriterType;
-  typedef FileWriterDecorator< ItkTransformWriterType >          DecoratedWriterType;
+  //typedef typename itk::TransformFileWriterTemplate< InternalComputationValueType >      ItkTransformWriterType;
+  typedef ItkTransfromDataObjectFileWriter< InternalComputationValueType, Dimensionality, Dimensionality> DecoratedWriterType;
 
   virtual int Set( typename AcceptingTransformInterfaceType::Pointer ) override;
 

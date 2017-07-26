@@ -36,8 +36,7 @@
 #include "selxItkTransformDisplacementFilter.h"
 #include "selxItkResampleFilter.h"
 #include "selxRegistrationController.h"
-#include "selxItkImageSourceFixed.h"
-#include "selxItkImageSourceMoving.h"
+#include "selxItkTransformSinkComponent.h"
 
 namespace selx
 {
@@ -58,6 +57,7 @@ using DefaultComponents = selx::TypeList<
   ItkTransformDisplacementFilterComponent< 2, float, double >,
   ItkResampleFilterComponent< 2, float, double >,
   RegistrationControllerComponent< >,
-  ItkSmoothingRecursiveGaussianImageFilterComponent< 2, float >
+  ItkSmoothingRecursiveGaussianImageFilterComponent< 2, float >,
+  ItkTransformSinkComponent< 2, float >
   >;
 }
