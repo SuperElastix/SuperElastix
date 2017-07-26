@@ -24,9 +24,9 @@ namespace selx
 {
 template< int Dimensionality, class TInternalComputationValue >
 ItkTransformSinkComponent< Dimensionality, TInternalComputationValue >::ItkTransformSinkComponent( const std::string & name, const LoggerInterface & logger ) : Superclass( name,
-    logger ),
-  m_MiniPipelineOutputImage( nullptr )
+    logger )
 {
+  m_MiniPipelineOutputImage = DecoratedTransformType::New();
 }
 
 
@@ -40,18 +40,9 @@ template< int Dimensionality, class TInternalComputationValue >
 int
 ItkTransformSinkComponent< Dimensionality, TInternalComputationValue >::Set(typename itkTransformInterface< TInternalComputationValue, Dimensionality >::Pointer other)
 {
-  /*
-  if( this->m_NetworkBuilderOutputImage == nullptr )
-  {
-    throw std::runtime_error( "SinkComponent needs to be initialized by SetMiniPipelineOutput()" );
-  }
-
-  // Store pointer to MiniPipelineOutputImage for later grafting onto NetworkBuilder output.
-  this->m_MiniPipelineOutputImage = other->GetItkTransform();
-  //this->m_MiniPipelineOutputImage->Graft(other->GetItkImage());
-  // Graft NetworkBuilder output onto MiniPipelineOutputImage.
-  //this->m_MiniPipelineOutputImage->Graft(this->m_NetworkBuilderOutputImage);
-  */
+  // Store pointer to the m_WarpedImageInterface for getting the result image after in has been generated (registration).
+  // TODO: sanity check that m_WarpedImageInterface was Null to detect if Set was called more than once erroneously.
+  this->m_TransformInterface = other;
   return 0;
 }
 
@@ -95,9 +86,25 @@ template< int Dimensionality, class TInternalComputationValue >
 typename itk::DataObject::Pointer
 ItkTransformSinkComponent< Dimensionality, TInternalComputationValue >::GetInitializedOutput()
 {
-  return DecoratedTransformType::New().GetPointer();
+  if (this->m_MiniPipelineOutputImage == nullptr)
+  {
+   this->m_MiniPipelineOutputImage = DecoratedTransformType::New();
+  }
+  //auto initializedTransform = TransformType:New();
+  //auto initializedDecorator = DecoratedTransformType::New();
+  //initializedDecorator->Set(initializedTransform);
+  //return initializedDecorator.GetPointer();
+  return this->m_MiniPipelineOutputImage.GetPointer();
 }
 
+template< int Dimensionality, class TInternalComputationValue >
+void
+ItkTransformSinkComponent< Dimensionality, TInternalComputationValue >::AfterRegistration()
+{
+
+  auto transform = this->m_TransformInterface->GetItkTransform();  
+  this->m_MiniPipelineOutputImage->Set(transform);
+}
 
 template< int Dimensionality, class TInternalComputationValue >
 bool

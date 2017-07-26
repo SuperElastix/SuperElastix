@@ -38,7 +38,7 @@ template< int Dimensionality, class InternalComputationValueType >
 class ItkTransformSinkComponent :
   public SuperElastixComponent<
   Accepting< itkTransformInterface< InternalComputationValueType, Dimensionality >>,
-  Providing< SinkInterface >
+  Providing< SinkInterface, AfterRegistrationInterface >
   >
 {
 public:
@@ -49,7 +49,7 @@ public:
     >                                     Self;
   typedef SuperElastixComponent<
     Accepting< itkTransformInterface< InternalComputationValueType, Dimensionality >>,
-    Providing< SinkInterface >
+    Providing< SinkInterface, AfterRegistrationInterface >
     >                                     Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
@@ -73,6 +73,8 @@ public:
 
   virtual itk::DataObject::Pointer GetInitializedOutput( void ) override;
 
+  virtual void AfterRegistration() override;
+
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
 
   static const char * GetDescription() { return "ItkTransformSink Component"; }
@@ -81,6 +83,7 @@ private:
 
   typename DecoratedTransformType::Pointer m_MiniPipelineOutputImage;
   //typename ItkImageType::Pointer m_NetworkBuilderOutputImage;
+  typename AcceptingTransformInterfaceType::Pointer m_TransformInterface;
 
 protected:
 
