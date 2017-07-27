@@ -58,6 +58,6 @@ using DefaultComponents = selx::TypeList<
   ItkResampleFilterComponent< 2, float, double >,
   RegistrationControllerComponent< >,
   ItkSmoothingRecursiveGaussianImageFilterComponent< 2, float >,
-  ItkTransformSinkComponent< 2, float >
+  ItkTransformSinkComponent< 2, double >
   >;
 }

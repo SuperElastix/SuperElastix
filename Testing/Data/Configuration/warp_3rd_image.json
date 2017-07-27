@@ -1,0 +1,39 @@
+{
+    "Component": {
+        "Name": "WarpInputImage",
+        "NameOfClass": "ItkImageSourceMovingComponent"
+    },
+    "Component": {
+        "Name": "ImageTransformer",
+        "NameOfClass": "MonolithicTransformixComponent"
+    },
+    "Component": {
+        "Name": "WarpOutputImage",
+        "NameOfClass": "ItkImageSinkComponent"
+    },
+    "Connection": {
+        "Out": "WarpInputImage",
+        "In": "ImageTransformer",
+        "NameOfInterface": "itkImageMovingInterface"
+    },
+    "Connection": {
+        "Out": "FixedImage",
+        "In": "ImageTransformer",
+        "NameOfInterface": "itkImageDomainFixedInterface"
+    },
+    "Connection": {
+        "Out": "RegistrationMethod",
+        "In": "ImageTransformer",
+        "NameOfInterface": "elastixTransformParameterObjectInterface"
+    },
+	"Connection": {
+        "Out": "ImageTransformer",
+        "In": "WarpOutputImage",
+        "NameOfInterface": "itkImageInterface"
+    },
+    "Connection": {
+        "Out": "ImageTransformer",
+        "In": "Controller",
+		"NameOfInterface": "ReconnectTransformInterface"
+    }
+}

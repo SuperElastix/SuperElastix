@@ -53,7 +53,8 @@
 #include "itkMeshFileReader.h"
 #include "itkMeshFileWriter.h"
 
-#include "itkTransformBase.h"
+#include "itkTransformFileWriter.h"
+#include "itkTransformFileReader.h"
 
 #include "selxDefaultComponents.h"
 
@@ -128,8 +129,11 @@ public:
   typedef itk::Image< itk::Vector< double, 3 >, 3 >       DisplacementImage3DType;
   typedef itk::ImageFileWriter< DisplacementImage3DType > DisplacementImageWriter3DType;
 
+  typedef itk::Transform<double, 3, 3> Transform3DNakedType;
   typedef itk::DataObjectDecorator<itk::Transform<double,3,3>> Transform3DType;
   typedef itk::TransformFileWriterTemplate<double> TransformWriterType;
+
+  typedef itk::TransformFileReaderTemplate<double> TransformReaderType;
 
   virtual void SetUp()
   {
@@ -572,7 +576,7 @@ TEST_F( RegistrationItkv4Test, FullyConfigured3dAffine )
   blueprint->SetConnection( "ResampleFilter", "Controller", { {} } );              //ReconnectTransformInterface
   blueprint->SetConnection( "TransformDisplacementFilter", "Controller", { {} } ); //ReconnectTransformInterface
 
-  blueprint->Write( dataManager->GetOutputFile( "RegistrationItkv4Test_DisplacementField_network.dot" ) );
+  blueprint->Write( dataManager->GetOutputFile( "RegistrationItkv4Test_FullyConfigured3dAffine_network.dot" ) );
 
   // Set up the readers and writers
   ImageReader3DType::Pointer fixedImageReader = ImageReader3DType::New();
@@ -582,10 +586,10 @@ TEST_F( RegistrationItkv4Test, FullyConfigured3dAffine )
   movingImageReader->SetFileName( dataManager->GetInputFile( "sphereB3d.mhd" ) );
 
   ImageWriter3DType::Pointer resultImageWriter = ImageWriter3DType::New();
-  resultImageWriter->SetFileName( dataManager->GetOutputFile( "RegistrationItkv4Test_DisplacementField_image.mhd" ) );
+  resultImageWriter->SetFileName( dataManager->GetOutputFile( "RegistrationItkv4Test_FullyConfigured3dAffine_image.mhd" ) );
 
   DisplacementImageWriter3DType::Pointer resultDisplacementWriter = DisplacementImageWriter3DType::New();
-  resultDisplacementWriter->SetFileName( dataManager->GetOutputFile( "RegistrationItkv4Test_DisplacementField_displacement.mhd" ) );
+  resultDisplacementWriter->SetFileName( dataManager->GetOutputFile( "RegistrationItkv4Test_FullyConfigured3dAffine_displacement.mhd" ) );
 
   // Connect SuperElastix in an itk pipeline
   superElastixFilter->SetInput( "FixedImageSource", fixedImageReader->GetOutput() );
@@ -763,7 +767,7 @@ TEST_F(RegistrationItkv4Test, TransformSink)
   blueprint->SetConnection("TransformDisplacementFilter", "Controller", { {} }); //ReconnectTransformInterface
   blueprint->SetConnection("TransformSink", "Controller", { {} }); //ReconnectTransformInterface
 
-  blueprint->Write(dataManager->GetOutputFile("RegistrationItkv4Test_DisplacementField_network.dot"));
+  blueprint->Write(dataManager->GetOutputFile("RegistrationItkv4Test_TransformSink_network.dot"));
 
   // Set up the readers and writers
   ImageReader3DType::Pointer fixedImageReader = ImageReader3DType::New();
@@ -803,5 +807,93 @@ TEST_F(RegistrationItkv4Test, TransformSink)
   // ... We can only get the output from the placeholder after execution of the filter
   transformWriter->SetInput(decoratedTransform->Get());
   EXPECT_NO_THROW(transformWriter->Update());
+}
+TEST_F(RegistrationItkv4Test, TransformSource)
+{
+  /** make example blueprint configuration */
+  BlueprintPointer blueprint = BlueprintPointer(new Blueprint());
+
+  // Components
+
+  blueprint->SetComponent("TransformSource", { { "NameOfClass", { "ItkTransformSourceComponent" } }, { "Dimensionality", { "3" } }, { "InternalComputationValueType", { "double" } } });
+
+  blueprint->SetComponent("FixedImageDomainSource", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "Dimensionality", { "3" } } });
+
+  blueprint->SetComponent("MovingImageSource", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "Dimensionality", { "3" } } });
+
+  blueprint->SetComponent("ResultImageSink", { { "NameOfClass", { "ItkImageSinkComponent" } }, { "Dimensionality", { "3" } } });
+
+  blueprint->SetComponent("ResultDisplacementFieldSink", { { "NameOfClass", { "DisplacementFieldItkImageFilterSinkComponent" } }, { "Dimensionality", { "3" } } });
+
+  blueprint->SetComponent("TransformDisplacementFilter", { { "NameOfClass", { "ItkTransformDisplacementFilterComponent" } }, { "Dimensionality", { "3" } } });
+
+  blueprint->SetComponent("ResampleFilter", { { "NameOfClass", { "ItkResampleFilterComponent" } },
+  { "Dimensionality", { "3" } } });
+
+  blueprint->SetComponent("Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } });
+
+  // Connections
+
+  blueprint->SetConnection("TransformSource", "ResampleFilter", { { "NameOfInterface", { "itkTransformInterface" } } });
+
+  blueprint->SetConnection("FixedImageDomainSource", "ResampleFilter", { { "NameOfInterface", { "itkImageFixedDomainInterface" } } });
+
+  blueprint->SetConnection("MovingImageSource", "ResampleFilter", { { "NameOfInterface", { "itkImageMovingInterface" } } });
+
+  blueprint->SetConnection("ResampleFilter", "ResultImageSink", { { "NameOfInterface", { "itkImageInterface" } } });
+
+  blueprint->SetConnection("TransformSource", "TransformDisplacementFilter", { {} });
+
+  blueprint->SetConnection("FixedImageDomainSource", "TransformDisplacementFilter", { {} });
+
+  blueprint->SetConnection("TransformDisplacementFilter", "ResultDisplacementFieldSink", { { "NameOfInterface", { "DisplacementFieldItkImageSourceInterface" } } });
+  
+  blueprint->SetConnection("ResampleFilter", "Controller", { {} });              //ReconnectTransformInterface
+  blueprint->SetConnection("TransformDisplacementFilter", "Controller", { {} }); //ReconnectTransformInterface
+  
+  blueprint->Write(dataManager->GetOutputFile("RegistrationItkv4Test_TransformSource_network.dot"));
+
+  // Set up the readers and writers
+  ImageReader3DType::Pointer fixedImageReader = ImageReader3DType::New();
+  fixedImageReader->SetFileName(dataManager->GetInputFile("sphereA3d.mhd"));
+
+  ImageReader3DType::Pointer movingImageReader = ImageReader3DType::New();
+  movingImageReader->SetFileName(dataManager->GetInputFile("sphereB3d.mhd"));
+
+  TransformReaderType::Pointer transformReader = TransformReaderType::New();
+  transformReader->SetFileName(dataManager->GetInputFile("ItkAffine3Dtransform.tfm"));
+  transformReader->Update();
+
+  ImageWriter3DType::Pointer resultImageWriter = ImageWriter3DType::New();
+  resultImageWriter->SetFileName(dataManager->GetOutputFile("RegistrationItkv4Test_TransformSource_image.mhd"));
+
+  DisplacementImageWriter3DType::Pointer resultDisplacementWriter = DisplacementImageWriter3DType::New();
+  resultDisplacementWriter->SetFileName(dataManager->GetOutputFile("RegistrationItkv4Test_TransformSource_displacement.mhd"));
+
+  // Connect SuperElastix in an itk pipeline
+  superElastixFilter->SetInput("FixedImageDomainSource", fixedImageReader->GetOutput());
+  superElastixFilter->SetInput("MovingImageSource", movingImageReader->GetOutput());
+  
+  //Itk lacks a support to use transform objects in a itk-pipeline.
+  auto nakedTransformBase = *(transformReader->GetTransformList()->begin());
+  const Transform3DNakedType * nakedTransform = dynamic_cast<Transform3DNakedType*>(nakedTransformBase.GetPointer());
+  EXPECT_TRUE(nakedTransform != nullptr);
+  auto decoratedTransform = Transform3DType::New();
+  decoratedTransform->Set(nakedTransform);
+  
+  superElastixFilter->SetInput("MovingImageSource", movingImageReader->GetOutput());
+  resultImageWriter->SetInput(superElastixFilter->GetOutput< Image3DType >("ResultImageSink"));
+  resultDisplacementWriter->SetInput(superElastixFilter->GetOutput< DisplacementImage3DType >("ResultDisplacementFieldSink"));
+ 
+  BlueprintITKPointer superElastixFilterBlueprint = BlueprintITKType::New();
+  superElastixFilterBlueprint->Set(blueprint);
+  EXPECT_NO_THROW(superElastixFilter->SetBlueprint(superElastixFilterBlueprint));
+
+  //Optional Update call
+  //superElastixFilter->Update();
+
+  // Update call on the writers triggers SuperElastix to configure and execute
+  EXPECT_NO_THROW(resultImageWriter->Update());
+  EXPECT_NO_THROW(resultDisplacementWriter->Update());
 }
 } // namespace selx
