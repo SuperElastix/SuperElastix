@@ -43,6 +43,7 @@
 #include "selxItkImageSourceFixed.h"
 #include "selxItkImageSourceMoving.h"
 #include "selxItkTransformSinkComponent.h"
+#include "selxItkTransformSourceComponent.h"
 
 #include "selxRegistrationController.h"
 #include "selxItkCompositeTransformComponent.h"
@@ -105,7 +106,9 @@ public:
     ItkCompositeTransformComponent< double, 3 >,
     ItkCompositeTransformComponent< double, 2 >,
     ItkTransformSinkComponent<2, double>, 
-    ItkTransformSinkComponent<3, double >> RegisterComponents;
+    ItkTransformSinkComponent<3, double >,
+    ItkTransformSourceComponent<2, double>,
+    ItkTransformSourceComponent < 3, double >> RegisterComponents;
 
   typedef std::unique_ptr< Blueprint >                       BlueprintPointer;
   typedef itk::UniquePointerDataObjectDecorator< Blueprint > BlueprintITKType;
@@ -836,7 +839,7 @@ TEST_F(RegistrationItkv4Test, TransformSource)
 
   blueprint->SetConnection("TransformSource", "ResampleFilter", { { "NameOfInterface", { "itkTransformInterface" } } });
 
-  blueprint->SetConnection("FixedImageDomainSource", "ResampleFilter", { { "NameOfInterface", { "itkImageFixedDomainInterface" } } });
+  blueprint->SetConnection("FixedImageDomainSource", "ResampleFilter", { { "NameOfInterface", { "itkImageDomainFixedInterface" } } });
 
   blueprint->SetConnection("MovingImageSource", "ResampleFilter", { { "NameOfInterface", { "itkImageMovingInterface" } } });
 
@@ -860,15 +863,16 @@ TEST_F(RegistrationItkv4Test, TransformSource)
   ImageReader3DType::Pointer movingImageReader = ImageReader3DType::New();
   movingImageReader->SetFileName(dataManager->GetInputFile("sphereB3d.mhd"));
 
+  itk::TransformFactoryBase::RegisterDefaultTransforms();
   TransformReaderType::Pointer transformReader = TransformReaderType::New();
   transformReader->SetFileName(dataManager->GetInputFile("ItkAffine3Dtransform.tfm"));
   transformReader->Update();
 
   ImageWriter3DType::Pointer resultImageWriter = ImageWriter3DType::New();
-  resultImageWriter->SetFileName(dataManager->GetOutputFile("RegistrationItkv4Test_TransformSource_image.mhd"));
+  resultImageWriter->SetFileName(dataManager->GetOutputFile("RegistrationItkv4Test_TransformSink.mhd"));
 
   DisplacementImageWriter3DType::Pointer resultDisplacementWriter = DisplacementImageWriter3DType::New();
-  resultDisplacementWriter->SetFileName(dataManager->GetOutputFile("RegistrationItkv4Test_TransformSource_displacement.mhd"));
+  resultDisplacementWriter->SetFileName(dataManager->GetOutputFile("RegistrationItkv4Test_TransformSink_def.mhd"));
 
   // Connect SuperElastix in an itk pipeline
   superElastixFilter->SetInput("FixedImageDomainSource", fixedImageReader->GetOutput());
@@ -882,6 +886,8 @@ TEST_F(RegistrationItkv4Test, TransformSource)
   decoratedTransform->Set(nakedTransform);
   
   superElastixFilter->SetInput("MovingImageSource", movingImageReader->GetOutput());
+  superElastixFilter->SetInput("TransformSource", decoratedTransform);
+  
   resultImageWriter->SetInput(superElastixFilter->GetOutput< Image3DType >("ResultImageSink"));
   resultDisplacementWriter->SetInput(superElastixFilter->GetOutput< DisplacementImage3DType >("ResultDisplacementFieldSink"));
  

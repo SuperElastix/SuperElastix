@@ -30,7 +30,7 @@
 #include "itkImportImageFilter.h"
 
 #include "selxAnyFileReader.h"
-#include "selxFileReaderDecorator.h"
+#include "selxItkTransformDataObjectFileReader.h"
 
 namespace selx
 {
@@ -56,8 +56,7 @@ public:
   using TransformType = typename TransformInterface::TransformType;
   using TransformPointer = typename TransformInterface::TransformPointer;
   using DecoratedTransformType = typename itk::DataObjectDecorator<TransformType>;
-  //typedef FileReaderDecorator< ItkImageReaderType >     DecoratedReaderType;
-   
+  using DecoratedReaderType = typedef ItkTransformDataObjectFileReader< InternalComputationValueType, Dimensionality, Dimensionality>;
 
   ItkTransformSourceComponent( const std::string & name, const LoggerInterface & logger );
   virtual ~ItkTransformSourceComponent();

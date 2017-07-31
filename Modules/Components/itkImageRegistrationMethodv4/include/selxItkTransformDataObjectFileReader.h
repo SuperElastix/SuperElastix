@@ -17,57 +17,54 @@
 *
 *=========================================================================*/
 
-#ifndef selxItkTransfromDataObjectFileWriter_h
-#define selxItkTransfromDataObjectFileWriter_h
+#ifndef selxItkTransformDataObjectFileReader_h
+#define selxItkTransformDataObjectFileReader_h
 
-#include "selxAnyFileWriter.h"
-#include "itkTransformFileWriter.h"
-
+#include "selxAnyFileReader.h"
+#include "itkTransformFileReader.h"
+#include "itkDataObjectDecorator.h"
 
 /**
- * \class selxItkTransfromDataObjectFileWriter
- * \brief Wrapper class, for a template specifiable Writer, that can be casted to an AnyFileWriter base class.
+ * \class selxItkTransformDataObjectFileReader
+ * \brief Wrapper class, for a template specifiable reader, that can be casted to an AnyFileReader base class.
  */
 
 namespace selx
 {
 template< typename TParametersValueType, int NInputDimensions, int NOutputDimensions >
-class ItkTransfromDataObjectFileWriter : public AnyFileWriter
+class ItkTransformDataObjectFileReader : public AnyFileReader
 {
 public:
 
   /** Standard ITK typedefs. */
-  typedef ItkTransfromDataObjectFileWriter<TParametersValueType, NInputDimensions, NOutputDimensions >             Self;
-  typedef AnyFileWriter                   Superclass;
+  typedef ItkTransformDataObjectFileReader<TParametersValueType, NInputDimensions, NOutputDimensions>             Self;
+  typedef AnyFileReader                   Superclass;
   typedef itk::SmartPointer< Self >       Pointer;
   typedef itk::SmartPointer< const Self > ConstPointer;
 
-  typedef itk::TransformFileWriterTemplate<TParametersValueType>                        WriterType;
-  typedef typename WriterType::Pointer      WriterPointer;
-  typedef typename WriterType::ConstPointer WriterConstPointer;
+  typedef itk::TransformFileReaderTemplate<TParametersValueType>                        ReaderType;
+  typedef typename ReaderType::Pointer      ReaderPointer;
+  typedef typename ReaderType::ConstPointer ReaderConstPointer;
   /** Method for creation through the object factory. */
   itkNewMacro( Self );
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( Self, selxAnyFileWriter );
+  itkTypeMacro( Self, selxAnyFileReader );
   typedef itk::DataObject InputDataType;
   typedef itk::DataObject OutputDataType;
   typedef itk::DataObject DataObject;
-
-  // Since we don't know the typename of the Input of the writer, we use a traits class with template specialization to Images, Meshes etc.
-  //typedef typename WriterType::InputImageType DerivedInputDataType;
-  //typedef typename WriterType::InputMeshType DerivedInputDataType;
-  typedef typename itk::DataObjectDecorator<itk::Transform<TParametersValueType,NInputDimensions,NOutputDimensions>> DerivedInputDataType;
+  typedef typename itk::Transform<TParametersValueType, NInputDimensions, NOutputDimensions> TransformType;
+  typedef typename itk::DataObjectDecorator<TransformType> DecoratedTransformType;
 
   virtual void SetFileName( const std::string ) ITK_OVERRIDE;
 
-  /** SetInput accepts any input data as long as it is derived from itk::DataObject */
-  virtual void SetInput( const InputDataType * ) ITK_OVERRIDE;
+  /** The AnyFileReader has a non type-specific, but derived from OutputDataType, GetOutput */
+  virtual OutputDataType * GetOutput() ITK_OVERRIDE;
 
   virtual void Update( void ) ITK_OVERRIDE;
 
-  ItkTransfromDataObjectFileWriter( void );
-  ~ItkTransfromDataObjectFileWriter( void );
+  ItkTransformDataObjectFileReader();
+  ~ItkTransformDataObjectFileReader();
 
 protected:
 
@@ -76,14 +73,13 @@ protected:
 
 private:
 
-  // the actual itk writer instantiation
-  WriterPointer m_Writer;
-  typename DerivedInputDataType::ConstPointer m_DerivedData;
+  // the actual itk reader instantiation
+  ReaderPointer m_Reader;
 };
 } // namespace elx
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "selxItkTransfromDataObjectFileWriter.hxx"
+#include "selxItkTransformDataObjectFileReader.hxx"
 #endif
 
 #endif // selxProcessObject_h

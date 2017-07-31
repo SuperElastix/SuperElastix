@@ -43,7 +43,7 @@ ItkTransformSourceComponent< Dimensionality, InternalComputationValueType >::Get
   {
     throw std::runtime_error( "SourceComponent needs to be initialized by SetMiniPipelineInput()" );
   }
-  return this->m_DecoratedTransform->Get();
+  return this->m_DecoratedTransform->GetModifiable();
 }
 
 
@@ -52,7 +52,7 @@ void
 ItkTransformSourceComponent< Dimensionality, InternalComputationValueType >
 ::SetMiniPipelineInput( itk::DataObject::Pointer object )
 {
-  this->m_DecoratedTransform = dynamic_cast< ItkImageType * >(object.GetPointer());
+  this->m_DecoratedTransform = dynamic_cast< DecoratedTransformType * >(object.GetPointer());
   if (this->m_DecoratedTransform == nullptr)
   {
     throw std::runtime_error( "DataObject passed by the NetworkBuilder is not of the right DecoratedTransformType or not at all an DecoratedTransformType" );
