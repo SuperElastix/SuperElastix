@@ -86,23 +86,16 @@ template< int Dimensionality, class TInternalComputationValue >
 typename itk::DataObject::Pointer
 ItkTransformSinkComponent< Dimensionality, TInternalComputationValue >::GetInitializedOutput()
 {
-  if (this->m_MiniPipelineOutputImage == nullptr)
-  {
-   this->m_MiniPipelineOutputImage = DecoratedTransformType::New();
-  }
-  //auto initializedTransform = TransformType:New();
-  //auto initializedDecorator = DecoratedTransformType::New();
-  //initializedDecorator->Set(initializedTransform);
-  //return initializedDecorator.GetPointer();
-  return this->m_MiniPipelineOutputImage.GetPointer();
+  return DecoratedTransformType::New().GetPointer();
 }
 
 template< int Dimensionality, class TInternalComputationValue >
 void
 ItkTransformSinkComponent< Dimensionality, TInternalComputationValue >::AfterRegistration()
 {
-
+  // Only after having performed the registration we can get the pointer to the result transform.
   auto transform = this->m_TransformInterface->GetItkTransform();  
+  // This pointer is put into the DataObjectDecorater (which was empty before) such that is can be passed in an itk-pipeline.
   this->m_MiniPipelineOutputImage->Set(transform);
 }
 
