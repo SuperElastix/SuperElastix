@@ -55,8 +55,8 @@ public:
   using TransformInterface = itkTransformInterface< InternalComputationValueType, Dimensionality >;
   using TransformType = typename TransformInterface::TransformType;
   using TransformPointer = typename TransformInterface::TransformPointer;
-  using DecoratedTransformType = typename itk::DataObjectDecorator<TransformType>;
-  using DecoratedReaderType = typedef ItkTransformDataObjectFileReader< InternalComputationValueType, Dimensionality, Dimensionality>;
+  using DecoratedTransformType = itk::DataObjectDecorator<TransformType>;
+  using DecoratedReaderType = ItkTransformDataObjectFileReader< InternalComputationValueType, Dimensionality, Dimensionality>;
 
   ItkTransformSourceComponent( const std::string & name, const LoggerInterface & logger );
   virtual ~ItkTransformSourceComponent();
