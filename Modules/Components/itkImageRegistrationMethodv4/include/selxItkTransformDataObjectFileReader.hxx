@@ -33,6 +33,7 @@ ItkTransformDataObjectFileReader< TParametersValueType, NInputDimensions, NOutpu
 ::ItkTransformDataObjectFileReader()
 {
   m_Reader = ReaderType::New();
+  m_DecoratedTransform = DecoratedTransformType::New();
 } // end Constructor
 
 
@@ -66,11 +67,11 @@ typename ItkTransformDataObjectFileReader< TParametersValueType, NInputDimension
   auto nakedTransformBase = *(this->m_Reader->GetTransformList()->begin());
   const TransformType * nakedTransform = dynamic_cast<TransformType*>(nakedTransformBase.GetPointer());
   assert(nakedTransform != nullptr);
-  auto decoratedTransform = DecoratedTransformType::New();
-  decoratedTransform->Set(nakedTransform);
+  
+  this->m_DecoratedTransform->Set(nakedTransform);
 
   //implicit cast from DecoratedTransformType<>* to OutputDataType*.
-  return decoratedTransform;
+  return this->m_DecoratedTransform;
 }
 
 template< typename TParametersValueType, int NInputDimensions, int NOutputDimensions >

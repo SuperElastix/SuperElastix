@@ -75,6 +75,8 @@ private:
 
   // the actual itk reader instantiation
   ReaderPointer m_Reader;
+
+  typename DecoratedTransformType::Pointer m_DecoratedTransform;
 };
 } // namespace elx
 
