@@ -48,7 +48,7 @@ public:
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
 
-  ItkAffineTransformComponent( const std::string & name, const LoggerInterface & logger );
+  ItkAffineTransformComponent( const std::string & name, LoggerImpl & logger );
   virtual ~ItkAffineTransformComponent();
 
   //typedef double InternalComputationValueType;

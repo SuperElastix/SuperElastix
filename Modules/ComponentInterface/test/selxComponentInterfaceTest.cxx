@@ -28,7 +28,7 @@ namespace selx
 {
     namespace hack // see issue SELX-55 Link error selxComponentInterfaceTest #55
     {
-        Logger logger;
+        LoggerImpl logger;
         typedef SuperElastixComponent< Accepting< >, Providing<  > > DummyBase;
         struct MyComp: DummyBase
         {
@@ -44,7 +44,7 @@ public:
 
   virtual void SetUp()
   {
-    Logger * logger = new Logger();
+    LoggerImpl * logger = new LoggerImpl();
     metric3p    = std::make_shared< SSDMetric3rdPartyComponent >( "nameless", *logger );
     optimizer3p = std::make_shared< GDOptimizer3rdPartyComponent >( "nameless", *logger );
 

@@ -35,7 +35,7 @@ SuperElastixFilterCustomComponents< ComponentTypeList >
 {
   //std::make_unique<NetworkBuilder<ComponentTypeList>>();
   m_NetworkBuilderFactory = std::unique_ptr< NetworkBuilderFactory< ComponentTypeList >>( new NetworkBuilderFactory< ComponentTypeList > );
-  m_Logger = LoggerType::New();
+  m_Logger = Logger::New();
 } // end Constructor
 } // namespace elx
 

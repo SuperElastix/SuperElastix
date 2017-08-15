@@ -51,7 +51,7 @@ public:
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
 
-  ItkGaussianExponentialDiffeomorphicTransformComponent( const std::string & name, const LoggerInterface & logger );
+  ItkGaussianExponentialDiffeomorphicTransformComponent( const std::string & name, LoggerImpl & logger );
   virtual ~ItkGaussianExponentialDiffeomorphicTransformComponent();
 
   /** Get types from interfaces */

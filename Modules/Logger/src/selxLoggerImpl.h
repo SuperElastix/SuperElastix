@@ -17,8 +17,8 @@
  *
  *=========================================================================*/
 
-#ifndef LoggerImpl_h
-#define LoggerImpl_h
+#ifndef selxLoggerImpl_h
+#define selxLoggerImpl_h
 
 #include "selxLogger.h"
 #include "boost/log/expressions/keyword.hpp"
@@ -26,29 +26,32 @@
 
 namespace selx
 {
+
 BOOST_LOG_ATTRIBUTE_KEYWORD( severity_filter, "Severity", SeverityType );
 BOOST_LOG_ATTRIBUTE_KEYWORD( channel_filter, "Channel", Logger::ChannelType );
 
-class Logger::LoggerImpl
+class LoggerImpl
 {
 public:
 
-  typedef boost::log::sources::severity_channel_logger< SeverityType, ChannelType > LoggerType;
+  typedef boost::log::sources::severity_channel_logger< SeverityType, Logger::ChannelType > BoostLoggerType;
 
   LoggerImpl();
   ~LoggerImpl();
 
-  void AddConsole( FormatType format );
+  void AddConsole( Logger::FormatType format );
 
-  // void AddFile( Logger::FileNameType fileName, Logger::FormatType format );
-  // void AddFile( Logger::FileNameType fileName, Logger::ChannelType channel, Logger::FormatType format );
+  // void AddFile( LoggerImpl::FileNameType fileName, LoggerImpl::FormatType format );
+  // void AddFile( LoggerImpl::FileNameType fileName, LoggerImpl::ChannelType channel, LoggerImpl::FormatType format );
 
   void Log( SeverityType severity, Logger::MessageType message );
 
-  // void Log( Logger::ChannelType channel, SeverityType severity, Logger::MessageType message );
+  // void Log( LoggerImpl::ChannelType channel, SeverityType severity, LoggerImpl::MessageType message );
 
-  LoggerType m_Logger;
+private:
+
+  BoostLoggerType m_Logger;
 };
 }
 
-#endif // LoggerImpl_h
+#endif // selxLoggerImpl_h

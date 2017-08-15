@@ -64,7 +64,7 @@ public:
   typedef itk::ImportImageFilter< TPixel, Dimensionality >   ImportFilterType;
 
 
-  NiftiToItkImageSinkComponent( const std::string & name, const LoggerInterface & logger );
+  NiftiToItkImageSinkComponent( const std::string & name, LoggerImpl & logger );
   virtual ~NiftiToItkImageSinkComponent();
 
   // accepting interfaces

@@ -25,7 +25,7 @@ namespace selx
 {
 // Declared outside of the class body, so it is a free function
 std::ostream &
-operator<<( std::ostream & out, const Blueprint::ParameterMapType & val )
+operator<<( std::ostream & out, const BlueprintImpl::ParameterMapType & val )
 {
   for( auto const & mapPair : val )
   {
@@ -94,7 +94,7 @@ make_edge_label_writer( ParameterMapType p )
 
 
 bool
-Blueprint::BlueprintImpl
+BlueprintImpl
 ::SetComponent( ComponentNameType name, ParameterMapType parameterMap )
 {
   if( this->ComponentExists( name ) )
@@ -109,14 +109,14 @@ Blueprint::BlueprintImpl
 }
 
 
-Blueprint::ParameterMapType
-Blueprint::BlueprintImpl
+BlueprintImpl::ParameterMapType
+BlueprintImpl
 ::GetComponent( ComponentNameType name ) const
 {
   if( !this->ComponentExists( name ) )
   {
     std::stringstream msg;
-    msg << "Blueprint does not contain component " << name << std::endl;
+    msg << "BlueprintImpl does not contain component " << name << std::endl;
     throw std::runtime_error( msg.str() );
   }
 
@@ -125,7 +125,7 @@ Blueprint::BlueprintImpl
 
 
 bool
-Blueprint::BlueprintImpl
+BlueprintImpl
 ::DeleteComponent( ComponentNameType name )
 {
   if( !this->ComponentExists( name ) )
@@ -138,8 +138,8 @@ Blueprint::BlueprintImpl
 }
 
 
-Blueprint::ComponentNamesType
-Blueprint::BlueprintImpl
+BlueprintImpl::ComponentNamesType
+BlueprintImpl
 ::GetComponentNames( void ) const
 {
   ComponentNamesType container;
@@ -152,7 +152,7 @@ Blueprint::BlueprintImpl
 
 
 bool
-Blueprint::BlueprintImpl
+BlueprintImpl
 ::SetConnection( ComponentNameType upstream, ComponentNameType downstream, ParameterMapType parameterMap )
 {
   if( !this->ComponentExists( upstream ) || !this->ComponentExists( downstream ) )
@@ -173,8 +173,8 @@ Blueprint::BlueprintImpl
 }
 
 
-Blueprint::ParameterMapType
-Blueprint::BlueprintImpl
+BlueprintImpl::ParameterMapType
+BlueprintImpl
 ::GetConnection( ComponentNameType upstream, ComponentNameType downstream ) const
 {
   return this->m_Graph[ this->GetConnectionIndex( upstream, downstream ) ].parameterMap;
@@ -182,8 +182,8 @@ Blueprint::BlueprintImpl
 
 
 bool
-Blueprint::BlueprintImpl
-::DeleteConnection( Blueprint::ComponentNameType upstream, Blueprint::ComponentNameType downstream )
+BlueprintImpl
+::DeleteConnection( BlueprintImpl::ComponentNameType upstream, BlueprintImpl::ComponentNameType downstream )
 {
   if( this->ConnectionExists( upstream, downstream ) )
   {
@@ -195,16 +195,15 @@ Blueprint::BlueprintImpl
 
 
 bool
-Blueprint::BlueprintImpl
+BlueprintImpl
 ::ComponentExists( ComponentNameType componentName ) const
 {
-  const GraphType::vertex_descriptor descriptor = this->m_Graph.vertex( componentName );
-  return descriptor != boost::graph_traits< GraphType >::null_vertex();
+  return this->m_Graph.vertex( componentName ) != boost::graph_traits< GraphType >::null_vertex();
 }
 
 
 bool
-Blueprint::BlueprintImpl
+BlueprintImpl
 ::ConnectionExists( ComponentNameType upstream, ComponentNameType downstream ) const
 {
   if( !this->ComponentExists( upstream ) )
@@ -221,21 +220,21 @@ Blueprint::BlueprintImpl
 
 
 bool
-Blueprint::BlueprintImpl
-::ComposeWith( std::unique_ptr< Blueprint > const & other )
+BlueprintImpl
+::ComposeWith(const BlueprintImpl &other)
 {
   // Make a backup of the current blueprint status in case composition fails
   GraphType graph_backup = GraphType( this->m_Graph );
 
   // Copy-in all components (Nodes)
-  for( auto const & componentName : other->GetComponentNames() )
+  for( auto const & componentName : other.GetComponentNames() )
   {
     // Does other blueprint use component with a name that already exists?
     if( this->ComponentExists( componentName ) )
     {
       // Component exists, check if properties can be merged
       auto ownProperties    = this->GetComponent( componentName );
-      auto othersProperties = other->GetComponent( componentName );
+      auto othersProperties = other.GetComponent( componentName );
 
       for( auto const & othersEntry : othersProperties )
       {
@@ -278,20 +277,20 @@ Blueprint::BlueprintImpl
     else
     {
       // Create Component copying properties of other
-      this->SetComponent( componentName, other->GetComponent( componentName ) );
+      this->SetComponent( componentName, other.GetComponent( componentName ) );
     }
   }
   // Copy-in all connections (Edges)
-  for( auto const & componentName : other->GetComponentNames() )
+  for( auto const & componentName : other.GetComponentNames() )
   {
-    for( auto incomingName : other->GetInputNames( componentName ) )
+    for( auto incomingName : other.GetInputNames( componentName ) )
     {
       // Does other blueprint have a connection that already exists?
       if( this->ConnectionExists( incomingName, componentName ) )
       {
         // Connection exists, check if properties can be merged
         auto ownProperties    = this->GetConnection( incomingName, componentName );
-        auto othersProperties = other->GetConnection( incomingName, componentName );
+        auto othersProperties = other.GetConnection( incomingName, componentName );
 
         for( auto const & othersEntry : othersProperties )
         {
@@ -334,7 +333,7 @@ Blueprint::BlueprintImpl
       else
       {
         // Create Component copying properties of other
-        this->SetConnection( incomingName, componentName, other->GetConnection( incomingName, componentName ) );
+        this->SetConnection( incomingName, componentName, other.GetConnection( incomingName, componentName ) );
       }
     }
   }
@@ -342,9 +341,8 @@ Blueprint::BlueprintImpl
   return true;
 }
 
-
-Blueprint::ComponentNamesType
-Blueprint::BlueprintImpl
+BlueprintImpl::ComponentNamesType
+BlueprintImpl
 ::GetInputNames( const ComponentNameType name ) const
 {
   ComponentNamesType container;
@@ -360,8 +358,8 @@ Blueprint::BlueprintImpl
 }
 
 
-Blueprint::ComponentNamesType
-Blueprint::BlueprintImpl
+BlueprintImpl::ComponentNamesType
+BlueprintImpl
 ::GetOutputNames( const ComponentNameType name ) const
 {
   ComponentNamesType     container;
@@ -375,14 +373,14 @@ Blueprint::BlueprintImpl
 }
 
 
-Blueprint::BlueprintImpl::ConnectionIndexType
-Blueprint::BlueprintImpl
+BlueprintImpl::ConnectionIndexType
+BlueprintImpl
 ::GetConnectionIndex( ComponentNameType upstream, ComponentNameType downstream ) const
 {
   // This function is part of the internal API and should fail hard if we use it incorrectly
   if( !this->ConnectionExists( upstream, downstream ) )
   {
-    throw std::runtime_error( "Blueprint does not contain connection from component " + upstream + " to " + downstream );
+    throw std::runtime_error( "BlueprintImpl does not contain connection from component " + upstream + " to " + downstream );
   }
 
   return boost::edge_by_label( upstream, downstream, this->m_Graph ).first;
@@ -390,7 +388,7 @@ Blueprint::BlueprintImpl
 
 
 void
-Blueprint::BlueprintImpl
+BlueprintImpl
 ::Write( const std::string filename )
 {
   std::ofstream dotfile( filename.c_str() );

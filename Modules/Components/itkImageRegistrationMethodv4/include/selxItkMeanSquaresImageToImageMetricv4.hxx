@@ -24,7 +24,7 @@ namespace selx
 {
 template< int Dimensionality, class TPixel, class InternalComputationValueType >
 ItkMeanSquaresImageToImageMetricv4Component< Dimensionality, TPixel, InternalComputationValueType >::ItkMeanSquaresImageToImageMetricv4Component(
-  const std::string & name, const LoggerInterface & logger ) : Superclass( name, logger )
+  const std::string & name, LoggerImpl & logger ) : Superclass( name, logger )
 {
   m_theItkFilter = TheItkFilterType::New();
 

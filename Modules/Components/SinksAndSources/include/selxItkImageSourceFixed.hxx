@@ -24,7 +24,7 @@ namespace selx
 {
 template< int Dimensionality, class TPixel >
 ItkImageSourceFixedComponent< Dimensionality, TPixel >
-::ItkImageSourceFixedComponent( const std::string & name, const LoggerInterface & logger ) : Superclass( name, logger ), m_Image( nullptr )
+::ItkImageSourceFixedComponent( const std::string & name, LoggerImpl & logger ) : Superclass( name, logger ), m_Image( nullptr )
 {
 }
 

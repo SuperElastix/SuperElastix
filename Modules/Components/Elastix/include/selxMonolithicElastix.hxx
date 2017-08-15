@@ -24,7 +24,7 @@ namespace selx
 {
 template< int Dimensionality, class TPixel >
 MonolithicElastixComponent< Dimensionality, TPixel >::MonolithicElastixComponent( const std::string & name,
-  const LoggerInterface & logger ) : Superclass( name, logger )
+  LoggerImpl & logger ) : Superclass( name, logger )
 {
   m_elastixFilter = ElastixFilterType::New();
 

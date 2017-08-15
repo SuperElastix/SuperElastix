@@ -227,8 +227,8 @@ install( FILES
          Modules/Filter/include/selxSuperElastixFilterCustomComponents.h
          Modules/Filter/include/itkUniquePointerDataObjectDecorator.h
          Modules/Filter/include/itkUniquePointerDataObjectDecorator.hxx
-         Modules/Blueprints/include/selxBlueprint.h
-         Modules/Logger/include/selxLogger.h
+  Modules/Blueprints/include/Blueprint.h
+  Modules/Logger/include/Logger.h
          Modules/FileIO/include/selxAnyFileReader.h
          Modules/FileIO/include/selxAnyFileWriter.h
          DESTINATION include )

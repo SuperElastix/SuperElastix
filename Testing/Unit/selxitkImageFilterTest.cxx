@@ -47,12 +47,9 @@ class itkImageFilterTest : public ::testing::Test
 {
 public:
 
-  using BlueprintITKType = itk::UniquePointerDataObjectDecorator< Blueprint >;
-  typedef BlueprintITKType::Pointer BlueprintITKPointer;
-
-  typedef std::unique_ptr< Blueprint >  BlueprintPointer;
-  typedef Blueprint::ParameterMapType   ParameterMapType;
-  typedef Blueprint::ParameterValueType ParameterValueType;
+  typedef selxBlueprint::Pointer  BlueprintPointer;
+  typedef BlueprintImpl::ParameterMapType   ParameterMapType;
+  typedef BlueprintImpl::ParameterValueType ParameterValueType;
   typedef DataManager                   DataManagerType;
 
   /** list the required components for the test */
@@ -78,7 +75,7 @@ public:
     dataManager = DataManagerType::New();
 
     /** make example blueprint configuration */
-    blueprint = BlueprintPointer( new Blueprint() );
+    blueprint = selxBlueprint::New();
 
     /** the 2 itkImageFilter Components are ItkSmoothingRecursiveGaussianImageFilterComponent*/
     ParameterMapType componentParameters;
@@ -126,7 +123,7 @@ public:
   }
 
 
-  // Blueprint holds a configuration for SuperElastix
+  // BlueprintImpl holds a configuration for SuperElastix
   BlueprintPointer            blueprint;
   SuperElastixFilterBase::Pointer superElastixFilter;
   // Data manager provides the paths to the input and output data for unit tests
@@ -146,10 +143,7 @@ TEST_F( itkImageFilterTest, Run )
   superElastixFilter->SetInput( "Source", inputImageReader->GetOutput() );
   resultImageWriter->SetInput( superElastixFilter->GetOutput< Image3DType >( "Sink" ) );
 
-  BlueprintITKPointer superElastixFilterBlueprint = BlueprintITKType::New();
-  superElastixFilterBlueprint->Set( blueprint );
-
-  EXPECT_NO_THROW( superElastixFilter->SetBlueprint( superElastixFilterBlueprint ) );
+  EXPECT_NO_THROW( superElastixFilter->SetBlueprint( blueprint ) );
 
   //Optional Update call
   //superElastixFilter->Update();

@@ -24,7 +24,7 @@ namespace selx
 {
 template< int Dimensionality, class TPixel >
 ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< Dimensionality, TPixel >::ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component(
-  const std::string & name, const LoggerInterface & logger ) : Superclass( name, logger )
+  const std::string & name, LoggerImpl & logger ) : Superclass( name, logger )
 {
   m_theItkFilter = TheItkFilterType::New();
 

@@ -48,7 +48,7 @@ public:
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
 
-  NiftyregReadImageComponent( const std::string & name, const LoggerInterface & logger );
+  NiftyregReadImageComponent( const std::string & name, LoggerImpl & logger );
   virtual ~NiftyregReadImageComponent();
 
   virtual std::shared_ptr<nifti_image> GetFloatingNiftiImage() override;

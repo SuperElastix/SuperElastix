@@ -67,7 +67,7 @@ public:
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
 
-  MonolithicElastixComponent( const std::string & name, const LoggerInterface & logger );
+  MonolithicElastixComponent( const std::string & name, LoggerImpl & logger );
   virtual ~MonolithicElastixComponent();
 
   typedef typename ComponentBase::CriterionType CriterionType;

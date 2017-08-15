@@ -17,8 +17,8 @@
  *
  *=========================================================================*/
 
-#ifndef Logger_cxx
-#define Logger_cxx
+#ifndef LoggerImpl_cxx
+#define LoggerImpl_cxx
 
 #include "selxLoggerImpl.h"
 
@@ -29,25 +29,25 @@
 
 namespace selx
 {
-Logger::LoggerImpl
+LoggerImpl
 ::LoggerImpl()
 {
-  this->m_Logger = boost::log::sources::severity_channel_logger< SeverityType, ChannelType >();
+  this->m_Logger = boost::log::sources::severity_channel_logger< SeverityType, Logger::ChannelType >();
 
   // Add LineID, TimeStamp, ProcessID and ThreadID
   boost::log::add_common_attributes();
 }
 
 
-Logger::LoggerImpl
+LoggerImpl
 ::~LoggerImpl()
 {
 }
 
 
 void
-Logger::LoggerImpl
-::AddConsole( FormatType format )
+LoggerImpl
+::AddConsole( Logger::FormatType format )
 {
   boost::log::add_console_log(
     std::cout,
@@ -57,7 +57,7 @@ Logger::LoggerImpl
 
 
 // void
-// Logger::LoggerImpl
+// LoggerImpl::LoggerImpl
 // ::AddFile( FileNameType fileName, FormatType format )
 // {
 //   boost::log::add_file_log(
@@ -67,8 +67,8 @@ Logger::LoggerImpl
 // }
 
 // void
-// Logger::LoggerImpl
-// ::AddFile( FileNameType fileName, ChannelType channel, FormatType format )
+// LoggerImpl::LoggerImpl
+// ::AddFile( FileNameType fileName, Logger::ChannelType channel, Logger::FormatType format )
 // {
 //   boost::log::add_file_log(
 //     boost::log::keywords::file_name = fileName,
@@ -78,8 +78,8 @@ Logger::LoggerImpl
 // }
 
 void
-Logger::LoggerImpl
-::Log( SeverityType severity, MessageType message )
+LoggerImpl
+::Log( SeverityType severity, Logger::MessageType message )
 {
   boost::log::record record = this->m_Logger.open_record( boost::log::keywords::severity = severity );
   if( record )
@@ -97,8 +97,8 @@ Logger::LoggerImpl
 
 
 // void
-// Logger::LoggerImpl
-// ::Log( Logger::ChannelType channel, SeverityType severity, const std::string message )
+// LoggerImpl::LoggerImpl
+// ::Log( LoggerImpl::ChannelType channel, SeverityType severity, const std::string message )
 // {
 //   boost::log::record record = this->m_Logger.open_record( ( boost::log::keywords::channel = channel, boost::log::keywords::severity = severity ) );
 //   if( record )
@@ -115,4 +115,4 @@ Logger::LoggerImpl
 // }
 }
 
-#endif // Logger_cxx
+#endif // LoggerImpl_cxx

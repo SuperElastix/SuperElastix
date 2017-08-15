@@ -48,7 +48,7 @@ public:
   typedef std::shared_ptr< Self >              Pointer;
   typedef std::shared_ptr< const Self >        ConstPointer;
 
-  NiftyregWriteImageComponent(const std::string & name, const LoggerInterface & logger);
+  NiftyregWriteImageComponent(const std::string & name, LoggerImpl & logger);
   virtual ~NiftyregWriteImageComponent();
 
   virtual int Set(typename NiftyregWarpedImageInterface< TPixel >::Pointer component) override;

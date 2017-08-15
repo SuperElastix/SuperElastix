@@ -18,7 +18,7 @@
  *=========================================================================*/
 
 #include "selxNetworkBuilder.h"
-#include "selxLogger.h"
+#include "Logger.h"
 
 //#include "ComponentFactory.h"
 #include "selxTransformComponent1.h"
@@ -39,9 +39,9 @@ class NetworkBuilderTest : public ::testing::Test
 public:
 
   typedef std::unique_ptr< NetworkBuilderBase > NetworkBuilderPointer;
-  typedef std::unique_ptr< Blueprint >          BlueprintPointer;
-  typedef Blueprint::ParameterMapType           ParameterMapType;
-  typedef Blueprint::ParameterValueType         ParameterValueType;
+  typedef std::unique_ptr< BlueprintImpl >          BlueprintPointer;
+  typedef BlueprintImpl::ParameterMapType           ParameterMapType;
+  typedef BlueprintImpl::ParameterValueType         ParameterValueType;
 
   /** register all example components */
   using CustomComponentList
@@ -51,7 +51,7 @@ public:
   virtual void SetUp()
   {
     /** make example blueprint configuration */
-    blueprint = BlueprintPointer( new Blueprint() );
+    blueprint = BlueprintPointer( new BlueprintImpl() );
     ParameterMapType metricComponentParameters;
     metricComponentParameters[ "NameOfClass" ] = { "MetricComponent1" };
 
@@ -74,18 +74,17 @@ public:
 
 
   BlueprintPointer blueprint;
-  Logger * logger = new Logger();
+  LoggerImpl * logger = new LoggerImpl();
 };
 
 TEST_F( NetworkBuilderTest, Create )
 {
-  NetworkBuilderPointer networkBuilderA = NetworkBuilderPointer( new NetworkBuilder< CustomComponentList >( *logger ) );
+  NetworkBuilderPointer networkBuilderA = NetworkBuilderPointer( new NetworkBuilder< CustomComponentList >( *logger, *blueprint ) );
 }
 
 TEST_F( NetworkBuilderTest, Configure )
 {
-  NetworkBuilderPointer networkBuilder = NetworkBuilderPointer( new NetworkBuilder< CustomComponentList >( *logger ) );
-  networkBuilder->AddBlueprint( blueprint );
+  NetworkBuilderPointer networkBuilder = NetworkBuilderPointer( new NetworkBuilder< CustomComponentList >( *logger, *blueprint ) );
 
   bool allUniqueComponents;
   EXPECT_NO_THROW( allUniqueComponents = networkBuilder->Configure() );
@@ -94,8 +93,7 @@ TEST_F( NetworkBuilderTest, Configure )
 
 TEST_F( NetworkBuilderTest, Connect )
 {
-  NetworkBuilderPointer networkBuilder = NetworkBuilderPointer( new NetworkBuilder< CustomComponentList >( *logger ) );
-  networkBuilder->AddBlueprint( blueprint );
+  NetworkBuilderPointer networkBuilder = NetworkBuilderPointer( new NetworkBuilder< CustomComponentList >( *logger, *blueprint ) );
   EXPECT_NO_THROW( bool allUniqueComponents = networkBuilder->Configure() );
   bool success;
   EXPECT_NO_THROW( success = networkBuilder->ConnectComponents() );
@@ -161,7 +159,7 @@ TEST_F( NetworkBuilderTest, DeduceComponentsFromConnections )
    // ItkResampleFilterComponent< 3, float, float >
   >;
 
-  BlueprintPointer blueprint = BlueprintPointer( new Blueprint() ); // override old blueprint
+  BlueprintPointer blueprint = BlueprintPointer( new BlueprintImpl() ); // override old blueprint
 
   blueprint->SetComponent( "RegistrationMethod", { { "NameOfClass", { "ItkImageRegistrationMethodv4Component" } },
                                                    { "NumberOfLevels", { "2" } },
@@ -245,8 +243,7 @@ TEST_F( NetworkBuilderTest, DeduceComponentsFromConnections )
   blueprint->SetConnection( "ResampleFilter", "Controller", { {} } );              //ReconnectTransformInterface
   blueprint->SetConnection( "TransformDisplacementFilter", "Controller", { {} } ); //ReconnectTransformInterface
 
-  std::unique_ptr< NetworkBuilderBase > networkBuilder( new NetworkBuilder< RegisterComponents >( *logger ) );
-  networkBuilder->AddBlueprint( blueprint );
+  std::unique_ptr< NetworkBuilderBase > networkBuilder( new NetworkBuilder< RegisterComponents >( *logger, *blueprint ) );
   bool allUniqueComponents;
   EXPECT_NO_THROW( allUniqueComponents = networkBuilder->Configure() );
   EXPECT_TRUE( allUniqueComponents );

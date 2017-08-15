@@ -20,14 +20,11 @@
 #ifndef selxSuperElastixFilterBase_h
 #define selxSuperElastixFilterBase_h
 
-#include "itkProcessObject.h"
 #include "selxBlueprint.h"
 #include "selxLogger.h"
 
 #include "selxAnyFileReader.h"
 #include "selxAnyFileWriter.h"
-//#include "itkSharedPointerDataObjectDecorator.h"
-#include "itkUniquePointerDataObjectDecorator.h"
 
 /**
  * \class SuperElastixFilterBase
@@ -63,19 +60,17 @@ public:
   typedef AnyFileReader AnyFileReaderType;
   typedef AnyFileWriter AnyFileWriterType;
 
-  typedef itk::UniquePointerDataObjectDecorator< Blueprint > BlueprintType;
-  typedef BlueprintType::Pointer                             BlueprintPointer;
-  typedef BlueprintType::ConstPointer                        BlueprintConstPointer;
+  typedef Blueprint::Pointer       BlueprintPointer;
+  typedef Blueprint::ConstPointer  BlueprintConstPointer;
+  itkSetObjectMacro( Blueprint, Blueprint );
+  itkGetObjectMacro( Blueprint, Blueprint );
 
-  typedef itk::UniquePointerDataObjectDecorator< Logger >    LoggerType;
-  typedef LoggerType::Pointer                                LoggerPointer;
-  typedef LoggerType::ConstPointer                           LoggerConstPointer;
+  typedef Logger::Pointer        LoggerObjectPointer;
+  typedef Logger::ConstPointer   LoggerObjectConstPointer;
+  itkSetObjectMacro( Logger, Logger );
+  itkGetConstObjectMacro( Logger, Logger );
 
-  // Setting a Blueprint creates a pipeline such that when SuperElastixFilter is updated it checks if the blueprint has been modified and if so, SuperElastixFilter resets its internals and start building the blueprint from scratch
-  itkSetObjectMacro( Blueprint, BlueprintType );
-  itkSetObjectMacro( Logger, LoggerType );
-
-  // Adding a Blueprint composes SuperElastixFilter' internal blueprint (accessible by Set/Get Blueprint) with the otherBlueprint.
+  // Adding a BlueprintImpl composes SuperElastixFilter' internal blueprint (accessible by Set/Get BlueprintImpl) with the otherBlueprint.
   // void AddBlueprint(BlueprintPointer otherBlueprint);
 
   bool ParseBlueprint( void );
@@ -117,10 +112,6 @@ public:
 
   void Update( void ) ITK_OVERRIDE;
 
-  void SetLogger( LoggerPointer logger );
-
-  LoggerPointer GetLogger();
-
 protected:
 
   // default constructor initialized with an empty NetworkBuilder
@@ -132,17 +123,15 @@ protected:
 
   std::unique_ptr< NetworkBuilderFactoryBase > m_NetworkBuilderFactory;
   std::unique_ptr< NetworkBuilderBase > m_NetworkBuilder;
-
-  LoggerPointer m_Logger;
+  LoggerObjectPointer m_Logger;
 
 private:
 
   //TODO make const correct
-  BlueprintType::Pointer m_Blueprint;
+  BlueprintPointer m_Blueprint;
 
   bool m_IsConnected;
   bool m_AllUniqueComponents;
-  bool m_IsBlueprintParsedOnce;
 };
 } // namespace elx
 

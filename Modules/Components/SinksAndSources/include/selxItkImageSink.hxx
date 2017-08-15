@@ -23,7 +23,7 @@
 namespace selx
 {
 template< int Dimensionality, class TPixel >
-ItkImageSinkComponent< Dimensionality, TPixel >::ItkImageSinkComponent( const std::string & name, const LoggerInterface & logger ) : Superclass( name,
+ItkImageSinkComponent< Dimensionality, TPixel >::ItkImageSinkComponent( const std::string & name, LoggerImpl & logger ) : Superclass( name,
     logger ),
   m_MiniPipelineOutputImage( nullptr ), m_NetworkBuilderOutputImage( nullptr )
 {

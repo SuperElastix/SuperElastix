@@ -62,7 +62,7 @@ public:
   using ItkImageDomainType = typename itkImageDomainFixedInterface<Dimensionality>::ItkImageDomainType;
 
 
-  ItkToNiftiImageSourceReferenceComponent( const std::string & name, const LoggerInterface & logger );
+  ItkToNiftiImageSourceReferenceComponent( const std::string & name, LoggerImpl & logger );
   virtual ~ItkToNiftiImageSourceReferenceComponent();
 
   // providing interfaces

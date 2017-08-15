@@ -17,6 +17,7 @@
  *
  *=========================================================================*/
 
+#include "selxBlueprintImpl.h"
 #include "selxBlueprint.h"
 
 #include "gtest/gtest.h"
@@ -27,14 +28,16 @@ class BlueprintTest : public ::testing::Test
 {
 public:
 
-  typedef Blueprint::ParameterMapType   ParameterMapType;
-  typedef Blueprint::ParameterValueType ParameterValueType;
+  typedef BlueprintImpl::ParameterMapType   ParameterMapType;
+  typedef BlueprintImpl::ParameterValueType ParameterValueType;
 
   virtual void SetUp()
   {
     parameterMap[ "NameOfClass" ]        = ParameterValueType( 1, "TestClassName" );
     anotherParameterMap[ "NameOfClass" ] = ParameterValueType( 1, "AnotherTestClassName" );
   }
+
+  typedef selxBlueprint::Pointer BlueprintPointer;
 
 
   ParameterMapType parameterMap;
@@ -43,8 +46,24 @@ public:
 
 TEST_F( BlueprintTest, SetGetDeleteComponent )
 {
-  std::unique_ptr< Blueprint > blueprint;
-  EXPECT_NO_THROW( blueprint = std::unique_ptr< Blueprint >( new Blueprint() ) );
+  std::unique_ptr< BlueprintImpl > blueprint;
+  EXPECT_NO_THROW( blueprint = std::unique_ptr< BlueprintImpl >( new BlueprintImpl() ) );
+
+  bool success0;
+  EXPECT_NO_THROW( success0 = blueprint->SetComponent( "MyComponentName", parameterMap ) );
+  EXPECT_TRUE( success0 );
+
+  bool success1;
+  EXPECT_NO_THROW( blueprint->SetComponent( "MyComponentName", parameterMap ) );
+  EXPECT_NO_THROW( success1 = blueprint->SetComponent( "MyComponentName", anotherParameterMap ) );
+  EXPECT_TRUE( success1 );
+  EXPECT_EQ( anotherParameterMap, blueprint->GetComponent( "MyComponentName" ) );
+}
+
+TEST_F( BlueprintTest, BlueprintObjectSetGetDeleteComponent )
+{
+  BlueprintPointer blueprint;
+  EXPECT_NO_THROW( blueprint = selxBlueprint::New() );
 
   bool success0;
   EXPECT_NO_THROW( success0 = blueprint->SetComponent( "MyComponentName", parameterMap ) );
@@ -59,8 +78,8 @@ TEST_F( BlueprintTest, SetGetDeleteComponent )
 
 TEST_F( BlueprintTest, SetGetDeleteConnection )
 {
-  std::unique_ptr< Blueprint > blueprint;
-  EXPECT_NO_THROW( blueprint = std::unique_ptr< Blueprint >( new Blueprint() ) );
+  std::unique_ptr< BlueprintImpl > blueprint;
+  EXPECT_NO_THROW( blueprint = std::unique_ptr< BlueprintImpl >( new BlueprintImpl() ) );
 
   blueprint->SetComponent( "Component0", parameterMap );
   blueprint->SetComponent( "Component1", parameterMap );
@@ -105,66 +124,66 @@ TEST_F( BlueprintTest, SetGetDeleteConnection )
 
 TEST_F( BlueprintTest, CopyConstuctor )
 {
-  std::unique_ptr< Blueprint > baseBlueprint;
-  EXPECT_NO_THROW( baseBlueprint = std::unique_ptr< Blueprint >( new Blueprint() ) );
+  std::unique_ptr< BlueprintImpl > baseBlueprint;
+  EXPECT_NO_THROW( baseBlueprint = std::unique_ptr< BlueprintImpl >( new BlueprintImpl() ) );
 
   baseBlueprint->SetComponent( "Component0", { { "OperationType", { "Transform" } } } );
-  std::unique_ptr< Blueprint > clonedBaseBlueprint;
-  EXPECT_NO_THROW( clonedBaseBlueprint = std::make_unique< Blueprint >( *baseBlueprint.get() ) );
+  std::unique_ptr< BlueprintImpl > clonedBaseBlueprint;
+  EXPECT_NO_THROW( clonedBaseBlueprint = std::make_unique< BlueprintImpl >( *baseBlueprint.get() ) );
 
   EXPECT_NO_THROW( clonedBaseBlueprint->SetComponent( "Component1", { { "OperationType", { "Source" } }, { "Dimensionality", { "3" } } } ) );
 
-  Blueprint::ParameterMapType clonedComponent0;
+  BlueprintImpl::ParameterMapType clonedComponent0;
   EXPECT_NO_THROW( clonedComponent0 = clonedBaseBlueprint->GetComponent( "Component0" ) );
 
-  Blueprint::ParameterMapType component1;
+  BlueprintImpl::ParameterMapType component1;
   EXPECT_THROW( component1 = baseBlueprint->GetComponent( "Component1" ), std::runtime_error );
 }
 
 TEST_F( BlueprintTest, Compose )
 {
-  std::unique_ptr< Blueprint > baseBlueprint;
-  EXPECT_NO_THROW( baseBlueprint = std::unique_ptr< Blueprint >( new Blueprint() ) );
+  std::unique_ptr< BlueprintImpl > baseBlueprint;
+  EXPECT_NO_THROW( baseBlueprint = std::unique_ptr< BlueprintImpl >( new BlueprintImpl() ) );
 
   baseBlueprint->SetComponent( "Component0", { { "OperationType", { "Transform" } } } );
   baseBlueprint->SetComponent( "Component1", { { "OperationType", { "Source" } }, { "Dimensionality", { "3" } } } );
 
   // compose-in a new 3rd component Component2
-  std::unique_ptr< Blueprint > nonConflictingBlueprint0;
-  EXPECT_NO_THROW( nonConflictingBlueprint0 = std::unique_ptr< Blueprint >( new Blueprint() ) );
+  std::unique_ptr< BlueprintImpl > nonConflictingBlueprint0;
+  EXPECT_NO_THROW( nonConflictingBlueprint0 = std::unique_ptr< BlueprintImpl >( new BlueprintImpl() ) );
 
   nonConflictingBlueprint0->SetComponent( "Component2", { { "OperationType", { "Sink" } } } );
 
-  EXPECT_TRUE( baseBlueprint->ComposeWith( nonConflictingBlueprint0 ) );
+  EXPECT_TRUE( baseBlueprint->ComposeWith( *nonConflictingBlueprint0 ) );
   EXPECT_STREQ( "Sink", baseBlueprint->GetComponent( "Component2" )[ "OperationType" ][ 0 ].c_str() );
 
   // compose-in additional properties of Component0 and Component1
-  std::unique_ptr< Blueprint > nonConflictingBlueprint1;
-  EXPECT_NO_THROW( nonConflictingBlueprint1 = std::unique_ptr< Blueprint >( new Blueprint() ) );
+  std::unique_ptr< BlueprintImpl > nonConflictingBlueprint1;
+  EXPECT_NO_THROW( nonConflictingBlueprint1 = std::unique_ptr< BlueprintImpl >( new BlueprintImpl() ) );
 
   nonConflictingBlueprint1->SetComponent( "Component0", { { "TranformationGroup", { "Diffeomorphic" } }, { "PixelType", { "float" } } } );
   nonConflictingBlueprint1->SetComponent( "Component1", { { "NameOfClass", { "ImageSourceClass" } } } );
 
-  EXPECT_TRUE( baseBlueprint->ComposeWith( nonConflictingBlueprint1 ) );
+  EXPECT_TRUE( baseBlueprint->ComposeWith( *nonConflictingBlueprint1 ) );
   EXPECT_STREQ( "Transform", baseBlueprint->GetComponent( "Component0" )[ "OperationType" ][ 0 ].c_str() );
   EXPECT_STREQ( "Diffeomorphic", baseBlueprint->GetComponent( "Component0" )[ "TranformationGroup" ][ 0 ].c_str() );
   EXPECT_STREQ( "ImageSourceClass", baseBlueprint->GetComponent( "Component1" )[ "NameOfClass" ][ 0 ].c_str() );
 
   // compose-in existing component with existing property key, but equal property value(s). Nothing happens actually (i.e. idempotency)
-  std::unique_ptr< Blueprint > nonConflictingBlueprint2;
-  EXPECT_NO_THROW( nonConflictingBlueprint2 = std::unique_ptr< Blueprint >( new Blueprint() ) );
+  std::unique_ptr< BlueprintImpl > nonConflictingBlueprint2;
+  EXPECT_NO_THROW( nonConflictingBlueprint2 = std::unique_ptr< BlueprintImpl >( new BlueprintImpl() ) );
 
   nonConflictingBlueprint2->SetComponent( "Component0", { { "PixelType", { "float" } } } );
 
-  EXPECT_TRUE( baseBlueprint->ComposeWith( nonConflictingBlueprint2 ) );
+  EXPECT_TRUE( baseBlueprint->ComposeWith( *nonConflictingBlueprint2 ) );
 
   // trying to overwrite properties fails
-  std::unique_ptr< Blueprint > conflictingBlueprint0;
-  EXPECT_NO_THROW( conflictingBlueprint0 = std::unique_ptr< Blueprint >( new Blueprint() ) );
+  std::unique_ptr< BlueprintImpl > conflictingBlueprint0;
+  EXPECT_NO_THROW( conflictingBlueprint0 = std::unique_ptr< BlueprintImpl >( new BlueprintImpl() ) );
   conflictingBlueprint0->SetComponent( "Component1", { { "Dimensionality", { "2" } }, { "InternalComputationValueType", { "float" } } } );
 
   // Compose fails and returns false
-  EXPECT_FALSE( baseBlueprint->ComposeWith( conflictingBlueprint0 ) );
+  EXPECT_FALSE( baseBlueprint->ComposeWith( *conflictingBlueprint0 ) );
 
   //baseBlueprint should not have been altered by a failing compose operation
   EXPECT_STREQ( "3", baseBlueprint->GetComponent( "Component1" )[ "Dimensionality" ][ 0 ].c_str() );
@@ -173,8 +192,8 @@ TEST_F( BlueprintTest, Compose )
 }
 //TEST_F( BlueprintTest, WriteBlueprint )
 //{
-//  std::unique_ptr< Blueprint > blueprint;
-//  EXPECT_NO_THROW( blueprint = std::unique_ptr< Blueprint >( new Blueprint() ) );
+//  std::unique_ptr< BlueprintImpl > blueprint;
+//  EXPECT_NO_THROW( blueprint = std::unique_ptr< BlueprintImpl >( new BlueprintImpl() ) );
 //
 //  // create some made up configuration to show graphviz output
 //  ParameterMapType component0Parameters;

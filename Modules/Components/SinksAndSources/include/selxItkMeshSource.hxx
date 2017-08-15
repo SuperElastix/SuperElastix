@@ -24,7 +24,7 @@ namespace selx
 {
 template< int Dimensionality, class TPixel >
 ItkMeshSourceComponent< Dimensionality, TPixel >
-::ItkMeshSourceComponent( const std::string & name, const LoggerInterface & logger ) : Superclass( name, logger ), m_Mesh( nullptr )
+::ItkMeshSourceComponent( const std::string & name, LoggerImpl & logger ) : Superclass( name, logger ), m_Mesh( nullptr )
 {
 }
 
