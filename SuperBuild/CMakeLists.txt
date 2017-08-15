@@ -17,7 +17,7 @@
 #
 #=========================================================================
 
-cmake_minimum_required( VERSION 3.0.2 )
+cmake_minimum_required( VERSION 3.5.1 )
 
 # ---------------------------------------------------------------------
 project( SuperElastixSuperBuild )
