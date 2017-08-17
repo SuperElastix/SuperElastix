@@ -28,7 +28,7 @@ namespace selx
  */
 
 SuperElastixFilterBase
-::SuperElastixFilterBase( ) :
+::SuperElastixFilterBase() :
   m_IsConnected( false ),
   m_AllUniqueComponents( false ),
   m_IsBlueprintParsedOnce( false )
@@ -140,7 +140,7 @@ SuperElastixFilterBase
       // or should we catch and rethrow nameAndInterface.second->SetMiniPipelineOutput(this->GetOutput(nameAndInterface.first)); ?
       itkExceptionMacro( << "SuperElastixFilter requires the output " "" << nameAndInterface.first << "" " for the Sink Component with that name" )
     }
-    // This (empty) Output DataObject is known to the outside of the SuperElastixFilter and might be connected to an itk pipeline. 
+    // This (empty) Output DataObject is known to the outside of the SuperElastixFilter and might be connected to an itk pipeline.
     // To keep the pipeline intact we need to propagate the DataObject upstream. Additional information such as requested region is preserved as well.
     // nameAndInterface.second->SetMiniPipelineOutput( this->GetOutput( nameAndInterface.first ) );
     usedOutputs.erase( foundIndex );
@@ -283,7 +283,7 @@ SuperElastixFilterBase
 
 void
 SuperElastixFilterBase
-::SetLogger( LoggerPointer logger ) 
+::SetLogger( LoggerPointer logger )
 {
   this->m_Logger = logger;
 }
@@ -291,9 +291,8 @@ SuperElastixFilterBase
 
 SuperElastixFilterBase::LoggerPointer
 SuperElastixFilterBase
-::GetLogger( void ) 
+::GetLogger( void )
 {
   return m_Logger;
 }
-
 } // namespace elx

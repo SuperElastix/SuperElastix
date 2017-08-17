@@ -36,9 +36,8 @@
 
 namespace selx
 {
-
 // Forward declaration, hiding implementation details and speeding up compilation time (PIMPL idiom)
-class NetworkBuilderBase; 
+class NetworkBuilderBase;
 class NetworkBuilderFactoryBase;
 
 class SuperElastixFilterBase : public itk::ProcessObject
@@ -46,7 +45,7 @@ class SuperElastixFilterBase : public itk::ProcessObject
 public:
 
   /** Standard ITK typedefs. */
-  typedef SuperElastixFilterBase              Self;
+  typedef SuperElastixFilterBase          Self;
   typedef itk::ProcessObject              Superclass;
   typedef itk::SmartPointer< Self >       Pointer;
   typedef itk::SmartPointer< const Self > ConstPointer;
@@ -67,9 +66,9 @@ public:
   typedef BlueprintType::Pointer                             BlueprintPointer;
   typedef BlueprintType::ConstPointer                        BlueprintConstPointer;
 
-  typedef itk::UniquePointerDataObjectDecorator< Logger >    LoggerType;
-  typedef LoggerType::Pointer                                LoggerPointer;
-  typedef LoggerType::ConstPointer                           LoggerConstPointer;
+  typedef itk::UniquePointerDataObjectDecorator< Logger > LoggerType;
+  typedef LoggerType::Pointer                             LoggerPointer;
+  typedef LoggerType::ConstPointer                        LoggerConstPointer;
 
   // Setting a Blueprint creates a pipeline such that when SuperElastixFilter is updated it checks if the blueprint has been modified and if so, SuperElastixFilter resets its internals and start building the blueprint from scratch
   itkSetObjectMacro( Blueprint, BlueprintType );
@@ -131,7 +130,7 @@ protected:
   virtual void GenerateData( void ) ITK_OVERRIDE;
 
   std::unique_ptr< NetworkBuilderFactoryBase > m_NetworkBuilderFactory;
-  std::unique_ptr< NetworkBuilderBase > m_NetworkBuilder;
+  std::unique_ptr< NetworkBuilderBase >        m_NetworkBuilder;
 
   LoggerPointer m_Logger;
 

@@ -106,9 +106,9 @@ public:
   typedef SuperElastixFilterBase::BlueprintType SuperElastixFilterBlueprintType;
   typedef SuperElastixFilterBase::Pointer       SuperElastixFilterBlueprintPointer;
   typedef SuperElastixFilterBase::ConstPointer  SuperElastixFilterBlueprintConstPointer;
-  typedef Blueprint::ParameterMapType       ParameterMapType;
-  typedef Blueprint::ParameterValueType     ParameterValueType;
-  typedef DataManager                       DataManagerType;
+  typedef Blueprint::ParameterMapType           ParameterMapType;
+  typedef Blueprint::ParameterValueType         ParameterValueType;
+  typedef DataManager                           DataManagerType;
 
   typedef itk::Image< float, 2 >              Image2DType;
   typedef itk::ImageFileReader< Image2DType > ImageReader2DType;
@@ -140,7 +140,7 @@ public:
 
 
   // Blueprint holds a configuration for SuperElastix
-  BlueprintPointer            blueprint;
+  BlueprintPointer                blueprint;
   SuperElastixFilterBase::Pointer superElastixFilter;
   // Data manager provides the paths to the input and output data for unit tests
   DataManagerType::Pointer dataManager;
@@ -624,30 +624,30 @@ TEST_F( RegistrationItkv4Test, FullyConfigured3dAffine )
   EXPECT_NO_THROW( resultDisplacementWriter->Update() );
 }
 
-TEST_F(RegistrationItkv4Test, CompositeTransform)
+TEST_F( RegistrationItkv4Test, CompositeTransform )
 {
   /** make example blueprint configuration */
-  BlueprintPointer blueprint = BlueprintPointer(new Blueprint());
+  BlueprintPointer blueprint = BlueprintPointer( new Blueprint() );
 
-  blueprint->SetComponent("MultiStageTransformController", { { "NameOfClass", { "ItkCompositeTransformComponent" } }, { "ExecutionOrder", { "RegistrationMethod1", "RegistrationMethod2" } } });
+  blueprint->SetComponent( "MultiStageTransformController", { { "NameOfClass", { "ItkCompositeTransformComponent" } }, { "ExecutionOrder", { "RegistrationMethod1", "RegistrationMethod2" } } } );
 
-  blueprint->SetComponent("FixedImageSource", { { "NameOfClass", { "ItkImageSourceComponent" } } });
-  blueprint->SetComponent("MovingImageSource", { { "NameOfClass", { "ItkImageSourceComponent" } } });
-  blueprint->SetComponent("ResultImageSink", { { "NameOfClass", { "ItkImageSinkComponent" } } });
+  blueprint->SetComponent( "FixedImageSource", { { "NameOfClass", { "ItkImageSourceComponent" } } } );
+  blueprint->SetComponent( "MovingImageSource", { { "NameOfClass", { "ItkImageSourceComponent" } } } );
+  blueprint->SetComponent( "ResultImageSink", { { "NameOfClass", { "ItkImageSinkComponent" } } } );
 
-  blueprint->SetComponent("ResampleFilter", { { "NameOfClass", { "ItkResampleFilterComponent" } } });
-  blueprint->SetConnection("FixedImageSource", "ResampleFilter", { {} });
-  blueprint->SetConnection("MovingImageSource", "ResampleFilter", { {} });
-  blueprint->SetConnection("MultiStageTransformController", "ResampleFilter", { {} }); //ReconnectTransformInterface
+  blueprint->SetComponent( "ResampleFilter", { { "NameOfClass", { "ItkResampleFilterComponent" } } } );
+  blueprint->SetConnection( "FixedImageSource", "ResampleFilter", { {} } );
+  blueprint->SetConnection( "MovingImageSource", "ResampleFilter", { {} } );
+  blueprint->SetConnection( "MultiStageTransformController", "ResampleFilter", { {} } ); //ReconnectTransformInterface
 
-  blueprint->SetConnection("ResampleFilter", "ResultImageSink", {});
+  blueprint->SetConnection( "ResampleFilter", "ResultImageSink", {} );
 
-  blueprint->SetComponent("RegistrationMethod1", { { "NameOfClass", { "ItkImageRegistrationMethodv4Component" } },
-  { "Dimensionality", { "2" } },
-  { "InternalComputationValueType", { "double" } },
-  { "PixelType", { "float" } } });
-  blueprint->SetConnection("FixedImageSource", "RegistrationMethod1", { { "Role", { "Fixed" } } });
-  blueprint->SetConnection("MovingImageSource", "RegistrationMethod1", { { "Role", { "Moving" } } });
+  blueprint->SetComponent( "RegistrationMethod1", { { "NameOfClass", { "ItkImageRegistrationMethodv4Component" } },
+                                                    { "Dimensionality", { "2" } },
+                                                    { "InternalComputationValueType", { "double" } },
+                                                    { "PixelType", { "float" } } } );
+  blueprint->SetConnection( "FixedImageSource", "RegistrationMethod1", { { "Role", { "Fixed" } } } );
+  blueprint->SetConnection( "MovingImageSource", "RegistrationMethod1", { { "Role", { "Moving" } } } );
 
   blueprint->SetComponent( "Metric1", { { "NameOfClass", { "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component" } } } );
   blueprint->SetConnection( "Metric1", "RegistrationMethod1", {} );

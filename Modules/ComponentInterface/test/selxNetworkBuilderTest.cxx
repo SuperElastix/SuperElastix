@@ -74,7 +74,7 @@ public:
 
 
   BlueprintPointer blueprint;
-  Logger * logger = new Logger();
+  Logger *         logger = new Logger();
 };
 
 TEST_F( NetworkBuilderTest, Create )
@@ -149,7 +149,7 @@ TEST_F( NetworkBuilderTest, DeduceComponentsFromConnections )
     ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent< 3, float >,
     ItkTransformDisplacementFilterComponent< 2, double, double >,
     ItkTransformDisplacementFilterComponent< 2, float, double >,
-   // ItkTransformDisplacementFilterComponent< 2, float, float >,
+    // ItkTransformDisplacementFilterComponent< 2, float, float >,
     ItkTransformDisplacementFilterComponent< 3, double, double >,
     ItkTransformDisplacementFilterComponent< 3, float, double >,
     //ItkTransformDisplacementFilterComponent< 3, float, float >,
@@ -158,8 +158,8 @@ TEST_F( NetworkBuilderTest, DeduceComponentsFromConnections )
     //ItkResampleFilterComponent< 2, float, float >,
     ItkResampleFilterComponent< 3, double, double >,
     ItkResampleFilterComponent< 3, float, double >
-   // ItkResampleFilterComponent< 3, float, float >
-  >;
+    // ItkResampleFilterComponent< 3, float, float >
+    >;
 
   BlueprintPointer blueprint = BlueprintPointer( new Blueprint() ); // override old blueprint
 
@@ -199,9 +199,9 @@ TEST_F( NetworkBuilderTest, DeduceComponentsFromConnections )
   component7Parameters[ "NumberOfIterations" ] = { "1" };
   blueprint->SetComponent( "Optimizer", component7Parameters );
 
-  blueprint->SetComponent("ResampleFilter", { { "NameOfClass", { "ItkResampleFilterComponent" } } });
+  blueprint->SetComponent( "ResampleFilter", { { "NameOfClass", { "ItkResampleFilterComponent" } } } );
 
-  blueprint->SetComponent("Transform", { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformComponent" } } });
+  blueprint->SetComponent( "Transform", { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformComponent" } } } );
 
   blueprint->SetComponent( "TransformResolutionAdaptor",
     { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent" } },
@@ -239,7 +239,7 @@ TEST_F( NetworkBuilderTest, DeduceComponentsFromConnections )
   blueprint->SetConnection( "FixedImageSource", "TransformDisplacementFilter", { {} } );
   blueprint->SetConnection( "RegistrationMethod", "ResampleFilter", { {} } );
   blueprint->SetConnection( "FixedImageSource", "ResampleFilter", { {} } );
-  blueprint->SetConnection("MovingImageSource", "ResampleFilter", { { keys::NameOfInterface, { "itkImageMovingInterface" } } });
+  blueprint->SetConnection( "MovingImageSource", "ResampleFilter", { { keys::NameOfInterface, { "itkImageMovingInterface" } } } );
 
   blueprint->SetConnection( "RegistrationMethod", "Controller", { {} } );          //RunRegistrationInterface
   blueprint->SetConnection( "ResampleFilter", "Controller", { {} } );              //ReconnectTransformInterface

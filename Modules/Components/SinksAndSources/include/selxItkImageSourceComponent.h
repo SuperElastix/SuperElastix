@@ -34,10 +34,10 @@ template< int Dimensionality, class TPixel >
 class ItkImageSourceComponent :
   public SuperElastixComponent<
   Accepting< >,
-  Providing< SourceInterface, itkImageInterface< Dimensionality, TPixel >, 
-             itkImageFixedInterface< Dimensionality, TPixel >,
-             itkImageMovingInterface< Dimensionality, TPixel >,
-             itkImageDomainFixedInterface< Dimensionality >>
+  Providing< SourceInterface, itkImageInterface< Dimensionality, TPixel >,
+  itkImageFixedInterface< Dimensionality, TPixel >,
+  itkImageMovingInterface< Dimensionality, TPixel >,
+  itkImageDomainFixedInterface< Dimensionality >>
   >
 {
 public:
@@ -48,7 +48,7 @@ public:
     >                                       Self;
   typedef SuperElastixComponent<
     Accepting< >,
-    Providing < SourceInterface, itkImageInterface< Dimensionality, TPixel >,
+    Providing< SourceInterface, itkImageInterface< Dimensionality, TPixel >,
     itkImageFixedInterface< Dimensionality, TPixel >,
     itkImageMovingInterface< Dimensionality, TPixel >,
     itkImageDomainFixedInterface< Dimensionality >>
@@ -59,7 +59,7 @@ public:
   ItkImageSourceComponent( const std::string & name, const LoggerInterface & logger );
   virtual ~ItkImageSourceComponent();
 
-  typedef itk::Image< TPixel, Dimensionality > ItkImageType;
+  typedef itk::Image< TPixel, Dimensionality >                                        ItkImageType;
   typedef typename itkImageDomainFixedInterface< Dimensionality >::ItkImageDomainType ItkImageDomainType;
 
   typedef typename itk::ImageFileReader< ItkImageType > ItkImageReaderType;
@@ -67,8 +67,11 @@ public:
 
   // providing interfaces
   virtual typename ItkImageType::Pointer GetItkImage() override;
+
   virtual typename ItkImageType::Pointer GetItkImageFixed() override;
+
   virtual typename ItkImageType::Pointer GetItkImageMoving() override;
+
   virtual typename ItkImageDomainType::Pointer GetItkImageDomainFixed() override;
 
   virtual void SetMiniPipelineInput( itk::DataObject::Pointer ) override;

@@ -22,19 +22,19 @@
 
 #include <stdlib.h>  // For size_t.
 
-// Meant to store the pointers to a few functions common to the ITK version and the Niftyreg version of nifti, 
+// Meant to store the pointers to a few functions common to the ITK version and the Niftyreg version of nifti,
 // that are included with the SuperBuild of SuperElastix.
 // (The list is not meant to be complete.)
 
 namespace selx
 {
-	struct NiftiFunctionPtrs
-	{
-		void(*disp_lib_hist_FunctionPtr)(void);
-		void(*disp_lib_version_FunctionPtr)(void);
-		int(*get_filesize_FunctionPtr)(const char *);
-		void(*swap_2bytes_FunctionPtr)(size_t, void *);
-	};
+struct NiftiFunctionPtrs
+{
+  void (* disp_lib_hist_FunctionPtr)( void );
+  void (* disp_lib_version_FunctionPtr)( void );
+  int  (* get_filesize_FunctionPtr)( const char * );
+  void (* swap_2bytes_FunctionPtr)( size_t, void * );
+};
 }
 
 #endif

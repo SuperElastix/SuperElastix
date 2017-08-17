@@ -27,14 +27,12 @@ namespace selx
 template< class ComponentList >
 class NetworkBuilderFactory : public NetworkBuilderFactoryBase
 {
-
 public:
 
   NetworkBuilderFactory() {}
   virtual ~NetworkBuilderFactory() {}
 
   virtual std::unique_ptr< NetworkBuilderBase > New( const Logger & logger );
-
 };
 } // end namespace selx
 
