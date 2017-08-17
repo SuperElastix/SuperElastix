@@ -38,6 +38,7 @@ ExternalProject_Add( ${proj}
   DEPENDS ${SUPERELASTIX_DEPENDENCIES}
   BUILD_COMMAND ${SELX_SUPERBUILD_COMMAND}
   INSTALL_COMMAND ""
+  BUILD_ALWAYS 1 
 )
 
 ExternalProject_Get_Property( ${proj} binary_dir )
