@@ -17,47 +17,47 @@
  *
  *=========================================================================*/
 
-#include "selxItkImageSourceFixedComponent.h"
+#include "selxItkMeshSourceComponent.h"
 #include "selxCheckTemplateProperties.h"
 
 namespace selx
 {
 template< int Dimensionality, class TPixel >
-ItkImageSourceFixedComponent< Dimensionality, TPixel >
-::ItkImageSourceFixedComponent( const std::string & name, const LoggerInterface & logger ) : Superclass( name, logger ), m_Image( nullptr )
+ItkMeshSourceComponent< Dimensionality, TPixel >
+::ItkMeshSourceComponent( const std::string & name, const LoggerInterface & logger ) : Superclass( name, logger ), m_Mesh( nullptr )
 {
 }
 
 
 template< int Dimensionality, class TPixel >
-ItkImageSourceFixedComponent< Dimensionality, TPixel >
-::~ItkImageSourceFixedComponent()
+ItkMeshSourceComponent< Dimensionality, TPixel >
+::~ItkMeshSourceComponent()
 {
 }
 
 
 template< int Dimensionality, class TPixel >
-typename ItkImageSourceFixedComponent< Dimensionality, TPixel >::ItkImageType::Pointer
-ItkImageSourceFixedComponent< Dimensionality, TPixel >
-::GetItkImageFixed()
+typename ItkMeshSourceComponent< Dimensionality, TPixel >::ItkMeshType::Pointer
+ItkMeshSourceComponent< Dimensionality, TPixel >
+::GetItkMesh()
 {
-  if( this->m_Image == nullptr )
+  if( this->m_Mesh == nullptr )
   {
     throw std::runtime_error( "SourceComponent needs to be initialized by SetMiniPipelineInput()" );
   }
-  return this->m_Image;
+  return this->m_Mesh;
 }
 
 
 template< int Dimensionality, class TPixel >
 void
-ItkImageSourceFixedComponent< Dimensionality, TPixel >
+ItkMeshSourceComponent< Dimensionality, TPixel >
 ::SetMiniPipelineInput( itk::DataObject::Pointer object )
 {
-  this->m_Image = dynamic_cast< ItkImageType * >( object.GetPointer() );
-  if( this->m_Image == nullptr )
+  this->m_Mesh = dynamic_cast< ItkMeshType * >( object.GetPointer() );
+  if( this->m_Mesh == nullptr )
   {
-    throw std::runtime_error( "DataObject passed by the NetworkBuilder is not of the right ImageType or not at all an ImageType" );
+    throw std::runtime_error( "DataObject passed by the NetworkBuilder is not of the right MeshType or not at all an MeshType" );
   }
   return;
 }
@@ -65,7 +65,7 @@ ItkImageSourceFixedComponent< Dimensionality, TPixel >
 
 template< int Dimensionality, class TPixel >
 typename AnyFileReader::Pointer
-ItkImageSourceFixedComponent< Dimensionality, TPixel >::GetInputFileReader()
+ItkMeshSourceComponent< Dimensionality, TPixel >::GetInputFileReader()
 {
   // Instanstiate an image file reader, decorated such that it can be implicitly cast to an AnyFileReaderType
   return DecoratedReaderType::New().GetPointer();
@@ -73,21 +73,8 @@ ItkImageSourceFixedComponent< Dimensionality, TPixel >::GetInputFileReader()
 
 
 template< int Dimensionality, class TPixel >
-typename ItkImageSourceFixedComponent< Dimensionality, TPixel >::ItkImageDomainType::Pointer
-ItkImageSourceFixedComponent< Dimensionality, TPixel >
-::GetItkImageDomainFixed()
-{
-  if( this->m_Image == nullptr )
-  {
-    throw std::runtime_error( "SourceComponent needs to be initialized by SetMiniPipelineInput()" );
-  }
-  return this->m_Image.GetPointer();
-}
-
-
-template< int Dimensionality, class TPixel >
 bool
-ItkImageSourceFixedComponent< Dimensionality, TPixel >
+ItkMeshSourceComponent< Dimensionality, TPixel >
 ::MeetsCriterion( const ComponentBase::CriterionType & criterion )
 {
   bool hasUndefinedCriteria( false );
@@ -101,7 +88,6 @@ ItkImageSourceFixedComponent< Dimensionality, TPixel >
   {
     return false;
   } // else: CriterionStatus::Unknown
-
   return meetsCriteria;
 }
 } //end namespace selx

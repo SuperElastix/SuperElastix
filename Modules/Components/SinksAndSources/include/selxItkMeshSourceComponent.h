@@ -17,78 +17,70 @@
  *
  *=========================================================================*/
 
-#ifndef selxItkImageSourceFixedComponent_h
-#define selxItkImageSourceFixedComponent_h
+#ifndef selxItkMeshSourceComponent_h
+#define selxItkMeshSourceComponent_h
 
 #include "selxSuperElastixComponent.h"
 #include "selxSinksAndSourcesInterfaces.h"
 #include "selxItkObjectInterfaces.h"
 
 #include <string.h>
-#include "itkImageFileReader.h"
+#include "itkMeshFileReader.h"
 #include "selxAnyFileReader.h"
 #include "selxFileReaderDecorator.h"
+
 namespace selx
 {
 template< int Dimensionality, class TPixel >
-class ItkImageSourceFixedComponent :
+class ItkMeshSourceComponent :
   public SuperElastixComponent<
   Accepting< >,
-  Providing< SourceInterface,
-  itkImageFixedInterface< Dimensionality, TPixel >,
-  itkImageDomainFixedInterface< Dimensionality >>
+  Providing< SourceInterface, itkMeshInterface< Dimensionality, TPixel >>
   >
 {
 public:
 
   /** Standard ITK typedefs. */
-  typedef ItkImageSourceFixedComponent<
+  typedef ItkMeshSourceComponent<
     Dimensionality, TPixel
     >                                     Self;
   typedef SuperElastixComponent<
     Accepting< >,
-    Providing< SourceInterface,
-    itkImageFixedInterface< Dimensionality, TPixel >,
-    itkImageDomainFixedInterface< Dimensionality >>
+    Providing< SourceInterface, itkMeshInterface< Dimensionality, TPixel >>
     >                                     Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
 
-  ItkImageSourceFixedComponent( const std::string & name, const LoggerInterface & logger );
-  virtual ~ItkImageSourceFixedComponent();
+  ItkMeshSourceComponent( const std::string & name, const LoggerInterface & logger );
+  virtual ~ItkMeshSourceComponent();
 
-  typedef typename itkImageFixedInterface< Dimensionality, TPixel >::ItkImageType     ItkImageType;
-  typedef typename itkImageDomainFixedInterface< Dimensionality >::ItkImageDomainType ItkImageDomainType;
+  typedef itk::Mesh< TPixel, Dimensionality >         ItkMeshType;
+  typedef typename itk::MeshFileReader< ItkMeshType > ItkMeshReaderType;
+  typedef FileReaderDecorator< ItkMeshReaderType >    DecoratedReaderType;
 
-  typedef typename itk::ImageFileReader< ItkImageType > ItkImageReaderType;
-  typedef FileReaderDecorator< ItkImageReaderType >     DecoratedReaderType;
-
-  // providing interfaces
-  virtual typename ItkImageType::Pointer GetItkImageFixed() override;
+  virtual typename ItkMeshType::Pointer GetItkMesh() override;
 
   virtual void SetMiniPipelineInput( itk::DataObject::Pointer ) override;
   virtual AnyFileReader::Pointer GetInputFileReader( void ) override;
 
-  virtual typename ItkImageDomainType::Pointer GetItkImageDomainFixed() override;
-
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
 
-  static const char * GetDescription() { return "ItkImageSourceFixed Component"; }
+  static const char * GetDescription() { return "ItkMeshSource Component"; }
 
 private:
 
-  typename ItkImageType::Pointer m_Image;
+  typename ItkMeshType::Pointer m_Mesh;
 
 protected:
 
   // return the class name and the template arguments to uniquely identify this component.
   static inline const std::map< std::string, std::string > TemplateProperties()
   {
-    return { { keys::NameOfClass, "ItkImageSourceFixedComponent" }, { keys::PixelType, PodString< TPixel >::Get() }, { keys::Dimensionality, std::to_string( Dimensionality ) } };
+    return { { keys::NameOfClass, "ItkMeshSourceComponent" }, { keys::PixelType, PodString< TPixel >::Get() }, { keys::Dimensionality, std::to_string( Dimensionality ) } };
   }
 };
 } //end namespace selx
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "selxItkImageSourceFixedComponent.hxx"
+#include "selxItkMeshSourceComponent.hxx"
 #endif
-#endif // #define selxItkImageSourceFixedComponent_h
+#endif // #define selxItkMeshSourceComponent_h

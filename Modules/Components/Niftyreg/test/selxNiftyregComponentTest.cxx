@@ -19,14 +19,14 @@
 
 #include "selxSuperElastixFilterCustomComponents.h"
 
-#include "selxRegistrationController.h"
+#include "selxRegistrationControllerComponent.h"
 
 #include "selxNiftyregReadImageComponent.h"
 #include "selxNiftyregWriteImageComponent.h"
 #include "selxNiftyregWriteImageComponent.h"
-#include "selxItkToNiftiImageSourceReferenceComponent.h"
+#include "selxItkToNiftiImageSourceComponent.h"
 #include "selxNiftiToItkImageSinkComponent.h"
-#include "selxItkImageSource.h"
+#include "selxItkImageSourceComponent.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 #include "selxNiftyregf3dComponent.h"
@@ -50,10 +50,10 @@ public:
   typedef TypeList < Niftyregf3dComponent< float >,
     NiftyregReadImageComponent< float >,
     NiftyregWriteImageComponent< float >,
-    ItkToNiftiImageSourceReferenceComponent< 2, float >,
+    ItkToNiftiImageSourceComponent< 2, float >,
     NiftiToItkImageSinkComponent<2, float>,
     ItkImageSourceComponent<2, float>,
-    ItkToNiftiImageSourceReferenceComponent< 3, float >,
+    ItkToNiftiImageSourceComponent< 3, float >,
     NiftiToItkImageSinkComponent<3, float>,
     ItkImageSourceComponent<3, float>,
     RegistrationControllerComponent< >> RegisterComponents;
@@ -111,7 +111,7 @@ TEST_F(NiftyregComponentTest, ItkToNiftiImage)
 {
   /** make example blueprint configuration */
   BlueprintPointer blueprint = BlueprintPointer(new Blueprint());
-  blueprint->SetComponent("FixedImage", { { "NameOfClass", { "ItkToNiftiImageSourceReferenceComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } } );
+  blueprint->SetComponent("FixedImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } } );
   blueprint->SetComponent("ResultImage", { { "NameOfClass", { "NiftyregWriteImageComponent" } }, { "FileName", { this->dataManager->GetOutputFile("ItkToNiftiImage_converted.nii.gz") } } });
   blueprint->SetComponent("Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } });
 
@@ -185,8 +185,8 @@ TEST_F(NiftyregComponentTest, Register2d_itkImages)
                                                   { "Optimizer", { "Gradient" } },
                                                   { "GridSpacingInVoxels", { "8", "8" } } });
   
-  blueprint->SetComponent("FixedImage", { { "NameOfClass", { "ItkToNiftiImageSourceReferenceComponent" } }, { "Dimensionality", { "2" } }, { "PixelType", { "float" } } });
-  blueprint->SetComponent("MovingImage", { { "NameOfClass", { "ItkToNiftiImageSourceReferenceComponent" } }, { "Dimensionality", { "2" } }, { "PixelType", { "float" } } });
+  blueprint->SetComponent("FixedImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "Dimensionality", { "2" } }, { "PixelType", { "float" } } });
+  blueprint->SetComponent("MovingImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "Dimensionality", { "2" } }, { "PixelType", { "float" } } });
   blueprint->SetComponent("ResultImage", { { "NameOfClass", { "NiftiToItkImageSinkComponent" } }, { "Dimensionality", { "2" } }, { "PixelType", { "float" } } });
   blueprint->SetComponent("Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } });
 
@@ -240,8 +240,8 @@ TEST_F(NiftyregComponentTest, WBIRDemo)
 
   
   blueprint->SetComponent("RegistrationMethod", { { "NameOfClass", { "Niftyregf3dComponent" } } });
-  blueprint->SetComponent("FixedImage", { { "NameOfClass", { "ItkToNiftiImageSourceReferenceComponent" } }, { "Dimensionality", { "2" } }, { "PixelType", { "float" } } });
-  blueprint->SetComponent("MovingImage", { { "NameOfClass", { "ItkToNiftiImageSourceReferenceComponent" } }, { "Dimensionality", { "2" } }, { "PixelType", { "float" } } });
+  blueprint->SetComponent("FixedImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "Dimensionality", { "2" } }, { "PixelType", { "float" } } });
+  blueprint->SetComponent("MovingImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "Dimensionality", { "2" } }, { "PixelType", { "float" } } });
   blueprint->SetComponent("ResultImage", { { "NameOfClass", { "NiftiToItkImageSinkComponent" } }, { "Dimensionality", { "2" } }, { "PixelType", { "float" } } });
   blueprint->SetComponent("Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } });
 

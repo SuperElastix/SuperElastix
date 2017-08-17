@@ -20,8 +20,8 @@
 #include "selxSuperElastixFilterCustomComponents.h"
 
 #include "selxItkSmoothingRecursiveGaussianImageFilterComponent.h"
-#include "selxItkImageSink.h"
-#include "selxItkImageSource.h"
+#include "selxItkImageSinkComponent.h"
+#include "selxItkImageSourceComponent.h"
 
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"

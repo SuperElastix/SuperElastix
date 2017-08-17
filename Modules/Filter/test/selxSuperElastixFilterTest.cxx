@@ -22,11 +22,11 @@
 #include "itkUniquePointerDataObjectDecorator.h"
 
 #include "selxItkSmoothingRecursiveGaussianImageFilterComponent.h"
-#include "selxItkImageSink.h"
-#include "selxItkImageSource.h"
-#include "selxItkMeshSink.h"
-#include "selxItkMeshSource.h"
-#include "selxRegistrationController.h"
+#include "selxItkImageSinkComponent.h"
+#include "selxItkImageSourceComponent.h"
+#include "selxItkMeshSinkComponent.h"
+#include "selxItkMeshSourceComponent.h"
+#include "selxRegistrationControllerComponent.h"
 
 #include "itkImage.h"
 #include "itkImageFileReader.h"

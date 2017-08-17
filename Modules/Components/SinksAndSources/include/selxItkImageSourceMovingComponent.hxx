@@ -17,29 +17,29 @@
  *
  *=========================================================================*/
 
-#include "selxItkImageSourceFixedComponent.h"
+#include "selxItkImageSourceMovingComponent.h"
 #include "selxCheckTemplateProperties.h"
 
 namespace selx
 {
 template< int Dimensionality, class TPixel >
-ItkImageSourceFixedComponent< Dimensionality, TPixel >
-::ItkImageSourceFixedComponent( const std::string & name, const LoggerInterface & logger ) : Superclass( name, logger ), m_Image( nullptr )
+ItkImageSourceMovingComponent< Dimensionality, TPixel >
+::ItkImageSourceMovingComponent( const std::string & name, const LoggerInterface & logger ) : Superclass( name, logger ), m_Image( nullptr )
 {
 }
 
 
 template< int Dimensionality, class TPixel >
-ItkImageSourceFixedComponent< Dimensionality, TPixel >
-::~ItkImageSourceFixedComponent()
+ItkImageSourceMovingComponent< Dimensionality, TPixel >
+::~ItkImageSourceMovingComponent()
 {
 }
 
 
 template< int Dimensionality, class TPixel >
-typename ItkImageSourceFixedComponent< Dimensionality, TPixel >::ItkImageType::Pointer
-ItkImageSourceFixedComponent< Dimensionality, TPixel >
-::GetItkImageFixed()
+typename ItkImageSourceMovingComponent< Dimensionality, TPixel >::ItkImageType::Pointer
+ItkImageSourceMovingComponent< Dimensionality, TPixel >
+::GetItkImageMoving()
 {
   if( this->m_Image == nullptr )
   {
@@ -51,7 +51,7 @@ ItkImageSourceFixedComponent< Dimensionality, TPixel >
 
 template< int Dimensionality, class TPixel >
 void
-ItkImageSourceFixedComponent< Dimensionality, TPixel >
+ItkImageSourceMovingComponent< Dimensionality, TPixel >
 ::SetMiniPipelineInput( itk::DataObject::Pointer object )
 {
   this->m_Image = dynamic_cast< ItkImageType * >( object.GetPointer() );
@@ -65,7 +65,7 @@ ItkImageSourceFixedComponent< Dimensionality, TPixel >
 
 template< int Dimensionality, class TPixel >
 typename AnyFileReader::Pointer
-ItkImageSourceFixedComponent< Dimensionality, TPixel >::GetInputFileReader()
+ItkImageSourceMovingComponent< Dimensionality, TPixel >::GetInputFileReader()
 {
   // Instanstiate an image file reader, decorated such that it can be implicitly cast to an AnyFileReaderType
   return DecoratedReaderType::New().GetPointer();
@@ -73,21 +73,8 @@ ItkImageSourceFixedComponent< Dimensionality, TPixel >::GetInputFileReader()
 
 
 template< int Dimensionality, class TPixel >
-typename ItkImageSourceFixedComponent< Dimensionality, TPixel >::ItkImageDomainType::Pointer
-ItkImageSourceFixedComponent< Dimensionality, TPixel >
-::GetItkImageDomainFixed()
-{
-  if( this->m_Image == nullptr )
-  {
-    throw std::runtime_error( "SourceComponent needs to be initialized by SetMiniPipelineInput()" );
-  }
-  return this->m_Image.GetPointer();
-}
-
-
-template< int Dimensionality, class TPixel >
 bool
-ItkImageSourceFixedComponent< Dimensionality, TPixel >
+ItkImageSourceMovingComponent< Dimensionality, TPixel >
 ::MeetsCriterion( const ComponentBase::CriterionType & criterion )
 {
   bool hasUndefinedCriteria( false );
