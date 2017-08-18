@@ -51,11 +51,11 @@ public:
   NiftyregReadImageComponent( const std::string & name, const LoggerInterface & logger );
   virtual ~NiftyregReadImageComponent();
 
-  virtual std::shared_ptr<nifti_image> GetFloatingNiftiImage() override;
+  virtual std::shared_ptr< nifti_image > GetFloatingNiftiImage() override;
 
-  virtual std::shared_ptr<nifti_image> GetReferenceNiftiImage() override;
+  virtual std::shared_ptr< nifti_image > GetReferenceNiftiImage() override;
 
-  virtual std::shared_ptr<nifti_image> GetWarpedNiftiImage() override;
+  virtual std::shared_ptr< nifti_image > GetWarpedNiftiImage() override;
 
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
 

@@ -24,7 +24,6 @@ namespace selx
 {
 class NetworkBuilderFactoryBase
 {
-
 public:
 
   NetworkBuilderFactoryBase() {}

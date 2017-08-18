@@ -31,10 +31,11 @@ template< >
 class Accepting< >
 {
 public:
-  //Accepting() = delete;
-  Accepting() {};
 
-  Accepting(const LoggerInterface & logger) {};// : m_Logger(logger){};
+  //Accepting() = delete;
+  Accepting() {}
+
+  Accepting( const LoggerInterface & logger ) {}// : m_Logger(logger){};
 
   static unsigned int CountMeetsCriteria( const ComponentBase::InterfaceCriteriaType ) { return 0; }
   //no interface called interfacename ;
@@ -53,6 +54,7 @@ public:
 protected:
 
 private:
+
   //const LoggerInterface & m_Logger;
 };
 
@@ -60,11 +62,11 @@ template< typename FirstInterface, typename ... RestInterfaces >
 class Accepting< FirstInterface, RestInterfaces ... > : public InterfaceAcceptor< FirstInterface >, public Accepting< RestInterfaces ... >
 {
 public:
-  
+
   //Accepting() = delete;
   Accepting();
 
-  Accepting(const LoggerInterface & logger);
+  Accepting( const LoggerInterface & logger );
 
   static unsigned int CountMeetsCriteria( const ComponentBase::InterfaceCriteriaType );
 
@@ -80,6 +82,7 @@ public:
 protected:
 
 private:
+
   const LoggerInterface & m_Logger;
 };
 } //end namespace selx

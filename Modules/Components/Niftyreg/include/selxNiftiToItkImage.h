@@ -37,11 +37,10 @@
 #ifndef selxNiftiToItkImage_h
 #define selxNiftiToItkImage_h
 
-
 #include <fstream>
-// explicitly include Niftyreg's version of nifti1_io, since it differs from 
+// explicitly include Niftyreg's version of nifti1_io, since it differs from
 // ITK's version and we want to be able to communicate the nifti_image pointer with Niftyreg.
-#include "../../Niftyreg/reg-io/nifti/nifti1_io.h" 
+#include "../../Niftyreg/reg-io/nifti/nifti1_io.h"
 #include "itkMacro.h"
 
 #include "itkImageIOBase.h"
@@ -53,51 +52,48 @@
 
 namespace selx
 {
+struct ImageInformationFromNifti
+{
+  double                            rescaleSlope;
+  double                            rescaleIntercept;
+  unsigned int                      numberOfDimensions;
+  unsigned int                      numberOfComponents;
+  itk::ImageIOBase::IOPixelType     pixelType;
+  itk::ImageIOBase::IOComponentType componentType;
+  std::vector< size_t >             dimensions;
+  std::vector< double >             spacing;
+};
 
-  struct ImageInformationFromNifti
-  {
-    double rescaleSlope;
-    double rescaleIntercept;
-    unsigned int numberOfDimensions;
-    unsigned int numberOfComponents;
-    itk::ImageIOBase::IOPixelType pixelType;
-    itk::ImageIOBase::IOComponentType componentType;
-    std::vector<size_t> dimensions;
-    std::vector<double> spacing;
-  };
+struct OrientationFromNifti
+{
+  std::vector< double >               origin;
+  std::vector< std::vector< double >> direction;
+};
 
-  struct OrientationFromNifti
-  {
-    std::vector<double> origin;
-    std::vector<std::vector<double>> direction;
-  };
-
-  template<class PixelType>
-  struct DataFromNifti
-  {
-    PixelType * buffer;
-    size_t numberOfElements;
-  };
+template< class PixelType >
+struct DataFromNifti
+{
+  PixelType * buffer;
+  size_t      numberOfElements;
+};
 /** \class NiftiToItkImage
  * Convert a nifti image to an itk image object.
  * Adapted from itkNiftiImageIO that is originally by Hans J. Johnson, The University of Iowa 2002
  */
-template<class ItkImageType, class NiftiPixelType>
+template< class ItkImageType, class NiftiPixelType >
 class NiftiToItkImage
 {
 public:
 
-  static typename ItkImageType::Pointer Convert(std::shared_ptr<nifti_image> input );
-
-
+  static typename ItkImageType::Pointer Convert( std::shared_ptr< nifti_image > input );
 
 protected:
 
 private:
-  // This is a class with static methods only, so construction is not needed.
-  NiftiToItkImage(){};
 
-  
+  // This is a class with static methods only, so construction is not needed.
+  NiftiToItkImage(){}
+
   /** Enums used to manipulate the pixel type. The pixel type provides
   * context for automatic data conversions (for instance, RGB to
   * SCALAR, VECTOR to SCALAR). */
@@ -118,26 +114,22 @@ private:
   };
   */
   /** Set the spacing and dimension information */
-  static ImageInformationFromNifti ReadImageInformation(std::shared_ptr<nifti_image> input);
+  static ImageInformationFromNifti ReadImageInformation( std::shared_ptr< nifti_image > input );
 
   /** Reads the data from disk into the memory buffer provided. */
-  static DataFromNifti<typename ItkImageType::PixelType> Read(std::shared_ptr<nifti_image> input_image, ImageInformationFromNifti const& imageInformationFromNifti);
+  static DataFromNifti< typename ItkImageType::PixelType > Read( std::shared_ptr< nifti_image > input_image,
+    ImageInformationFromNifti const & imageInformationFromNifti );
 
-  static bool MustRescale(double rescaleSlope, double rescaleIntercept);
+  static bool MustRescale( double rescaleSlope, double rescaleIntercept );
 
   //void  DefineHeaderObjectDataType();
 
-  static OrientationFromNifti GetImageIOOrientationFromNIfTI(unsigned short int dims, std::shared_ptr<nifti_image> input);
+  static OrientationFromNifti GetImageIOOrientationFromNIfTI( unsigned short int dims, std::shared_ptr< nifti_image > input );
 
-  static void SetImageIOMetadataFromNIfTI(std::shared_ptr<nifti_image> input, itk::MetaDataDictionary& dict);
-
+  static void SetImageIOMetadataFromNIfTI( std::shared_ptr< nifti_image > input, itk::MetaDataDictionary & dict );
 };
-
-
-
 } // end namespace selx
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "selxNiftiToItkImage.hxx"
 #endif
 #endif // selxNiftiToItkImage_h
-
