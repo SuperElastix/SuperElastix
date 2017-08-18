@@ -38,6 +38,8 @@ if(CMAKE_CONFIGURATION_TYPES)
   "SuperElastix SuperBuild allows CMake to generate only one configuration at a time (Debug, Release, MinSizeRel, or RelWithDebInfo)"
   FORCE)
   
+  set_property(CACHE CMAKE_CONFIGURATION_TYPES PROPERTY STRINGS Debug Release MinSizeRel RelWithDebInfo)
+  
   message(STATUS "Selected configuration type (CMAKE_CONFIGURATION_TYPES): " ${CMAKE_CONFIGURATION_TYPES})
 endif()
 
