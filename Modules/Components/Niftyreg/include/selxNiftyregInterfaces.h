@@ -35,9 +35,9 @@ class NiftyregReferenceImageInterface
 {
 public:
 
-  using Type                                     = NiftyregReferenceImageInterface< TPixel >;
-  using Pointer                                  = std::shared_ptr< Type >;
-  virtual std::shared_ptr<nifti_image> GetReferenceNiftiImage() = 0;
+  using Type    = NiftyregReferenceImageInterface< TPixel >;
+  using Pointer = std::shared_ptr< Type >;
+  virtual std::shared_ptr< nifti_image > GetReferenceNiftiImage() = 0;
 };
 
 template< class TPixel >
@@ -45,9 +45,9 @@ class NiftyregFloatingImageInterface
 {
 public:
 
-  using Type                                    = NiftyregFloatingImageInterface< TPixel >;
-  using Pointer                                 = std::shared_ptr< Type >;
-  virtual std::shared_ptr<nifti_image> GetFloatingNiftiImage() = 0;
+  using Type    = NiftyregFloatingImageInterface< TPixel >;
+  using Pointer = std::shared_ptr< Type >;
+  virtual std::shared_ptr< nifti_image > GetFloatingNiftiImage() = 0;
 };
 
 template< class TPixel >
@@ -55,9 +55,9 @@ class NiftyregWarpedImageInterface
 {
 public:
 
-  using Type = NiftyregWarpedImageInterface< TPixel >;
+  using Type    = NiftyregWarpedImageInterface< TPixel >;
   using Pointer = std::shared_ptr< Type >;
-  virtual std::shared_ptr<nifti_image> GetWarpedNiftiImage() = 0;
+  virtual std::shared_ptr< nifti_image > GetWarpedNiftiImage() = 0;
 };
 
 template< class TPixel >
@@ -83,7 +83,7 @@ struct Properties< NiftyregWarpedImageInterface< TPixel >>
 {
   static const std::map< std::string, std::string > Get()
   {
-    return{ { keys::NameOfInterface, "NiftyregWarpedImageInterface" }, { keys::PixelType, PodString< TPixel >::Get() } };
+    return { { keys::NameOfInterface, "NiftyregWarpedImageInterface" }, { keys::PixelType, PodString< TPixel >::Get() } };
   }
 };
 }

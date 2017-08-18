@@ -17,8 +17,8 @@
  *
  *=========================================================================*/
 
-#ifndef selxItkImageSourceFixed_h
-#define selxItkImageSourceFixed_h
+#ifndef selxItkImageSourceFixedComponent_h
+#define selxItkImageSourceFixedComponent_h
 
 #include "selxSuperElastixComponent.h"
 #include "selxSinksAndSourcesInterfaces.h"
@@ -89,6 +89,6 @@ protected:
 };
 } //end namespace selx
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "selxItkImageSourceFixed.hxx"
+#include "selxItkImageSourceFixedComponent.hxx"
 #endif
-#endif // #define selxItkImageSourceFixed_h
+#endif // #define selxItkImageSourceFixedComponent_h

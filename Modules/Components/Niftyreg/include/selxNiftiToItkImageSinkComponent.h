@@ -38,7 +38,7 @@ namespace selx
 template< int Dimensionality, class TPixel >
 class NiftiToItkImageSinkComponent :
   public SuperElastixComponent<
-  Accepting< NiftyregWarpedImageInterface< TPixel >, itkImageDomainFixedInterface<Dimensionality> >,
+  Accepting< NiftyregWarpedImageInterface< TPixel >, itkImageDomainFixedInterface< Dimensionality >>,
   Providing< SinkInterface, AfterRegistrationInterface >
   >
 {
@@ -47,30 +47,29 @@ public:
   /** Standard ITK typedefs. */
   typedef NiftiToItkImageSinkComponent< Dimensionality, TPixel > Self;
   typedef SuperElastixComponent<
-    Accepting< NiftyregWarpedImageInterface< TPixel >, itkImageDomainFixedInterface<Dimensionality> >,
+    Accepting< NiftyregWarpedImageInterface< TPixel >, itkImageDomainFixedInterface< Dimensionality >>,
     Providing< SinkInterface, AfterRegistrationInterface >
     >                                            Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
 
-  typedef NiftyregWarpedImageInterface< TPixel >      WarpedImageInterfaceType;
-  typedef itkImageDomainFixedInterface<Dimensionality> ImageDomainInterfaceType;
-  typedef std::shared_ptr<nifti_image> NiftiImagePointer;
-  
+  typedef NiftyregWarpedImageInterface< TPixel >         WarpedImageInterfaceType;
+  typedef itkImageDomainFixedInterface< Dimensionality > ImageDomainInterfaceType;
+  typedef std::shared_ptr< nifti_image >                 NiftiImagePointer;
+
   typedef typename itk::Image< TPixel, Dimensionality > ItkImageType;
   typedef typename itk::ImageFileWriter< ItkImageType > ItkImageWriterType;
   typedef FileWriterDecorator< ItkImageWriterType >     DecoratedWriterType;
 
-  typedef itk::ImportImageFilter< TPixel, Dimensionality >   ImportFilterType;
-
+  typedef itk::ImportImageFilter< TPixel, Dimensionality > ImportFilterType;
 
   NiftiToItkImageSinkComponent( const std::string & name, const LoggerInterface & logger );
   virtual ~NiftiToItkImageSinkComponent();
 
   // accepting interfaces
-  virtual int Set(typename WarpedImageInterfaceType::Pointer) override;
-  
-  virtual int Set(typename ImageDomainInterfaceType::Pointer) override;
+  virtual int Set( typename WarpedImageInterfaceType::Pointer ) override;
+
+  virtual int Set( typename ImageDomainInterfaceType::Pointer ) override;
 
   // prodiving interfaces
   virtual void SetMiniPipelineOutput( itk::DataObject::Pointer ) override;
@@ -79,7 +78,7 @@ public:
   virtual AnyFileWriter::Pointer GetOutputFileWriter( void ) override;
 
   virtual itk::DataObject::Pointer GetInitializedOutput( void ) override;
-  
+
   virtual void AfterRegistration() override;
 
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
@@ -87,6 +86,7 @@ public:
   static const char * GetDescription() { return "NiftiToItkImageSink Component"; }
 
 private:
+
   typename WarpedImageInterfaceType::Pointer m_WarpedImageInterface;
   typename ImageDomainInterfaceType::Pointer m_ImageDomainInterface;
   typename ImportFilterType::Pointer m_ImportFilter;

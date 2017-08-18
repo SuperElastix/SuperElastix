@@ -147,7 +147,7 @@ ElastixComponent< Dimensionality, TPixel >
       }
       catch( itk::ExceptionObject & err )
       {
-        this->m_Logger.Log(SeverityType::SELX_ERROR, err.what());
+        this->m_Logger.Log( SeverityType::SELX_ERROR, err.what() );
         meetsCriteria = false;
       }
     }

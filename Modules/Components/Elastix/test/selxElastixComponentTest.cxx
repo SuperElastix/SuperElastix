@@ -21,13 +21,11 @@
 #include "elxParameterObject.h"
 
 #include "selxElastixComponent.h"
-#include "selxMonolithicElastix.h"
-#include "selxMonolithicTransformix.h"
-#include "selxItkImageSink.h"
-#include "selxItkImageSource.h"
-#include "selxItkImageSourceFixed.h"
-#include "selxItkImageSourceMoving.h"
-#include "selxRegistrationController.h"
+#include "selxMonolithicElastixComponent.h"
+#include "selxMonolithicTransformixComponent.h"
+#include "selxItkImageSinkComponent.h"
+#include "selxItkImageSourceComponent.h"
+#include "selxRegistrationControllerComponent.h"
 
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"

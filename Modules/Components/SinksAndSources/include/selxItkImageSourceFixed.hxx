@@ -17,7 +17,7 @@
  *
  *=========================================================================*/
 
-#include "selxItkImageSourceFixed.h"
+#include "selxItkImageSourceFixedComponent.h"
 #include "selxCheckTemplateProperties.h"
 
 namespace selx

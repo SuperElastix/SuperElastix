@@ -25,7 +25,7 @@
 namespace selx
 {
 template< typename ComponentList >
-NetworkBuilder< ComponentList >::NetworkBuilder( const Logger & logger ) : m_Logger(logger), m_isConfigured( false ), m_Blueprint( new Blueprint )
+NetworkBuilder< ComponentList >::NetworkBuilder( const Logger & logger ) : m_Logger( logger ), m_isConfigured( false ), m_Blueprint( new Blueprint )
 {
 }
 
@@ -537,5 +537,4 @@ NetworkBuilder< ComponentList >::GetRealizedNetwork()
     return NetworkContainer( components, outputObjectsMap );
   }
 }
-
 } // end namespace selx

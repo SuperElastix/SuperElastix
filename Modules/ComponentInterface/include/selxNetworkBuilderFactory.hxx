@@ -22,13 +22,10 @@
 
 namespace selx
 {
-
 template< typename ComponentList >
 std::unique_ptr< NetworkBuilderBase >
 NetworkBuilderFactory< ComponentList >::New( const Logger & logger )
 {
   return std::unique_ptr< NetworkBuilderBase >( new NetworkBuilder< ComponentList >( logger ) );
 }
-
-
 } // end namespace selx

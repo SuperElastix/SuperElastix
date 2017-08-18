@@ -21,9 +21,10 @@
 
 namespace selx
 {
-	class NiftyregNiftiUser
-	{
-	public:
-		static NiftiFunctionPtrs GetNiftiFunctionPtrs();
-	};
+class NiftyregNiftiUser
+{
+public:
+
+  static NiftiFunctionPtrs GetNiftiFunctionPtrs();
+};
 }
