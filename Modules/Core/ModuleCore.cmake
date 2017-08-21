@@ -36,7 +36,7 @@ set( ${MODULE}_TEST_SOURCE_FILES
 )
 
 set( ${MODULE}_LIBRARIES
-  ModuleComponentInterface
+  ModuleCore
 )
 
 set( ${MODULE}_MODULE_DEPENDENCIES

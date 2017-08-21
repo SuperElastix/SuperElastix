@@ -233,5 +233,5 @@ install( FILES
          Modules/FileIO/include/selxAnyFileWriter.h
          DESTINATION include )
 
-install( TARGETS ModuleFilter ModuleBlueprints ModuleLogger ModuleComponentInterface
+install( TARGETS ModuleFilter ModuleBlueprints ModuleLogger ModuleCore
          DESTINATION lib )
