@@ -66,9 +66,12 @@ FUNCTION(INTERNAL_CPPCHECK)
 
 				# get include dirs of the target
 				get_target_property(cppcheckIncludeDirs ${TARGET_TO_CHECK} INCLUDE_DIRECTORIES)
-				set( cppcheckIncludes )
-				foreach(includeDir ${cppcheckIncludeDirs} )
-					LIST (APPEND cppcheckIncludes "-I${includeDir}")
+				
+				# Use a file with all the includes instead of putting them on the commandline
+				SET(cppcheck_include_directories_file "${CMAKE_CURRENT_BINARY_DIR}/cppcheck_includes.txt")
+				FILE(WRITE ${cppcheck_include_directories_file} "")
+				foreach(include_dir ${cppcheckIncludeDirs})
+					FILE(APPEND ${cppcheck_include_directories_file} "${include_dir}" \n)
 				endforeach()
 
 				# get compile definitions
@@ -87,7 +90,7 @@ FUNCTION(INTERNAL_CPPCHECK)
 
 				add_custom_command(TARGET cppcheck
 					COMMAND ${CPPCHECK_EXECUTABLE}
-					ARGS -q --inline-suppr --enable=all ${cppcheckIncludes} ${cppcheckDefines} ${cppcheckSourceFiles}
+					ARGS -q --inline-suppr --enable=all "--includes-file=${cppcheck_include_directories_file}" ${cppcheckDefines} ${cppcheckSourceFiles}
 					)
 
 			ENDFOREACH()
