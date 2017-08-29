@@ -58,6 +58,13 @@ node('lkeb-vm-test') {
 	}
 
 	timeout(45) {
+		stage('CppCheck') {
+			dir('build/SuperElastix-build') {
+				sh 'make cppcheck'
+			}
+		}
+	}
+	timeout(45) {
 		stage('Test') {
 			dir('build/SuperElastix-build') {
 				sh '../../../../tools/cmake/bin/ctest' //tool 'CTest 3.5.1' does not exist, TODO find proper way
