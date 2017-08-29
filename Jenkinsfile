@@ -34,7 +34,7 @@ node('lkeb-vm-test') {
 	stage('Init') {
 		tool 'CMake 3.5.1'
 		//tool 'CTest 3.5.1' does not exist, TODO find proper way
-		sh 'rm -rf build'
+		// TODO Temp skip (Niels, August 2017) sh 'rm -rf build'
 		sh 'mkdir -p build'
 	}
 
@@ -48,7 +48,7 @@ node('lkeb-vm-test') {
 		stage('Build') {
 			dir('build') {
 				sh "${ tool 'CMake 3.5.1' } ../src/SuperBuild"
-				sh 'make clean'
+				// TODO Temp skip (Niels, August 2017) sh 'make clean'
 				sh 'make -j4'
 			}
 		}
