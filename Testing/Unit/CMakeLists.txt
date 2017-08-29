@@ -37,6 +37,8 @@ foreach( ModuleTestSourceFileNames ${SUPERELASTIX_TEST_SOURCE_FILES} )
   string( FIND ${ModuleTestSourceFileNames} "_" FIRST_UNDERSCORE_POS )
   string( SUBSTRING ${ModuleTestSourceFileNames} 0 ${FIRST_UNDERSCORE_POS} ModuleName )
 
+  set(TARGETS_TO_CHECK ${TARGETS_TO_CHECK} ${ModuleName}TestDriver CACHE INTERNAL "" FORCE )
+
   # Build module test driver
   add_executable( ${ModuleName}TestDriver ${${ModuleTestSourceFileNames}} )
   target_include_directories( ${ModuleName}TestDriver PUBLIC {SUPERELASTIX_INCLUDE_DIRS} )

@@ -175,6 +175,9 @@ if( ${BUILD_TESTING} )
   add_subdirectory( Testing )
 endif()
 
+include(CppCheck)
+INTERNAL_CPPCHECK()
+
 # ---------------------------------------------------------------------
 # Documentation
 
