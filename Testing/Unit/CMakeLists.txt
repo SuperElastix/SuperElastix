@@ -32,6 +32,9 @@ endif()
 # ---------------------------------------------------------------------
 # Build tests
 
+# TODO Note: The following removal is only temporarilyily, Niels, Aug 2017 
+list(REMOVE_ITEM TARGETS_TO_CHECK ModuleElastixTestDriver)
+
 foreach( ModuleTestSourceFileNames ${SUPERELASTIX_TEST_SOURCE_FILES} )
   # Get module name
   string( FIND ${ModuleTestSourceFileNames} "_" FIRST_UNDERSCORE_POS )
