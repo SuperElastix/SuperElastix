@@ -88,10 +88,18 @@ FUNCTION(INTERNAL_CPPCHECK)
 					LIST (APPEND cppcheckDefines "-D${cppcheckDefine}")
 				endforeach()
 
+				set( cppCheckMessageFormat "" )
+
+				if (MSVC)
+					set( cppCheckMessageFormat "--template=vs" )
+				elseif (GCC)
+					set( cppCheckMessageFormat "--template=gcc" )
+				endif()
 				add_custom_command(TARGET cppcheck COMMAND ${CPPCHECK_EXECUTABLE} ARGS
 					-q
 					--inline-suppr
 					--enable=all 
+					${cppCheckMessageFormat}
 					"--includes-file=${cppcheck_include_directories_file}"
 					${cppcheckDefines}
 					${cppcheckSourceFiles}
