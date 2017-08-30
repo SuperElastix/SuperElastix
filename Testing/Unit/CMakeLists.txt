@@ -37,7 +37,9 @@ foreach( ModuleTestSourceFileNames ${SUPERELASTIX_TEST_SOURCE_FILES} )
   string( FIND ${ModuleTestSourceFileNames} "_" FIRST_UNDERSCORE_POS )
   string( SUBSTRING ${ModuleTestSourceFileNames} 0 ${FIRST_UNDERSCORE_POS} ModuleName )
 
-  set(TARGETS_TO_CHECK ${TARGETS_TO_CHECK} ${ModuleName}TestDriver CACHE INTERNAL "" FORCE )
+  list(APPEND TARGETS_TO_CHECK ${ModuleName}TestDriver)
+  list(REMOVE_DUPLICATES TARGETS_TO_CHECK)
+  set(TARGETS_TO_CHECK ${TARGETS_TO_CHECK} CACHE INTERNAL "" FORCE )
 
   # Build module test driver
   add_executable( ${ModuleName}TestDriver ${${ModuleTestSourceFileNames}} )
