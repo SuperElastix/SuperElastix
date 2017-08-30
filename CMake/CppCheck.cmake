@@ -96,9 +96,9 @@ FUNCTION(INTERNAL_CPPCHECK)
 					set( cppCheckMessageFormat "--template=gcc" )
 				endif()
 				add_custom_command(TARGET cppcheck COMMAND ${CPPCHECK_EXECUTABLE} ARGS
-					-q
+					--verbose
 					--inline-suppr
-					--enable=all 
+					--enable=warning 
 					${cppCheckMessageFormat}
 					"--includes-file=${cppcheck_include_directories_file}"
 					${cppcheckDefines}
