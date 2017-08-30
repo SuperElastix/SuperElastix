@@ -88,10 +88,14 @@ FUNCTION(INTERNAL_CPPCHECK)
 					LIST (APPEND cppcheckDefines "-D${cppcheckDefine}")
 				endforeach()
 
-				add_custom_command(TARGET cppcheck
-					COMMAND ${CPPCHECK_EXECUTABLE}
-					ARGS -q --inline-suppr --enable=all "--includes-file=${cppcheck_include_directories_file}" ${cppcheckDefines} ${cppcheckSourceFiles}
-					)
+				add_custom_command(TARGET cppcheck COMMAND ${CPPCHECK_EXECUTABLE} ARGS
+					-q
+					--inline-suppr
+					--enable=all 
+					"--includes-file=${cppcheck_include_directories_file}"
+					${cppcheckDefines}
+					${cppcheckSourceFiles}
+				)
 
 			ENDFOREACH()
 		ENDIF()
