@@ -44,6 +44,7 @@ class MonolithicTransformixComponent :
   >,
   Providing<
   itkImageInterface< Dimensionality, TPixel >,
+  DisplacementFieldItkImageSourceInterface< Dimensionality, TPixel >,
   ReconnectTransformInterface
   >
   >
@@ -62,6 +63,7 @@ public:
     >,
     Providing<
     itkImageInterface< Dimensionality, TPixel >,
+    DisplacementFieldItkImageSourceInterface< Dimensionality, TPixel >,
     ReconnectTransformInterface
     >
     >                                      Superclass;
@@ -74,9 +76,10 @@ public:
   typedef typename ComponentBase::CriterionType CriterionType;
   typedef TPixel                                PixelType;
 
-  // fixed and moving image types are all the same, these aliases can be used to be explicit.
-  typedef typename itkImageMovingInterface< Dimensionality, TPixel >::ItkImageType MovingImageType;
-  typedef typename itkImageInterface< Dimensionality, TPixel >::ItkImageType       ResultImageType;
+  // fixed and moving image types are all the same, these aliases can be used to be explicit. 
+  using MovingImageType = typename itkImageMovingInterface< Dimensionality, TPixel >::ItkImageType;
+  using ResultImageType = typename itkImageInterface< Dimensionality, TPixel >::ItkImageType;
+  using DisplacementFieldImageType = typename DisplacementFieldItkImageSourceInterface< Dimensionality, TPixel >::ItkImageType;
 
   typedef elastix::ParameterObject        elxParameterObjectType;
   typedef elxParameterObjectType::Pointer elxParameterObjectPointer;
@@ -94,6 +97,8 @@ public:
 
   // Providing Interfaces:
   virtual typename ResultImageType::Pointer GetItkImage() override;
+
+  virtual typename DisplacementFieldImageType::Pointer GetDisplacementFieldItkImage() override;
 
   virtual void ReconnectTransform() override;
 
