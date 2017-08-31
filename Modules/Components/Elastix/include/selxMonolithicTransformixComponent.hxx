@@ -139,6 +139,7 @@ template< int Dimensionality, class TPixel >
 typename MonolithicTransformixComponent< Dimensionality, TPixel >::DisplacementFieldImageType::Pointer
 MonolithicTransformixComponent< Dimensionality, TPixel >::GetDisplacementFieldItkImage()
 {
+  this->m_transformixFilter->ComputeDeformationFieldOn();
   return this->m_transformixFilter->GetOutputDeformationField();
 }
 
