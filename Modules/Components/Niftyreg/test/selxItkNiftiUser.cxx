@@ -24,7 +24,7 @@
 // should fail when you uncomment the next line:
 // #define itk_nifti_mangle_h
 
-#include "../ITK-4.10/nifti1_io.h"
+#include "../ITK-4.12/nifti1_io.h"
 
 namespace selx
 {
