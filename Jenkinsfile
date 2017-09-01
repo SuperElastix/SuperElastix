@@ -57,7 +57,7 @@ node('lkeb-vm-test') {
 		}
 	}
 
-	timeout(15) {  // TODO Restore timeout = 45 minutes (Niels, August 2017)
+	timeout(75) {  // TODO Restore timeout = 45 minutes (Niels, August 2017)
 		stage('CppCheck') {
 			dir('build/SuperElastix-build') {
 				sh 'make cppcheck'
