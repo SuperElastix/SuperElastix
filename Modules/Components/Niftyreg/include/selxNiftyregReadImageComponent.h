@@ -63,7 +63,7 @@ public:
 
 private:
 
-  std::string   m_ImageFileName;
+  std::string m_ImageFileName;
   nifti_image * m_referenceImage;
 
 protected:

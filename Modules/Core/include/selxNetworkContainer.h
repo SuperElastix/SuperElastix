@@ -50,7 +50,7 @@ public:
 private:
 
   const ComponentContainerType m_ComponentContainer;
-  const OutputObjectsMapType   m_OutputObjectsMap;
+  const OutputObjectsMapType m_OutputObjectsMap;
 };
 } // end namespace selx
 #endif // selxNetworkContainer_h

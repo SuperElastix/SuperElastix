@@ -60,11 +60,11 @@ NiftiToItkImage< ItkImageType, NiftiPixelType >
 
   auto importImageFilter = itk::ImportImageFilter< typename ItkImageType::PixelType, ItkImageType::ImageDimension >::New();
 
-  typename ItkImageType::RegionType region;
-  typename ItkImageType::IndexType index;
-  typename ItkImageType::SizeType size;
-  typename ItkImageType::PointType origin;
-  typename ItkImageType::SpacingType spacing;
+  typename ItkImageType::RegionType    region;
+  typename ItkImageType::IndexType     index;
+  typename ItkImageType::SizeType      size;
+  typename ItkImageType::PointType     origin;
+  typename ItkImageType::SpacingType   spacing;
   typename ItkImageType::DirectionType direction;
 
   for( unsigned int d = 0; d < imageInformationFromNifti.numberOfDimensions; ++d )

@@ -90,7 +90,7 @@ private:
   typename std::vector< typename MultiStageTransformInterface< InternalComputationValueType, Dimensionality >::Pointer > m_registrationStages;
 
   std::set< ReconnectTransformInterface::Pointer > m_ReconnectTransformInterfaces;
-  std::vector< std::string >                       m_ExecutionOrder;
+  std::vector< std::string > m_ExecutionOrder;
 
 protected:
 

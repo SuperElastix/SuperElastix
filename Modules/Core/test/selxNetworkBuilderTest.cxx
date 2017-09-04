@@ -74,7 +74,7 @@ public:
 
 
   BlueprintPointer blueprint;
-  Logger *         logger = new Logger();
+  Logger * logger = new Logger();
 };
 
 TEST_F( NetworkBuilderTest, Create )

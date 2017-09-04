@@ -82,7 +82,7 @@ template< int Dimensionality, class TPixel >
 void
 ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel >::RunRegistration( void )
 {
-  typename FixedImageType::ConstPointer fixedImage   = this->m_theItkFilter->GetFixedImage();
+  typename FixedImageType::ConstPointer  fixedImage  = this->m_theItkFilter->GetFixedImage();
   typename MovingImageType::ConstPointer movingImage = this->m_theItkFilter->GetMovingImage();
 
   // Scale estimator is not used in current implementation yet

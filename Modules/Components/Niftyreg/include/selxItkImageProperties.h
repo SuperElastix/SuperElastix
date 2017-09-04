@@ -188,7 +188,7 @@ public:
   static const itk::SizeValueType GetDimensions( typename ItkImageType::Pointer input, unsigned int i )
   {
     typename ItkImageType::RegionType region = input->GetLargestPossibleRegion();
-    typename ItkImageType::SizeType size     = region.GetSize();
+    typename ItkImageType::SizeType   size   = region.GetSize();
     return size[ i ];
   }
 

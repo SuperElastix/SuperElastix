@@ -127,7 +127,7 @@ public:
 
 
   // Blueprint holds a configuration for SuperElastix
-  BlueprintPointer                blueprint;
+  BlueprintPointer blueprint;
   SuperElastixFilterBase::Pointer superElastixFilter;
   // Data manager provides the paths to the input and output data for unit tests
   DataManagerType::Pointer dataManager;

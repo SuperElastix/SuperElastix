@@ -130,7 +130,7 @@ protected:
   virtual void GenerateData( void ) ITK_OVERRIDE;
 
   std::unique_ptr< NetworkBuilderFactoryBase > m_NetworkBuilderFactory;
-  std::unique_ptr< NetworkBuilderBase >        m_NetworkBuilder;
+  std::unique_ptr< NetworkBuilderBase > m_NetworkBuilder;
 
   LoggerPointer m_Logger;
 

@@ -114,8 +114,8 @@ protected:
 
   // A selector for each node, that each can hold multiple instantiated components. Ultimately is should be 1 component each.
   ComponentSelectorContainerType m_ComponentSelectorContainer;
-  bool                           m_isConfigured;
-  const Logger &                 m_Logger;
+  bool m_isConfigured;
+  const Logger & m_Logger;
 
 private:
 };
