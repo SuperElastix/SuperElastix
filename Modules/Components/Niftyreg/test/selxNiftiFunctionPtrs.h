@@ -30,7 +30,6 @@ namespace selx
 {
 struct NiftiFunctionPtrs
 {
-  void (* disp_lib_hist_FunctionPtr)( void );
   void (* disp_lib_version_FunctionPtr)( void );
   int  (* get_filesize_FunctionPtr)( const char * );
   void (* swap_2bytes_FunctionPtr)( size_t, void * );
