@@ -98,7 +98,7 @@ FUNCTION(INTERNAL_CPPCHECK)
 				add_custom_command(TARGET cppcheck COMMAND ${CPPCHECK_EXECUTABLE} ARGS
 					--verbose
 					--inline-suppr
-					--enable=warning 
+					--enable=all 
 					${cppCheckMessageFormat}
 					"--includes-file=${cppcheck_include_directories_file}"
 					${cppcheckDefines}
