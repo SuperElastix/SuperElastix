@@ -34,7 +34,10 @@ node('lkeb-vm-test') {
 	stage('Init') {
 		tool 'CMake 3.5.1'
 		//tool 'CTest 3.5.1' does not exist, TODO find proper way
-		// TODO Temp skip (Niels, August 2017) sh 'rm -rf build'
+		// TODO Temp skip (Niels, August, Sept 2017) sh 'rm -rf build' and only remove the following two subdirectories:
+		'rm -rf build/SuperElastix-build'
+		'rm -rf build/SuperElastix-prefix'
+
 		sh 'mkdir -p build'
 	}
 
