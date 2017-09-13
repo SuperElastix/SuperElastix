@@ -32,20 +32,15 @@ endif()
 # ---------------------------------------------------------------------
 # Build tests
 
-# TODO Note: The following removal is only temporarilyily, Niels, Aug 2017 
-list(REMOVE_ITEM TARGETS_TO_CHECK ModuleElastixTestDriver)
-
 foreach( ModuleTestSourceFileNames ${SUPERELASTIX_TEST_SOURCE_FILES} )
   # Get module name
   string( FIND ${ModuleTestSourceFileNames} "_" FIRST_UNDERSCORE_POS )
   string( SUBSTRING ${ModuleTestSourceFileNames} 0 ${FIRST_UNDERSCORE_POS} ModuleName )
 
-  if( NOT ${ModuleName} STREQUAL "ModuleElastix" ) # TODO Restoore temporarily skipping ModuleElastix, Niels, Aug 2017 
-    list(APPEND TARGETS_TO_CHECK ${ModuleName}TestDriver)
-    list(REMOVE_DUPLICATES TARGETS_TO_CHECK)
-    set(TARGETS_TO_CHECK ${TARGETS_TO_CHECK} CACHE INTERNAL "" FORCE )
-  endif()
-  
+  list(APPEND TARGETS_TO_CHECK ${ModuleName}TestDriver)
+  list(REMOVE_DUPLICATES TARGETS_TO_CHECK)
+  set(TARGETS_TO_CHECK ${TARGETS_TO_CHECK} CACHE INTERNAL "" FORCE )
+
   # Build module test driver
   add_executable( ${ModuleName}TestDriver ${${ModuleTestSourceFileNames}} )
   target_include_directories( ${ModuleName}TestDriver PUBLIC ${SUPERELASTIX_INCLUDE_DIRS} )
