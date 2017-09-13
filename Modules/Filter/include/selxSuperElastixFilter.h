@@ -29,7 +29,6 @@
 
 namespace selx
 {
-
 class SuperElastixFilter : public SuperElastixFilterBase
 {
 public:
@@ -46,12 +45,10 @@ public:
   /** Run-time type information (and related methods). */
   itkTypeMacro( Self, itk::ProcessObject );
 
-
 protected:
 
-  // Constructor with NetworkBuilder filled with Default Component for API library use 
+  // Constructor with NetworkBuilder filled with Default Component for API library use
   SuperElastixFilter( void );
-
 };
 } // namespace elx
 

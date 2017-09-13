@@ -33,19 +33,22 @@ NiftyregWriteImageComponent< TPixel >::~NiftyregWriteImageComponent()
 {
 }
 
+
 template< class TPixel >
-int NiftyregWriteImageComponent<  TPixel >::Set(typename NiftyregWarpedImageInterface< TPixel >::Pointer component)
+int
+NiftyregWriteImageComponent<  TPixel >::Set( typename NiftyregWarpedImageInterface< TPixel >::Pointer component )
 {
   this->m_WarpedImageInterface = component;
   return 1;
 }
+
 
 template< class TPixel >
 void
 NiftyregWriteImageComponent<  TPixel >::AfterRegistration()
 {
   auto warpedImage = this->m_WarpedImageInterface->GetWarpedNiftiImage();
-  reg_io_WriteImageFile(warpedImage.get(), this->m_ImageFileName.c_str());
+  reg_io_WriteImageFile( warpedImage.get(), this->m_ImageFileName.c_str() );
 }
 
 

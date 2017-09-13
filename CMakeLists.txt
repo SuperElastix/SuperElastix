@@ -17,7 +17,7 @@
 #
 #=========================================================================
 
-cmake_minimum_required( VERSION 3.0.2 )
+cmake_minimum_required( VERSION 3.5.1 )
 
 # ---------------------------------------------------------------------
 project( SuperElastix )
@@ -114,7 +114,7 @@ set( Boost_USE_STATIC_LIBS ON ) # only find static libs
 set( Boost_USE_MULTITHREADED ON )
 set( Boost_USE_STATIC_RUNTIME OFF )
 
-find_package( Boost COMPONENTS filesystem system log date_time thread regex REQUIRED QUIET ) # graph ?
+find_package( Boost 1.65.0 EXACT COMPONENTS filesystem system log_setup log date_time chrono atomic thread regex REQUIRED QUIET ) # graph ?
 include_directories( ${Boost_INCLUDE_DIRS} )
 
 # ---------------------------------------------------------------------
@@ -233,5 +233,5 @@ install( FILES
          Modules/FileIO/include/selxAnyFileWriter.h
          DESTINATION include )
 
-install( TARGETS ModuleFilter ModuleBlueprints ModuleLogger ModuleComponentInterface
+install( TARGETS ModuleFilter ModuleBlueprints ModuleLogger ModuleCore
          DESTINATION lib )

@@ -23,11 +23,11 @@
 namespace selx
 {
 template< int Dimensionality, class TPixel >
-NiftiToItkImageSinkComponent< Dimensionality, TPixel >::NiftiToItkImageSinkComponent( const std::string & name, LoggerImpl & logger ) : Superclass( name,
-  logger), m_NetworkBuilderOutputImage(nullptr), m_WarpedImageInterface(nullptr), m_ImageDomainInterface(nullptr)
+NiftiToItkImageSinkComponent< Dimensionality, TPixel >::NiftiToItkImageSinkComponent( const std::string & name, LoggerImpl & logger ) : 
+  Superclass( name, logger ), m_NetworkBuilderOutputImage( nullptr ), m_WarpedImageInterface( nullptr ), m_ImageDomainInterface(n ullptr )
 {
   m_MiniPipelineOutputImage = ItkImageType::New(); // this is just an empty image for we have a SmartPointer we can pass around downstream. The actual image data will be grafted into this image.
-  m_ImportFilter = ImportFilterType::New();
+  m_ImportFilter            = ImportFilterType::New();
 }
 
 
@@ -39,30 +39,30 @@ NiftiToItkImageSinkComponent< Dimensionality, TPixel >::~NiftiToItkImageSinkComp
 
 template< int Dimensionality, class TPixel >
 int
-NiftiToItkImageSinkComponent< Dimensionality, TPixel >::Set(typename WarpedImageInterfaceType::Pointer other)
+NiftiToItkImageSinkComponent< Dimensionality, TPixel >::Set( typename WarpedImageInterfaceType::Pointer other )
 {
- 
   // Store pointer to the m_WarpedImageInterface for getting the result image after in has been generated (registration).
   // TODO: sanity check that m_WarpedImageInterface was Null to detect if Set was called more than once erroneously.
   this->m_WarpedImageInterface = other;
   return 0;
 }
 
+
 template< int Dimensionality, class TPixel >
 int
-NiftiToItkImageSinkComponent< Dimensionality, TPixel >::Set(typename ImageDomainInterfaceType::Pointer other)
+NiftiToItkImageSinkComponent< Dimensionality, TPixel >::Set( typename ImageDomainInterfaceType::Pointer other )
 {
-
   // Store pointer to the m_ImageDomainInterface for getting the result image after in has been generated (registration).
   // TODO: sanity check that m_ImageDomainInterface was Null to detect if Set was called more than once erroneously.
-  m_MiniPipelineOutputImage->SetRegions(other->GetItkImageDomainFixed()->GetLargestPossibleRegion());
+  m_MiniPipelineOutputImage->SetRegions( other->GetItkImageDomainFixed()->GetLargestPossibleRegion() );
   //this->m_ImageDomainInterface = other;
   return 0;
 }
 
+
 template< int Dimensionality, class TPixel >
 void
-NiftiToItkImageSinkComponent< Dimensionality, TPixel >::SetMiniPipelineOutput(itk::DataObject::Pointer NetworkBuilderOutput)
+NiftiToItkImageSinkComponent< Dimensionality, TPixel >::SetMiniPipelineOutput( itk::DataObject::Pointer NetworkBuilderOutput )
 {
   /** Tries to cast the NetworkBuilderOutput to an image (data object) and stores the result.
   *  The resulting output image will be grafted into when the sink component is connected to an other component.
@@ -86,6 +86,7 @@ NiftiToItkImageSinkComponent< Dimensionality, TPixel >::GetMiniPipelineOutput()
   return this->m_MiniPipelineOutputImage.GetPointer();
 }
 
+
 template< int Dimensionality, class TPixel >
 typename AnyFileWriter::Pointer
 NiftiToItkImageSinkComponent< Dimensionality, TPixel >::GetOutputFileWriter()
@@ -102,24 +103,25 @@ NiftiToItkImageSinkComponent< Dimensionality, TPixel >::GetInitializedOutput()
   return ItkImageType::New().GetPointer();
 }
 
+
 template< int Dimensionality, class TPixel >
 void
 NiftiToItkImageSinkComponent< Dimensionality, TPixel >::AfterRegistration()
 {
-  
   auto warpedNiftiImage = this->m_WarpedImageInterface->GetWarpedNiftiImage();
-  auto warpedItkImage = NiftiToItkImage<ItkImageType, TPixel>::Convert(warpedNiftiImage);
-  //TPixel *  	ptr;
+  auto warpedItkImage   = NiftiToItkImage< ItkImageType, TPixel >::Convert( warpedNiftiImage );
+  //TPixel *    ptr;
   //SizeValueType  num;
   //std:tie(ptr,num) = NiftiToItkImage<ItkImageType, TPixel>::Convert(warpedNiftiImage);
 
   //this->m_ImportFilter->SetImportPointer(ptr, num, true);
-  this->m_MiniPipelineOutputImage->Graft(warpedItkImage);
+  this->m_MiniPipelineOutputImage->Graft( warpedItkImage );
 }
+
 
 template< int Dimensionality, class TPixel >
 bool
-NiftiToItkImageSinkComponent< Dimensionality, TPixel >::MeetsCriterion(const ComponentBase::CriterionType & criterion)
+NiftiToItkImageSinkComponent< Dimensionality, TPixel >::MeetsCriterion( const ComponentBase::CriterionType & criterion )
 {
   bool hasUndefinedCriteria( false );
   bool meetsCriteria( false );

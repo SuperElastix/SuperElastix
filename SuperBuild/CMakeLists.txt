@@ -17,7 +17,7 @@
 #
 #=========================================================================
 
-cmake_minimum_required( VERSION 3.0.2 )
+cmake_minimum_required( VERSION 3.5.1 )
 
 # ---------------------------------------------------------------------
 project( SuperElastixSuperBuild )
@@ -37,6 +37,8 @@ if(CMAKE_CONFIGURATION_TYPES)
   set(CMAKE_CONFIGURATION_TYPES "${CMAKE_CONFIGURATION_TYPES}" CACHE STRING
   "SuperElastix SuperBuild allows CMake to generate only one configuration at a time (Debug, Release, MinSizeRel, or RelWithDebInfo)"
   FORCE)
+  
+  set_property(CACHE CMAKE_CONFIGURATION_TYPES PROPERTY STRINGS Debug Release MinSizeRel RelWithDebInfo)
   
   message(STATUS "Selected configuration type (CMAKE_CONFIGURATION_TYPES): " ${CMAKE_CONFIGURATION_TYPES})
 endif()
@@ -153,7 +155,7 @@ endif()
 mark_as_advanced( USE_SYSTEM_BOOST )
 option( USE_SYSTEM_BOOST "Use an installed version of BOOST" OFF )
 if( USE_SYSTEM_BOOST )
-  find_package( BOOST REQUIRED log date_time thread regex graph program_options filesystem )
+  find_package( Boost 1.65.0 EXACT REQUIRED log date_time thread regex graph program_options filesystem )
 else()
   include( ExternalBoost )
 endif()

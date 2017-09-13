@@ -32,10 +32,10 @@ TEST( LoggerTest, Console )
 {
   Logger::Pointer logger = Logger::New();
   logger->AddConsole();
-  logger->Log(SeverityType::SELX_TRACE, "Console TRACE message");
-  logger->Log(SeverityType::SELX_DEBUG, "Console DEBUG message");
-  logger->Log(SeverityType::SELX_INFO, "Console INFO message");
-  logger->Log(SeverityType::SELX_WARNING, "Console WARNING message");
-  logger->Log(SeverityType::SELX_ERROR, "Console ERROR message");
-  logger->Log(SeverityType::SELX_FATAL, "Console FATAL message");
+  logger->Log( SeverityType::SELX_TRACE, "Console TRACE message" );
+  logger->Log( SeverityType::SELX_DEBUG, "Console DEBUG message" );
+  logger->Log( SeverityType::SELX_INFO, "Console INFO message" );
+  logger->Log( SeverityType::SELX_WARNING, "Console WARNING message" );
+  logger->Log( SeverityType::SELX_ERROR, "Console ERROR message" );
+  logger->Log( SeverityType::SELX_FATAL, "Console FATAL message" );
 }

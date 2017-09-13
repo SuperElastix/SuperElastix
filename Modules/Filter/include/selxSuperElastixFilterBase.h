@@ -33,9 +33,8 @@
 
 namespace selx
 {
-
 // Forward declaration, hiding implementation details and speeding up compilation time (PIMPL idiom)
-class NetworkBuilderBase; 
+class NetworkBuilderBase;
 class NetworkBuilderFactoryBase;
 
 class SuperElastixFilterBase : public itk::ProcessObject
@@ -43,7 +42,7 @@ class SuperElastixFilterBase : public itk::ProcessObject
 public:
 
   /** Standard ITK typedefs. */
-  typedef SuperElastixFilterBase              Self;
+  typedef SuperElastixFilterBase          Self;
   typedef itk::ProcessObject              Superclass;
   typedef itk::SmartPointer< Self >       Pointer;
   typedef itk::SmartPointer< const Self > ConstPointer;
@@ -122,8 +121,14 @@ protected:
   virtual void GenerateData( void ) ITK_OVERRIDE;
 
   std::unique_ptr< NetworkBuilderFactoryBase > m_NetworkBuilderFactory;
+<<<<<<< HEAD
   std::unique_ptr< NetworkBuilderBase > m_NetworkBuilder;
   LoggerObjectPointer m_Logger;
+=======
+  std::unique_ptr< NetworkBuilderBase >        m_NetworkBuilder;
+
+  LoggerPointer m_Logger;
+>>>>>>> develop
 
 private:
 

@@ -24,69 +24,69 @@
 
 namespace selx
 {
-	class NiftiNameManglingTest : public ::testing::Test
-	{
-	public:
-		const NiftiFunctionPtrs itkNiftiFunctionPtrs;
-		const NiftiFunctionPtrs niftyregNiftiFunctionPtrs;
+class NiftiNameManglingTest : public ::testing::Test
+{
+public:
 
-		NiftiNameManglingTest()
-			:
-			itkNiftiFunctionPtrs(ItkNiftiUser::GetNiftiFunctionPtrs()),
-			niftyregNiftiFunctionPtrs(NiftyregNiftiUser::GetNiftiFunctionPtrs())
-		{
-		}
+  const NiftiFunctionPtrs itkNiftiFunctionPtrs;
+  const NiftiFunctionPtrs niftyregNiftiFunctionPtrs;
 
-		virtual void SetUp() override
-		{
-		}
-
-		virtual void TearDown() override
-		{
-		}
-	};
+  NiftiNameManglingTest()
+    :
+    itkNiftiFunctionPtrs( ItkNiftiUser::GetNiftiFunctionPtrs() ),
+    niftyregNiftiFunctionPtrs( NiftyregNiftiUser::GetNiftiFunctionPtrs() )
+  {
+  }
 
 
-	// The name mangling should ensure that common functions from different nifti library instantiations
-	// (either fromn ITK or Niftyreg) can de distinguished by their function address.
-	TEST_F(NiftiNameManglingTest, AddressesOfFunctionsFromDifferentNiftiLibsAreDifferent)
-	{
-		// Sanity checks to see if the function pointers are properly initialized.
-		ASSERT_NE(nullptr, itkNiftiFunctionPtrs.disp_lib_hist_FunctionPtr);
-		ASSERT_NE(nullptr, itkNiftiFunctionPtrs.disp_lib_version_FunctionPtr);
-		ASSERT_NE(nullptr, niftyregNiftiFunctionPtrs.disp_lib_hist_FunctionPtr);
-		ASSERT_NE(nullptr, niftyregNiftiFunctionPtrs.disp_lib_version_FunctionPtr);
-
-		// The main test: the function addresses should be different.
-		ASSERT_NE(itkNiftiFunctionPtrs.disp_lib_hist_FunctionPtr,
-			niftyregNiftiFunctionPtrs.disp_lib_hist_FunctionPtr);
-
-		ASSERT_NE(itkNiftiFunctionPtrs.disp_lib_version_FunctionPtr,
-			niftyregNiftiFunctionPtrs.disp_lib_version_FunctionPtr);
-	}
+  virtual void SetUp() override
+  {
+  }
 
 
-	// Function calls from either ITK or Niftyreg should usually have the same effect.
-	TEST_F(NiftiNameManglingTest, FunctionCallsFromDifferentNiftiLibsHaveSameEffect)
-	{
-		// Sanity checks of the test itself, to prevent dereferencing a null pointer:
-		ASSERT_NE(nullptr, itkNiftiFunctionPtrs.get_filesize_FunctionPtr);
-		ASSERT_NE(nullptr, itkNiftiFunctionPtrs.swap_2bytes_FunctionPtr);
-		ASSERT_NE(nullptr, niftyregNiftiFunctionPtrs.swap_2bytes_FunctionPtr);
-		ASSERT_NE(nullptr, niftyregNiftiFunctionPtrs.get_filesize_FunctionPtr);
+  virtual void TearDown() override
+  {
+  }
+};
 
-		ASSERT_EQ(itkNiftiFunctionPtrs.get_filesize_FunctionPtr(nullptr),
-			niftyregNiftiFunctionPtrs.get_filesize_FunctionPtr(nullptr));
-		ASSERT_EQ(itkNiftiFunctionPtrs.get_filesize_FunctionPtr(""),
-			niftyregNiftiFunctionPtrs.get_filesize_FunctionPtr(""));
+// The name mangling should ensure that common functions from different nifti library instantiations
+// (either fromn ITK or Niftyreg) can de distinguished by their function address.
+TEST_F( NiftiNameManglingTest, AddressesOfFunctionsFromDifferentNiftiLibsAreDifferent )
+{
+  // Sanity checks to see if the function pointers are properly initialized.
+  ASSERT_NE( nullptr, itkNiftiFunctionPtrs.disp_lib_hist_FunctionPtr );
+  ASSERT_NE( nullptr, itkNiftiFunctionPtrs.disp_lib_version_FunctionPtr );
+  ASSERT_NE( nullptr, niftyregNiftiFunctionPtrs.disp_lib_hist_FunctionPtr );
+  ASSERT_NE( nullptr, niftyregNiftiFunctionPtrs.disp_lib_version_FunctionPtr );
 
-		int itkData = 1;
-		itkNiftiFunctionPtrs.swap_2bytes_FunctionPtr(sizeof(int), &itkData);
+  // The main test: the function addresses should be different.
+  ASSERT_NE( itkNiftiFunctionPtrs.disp_lib_hist_FunctionPtr,
+    niftyregNiftiFunctionPtrs.disp_lib_hist_FunctionPtr );
 
-		int niftyregData = 1;
-		niftyregNiftiFunctionPtrs.swap_2bytes_FunctionPtr(sizeof(int), &niftyregData);
+  ASSERT_NE( itkNiftiFunctionPtrs.disp_lib_version_FunctionPtr,
+    niftyregNiftiFunctionPtrs.disp_lib_version_FunctionPtr );
+}
 
-		ASSERT_EQ(itkData, niftyregData);
-	}
+// Function calls from either ITK or Niftyreg should usually have the same effect.
+TEST_F( NiftiNameManglingTest, FunctionCallsFromDifferentNiftiLibsHaveSameEffect )
+{
+  // Sanity checks of the test itself, to prevent dereferencing a null pointer:
+  ASSERT_NE( nullptr, itkNiftiFunctionPtrs.get_filesize_FunctionPtr );
+  ASSERT_NE( nullptr, itkNiftiFunctionPtrs.swap_2bytes_FunctionPtr );
+  ASSERT_NE( nullptr, niftyregNiftiFunctionPtrs.swap_2bytes_FunctionPtr );
+  ASSERT_NE( nullptr, niftyregNiftiFunctionPtrs.get_filesize_FunctionPtr );
 
+  ASSERT_EQ( itkNiftiFunctionPtrs.get_filesize_FunctionPtr( nullptr ),
+    niftyregNiftiFunctionPtrs.get_filesize_FunctionPtr( nullptr ) );
+  ASSERT_EQ( itkNiftiFunctionPtrs.get_filesize_FunctionPtr( "" ),
+    niftyregNiftiFunctionPtrs.get_filesize_FunctionPtr( "" ) );
+
+  int itkData = 1;
+  itkNiftiFunctionPtrs.swap_2bytes_FunctionPtr( sizeof( int ), &itkData );
+
+  int niftyregData = 1;
+  niftyregNiftiFunctionPtrs.swap_2bytes_FunctionPtr( sizeof( int ), &niftyregData );
+
+  ASSERT_EQ( itkData, niftyregData );
+}
 }
