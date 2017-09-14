@@ -47,7 +47,7 @@ class itkImageFilterTest : public ::testing::Test
 {
 public:
 
-  typedef selxBlueprint::Pointer  BlueprintPointer;
+  typedef Blueprint::Pointer  BlueprintPointer;
   typedef BlueprintImpl::ParameterMapType   ParameterMapType;
   typedef BlueprintImpl::ParameterValueType ParameterValueType;
   typedef DataManager                   DataManagerType;
@@ -75,7 +75,7 @@ public:
     dataManager = DataManagerType::New();
 
     /** make example blueprint configuration */
-    blueprint = selxBlueprint::New();
+    blueprint = Blueprint::New();
 
     /** the 2 itkImageFilter Components are ItkSmoothingRecursiveGaussianImageFilterComponent*/
     ParameterMapType componentParameters;

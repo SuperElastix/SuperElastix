@@ -41,10 +41,10 @@ class ElastixComponentTest : public ::testing::Test
 {
 public:
 
-  typedef selxBlueprint::Pointer                       BlueprintPointer;
-  typedef BlueprintImpl::ParameterMapType                        ParameterMapType;
-  typedef BlueprintImpl::ParameterValueType                      ParameterValueType;
-  typedef DataManager                                        DataManagerType;
+  typedef Blueprint::Pointer BlueprintPointer;
+  typedef BlueprintImpl::ParameterMapType ParameterMapType;
+  typedef BlueprintImpl::ParameterValueType ParameterValueType;
+  typedef DataManager DataManagerType;
 
   /** Make a list of components to be registered for this test*/
   typedef TypeList< ElastixComponent< 2, float >,
@@ -87,7 +87,7 @@ public:
 TEST_F( ElastixComponentTest, ImagesOnly )
 {
   /** make example blueprint configuration */
-  BlueprintPointer blueprint = selxBlueprint::New();
+  BlueprintPointer blueprint = Blueprint::New();
 
   ParameterMapType component0Parameters;
   component0Parameters[ "NameOfClass" ]               = { "ElastixComponent" };
@@ -155,7 +155,7 @@ TEST_F( ElastixComponentTest, ImagesOnly )
 TEST_F( ElastixComponentTest, MonolithicElastixTransformix )
 {
   /** make example blueprint configuration */
-  BlueprintPointer blueprint = selxBlueprint::New();
+  BlueprintPointer blueprint = Blueprint::New();
 
   blueprint->SetComponent( "RegistrationMethod", { { "NameOfClass", { "MonolithicElastixComponent" } },
                                                    { "RegistrationSettings", { "rigid" } }, { "MaximumNumberOfIterations", { "2" } },

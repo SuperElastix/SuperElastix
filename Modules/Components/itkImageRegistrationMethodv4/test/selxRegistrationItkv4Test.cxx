@@ -99,7 +99,7 @@ public:
     ItkCompositeTransformComponent< double, 3 >,
     ItkCompositeTransformComponent< double, 2 >> RegisterComponents;
 
-  typedef selxBlueprint::Pointer BlueprintPointer;
+  typedef Blueprint::Pointer BlueprintPointer;
 
   typedef SuperElastixFilterBase::Pointer       SuperElastixFilterBlueprintPointer;
   typedef SuperElastixFilterBase::ConstPointer  SuperElastixFilterBlueprintConstPointer;
@@ -147,7 +147,7 @@ public:
 TEST_F( RegistrationItkv4Test, DISABLED_3DImagesOnly )
 {
   /** make example blueprint configuration */
-  BlueprintPointer blueprint = selxBlueprint::New();
+  BlueprintPointer blueprint = Blueprint::New();
 
   ParameterMapType component0Parameters;
   component0Parameters[ "NameOfClass" ]    = { "ItkImageRegistrationMethodv4Component" };
@@ -211,7 +211,7 @@ TEST_F( RegistrationItkv4Test, DISABLED_3DImagesOnly )
 TEST_F( RegistrationItkv4Test, DISABLED_3DANTSCCMetric )
 {
   /** make example blueprint configuration */
-  BlueprintPointer blueprint = selxBlueprint::New();
+  BlueprintPointer blueprint = Blueprint::New();
 
   ParameterMapType component0Parameters;
   component0Parameters[ "NameOfClass" ]    = { "ItkImageRegistrationMethodv4Component" };
@@ -293,7 +293,7 @@ TEST_F( RegistrationItkv4Test, DISABLED_3DANTSCCMetric )
 TEST_F( RegistrationItkv4Test, DISABLED_3DMeanSquaresMetric )
 {
   /** make example blueprint configuration */
-  BlueprintPointer blueprint = selxBlueprint::New();
+  BlueprintPointer blueprint = Blueprint::New();
 
   ParameterMapType component0Parameters;
   component0Parameters[ "NameOfClass" ]    = { "ItkImageRegistrationMethodv4Component" };
@@ -372,7 +372,7 @@ TEST_F( RegistrationItkv4Test, DISABLED_3DMeanSquaresMetric )
 TEST_F( RegistrationItkv4Test, FullyConfigured3d )
 {
   /** make example blueprint configuration */
-  BlueprintPointer blueprint = selxBlueprint::New();
+  BlueprintPointer blueprint = Blueprint::New();
 
   blueprint->SetComponent( "RegistrationMethod", { { "NameOfClass", { "ItkImageRegistrationMethodv4Component" } },
                                                    { "Dimensionality", { "3" } },
@@ -495,7 +495,7 @@ TEST_F( RegistrationItkv4Test, FullyConfigured3d )
 TEST_F( RegistrationItkv4Test, FullyConfigured3dAffine )
 {
   /** make example blueprint configuration */
-  BlueprintPointer blueprint = selxBlueprint::New();
+  BlueprintPointer blueprint = Blueprint::New();
 
   blueprint->SetComponent( "RegistrationMethod", { { "NameOfClass", { "ItkImageRegistrationMethodv4Component" } },
                                                    { "Dimensionality", { "3" } },
@@ -612,7 +612,7 @@ TEST_F( RegistrationItkv4Test, FullyConfigured3dAffine )
 TEST_F( RegistrationItkv4Test, CompositeTransform )
 {
   /** make example blueprint configuration */
-  BlueprintPointer blueprint = selxBlueprint::New();
+  BlueprintPointer blueprint = Blueprint::New();
 
   blueprint->SetComponent( "MultiStageTransformController", { { "NameOfClass", { "ItkCompositeTransformComponent" } }, { "ExecutionOrder", { "RegistrationMethod1", "RegistrationMethod2" } } } );
 

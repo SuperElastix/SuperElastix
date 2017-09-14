@@ -37,7 +37,7 @@ public:
     anotherParameterMap[ "NameOfClass" ] = ParameterValueType( 1, "AnotherTestClassName" );
   }
 
-  typedef selxBlueprint::Pointer BlueprintPointer;
+  typedef Blueprint::Pointer BlueprintPointer;
 
 
   ParameterMapType parameterMap;
@@ -63,7 +63,7 @@ TEST_F( BlueprintTest, SetGetDeleteComponent )
 TEST_F( BlueprintTest, BlueprintObjectSetGetDeleteComponent )
 {
   BlueprintPointer blueprint;
-  EXPECT_NO_THROW( blueprint = selxBlueprint::New() );
+  EXPECT_NO_THROW( blueprint = Blueprint::New() );
 
   bool success0;
   EXPECT_NO_THROW( success0 = blueprint->SetComponent( "MyComponentName", parameterMap ) );

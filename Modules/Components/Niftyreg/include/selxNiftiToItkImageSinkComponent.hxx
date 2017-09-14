@@ -24,7 +24,7 @@ namespace selx
 {
 template< int Dimensionality, class TPixel >
 NiftiToItkImageSinkComponent< Dimensionality, TPixel >::NiftiToItkImageSinkComponent( const std::string & name, LoggerImpl & logger ) : 
-  Superclass( name, logger ), m_NetworkBuilderOutputImage( nullptr ), m_WarpedImageInterface( nullptr ), m_ImageDomainInterface(n ullptr )
+  Superclass( name, logger ), m_NetworkBuilderOutputImage( nullptr ), m_WarpedImageInterface( nullptr ), m_ImageDomainInterface( nullptr )
 {
   m_MiniPipelineOutputImage = ItkImageType::New(); // this is just an empty image for we have a SmartPointer we can pass around downstream. The actual image data will be grafted into this image.
   m_ImportFilter            = ImportFilterType::New();

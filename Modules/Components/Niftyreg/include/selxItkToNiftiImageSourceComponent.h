@@ -63,8 +63,8 @@ public:
 
   using ItkImageDomainType = typename itkImageDomainFixedInterface< Dimensionality >::ItkImageDomainType;
 
-  ItkToNiftiImageSourceReferenceComponent( const std::string & name, LoggerImpl & logger );
-  virtual ~ItkToNiftiImageSourceReferenceComponent();
+  ItkToNiftiImageSourceComponent( const std::string & name, LoggerImpl & logger );
+  virtual ~ItkToNiftiImageSourceComponent();
 
   // providing interfaces
   //virtual std::shared_ptr<nifti_image> GetFloatingNiftiImage() override;

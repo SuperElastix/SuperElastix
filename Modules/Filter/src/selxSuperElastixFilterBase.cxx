@@ -35,32 +35,6 @@ SuperElastixFilterBase
   this->m_Blueprint = nullptr;
   this->m_Logger = Logger::New();
 } // end Constructor
-//
-//Logger::Pointer
-//SuperElastixFilterBase
-//::GetLogger( void )
-//{
-//  return this->m_Logger->GetLogger();
-//}
-//
-//Blueprint::Pointer
-//SuperElastixFilterBase
-//::GetBlueprint( void )
-//{
-//  return this->m_Blueprint;
-//}
-
-
-/*
-void
-SuperElastixFilter
-::AddBlueprint(BlueprintPointer otherBlueprint)
-{
-  auto blueprint_internals = this->m_Blueprint->Get();
-  blueprint_internals->ComposeWith(otherBlueprint->Get());
-  this->m_Blueprint->Set(blueprint_internals);
-}
-*/
 
 bool
 SuperElastixFilterBase
@@ -285,21 +259,6 @@ SuperElastixFilterBase
   //this->SetPrimaryOutput()
   this->GenerateOutputInformation();
   this->GenerateData();
-}
-
-void
-SuperElastixFilterBase
-::SetLogger( LoggerPointer logger )
-{
-  this->m_Logger = logger;
-}
-
-
-SuperElastixFilterBase::LoggerPointer
-SuperElastixFilterBase
-::GetLogger( void )
-{
-  return m_Logger;
 }
 
 } // namespace elx
