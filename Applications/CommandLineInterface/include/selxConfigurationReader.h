@@ -44,12 +44,12 @@ public:
   typedef Blueprint::ParameterKeyType   ParameterKeyType;
   typedef Blueprint::ParameterValueType ParameterValueType;
   typedef Blueprint::ParameterMapType   ParameterMapType;
-  typedef std::unique_ptr< Blueprint >  BlueprintPointerType;
+  typedef std::shared_ptr< BlueprintImpl > BlueprintImplPointer;
 
   using PathType = boost::filesystem::path;
   using PathsType = std::list<PathType>;
-  static BlueprintPointerType FromFile(const PathType & filename);
-  static void MergeFromFile(BlueprintPointerType & blueprint, const PathType & filename);
+  static BlueprintImpl FromFile(const PathType& filename);
+  static void MergeFromFile(BlueprintImplPointer blueprint, const PathType & filename);
   
 private:
 
@@ -59,10 +59,10 @@ private:
   static PropertyTreeType ReadPropertyTree(const PathType & filename);
 
   static PathsType FindIncludes(const PropertyTreeType &);
-  static ParameterValueType VectorizeValues( ComponentOrConnectionTreeType componentOrConnectionTree );
+  static ParameterValueType VectorizeValues(ComponentOrConnectionTreeType componentOrConnectionTree);
 
-  static BlueprintPointerType FromPropertyTree( const PropertyTreeType & );
-  static void MergeProperties(BlueprintPointerType&, const PropertyTreeType &);
+  static BlueprintImpl FromPropertyTree(const PropertyTreeType &);
+  static void MergeProperties(BlueprintImplPointer blueprint, const PropertyTreeType &);
 
 
   

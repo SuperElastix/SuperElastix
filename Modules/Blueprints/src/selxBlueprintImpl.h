@@ -36,6 +36,7 @@ class BlueprintImpl
 {
 public:
 
+  typedef std::shared_ptr< BlueprintImpl > BlueprintImplPointer;
   typedef Blueprint::ParameterKeyType ParameterKeyType;
   typedef Blueprint::ParameterValueType ParameterValueType;
   typedef Blueprint::ParameterMapType ParameterMapType;
@@ -102,7 +103,7 @@ public:
 
   bool ConnectionExists( ComponentNameType upstream, ComponentNameType downstream ) const;
 
-  bool ComposeWith(const BlueprintImpl &other);
+  bool ComposeWith( const BlueprintImpl & other);
 
   // Returns a vector of the Component names at the incoming direction
   ComponentNamesType GetInputNames( const ComponentNameType name ) const;

@@ -26,15 +26,15 @@ namespace selx
 Blueprint
 ::Blueprint()
 {
-  this->m_Blueprint = BlueprintPointer( new BlueprintImpl() );
+  this->m_Blueprint = BlueprintImplPointer( new BlueprintImpl() );
 }
 
 void
 Blueprint
-::SetBlueprint( BlueprintImpl & blueprint )
+::SetBlueprint( BlueprintImpl& blueprint )
 {
   this->Modified();
-  this->m_Blueprint = BlueprintPointer( &blueprint );
+  this->m_Blueprint = BlueprintImplPointer( &blueprint );
 }
 
 
@@ -130,10 +130,10 @@ Blueprint
 
 bool
 Blueprint
-::ComposeWith( Blueprint& other)
+::ComposeWith( const BlueprintImpl & other)
 {
   this->Modified();
-  return this->m_Blueprint->ComposeWith( other.GetBlueprint() );
+  return this->m_Blueprint->ComposeWith( other );
 }
 
 

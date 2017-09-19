@@ -221,7 +221,7 @@ BlueprintImpl
 
 bool
 BlueprintImpl
-::ComposeWith(const BlueprintImpl &other)
+::ComposeWith( const BlueprintImpl & other )
 {
   // Make a backup of the current blueprint status in case composition fails
   GraphType graph_backup = GraphType( this->m_Graph );
