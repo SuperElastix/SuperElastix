@@ -38,8 +38,8 @@ matrix:
 
 before_script:
   - mkdir -p ${SUPERELASTIX_BUILD_DIR}
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]] cd ${ExternalData_OBJECT_STORES} && if [[ ! -e ${CMAKE_DOWNLOAD_FILE} ]]; then curl -sSO https://cmake.org/files/v3.6/${CMAKE_DOWNLOAD_FILE}; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]] echo "y\n" | sudo bash "${ExternalData_OBJECT_STORES}/${CMAKE_DOWNLOAD_FILE}" --prefix=/usr/local --exclude-subdir && cmake --version
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cd ${ExternalData_OBJECT_STORES} && if [[ ! -e ${CMAKE_DOWNLOAD_FILE} ]]; then curl -sSO https://cmake.org/files/v3.6/${CMAKE_DOWNLOAD_FILE}; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then echo "y\n" | sudo bash "${ExternalData_OBJECT_STORES}/${CMAKE_DOWNLOAD_FILE}" --prefix=/usr/local --exclude-subdir && cmake --version
 
 script:
   - if [[ ! -e ${ITK_BUILD_DIR}/ITKConfig.cmake ]]; then
@@ -49,7 +49,7 @@ script:
       git checkout v4.12.2 &&
       mkdir -p ${ITK_BUILD_DIR} &&
       cd ${ITK_BUILD_DIR} &&
-      cmake -DBUILD_EXAMPLES=OFF -DBUILD_TESTING=OFF -DCMAKE_BUILD_TYPE=Release   -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON -DCMAKE_VISIBILITY_INLINES_HIDDEN:BOOL=ON -DBUILD_SHARED_LIBS:BOOL=OFF -DCMAKE_SKIP_RPATH:BOOL=ON -DITK_LEGACY_REMOVE:BOOL=ON -DITK_USE_KWSTYLE:BOOL=OFF -DITK_BUILD_DEFAULT_MODULES:BOOL=ON -DModule_ITKReview:BOOL=ON ${ITK_SOURCE_DIR} &&
+      cmake -DBUILD_EXAMPLES=OFF -DBUILD_TESTING=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON -DCMAKE_VISIBILITY_INLINES_HIDDEN:BOOL=ON -DBUILD_SHARED_LIBS:BOOL=OFF -DCMAKE_SKIP_RPATH:BOOL=ON -DITK_LEGACY_REMOVE:BOOL=ON -DITK_USE_KWSTYLE:BOOL=OFF -DITK_BUILD_DEFAULT_MODULES:BOOL=ON -DModule_ITKReview:BOOL=ON ${ITK_SOURCE_DIR} &&
       make --jobs=4; fi
   - if [[ ! -e ${ELASTIX_BUILD_DIR}/src/UseElastix.cmake ]]; then
       rm -rf ${ELASTIX_SOURCE_DIR} ${ELASTIX_BUILD_DIR} &&
