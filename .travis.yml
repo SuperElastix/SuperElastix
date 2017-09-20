@@ -11,7 +11,7 @@ env:
     ELASTIX_BUILD_DIR=${HOME_DIR}/Elastix-build
     SUPERELASTIX_SOURCE_DIR=${TRAVIS_BUILD_DIR}/SuperBuild
     SUPERELASTIX_BUILD_DIR=${HOME_DIR}/SUPERELASTIX-build
-    OMP_NUM_THREADS=2
+    CMAKE_DOWNLOAD_FILE=cmake-3.6.0-Linux-x86_64.sh
 
 cache:
   directories:
@@ -38,6 +38,8 @@ matrix:
 
 before_script:
   - mkdir -p ${SUPERELASTIX_BUILD_DIR}
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]] cd ${ExternalData_OBJECT_STORES} && if [[ ! -e ${CMAKE_DOWNLOAD_FILE} ]]; then curl -sSO https://cmake.org/files/v3.6/${CMAKE_DOWNLOAD_FILE}; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]] echo "y\n" | sudo bash "${ExternalData_OBJECT_STORES}/${CMAKE_DOWNLOAD_FILE}" --prefix=/usr/local --exclude-subdir && cmake --version
 
 script:
   - if [[ ! -e ${ITK_BUILD_DIR}/ITKConfig.cmake ]]; then
