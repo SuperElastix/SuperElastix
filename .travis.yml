@@ -3,6 +3,7 @@ language: cpp
 env:
   global:
     HOME_DIR=${TRAVIS_BUILD_DIR}/..
+    ExternalData_OBJECT_STORES=${HOME_DIR}/.ExternalData
     ITK_URL=https://github.com/InsightSoftwareConsortium/ITK
     ITK_SOURCE_DIR=${HOME_DIR}/ITK-source
     ITK_BUILD_DIR=${HOME_DIR}/ITK-build
@@ -15,7 +16,7 @@ env:
 
 cache:
   directories:
-    - ExternalData_OBJECT_STORES=${HOME}/.ExternalData
+    - ${ExternalData_OBJECT_STORES}
     - ${ITK_SOURCE_DIR}
     - ${ITK_BUILD_DIR}
     - ${ELASTIX_SOURCE_DIR}
@@ -38,8 +39,10 @@ matrix:
 
 before_script:
   - mkdir -p ${SUPERELASTIX_BUILD_DIR}
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cd ${ExternalData_OBJECT_STORES} && if [[ ! -e ${CMAKE_DOWNLOAD_FILE} ]]; then curl -sSO https://cmake.org/files/v3.6/${CMAKE_DOWNLOAD_FILE}; fi; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then echo "y\n" | sudo bash "${ExternalData_OBJECT_STORES}/${CMAKE_DOWNLOAD_FILE}" --prefix=/usr/local --exclude-subdir && cmake --version; fi
+  - mkdir -p ${ExternalData_OBJECT_STORES}
+  - if [[ "$TRAVIS_OS_NAME" == "linux" && ! -e "${ExternalData_OBJECT_STORES}/${CMAKE_DOWNLOAD_FILE}" ]]; then (cd ${ExternalData_OBJECT_STORES} && curl -sSO https://cmake.org/files/v3.6/${CMAKE_DOWNLOAD_FILE}); fi; 
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo bash "${ExternalData_OBJECT_STORES}/${CMAKE_DOWNLOAD_FILE}" --prefix=/usr/local --exclude-subdir; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cmake --version; fi
 
 script:
   - if [[ ! -e ${ITK_BUILD_DIR}/ITKConfig.cmake ]]; then
