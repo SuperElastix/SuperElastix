@@ -32,6 +32,9 @@ if( UNIX )
   set( BOOST_BUILD_COMMAND ./b2 ${B2_ARGS})
 else()
   if( WIN32 )
+    # If building on Windows: The target machine should be Windows 7 or higher.
+    # Note that BOOST_USE_WINAPI_VERSION should match with _WIN32_WINNT. 
+    set(B2_ARGS "define=BOOST_USE_WINAPI_VERSION=0x0601" ${B2_ARGS})
     if(MSVC11)
       set(B2_ARGS "--toolset=msvc-11.0" ${B2_ARGS})
     elseif(MSVC12)
