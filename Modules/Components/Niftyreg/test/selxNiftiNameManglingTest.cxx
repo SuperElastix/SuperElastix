@@ -54,15 +54,10 @@ public:
 TEST_F( NiftiNameManglingTest, AddressesOfFunctionsFromDifferentNiftiLibsAreDifferent )
 {
   // Sanity checks to see if the function pointers are properly initialized.
-  ASSERT_NE( nullptr, itkNiftiFunctionPtrs.disp_lib_hist_FunctionPtr );
   ASSERT_NE( nullptr, itkNiftiFunctionPtrs.disp_lib_version_FunctionPtr );
-  ASSERT_NE( nullptr, niftyregNiftiFunctionPtrs.disp_lib_hist_FunctionPtr );
   ASSERT_NE( nullptr, niftyregNiftiFunctionPtrs.disp_lib_version_FunctionPtr );
 
   // The main test: the function addresses should be different.
-  ASSERT_NE( itkNiftiFunctionPtrs.disp_lib_hist_FunctionPtr,
-    niftyregNiftiFunctionPtrs.disp_lib_hist_FunctionPtr );
-
   ASSERT_NE( itkNiftiFunctionPtrs.disp_lib_version_FunctionPtr,
     niftyregNiftiFunctionPtrs.disp_lib_version_FunctionPtr );
 }
