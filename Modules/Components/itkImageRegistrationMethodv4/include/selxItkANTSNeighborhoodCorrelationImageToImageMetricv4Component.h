@@ -49,7 +49,7 @@ public:
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
 
-  ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component( const std::string & name, const LoggerInterface & logger );
+  ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component( const std::string & name, LoggerImpl & logger );
   virtual ~ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component();
 
   typedef TPixel PixelType;

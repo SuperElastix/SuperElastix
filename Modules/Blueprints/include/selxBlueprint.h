@@ -17,8 +17,11 @@
  *
  *=========================================================================*/
 
-#ifndef Blueprint_h
-#define Blueprint_h
+#ifndef selxBlueprint_h
+#define selxBlueprint_h
+
+#include "itkDataObject.h"
+#include "itkObjectFactory.h"
 
 #include <string>
 #include <vector>
@@ -27,24 +30,39 @@
 
 namespace selx
 {
-class Blueprint
+
+class BlueprintImpl;
+
+class Blueprint : public itk::DataObject
 {
 public:
+
+  /** Standard ITK typedefs. */
+  typedef Blueprint             Self;
+  typedef itk::ProcessObject              Superclass;
+  typedef itk::SmartPointer< Self >       Pointer;
+  typedef itk::SmartPointer< const Self > ConstPointer;
+
+  /** Method for creation through the object factory. */
+  itkNewMacro( Self );
+
+  /** Run-time type information (and related methods). */
+  itkTypeMacro( Self, itk::DataObject );
 
   typedef std::string                                      ParameterKeyType;
   typedef std::vector< std::string >                       ParameterValueType;
   typedef std::map< ParameterKeyType, ParameterValueType > ParameterMapType;
   typedef std::string                                      ComponentNameType;
   typedef std::vector< ComponentNameType >                 ComponentNamesType;
-  typedef std::unique_ptr< Blueprint >                     Pointer;
-  typedef std::unique_ptr< const Blueprint >               ConstPointer;
 
-  Blueprint( void );
-  Blueprint( const Blueprint & other );                   // copyable
-  Blueprint & operator=( const Blueprint & other );       //
+  /* m_Blueprint is initialized in the default constructor */
+  Blueprint();
 
-  //Blueprint(Blueprint&&);
-  ~Blueprint( void );
+  /** The actual blueprint is a pimpled member variable */
+  typedef std::shared_ptr< BlueprintImpl > BlueprintImplPointer;
+
+  void SetBlueprint( BlueprintImpl & blueprint );
+  BlueprintImpl & GetBlueprint( void );
 
   bool SetComponent( ComponentNameType, ParameterMapType parameterMap );
 
@@ -65,10 +83,10 @@ public:
 
   bool ConnectionExists( ComponentNameType upstream, ComponentNameType downstream ) const;
 
-  //std::unique_ptr<Blueprint> Clone(Blueprint const &other );
+  //std::unique_ptr<BlueprintImpl> Clone(BlueprintImpl const &other );
 
   // "functional" composition of blueprints is done by adding settings of other to this blueprint. Redefining/overwriting properties is not allowed and returns false.
-  bool ComposeWith( std::unique_ptr< Blueprint > const & other );
+  bool ComposeWith( const BlueprintImpl & other );
 
   // Returns a vector of the Component names at the incoming direction
   ComponentNamesType GetInputNames( const ComponentNameType name ) const;
@@ -80,9 +98,8 @@ public:
 
 private:
 
-  struct BlueprintImpl;
-  std::unique_ptr< BlueprintImpl > m_Pimple;
+  BlueprintImplPointer m_Blueprint;
 };
 }
 
-#endif // #define Blueprint_h
+#endif // #define selxBlueprint_h

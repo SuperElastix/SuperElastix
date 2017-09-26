@@ -22,35 +22,43 @@
 
 namespace selx
 {
+
 Blueprint
-::Blueprint( void ) : m_Pimple( new Blueprint::BlueprintImpl ) {}
-
-Blueprint::Blueprint( const Blueprint & other )
-  : m_Pimple( new BlueprintImpl( *other.m_Pimple ) )
-{}
-
-Blueprint &
-Blueprint::operator=( const Blueprint & other )
+::Blueprint()
 {
-  if( this != &other )
-  {
-    m_Pimple.reset( new BlueprintImpl( *other.m_Pimple ) );
-  }
-  return *this;
+  this->m_Blueprint = BlueprintImplPointer( new BlueprintImpl() );
+}
+
+void
+Blueprint
+::SetBlueprint( BlueprintImpl& blueprint )
+{
+  this->Modified();
+  this->m_Blueprint = BlueprintImplPointer( &blueprint );
 }
 
 
-//Blueprint
-//::Blueprint(Blueprint&&) = default;
-
+BlueprintImpl &
 Blueprint
-::~Blueprint( void ) = default;
+::GetBlueprint( void)
+{
+  if( this->m_Blueprint )
+  {
+    return *this->m_Blueprint;
+  }
+  else
+  {
+    itkExceptionMacro( "BlueprintImpl not set." )
+  }
+}
+
 
 bool
 Blueprint
 ::SetComponent( ComponentNameType name, ParameterMapType parameterMap )
 {
-  return this->m_Pimple->SetComponent( name, parameterMap );
+  this->Modified();
+  return this->m_Blueprint->SetComponent( name, parameterMap );
 }
 
 
@@ -58,7 +66,7 @@ Blueprint::ParameterMapType
 Blueprint
 ::GetComponent( ComponentNameType componentName ) const
 {
-  return this->m_Pimple->GetComponent( componentName );
+  return this->m_Blueprint->GetComponent( componentName );
 }
 
 
@@ -66,14 +74,15 @@ bool
 Blueprint
 ::DeleteComponent( ComponentNameType componentName )
 {
-  return this->m_Pimple->DeleteComponent( componentName );
+  this->Modified();
+  return this->m_Blueprint->DeleteComponent( componentName );
 }
 
 
 Blueprint::ComponentNamesType
 Blueprint::GetComponentNames( void ) const
 {
-  return this->m_Pimple->GetComponentNames();
+  return this->m_Blueprint->GetComponentNames();
 }
 
 
@@ -81,7 +90,8 @@ bool
 Blueprint
 ::SetConnection( ComponentNameType upstream, ComponentNameType downstream, ParameterMapType parameterMap )
 {
-  return this->m_Pimple->SetConnection( upstream, downstream, parameterMap );
+  this->Modified();
+  return this->m_Blueprint->SetConnection( upstream, downstream, parameterMap );
 }
 
 
@@ -89,7 +99,7 @@ Blueprint::ParameterMapType
 Blueprint
 ::GetConnection( ComponentNameType upstream, ComponentNameType downstream ) const
 {
-  return this->m_Pimple->GetConnection( upstream, downstream );
+  return this->m_Blueprint->GetConnection( upstream, downstream );
 }
 
 
@@ -97,7 +107,8 @@ bool
 Blueprint
 ::DeleteConnection( ComponentNameType upstream, ComponentNameType downstream )
 {
-  return this->m_Pimple->DeleteConnection( upstream, downstream );
+  this->Modified();
+  return this->m_Blueprint->DeleteConnection( upstream, downstream );
 }
 
 
@@ -105,7 +116,7 @@ bool
 Blueprint
 ::ComponentExists( ComponentNameType componentName ) const
 {
-  return this->m_Pimple->ComponentExists( componentName );
+  return this->m_Blueprint->ComponentExists( componentName );
 }
 
 
@@ -113,22 +124,16 @@ bool
 Blueprint
 ::ConnectionExists( ComponentNameType upstream, ComponentNameType downstream ) const
 {
-  return this->m_Pimple->ConnectionExists( upstream, downstream );
+  return this->m_Blueprint->ConnectionExists( upstream, downstream );
 }
 
 
-//std::unique_ptr<Blueprint>
-//Blueprint
-//::Clone(Blueprint const &other)
-//{
-// return std::make_unique<Blueprint>(other);
-//}
-
 bool
 Blueprint
-::ComposeWith( std::unique_ptr< Blueprint > const & other )
+::ComposeWith( const BlueprintImpl & other)
 {
-  return this->m_Pimple->ComposeWith( other );
+  this->Modified();
+  return this->m_Blueprint->ComposeWith( other );
 }
 
 
@@ -136,7 +141,7 @@ Blueprint::ComponentNamesType
 Blueprint
 ::GetOutputNames( const ComponentNameType name ) const
 {
-  return this->m_Pimple->GetOutputNames( name );
+  return this->m_Blueprint->GetOutputNames( name );
 }
 
 
@@ -144,7 +149,7 @@ Blueprint::ComponentNamesType
 Blueprint
 ::GetInputNames( const ComponentNameType name ) const
 {
-  return this->m_Pimple->GetInputNames( name );
+  return this->m_Blueprint->GetInputNames( name );
 }
 
 
@@ -152,6 +157,6 @@ void
 Blueprint
 ::Write( const std::string filename )
 {
-  this->m_Pimple->Write( filename );
+  this->m_Blueprint->Write( filename );
 }
 } // namespace selx

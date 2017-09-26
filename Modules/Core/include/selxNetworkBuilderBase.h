@@ -32,24 +32,24 @@
 #include "selxComponentBase.h"
 #include "selxInterfaces.h"
 #include "selxInterfaceTraits.h"
-#include "selxBlueprint.h"
+#include "selxBlueprintImpl.h"
 #include "selxNetworkContainer.h"
 #include "selxAnyFileReader.h"
 #include "selxAnyFileWriter.h"
-#include "selxLogger.h"
+#include "selxLoggerImpl.h"
 
 namespace selx
 {
 class NetworkBuilderBase
 {
-  // The NetworkBuilderBase takes care of the at run time realization of the algorithm network that is described by the Blueprint.
+  // The NetworkBuilderBase takes care of the at run time realization of the algorithm network that is described by the BlueprintImpl.
   // The output, GetRealizedNetwork(), is a (light weight) ComponentContainer with 1 Execute button that is self-contained to run the registration algorithm.
   // After obtaining the RealizedNetwork(), the NetworkBuilderBase object can be deleted in order to free memory, releasing all internal/intermediate data of the configuration process.
 
 public:
 
-  typedef Blueprint::ComponentNameType  ComponentNameType;
-  typedef Blueprint::ComponentNamesType ComponentNamesType;
+  typedef BlueprintImpl::ComponentNameType  ComponentNameType;
+  typedef BlueprintImpl::ComponentNamesType ComponentNamesType;
   typedef std::map<
     std::string, SourceInterface::Pointer > SourceInterfaceMapType;
   typedef std::map<
@@ -62,7 +62,7 @@ public:
 
   virtual ~NetworkBuilderBase() {}
 
-  virtual bool AddBlueprint( const std::unique_ptr< Blueprint > & blueprint ) = 0;
+  virtual bool AddBlueprint( const BlueprintImpl & blueprint ) = 0;
 
   /** Read configuration at the blueprints nodes and edges and return true if all components could be uniquely selected*/
   virtual bool Configure() = 0;

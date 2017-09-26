@@ -20,22 +20,21 @@
 #ifndef Accepting_hxx
 #define Accepting_hxx
 
+#include "selxLogger.h"
 #include "selxCount.h"
 
 namespace selx
 {
-//template< >
-//Accepting< >::Accepting(const LoggerInterface & logger) : m_Logger(logger);
 
 template< typename FirstInterface, typename ... RestInterfaces  >
-Accepting< FirstInterface, RestInterfaces ... >::Accepting() : m_Logger( *( new Logger() ) )
+Accepting< FirstInterface, RestInterfaces ... >::Accepting() : m_Logger(*(new LoggerImpl()))
 {
   //TODO: remove this constructor as it should not be used
 }
 
 
 template< typename FirstInterface, typename ... RestInterfaces  >
-Accepting< FirstInterface, RestInterfaces ... >::Accepting( const LoggerInterface & logger ) : m_Logger( logger )
+Accepting< FirstInterface, RestInterfaces ... >::Accepting( LoggerImpl & logger ) : m_Logger(logger)
 {}
 
 template< typename FirstInterface, typename ... RestInterfaces >

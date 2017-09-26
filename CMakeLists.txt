@@ -83,6 +83,12 @@ if( ${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC )
   # set( MSVC_INCREMENTAL_DEFAULT ON )
 endif()
 
+if( WIN32 )
+  # If building on Windows: The target machine should be Windows 7 or higher.
+  # Note that the Windows version should match with BOOST_USE_WINAPI_VERSION. 
+  add_definitions(-D_WIN32_WINNT=0x0601)
+endif()
+
 # ---------------------------------------------------------------------
 # Use SuperBuild. 
 
@@ -227,8 +233,8 @@ install( FILES
          Modules/Filter/include/selxSuperElastixFilterCustomComponents.h
          Modules/Filter/include/itkUniquePointerDataObjectDecorator.h
          Modules/Filter/include/itkUniquePointerDataObjectDecorator.hxx
-         Modules/Blueprints/include/selxBlueprint.h
-         Modules/Logger/include/selxLogger.h
+  Modules/Blueprints/include/Blueprint.h
+  Modules/Logger/include/Logger.h
          Modules/FileIO/include/selxAnyFileReader.h
          Modules/FileIO/include/selxAnyFileWriter.h
          DESTINATION include )

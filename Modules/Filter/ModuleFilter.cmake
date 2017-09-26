@@ -17,7 +17,7 @@
 #
 #=========================================================================
 
-# TODO: This variable is overwritten by the Logger 
+# TODO: This variable is overwritten by the LoggerImpl
 set( MODULE ModuleFilter )
 
 set( ${MODULE}_INCLUDE_DIRS

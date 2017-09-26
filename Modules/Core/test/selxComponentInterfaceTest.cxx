@@ -26,15 +26,17 @@
 
 namespace selx
 {
-namespace hack     // see issue SELX-55 Link error selxComponentInterfaceTest #55
+
+namespace hack // see issue SELX-55 Link error selxComponentInterfaceTest #55
 {
-Logger logger;
-typedef SuperElastixComponent< Accepting< >, Providing<  >> DummyBase;
-struct MyComp : DummyBase
-{
-  MyComp() : DummyBase( "nameless", logger ) {}
-  virtual bool MeetsCriterion( const CriterionType & criterion ) override { throw 42; }
-} dummy;
+    LoggerImpl logger;
+    typedef SuperElastixComponent< Accepting< >, Providing<  > > DummyBase;
+    struct MyComp: DummyBase
+    {
+        MyComp(): DummyBase("nameless", logger) {}
+        virtual bool MeetsCriterion( const CriterionType & criterion ) override { throw 42; };
+
+    } dummy;   
 }
 
 class InterfaceTest : public ::testing::Test
@@ -43,7 +45,7 @@ public:
 
   virtual void SetUp()
   {
-    Logger * logger = new Logger();
+    LoggerImpl * logger = new LoggerImpl();
     metric3p    = std::make_shared< SSDMetric3rdPartyComponent >( "nameless", *logger );
     optimizer3p = std::make_shared< GDOptimizer3rdPartyComponent >( "nameless", *logger );
 

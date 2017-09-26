@@ -44,7 +44,7 @@ public:
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
 
-  SSDMetric4thPartyComponent( const std::string & name, const LoggerInterface & logger );
+  SSDMetric4thPartyComponent( const std::string & name, LoggerImpl & logger );
   virtual ~SSDMetric4thPartyComponent();
   Example4thParty::SSDMetric4thParty * theImplementation;
   virtual int GetValue() override;

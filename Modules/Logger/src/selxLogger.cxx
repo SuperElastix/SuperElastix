@@ -22,44 +22,59 @@
 
 namespace selx
 {
-Logger
-::Logger( void ) : m_Pimple( new Logger::LoggerImpl ) {}
 
 Logger
-::~Logger( void ) = default;
+::Logger()
+{
+  this->m_Logger = LoggerPointer( new LoggerImpl() );
+}
+
+LoggerImpl &
+Logger
+::GetLogger( void)
+{
+  if( this->m_Logger )
+  {
+    return *this->m_Logger;
+  }
+  else
+  {
+    itkExceptionMacro( "LoggerImpl not set." )
+  }
+}
 
 void
 Logger
 ::AddConsole( FormatType format )
 {
-  this->m_Pimple->AddConsole( format );
+  this->m_Logger->AddConsole( format );
 }
 
 
 // void
-// Logger
+// LoggerImpl
 // :: AddFile( FileNameType fileName, FormatType format )
 // {
 //   this->m_Pimple->AddFile( fileName, format );
 // }
 
 // void
-// Logger
-// :: AddFile( FileNameType fileName, Logger::ChannelType channel, FormatType format )
+// LoggerImpl
+// :: AddFile( FileNameType fileName, LoggerImpl::ChannelType channel, FormatType format )
 // {
 //   this->m_Pimple->AddFile( fileName, channel, format );
 // }
 
 void
 Logger
-::Log( SeverityType severity, MessageType message ) const
+::Log( SeverityType severity, MessageType message )
 {
-  this->m_Pimple->Log( severity, message );
+  this->m_Logger->Log( severity, message );
 }
 
 
 // void
-// Logger
+// LoggerImpl
 // ::Log( ChannelType channel, SeverityType severity, MessageType message )
 // {
 //   this->m_Pimple->Log( channel, severity, message );

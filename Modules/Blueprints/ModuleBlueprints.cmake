@@ -19,6 +19,7 @@
 
 set( ${MODULE}_INCLUDE_DIRS
   ${${MODULE}_SOURCE_DIR}/include
+  ${${MODULE}_SOURCE_DIR}/src # Internal components may want the selxBlueprintImpl.h
 )
 
 # Module source files

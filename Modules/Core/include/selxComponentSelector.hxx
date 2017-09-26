@@ -28,7 +28,7 @@ struct ContructComponentsFromTypeList< TypeList< >>
 {
   static std::list< ComponentBase::Pointer > fill( std::list< ComponentBase::Pointer > & components,
     const std::string & name,
-    const LoggerInterface & logger )
+    LoggerImpl & logger )
   {
     return components;
   }
@@ -39,7 +39,7 @@ struct ContructComponentsFromTypeList< TypeList< ComponentType, Rest ... >>
 {
   static std::list< ComponentBase::Pointer > fill( std::list< ComponentBase::Pointer > & components,
     const std::string & name,
-    const LoggerInterface & logger )
+    LoggerImpl & logger )
   {
     components.push_back( std::make_shared< ComponentType >( name, logger ) );
     return ContructComponentsFromTypeList< TypeList< Rest ... >>::fill( components, name, logger );
@@ -47,7 +47,7 @@ struct ContructComponentsFromTypeList< TypeList< ComponentType, Rest ... >>
 };
 
 template< class ComponentList >
-ComponentSelector< ComponentList >::ComponentSelector( const std::string & name, const LoggerInterface & logger )
+ComponentSelector< ComponentList >::ComponentSelector( const std::string & name, LoggerImpl & logger )
 {
   m_PossibleComponents = std::list< ComponentBase::Pointer >();
   m_PossibleComponents = ContructComponentsFromTypeList< ComponentList >::fill( m_PossibleComponents, name, logger );

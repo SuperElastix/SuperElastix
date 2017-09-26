@@ -52,7 +52,7 @@ public:
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
 
-  ItkImageSinkComponent( const std::string & name, const LoggerInterface & logger );
+  ItkImageSinkComponent( const std::string & name, LoggerImpl & logger );
   virtual ~ItkImageSinkComponent();
 
   typedef itkImageInterface< Dimensionality, TPixel >        AcceptingImageInterfaceType;

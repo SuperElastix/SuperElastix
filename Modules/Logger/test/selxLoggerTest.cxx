@@ -25,12 +25,12 @@ using namespace selx;
 
 TEST( LoggerTest, Initialization )
 {
-  Logger * logger = new Logger();
+  Logger::Pointer logger = Logger::New();
 }
 
 TEST( LoggerTest, Console )
 {
-  Logger * logger = new Logger();
+  Logger::Pointer logger = Logger::New();
   logger->AddConsole();
   logger->Log( SeverityType::SELX_TRACE, "Console TRACE message" );
   logger->Log( SeverityType::SELX_DEBUG, "Console DEBUG message" );

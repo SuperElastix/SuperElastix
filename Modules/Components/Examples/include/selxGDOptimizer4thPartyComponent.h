@@ -46,7 +46,7 @@ public:
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
 
-  GDOptimizer4thPartyComponent( const std::string & name, const LoggerInterface & logger );
+  GDOptimizer4thPartyComponent( const std::string & name, LoggerImpl & logger );
   virtual ~GDOptimizer4thPartyComponent();
   Example4thParty::GDOptimizer4thParty * theImplementation;
   Metric4thPartyWrapper *                MetricObject;
