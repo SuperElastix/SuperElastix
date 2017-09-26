@@ -61,16 +61,16 @@ MonolithicTransformixComponent< Dimensionality, TPixel >::Set( typename itkImage
 
   auto fixedImageDomain = component->GetItkImageDomainFixed();
 
-  auto                                                     size = fixedImageDomain->GetLargestPossibleRegion().GetSize();
+  auto size = fixedImageDomain->GetLargestPossibleRegion().GetSize();
   typename TransformixFilterType::ParameterValueVectorType sizeParameters;
 
-  auto                                                     spacing = fixedImageDomain->GetSpacing();
+  auto spacing = fixedImageDomain->GetSpacing();
   typename TransformixFilterType::ParameterValueVectorType spacingParameters;
 
-  auto                                                     index = fixedImageDomain->GetLargestPossibleRegion().GetIndex();
+  auto index = fixedImageDomain->GetLargestPossibleRegion().GetIndex();
   typename TransformixFilterType::ParameterValueVectorType indexParameters;
 
-  auto                                                     origin = fixedImageDomain->GetOrigin();
+  auto origin = fixedImageDomain->GetOrigin();
   typename TransformixFilterType::ParameterValueVectorType originParameters;
 
   //auto direction = fixedImageDomain->GetDirectionCosines();
@@ -84,8 +84,8 @@ MonolithicTransformixComponent< Dimensionality, TPixel >::Set( typename itkImage
     originParameters.push_back( std::to_string( origin[ d ] ) );
   }
 
-  elxParameterObjectPointer                        trxParameterObject = elxParameterObjectType::New();
-  typename TransformixFilterType::ParameterMapType trxParameterMap    = {
+  elxParameterObjectPointer trxParameterObject = elxParameterObjectType::New();
+  typename TransformixFilterType::ParameterMapType trxParameterMap = {
     { "FixedImageDimension", { std::to_string( Dimensionality ) } },
     { "MovingImageDimension", { std::to_string( Dimensionality ) } },
     { "FixedInternalImagePixelType", { "float" } },

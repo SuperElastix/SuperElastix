@@ -41,7 +41,7 @@ public:
 
 private:
 
-  MetricValueInterface::Pointer metricval;
+  MetricValueInterface::Pointer      metricval;
   MetricDerivativeInterface::Pointer metricderiv;
 };
 } // end namespace selx

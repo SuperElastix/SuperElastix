@@ -74,9 +74,9 @@ public:
 
 private:
 
-  std::set< RunRegistrationInterface::Pointer > m_RunRegistrationInterfaces;
+  std::set< RunRegistrationInterface::Pointer >    m_RunRegistrationInterfaces;
   std::set< ReconnectTransformInterface::Pointer > m_ReconnectTransformInterfaces;
-  std::set< AfterRegistrationInterface::Pointer > m_AfterRegistrationInterfaces;
+  std::set< AfterRegistrationInterface::Pointer >  m_AfterRegistrationInterfaces;
 
 protected:
 

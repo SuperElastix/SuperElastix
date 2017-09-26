@@ -158,9 +158,9 @@ ItkToNiftiImage< ItkImageType, NiftiPixelType >::Convert( typename ItkImageType:
   {
     std::stringstream msg;
     msg
-      <<
-      "Input ItkImage must be fully loaded in memory. E.g. use m_ItkImage->GetSource()->UpdateLargestPossibleRegion() before calling this function."
-      << std::endl;
+        <<
+        "Input ItkImage must be fully loaded in memory. E.g. use m_ItkImage->GetSource()->UpdateLargestPossibleRegion() before calling this function."
+        << std::endl;
     throw std::runtime_error( msg.str() );
   }
 

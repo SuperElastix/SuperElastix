@@ -49,7 +49,7 @@ public:
   GDOptimizer4thPartyComponent( const std::string & name, const LoggerInterface & logger );
   virtual ~GDOptimizer4thPartyComponent();
   Example4thParty::GDOptimizer4thParty * theImplementation;
-  Metric4thPartyWrapper * MetricObject;
+  Metric4thPartyWrapper *                MetricObject;
 
   virtual int Set( MetricValueInterface::Pointer ) override;
 

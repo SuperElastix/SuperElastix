@@ -57,10 +57,10 @@ public:
     const TFilter * filter = static_cast< const TFilter * >( object );
     if( typeid( event ) == typeid( itk::MultiResolutionIterationEvent ) )
     {
-      unsigned int                                               currentLevel    = filter->GetCurrentLevel();
-      typename TFilter::ShrinkFactorsPerDimensionContainerType   shrinkFactors   = filter->GetShrinkFactorsPerDimension( currentLevel );
-      typename TFilter::SmoothingSigmasArrayType                 smoothingSigmas = filter->GetSmoothingSigmasPerLevel();
-      typename TFilter::TransformParametersAdaptorsContainerType adaptors        = filter->GetTransformParametersAdaptorsPerLevel();
+      unsigned int currentLevel = filter->GetCurrentLevel();
+      typename TFilter::ShrinkFactorsPerDimensionContainerType shrinkFactors = filter->GetShrinkFactorsPerDimension( currentLevel );
+      typename TFilter::SmoothingSigmasArrayType smoothingSigmas             = filter->GetSmoothingSigmasPerLevel();
+      typename TFilter::TransformParametersAdaptorsContainerType adaptors    = filter->GetTransformParametersAdaptorsPerLevel();
 
       // TODO optimizer is can be ObjectToObjectOptimizerBaseTemplate<double> or ObjectToObjectOptimizerBaseTemplate<float>
       // dynamic cast will fail on <float>, since GradientDescentOptimizerv4Type is by default <double>
@@ -215,7 +215,7 @@ template< int Dimensionality, class TPixel, class InternalComputationValueType >
 void
 ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >::RunRegistration( void )
 {
-  typename FixedImageType::ConstPointer  fixedImage  = this->m_theItkFilter->GetFixedImage();
+  typename FixedImageType::ConstPointer fixedImage   = this->m_theItkFilter->GetFixedImage();
   typename MovingImageType::ConstPointer movingImage = this->m_theItkFilter->GetMovingImage();
 
   // Scale estimator is not used in current implementation yet

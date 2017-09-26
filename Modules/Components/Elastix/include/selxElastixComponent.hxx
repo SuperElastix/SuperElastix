@@ -29,8 +29,8 @@ ElastixComponent< Dimensionality, TPixel >::ElastixComponent( const std::string 
   m_transformixFilter = TransformixFilterType::New();
 
   // TODO: Due to some issues with Criteria being propagated as elastix settings, I need to empty the selxparameterObject.
-  elxParameterObjectPointer                         elxParameterObject = elxParameterObjectType::New();
-  typename elxParameterObjectType::ParameterMapType defaultParameters  = elxParameterObject->GetDefaultParameterMap( "rigid" );
+  elxParameterObjectPointer elxParameterObject = elxParameterObjectType::New();
+  typename elxParameterObjectType::ParameterMapType defaultParameters = elxParameterObject->GetDefaultParameterMap( "rigid" );
 
   elxParameterObject->SetParameterMap( defaultParameters );
   m_elastixFilter->SetParameterObject( elxParameterObject );
@@ -155,9 +155,9 @@ ElastixComponent< Dimensionality, TPixel >
   else
   {
     // temporary solution: pass all SuperElastixComponent parameters as is to elastix. This should be defined in deeper hierarchy of the criteria, but for now we have a flat mapping only.
-    elxParameterObjectPointer                         elxParameterObject = this->m_elastixFilter->GetParameterObject();
-    typename elxParameterObjectType::ParameterMapType newParameterMap    = elxParameterObject->GetParameterMap( 0 ); //copy const paramtermap to a non const map
-    newParameterMap[ criterion.first ] = criterion.second;                                                           //overwrite element
+    elxParameterObjectPointer elxParameterObject = this->m_elastixFilter->GetParameterObject();
+    typename elxParameterObjectType::ParameterMapType newParameterMap = elxParameterObject->GetParameterMap( 0 ); //copy const paramtermap to a non const map
+    newParameterMap[ criterion.first ]                                = criterion.second;                         //overwrite element
     elxParameterObjectPointer newParameterObject = elxParameterObjectType::New();
     newParameterObject->SetParameterMap( newParameterMap );
     this->m_elastixFilter->SetParameterObject( newParameterObject );

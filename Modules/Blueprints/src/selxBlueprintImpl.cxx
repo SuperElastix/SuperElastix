@@ -55,7 +55,7 @@ public:
 
 private:
 
-  NameType name;
+  NameType         name;
   ParameterMapType parameterMap;
 };
 
