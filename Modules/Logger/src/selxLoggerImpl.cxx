@@ -17,9 +17,6 @@
  *
  *=========================================================================*/
 
-#ifndef LoggerImpl_cxx
-#define LoggerImpl_cxx
-
 #include "selxLoggerImpl.h"
 
 #include "boost/log/sources/record_ostream.hpp"
@@ -114,5 +111,3 @@ LoggerImpl
 //   }
 // }
 }
-
-#endif // LoggerImpl_cxx

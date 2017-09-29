@@ -16,8 +16,6 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef TransformComponent1_hxx
-#define TransformComponent1_hxx
 
 #include "selxTransformComponent1.h"
 
@@ -79,5 +77,3 @@ TransformComponent1::MeetsCriterion( const CriterionType & criterion )
   return meetsCriteria;
 }
 } // end namespace selx
-
-#endif
