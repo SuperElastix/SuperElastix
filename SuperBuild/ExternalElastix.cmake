@@ -19,8 +19,8 @@
 
 set( proj Elastix )
 
-set( ELASTIX_GIT_REPOSITORY https://github.com/FBerendsen/elastix )
-set( ELASTIX_GIT_TAG SELX-80-Transformix-Deformation-Field-Object )
+set( ELASTIX_GIT_REPOSITORY https://github.com/SuperElastix/elastix )
+set( ELASTIX_GIT_TAG 2ac905afdb1a5a841c05ed6abf92a1bf232d1e89 )
 
 UPDATE_SELX_SUPERBUILD_COMMAND(${proj})
 
