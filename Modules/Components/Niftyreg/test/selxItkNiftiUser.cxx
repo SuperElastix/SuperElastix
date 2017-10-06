@@ -24,19 +24,19 @@
 // should fail when you uncomment the next line:
 // #define itk_nifti_mangle_h
 
-#include "../ITK-4.10/nifti1_io.h"
+#include "../ITK-4.12/nifti1_io.h"
 
 namespace selx
 {
-	NiftiFunctionPtrs ItkNiftiUser::GetNiftiFunctionPtrs()
-	{
-		const NiftiFunctionPtrs result =
-		{
-			&nifti_disp_lib_hist,
-			&nifti_disp_lib_version,
-			&nifti_get_filesize,
-			&nifti_swap_2bytes
-		};
-		return result;
-	}
+NiftiFunctionPtrs
+ItkNiftiUser::GetNiftiFunctionPtrs()
+{
+  const NiftiFunctionPtrs result =
+  {
+    &nifti_disp_lib_version,
+    &nifti_get_filesize,
+    &nifti_swap_2bytes
+  };
+  return result;
+}
 }

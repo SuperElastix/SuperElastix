@@ -33,7 +33,7 @@ namespace selx
 template< class TPixel >
 class NiftyregWriteImageComponent :
   public SuperElastixComponent<
-  Accepting< NiftyregWarpedImageInterface< TPixel > >,
+  Accepting< NiftyregWarpedImageInterface< TPixel >>,
   Providing< AfterRegistrationInterface >
   >
 {
@@ -42,16 +42,16 @@ public:
   /** Standard ITK typedefs. */
   typedef NiftyregWriteImageComponent< TPixel > Self;
   typedef SuperElastixComponent<
-    Accepting< NiftyregWarpedImageInterface< TPixel > >,
+    Accepting< NiftyregWarpedImageInterface< TPixel >>,
     Providing< AfterRegistrationInterface >
-  >                                            Superclass;
-  typedef std::shared_ptr< Self >              Pointer;
-  typedef std::shared_ptr< const Self >        ConstPointer;
+    >                                            Superclass;
+  typedef std::shared_ptr< Self >       Pointer;
+  typedef std::shared_ptr< const Self > ConstPointer;
 
-  NiftyregWriteImageComponent(const std::string & name, const LoggerInterface & logger);
+  NiftyregWriteImageComponent(const std::string & name, LoggerImpl & logger);
   virtual ~NiftyregWriteImageComponent();
 
-  virtual int Set(typename NiftyregWarpedImageInterface< TPixel >::Pointer component) override;
+  virtual int Set( typename NiftyregWarpedImageInterface< TPixel >::Pointer component ) override;
 
   virtual void AfterRegistration() override;
 
@@ -61,7 +61,7 @@ public:
 
 private:
 
-  std::string   m_ImageFileName;
+  std::string m_ImageFileName;
   typename NiftyregWarpedImageInterface< TPixel >::Pointer m_WarpedImageInterface;
 
 protected:

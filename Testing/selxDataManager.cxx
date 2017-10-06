@@ -17,9 +17,6 @@
  *
  *=========================================================================*/
 
-#ifndef __DataManager_cxx
-#define __DataManager_cxx
-
 #include <itkSimpleDataObjectDecorator.h>
 #include "selxDataManager.h"
 
@@ -57,6 +54,3 @@ DataManager
   const std::string path = this->GetConfigurationDirectory() + this->GetFolderSeparator() + filename;
   return path;
 }
-
-
-#endif // __DataManager_cxx

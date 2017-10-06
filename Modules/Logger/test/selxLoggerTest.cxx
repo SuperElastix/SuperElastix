@@ -25,17 +25,17 @@ using namespace selx;
 
 TEST( LoggerTest, Initialization )
 {
-  Logger * logger = new Logger();
+  Logger::Pointer logger = Logger::New();
 }
 
 TEST( LoggerTest, Console )
 {
-  Logger * logger = new Logger();
+  Logger::Pointer logger = Logger::New();
   logger->AddConsole();
-  logger->Log(SeverityType::SELX_TRACE, "Console TRACE message");
-  logger->Log(SeverityType::SELX_DEBUG, "Console DEBUG message");
-  logger->Log(SeverityType::SELX_INFO, "Console INFO message");
-  logger->Log(SeverityType::SELX_WARNING, "Console WARNING message");
-  logger->Log(SeverityType::SELX_ERROR, "Console ERROR message");
-  logger->Log(SeverityType::SELX_FATAL, "Console FATAL message");
+  logger->Log( SeverityType::SELX_TRACE, "Console TRACE message" );
+  logger->Log( SeverityType::SELX_DEBUG, "Console DEBUG message" );
+  logger->Log( SeverityType::SELX_INFO, "Console INFO message" );
+  logger->Log( SeverityType::SELX_WARNING, "Console WARNING message" );
+  logger->Log( SeverityType::SELX_ERROR, "Console ERROR message" );
+  logger->Log( SeverityType::SELX_FATAL, "Console FATAL message" );
 }

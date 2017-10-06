@@ -17,7 +17,7 @@
 #
 #=========================================================================
 
-cmake_minimum_required( VERSION 3.0.2 )
+cmake_minimum_required( VERSION 3.5.1 )
 
 # ---------------------------------------------------------------------
 project( SuperElastixSuperBuild )
@@ -37,6 +37,8 @@ if(CMAKE_CONFIGURATION_TYPES)
   set(CMAKE_CONFIGURATION_TYPES "${CMAKE_CONFIGURATION_TYPES}" CACHE STRING
   "SuperElastix SuperBuild allows CMake to generate only one configuration at a time (Debug, Release, MinSizeRel, or RelWithDebInfo)"
   FORCE)
+  
+  set_property(CACHE CMAKE_CONFIGURATION_TYPES PROPERTY STRINGS Debug Release MinSizeRel RelWithDebInfo)
   
   message(STATUS "Selected configuration type (CMAKE_CONFIGURATION_TYPES): " ${CMAKE_CONFIGURATION_TYPES})
 endif()
@@ -99,8 +101,8 @@ endfunction()
 # Build ITK
 
 set( ITK_VERSION_MAJOR "4" )
-set( ITK_VERSION_MINOR "10" )
-set( ITK_VERSION_PATCH "1" )
+set( ITK_VERSION_MINOR "12" )
+set( ITK_VERSION_PATCH "2" )
 set( ITK_VERSION_STRING "${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR}.${ITK_VERSION_PATCH}" )
 
 mark_as_advanced( USE_SYSTEM_ITK )
@@ -108,7 +110,6 @@ option( USE_SYSTEM_ITK "Use an installed version of ITK" OFF )
 
 if( USE_SYSTEM_ITK )
   find_package( ITK ${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR} REQUIRED )
-  include( elxRequiredITKModules )
 else()
   include( ExternalITK )
 endif()
@@ -120,8 +121,13 @@ mark_as_advanced( USE_SYSTEM_ELASTIX )
 option( USE_SYSTEM_ELASTIX "Use an installed version of elastix" OFF )
 if( USE_SYSTEM_ELASTIX )
   if( NOT EXISTS ${ELASTIX_USE_FILE} )
+    # Also try ELASTIX_DIR
+    set( ELASTIX_USE_FILE ${ELASTIX_DIR}/UseElastix.cmake )
+  endif()
+
+  if( NOT EXISTS ${ELASTIX_USE_FILE} )
     set( ELASTIX_USE_FILE "NOT_FOUND" CACHE PATH "Absolute path to UseElastix.cmake." )
-    message( FATAL_ERROR "Could not find the ELASTIX_USE_FILE (${ELASTIX_USE_FILE}). Use the SuperBuild or manually point the ELASTIX_USE_FILE CMake variable to the UseElastix.cmake file in source directory of your elastix build tree." )
+    message( FATAL_ERROR "Could not find the ELASTIX_USE_FILE (${ELASTIX_USE_FILE}). Use the SuperBuild or manually point the ELASTIX_USE_FILE CMake variable to the UseElastix.cmake file in root directory of your Elastix build tree." )
   endif()
 else()
   include( ExternalElastix )
@@ -148,7 +154,7 @@ endif()
 mark_as_advanced( USE_SYSTEM_BOOST )
 option( USE_SYSTEM_BOOST "Use an installed version of BOOST" OFF )
 if( USE_SYSTEM_BOOST )
-  find_package( BOOST REQUIRED log date_time thread regex graph program_options filesystem )
+  find_package( Boost 1.65.0 EXACT REQUIRED log date_time thread regex graph program_options filesystem )
 else()
   include( ExternalBoost )
 endif()

@@ -24,7 +24,7 @@ namespace selx
 {
 template< class InternalComputationValueType, int Dimensionality >
 ItkCompositeTransformComponent< InternalComputationValueType,
-Dimensionality >::ItkCompositeTransformComponent( const std::string & name, const LoggerInterface & logger ) : Superclass( name, logger )
+Dimensionality >::ItkCompositeTransformComponent( const std::string & name, LoggerImpl & logger ) : Superclass( name, logger )
 {
   m_CompositeTransform = CompositeTransformType::New();
 

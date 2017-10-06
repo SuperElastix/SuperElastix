@@ -33,8 +33,8 @@ namespace selx
 template< class TPixel >
 class Niftyregf3dComponent :
   public SuperElastixComponent<
-    Accepting< NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >>,
-    Providing< NiftyregWarpedImageInterface< TPixel >, RunRegistrationInterface >
+  Accepting< NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >>,
+  Providing< NiftyregWarpedImageInterface< TPixel >, RunRegistrationInterface >
   >
 {
 public:
@@ -44,18 +44,18 @@ public:
   typedef SuperElastixComponent<
     Accepting< NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >>,
     Providing< NiftyregWarpedImageInterface< TPixel >, RunRegistrationInterface >
-  >                                      Superclass;
-  typedef std::shared_ptr< Self >        Pointer;
-  typedef std::shared_ptr< const Self >  ConstPointer;
+    >                                      Superclass;
+  typedef std::shared_ptr< Self >       Pointer;
+  typedef std::shared_ptr< const Self > ConstPointer;
 
-  Niftyregf3dComponent( const std::string & name, const LoggerInterface & logger );
+  Niftyregf3dComponent( const std::string & name, LoggerImpl & logger );
   virtual ~Niftyregf3dComponent();
 
   virtual int Set( typename NiftyregReferenceImageInterface< TPixel >::Pointer ) override;
 
   virtual int Set( typename NiftyregFloatingImageInterface< TPixel >::Pointer ) override;
 
-  virtual std::shared_ptr<nifti_image> GetWarpedNiftiImage() override;
+  virtual std::shared_ptr< nifti_image > GetWarpedNiftiImage() override;
 
   virtual void RunRegistration() override;
 
@@ -65,11 +65,11 @@ public:
 
 private:
 
-  reg_f3d< TPixel > * m_reg_f3d;
-  std::shared_ptr<nifti_image> m_reference_image;
-  std::shared_ptr<nifti_image> m_floating_image;
+  reg_f3d< TPixel > *            m_reg_f3d;
+  std::shared_ptr< nifti_image > m_reference_image;
+  std::shared_ptr< nifti_image > m_floating_image;
   // m_warped_images is an array of 2 nifti images. Depending on the use case, typically only [0] is a valid image
-  std::unique_ptr< std::array<std::shared_ptr<nifti_image>,2>> m_warped_images;
+  std::unique_ptr< std::array< std::shared_ptr< nifti_image >, 2 >> m_warped_images;
 
 protected:
 

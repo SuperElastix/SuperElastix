@@ -27,25 +27,24 @@
 #include "selxSSDMetric4thPartyComponent.h"
 
 #include "selxItkSmoothingRecursiveGaussianImageFilterComponent.h"
-#include "selxDisplacementFieldItkImageFilterSink.h"
-#include "selxItkImageSource.h"
-#include "selxItkImageSink.h"
+#include "selxDisplacementFieldItkImageFilterSinkComponent.h"
+#include "selxItkImageSourceComponent.h"
+#include "selxItkImageSinkComponent.h"
 
 #include "selxItkImageRegistrationMethodv4Component.h"
-#include "selxItkANTSNeighborhoodCorrelationImageToImageMetricv4.h"
-#include "selxItkMeanSquaresImageToImageMetricv4.h"
-#include "selxItkGradientDescentOptimizerv4.h"
-#include "selxItkAffineTransform.h"
-#include "selxItkGaussianExponentialDiffeomorphicTransform.h"
+#include "selxItkANTSNeighborhoodCorrelationImageToImageMetricv4Component.h"
+#include "selxItkMeanSquaresImageToImageMetricv4Component.h"
+#include "selxItkGradientDescentOptimizerv4Component.h"
+#include "selxItkAffineTransformComponent.h"
+#include "selxItkGaussianExponentialDiffeomorphicTransformComponent.h"
 #include "selxItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent.h"
-#include "selxItkTransformDisplacementFilter.h"
-#include "selxItkResampleFilter.h"
-#include "selxItkImageSourceFixed.h"
-#include "selxItkImageSourceMoving.h"
+
+#include "selxItkTransformDisplacementFilterComponent.h"
+#include "selxItkResampleFilterComponent.h"
 #include "selxItkTransformSinkComponent.h"
 #include "selxItkTransformSourceComponent.h"
 
-#include "selxRegistrationController.h"
+#include "selxRegistrationControllerComponent.h"
 #include "selxItkCompositeTransformComponent.h"
 
 #include "itkImageFileReader.h"
@@ -110,16 +109,14 @@ public:
     ItkTransformSourceComponent<2, double>,
     ItkTransformSourceComponent < 3, double >> RegisterComponents;
 
-  typedef std::unique_ptr< Blueprint >                       BlueprintPointer;
-  typedef itk::UniquePointerDataObjectDecorator< Blueprint > BlueprintITKType;
-  typedef BlueprintITKType::Pointer                          BlueprintITKPointer;
+  typedef Blueprint::Pointer BlueprintPointer;
 
-  typedef SuperElastixFilterBase::BlueprintType SuperElastixFilterBlueprintType;
   typedef SuperElastixFilterBase::Pointer       SuperElastixFilterBlueprintPointer;
   typedef SuperElastixFilterBase::ConstPointer  SuperElastixFilterBlueprintConstPointer;
-  typedef Blueprint::ParameterMapType       ParameterMapType;
-  typedef Blueprint::ParameterValueType     ParameterValueType;
-  typedef DataManager                       DataManagerType;
+
+  typedef BlueprintImpl::ParameterMapType       ParameterMapType;
+  typedef BlueprintImpl::ParameterValueType     ParameterValueType;
+  typedef DataManager                           DataManagerType;
 
   typedef itk::Image< float, 2 >              Image2DType;
   typedef itk::ImageFileReader< Image2DType > ImageReader2DType;
@@ -155,21 +152,18 @@ public:
     superElastixFilter = nullptr;
   }
 
-
-  // Blueprint holds a configuration for SuperElastix
-  BlueprintPointer            blueprint;
+  BlueprintPointer blueprint;
   SuperElastixFilterBase::Pointer superElastixFilter;
-  // Data manager provides the paths to the input and output data for unit tests
   DataManagerType::Pointer dataManager;
 };
 
 // These test are disabled, since may not want to check each component with this much boilerplate code.
 // We should consider moving functional tests outside the unit tests
-// Anyway, the Blueprint configuration needs to be updated
+// Anyway, the BlueprintImpl configuration needs to be updated
 TEST_F( RegistrationItkv4Test, DISABLED_3DImagesOnly )
 {
   /** make example blueprint configuration */
-  BlueprintPointer blueprint = BlueprintPointer( new Blueprint() );
+  BlueprintPointer blueprint = Blueprint::New();
 
   ParameterMapType component0Parameters;
   component0Parameters[ "NameOfClass" ]    = { "ItkImageRegistrationMethodv4Component" };
@@ -218,9 +212,7 @@ TEST_F( RegistrationItkv4Test, DISABLED_3DImagesOnly )
   superElastixFilter->SetInput( "MovingImageSource", movingImageReader->GetOutput() );
   resultImageWriter->SetInput( superElastixFilter->GetOutput< Image3DType >( "ResultImageSink" ) );
 
-  BlueprintITKPointer superElastixFilterBlueprint = BlueprintITKType::New();
-  superElastixFilterBlueprint->Set( blueprint );
-  EXPECT_NO_THROW( superElastixFilter->SetBlueprint( superElastixFilterBlueprint ) );
+  EXPECT_NO_THROW( superElastixFilter->SetBlueprint( blueprint ) );
 
   //Optional Update call
   //superElastixFilter->Update();
@@ -231,11 +223,11 @@ TEST_F( RegistrationItkv4Test, DISABLED_3DImagesOnly )
 
 // These test are disabled, since may not want to check each component with this much boilerplate code.
 // We should consider moving functional tests outside the unit tests
-// Anyway, the Blueprint configuration needs to be updated
+// Anyway, the BlueprintImpl configuration needs to be updated
 TEST_F( RegistrationItkv4Test, DISABLED_3DANTSCCMetric )
 {
   /** make example blueprint configuration */
-  BlueprintPointer blueprint = BlueprintPointer( new Blueprint() );
+  BlueprintPointer blueprint = Blueprint::New();
 
   ParameterMapType component0Parameters;
   component0Parameters[ "NameOfClass" ]    = { "ItkImageRegistrationMethodv4Component" };
@@ -302,9 +294,7 @@ TEST_F( RegistrationItkv4Test, DISABLED_3DANTSCCMetric )
   superElastixFilter->SetInput( "MovingImageSource", movingImageReader->GetOutput() );
   resultImageWriter->SetInput( superElastixFilter->GetOutput< Image3DType >( "ResultImageSink" ) );
 
-  BlueprintITKPointer superElastixFilterBlueprint = BlueprintITKType::New();
-  superElastixFilterBlueprint->Set( blueprint );
-  EXPECT_NO_THROW( superElastixFilter->SetBlueprint( superElastixFilterBlueprint ) );
+  EXPECT_NO_THROW( superElastixFilter->SetBlueprint( blueprint ) );
 
   //Optional Update call
   //superElastixFilter->Update();
@@ -315,11 +305,11 @@ TEST_F( RegistrationItkv4Test, DISABLED_3DANTSCCMetric )
 
 // These test are disabled, since may not want to check each component with this much boilerplate code.
 // We should consider moving functional tests outside the unit tests
-// Anyway, the Blueprint configuration needs to be updated
+// Anyway, the BlueprintImpl configuration needs to be updated
 TEST_F( RegistrationItkv4Test, DISABLED_3DMeanSquaresMetric )
 {
   /** make example blueprint configuration */
-  BlueprintPointer blueprint = BlueprintPointer( new Blueprint() );
+  BlueprintPointer blueprint = Blueprint::New();
 
   ParameterMapType component0Parameters;
   component0Parameters[ "NameOfClass" ]    = { "ItkImageRegistrationMethodv4Component" };
@@ -386,9 +376,7 @@ TEST_F( RegistrationItkv4Test, DISABLED_3DMeanSquaresMetric )
   superElastixFilter->SetInput( "MovingImageSource", movingImageReader->GetOutput() );
   resultImageWriter->SetInput( superElastixFilter->GetOutput< Image3DType >( "ResultImageSink" ) );
 
-  BlueprintITKPointer superElastixFilterBlueprint = BlueprintITKType::New();
-  superElastixFilterBlueprint->Set( blueprint );
-  EXPECT_NO_THROW( superElastixFilter->SetBlueprint( superElastixFilterBlueprint ) );
+  EXPECT_NO_THROW( superElastixFilter->SetBlueprint( blueprint ) );
 
   //Optional Update call
   //superElastixFilter->Update();
@@ -400,7 +388,7 @@ TEST_F( RegistrationItkv4Test, DISABLED_3DMeanSquaresMetric )
 TEST_F(RegistrationItkv4Test, FullyConfigured3d)
 {
   /** make example blueprint configuration */
-  BlueprintPointer blueprint = BlueprintPointer(new Blueprint());
+  BlueprintPointer blueprint = Blueprint::New();
 
   // Components
   blueprint->SetComponent("RegistrationMethod", { { "NameOfClass", { "ItkImageRegistrationMethodv4Component" } },
@@ -482,9 +470,7 @@ TEST_F(RegistrationItkv4Test, FullyConfigured3d)
   resultImageWriter->SetInput( superElastixFilter->GetOutput< Image3DType >( "ResultImageSink" ) );
   resultDisplacementWriter->SetInput( superElastixFilter->GetOutput< DisplacementImage3DType >( "ResultDisplacementFieldSink" ) );
 
-  BlueprintITKPointer superElastixFilterBlueprint = BlueprintITKType::New();
-  superElastixFilterBlueprint->Set( blueprint );
-  EXPECT_NO_THROW( superElastixFilter->SetBlueprint( superElastixFilterBlueprint ) );
+  EXPECT_NO_THROW( superElastixFilter->SetBlueprint( blueprint ) );
 
   //Optional Update call
   //superElastixFilter->Update();
@@ -496,7 +482,7 @@ TEST_F(RegistrationItkv4Test, FullyConfigured3d)
 TEST_F( RegistrationItkv4Test, FullyConfigured3dAffine )
 {
   /** make example blueprint configuration */
-  BlueprintPointer blueprint = BlueprintPointer( new Blueprint() );
+  BlueprintPointer blueprint = Blueprint::New();
 
   blueprint->SetComponent( "RegistrationMethod", { { "NameOfClass", { "ItkImageRegistrationMethodv4Component" } },
                                                    { "Dimensionality", { "3" } },
@@ -600,9 +586,7 @@ TEST_F( RegistrationItkv4Test, FullyConfigured3dAffine )
   resultImageWriter->SetInput( superElastixFilter->GetOutput< Image3DType >( "ResultImageSink" ) );
   resultDisplacementWriter->SetInput( superElastixFilter->GetOutput< DisplacementImage3DType >( "ResultDisplacementFieldSink" ) );
 
-  BlueprintITKPointer superElastixFilterBlueprint = BlueprintITKType::New();
-  superElastixFilterBlueprint->Set( blueprint );
-  EXPECT_NO_THROW( superElastixFilter->SetBlueprint( superElastixFilterBlueprint ) );
+  EXPECT_NO_THROW( superElastixFilter->SetBlueprint( blueprint ) );
 
   //Optional Update call
   //superElastixFilter->Update();
@@ -612,30 +596,30 @@ TEST_F( RegistrationItkv4Test, FullyConfigured3dAffine )
   EXPECT_NO_THROW( resultDisplacementWriter->Update() );
 }
 
-TEST_F(RegistrationItkv4Test, CompositeTransform)
+TEST_F( RegistrationItkv4Test, CompositeTransform )
 {
   /** make example blueprint configuration */
-  BlueprintPointer blueprint = BlueprintPointer(new Blueprint());
+  BlueprintPointer blueprint = Blueprint::New();
 
-  blueprint->SetComponent("MultiStageTransformController", { { "NameOfClass", { "ItkCompositeTransformComponent" } }, { "ExecutionOrder", { "RegistrationMethod1", "RegistrationMethod2" } } });
+  blueprint->SetComponent( "MultiStageTransformController", { { "NameOfClass", { "ItkCompositeTransformComponent" } }, { "ExecutionOrder", { "RegistrationMethod1", "RegistrationMethod2" } } } );
 
-  blueprint->SetComponent("FixedImageSource", { { "NameOfClass", { "ItkImageSourceComponent" } } });
-  blueprint->SetComponent("MovingImageSource", { { "NameOfClass", { "ItkImageSourceComponent" } } });
-  blueprint->SetComponent("ResultImageSink", { { "NameOfClass", { "ItkImageSinkComponent" } } });
+  blueprint->SetComponent( "FixedImageSource", { { "NameOfClass", { "ItkImageSourceComponent" } } } );
+  blueprint->SetComponent( "MovingImageSource", { { "NameOfClass", { "ItkImageSourceComponent" } } } );
+  blueprint->SetComponent( "ResultImageSink", { { "NameOfClass", { "ItkImageSinkComponent" } } } );
 
-  blueprint->SetComponent("ResampleFilter", { { "NameOfClass", { "ItkResampleFilterComponent" } } });
-  blueprint->SetConnection("FixedImageSource", "ResampleFilter", { {} });
-  blueprint->SetConnection("MovingImageSource", "ResampleFilter", { {} });
-  blueprint->SetConnection("MultiStageTransformController", "ResampleFilter", { {} }); //ReconnectTransformInterface
+  blueprint->SetComponent( "ResampleFilter", { { "NameOfClass", { "ItkResampleFilterComponent" } } } );
+  blueprint->SetConnection( "FixedImageSource", "ResampleFilter", { {} } );
+  blueprint->SetConnection( "MovingImageSource", "ResampleFilter", { {} } );
+  blueprint->SetConnection( "MultiStageTransformController", "ResampleFilter", { {} } ); //ReconnectTransformInterface
 
-  blueprint->SetConnection("ResampleFilter", "ResultImageSink", {});
+  blueprint->SetConnection( "ResampleFilter", "ResultImageSink", {} );
 
-  blueprint->SetComponent("RegistrationMethod1", { { "NameOfClass", { "ItkImageRegistrationMethodv4Component" } },
-  { "Dimensionality", { "2" } },
-  { "InternalComputationValueType", { "double" } },
-  { "PixelType", { "float" } } });
-  blueprint->SetConnection("FixedImageSource", "RegistrationMethod1", { { "Role", { "Fixed" } } });
-  blueprint->SetConnection("MovingImageSource", "RegistrationMethod1", { { "Role", { "Moving" } } });
+  blueprint->SetComponent( "RegistrationMethod1", { { "NameOfClass", { "ItkImageRegistrationMethodv4Component" } },
+                                                    { "Dimensionality", { "2" } },
+                                                    { "InternalComputationValueType", { "double" } },
+                                                    { "PixelType", { "float" } } } );
+  blueprint->SetConnection( "FixedImageSource", "RegistrationMethod1", { { "Role", { "Fixed" } } } );
+  blueprint->SetConnection( "MovingImageSource", "RegistrationMethod1", { { "Role", { "Moving" } } } );
 
   blueprint->SetComponent( "Metric1", { { "NameOfClass", { "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component" } } } );
   blueprint->SetConnection( "Metric1", "RegistrationMethod1", {} );
@@ -688,9 +672,7 @@ TEST_F(RegistrationItkv4Test, CompositeTransform)
 
   resultImageWriter->SetInput( superElastixFilter->GetOutput< Image2DType >( "ResultImageSink" ) );
 
-  BlueprintITKPointer superElastixFilterBlueprint = BlueprintITKType::New();
-  superElastixFilterBlueprint->Set( blueprint );
-  EXPECT_NO_THROW( superElastixFilter->SetBlueprint( superElastixFilterBlueprint ) );
+  EXPECT_NO_THROW( superElastixFilter->SetBlueprint( blueprint ) );
 
   //Optional Update call
   //superElastixFilter->Update();

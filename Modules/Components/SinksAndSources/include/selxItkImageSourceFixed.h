@@ -17,8 +17,8 @@
  *
  *=========================================================================*/
 
-#ifndef selxItkImageSourceFixed_h
-#define selxItkImageSourceFixed_h
+#ifndef selxItkImageSourceFixedComponent_h
+#define selxItkImageSourceFixedComponent_h
 
 #include "selxSuperElastixComponent.h"
 #include "selxSinksAndSourcesInterfaces.h"
@@ -54,7 +54,7 @@ public:
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
 
-  ItkImageSourceFixedComponent( const std::string & name, const LoggerInterface & logger );
+  ItkImageSourceFixedComponent( const std::string & name, LoggerImpl & logger );
   virtual ~ItkImageSourceFixedComponent();
 
   typedef typename itkImageFixedInterface< Dimensionality, TPixel >::ItkImageType     ItkImageType;
@@ -89,6 +89,6 @@ protected:
 };
 } //end namespace selx
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "selxItkImageSourceFixed.hxx"
+#include "selxItkImageSourceFixedComponent.hxx"
 #endif
-#endif // #define selxItkImageSourceFixed_h
+#endif // #define selxItkImageSourceFixedComponent_h

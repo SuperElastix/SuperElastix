@@ -19,6 +19,7 @@
 
 set( ${MODULE}_INCLUDE_DIRS
   ${${MODULE}_SOURCE_DIR}/include
+  ${${MODULE}_SOURCE_DIR}/src # Internal components need selxLogger.h
 )
 
 # Module source files

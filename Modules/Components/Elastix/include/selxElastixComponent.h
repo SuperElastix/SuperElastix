@@ -65,7 +65,7 @@ public:
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
 
-  ElastixComponent( const std::string & name, const LoggerInterface & logger );
+  ElastixComponent( const std::string & name, LoggerImpl & logger );
   virtual ~ElastixComponent();
 
   typedef typename ComponentBase::CriterionType CriterionType;

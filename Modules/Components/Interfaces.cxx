@@ -17,5 +17,5 @@
 *
 *=========================================================================*/
 
-// This is an empty file to let cmake aggregate all interface files, 
+// This is an empty file to let cmake aggregate all interface files,
 // required to show these headers in Visual 2013 Studio Solution Explorer

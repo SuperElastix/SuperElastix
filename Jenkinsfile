@@ -32,8 +32,7 @@ def updateGithubCommitStatus(build) {
 
 node('lkeb-vm-test') {
 	stage('Init') {
-		tool 'CMake 3.8.0'
-		//tool 'CTest 3.8.0' does not exist, TODO find proper way
+		cmake = tool 'CMake 3.5.1'
 		sh 'rm -rf build'
 		sh 'mkdir -p build'
 	}
@@ -47,7 +46,7 @@ node('lkeb-vm-test') {
 		}
 		stage('Build') {
 			dir('build') {
-				sh "${ tool 'CMake 3.8.0' } ../src/SuperBuild"
+				sh "${ cmake } ../src/SuperBuild"
 				sh 'make clean'
 				sh 'make -j4'
 			}
@@ -60,7 +59,7 @@ node('lkeb-vm-test') {
 	timeout(45) {
 		stage('Test') {
 			dir('build/SuperElastix-build') {
-				sh '../../../../tools/cmake/bin/ctest' //tool 'CTest 3.8.0' does not exist, TODO find proper way
+				sh "`dirname ${ cmake }`/ctest"
 			}
 		}
 	}

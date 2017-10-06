@@ -27,7 +27,6 @@ ExternalProject_Add( ${proj}
   GIT_REPOSITORY ${ITK_REPOSITORY}
   GIT_TAG ${ITK_TAG}
   UPDATE_COMMAND ""
-  PATCH_COMMAND "${GIT_EXECUTABLE}" reset --hard && "${GIT_EXECUTABLE}" clean --force && "${GIT_EXECUTABLE}" apply --whitespace=fix "${CMAKE_SOURCE_DIR}/Patches/itk_png_mangle_get_uint_31.patch" && "${GIT_EXECUTABLE}" apply "${CMAKE_SOURCE_DIR}/Patches/itk_nifti_mangle.patch"
   SOURCE_DIR ${proj}
   BINARY_DIR ${proj}-build
   CMAKE_ARGS

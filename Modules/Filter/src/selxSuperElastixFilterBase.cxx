@@ -28,41 +28,22 @@ namespace selx
  */
 
 SuperElastixFilterBase
-::SuperElastixFilterBase( ) :
+::SuperElastixFilterBase() :
   m_IsConnected( false ),
-  m_AllUniqueComponents( false ),
-  m_IsBlueprintParsedOnce( false )
+  m_AllUniqueComponents( false )
 {
-  // Disable "Primary" as required input
-  // TODO: Blueprint should become primary
-  this->SetRequiredInputNames( {} );
+  this->m_Blueprint = nullptr;
+  this->m_Logger = Logger::New();
 } // end Constructor
-
-
-/*
-void
-SuperElastixFilter
-::AddBlueprint(BlueprintPointer otherBlueprint)
-{
-  auto blueprint_internals = this->m_Blueprint->Get();
-  blueprint_internals->ComposeWith(otherBlueprint->Get());
-  this->m_Blueprint->Set(blueprint_internals);
-}
-*/
 
 bool
 SuperElastixFilterBase
 ::ParseBlueprint()
 {
-  if( ( !this->m_IsBlueprintParsedOnce ) || ( this->m_Blueprint->GetMTime() > this->GetMTime() ) )
+  if( ( this->m_Blueprint->GetMTime() > this->GetMTime() || !this->m_NetworkBuilder ) )
   {
-    // Was Blueprint modified by Set() or by AddBlueprint?
-    // delete previous blueprint and start all over with new one
-    m_NetworkBuilder = m_NetworkBuilderFactory->New( *this->m_Logger->Get() );
-    this->m_NetworkBuilder->AddBlueprint( this->m_Blueprint->Get() );
-    this->m_AllUniqueComponents   = this->m_NetworkBuilder->Configure();
-    this->m_IsBlueprintParsedOnce = true;
-    this->Modified();
+    m_NetworkBuilder = m_NetworkBuilderFactory->New( this->m_Logger->GetLogger(), this->m_Blueprint->GetBlueprint() );
+    this->m_AllUniqueComponents = this->m_NetworkBuilder->Configure();
   }
   return this->m_AllUniqueComponents;
 }
@@ -94,34 +75,34 @@ SuperElastixFilterBase
   if( !this->m_Blueprint )
   {
     //TODO: remove this check here by making m_Blueprint primary input
-    itkExceptionMacro( << "Setting a Blueprint is required first." )
+    itkExceptionMacro( << "Setting a BlueprintImpl is required first." )
   }
 
   this->ParseBlueprint();
 
   // Handle inputs:
-  auto                                       usedInputs = this->GetInputNames();
-  NetworkBuilderBase::SourceInterfaceMapType sources    = this->m_NetworkBuilder->GetSourceInterfaces();
+  auto                                       inputNames = this->GetInputNames();
+  NetworkBuilderBase::SourceInterfaceMapType sources = this->m_NetworkBuilder->GetSourceInterfaces();
   for( const auto & nameAndInterface : sources )
   {
-    auto foundIndex = std::find( usedInputs.begin(), usedInputs.end(), nameAndInterface.first );
+    auto inputName = std::find( inputNames.begin(), inputNames.end(), nameAndInterface.first );
 
-    if( foundIndex == usedInputs.end() )
+    if( inputName == inputNames.end() )
     {
       // or should we catch and rethrow nameAndInterface.second->SetMiniPipelineInput(this->GetInput(nameAndInterface.first)); ?
       itkExceptionMacro( << "SuperElastixFilter requires the input " "" << nameAndInterface.first << "" " for the Source Component with that name" )
     }
 
     nameAndInterface.second->SetMiniPipelineInput( this->GetInput( nameAndInterface.first ) );
-    usedInputs.erase( foundIndex );
+    inputNames.erase( inputName );
   }
-  if( usedInputs.size() > 0 )
+  if( inputNames.size() > 0 )
   {
     std::stringstream msg;
-    msg << "These inputs are connected, but not used by any Source Component: " << std::endl;
-    for( auto & unusedInput : usedInputs )
+    msg << "These inputs were given, but not used by any Source Component: " << std::endl;
+    for( auto & unusedInputName : inputNames )
     {
-      msg << unusedInput << std::endl;
+      msg << unusedInputName << std::endl;
     }
 
     itkExceptionMacro( << msg.str() )
@@ -140,7 +121,7 @@ SuperElastixFilterBase
       // or should we catch and rethrow nameAndInterface.second->SetMiniPipelineOutput(this->GetOutput(nameAndInterface.first)); ?
       itkExceptionMacro( << "SuperElastixFilter requires the output " "" << nameAndInterface.first << "" " for the Sink Component with that name" )
     }
-    // This (empty) Output DataObject is known to the outside of the SuperElastixFilter and might be connected to an itk pipeline. 
+    // This (empty) Output DataObject is known to the outside of the SuperElastixFilter and might be connected to an itk pipeline.
     // To keep the pipeline intact we need to propagate the DataObject upstream. Additional information such as requested region is preserved as well.
     // nameAndInterface.second->SetMiniPipelineOutput( this->GetOutput( nameAndInterface.first ) );
     usedOutputs.erase( foundIndex );
@@ -211,11 +192,11 @@ SuperElastixFilterBase::AnyFileReaderType::Pointer
 SuperElastixFilterBase
 ::GetInputFileReader( const DataObjectIdentifierType & inputName )
 {
-  //TODO: Before we can get the reader the Blueprint needs to set and applied in the NetworkBuilder.
+  //TODO: Before we can get the reader the BlueprintImpl needs to set and applied in the NetworkBuilder.
   // This is not like the itk pipeline philosophy
   if( !this->ParseBlueprint() )
   {
-    itkExceptionMacro( << "Blueprint was not sufficiently specified to build a network." )
+    itkExceptionMacro( << "BlueprintImpl was not sufficiently specified to build a network." )
   }
   return this->m_NetworkBuilder->GetInputFileReader( inputName );
 }
@@ -225,11 +206,11 @@ SuperElastixFilterBase::AnyFileWriterType::Pointer
 SuperElastixFilterBase
 ::GetOutputFileWriter( const DataObjectIdentifierType & outputName )
 {
-  //TODO: Before we can get the reader the Blueprint needs to set and applied in the NetworkBuilder.
+  //TODO: Before we can get the reader the BlueprintImpl needs to set and applied in the NetworkBuilder.
   // This is not like the itk pipeline philosophy
   if( !this->ParseBlueprint() )
   {
-    itkExceptionMacro( << "Blueprint was not sufficiently specified to build a network." )
+    itkExceptionMacro( << "BlueprintImpl was not sufficiently specified to build a network." )
   }
 
   return this->m_NetworkBuilder->GetOutputFileWriter( outputName );
@@ -259,7 +240,7 @@ SuperElastixFilterBase
   {
     if( !this->ParseBlueprint() )
     {
-      itkExceptionMacro( << "Blueprint was not sufficiently specified to build a network." )
+      itkExceptionMacro( << "BlueprintImpl was not sufficiently specified to build a network." )
     }
     OutputDataType::Pointer newOutput = this->m_NetworkBuilder->GetInitializedOutput( outputName );
     this->Modified();
@@ -280,22 +261,6 @@ SuperElastixFilterBase
   //this->SetPrimaryOutput()
   this->GenerateOutputInformation();
   this->GenerateData();
-}
-
-
-void
-SuperElastixFilterBase
-::SetLogger( LoggerPointer logger ) 
-{
-  this->m_Logger = logger;
-}
-
-
-SuperElastixFilterBase::LoggerPointer
-SuperElastixFilterBase
-::GetLogger( void ) 
-{
-  return m_Logger;
 }
 
 } // namespace elx

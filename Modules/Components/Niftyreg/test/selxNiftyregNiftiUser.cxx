@@ -17,22 +17,21 @@
 *
 *=========================================================================*/
 
-
 #include "selxNiftyregNiftiUser.h"
 
 #include "../../Niftyreg/reg-io/nifti/nifti1_io.h"
 
 namespace selx
 {
-	NiftiFunctionPtrs NiftyregNiftiUser::GetNiftiFunctionPtrs()
-	{
-		const NiftiFunctionPtrs result =
-		{
-			&nifti_disp_lib_hist,
-			&nifti_disp_lib_version,
-			&nifti_get_filesize,
-			&nifti_swap_2bytes
-		};
-		return result;
-	}
+NiftiFunctionPtrs
+NiftyregNiftiUser::GetNiftiFunctionPtrs()
+{
+  const NiftiFunctionPtrs result =
+  {
+    &nifti_disp_lib_version,
+    &nifti_get_filesize,
+    &nifti_swap_2bytes
+  };
+  return result;
+}
 }

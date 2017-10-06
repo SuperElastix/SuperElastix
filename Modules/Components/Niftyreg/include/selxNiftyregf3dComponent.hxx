@@ -23,7 +23,7 @@
 namespace selx
 {
 template< class TPixel >
-Niftyregf3dComponent< TPixel >::Niftyregf3dComponent( const std::string & name, const LoggerInterface & logger ) : Superclass( name, logger )
+Niftyregf3dComponent< TPixel >::Niftyregf3dComponent( const std::string & name, LoggerImpl & logger ) : Superclass( name, logger )
 {
   m_reg_f3d = new reg_f3d< TPixel >( 1, 1 );
 }
@@ -44,7 +44,7 @@ Niftyregf3dComponent< TPixel >
   // store the shared_ptr to the data, otherwise it gets freed
   this->m_reference_image = component->GetReferenceNiftiImage();
   // connect the itk pipeline
-  this->m_reg_f3d->SetReferenceImage(this->m_reference_image.get());
+  this->m_reg_f3d->SetReferenceImage( this->m_reference_image.get() );
   return 0;
 }
 
@@ -57,16 +57,17 @@ Niftyregf3dComponent< TPixel >
   // store the shared_ptr to the data, otherwise it gets freed
   this->m_floating_image = component->GetFloatingNiftiImage();
   // connect the itk pipeline
-  this->m_reg_f3d->SetFloatingImage(this->m_floating_image.get());
+  this->m_reg_f3d->SetFloatingImage( this->m_floating_image.get() );
   return 0;
 }
 
+
 template< class TPixel >
-std::shared_ptr<nifti_image>
+std::shared_ptr< nifti_image >
 Niftyregf3dComponent< TPixel >
 ::GetWarpedNiftiImage()
 {
-  return (*(this->m_warped_images.get()))[0];
+  return ( *( this->m_warped_images.get() ) )[ 0 ];
 }
 
 
@@ -79,20 +80,22 @@ Niftyregf3dComponent<  TPixel >
   //this->m_reg_f3d->UseCubicSplineInterpolation();
 
   this->m_reg_f3d->Run();
-  nifti_image** outputWarpedImage = m_reg_f3d->GetWarpedImage();
-  memset(outputWarpedImage[0]->descrip, 0, 80);
-  strcpy(outputWarpedImage[0]->descrip, "Warped image using NiftyReg (reg_f3d)");
+  nifti_image ** outputWarpedImage = m_reg_f3d->GetWarpedImage();
+  memset( outputWarpedImage[ 0 ]->descrip, 0, 80 );
+  strcpy( outputWarpedImage[ 0 ]->descrip, "Warped image using NiftyReg (reg_f3d)" );
 
   //encapsulate malloc-ed pointer in a smartpointer for proper memory ownership
-  this->m_warped_images = std::unique_ptr< std::array<std::shared_ptr<nifti_image>, 2>>(new std::array<std::shared_ptr<nifti_image>, 2>);
-  (*(this->m_warped_images.get()))[0] = std::shared_ptr<nifti_image>(outputWarpedImage[0], nifti_image_free);
-  (*(this->m_warped_images.get()))[1] = std::shared_ptr<nifti_image>(outputWarpedImage[1], nifti_image_free);
+  this->m_warped_images
+    = std::unique_ptr< std::array< std::shared_ptr< nifti_image >,
+    2 >>( new std::array< std::shared_ptr< nifti_image >, 2 > );
+  ( *( this->m_warped_images.get() ) )[ 0 ] = std::shared_ptr< nifti_image >( outputWarpedImage[ 0 ], nifti_image_free );
+  ( *( this->m_warped_images.get() ) )[ 1 ] = std::shared_ptr< nifti_image >( outputWarpedImage[ 1 ], nifti_image_free );
 
   // m_reg_f3d->GetWarpedImage() malloc-ed the container which we must free ourselves.
-  free(outputWarpedImage);
+  free( outputWarpedImage );
   outputWarpedImage = NULL;
-
 }
+
 
 /* Niftyreg member functions:
 void SetControlPointGridImage(nifti_image *);
@@ -171,40 +174,39 @@ Niftyregf3dComponent<  TPixel >
   {
     return false;
   } // else: CriterionStatus::Unknown
-  
-  else if (criterion.first == "Metric") //Supports this?
+
+  else if( criterion.first == "Metric" ) //Supports this?
   {
     meetsCriteria = true;
-    if (criterion.second.size() == 1)
+    if( criterion.second.size() == 1 )
     {
-      if (criterion.second[0] == "SumOfSquaredDifferences" || criterion.second[0] == "SSD")
+      if( criterion.second[ 0 ] == "SumOfSquaredDifferences" || criterion.second[ 0 ] == "SSD" )
       {
-        this->m_reg_f3d->UseSSD(0, false);// try catch? TODO normalize argument?
-
+        this->m_reg_f3d->UseSSD( 0, false );// try catch? TODO normalize argument?
       }
-      else if (criterion.second[0] == "MIND")
+      else if( criterion.second[ 0 ] == "MIND" )
       {
-        this->m_reg_f3d->UseMIND(0,0);// try catch? TODO timepoint, offset arguments?
+        this->m_reg_f3d->UseMIND( 0, 0 );// try catch? TODO timepoint, offset arguments?
       }
-      else if (criterion.second[0] == "MINDSCC")
+      else if( criterion.second[ 0 ] == "MINDSCC" )
       {
-        this->m_reg_f3d->UseMINDSSC(0, 0);// try catch? TODO timepoint, offset arguments?
+        this->m_reg_f3d->UseMINDSSC( 0, 0 );// try catch? TODO timepoint, offset arguments?
       }
-      else if (criterion.second[0] == "KLDivergence")
+      else if( criterion.second[ 0 ] == "KLDivergence" )
       {
-        this->m_reg_f3d->UseKLDivergence(0);// try catch?
+        this->m_reg_f3d->UseKLDivergence( 0 );// try catch?
       }
-      else if (criterion.second[0] == "DTI")
+      else if( criterion.second[ 0 ] == "DTI" )
       {
-        this->m_reg_f3d->UseDTI(0);// try catch?
+        this->m_reg_f3d->UseDTI( 0 );// try catch?
       }
-      else if (criterion.second[0] == "LNCC")
+      else if( criterion.second[ 0 ] == "LNCC" )
       {
-        this->m_reg_f3d->UseLNCC(0, 5.0);// try catch? TODO stdDevKernel;
+        this->m_reg_f3d->UseLNCC( 0, 5.0 );// try catch? TODO stdDevKernel;
       }
       else
       {
-        std::cout << "The key " << criterion.first << " is recognized, but not with value " << criterion.second[0] << std::endl;
+        std::cout << "The key " << criterion.first << " is recognized, but not with value " << criterion.second[ 0 ] << std::endl;
         return false;
       }
     }
@@ -215,13 +217,13 @@ Niftyregf3dComponent<  TPixel >
       return false;
     }
   }
-  else if (criterion.first == "NumberOfIterations" || criterion.first == "MaximalIterationNumber") //Supports this?
+  else if( criterion.first == "NumberOfIterations" || criterion.first == "MaximalIterationNumber" ) //Supports this?
   {
     meetsCriteria = true;
-    if (criterion.second.size() == 1)
+    if( criterion.second.size() == 1 )
     {
       // try catch?
-      this->m_reg_f3d->SetMaximalIterationNumber(std::stoi(criterion.second[0]));
+      this->m_reg_f3d->SetMaximalIterationNumber( std::stoi( criterion.second[ 0 ] ) );
     }
     else
     {
@@ -231,22 +233,22 @@ Niftyregf3dComponent<  TPixel >
     }
   }
 
-  else if (criterion.first == "Optimizer") //Supports this?
+  else if( criterion.first == "Optimizer" ) //Supports this?
   {
     meetsCriteria = true;
-    if (criterion.second.size() == 1)
+    if( criterion.second.size() == 1 )
     {
-      if (criterion.second[0] == "ConjugateGradient")
+      if( criterion.second[ 0 ] == "ConjugateGradient" )
       {
         this->m_reg_f3d->UseConjugateGradient();// try catch?
       }
-      else if (criterion.second[0] == "Gradient")
+      else if( criterion.second[ 0 ] == "Gradient" )
       {
         this->m_reg_f3d->DoNotUseConjugateGradient();// try catch?
       }
       else
       {
-        std::cout << "The key " << criterion.first << " is recognized, but not with value " << criterion.second[0]  << std::endl;
+        std::cout << "The key " << criterion.first << " is recognized, but not with value " << criterion.second[ 0 ]  << std::endl;
         return false;
       }
     }
@@ -258,13 +260,13 @@ Niftyregf3dComponent<  TPixel >
     }
   }
 
-  else if (criterion.first == "NumberOfResolutions") //Supports this?
+  else if( criterion.first == "NumberOfResolutions" ) //Supports this?
   {
     meetsCriteria = true;
-    if (criterion.second.size() == 1)
+    if( criterion.second.size() == 1 )
     {
       // try catch?
-      this->m_reg_f3d->SetLevelNumber(std::stoi(criterion.second[0]));
+      this->m_reg_f3d->SetLevelNumber( std::stoi( criterion.second[ 0 ] ) );
     }
     else
     {
@@ -273,11 +275,11 @@ Niftyregf3dComponent<  TPixel >
       return false;
     }
   }
-  else if (criterion.first == "GridSpacingInVoxels") //Supports this?
+  else if( criterion.first == "GridSpacingInVoxels" ) //Supports this?
   {
-    for (unsigned int d = 0; d < criterion.second.size(); ++d)
+    for( unsigned int d = 0; d < criterion.second.size(); ++d )
     {
-      this->m_reg_f3d->SetSpacing(d, std::stof(criterion.second[d]));
+      this->m_reg_f3d->SetSpacing( d, std::stof( criterion.second[ d ] ) );
     }
     meetsCriteria = true;
   }
