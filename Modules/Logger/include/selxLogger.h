@@ -17,14 +17,19 @@
  *
  *=========================================================================*/
 
-#ifndef Logger_h
-#define Logger_h
+// There already is an sitkLogger preprocessor definition in ITK
+#ifndef selxLogger_h
+#define selxLogger_h
 
 #include <string>
 #include <memory>
 
+#include "itkDataObject.h"
+#include "itkObjectFactory.h"
+
 namespace selx
 {
+
 enum class SeverityType {
   SELX_TRACE,
   SELX_DEBUG,
@@ -34,42 +39,53 @@ enum class SeverityType {
   SELX_FATAL
 };
 
-class LoggerInterface
+class LoggerImpl;
+
+class Logger : public itk::DataObject
 {
 public:
 
-  typedef const std::string MessageType;
+  /** Standard ITK typedefs. */
+  typedef Logger                Self;
+  typedef itk::ProcessObject              Superclass;
+  typedef itk::SmartPointer< Self >       Pointer;
+  typedef itk::SmartPointer< const Self > ConstPointer;
 
-  virtual void Log( SeverityType severity, MessageType message ) const = 0;
-};
+  /** Method for creation through the object factory. */
+  itkNewMacro( Self );
 
-class Logger : public LoggerInterface
-{
-public:
+  /** Run-time type information (and related methods). */
+  itkTypeMacro( Self, itk::DataObject );
+
+  /* m_Logger is initialized in the default constructor */
+  Logger();
+  LoggerImpl & GetLogger( void );
+
+  /** The actual logger is a pimpled member variable */
+  typedef std::shared_ptr< LoggerImpl > LoggerPointer;
 
   typedef const std::string ChannelType;
   typedef const std::string FormatType;
-  using LoggerInterface::MessageType;
-  Logger();
-  ~Logger();
+  typedef const std::string MessageType;
 
   void AddConsole( FormatType format = "[%LineID% %TimeStamp%]: %Message%" );
 
   // void AddFile( FileNameType fileName = "SuperElastix_%Y-%m-%d_%H-%M-%S.%N.log",
   //               FormatType format = "[%LineID% %TimeStamp% %ComponentName% %Channel% %SeverityLevel%]: %Message%" );
   // void AddFile( FileNameType fileName = "SuperElastix_%Y-%m-%d_%H-%M-%S.%N.log",
-  //               Logger::ChannelType channel = "SuperElastix",
+  //               LoggerImpl::ChannelType channel = "SuperElastix",
   //               FormatType format = "[%LineID% %TimeStamp% %ComponentName% %Channel% %SeverityLevel%]: %Message%" );
 
-  virtual void Log( SeverityType severity, MessageType message ) const;
+  virtual void Log( SeverityType severity, MessageType message );
 
   // void Log( ChannelType channel, SeverityType severity, MessageType message );
 
+
+
 private:
 
-  class LoggerImpl;
-  std::unique_ptr< LoggerImpl > m_Pimple;
+  LoggerPointer m_Logger;
 };
 } // namespace
 
-#endif // Logger_h
+#endif // selxLogger_h

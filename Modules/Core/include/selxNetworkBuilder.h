@@ -32,7 +32,8 @@
 #include <cstring>
 #include <map>
 
-#include "selxBlueprint.h"
+#include "selxLoggerImpl.h"
+#include "selxBlueprintImpl.h"
 #include "selxNetworkContainer.h"
 #include "selxInterfaces.h"
 #include "selxInterfaceTraits.h"
@@ -42,13 +43,13 @@ namespace selx
 template< class ComponentList >
 class NetworkBuilder : public NetworkBuilderBase
 {
-  // The NetworkBuilder takes care of the at run time realization of the algorithm network that is described by the Blueprint.
+  // The NetworkBuilder takes care of the at run time realization of the algorithm network that is described by the BlueprintImpl.
   // The output, GetRealizedNetwork(), is a (light weight) ComponentContainer with 1 Execute button that is self-contained to run the registration algorithm.
   // After obtaining the RealizedNetwork(), the NetworkBuilder object can be deleted in order to free memory, releasing all internal/intermediate data of the configuration process.
 
 public:
 
-  typedef Blueprint::ComponentNameType ComponentNameType;
+  typedef BlueprintImpl::ComponentNameType ComponentNameType;
   typedef std::map<
     std::string, SourceInterface::Pointer > SourceInterfaceMapType;
   typedef std::map<
@@ -57,10 +58,10 @@ public:
   typedef std::map<
     std::string, RegistrationControllerStartInterface::Pointer > RegistrationControllerStartInterfaceMapType;
 
-  NetworkBuilder( const Logger & logger );
+  NetworkBuilder( LoggerImpl & logger, BlueprintImpl & blueprint );
   virtual ~NetworkBuilder() {}
 
-  virtual bool AddBlueprint( const std::unique_ptr< Blueprint > & blueprint );
+  virtual bool AddBlueprint( const BlueprintImpl & blueprint );
 
   /** Read configuration at the blueprints nodes and edges and return true if all components could be uniquely selected*/
   virtual bool Configure();
@@ -108,14 +109,14 @@ protected:
 
   //TODO make const correct
   //NetworkBuilder should be constructed with a blueprint.
-  //Blueprint::ConstPointer m_Blueprint;
-  //Blueprint const * m_Blueprint;
-  std::unique_ptr< Blueprint > m_Blueprint;
+  //BlueprintImpl::ConstPointer m_Blueprint;
+  //BlueprintImpl const * m_Blueprint;
 
   // A selector for each node, that each can hold multiple instantiated components. Ultimately is should be 1 component each.
-  ComponentSelectorContainerType m_ComponentSelectorContainer;
-  bool                           m_isConfigured;
-  const Logger &                 m_Logger;
+  ComponentSelectorContainerType  m_ComponentSelectorContainer;
+  bool                            m_isConfigured;
+  LoggerImpl &                        m_Logger;
+  BlueprintImpl &                     m_Blueprint;
 
 private:
 };

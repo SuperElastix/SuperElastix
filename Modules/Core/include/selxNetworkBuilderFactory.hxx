@@ -24,8 +24,8 @@ namespace selx
 {
 template< typename ComponentList >
 std::unique_ptr< NetworkBuilderBase >
-NetworkBuilderFactory< ComponentList >::New( const Logger & logger )
+NetworkBuilderFactory< ComponentList >::New( LoggerImpl & logger, BlueprintImpl & blueprint )
 {
-  return std::unique_ptr< NetworkBuilderBase >( new NetworkBuilder< ComponentList >( logger ) );
+  return std::unique_ptr< NetworkBuilderBase >( new NetworkBuilder< ComponentList >( logger, blueprint ) );
 }
 } // end namespace selx

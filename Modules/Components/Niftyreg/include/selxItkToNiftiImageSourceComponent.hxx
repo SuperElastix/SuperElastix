@@ -23,9 +23,8 @@
 namespace selx
 {
 template< int Dimensionality, class TPixel >
-ItkToNiftiImageSourceComponent< Dimensionality, TPixel >::ItkToNiftiImageSourceComponent( const std::string & name,
-  const LoggerInterface & logger ) : Superclass( name,
-    logger ), m_Image( nullptr )
+ItkToNiftiImageSourceComponent< Dimensionality, TPixel >
+::ItkToNiftiImageSourceComponent(const std::string & name, LoggerImpl & logger) : Superclass( name, logger ), m_Image( nullptr )
 {
 }
 

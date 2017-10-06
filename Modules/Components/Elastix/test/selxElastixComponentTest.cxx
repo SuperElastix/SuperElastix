@@ -43,12 +43,10 @@ class ElastixComponentTest : public ::testing::Test
 {
 public:
 
-  typedef std::unique_ptr< Blueprint >                       BlueprintPointer;
-  typedef itk::UniquePointerDataObjectDecorator< Blueprint > BlueprintITKType;
-  typedef BlueprintITKType::Pointer                          BlueprintITKPointer;
-  typedef Blueprint::ParameterMapType                        ParameterMapType;
-  typedef Blueprint::ParameterValueType                      ParameterValueType;
-  typedef DataManager                                        DataManagerType;
+  typedef Blueprint::Pointer BlueprintPointer;
+  typedef BlueprintImpl::ParameterMapType ParameterMapType;
+  typedef BlueprintImpl::ParameterValueType ParameterValueType;
+  typedef DataManager DataManagerType;
 
   /** Make a list of components to be registered for this test*/
   typedef TypeList< ElastixComponent< 2, float >,
@@ -86,7 +84,7 @@ public:
   }
 
 
-  // Blueprint holds a configuration for SuperElastix
+  // BlueprintImpl holds a configuration for SuperElastix
   SuperElastixFilterCustomComponents< RegisterComponents >::Pointer superElastixFilter;
   // Data manager provides the paths to the input and output data for unit tests
   DataManagerType::Pointer dataManager;
@@ -95,7 +93,7 @@ public:
 TEST_F( ElastixComponentTest, ImagesOnly )
 {
   /** make example blueprint configuration */
-  BlueprintPointer blueprint = BlueprintPointer( new Blueprint() );
+  BlueprintPointer blueprint = Blueprint::New();
 
   ParameterMapType component0Parameters;
   component0Parameters[ "NameOfClass" ]               = { "ElastixComponent" };
@@ -149,25 +147,21 @@ TEST_F( ElastixComponentTest, ImagesOnly )
   ImageWriter2DType::Pointer resultImageWriter = ImageWriter2DType::New();
   resultImageWriter->SetFileName( dataManager->GetOutputFile( "ElastixComponentTest_BrainProtonDensity.mhd" ) );
 
-  // Connect SuperElastix in an itk pipeline
   superElastixFilter->SetInput( "FixedImageSource", fixedImageReader->GetOutput() );
   superElastixFilter->SetInput( "MovingImageSource", movingImageReader->GetOutput() );
+
   resultImageWriter->SetInput( superElastixFilter->GetOutput< Image2DType >( "ResultImageSink" ) );
 
-  BlueprintITKPointer ITKBlueprint = BlueprintITKType::New();
-  ITKBlueprint->Set( blueprint );
-  EXPECT_NO_THROW( superElastixFilter->SetBlueprint( ITKBlueprint ) );
-
-  //Optional Update call
-  //superElastixFilter->Update();
+  EXPECT_NO_THROW( superElastixFilter->SetBlueprint( blueprint ) );
 
   // Update call on the writers triggers SuperElastix to configure and execute
-  EXPECT_NO_THROW( resultImageWriter->Update() );
+  resultImageWriter->Update();
 }
+
 TEST_F( ElastixComponentTest, MonolithicElastixTransformix )
 {
   /** make example blueprint configuration */
-  BlueprintPointer blueprint = BlueprintPointer( new Blueprint() );
+  BlueprintPointer blueprint = Blueprint::New();
 
   blueprint->SetComponent( "RegistrationMethod", { { "NameOfClass", { "MonolithicElastixComponent" } },
                                                    { "RegistrationSettings", { "rigid" } }, { "MaximumNumberOfIterations", { "2" } },
@@ -224,15 +218,11 @@ TEST_F( ElastixComponentTest, MonolithicElastixTransformix )
   resultImageWriter->SetInput( superElastixFilter->GetOutput< Image2DType >( "ResultImageSink" ) );
   resultDisplacementWriter->SetInput(superElastixFilter->GetOutput< DisplacementImage2DType >("ResultDisplacementFieldSink"));
 
-  BlueprintITKPointer ITKBlueprint = BlueprintITKType::New();
-  ITKBlueprint->Set( blueprint );
-  EXPECT_NO_THROW( superElastixFilter->SetBlueprint( ITKBlueprint ) );
-
-  //Optional Update call
-  //superElastixFilter->Update();
+  EXPECT_NO_THROW( superElastixFilter->SetBlueprint( blueprint ) );
 
   // Update call on the writers triggers SuperElastix to configure and execute
   EXPECT_NO_THROW( resultImageWriter->Update() );
-  EXPECT_NO_THROW(resultDisplacementWriter->Update());
+  EXPECT_NO_THROW( resultDisplacementWriter->Update() );
+
 }
 } // namespace selx

@@ -17,8 +17,8 @@
  *
  *=========================================================================*/
 
-#ifndef BlueprintImpl_h
-#define BlueprintImpl_h
+#ifndef selxBlueprintImpl_h
+#define selxBlueprintImpl_h
 
 #include "boost/graph/graphviz.hpp"
 #include "boost/graph/graph_traits.hpp"
@@ -31,8 +31,18 @@
 
 namespace selx
 {
-struct Blueprint::BlueprintImpl
+
+class BlueprintImpl
 {
+public:
+
+  typedef std::shared_ptr< BlueprintImpl > BlueprintImplPointer;
+  typedef Blueprint::ParameterKeyType ParameterKeyType;
+  typedef Blueprint::ParameterValueType ParameterValueType;
+  typedef Blueprint::ParameterMapType ParameterMapType;
+  typedef Blueprint::ComponentNameType ComponentNameType;
+  typedef Blueprint::ComponentNamesType ComponentNamesType;
+
   // Component parameter map that sits on a node in the graph
   // and holds component configuration settings
   struct ComponentPropertyType
@@ -93,7 +103,7 @@ struct Blueprint::BlueprintImpl
 
   bool ConnectionExists( ComponentNameType upstream, ComponentNameType downstream ) const;
 
-  bool ComposeWith( std::unique_ptr< Blueprint > const & other );
+  bool ComposeWith( const BlueprintImpl & other);
 
   // Returns a vector of the Component names at the incoming direction
   ComponentNamesType GetInputNames( const ComponentNameType name ) const;
@@ -105,8 +115,9 @@ struct Blueprint::BlueprintImpl
 
   ConnectionIndexType GetConnectionIndex( ComponentNameType upsteam, ComponentNameType downstream ) const;
 
+private:
   GraphType m_Graph;
 };
 } // namespace selx
 
-#endif // #ifndef BlueprintImpl_h
+#endif // #ifndef selxBlueprintImpl_h

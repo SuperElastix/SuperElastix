@@ -21,7 +21,7 @@
 
 #include "itkObjectFactory.h"
 #include "selxComponentBase.h"
-
+#include "selxLogger.h"
 #include "selxTypeList.h"
 
 namespace selx
@@ -50,7 +50,7 @@ public:
   typedef ComponentListType::size_type      NumberOfComponentsType;
   /** set selection criteria for possibleComponents*/
 
-  ComponentSelector( const std::string & name, const LoggerInterface & logger );
+  ComponentSelector( const std::string & name, LoggerImpl & logger );
 
   /** Narrow selection criteria*/
   void AddCriterion( const CriterionType & criterion );

@@ -51,7 +51,7 @@ public:
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
 
-  ItkSmoothingRecursiveGaussianImageFilterComponent( const std::string & name, const LoggerInterface & logger );
+  ItkSmoothingRecursiveGaussianImageFilterComponent( const std::string & name, LoggerImpl & logger );
   virtual ~ItkSmoothingRecursiveGaussianImageFilterComponent();
 
   typedef TPixel PixelType;

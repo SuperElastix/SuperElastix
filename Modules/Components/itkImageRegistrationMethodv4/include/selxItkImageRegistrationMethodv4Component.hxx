@@ -118,7 +118,7 @@ public:
 
 template< int Dimensionality, class TPixel, class InternalComputationValueType >
 ItkImageRegistrationMethodv4Component< Dimensionality, TPixel,
-InternalComputationValueType >::ItkImageRegistrationMethodv4Component( const std::string & name, const LoggerInterface & logger ) : Superclass( name,
+InternalComputationValueType >::ItkImageRegistrationMethodv4Component( const std::string & name, LoggerImpl & logger ) : Superclass( name,
     logger ),
   m_TransformAdaptorsContainerInterface(
     nullptr )

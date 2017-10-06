@@ -18,7 +18,7 @@
  *=========================================================================*/
 
 #include "selxSuperElastixFilter.h"
-#include "selxBlueprint.h"
+#include "selxBlueprintImpl.h"
 #include "selxConfigurationReader.h"
 #include "selxAnyFileReader.h"
 #include "selxAnyFileWriter.h"
@@ -59,12 +59,8 @@ main( int ac, char * av[] )
     selx::SuperElastixFilter::Pointer superElastixFilter = selx::SuperElastixFilter::New();
 
     // add logger
-    selx::SuperElastixFilter::LoggerPointer itkLogger = selx::SuperElastixFilter::LoggerType::New();
-    std::unique_ptr<selx::Logger> selxLogger(new selx::Logger());
-    selxLogger->AddConsole();
-    itkLogger->Set( selxLogger);
-
-    superElastixFilter->SetLogger(itkLogger);
+    selx::Logger::Pointer logger = selx::Logger::New();
+    superElastixFilter->SetLogger(logger);
 
     boost::filesystem::path            configurationPath;
     VectorOfPathsType                   configurationPaths;
@@ -98,21 +94,22 @@ main( int ac, char * av[] )
     }
 
     // create empty blueprint
-    selx::Blueprint::Pointer blueprint = selx::Blueprint::Pointer(new selx::Blueprint());
+    typedef  std::shared_ptr< selx::BlueprintImpl> BlueprintImplPointer;
+    BlueprintImplPointer blueprintImpl = BlueprintImplPointer(new selx::BlueprintImpl());
     for (const auto & configurationPath : configurationPaths)
     {
-      selx::ConfigurationReader::MergeFromFile(blueprint, configurationPath);
+      selx::ConfigurationReader::MergeFromFile(blueprintImpl, configurationPath);
     }
 
     if( vm.count( "graphout" ) )
     {
-      blueprint->Write( vm[ "graphout" ].as< fs::path >().string() );
+      blueprintImpl->Write( vm[ "graphout" ].as< fs::path >().string() );
     }
 
     //turn the blueprint into an itkObject to connect to the superElastix itkFilter
-    selx::SuperElastixFilter::BlueprintPointer itkBluePrint = selx::SuperElastixFilter::BlueprintType::New();
-    itkBluePrint->Set(blueprint);
-    superElastixFilter->SetBlueprint(itkBluePrint);
+    selx::Blueprint::Pointer blueprint = selx::Blueprint::New();
+    blueprint->SetBlueprint(*blueprintImpl);
+    superElastixFilter->SetBlueprint(blueprint);
 
     if( vm.count( "in" ) )
     {

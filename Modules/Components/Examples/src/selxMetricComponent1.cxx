@@ -16,8 +16,6 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef MetricComponent1_hxx
-#define MetricComponent1_hxx
 
 #include "selxMetricComponent1.h"
 
@@ -75,5 +73,3 @@ MetricComponent1
   return meetsCriteria;
 }
 } // end namespace selx
-
-#endif

@@ -1,1 +1,0 @@
-For details about itk_nifti_mangle.patch, see issue #50 "Conflict between ITK's nifti and NiftyReg's nifti library", https://github.com/SuperElastix/SuperElastix/issues/50

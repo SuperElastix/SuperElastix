@@ -56,7 +56,7 @@ public:
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
 
-  ItkImageSourceComponent( const std::string & name, const LoggerInterface & logger );
+  ItkImageSourceComponent( const std::string & name, LoggerImpl & logger );
   virtual ~ItkImageSourceComponent();
 
   typedef itk::Image< TPixel, Dimensionality >                                        ItkImageType;
