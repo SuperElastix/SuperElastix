@@ -80,6 +80,13 @@ public:
 
 protected:
 
+  void Trace( const std::string message ) { this->m_Logger.Trace( "[Acceptor] " + message ); };
+  void Debug( const std::string message ) { this->m_Logger.Debug( "[Acceptor] " + message ); };
+  void Info( const std::string message ) { this->m_Logger.Info( "[Acceptor] " + message ); };
+  void Warning( const std::string message ) { this->m_Logger.Warning( "[Acceptor] " + message ); };
+  void Error( const std::string message ) { this->m_Logger.Error( "[Acceptor] " + message ); };
+  void Critical( const std::string message ) { this->m_Logger.Critical( "[Acceptor] " + message ); };
+
 private:
   LoggerImpl & m_Logger;
 };

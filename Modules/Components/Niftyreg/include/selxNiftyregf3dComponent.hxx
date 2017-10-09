@@ -206,7 +206,9 @@ Niftyregf3dComponent<  TPixel >
       }
       else
       {
-        std::cout << "The key " << criterion.first << " is recognized, but not with value " << criterion.second[ 0 ] << std::endl;
+        std::ostringstream ss;
+        ss << "The key " << criterion.first << " is recognized, but not with value " << criterion.second[ 0 ] << std::endl;
+        this->Info( ss.str() );
         return false;
       }
     }

@@ -73,6 +73,16 @@ public:
 
   const std::string m_Name;
   LoggerImpl & m_Logger;
+
+protected:
+
+  void Trace( const std::string message ) { this->m_Logger.Trace( "[" + this->m_Name + "] " + message ); };
+  void Debug( const std::string message ) { this->m_Logger.Debug( "[" + this->m_Name + "] " + message ); };
+  void Info( const std::string message ) { this->m_Logger.Info( "[" + this->m_Name + "] " + message ); };
+  void Warning( const std::string message ) { this->m_Logger.Warning( "[" + this->m_Name + "] " + message ); };
+  void Error( const std::string message ) { this->m_Logger.Error( "[" + this->m_Name + "] " + message ); };
+  void Critical( const std::string message ) { this->m_Logger.Critical( "[" + this->m_Name + "] " + message ); };
+
 };
 } // end namespace selx
 

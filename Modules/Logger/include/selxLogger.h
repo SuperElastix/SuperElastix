@@ -30,14 +30,15 @@
 namespace selx
 {
 
-enum class SeverityType {
-  SELX_TRACE,
-  SELX_DEBUG,
-  SELX_INFO,
-  SELX_WARNING,
-  SELX_ERROR,
-  SELX_FATAL
-};
+typedef enum {
+  TRACE = 0,
+  DEBUG = 1,
+  INFO = 2,
+  WARNING = 3,
+  ERROR = 4,
+  CRITICAL = 5,
+  OFF = 6,
+} LogLevel;
 
 class LoggerImpl;
 
@@ -46,7 +47,7 @@ class Logger : public itk::DataObject
 public:
 
   /** Standard ITK typedefs. */
-  typedef Logger                Self;
+  typedef Logger                          Self;
   typedef itk::ProcessObject              Superclass;
   typedef itk::SmartPointer< Self >       Pointer;
   typedef itk::SmartPointer< const Self > ConstPointer;
@@ -57,34 +58,43 @@ public:
   /** Run-time type information (and related methods). */
   itkTypeMacro( Self, itk::DataObject );
 
-  /* m_Logger is initialized in the default constructor */
+  /* m_LoggerImpl is initialized in the default constructor */
   Logger();
-  LoggerImpl & GetLogger( void );
 
   /** The actual logger is a pimpled member variable */
-  typedef std::shared_ptr< LoggerImpl > LoggerPointer;
+  typedef std::unique_ptr< LoggerImpl > LoggerImplPointer;
 
-  typedef const std::string ChannelType;
-  typedef const std::string FormatType;
-  typedef const std::string MessageType;
+  /* Provide a reference to internal logger */
+  LoggerImpl & GetLogger( void );
 
-  void AddConsole( FormatType format = "[%LineID% %TimeStamp%]: %Message%" );
+  void SetLogLevel( const LogLevel& level );
+  void SetFormat( const std::string& format );
 
-  // void AddFile( FileNameType fileName = "SuperElastix_%Y-%m-%d_%H-%M-%S.%N.log",
-  //               FormatType format = "[%LineID% %TimeStamp% %ComponentName% %Channel% %SeverityLevel%]: %Message%" );
-  // void AddFile( FileNameType fileName = "SuperElastix_%Y-%m-%d_%H-%M-%S.%N.log",
-  //               LoggerImpl::ChannelType channel = "SuperElastix",
-  //               FormatType format = "[%LineID% %TimeStamp% %ComponentName% %Channel% %SeverityLevel%]: %Message%" );
+  void SetSyncMode();
+  void SetAsyncMode();
+  void SetAsyncBlockOnOverflow( void );
+  void SetAsyncDiscardOnOverflow( void );
+  void SetAsyncQueueSize( const size_t& queueSize );
 
-  virtual void Log( SeverityType severity, MessageType message );
+  void Trace( const std::string& message );
+  void Debug( const std::string& message );
+  void Info( const std::string& message );
+  void Warning( const std::string& message );
+  void Error( const std::string& message );
+  void Critical( const std::string& message );
 
-  // void Log( ChannelType channel, SeverityType severity, MessageType message );
-
-
+  void AddOutLogger( void ); // Remove with name "out"
+  void AddOutLoggerWithColors( void ); // Remove with name "err"
+  void AddErrLogger( void ); // Remove with name "out"
+  void AddErrLoggerWithColors( void ); // Remove with name "err"
+  void AddFileLogger( const std::string& fileName );
+  void AddDailyFileLogger( const std::string& fileName, const int& hours = 0, const int& minutes = 0 );
+  void AddRotatingFileLogger( const std::string& fileName, const size_t& maxFileSize = 262144, const size_t& maxNumberOfFiles = 1);
+  void RemoveLogger( const std::string& fileName );
 
 private:
 
-  LoggerPointer m_Logger;
+  LoggerImplPointer m_LoggerImpl;
 };
 } // namespace
 

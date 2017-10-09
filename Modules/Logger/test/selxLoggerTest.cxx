@@ -31,11 +31,52 @@ TEST( LoggerTest, Initialization )
 TEST( LoggerTest, Console )
 {
   Logger::Pointer logger = Logger::New();
-  logger->AddConsole();
-  logger->Log( SeverityType::SELX_TRACE, "Console TRACE message" );
-  logger->Log( SeverityType::SELX_DEBUG, "Console DEBUG message" );
-  logger->Log( SeverityType::SELX_INFO, "Console INFO message" );
-  logger->Log( SeverityType::SELX_WARNING, "Console WARNING message" );
-  logger->Log( SeverityType::SELX_ERROR, "Console ERROR message" );
-  logger->Log( SeverityType::SELX_FATAL, "Console FATAL message" );
+  logger->AddOutLoggerWithColors();
+
+  // TODO: Explicitly test output
+  logger->Trace( "Console TRACE message" );
+  logger->Debug( "Console DEBUG message" );
+  logger->Info( "Console INFO message" );
+  logger->Warning( "Console WARNING message" );
+  logger->Error( "Console ERROR message" );
+  logger->Critical( "Console FATAL message" );
+
+  logger->SetLogLevel( LogLevel::TRACE );
+  logger->Trace( "Console TRACE message" );
+  logger->Debug( "Console DEBUG message" );
 }
+
+// This will fail with "logger with name 'cout' already exists" if logger above is not properly deallocatd
+TEST( LoggerTest, MemoryManagement )
+{
+  Logger::Pointer logger = Logger::New();
+  logger->AddOutLoggerWithColors();
+}
+
+TEST( LoggerTest, Singleton )
+{
+  Logger::Pointer logger = Logger::New();
+  logger->AddOutLogger();
+  EXPECT_THROW( logger->AddOutLogger(), std::exception );
+
+  logger->AddFileLogger( "fileLogger.log" );
+  EXPECT_THROW( logger->AddFileLogger( "fileLogger.log" ), std::exception );
+
+  logger->AddDailyFileLogger( "dailyFileLogger.log" );
+  EXPECT_THROW( logger->AddDailyFileLogger( "dailyFileLogger.log" ), std::exception );
+
+  logger->AddRotatingFileLogger( "rotatingFileLogger.log" );
+  EXPECT_THROW( logger->AddRotatingFileLogger( "dailyFileLogger.log" ), std::exception );
+}
+
+TEST( LoggerTest, MultiSink )
+{
+  Logger::Pointer logger = Logger::New();
+  logger->AddOutLogger();
+  logger->AddErrLogger();
+  logger->AddFileLogger( "fileLogger.log" );
+  logger->AddDailyFileLogger( "dailyFileLogger.log" );
+  logger->AddRotatingFileLogger( "rotatingFileLogger.log" );
+  logger->Info( "Multi-sink INFO message" );
+}
+

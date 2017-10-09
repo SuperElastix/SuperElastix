@@ -19,95 +19,223 @@
 
 #include "selxLoggerImpl.h"
 
-#include "boost/log/sources/record_ostream.hpp"
-#include "boost/log/utility/setup/file.hpp"
-#include "boost/log/utility/setup/console.hpp"
-#include "boost/log/utility/setup/common_attributes.hpp"
-
 namespace selx
 {
+
 LoggerImpl
-::LoggerImpl()
+::LoggerImpl() : m_Loggers(), m_QueueSize( 262144 ), m_OverflowPolicy( spdlog::async_overflow_policy::block_retry )
 {
-  this->m_Logger = boost::log::sources::severity_channel_logger< SeverityType, Logger::ChannelType >();
-
-  // Add LineID, TimeStamp, ProcessID and ThreadID
-  boost::log::add_common_attributes();
+  this->SetSyncMode();
+  this->SetFormat( "[%Y-%m-%d %H:%M:%S] [thread %t] [%l] %v" );
 }
-
 
 LoggerImpl
 ::~LoggerImpl()
 {
+  spdlog::drop_all();
+}
+
+void
+LoggerImpl
+::SetLogLevel( const LogLevel& level ) {
+  switch (level) {
+    case LogLevel::TRACE:
+      this->SetLogLevel( spdlog::level::level_enum::trace );
+      break;
+    case LogLevel::DEBUG:
+      this->SetLogLevel( spdlog::level::level_enum::debug );
+      break;
+    case LogLevel::INFO:
+      this->SetLogLevel( spdlog::level::level_enum::info );
+      break;
+    case LogLevel::WARNING:
+      this->SetLogLevel( spdlog::level::level_enum::warn );
+      break;
+    case LogLevel::ERROR:
+      this->SetLogLevel( spdlog::level::level_enum::err );
+      break;
+    case LogLevel::CRITICAL:
+      this->SetLogLevel( spdlog::level::level_enum::critical );
+      break;
+    case LogLevel::OFF:
+      this->SetLogLevel( spdlog::level::level_enum::off );
+      break;
+    default:
+      itkGenericExceptionMacro( "Invalid log level." );
+  }
+}
+
+void
+LoggerImpl
+::SetLogLevel( const spdlog::level::level_enum& level ) {
+  spdlog::set_level( level );
+  std::for_each(this->m_Loggers.begin(), this->m_Loggers.end(), [ level ]( LoggerType logger )
+  {
+    logger->set_level( level );
+    if ( "err" != logger->name() ) {
+      logger->set_level( level );
+    } else {
+      // Only change err log level if it is 'trace' or 'debug'
+      if ( level <= spdlog::level::debug ) {
+        logger->set_level( level );
+      }
+    }
+  } );
 }
 
 
 void
 LoggerImpl
-::AddConsole( Logger::FormatType format )
+::SetFormat( const std::string& format )
 {
-  boost::log::add_console_log(
-    std::cout,
-    boost::log::keywords::format = format
-    );
+  spdlog::set_pattern( format );
 }
-
-
-// void
-// LoggerImpl::LoggerImpl
-// ::AddFile( FileNameType fileName, FormatType format )
-// {
-//   boost::log::add_file_log(
-//     boost::log::keywords::file_name = fileName,
-//     boost::log::keywords::format = format
-//   );
-// }
-
-// void
-// LoggerImpl::LoggerImpl
-// ::AddFile( FileNameType fileName, Logger::ChannelType channel, Logger::FormatType format )
-// {
-//   boost::log::add_file_log(
-//     boost::log::keywords::file_name = fileName,
-//     boost::log::keywords::filter = channel_filter == channel,
-//     boost::log::keywords::format = format
-//   );
-// }
 
 void
 LoggerImpl
-::Log( SeverityType severity, Logger::MessageType message )
+::SetSyncMode()
 {
-  boost::log::record record = this->m_Logger.open_record( boost::log::keywords::severity = severity );
-  if( record )
-  {
-    boost::log::record_ostream strm( record );
-    strm << message;
-    strm.flush();
-    this->m_Logger.push_record( boost::move( record ) );
-  }
-  else
-  {
-    assert( false );
-  }
+  spdlog::set_sync_mode();
+}
+
+void
+LoggerImpl
+::SetAsyncMode()
+{
+  spdlog::set_async_mode(this->m_QueueSize, this->m_OverflowPolicy);
+}
+
+void
+LoggerImpl
+::SetAsyncBlockOnOverflow( void )
+{
+  this->m_OverflowPolicy = OverflowPolicyType::block_retry;
+  this->SetAsyncMode();
+}
+
+void
+LoggerImpl
+::SetAsyncDiscardOnOverflow( void )
+{
+  this->m_OverflowPolicy = OverflowPolicyType::discard_log_msg;
+  this->SetAsyncMode();
+}
+
+void
+LoggerImpl
+::SetAsyncQueueSize( const size_t& queueSize )
+{
+  this->m_QueueSize = queueSize;
+  this->SetAsyncMode();
+}
+
+void
+LoggerImpl
+::Trace( const std::string& message )
+{
+  std::for_each(this->m_Loggers.begin(), this->m_Loggers.end(), [ message ]( LoggerType logger ) { logger->trace( message ); } );
+}
+
+void
+LoggerImpl
+::Debug( const std::string& message )
+{
+  std::for_each(this->m_Loggers.begin(), this->m_Loggers.end(), [ message ]( LoggerType logger ) { logger->debug( message ); } );
+}
+
+void
+LoggerImpl
+::Info( const std::string& message )
+{
+  std::for_each(this->m_Loggers.begin(), this->m_Loggers.end(), [ message ](LoggerType logger ) { logger->info( message ); } );
+}
+
+void
+LoggerImpl
+::Warning( const std::string& message )
+{
+  std::for_each(this->m_Loggers.begin(), this->m_Loggers.end(), [ message ](LoggerType logger ) { logger->warn( message ); } );
+}
+
+void
+LoggerImpl
+::Error( const std::string& message )
+{
+  std::for_each(this->m_Loggers.begin(), this->m_Loggers.end(), [ message ](LoggerType logger ) { logger->error( message ); } );
+}
+
+void
+LoggerImpl
+::Critical( const std::string& message )
+{
+  std::for_each(this->m_Loggers.begin(), this->m_Loggers.end(), [ message ]( LoggerType logger ) { logger->critical( message ); } );
 }
 
 
-// void
-// LoggerImpl::LoggerImpl
-// ::Log( LoggerImpl::ChannelType channel, SeverityType severity, const std::string message )
-// {
-//   boost::log::record record = this->m_Logger.open_record( ( boost::log::keywords::channel = channel, boost::log::keywords::severity = severity ) );
-//   if( record )
-//   {
-//     boost::log::record_ostream strm( record );
-//     strm << message;
-//     strm.flush();
-//     this->m_Logger.push_record( boost::move( record ) );
-//   }
-//   else
-//   {
-//     assert( false );
-//   }
-// }
+void
+LoggerImpl
+::AddOutLogger( void )
+{
+  auto logger = spdlog::stdout_logger_mt( "cout" );
+  this->m_Loggers.push_back( logger );
 }
+
+void
+LoggerImpl
+::AddOutLoggerWithColors( void )
+{
+  auto logger = spdlog::stdout_color_mt( "cout" );
+  this->m_Loggers.push_back( logger );
+}
+
+void
+LoggerImpl
+::AddErrLogger( void )
+{
+  auto logger = spdlog::stderr_logger_mt( "err" );
+  logger->set_level( spdlog::level::debug );
+  this->m_Loggers.push_back( logger );
+}
+
+void
+LoggerImpl
+::AddErrLoggerWithColors( void )
+{
+  auto logger = spdlog::stderr_color_mt( "err" );
+  logger->set_level( spdlog::level::debug );
+  this->m_Loggers.push_back( logger );
+}
+
+void
+LoggerImpl
+::AddFileLogger( const std::string& fileName )
+{
+  auto logger = spdlog::basic_logger_mt( fileName, fileName );
+  this->m_Loggers.push_back( logger );
+}
+
+void
+LoggerImpl
+::AddDailyFileLogger( const std::string& fileName, const int& hour, const int& minute )
+{
+  auto logger = spdlog::daily_logger_mt( fileName, fileName, hour, minute );
+  this->m_Loggers.push_back( logger );
+}
+
+void
+LoggerImpl
+::AddRotatingFileLogger( const std::string& fileName, const size_t& maxFileSize, const size_t& maxNumberOfFiles )
+{
+  auto logger = spdlog::rotating_logger_mt( fileName, fileName, maxFileSize, maxNumberOfFiles );
+  this->m_Loggers.push_back( logger );
+}
+
+void
+LoggerImpl
+::RemoveLogger( const std::string& name )
+{
+  spdlog::drop( name );
+}
+
+
+} // namespace

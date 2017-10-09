@@ -29,6 +29,7 @@
 #include "selxAccepting.h"
 #include "selxProviding.h"
 #include "selxCount.h"
+#include "selxLogger.h"
 
 namespace selx
 {

@@ -21,36 +21,53 @@
 #define selxLoggerImpl_h
 
 #include "selxLogger.h"
-#include "boost/log/expressions/keyword.hpp"
-#include "boost/log/sources/severity_channel_logger.hpp"
+#include "spdlog/spdlog.h"
 
 namespace selx
 {
-
-BOOST_LOG_ATTRIBUTE_KEYWORD( severity_filter, "Severity", SeverityType );
-BOOST_LOG_ATTRIBUTE_KEYWORD( channel_filter, "Channel", Logger::ChannelType );
 
 class LoggerImpl
 {
 public:
 
-  typedef boost::log::sources::severity_channel_logger< SeverityType, Logger::ChannelType > BoostLoggerType;
+  typedef std::shared_ptr< spdlog::logger > LoggerType;
+  typedef std::vector< LoggerType > LoggerVectorType;
+  typedef spdlog::async_overflow_policy OverflowPolicyType;
 
   LoggerImpl();
   ~LoggerImpl();
 
-  void AddConsole( Logger::FormatType format );
+  void SetLogLevel( const LogLevel& level );
+  void SetLogLevel( const spdlog::level::level_enum& level );
+  void SetFormat( const std::string& format );
 
-  // void AddFile( LoggerImpl::FileNameType fileName, LoggerImpl::FormatType format );
-  // void AddFile( LoggerImpl::FileNameType fileName, LoggerImpl::ChannelType channel, LoggerImpl::FormatType format );
+  void SetSyncMode();
+  void SetAsyncMode();
+  void SetAsyncBlockOnOverflow( void );
+  void SetAsyncDiscardOnOverflow( void );
+  void SetAsyncQueueSize( const size_t& queueSize );
 
-  void Log( SeverityType severity, Logger::MessageType message );
+  void Trace( const std::string& message );
+  void Debug( const std::string& message );
+  void Info( const std::string& message );
+  void Warning( const std::string& message );
+  void Error( const std::string& message );
+  void Critical( const std::string& message );
 
-  // void Log( LoggerImpl::ChannelType channel, SeverityType severity, LoggerImpl::MessageType message );
+  void AddOutLogger( void );
+  void AddOutLoggerWithColors( void );
+  void AddErrLogger( void );
+  void AddErrLoggerWithColors( void );
+  void AddFileLogger( const std::string& fileName );
+  void AddDailyFileLogger( const std::string& fileName, const int& hour, const int& minute);
+  void AddRotatingFileLogger( const std::string& fileName, const size_t& maxFileSize, const size_t& maxNumberOfFiles);
+  void RemoveLogger( const std::string& name );
 
 private:
 
-  BoostLoggerType m_Logger;
+  size_t m_QueueSize;
+  OverflowPolicyType m_OverflowPolicy;
+  LoggerVectorType m_Loggers;
 };
 }
 

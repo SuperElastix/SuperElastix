@@ -25,7 +25,7 @@
 namespace selx
 {
 template< typename ComponentList >
-NetworkBuilder< ComponentList >::NetworkBuilder( LoggerImpl & logger, BlueprintImpl & blueprint ) : m_Logger( logger ), m_isConfigured( false ), m_Blueprint( blueprint )
+NetworkBuilder< ComponentList >::NetworkBuilder( LoggerImpl & logger, BlueprintImpl & blueprint ) : m_Logger( logger ), m_isConfigured( false ), m_Blueprint( blueprint ), m_Name( "NetworkBuilder" )
 {
 }
 
@@ -53,49 +53,48 @@ NetworkBuilder< ComponentList >::Configure()
 
   if( !this->m_isConfigured )
   {
-    std::cout << "===== Applying Component Criteria =====" << std::endl;
+    this->Debug( "===== Applying Component Criteria =====" );
     this->ApplyComponentConfiguration();
 
     auto nonUniqueComponentNames = this->GetNonUniqueComponentNames();
-    std::cout << nonUniqueComponentNames.size() << " out of " << m_Blueprint.GetComponentNames().size()
-              << " Components could not be uniquely selected" << std::endl << std::endl;
+    std::ostringstream ss;
+    ss << nonUniqueComponentNames.size() << " out of " << m_Blueprint.GetComponentNames().size()
+       << " Components could not be uniquely selected";
+    this->Debug( ss.str() );
 
-    std::cout << "===== Applying Connection Criteria =====" << std::endl;
+    this->Debug( "===== Applying Connection Criteria =====" );
     this->ApplyConnectionConfiguration();
     nonUniqueComponentNames = this->GetNonUniqueComponentNames();
-    std::cout << nonUniqueComponentNames.size() << " out of " << m_Blueprint.GetComponentNames().size()
-              << " Components could not be uniquely selected" << std::endl << std::endl;
+    ss.str( std::string() );
+    ss << nonUniqueComponentNames.size() << " out of " << m_Blueprint.GetComponentNames().size()
+       << " Components could not be uniquely selected";
+    this->Debug( ss.str() );
 
-    std::cout << "===== Performing Handshakes between unique and non-unique Components =====" << std::endl;
+    this->Debug( "===== Performing Handshakes between unique and non-unique Components =====" );
     this->PropagateConnectionsWithUniqueComponents();
 
     nonUniqueComponentNames = this->GetNonUniqueComponentNames();
-    std::cout << nonUniqueComponentNames.size() << " out of " << m_Blueprint.GetComponentNames().size()
-              << " Components could not be uniquely selected" << std::endl << std::endl;
+    ss.str( std::string() );
+    ss << nonUniqueComponentNames.size() << " out of " << m_Blueprint.GetComponentNames().size()
+       << " Components could not be uniquely selected";
+    this->Debug( ss.str() );
     this->m_isConfigured = true;
   }
   auto nonUniqueComponentNames = this->GetNonUniqueComponentNames();
 
   if( nonUniqueComponentNames.size() > 0 )
   {
-    std::cout << std::endl << "These Nodes need more criteria: " << std::endl;
+    this->Info( "These Nodes need more criteria: " );
     for( const auto & nonUniqueComponentName : nonUniqueComponentNames )
     {
-      std::cout << this->m_ComponentSelectorContainer[ nonUniqueComponentName ]->NumberOfComponents() << "  " << nonUniqueComponentName << std::endl;
+      std::ostringstream ss;
+      ss << this->m_ComponentSelectorContainer[ nonUniqueComponentName ]->NumberOfComponents() << "  " << nonUniqueComponentName;
+      this->Info( ss.str() );
       //this->m_ComponentSelectorContainer[nonUniqueComponentName]->PrintComponents();
-      std::cout << "TODO: print components" << std::endl;
+      this->Debug( "TODO: print components" );
     }
     return false;
   }
-
-  /*
-  std::cout << "===== Selected Components =====" << std::endl;
-  for (auto const & componentName : m_Blueprint->GetComponentNames())
-  {
-    std::cout << componentName << ":" << std::endl;
-    this->m_ComponentSelectorContainer[componentName]->PrintComponents();
-  }
-  */
 
   return true;
 }
@@ -151,7 +150,7 @@ NetworkBuilder< ComponentList >::ApplyComponentConfiguration()
 
   for( auto const & name : componentNames )
   {
-    std::cout << " BlueprintImpl Node: " << name << std::endl;
+    this->Debug( " BlueprintImpl Node: " + name );
     ComponentSelectorPointer currentComponentSelector = std::make_shared< ComponentSelectorType >( name, this->m_Logger );
 
     BlueprintImpl::ParameterMapType currentProperty = this->m_Blueprint.GetComponent( name );
@@ -224,24 +223,29 @@ NetworkBuilder< ComponentList >::ApplyConnectionConfiguration()
       this->m_ComponentSelectorContainer[ name ]->AddProvidingInterfaceCriteria( interfaceCriteria );
       this->m_ComponentSelectorContainer[ outgoingName ]->AddAcceptingInterfaceCriteria( interfaceCriteria );
 
-      std::cout << " Has Interface: " << std::endl;
+      this->Debug( " Has Interface: " );
       std::for_each( interfaceCriteria.begin(), interfaceCriteria.end(), [ ]( ComponentBase::InterfaceCriteriaType::value_type kv ) mutable {
-          std::cout << "  { " << kv.first << ": " << kv.second << " }\n";
-        } );
-      std::cout << "  " << this->m_ComponentSelectorContainer[ name ]->NumberOfComponents() << ' ' <<  name << ": Providing" << std::endl;
-      std::cout << "  " << this->m_ComponentSelectorContainer[ outgoingName ]->NumberOfComponents() << ' ' << outgoingName << ": Accepting"
-                << std::endl;
+          // TODO:  This shows why we need << overloading: "error: 'this' cannot be implicitly captured in this context" when using this->Debug()
+          std::cout << "  { " << kv.first << ": " << kv.second << " }" << std::endl;
+        } 
+      );
+
+      std::ostringstream ss;
+      ss << "  " << this->m_ComponentSelectorContainer[ name ]->NumberOfComponents() << ' ' <<  name << ": Providing"; this->Debug( ss.str() ); ss.str( std::string() );
+      ss << "  " << this->m_ComponentSelectorContainer[ outgoingName ]->NumberOfComponents() << ' ' << outgoingName << ": Accepting"; this->Debug( ss.str() ); ss.str( std::string() );
 
       if( this->m_ComponentSelectorContainer[ outgoingName ]->NumberOfComponents() == 0 )
       {
         std::stringstream msg;
-        msg << outgoingName << " does not accept a connection of given criteria" << std::endl;
+        msg << outgoingName << " does not accept a connection of given criteria";
+        this->Error( msg.str() );
         throw std::runtime_error( msg.str() );
       }
       if( this->m_ComponentSelectorContainer[ name ]->NumberOfComponents() == 0 )
       {
         std::stringstream msg;
-        msg << name << " does not provide a connection of given criteria" << std::endl;
+        msg << name << " does not provide a connection of given criteria";
+        this->Error( msg.str() );
         throw std::runtime_error( msg.str() );
       }
     }

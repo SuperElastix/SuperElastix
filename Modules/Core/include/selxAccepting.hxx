@@ -133,9 +133,10 @@ Accepting< FirstInterface, RestInterfaces ... >::AreAllAccepted()
     auto const & properties = Properties< FirstInterface >::Get();
     for( auto const & keyvalue : properties )
     {
-      std::cout << "{ " "" << keyvalue.first << "" ": " "" << keyvalue.second << "" "}" << std::endl;
+      std::ostringstream ss;
+      ss << "{ " "" << keyvalue.first << "" ": " "" << keyvalue.second << "" "}";
+      this->Debug( ss.str() );
     }
-    //std::cout << std::endl;
     return false;
   }
 
