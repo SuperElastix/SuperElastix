@@ -23,7 +23,7 @@
 namespace selx
 {
 template< int Dimensionality, class InternalComputationValueType >
-ItkTransformSourceComponent< Dimensionality, InternalComputationValueType >::ItkTransformSourceComponent(const std::string & name, const LoggerInterface & logger) : Superclass(name,
+ItkTransformSourceComponent< Dimensionality, InternalComputationValueType >::ItkTransformSourceComponent(const std::string & name, LoggerImpl & logger) : Superclass(name,
   logger)
 {
 }

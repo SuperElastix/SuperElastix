@@ -684,7 +684,7 @@ TEST_F( RegistrationItkv4Test, CompositeTransform )
 TEST_F(RegistrationItkv4Test, TransformSink)
 {
   /** make example blueprint configuration */
-  BlueprintPointer blueprint = BlueprintPointer(new Blueprint());
+  BlueprintPointer blueprint = Blueprint::New();
 
   // Components
 
@@ -777,9 +777,7 @@ TEST_F(RegistrationItkv4Test, TransformSink)
   resultDisplacementWriter->SetInput(superElastixFilter->GetOutput< DisplacementImage3DType >("ResultDisplacementFieldSink"));
   //Itk lacks a support to use transform objects in a itk-pipeline. We need to store the output placeholder (=smartpointer to empty decortator) here...
   auto decoratedTransform = superElastixFilter->GetOutput< Transform3DType >("TransformSink");
-  BlueprintITKPointer superElastixFilterBlueprint = BlueprintITKType::New();
-  superElastixFilterBlueprint->Set(blueprint);
-  EXPECT_NO_THROW(superElastixFilter->SetBlueprint(superElastixFilterBlueprint));
+  EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
 
   //Optional Update call
   //superElastixFilter->Update();
@@ -796,7 +794,7 @@ TEST_F(RegistrationItkv4Test, TransformSink)
 TEST_F(RegistrationItkv4Test, TransformSource)
 {
   /** make example blueprint configuration */
-  BlueprintPointer blueprint = BlueprintPointer(new Blueprint());
+  BlueprintPointer blueprint = Blueprint::New();
 
   // Components
 
@@ -873,9 +871,7 @@ TEST_F(RegistrationItkv4Test, TransformSource)
   resultImageWriter->SetInput(superElastixFilter->GetOutput< Image3DType >("ResultImageSink"));
   resultDisplacementWriter->SetInput(superElastixFilter->GetOutput< DisplacementImage3DType >("ResultDisplacementFieldSink"));
  
-  BlueprintITKPointer superElastixFilterBlueprint = BlueprintITKType::New();
-  superElastixFilterBlueprint->Set(blueprint);
-  EXPECT_NO_THROW(superElastixFilter->SetBlueprint(superElastixFilterBlueprint));
+  EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
 
   //Optional Update call
   //superElastixFilter->Update();

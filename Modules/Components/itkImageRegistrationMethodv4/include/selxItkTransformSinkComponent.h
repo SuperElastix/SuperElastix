@@ -54,7 +54,7 @@ public:
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
 
-  ItkTransformSinkComponent( const std::string & name, const LoggerInterface & logger );
+  ItkTransformSinkComponent( const std::string & name, LoggerImpl & logger );
   virtual ~ItkTransformSinkComponent();
 
   typedef itkTransformInterface< InternalComputationValueType, Dimensionality >        AcceptingTransformInterfaceType;

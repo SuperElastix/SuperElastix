@@ -23,7 +23,7 @@
 namespace selx
 {
 template< int Dimensionality, class TInternalComputationValue >
-ItkTransformSinkComponent< Dimensionality, TInternalComputationValue >::ItkTransformSinkComponent( const std::string & name, const LoggerInterface & logger ) : Superclass( name,
+ItkTransformSinkComponent< Dimensionality, TInternalComputationValue >::ItkTransformSinkComponent( const std::string & name, LoggerImpl & logger ) : Superclass( name,
     logger )
 {
   m_MiniPipelineOutputImage = DecoratedTransformType::New();
