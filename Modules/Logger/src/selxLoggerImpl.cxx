@@ -133,42 +133,60 @@ void
 LoggerImpl
 ::Trace( const std::string& message )
 {
-  std::for_each(this->m_Loggers.begin(), this->m_Loggers.end(), [ message ]( LoggerType logger ) { logger->trace( message ); } );
+  for( const auto& logger : this->m_Loggers )
+  {
+    logger->trace( message );
+  }
 }
 
 void
 LoggerImpl
 ::Debug( const std::string& message )
 {
-  std::for_each(this->m_Loggers.begin(), this->m_Loggers.end(), [ message ]( LoggerType logger ) { logger->debug( message ); } );
+  for( const auto& logger : this->m_Loggers )
+  {
+    logger->debug( message );
+  }
 }
 
 void
 LoggerImpl
 ::Info( const std::string& message )
 {
-  std::for_each(this->m_Loggers.begin(), this->m_Loggers.end(), [ message ](LoggerType logger ) { logger->info( message ); } );
+  for( const auto& logger : this->m_Loggers )
+  {
+    logger->info( message );
+  }
 }
 
 void
 LoggerImpl
 ::Warning( const std::string& message )
 {
-  std::for_each(this->m_Loggers.begin(), this->m_Loggers.end(), [ message ](LoggerType logger ) { logger->warn( message ); } );
+  for( const auto& logger : this->m_Loggers )
+  {
+    logger->warn( message );
+  }
 }
 
 void
 LoggerImpl
 ::Error( const std::string& message )
 {
-  std::for_each(this->m_Loggers.begin(), this->m_Loggers.end(), [ message ](LoggerType logger ) { logger->error( message ); } );
+  for( const auto& logger : this->m_Loggers )
+  {
+    logger->error( message );
+  }
 }
 
 void
 LoggerImpl
 ::Critical( const std::string& message )
 {
-  std::for_each(this->m_Loggers.begin(), this->m_Loggers.end(), [ message ]( LoggerType logger ) { logger->critical( message ); } );
+  for( const auto& logger : this->m_Loggers )
+  {
+    logger->critical( message );
+  }
 }
 
 
