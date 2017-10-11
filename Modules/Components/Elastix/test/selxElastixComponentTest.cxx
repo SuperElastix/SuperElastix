@@ -25,6 +25,8 @@
 #include "selxMonolithicTransformixComponent.h"
 #include "selxItkImageSinkComponent.h"
 #include "selxItkImageSourceComponent.h"
+#include "selxDisplacementFieldItkImageFilterSinkComponent.h"
+
 #include "selxRegistrationControllerComponent.h"
 
 #include "itkImageFileReader.h"
@@ -51,6 +53,7 @@ public:
     MonolithicElastixComponent< 2, float >,
     MonolithicTransformixComponent< 2, float >,
     ItkImageSinkComponent< 2, float >,
+    DisplacementFieldItkImageFilterSinkComponent< 2, float >,
     ItkImageSourceComponent< 2, float >,
     ItkImageSourceComponent< 3, double >,
     RegistrationControllerComponent< >> RegisterComponents;
@@ -58,6 +61,9 @@ public:
   typedef itk::Image< float, 2 >              Image2DType;
   typedef itk::ImageFileReader< Image2DType > ImageReader2DType;
   typedef itk::ImageFileWriter< Image2DType > ImageWriter2DType;
+
+  typedef itk::Image< itk::Vector< float, 2 >, 2 >       DisplacementImage2DType;
+  typedef itk::ImageFileWriter< DisplacementImage2DType > DisplacementImageWriter2DType;
 
   virtual void SetUp()
   {
@@ -170,6 +176,8 @@ TEST_F( ElastixComponentTest, MonolithicElastixTransformix )
 
   blueprint->SetComponent( "ResultImageSink", { { "NameOfClass", { "ItkImageSinkComponent" } }, { "Dimensionality", { "2" } } } );
 
+  blueprint->SetComponent( "ResultDisplacementFieldSink", { { "NameOfClass", { "DisplacementFieldItkImageFilterSinkComponent" } }, { "Dimensionality", { "2" } } });
+
   blueprint->SetComponent( "Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } } );
 
   blueprint->SetConnection( "FixedImageSource", "RegistrationMethod", { { "NameOfInterface", { "itkImageFixedInterface" } } } ); // ;
@@ -184,9 +192,12 @@ TEST_F( ElastixComponentTest, MonolithicElastixTransformix )
 
   blueprint->SetConnection( "TransformDisplacementField", "ResultImageSink", { { "NameOfInterface", { "itkImageInterface" } } } ); // ;
 
+  blueprint->SetConnection( "TransformDisplacementField", "ResultDisplacementFieldSink", { { "NameOfInterface", { "DisplacementFieldItkImageSourceInterface" } } }); // ;
+
   blueprint->SetConnection( "RegistrationMethod", "Controller", { {} } );         //
   blueprint->SetConnection( "TransformDisplacementField", "Controller", { {} } ); //
   blueprint->SetConnection( "ResultImageSink", "Controller", { {} } );            //
+  blueprint->SetConnection( "ResultDisplacementFieldSink", "Controller", { {} });            //
 
   // Set up the readers and writers
   ImageReader2DType::Pointer fixedImageReader = ImageReader2DType::New();
@@ -198,15 +209,20 @@ TEST_F( ElastixComponentTest, MonolithicElastixTransformix )
   ImageWriter2DType::Pointer resultImageWriter = ImageWriter2DType::New();
   resultImageWriter->SetFileName( dataManager->GetOutputFile( "ElastixComponentTest_BrainProtonDensity.mhd" ) );
 
+  DisplacementImageWriter2DType::Pointer resultDisplacementWriter = DisplacementImageWriter2DType::New();
+  resultDisplacementWriter->SetFileName(dataManager->GetOutputFile("MonolithicElastixTransformix_displacement.mhd"));
+
   // Connect SuperElastix in an itk pipeline
   superElastixFilter->SetInput( "FixedImageSource", fixedImageReader->GetOutput() );
   superElastixFilter->SetInput( "MovingImageSource", movingImageReader->GetOutput() );
   resultImageWriter->SetInput( superElastixFilter->GetOutput< Image2DType >( "ResultImageSink" ) );
+  resultDisplacementWriter->SetInput(superElastixFilter->GetOutput< DisplacementImage2DType >("ResultDisplacementFieldSink"));
 
   EXPECT_NO_THROW( superElastixFilter->SetBlueprint( blueprint ) );
 
   // Update call on the writers triggers SuperElastix to configure and execute
-  // EXPECT_NO_THROW( resultImageWriter->Update() );
-  resultImageWriter->Update();
+  EXPECT_NO_THROW( resultImageWriter->Update() );
+  EXPECT_NO_THROW( resultDisplacementWriter->Update() );
+
 }
 } // namespace selx

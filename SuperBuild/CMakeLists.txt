@@ -126,7 +126,7 @@ if( USE_SYSTEM_ELASTIX )
   endif()
 
   if( NOT EXISTS ${ELASTIX_USE_FILE} )
-    set( ELASTIX_USE_FILE "NOT_FOUND" CACHE PATH "Absolute path to UseElastix.cmake." )
+    set( ELASTIX_USE_FILE "NOT_FOUND" CACHE FILEPATH "Absolute path to UseElastix.cmake." )
     message( FATAL_ERROR "Could not find the ELASTIX_USE_FILE (${ELASTIX_USE_FILE}). Use the SuperBuild or manually point the ELASTIX_USE_FILE CMake variable to the UseElastix.cmake file in root directory of your Elastix build tree." )
   endif()
 else()
