@@ -109,7 +109,7 @@ VariadicLogger
 {
   for( const auto& logger : this->m_Loggers )
   {
-    logger->trace( fmt, args... );
+    logger->debug( fmt, args... );
   }
 }
 
@@ -120,7 +120,7 @@ VariadicLogger
 {
   for( const auto& logger : this->m_Loggers )
   {
-    logger->trace( fmt, args... );
+    logger->info( fmt, args... );
   }
 }
 
@@ -131,7 +131,7 @@ VariadicLogger
 {
   for( const auto& logger : this->m_Loggers )
   {
-    logger->trace( fmt, args... );
+    logger->warn( fmt, args... );
   }
 }
 
@@ -142,7 +142,7 @@ VariadicLogger
 {
   for( const auto& logger : this->m_Loggers )
   {
-    logger->trace( fmt, args... );
+    logger->error( fmt, args... );
   }
 }
 
