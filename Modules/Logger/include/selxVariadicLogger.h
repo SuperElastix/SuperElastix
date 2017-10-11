@@ -89,4 +89,6 @@ private:
 };
 } // namespace
 
+#include "selxVariadicLogger.hxx"
+
 #endif // selxVariadicLogger_h
