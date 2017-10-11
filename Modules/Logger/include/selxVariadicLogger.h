@@ -17,7 +17,6 @@
  *
  *=========================================================================*/
 
-// There already is an sitkLogger preprocessor definition in ITK
 #ifndef selxVariadicLogger_h
 #define selxVariadicLogger_h
 
@@ -64,12 +63,13 @@ public:
   void SetAsyncBlockOnOverflow( void );
   void SetAsyncDiscardOnOverflow( void );
   void SetAsyncQueueSize( const size_t& queueSize );
+  void Flush();
 
   template <typename... Args> void Trace( const char* fmt, const Args&... args );
   template <typename... Args> void Debug( const char* fmt, const Args&... args );
   template <typename... Args> void Info( const char* fmt, const Args&... args );
+  template <typename... Args> void Warning( const char* fmt,  const Args&... args );
   template <typename... Args> void Error( const char* fmt, const Args&... args );
-  template <typename... Args> void Warning( const char* fmt, const Args&... args );
   template <typename... Args> void Critical( const char* fmt, const Args&... args );
 
   void AddOutLogger( void ); // Remove with name "out"

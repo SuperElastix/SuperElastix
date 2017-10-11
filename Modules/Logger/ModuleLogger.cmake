@@ -30,6 +30,7 @@ set( ${MODULE}_SOURCE_FILES
   ${${MODULE}_SOURCE_DIR}/src/selxLogger.cxx
   ${${MODULE}_SOURCE_DIR}/src/selxLoggerImpl.h
   ${${MODULE}_SOURCE_DIR}/src/selxLoggerImpl.cxx
+  ${${MODULE}_SOURCE_DIR}/src/selxVariadicLogger.cxx
 )
 
 # Export tests
