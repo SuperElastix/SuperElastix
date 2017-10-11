@@ -17,24 +17,26 @@
 #
 #=========================================================================
 
+file( GLOB_RECURSE SPDLOG_HEADERS ${${MODULE}_SOURCE_DIR}/src/spdlog*.h )
+
 set( ${MODULE}_INCLUDE_DIRS
   ${${MODULE}_SOURCE_DIR}/include
   ${${MODULE}_SOURCE_DIR}/src # Internal components need selxLoggerImpl.h
+  ${SPDLOG_HEADERS}
 )
-
-file( GLOB_RECURSE SPDLOG_HEADERS ${${MODULE}_SOURCE_DIR}/src/spdlog*.h )
 
 # Module source files
 set( ${MODULE}_SOURCE_FILES
   ${${MODULE}_SOURCE_DIR}/src/selxLogger.cxx
   ${${MODULE}_SOURCE_DIR}/src/selxLoggerImpl.h
   ${${MODULE}_SOURCE_DIR}/src/selxLoggerImpl.cxx
-  ${SPDLOG_HEADERS}
+  ${${MODULE}_SOURCE_DIR}/src/selxVariadicLogger.cxx
 )
 
 # Export tests
 set( ${MODULE}_TEST_SOURCE_FILES
   ${${MODULE}_SOURCE_DIR}/test/selxLoggerTest.cxx
+  ${${MODULE}_SOURCE_DIR}/test/selxVariadicLoggerTest.cxx
 )
 
 set( ${MODULE}_LIBRARIES
