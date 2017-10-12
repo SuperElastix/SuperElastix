@@ -34,7 +34,7 @@ template< class TPixel >
 class Niftyregf3dComponent :
   public SuperElastixComponent<
   Accepting< NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >>,
-  Providing< NiftyregWarpedImageInterface< TPixel >, RunRegistrationInterface >
+  Providing< NiftyregWarpedImageInterface< TPixel >, NiftyregControlPointPositionImageInterface< TPixel >, RunRegistrationInterface >
   >
 {
 public:
@@ -43,7 +43,7 @@ public:
   typedef Niftyregf3dComponent< TPixel > Self;
   typedef SuperElastixComponent<
     Accepting< NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >>,
-    Providing< NiftyregWarpedImageInterface< TPixel >, RunRegistrationInterface >
+    Providing< NiftyregWarpedImageInterface< TPixel >, NiftyregControlPointPositionImageInterface< TPixel >, RunRegistrationInterface >
     >                                      Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
@@ -51,12 +51,19 @@ public:
   Niftyregf3dComponent( const std::string & name, LoggerImpl & logger );
   virtual ~Niftyregf3dComponent();
 
+  // Accepting NiftyregReferenceImageInterface
   virtual int Set( typename NiftyregReferenceImageInterface< TPixel >::Pointer ) override;
 
+  // Accepting NiftyregFloatingImageInterface
   virtual int Set( typename NiftyregFloatingImageInterface< TPixel >::Pointer ) override;
 
+  // Providing NiftyregWarpedImageInterface
   virtual std::shared_ptr< nifti_image > GetWarpedNiftiImage() override;
 
+  // Providing NiftyregControlPointPositionImageInterface
+  virtual std::shared_ptr< nifti_image > GetControlPointPositionImage() override;
+
+  // Providing RunRegistrationInterface
   virtual void RunRegistration() override;
 
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
@@ -70,6 +77,8 @@ private:
   std::shared_ptr< nifti_image > m_floating_image;
   // m_warped_images is an array of 2 nifti images. Depending on the use case, typically only [0] is a valid image
   std::unique_ptr< std::array< std::shared_ptr< nifti_image >, 2 >> m_warped_images;
+  std::shared_ptr< nifti_image > m_cpp_image;
+  
 
 protected:
 
