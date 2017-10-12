@@ -32,9 +32,7 @@ def updateGithubCommitStatus(build) {
 
 node('lkeb-vm-test') {
 	stage('Init') {
-		cmake = tool 'CMake 3.5.1'
-		sh 'rm -rf build'
-		sh 'mkdir -p build'
+		echo 'Skipped initializing!'
 	}
 
 	timeout(120) {
@@ -46,9 +44,7 @@ node('lkeb-vm-test') {
 		}
 		stage('Build') {
 			dir('build') {
-				sh "${ cmake } ../src/SuperBuild"
-				sh 'make clean'
-				sh 'make -j4'
+				echo 'Skipped building!'
 			}
 		}
 		dir('src') {
@@ -59,7 +55,7 @@ node('lkeb-vm-test') {
 	timeout(45) {
 		stage('Test') {
 			dir('build/SuperElastix-build') {
-				sh "`dirname ${ cmake }`/ctest"
+				echo 'Skipped testing!'
 			}
 		}
 	}
