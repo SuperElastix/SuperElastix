@@ -78,17 +78,14 @@ public:
   // Helper function by which a component can check if all its Accepting interfaces have been set after the handshakes
   bool AreAllAccepted();
 
-protected:
-
-  void Trace( const std::string message ) { this->m_Logger.Trace( "[Acceptor] " + message ); };
-  void Debug( const std::string message ) { this->m_Logger.Debug( "[Acceptor] " + message ); };
-  void Info( const std::string message ) { this->m_Logger.Info( "[Acceptor] " + message ); };
-  void Warning( const std::string message ) { this->m_Logger.Warning( "[Acceptor] " + message ); };
-  void Error( const std::string message ) { this->m_Logger.Error( "[Acceptor] " + message ); };
-  void Critical( const std::string message ) { this->m_Logger.Critical( "[Acceptor] " + message ); };
+  template <typename ... Args> void Debug(const std::string& fmt, const Args& ... args)
+  {
+    this->m_Logger.Log< spdlog::level::level_enum::debug >( fmt, args... );
+  }
 
 private:
-  LoggerImpl & m_Logger;
+
+  LoggerImpl& m_Logger;
 };
 } //end namespace selx
 #ifndef ITK_MANUAL_INSTANTIATION

@@ -17,12 +17,8 @@
  *
  *=========================================================================*/
 
-// There already is an sitkLogger preprocessor definition in ITK
-#ifndef selxLogger_h
-#define selxLogger_h
-
-#include <string>
-#include <memory>
+#ifndef selxLoggerController_h
+#define selxLoggerController_h
 
 #include "itkDataObject.h"
 #include "itkObjectFactory.h"
@@ -30,15 +26,16 @@
 namespace selx
 {
 
-typedef enum {
+enum class LogLevel
+{
   TRACE = 0,
   DEBUG = 1,
   INFO = 2,
   WARNING = 3,
   ERROR = 4,
   CRITICAL = 5,
-  OFF = 6,
-} LogLevel;
+  OFF = 6
+};
 
 class LoggerImpl;
 
@@ -58,44 +55,35 @@ public:
   /** Run-time type information (and related methods). */
   itkTypeMacro( Self, itk::DataObject );
 
-  /* m_LoggerImpl is initialized in the default constructor */
   Logger();
 
-  /** The actual logger is a pimpled member variable */
   typedef std::unique_ptr< LoggerImpl > LoggerImplPointer;
 
-  /* Provide a reference to internal logger */
-  LoggerImpl & GetLogger( void );
-
   void SetLogLevel( const LogLevel& level );
-  void SetFormat( const std::string& format );
+  void SetPattern( const std::string& pattern );
 
   void SetSyncMode();
   void SetAsyncMode();
-  void SetAsyncBlockOnOverflow( void );
-  void SetAsyncDiscardOnOverflow( void );
+  void SetAsyncQueueBlockOnOverflow(void);
+  void SetAsyncQueueDiscardOnOverflow(void);
   void SetAsyncQueueSize( const size_t& queueSize );
+  void AsyncQueueFlush();
 
-  void Trace( const std::string& message );
-  void Debug( const std::string& message );
-  void Info( const std::string& message );
-  void Warning( const std::string& message );
-  void Error( const std::string& message );
-  void Critical( const std::string& message );
+  // TODO: AddStreamWithColors, AddRotatingFileBySize, AddRotatingFileByTime
+  void AddStream( std::ostream& stream, const std::string& identifier, const bool& force_flush = false );
+  void RemoveStream( const std::string& identifier );
+  void RemoveAllStreams( void );
 
-  void AddOutLogger( void ); // Remove with name "out"
-  void AddOutLoggerWithColors( void ); // Remove with name "err"
-  void AddErrLogger( void ); // Remove with name "out"
-  void AddErrLoggerWithColors( void ); // Remove with name "err"
-  void AddFileLogger( const std::string& fileName );
-  void AddDailyFileLogger( const std::string& fileName, const int& hours = 0, const int& minutes = 0 );
-  void AddRotatingFileLogger( const std::string& fileName, const size_t& maxFileSize = 262144, const size_t& maxNumberOfFiles = 1);
-  void RemoveLogger( const std::string& fileName );
+  void Log( const LogLevel& level, const std::string& message, const std::string& name = "General" );
+
+  LoggerImpl& GetLogger( void );
+
 
 private:
 
   LoggerImplPointer m_LoggerImpl;
+
 };
 } // namespace
 
-#endif // selxLogger_h
+#endif // selxLoggerController_h

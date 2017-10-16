@@ -22,53 +22,59 @@
 
 #include "selxLogger.h"
 #include "spdlog/spdlog.h"
+#include "spdlog/sinks/ostream_sink.h"
 
 namespace selx
 {
 
 class LoggerImpl
 {
+
 public:
 
-  typedef std::shared_ptr< spdlog::logger > LoggerType;
-  typedef std::vector< LoggerType > LoggerVectorType;
-  typedef spdlog::async_overflow_policy OverflowPolicyType;
+  typedef spdlog::async_overflow_policy AsyncQueueOverflowPolicyType;
 
   LoggerImpl();
-  ~LoggerImpl();
 
   void SetLogLevel( const LogLevel& level );
-  void SetLogLevel( const spdlog::level::level_enum& level );
-  void SetFormat( const std::string& format );
+  void SetPattern( const std::string& pattern );
 
   void SetSyncMode();
   void SetAsyncMode();
-  void SetAsyncBlockOnOverflow( void );
-  void SetAsyncDiscardOnOverflow( void );
+  void SetAsyncQueueBlockOnOverflow(void);
+  void SetAsyncQueueDiscardOnOverflow(void);
   void SetAsyncQueueSize( const size_t& queueSize );
+  void AsyncQueueFlush();
 
-  void Trace( const std::string& message );
-  void Debug( const std::string& message );
-  void Info( const std::string& message );
-  void Warning( const std::string& message );
-  void Error( const std::string& message );
-  void Critical( const std::string& message );
+  void AddStream( std::ostream& stream, const std::string& identifier, const bool& forceFlush = false );
+  void RemoveStream( const std::string& identifier );
+  void RemoveAllStreams( void );
 
-  void AddOutLogger( void );
-  void AddOutLoggerWithColors( void );
-  void AddErrLogger( void );
-  void AddErrLoggerWithColors( void );
-  void AddFileLogger( const std::string& fileName );
-  void AddDailyFileLogger( const std::string& fileName, const int& hour, const int& minute);
-  void AddRotatingFileLogger( const std::string& fileName, const size_t& maxFileSize, const size_t& maxNumberOfFiles);
-  void RemoveLogger( const std::string& name );
+  void Log( const LogLevel& level, const std::string& message, const std::string& name = "NoName" );
+
+  template <typename spdlog::level::level_enum level, typename ... Args>
+  void
+  Log( const std::string& fmt, const Args& ... args )
+  {
+  	for( const auto& logger : this->m_Loggers )
+  	{
+    	logger->log( level, fmt, args ... );
+  	}
+  }
 
 private:
 
-  size_t m_QueueSize;
-  OverflowPolicyType m_OverflowPolicy;
-  LoggerVectorType m_Loggers;
+  typedef std::shared_ptr< spdlog::logger > LoggerType;
+  typedef std::vector< LoggerType > LoggerVectorType;
+
+  spdlog::level::level_enum ToSpdLogLevel( const LogLevel& level );
+
+  size_t m_AsyncQueueSize;
+  AsyncQueueOverflowPolicyType m_AsyncQueueOverflowPolicy;
+	LoggerVectorType m_Loggers;
+
 };
-}
+
+} // namespace
 
 #endif // selxLoggerImpl_h

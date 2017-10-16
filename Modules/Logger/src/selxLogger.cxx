@@ -27,19 +27,6 @@ Logger
   this->m_LoggerImpl = LoggerImplPointer(new LoggerImpl());
 }
 
-LoggerImpl &
-Logger
-::GetLogger(void) {
-  if (this->m_LoggerImpl)
-  {
-    return *this->m_LoggerImpl;
-  }
-  else
-  {
-    itkExceptionMacro("LoggerImpl not set.");
-  }
-}
-
 void
 Logger
 ::SetLogLevel( const LogLevel& level )
@@ -49,9 +36,9 @@ Logger
 
 void
 Logger
-::SetFormat( const std::string& format )
+::SetPattern( const std::string& pattern )
 {
-  this->m_LoggerImpl->SetFormat( format );
+  this->m_LoggerImpl->SetPattern( pattern );
 }
 
 void
@@ -70,16 +57,16 @@ Logger
 
 void
 Logger
-::SetAsyncBlockOnOverflow( void )
+::SetAsyncQueueBlockOnOverflow(void)
 {
-  this->m_LoggerImpl->SetAsyncBlockOnOverflow();
+  this->m_LoggerImpl->SetAsyncQueueBlockOnOverflow();
 }
 
 void
 Logger
-::SetAsyncDiscardOnOverflow( void )
+::SetAsyncQueueDiscardOnOverflow(void)
 {
-  this->m_LoggerImpl->SetAsyncDiscardOnOverflow();
+  this->m_LoggerImpl->SetAsyncQueueDiscardOnOverflow();
 }
 
 void
@@ -91,102 +78,44 @@ Logger
 
 void
 Logger
-::Trace( const std::string& message )
+::AsyncQueueFlush( void )
 {
-  this->m_LoggerImpl->Trace( message );
+  this->m_LoggerImpl->AsyncQueueFlush();
 }
 
 void
 Logger
-::Debug( const std::string& message )
+::AddStream( std::ostream& stream, const std::string& identifier, const bool& forceFlush )
 {
-  this->m_LoggerImpl->Debug( message );
+  this->m_LoggerImpl->AddStream( stream, identifier, forceFlush);
+}
+void
+Logger
+::RemoveStream( const std::string& identifier )
+{
+  this->m_LoggerImpl->RemoveStream( identifier );
 }
 
 void
 Logger
-::Info( const std::string& message )
+::RemoveAllStreams( void )
 {
-  this->m_LoggerImpl->Info( message );
+  this->m_LoggerImpl->RemoveAllStreams();
 }
+
 
 void
 Logger
-::Warning( const std::string& message )
+::Log( const LogLevel& level, const std::string& message, const std::string& name )
 {
-  this->m_LoggerImpl->Warning( message );
+  this->m_LoggerImpl->Log( level, message, name );
 }
 
-void
+LoggerImpl&
 Logger
-::Error( const std::string& message )
+::GetLogger( void )
 {
-  this->m_LoggerImpl->Error( message );
+  return *this->m_LoggerImpl;
 }
-
-void
-Logger
-::Critical( const std::string& message )
-{
-  this->m_LoggerImpl->Critical( message );
-}
-
-void
-Logger
-::AddOutLogger( void )
-{
-  this->m_LoggerImpl->AddOutLogger();
-}
-
-void
-Logger
-::AddOutLoggerWithColors( void )
-{
-  this->m_LoggerImpl->AddOutLoggerWithColors();
-}
-
-void
-Logger
-::AddErrLogger( void )
-{
-  this->m_LoggerImpl->AddErrLogger();
-}
-
-void
-Logger
-::AddErrLoggerWithColors( void )
-{
-  this->m_LoggerImpl->AddErrLoggerWithColors();
-}
-
-void
-Logger
-::AddFileLogger( const std::string& fileName )
-{
-  this->m_LoggerImpl->AddFileLogger( fileName );
-}
-
-void
-Logger
-::AddDailyFileLogger( const std::string& fileName, const int& hours, const int& minutes )
-{
-  this->m_LoggerImpl->AddDailyFileLogger( fileName, hours, minutes );
-}
-
-void
-Logger
-::AddRotatingFileLogger( const std::string& fileName, const size_t& maxFileSize, const size_t& maxNumberOfFiles )
-{
-  this->m_LoggerImpl->AddRotatingFileLogger( fileName, maxFileSize, maxNumberOfFiles );
-}
-
-void
-Logger
-::RemoveLogger( const std::string& name )
-{
-  this->m_LoggerImpl->RemoveLogger( name );
-}
-
-
 
 } // namespace

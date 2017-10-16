@@ -119,13 +119,6 @@ protected:
   LoggerImpl &                    m_Logger;
   BlueprintImpl &                 m_Blueprint;
 
-  void Trace( const std::string message ) { this->m_Logger.Trace( "[" + this->m_Name + "] " + message ); };
-  void Debug( const std::string message ) { this->m_Logger.Debug( "[" + this->m_Name + "] " + message ); };
-  void Info( const std::string message ) { this->m_Logger.Info( "[" + this->m_Name + "] " + message ); };
-  void Warning( const std::string message ) { this->m_Logger.Warning( "[" + this->m_Name + "] " + message ); };
-  void Error( const std::string message ) { this->m_Logger.Error( "[" + this->m_Name + "] " + message ); };
-  void Critical( const std::string message ) { this->m_Logger.Critical( "[" + this->m_Name + "] " + message ); };
-
 private:
 };
 } // end namespace selx

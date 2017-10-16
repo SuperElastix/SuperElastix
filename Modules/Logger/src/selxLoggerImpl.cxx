@@ -18,47 +18,42 @@
  *=========================================================================*/
 
 #include "selxLoggerImpl.h"
+#include "spdlog/details/registry.h"
 
 namespace selx
 {
 
 LoggerImpl
-::LoggerImpl() : m_Loggers(), m_QueueSize( 262144 ), m_OverflowPolicy( spdlog::async_overflow_policy::block_retry )
+::LoggerImpl() : m_Loggers(), m_AsyncQueueSize( 262144 ), m_AsyncQueueOverflowPolicy( spdlog::async_overflow_policy::block_retry )
 {
   this->SetSyncMode();
-  this->SetFormat( "[%Y-%m-%d %H:%M:%S] [thread %t] [%l] %v" );
+  this->SetPattern( "[%Y-%m-%d %H:%M:%S] [thread %t] [%l] [{0}] %v" );
 }
 
+spdlog::level::level_enum
 LoggerImpl
-::~LoggerImpl()
-{
-  spdlog::drop_all();
-}
-
-void
-LoggerImpl
-::SetLogLevel( const LogLevel& level ) {
+::ToSpdLogLevel( const LogLevel& level ) {
   switch (level) {
     case LogLevel::TRACE:
-      this->SetLogLevel( spdlog::level::level_enum::trace );
+      return spdlog::level::level_enum::trace;
       break;
     case LogLevel::DEBUG:
-      this->SetLogLevel( spdlog::level::level_enum::debug );
+      return spdlog::level::level_enum::debug;
       break;
     case LogLevel::INFO:
-      this->SetLogLevel( spdlog::level::level_enum::info );
+      return spdlog::level::level_enum::info;
       break;
     case LogLevel::WARNING:
-      this->SetLogLevel( spdlog::level::level_enum::warn );
+      return spdlog::level::level_enum::warn;
       break;
     case LogLevel::ERROR:
-      this->SetLogLevel( spdlog::level::level_enum::err );
+      return spdlog::level::level_enum::err;
       break;
     case LogLevel::CRITICAL:
-      this->SetLogLevel( spdlog::level::level_enum::critical );
+      return spdlog::level::level_enum::critical;
       break;
     case LogLevel::OFF:
-      this->SetLogLevel( spdlog::level::level_enum::off );
+      return spdlog::level::level_enum::off;
       break;
     default:
       itkGenericExceptionMacro( "Invalid log level." );
@@ -67,28 +62,20 @@ LoggerImpl
 
 void
 LoggerImpl
-::SetLogLevel( const spdlog::level::level_enum& level ) {
-  spdlog::set_level( level );
-  std::for_each(this->m_Loggers.begin(), this->m_Loggers.end(), [ level ]( LoggerType logger )
+::SetLogLevel( const LogLevel& level ) {
+  spdlog::level::level_enum spdloglevel = this->ToSpdLogLevel( level );
+  spdlog::set_level( spdloglevel );
+  for( const auto& logger : this->m_Loggers )
   {
-    logger->set_level( level );
-    if ( "err" != logger->name() ) {
-      logger->set_level( level );
-    } else {
-      // Only change err log level if it is 'trace' or 'debug'
-      if ( level <= spdlog::level::debug ) {
-        logger->set_level( level );
-      }
-    }
-  } );
+    logger->set_level( spdloglevel );
+  }
 }
-
 
 void
 LoggerImpl
-::SetFormat( const std::string& format )
+::SetPattern( const std::string& pattern )
 {
-  spdlog::set_pattern( format );
+  spdlog::set_pattern( pattern );
 }
 
 void
@@ -102,22 +89,22 @@ void
 LoggerImpl
 ::SetAsyncMode()
 {
-  spdlog::set_async_mode(this->m_QueueSize, this->m_OverflowPolicy);
+  spdlog::set_async_mode(this->m_AsyncQueueSize, this->m_AsyncQueueOverflowPolicy);
 }
 
 void
 LoggerImpl
-::SetAsyncBlockOnOverflow( void )
+::SetAsyncQueueBlockOnOverflow(void)
 {
-  this->m_OverflowPolicy = OverflowPolicyType::block_retry;
+  this->m_AsyncQueueOverflowPolicy = AsyncQueueOverflowPolicyType::block_retry;
   this->SetAsyncMode();
 }
 
 void
 LoggerImpl
-::SetAsyncDiscardOnOverflow( void )
+::SetAsyncQueueDiscardOnOverflow(void)
 {
-  this->m_OverflowPolicy = OverflowPolicyType::discard_log_msg;
+  this->m_AsyncQueueOverflowPolicy = AsyncQueueOverflowPolicyType::discard_log_msg;
   this->SetAsyncMode();
 }
 
@@ -125,134 +112,42 @@ void
 LoggerImpl
 ::SetAsyncQueueSize( const size_t& queueSize )
 {
-  this->m_QueueSize = queueSize;
+  this->m_AsyncQueueSize = queueSize;
   this->SetAsyncMode();
 }
 
 void
 LoggerImpl
-::Trace( const std::string& message )
+::AddStream( std::ostream& stream, const std::string& name, const bool& forceFlush )
 {
-  for( const auto& logger : this->m_Loggers )
-  {
-    logger->trace( message );
-  }
-}
-
-void
-LoggerImpl
-::Debug( const std::string& message )
-{
-  for( const auto& logger : this->m_Loggers )
-  {
-    logger->debug( message );
-  }
-}
-
-void
-LoggerImpl
-::Info( const std::string& message )
-{
-  for( const auto& logger : this->m_Loggers )
-  {
-    logger->info( message );
-  }
-}
-
-void
-LoggerImpl
-::Warning( const std::string& message )
-{
-  for( const auto& logger : this->m_Loggers )
-  {
-    logger->warn( message );
-  }
-}
-
-void
-LoggerImpl
-::Error( const std::string& message )
-{
-  for( const auto& logger : this->m_Loggers )
-  {
-    logger->error( message );
-  }
-}
-
-void
-LoggerImpl
-::Critical( const std::string& message )
-{
-  for( const auto& logger : this->m_Loggers )
-  {
-    logger->critical( message );
-  }
-}
-
-
-void
-LoggerImpl
-::AddOutLogger( void )
-{
-  auto logger = spdlog::stdout_logger_mt( "cout" );
+  auto sink = std::make_shared< spdlog::sinks::ostream_sink< std::mutex > >(stream, forceFlush);
+  auto logger = spdlog::details::registry::instance().create(name, { sink } );
   this->m_Loggers.push_back( logger );
 }
 
 void
 LoggerImpl
-::AddOutLoggerWithColors( void )
-{
-  auto logger = spdlog::stdout_color_mt( "cout" );
-  this->m_Loggers.push_back( logger );
-}
-
-void
-LoggerImpl
-::AddErrLogger( void )
-{
-  auto logger = spdlog::stderr_logger_mt( "err" );
-  logger->set_level( spdlog::level::debug );
-  this->m_Loggers.push_back( logger );
-}
-
-void
-LoggerImpl
-::AddErrLoggerWithColors( void )
-{
-  auto logger = spdlog::stderr_color_mt( "err" );
-  logger->set_level( spdlog::level::debug );
-  this->m_Loggers.push_back( logger );
-}
-
-void
-LoggerImpl
-::AddFileLogger( const std::string& fileName )
-{
-  auto logger = spdlog::basic_logger_mt( fileName, fileName );
-  this->m_Loggers.push_back( logger );
-}
-
-void
-LoggerImpl
-::AddDailyFileLogger( const std::string& fileName, const int& hour, const int& minute )
-{
-  auto logger = spdlog::daily_logger_mt( fileName, fileName, hour, minute );
-  this->m_Loggers.push_back( logger );
-}
-
-void
-LoggerImpl
-::AddRotatingFileLogger( const std::string& fileName, const size_t& maxFileSize, const size_t& maxNumberOfFiles )
-{
-  auto logger = spdlog::rotating_logger_mt( fileName, fileName, maxFileSize, maxNumberOfFiles );
-  this->m_Loggers.push_back( logger );
-}
-
-void
-LoggerImpl
-::RemoveLogger( const std::string& name )
+::RemoveStream( const std::string& name )
 {
   spdlog::drop( name );
+}
+
+void
+LoggerImpl
+::RemoveAllStreams( void )
+{
+  spdlog::drop_all();
+}
+
+void
+LoggerImpl
+::Log( const LogLevel& level, const std::string& message, const std::string& name )
+{
+  spdlog::level::level_enum spdLogLevel = this->ToSpdLogLevel( level );
+  for( const auto& logger : this->m_Loggers )
+  {
+    logger->log( spdLogLevel, message.c_str(), name );
+  }
 }
 
 
