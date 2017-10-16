@@ -95,14 +95,14 @@ Niftyregf3dComponent<  TPixel >
   this->m_warped_images
     = std::unique_ptr< std::array< std::shared_ptr< nifti_image >,
     2 >>( new std::array< std::shared_ptr< nifti_image >, 2 > );
-  ( *( this->m_warped_images.get() ) )[ 0 ] = std::shared_ptr< nifti_image >( outputWarpedImage[ 0 ], nifti_image_free );
-  ( *( this->m_warped_images.get() ) )[ 1 ] = std::shared_ptr< nifti_image >( outputWarpedImage[ 1 ], nifti_image_free );
+  (*(this->m_warped_images.get()))[0] = std::shared_ptr< nifti_image >(outputWarpedImage[0], [](nifti_image* ptr){nifti_image_free(ptr); ptr = NULL; });
+  (*(this->m_warped_images.get()))[1] = std::shared_ptr< nifti_image >(outputWarpedImage[1], [](nifti_image* ptr){nifti_image_free(ptr); ptr = NULL; });
 
   // m_reg_f3d->GetWarpedImage() malloc-ed the container which we must free ourselves.
   free( outputWarpedImage );
   outputWarpedImage = NULL;
 
-  this->m_cpp_image = std::shared_ptr< nifti_image >(m_reg_f3d->GetControlPointPositionImage(), nifti_image_free);
+  this->m_cpp_image = std::shared_ptr< nifti_image >(m_reg_f3d->GetControlPointPositionImage(), [](nifti_image* ptr){nifti_image_free(ptr); ptr=NULL ;});
 
 }
 

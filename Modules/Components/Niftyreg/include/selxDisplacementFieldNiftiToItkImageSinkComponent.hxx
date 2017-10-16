@@ -109,9 +109,9 @@ void
 DisplacementFieldNiftiToItkImageSinkComponent< Dimensionality, TPixel >::AfterRegistration()
 {
   auto displacementFieldNiftiImage = this->m_DisplacementFieldInterface->GetDisplacementFieldNiftiImage();
-  //auto displacementFieldItkImage   = NiftiToItkImage< ItkDisplacementFieldType, TPixel >::Convert( displacementFieldNiftiImage );
+  auto displacementFieldItkImage   = NiftiToItkImage< ItkDisplacementFieldType, TPixel >::Convert( displacementFieldNiftiImage );
   //auto displacementFieldItkImage = NiftiToItkImage< itk::Image< TPixel, Dimensionality >, TPixel >::Convert(displacementFieldNiftiImage);
-  //this->m_MiniPipelineOutputImage->Graft( displacementFieldItkImage );
+  this->m_MiniPipelineOutputImage->Graft( displacementFieldItkImage );
 }
 
 

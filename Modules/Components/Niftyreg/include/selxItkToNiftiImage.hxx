@@ -174,7 +174,8 @@ ItkToNiftiImage< ItkImageType, NiftiPixelType >::Convert( typename ItkImageType:
     pixelContainer->ContainerManageMemoryOff();
   }
 
-  std::shared_ptr< nifti_image > ptr( output, nifti_image_free );
+  //std::shared_ptr< nifti_image > ptr(output, [](nifti_image* ptr){nifti_image_free(ptr); ptr = NULL; });
+  std::shared_ptr< nifti_image > ptr(output);
   return ptr;
 }
 

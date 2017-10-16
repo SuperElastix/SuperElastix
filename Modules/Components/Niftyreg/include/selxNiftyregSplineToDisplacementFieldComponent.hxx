@@ -59,6 +59,7 @@ void
 NiftyregSplineToDisplacementFieldComponent<  TPixel >
 ::ReconnectTransform()
 {
+  
   nifti_image * inputTransformationImage = this->m_NiftyregControlPointPositionImageInterface->GetControlPointPositionImage().get();
   
   // Create a dense field
@@ -94,6 +95,7 @@ NiftyregSplineToDisplacementFieldComponent<  TPixel >
   memset(outputTransformationImage->data,
     0,
     outputTransformationImage->nvox*outputTransformationImage->nbyper);
+  
   reg_getDeformationFromDisplacement(outputTransformationImage);
   // The spline transformation is composed with the identity field
   //TODO: replace reg_spline_getDeformationField by reg_cubic_spline_getDeformationField2D<TPixel>
@@ -105,7 +107,8 @@ NiftyregSplineToDisplacementFieldComponent<  TPixel >
     );
 
   reg_getDisplacementFromDeformation(outputTransformationImage);
-  this->m_displacement_image = std::shared_ptr< nifti_image >(outputTransformationImage, nifti_image_free);
+  this->m_displacement_image = std::shared_ptr< nifti_image >(outputTransformationImage, [](nifti_image* ptr){nifti_image_free(ptr); ptr = NULL; });
+  
   return;
 }
 
