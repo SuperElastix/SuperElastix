@@ -64,7 +64,12 @@ typename ItkTransformDataObjectFileReader< TParametersValueType, NInputDimension
 {
   //TODO it is bad design to call Update here. We could consider storing an empty decoratedTransform: (itk::ProcessObject) this->SetOutput(decoratedTransform). THe m_source of this decoratedTransformObject points to this class and might give us a mechanism for updating this object by setting the nakedtransform.
   this->m_Reader->Update();
-  auto nakedTransformBase = *(this->m_Reader->GetTransformList()->begin());
+  auto transformList = this->m_Reader->GetTransformList();
+  if (transformList->size() > 1)
+  {
+    itkExceptionMacro("Reading a transform file containing more than 1 transform is not implemented");
+  }
+  auto nakedTransformBase = *(transformList->begin());
   const TransformType * nakedTransform = dynamic_cast<TransformType*>(nakedTransformBase.GetPointer());
   assert(nakedTransform != nullptr);
   
