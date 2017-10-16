@@ -81,7 +81,7 @@ public:
 
 private:
 
-  typename DecoratedTransformType::Pointer m_MiniPipelineOutputImage;
+  typename DecoratedTransformType::Pointer m_MiniPipelineOutput;
   //typename ItkImageType::Pointer m_NetworkBuilderOutputImage;
   typename AcceptingTransformInterfaceType::Pointer m_TransformInterface;
 
