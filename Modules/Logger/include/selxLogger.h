@@ -23,6 +23,8 @@
 #include "itkDataObject.h"
 #include "itkObjectFactory.h"
 
+#include <memory>  // For unique_ptr.
+
 namespace selx
 {
 
