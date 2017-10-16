@@ -64,15 +64,16 @@ public:
   //typedef typename itk::TransformFileWriterTemplate< InternalComputationValueType >      ItkTransformWriterType;
   typedef ItkTransfromDataObjectFileWriter< InternalComputationValueType, Dimensionality, Dimensionality> DecoratedWriterType;
 
+  // accepting itkTransformInterface
   virtual int Set( typename AcceptingTransformInterfaceType::Pointer ) override;
 
+  // providing SinkInterface
   virtual void SetMiniPipelineOutput( itk::DataObject::Pointer ) override;
   virtual itk::DataObject::Pointer GetMiniPipelineOutput( void ) override;
-
   virtual AnyFileWriter::Pointer GetOutputFileWriter( void ) override;
-
   virtual itk::DataObject::Pointer GetInitializedOutput( void ) override;
 
+  // providing AfterRegistrationInterface
   virtual void AfterRegistration() override;
 
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
