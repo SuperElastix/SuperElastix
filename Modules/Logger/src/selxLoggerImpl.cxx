@@ -46,7 +46,7 @@ LoggerImpl
     case LogLevel::WARNING:
       return spdlog::level::level_enum::warn;
       break;
-    case LogLevel::ERROR:
+    case LogLevel::SELX_ERROR:
       return spdlog::level::level_enum::err;
       break;
     case LogLevel::CRITICAL:

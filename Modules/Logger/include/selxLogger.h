@@ -32,7 +32,7 @@ enum class LogLevel
   DEBUG = 1,
   INFO = 2,
   WARNING = 3,
-  ERROR = 4,
+  SELX_ERROR = 4,
   CRITICAL = 5,
   OFF = 6
 };
