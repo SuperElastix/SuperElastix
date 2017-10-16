@@ -22,7 +22,7 @@
 #include "gtest/gtest.h"
 
 using namespace selx;
-using namespace spdlog::level
+using namespace spdlog::level;
 
 TEST( LoggerTest, Initialization )
 {
