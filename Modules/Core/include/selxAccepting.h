@@ -21,6 +21,8 @@
 #define Accepting_h
 
 #include "selxLoggerImpl.h"
+#include "selxComponentBase.h"
+#include "selxInterfaceAcceptor.h"
 
 namespace selx
 {
