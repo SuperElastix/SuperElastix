@@ -23,6 +23,7 @@
 #include "selxLogger.h"
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/ostream_sink.h"
+#include "spdlog/fmt/bundled/ostream.h" // << operator
 
 namespace selx
 {
@@ -51,9 +52,9 @@ public:
   void RemoveStream( const std::string& identifier );
   void RemoveAllStreams( void );
 
-   void Log( const LogLevel& level, const std::string& message );
+  void Log( const LogLevel& level, const std::string& message );
 
-  template <typename ... Args>
+  template < typename ... Args >
   void
   Log( const LogLevel& level, const std::string& fmt, const Args& ... args )
   {
@@ -61,6 +62,19 @@ public:
   	{
       identifierAndLogger.second->log( this->ToSpdLogLevel( level ), fmt.c_str(), args ... );
   	}
+  }
+
+  // TODO: Use std::copy_n to print [n1, n2, ... , n-1, n] if vector is long
+  template < typename T >
+  std::string operator<<( const std::vector< T >& v ) {
+    std::ostringstream out;
+    if( !v.empty() ) {
+      if( v.size() > 1 ) out << '[';
+      std::copy( v.begin(), v.end(), std::ostream_iterator< T >( out, ", " ) );
+      out << "\b\b";
+      if( v.size() > 1 ) out << "]";
+    }
+    return out.str();
   }
 
 private:

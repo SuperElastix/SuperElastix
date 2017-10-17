@@ -53,29 +53,27 @@ NetworkBuilder< ComponentList >::Configure()
 
   if( !this->m_isConfigured )
   {
-    this->m_Logger.Log( LogLevel::DBG, "===== Applying Component Criteria =====" );
+    this->m_Logger.Log( LogLevel::INF, "Applying Component Criteria ... " );
     this->ApplyComponentConfiguration();
-
     auto nonUniqueComponentNames = this->GetNonUniqueComponentNames();
-    this->m_Logger.Log(  LogLevel::DBG,
-                         "%d out of %d components could not be uniquely selected.",
+    this->m_Logger.Log(  LogLevel::INF,
+                         "Applying Component Criteria ... Done. {0:d} out of {1:d} components could not be uniquely selected.",
                          nonUniqueComponentNames.size(),
                          m_Blueprint.GetComponentNames().size() );
 
-    this->m_Logger.Log( LogLevel::DBG, "===== Applying Connection Criteria =====" );
+    this->m_Logger.Log( LogLevel::INF, "Applying Connection Criteria ..." );
     this->ApplyConnectionConfiguration();
     nonUniqueComponentNames = this->GetNonUniqueComponentNames();
-    this->m_Logger.Log(  LogLevel::DBG,
-                         "%d out of %d components could not be uniquely selected.",
+    this->m_Logger.Log(  LogLevel::INF,
+                         "Applying Connection Criteria ... Done. {0:d} out of {1:d} components could not be uniquely selected.",
                          nonUniqueComponentNames.size(),
                          m_Blueprint.GetComponentNames().size() );
 
-    this->m_Logger.Log( LogLevel::DBG, "===== Performing Handshakes between unique and non-unique Components =====" );
+    this->m_Logger.Log( LogLevel::INF, "Performing handshakes between unique and non-unique Components ..." );
     this->PropagateConnectionsWithUniqueComponents();
-
     nonUniqueComponentNames = this->GetNonUniqueComponentNames();
-    this->m_Logger.Log(  LogLevel::DBG,
-                         "%d out of %d components could not be uniquely selected.",
+    this->m_Logger.Log(  LogLevel::INF,
+                         "Performing handshakes between unique and non-unique Components ... Done. {0:d} out of {1:d} components could not be uniquely selected.",
                          nonUniqueComponentNames.size(),
                          m_Blueprint.GetComponentNames().size() );
     this->m_isConfigured = true;
@@ -149,36 +147,25 @@ NetworkBuilder< ComponentList >::ApplyComponentConfiguration()
 
   for( auto const & name : componentNames )
   {
-    this->m_Logger.Log( LogLevel::DBG, " BlueprintImpl Node: %s ", name );
     ComponentSelectorPointer currentComponentSelector = std::make_shared< ComponentSelectorType >( name, this->m_Logger );
 
     BlueprintImpl::ParameterMapType currentProperty = this->m_Blueprint.GetComponent( name );
-    for( auto const & criterion : currentProperty )
+    for( auto const& criterion : currentProperty )
     {
       currentComponentSelector->AddCriterion( criterion );
-
-      std::cout << "  " << currentComponentSelector->NumberOfComponents() << "  " << criterion.first << ": ";
-      if( criterion.second.size() > 1 )
-      {
-        std::cout << "[ ";
-        for( auto const element : criterion.second )
-        {
-          std::cout << element << " ";
-        }
-        std::cout << "]";
-      }
-      else
-      {
-        std::cout << criterion.second[ 0 ];
-      }
-      std::cout << std::endl;
+      
+      this->m_Logger.Log( LogLevel::DBG,
+                          "{0} components can connect to {1} where {2} equal {3}.",
+                          currentComponentSelector->NumberOfComponents(),
+                          name,
+                          criterion.first,
+                          this->m_Logger << criterion.second );
     }
 
     if( currentComponentSelector->NumberOfComponents() == 0 )
     {
-      std::stringstream msg;
-      msg << "Too many criteria for Component " << name << std::endl;
-      throw std::runtime_error( msg.str() );
+      this->m_Logger.Log( LogLevel::CRT, "Could not identify unique component {0} from the specified criteria." );
+      throw std::runtime_error( "See the log for details." );
     }
 
     // insert new element

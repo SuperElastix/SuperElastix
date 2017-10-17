@@ -24,7 +24,7 @@ namespace selx {
 
 Logger
 ::Logger() {
-  this->m_LoggerImpl = LoggerImplPointer(new LoggerImpl());
+  this->m_LoggerImpl = LoggerImplPointer( new LoggerImpl() );
 }
 
 void

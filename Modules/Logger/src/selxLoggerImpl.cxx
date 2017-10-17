@@ -27,7 +27,7 @@ LoggerImpl
 ::LoggerImpl() : m_Loggers(), m_AsyncQueueSize( 262144 ), m_AsyncQueueOverflowPolicy( spdlog::async_overflow_policy::block_retry )
 {
   this->SetSyncMode();
-  this->SetPattern( "[%Y-%m-%d %H:%M:%S.%e] [thread %t] [%l] %v" );
+  this->SetPattern( "[%Y-%m-%d %H:%M:%S.%f] [thread %t] [%l] %v" );
 }
 
 LoggerImpl
@@ -42,25 +42,18 @@ LoggerImpl
   switch (level) {
     case LogLevel::TRC:
       return spdlog::level::level_enum::trace;
-      break;
     case LogLevel::DBG:
       return spdlog::level::level_enum::debug;
-      break;
     case LogLevel::INF:
       return spdlog::level::level_enum::info;
-      break;
     case LogLevel::WRN:
       return spdlog::level::level_enum::warn;
-      break;
     case LogLevel::ERR:
       return spdlog::level::level_enum::err;
-      break;
     case LogLevel::CRT:
       return spdlog::level::level_enum::critical;
-      break;
     case LogLevel::OFF:
       return spdlog::level::level_enum::off;
-      break;
     default:
       itkGenericExceptionMacro( "Invalid log level." );
   }
@@ -103,7 +96,6 @@ LoggerImpl
 ::SetAsyncQueueBlockOnOverflow(void)
 {
   this->m_AsyncQueueOverflowPolicy = AsyncQueueOverflowPolicyType::block_retry;
-  this->SetAsyncMode();
 }
 
 void
@@ -111,7 +103,6 @@ LoggerImpl
 ::SetAsyncQueueDiscardOnOverflow(void)
 {
   this->m_AsyncQueueOverflowPolicy = AsyncQueueOverflowPolicyType::discard_log_msg;
-  this->SetAsyncMode();
 }
 
 void
@@ -119,7 +110,6 @@ LoggerImpl
 ::SetAsyncQueueSize( const size_t& queueSize )
 {
   this->m_AsyncQueueSize = queueSize;
-  this->SetAsyncMode();
 }
 
 void
@@ -171,6 +161,5 @@ LoggerImpl
     identifierAndLogger.second->log( spdLogLevel, message.c_str() );
   }
 }
-
 
 } // namespace

@@ -34,18 +34,18 @@ TEST( LoggerImplTest, Console )
   logger.AddStream( "cout", std::cout );
 
   // TODO: Explicitly test output
-  logger.Log( LogLevel::TRC, "Console TRACE message" );
-  logger.Log( LogLevel::DBG, "Console DEBUG message" );
-  logger.Log( LogLevel::INF, "Console INFO message" );
-  logger.Log( LogLevel::WRN, "Console WARNING message" );
-  logger.Log( LogLevel::ERR ,"Console ERROR message" );
-  logger.Log( LogLevel::CRT, "Console FATAL message" );
+  logger.Log( LogLevel::TRC, "Console TRACE message that should not be logged." );
+  logger.Log( LogLevel::DBG, "Console DEBUG message that should not be logged." );
+  logger.Log( LogLevel::INF, "Console INFO message that should be logged." );
+  logger.Log( LogLevel::WRN, "Console WARNING message that should be logged." );
+  logger.Log( LogLevel::ERR ,"Console ERROR message that should be logged." );
+  logger.Log( LogLevel::CRT, "Console FATAL message that should be logged." );
 
   logger.SetLogLevel( LogLevel::TRC );
-  logger.Log( LogLevel::TRC, "Console TRACE message" );
-  logger.Log( LogLevel::DBG, "Console DEBUG message" );
+  logger.Log( LogLevel::TRC, "Console TRACE message that should be logged." );
+  logger.Log( LogLevel::DBG, "Console DEBUG message that should be logged." );
 
-  logger.Log( LogLevel::INF, "Console INFO message with pattern {1:d}", "LoggerImplTest", 42 );
+  logger.Log( LogLevel::INF, "Console INFO message with pattern {1:d} that should be logged.", "LoggerImplTest", 42 );
 }
 
 
