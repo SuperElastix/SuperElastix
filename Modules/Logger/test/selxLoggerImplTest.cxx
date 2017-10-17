@@ -22,64 +22,36 @@
 #include "gtest/gtest.h"
 
 using namespace selx;
-using namespace spdlog::level;
 
-TEST( LoggerTest, Initialization )
+TEST( LoggerImplTest, Initialization )
 {
-  Logger::Pointer logger = Logger::New();
+  LoggerImpl logger = LoggerImpl();
 }
 
-TEST( VariadicLoggerTest, Console )
+TEST( LoggerImplTest, Console )
 {
-  Logger::Pointer logger = Logger::New();
-  logger->AddStream( std::cout );
+  LoggerImpl logger = LoggerImpl();
+  logger.AddStream( "cout", std::cout );
 
   // TODO: Explicitly test output
-  logger->Log( trace, "Console TRACE message" );
-  logger->Log( debug, "Console DEBUG message" );
-  logger->Log( info, "Console INFO message" );
-  logger->Log( warn, "Console WARNING message" );
-  logger->Log( error ,"Console ERROR message" );
-  logger->Log( critical, "Console FATAL message" );
+  logger.Log( LogLevel::TRC, "Console TRACE message" );
+  logger.Log( LogLevel::DBG, "Console DEBUG message" );
+  logger.Log( LogLevel::INF, "Console INFO message" );
+  logger.Log( LogLevel::WRN, "Console WARNING message" );
+  logger.Log( LogLevel::ERR ,"Console ERROR message" );
+  logger.Log( LogLevel::CRT, "Console FATAL message" );
 
-  logger->SetLogLevel( trace );
-  logger->Log( trace, "Console TRACE message" );
-  logger->Log( debug, "Console DEBUG message" );
+  logger.SetLogLevel( LogLevel::TRC );
+  logger.Log( LogLevel::TRC, "Console TRACE message" );
+  logger.Log( LogLevel::DBG, "Console DEBUG message" );
 
-  logger->Log( info, "Console INFO message with pattern {1:d}", "LoggerImplTest", 42 );
+  logger.Log( LogLevel::INF, "Console INFO message with pattern {1:d}", "LoggerImplTest", 42 );
 }
 
-// // This will fail with "logger with name 'cout' already exists" if logger above is not properly deallocatd
-// TEST( VariadicLoggerTest, MemoryManagement )
-// {
-//   VariadicLogger::Pointer logger = VariadicLogger::New();
-//   logger->AddOutLoggerWithColors();
-// }
 
-// TEST( VariadicLoggerTest, Singleton )
-// {
-//   VariadicLogger::Pointer logger = VariadicLogger::New();
-//   logger->AddOutLogger();
-//   EXPECT_THROW( logger->AddOutLogger(), std::exception );
-
-//   logger->AddFileLogger( "fileLogger.log" );
-//   EXPECT_THROW( logger->AddFileLogger( "fileLogger.log" ), std::exception );
-
-//   logger->AddDailyFileLogger( "dailyFileLogger.log" );
-//   EXPECT_THROW( logger->AddDailyFileLogger( "dailyFileLogger.log" ), std::exception );
-
-//   logger->AddRotatingFileLogger( "rotatingFileLogger.log" );
-//   EXPECT_THROW( logger->AddRotatingFileLogger( "dailyFileLogger.log" ), std::exception );
-// }
-
-// TEST( VariadicLoggerTest, MultiSink )
-// {
-//   VariadicLogger::Pointer logger = VariadicLogger::New();
-//   logger->AddOutLogger();
-//   logger->AddErrLogger();
-//   logger->AddFileLogger( "fileLogger.log" );
-//   logger->AddDailyFileLogger( "dailyFileLogger.log" );
-//   logger->AddRotatingFileLogger( "rotatingFileLogger.log" );
-//   logger->Info( "Multi-sink INFO message" );
-// }
-
+ TEST( LoggerImplTest, MemoryManagement )
+ {
+   // This will fail with "logger with name 'cout' already exists" if logger above is not properly destroyed
+   LoggerImpl logger = LoggerImpl();
+   logger.AddStream( "cout", std::cout );
+ }

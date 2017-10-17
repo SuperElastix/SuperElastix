@@ -35,6 +35,7 @@ public:
   typedef spdlog::async_overflow_policy AsyncQueueOverflowPolicyType;
 
   LoggerImpl();
+  ~LoggerImpl();
 
   void SetLogLevel( const LogLevel& level );
   void SetPattern( const std::string& pattern );
@@ -46,33 +47,32 @@ public:
   void SetAsyncQueueSize( const size_t& queueSize );
   void AsyncQueueFlush();
 
-  void AddStream( std::ostream& stream, const std::string& identifier, const bool& forceFlush = false );
+  void AddStream( const std::string& identifier, std::ostream& stream, const bool& forceFlush = false );
   void RemoveStream( const std::string& identifier );
   void RemoveAllStreams( void );
 
-  void Log( const LogLevel& level, const std::string& message, const std::string& name = "NoName" );
+   void Log( const LogLevel& level, const std::string& message );
 
-  template <typename spdlog::level::level_enum level, typename ... Args>
+  template <typename ... Args>
   void
-  Log( const std::string& fmt, const Args& ... args )
+  Log( const LogLevel& level, const std::string& fmt, const Args& ... args )
   {
-  	for( const auto& logger : this->m_Loggers )
+  	for( const auto& identifierAndLogger : this->m_Loggers )
   	{
-    	logger->log( level, fmt, args ... );
+      identifierAndLogger.second->log( this->ToSpdLogLevel( level ), fmt.c_str(), args ... );
   	}
   }
 
 private:
 
   typedef std::shared_ptr< spdlog::logger > LoggerType;
-  typedef std::vector< LoggerType > LoggerVectorType;
+  typedef std::map< std::string, LoggerType > LoggerVectorType;
 
   spdlog::level::level_enum ToSpdLogLevel( const LogLevel& level );
 
   size_t m_AsyncQueueSize;
   AsyncQueueOverflowPolicyType m_AsyncQueueOverflowPolicy;
 	LoggerVectorType m_Loggers;
-
 };
 
 } // namespace

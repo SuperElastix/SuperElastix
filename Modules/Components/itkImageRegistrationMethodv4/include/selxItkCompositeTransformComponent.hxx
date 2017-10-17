@@ -93,15 +93,13 @@ ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >::
 
   if( mismatchNames.size() > 0 )
   {
-    std::ostringstream ss;
-    ss << "Non-fatal error: The names of ExecutionOrder and the connected Stages do not correspond for " << this->m_Name
-              << ". Found mismatch is [ ";
+    this->Error( "The names of ExecutionOrder and the connected Stages do not match for %s ", this->m_Name );
+    this->Error( "Mismatch is [ " );
     for( auto const & name : mismatchNames )
     {
-      ss << "" << name << "" " ";
+      this->Error( "  %s," );
     }
-    ss << "]." << std::endl;
-    this->m_Logger.Debug( ss.str() );
+    this->Error( "]" );
   }
 
   // Perform execution flow

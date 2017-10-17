@@ -27,29 +27,35 @@ LoggerImpl
 ::LoggerImpl() : m_Loggers(), m_AsyncQueueSize( 262144 ), m_AsyncQueueOverflowPolicy( spdlog::async_overflow_policy::block_retry )
 {
   this->SetSyncMode();
-  this->SetPattern( "[%Y-%m-%d %H:%M:%S] [thread %t] [%l] [{0}] %v" );
+  this->SetPattern( "[%Y-%m-%d %H:%M:%S.%e] [thread %t] [%l] %v" );
+}
+
+LoggerImpl
+::~LoggerImpl()
+{
+  this->RemoveAllStreams();
 }
 
 spdlog::level::level_enum
 LoggerImpl
 ::ToSpdLogLevel( const LogLevel& level ) {
   switch (level) {
-    case LogLevel::TRACE:
+    case LogLevel::TRC:
       return spdlog::level::level_enum::trace;
       break;
-    case LogLevel::DEBUG:
+    case LogLevel::DBG:
       return spdlog::level::level_enum::debug;
       break;
-    case LogLevel::INFO:
+    case LogLevel::INF:
       return spdlog::level::level_enum::info;
       break;
-    case LogLevel::WARNING:
+    case LogLevel::WRN:
       return spdlog::level::level_enum::warn;
       break;
-    case LogLevel::SELX_ERROR:
+    case LogLevel::ERR:
       return spdlog::level::level_enum::err;
       break;
-    case LogLevel::CRITICAL:
+    case LogLevel::CRT:
       return spdlog::level::level_enum::critical;
       break;
     case LogLevel::OFF:
@@ -65,9 +71,9 @@ LoggerImpl
 ::SetLogLevel( const LogLevel& level ) {
   spdlog::level::level_enum spdloglevel = this->ToSpdLogLevel( level );
   spdlog::set_level( spdloglevel );
-  for( const auto& logger : this->m_Loggers )
+  for( const auto& item : this->m_Loggers )
   {
-    logger->set_level( spdloglevel );
+    item.second->set_level( spdloglevel );
   }
 }
 
@@ -118,11 +124,21 @@ LoggerImpl
 
 void
 LoggerImpl
-::AddStream( std::ostream& stream, const std::string& name, const bool& forceFlush )
+::AsyncQueueFlush( void )
+{
+  for( const auto& identifierAndLogger : this->m_Loggers )
+  {
+    identifierAndLogger.second->flush();
+  }
+}
+
+void
+LoggerImpl
+::AddStream( const std::string& identifier, std::ostream& stream, const bool& forceFlush )
 {
   auto sink = std::make_shared< spdlog::sinks::ostream_sink< std::mutex > >(stream, forceFlush);
-  auto logger = spdlog::details::registry::instance().create(name, { sink } );
-  this->m_Loggers.push_back( logger );
+  auto logger = spdlog::details::registry::instance().create(identifier, { sink } );
+  this->m_Loggers.insert( std::make_pair( identifier, logger ) );
 }
 
 void
@@ -130,23 +146,29 @@ LoggerImpl
 ::RemoveStream( const std::string& name )
 {
   spdlog::drop( name );
+  this->m_Loggers.erase( name );
 }
 
 void
 LoggerImpl
 ::RemoveAllStreams( void )
 {
-  spdlog::drop_all();
+  for( const auto& identifierAndLogger : this->m_Loggers )
+  {
+    spdlog::drop( identifierAndLogger.first );
+  }
+
+  this->m_Loggers.clear();
 }
 
 void
 LoggerImpl
-::Log( const LogLevel& level, const std::string& message, const std::string& name )
+::Log( const LogLevel& level, const std::string& message )
 {
-  spdlog::level::level_enum spdLogLevel = this->ToSpdLogLevel( level );
-  for( const auto& logger : this->m_Loggers )
+  auto spdLogLevel = this->ToSpdLogLevel( level );
+  for( const auto& identifierAndLogger : this->m_Loggers )
   {
-    logger->log( spdLogLevel, message.c_str(), name );
+    identifierAndLogger.second->log( spdLogLevel, message.c_str() );
   }
 }
 

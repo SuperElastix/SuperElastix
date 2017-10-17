@@ -30,12 +30,12 @@ namespace selx
 
 enum class LogLevel
 {
-  TRACE = 0,
-  DEBUG = 1,
-  INFO = 2,
-  WARNING = 3,
-  SELX_ERROR = 4,
-  CRITICAL = 5,
+  TRC = 0,
+  DBG = 1,
+  INF = 2,
+  WRN = 3,
+  ERR = 4,
+  CRT = 5,
   OFF = 6
 };
 
@@ -59,8 +59,6 @@ public:
 
   Logger();
 
-  typedef std::unique_ptr< LoggerImpl > LoggerImplPointer;
-
   void SetLogLevel( const LogLevel& level );
   void SetPattern( const std::string& pattern );
 
@@ -72,17 +70,18 @@ public:
   void AsyncQueueFlush();
 
   // TODO: AddStreamWithColors, AddRotatingFileBySize, AddRotatingFileByTime
-  void AddStream( std::ostream& stream, const std::string& identifier, const bool& force_flush = false );
+  void AddStream( const std::string& identifier, std::ostream& stream, const bool& force_flush = false );
   void RemoveStream( const std::string& identifier );
   void RemoveAllStreams( void );
 
-  void Log( const LogLevel& level, const std::string& message, const std::string& name = "General" );
+  void Log( const LogLevel& level, const std::string& message );
 
   LoggerImpl& GetLogger( void );
 
 
 private:
 
+  typedef std::unique_ptr< LoggerImpl > LoggerImplPointer;
   LoggerImplPointer m_LoggerImpl;
 
 };

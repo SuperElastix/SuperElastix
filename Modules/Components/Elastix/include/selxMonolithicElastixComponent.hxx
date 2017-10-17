@@ -128,7 +128,7 @@ MonolithicElastixComponent< Dimensionality, TPixel >
       }
       catch( itk::ExceptionObject & err )
       {
-        this->m_Logger.Error( err.what() );
+        this->Error( err.what() );
         meetsCriteria = false;
       }
     }

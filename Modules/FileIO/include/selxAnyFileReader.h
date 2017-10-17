@@ -59,7 +59,7 @@ public:
   virtual OutputDataType * GetOutput() = 0;
 
   /** This method should be overriden. See fx. the FileReaderDecorator. */
-  virtual void Update( void ) = 0;
+  virtual void Update( void ) override = 0;
 
   /** GetOutput tries dynamic cast to required output type */
   //template<typename ReturnType>

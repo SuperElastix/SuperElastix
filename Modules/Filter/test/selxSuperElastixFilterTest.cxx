@@ -81,9 +81,8 @@ public:
   {
     dataManager = DataManagerType::New();
     logger = Logger::New();
-    logger->SetSyncMode();
-    logger->SetLogLevel( LogLevel::DEBUG );
-    logger->AddOutLogger();
+    logger->SetLogLevel( LogLevel::DBG );
+    logger->AddStream( std::cout, "cout" );
   }
 
 

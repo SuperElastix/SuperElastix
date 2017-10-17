@@ -53,46 +53,45 @@ NetworkBuilder< ComponentList >::Configure()
 
   if( !this->m_isConfigured )
   {
-    this->Debug( "===== Applying Component Criteria =====" );
+    this->m_Logger.Log( LogLevel::DBG, "===== Applying Component Criteria =====" );
     this->ApplyComponentConfiguration();
 
     auto nonUniqueComponentNames = this->GetNonUniqueComponentNames();
-    std::ostringstream ss;
-    ss << nonUniqueComponentNames.size() << " out of " << m_Blueprint.GetComponentNames().size()
-       << " Components could not be uniquely selected";
-    this->Debug( ss.str() );
+    this->m_Logger.Log(  LogLevel::DBG,
+                         "%d out of %d components could not be uniquely selected.",
+                         nonUniqueComponentNames.size(),
+                         m_Blueprint.GetComponentNames().size() );
 
-    this->Debug( "===== Applying Connection Criteria =====" );
+    this->m_Logger.Log( LogLevel::DBG, "===== Applying Connection Criteria =====" );
     this->ApplyConnectionConfiguration();
     nonUniqueComponentNames = this->GetNonUniqueComponentNames();
-    ss.str( std::string() );
-    ss << nonUniqueComponentNames.size() << " out of " << m_Blueprint.GetComponentNames().size()
-       << " Components could not be uniquely selected";
-    this->Debug( ss.str() );
+    this->m_Logger.Log(  LogLevel::DBG,
+                         "%d out of %d components could not be uniquely selected.",
+                         nonUniqueComponentNames.size(),
+                         m_Blueprint.GetComponentNames().size() );
 
-    this->Debug( "===== Performing Handshakes between unique and non-unique Components =====" );
+    this->m_Logger.Log( LogLevel::DBG, "===== Performing Handshakes between unique and non-unique Components =====" );
     this->PropagateConnectionsWithUniqueComponents();
 
     nonUniqueComponentNames = this->GetNonUniqueComponentNames();
-    ss.str( std::string() );
-    ss << nonUniqueComponentNames.size() << " out of " << m_Blueprint.GetComponentNames().size()
-       << " Components could not be uniquely selected";
-    this->Debug( ss.str() );
+    this->m_Logger.Log(  LogLevel::DBG,
+                         "%d out of %d components could not be uniquely selected.",
+                         nonUniqueComponentNames.size(),
+                         m_Blueprint.GetComponentNames().size() );
     this->m_isConfigured = true;
   }
   auto nonUniqueComponentNames = this->GetNonUniqueComponentNames();
 
   if( nonUniqueComponentNames.size() > 0 )
   {
-    this->Info( "These Nodes need more criteria: " );
+    this->m_Logger.Log( LogLevel::CRT, "These Nodes need more criteria: [" );
     for( const auto & nonUniqueComponentName : nonUniqueComponentNames )
     {
-      std::ostringstream ss;
-      ss << this->m_ComponentSelectorContainer[ nonUniqueComponentName ]->NumberOfComponents() << "  " << nonUniqueComponentName;
-      this->Info( ss.str() );
-      //this->m_ComponentSelectorContainer[nonUniqueComponentName]->PrintComponents();
-      this->Debug( "TODO: print components" );
+      this->m_Logger.Log( LogLevel::CRT, "  %s: %d",
+                          nonUniqueComponentName,
+                          this->m_ComponentSelectorContainer[ nonUniqueComponentName ]->NumberOfComponents() );
     }
+    this->m_Logger.Log( LogLevel::CRT, "]" );
     return false;
   }
 
@@ -150,7 +149,7 @@ NetworkBuilder< ComponentList >::ApplyComponentConfiguration()
 
   for( auto const & name : componentNames )
   {
-    this->Debug( " BlueprintImpl Node: " + name );
+    this->m_Logger.Log( LogLevel::DBG, " BlueprintImpl Node: %s ", name );
     ComponentSelectorPointer currentComponentSelector = std::make_shared< ComponentSelectorType >( name, this->m_Logger );
 
     BlueprintImpl::ParameterMapType currentProperty = this->m_Blueprint.GetComponent( name );
@@ -223,7 +222,7 @@ NetworkBuilder< ComponentList >::ApplyConnectionConfiguration()
       this->m_ComponentSelectorContainer[ name ]->AddProvidingInterfaceCriteria( interfaceCriteria );
       this->m_ComponentSelectorContainer[ outgoingName ]->AddAcceptingInterfaceCriteria( interfaceCriteria );
 
-      this->Debug( " Has Interface: " );
+      this->m_Logger.Log( LogLevel::DBG, " Has Interface: " );
       std::for_each( interfaceCriteria.begin(), interfaceCriteria.end(), [ ]( ComponentBase::InterfaceCriteriaType::value_type kv ) mutable {
           // TODO:  This shows why we need << overloading: "error: 'this' cannot be implicitly captured in this context" when using this->Debug()
           std::cout << "  { " << kv.first << ": " << kv.second << " }" << std::endl;
@@ -231,21 +230,21 @@ NetworkBuilder< ComponentList >::ApplyConnectionConfiguration()
       );
 
       std::ostringstream ss;
-      ss << "  " << this->m_ComponentSelectorContainer[ name ]->NumberOfComponents() << ' ' <<  name << ": Providing"; this->Debug( ss.str() ); ss.str( std::string() );
-      ss << "  " << this->m_ComponentSelectorContainer[ outgoingName ]->NumberOfComponents() << ' ' << outgoingName << ": Accepting"; this->Debug( ss.str() ); ss.str( std::string() );
+      ss << "  " << this->m_ComponentSelectorContainer[ name ]->NumberOfComponents() << ' ' <<  name << ": Providing"; this->m_Logger.Log( LogLevel::DBG, ss.str() ); ss.str( std::string() );
+      ss << "  " << this->m_ComponentSelectorContainer[ outgoingName ]->NumberOfComponents() << ' ' << outgoingName << ": Accepting"; this->m_Logger.Log( LogLevel::DBG, ss.str() ); ss.str( std::string() );
 
       if( this->m_ComponentSelectorContainer[ outgoingName ]->NumberOfComponents() == 0 )
       {
         std::stringstream msg;
         msg << outgoingName << " does not accept a connection of given criteria";
-        this->Error( msg.str() );
+        this->m_Logger.Log( LogLevel::DBG, msg.str() );
         throw std::runtime_error( msg.str() );
       }
       if( this->m_ComponentSelectorContainer[ name ]->NumberOfComponents() == 0 )
       {
         std::stringstream msg;
         msg << name << " does not provide a connection of given criteria";
-        this->Error( msg.str() );
+        this->m_Logger.Log( LogLevel::DBG, msg.str() );
         throw std::runtime_error( msg.str() );
       }
     }

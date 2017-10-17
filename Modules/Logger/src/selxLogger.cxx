@@ -85,10 +85,11 @@ Logger
 
 void
 Logger
-::AddStream( std::ostream& stream, const std::string& identifier, const bool& forceFlush )
+::AddStream( const std::string& identifier, std::ostream& stream, const bool& forceFlush )
 {
-  this->m_LoggerImpl->AddStream( stream, identifier, forceFlush);
+  this->m_LoggerImpl->AddStream( identifier, stream, forceFlush);
 }
+
 void
 Logger
 ::RemoveStream( const std::string& identifier )
@@ -106,9 +107,9 @@ Logger
 
 void
 Logger
-::Log( const LogLevel& level, const std::string& message, const std::string& name )
+::Log( const LogLevel& level, const std::string& message )
 {
-  this->m_LoggerImpl->Log( level, message, name );
+  this->m_LoggerImpl->Log( level, message );
 }
 
 LoggerImpl&

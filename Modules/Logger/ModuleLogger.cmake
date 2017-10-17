@@ -17,7 +17,7 @@
 #
 #=========================================================================
 
-# TODO: Include detail only for core
+# TODO: Include detail for core only
 set( ${MODULE}_INCLUDE_DIRS
   ${${MODULE}_SOURCE_DIR}/include
   ${${MODULE}_SOURCE_DIR}/detail
@@ -31,7 +31,6 @@ set( ${MODULE}_SOURCE_FILES
 
 # Export tests
 set( ${MODULE}_TEST_SOURCE_FILES
-  # ${${MODULE}_SOURCE_DIR}/test/selxLoggerTest.cxx
   ${${MODULE}_SOURCE_DIR}/test/selxLoggerImplTest.cxx
 )
 

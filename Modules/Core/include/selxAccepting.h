@@ -20,6 +20,7 @@
 #ifndef Accepting_h
 #define Accepting_h
 
+#include "selxLogger.h"
 #include "selxLoggerImpl.h"
 #include "selxComponentBase.h"
 #include "selxInterfaceAcceptor.h"
@@ -82,7 +83,7 @@ public:
 
   template <typename ... Args> void Debug(const std::string& fmt, const Args& ... args)
   {
-    this->m_Logger.Log< spdlog::level::level_enum::debug >( fmt, args... );
+    this->m_Logger.Log( LogLevel::ERR, fmt, args ... );
   }
 
 private:
