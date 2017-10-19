@@ -124,7 +124,7 @@ RescaleFunction( TBuffer * buffer,
 }
 
 // Internal function to rescale pixel according to Rescale Slope/Intercept
-template< typename TBuffer, int Dims >
+template< typename TBuffer, unsigned int Dims >
 void
 RescaleFunction(itk::Vector<TBuffer, Dims> * buffer,
 double slope,
