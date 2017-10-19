@@ -26,14 +26,6 @@ class StreamToString
 {
 public:
 
-  // Stream T to string
-  template < typename T >
-  std::string operator<<( const T& value ) {
-    std::ostringstream out;
-    out << value;
-    return out.str();
-  }
-
   // Stream std:vector to string
   // TODO: Use std::copy_n to print [n1, n2, ... , n-1, n] if vector is long
   template < typename T >

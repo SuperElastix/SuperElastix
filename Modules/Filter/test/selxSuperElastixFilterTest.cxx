@@ -82,7 +82,7 @@ public:
     dataManager = DataManagerType::New();
     logger = Logger::New();
     logger->SetLogLevel( LogLevel::DBG );
-    logger->AddStream( std::cout, "cout" );
+    logger->AddStream( "cout", std::cout );
   }
 
 
@@ -133,7 +133,6 @@ TEST_F( SuperElastixFilterTest, ImageOnly )
 }
 TEST_F( SuperElastixFilterTest, ImageAndMesh )
 {
-  std::cout << "Starting ..." << std::endl;
   ImageReader3DType::Pointer imageReader3D = ImageReader3DType::New();
   ImageWriter3DType::Pointer imageWriter3D = ImageWriter3DType::New();
 
@@ -170,7 +169,6 @@ TEST_F( SuperElastixFilterTest, ImageAndMesh )
   superElastixFilter->SetInput( "InputImage", imageReader3D->GetOutput() );
   imageWriter3D->SetInput( superElastixFilter->GetOutput< Image3DType >( "OutputImage" ) );
 
-  std::cout << "Updating now" << std::endl;
   EXPECT_NO_THROW( meshWriter->Update() );
   EXPECT_NO_THROW( imageWriter3D->Update() );
 }
@@ -193,11 +191,9 @@ TEST_F( SuperElastixFilterTest, TooManyInputs )
   superElastixFilter->SetLogger(logger);
   EXPECT_NO_THROW( superElastixFilter->SetBlueprint( blueprint ) );
 
-  std::cout << "Set inputs " << std::endl;
   superElastixFilter->SetInput( "Source_A", imageReader3D_A->GetOutput() );
   superElastixFilter->SetInput( "Source_B", imageReader3D_B->GetOutput() );
 
-  std::cout << "Update " << std::endl;
   EXPECT_THROW( superElastixFilter->Update(), itk::ExceptionObject );
 }
 TEST_F( SuperElastixFilterTest, TooManySources )

@@ -81,11 +81,6 @@ public:
   // Helper function by which a component can check if all its Accepting interfaces have been set after the handshakes
   bool AreAllAccepted();
 
-  template <typename ... Args> void Debug(const std::string& fmt, const Args& ... args)
-  {
-    this->m_Logger.Log( LogLevel::ERR, fmt, args ... );
-  }
-
 private:
 
   LoggerImpl& m_Logger;

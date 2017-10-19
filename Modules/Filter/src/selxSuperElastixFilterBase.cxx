@@ -151,8 +151,9 @@ SuperElastixFilterBase
   }
   else
   {
-    this->m_Logger->Log( LogLevel::CRT, "Missing conections found." );
-    itkExceptionMacro( << "One or more components has unsatisfied connections" )
+    this->m_Logger->Log( LogLevel::INF, "Missing connections found." );
+    // Commented out by KM: We should throw here if components allow missing connections?
+    // itkExceptionMacro( << "One or more components has unsatisfied connections" )
   }
 
   for( const auto & nameAndInterface : sinks )

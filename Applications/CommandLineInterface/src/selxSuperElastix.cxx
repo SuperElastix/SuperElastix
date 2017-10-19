@@ -113,6 +113,7 @@ main( int ac, char * av[] )
 
     if( vm.count( "in" ) )
     {
+      logger->Log( LogLevel::INF, "Preparing input data ... ");
       int index = 0;
       for( const auto & inputPair : inputPairs )
       {
@@ -125,19 +126,26 @@ main( int ac, char * av[] )
 
         // since we do not know which reader type we should instantiate for input "name",
         // we ask SuperElastix for a reader that matches the type of the source component "name"
-
+        logger->Log( LogLevel::INF, "Preparing input {0} ...", name );
         selx::AnyFileReader::Pointer reader = superElastixFilter->GetInputFileReader( name );
         reader->SetFileName( path );
         superElastixFilter->SetInput( name, reader->GetOutput() );
         fileReaders.push_back( reader );
 
+        logger->Log( LogLevel::INF, "Preparing input {0} ... Done", name );
         std::cout << "Input data " << index << " " << name << " : " << path << "\n";
         ++index;
       }
+      logger->Log( LogLevel::INF, "Preparing input data ... Done");
+    }
+    else
+    {
+      logger->Log( LogLevel::INF, "No input data specified.");
     }
 
     if( vm.count( "out" ) )
     {
+      logger->Log( LogLevel::INF, "Preparing output data ... ");
       int index = 0;
       for( const auto & outputPair : outputPairs )
       {
@@ -148,34 +156,40 @@ main( int ac, char * av[] )
 
         // since we do not know which writer type we should instantiate for output "name",
         // we ask SuperElastix for a writer that matches the type of the sink component "name"
+        logger->Log( LogLevel::INF, "Preparing output {0} ...", name );
         selx::AnyFileWriter::Pointer writer = superElastixFilter->GetOutputFileWriter( name );
-
         //ImageWriter2DType::Pointer writer = ImageWriter2DType::New();
         writer->SetFileName( path );
         //writer->SetInput(superElastixFilter->GetOutput<Image2DType>(name));
         writer->SetInput( superElastixFilter->GetOutput( name ) );
         fileWriters.push_back( writer );
-
-        std::cout << "Output data " << index << " " << name << " : " << path << "\n";
+        logger->Log( LogLevel::INF, "Preparing output {0} ... Done", name );
         ++index;
 
       }
     }
+    else
+    {
+      logger->Log( LogLevel::INF, "No output data specified.");
+    }
 
     /* Execute SuperElastix by updating the writers */
-
+    logger->Log( LogLevel::INF, "Executing ...");
     for( auto & writer : fileWriters )
     {
       writer->Update();
     }
+    logger->Log( LogLevel::INF, "Executing ... Done");
   }
   catch( std::exception & e )
   {
+    logger->Log( LogLevel::ERR, "Executing ... Error");
     std::cerr << "error: " << e.what() << "\n";
     return 1;
   }
   catch( ... )
   {
+    logger->Log( LogLevel::ERR, "Executing ... Error");
     std::cerr << "Exception of unknown type!\n";
   }
 
