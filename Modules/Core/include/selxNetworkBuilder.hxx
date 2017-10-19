@@ -53,19 +53,19 @@ NetworkBuilder< ComponentList >::Configure()
 
   if( !this->m_isConfigured )
   {
-    this->m_Logger.Log( LogLevel::INF, "Applying Component Criteria ... " );
+    this->m_Logger.Log( LogLevel::INF, "Applying component criteria ... " );
     this->ApplyComponentConfiguration();
     auto nonUniqueComponentNames = this->GetNonUniqueComponentNames();
     this->m_Logger.Log(  LogLevel::INF,
-                         "Applying Component Criteria ... Done. {0:d} out of {1:d} components could not be uniquely selected.",
-                         nonUniqueComponentNames.size(),
+                         "Applying component criteria ... Done. {0:d} out of {1:d} components was uniquely selected.",
+                         m_Blueprint.GetComponentNames().size()-nonUniqueComponentNames.size(),
                          m_Blueprint.GetComponentNames().size() );
 
-    this->m_Logger.Log( LogLevel::INF, "Applying Connection Criteria ..." );
+    this->m_Logger.Log( LogLevel::INF, "Applying connection criteria ..." );
     this->ApplyConnectionConfiguration();
     nonUniqueComponentNames = this->GetNonUniqueComponentNames();
     this->m_Logger.Log(  LogLevel::INF,
-                         "Applying Connection Criteria ... Done. {0:d} out of {1:d} components could not be uniquely selected.",
+                         "Applying connection criteria ... Done. {0:d} out of {1:d} components could not be uniquely selected.",
                          nonUniqueComponentNames.size(),
                          m_Blueprint.GetComponentNames().size() );
 
@@ -73,8 +73,8 @@ NetworkBuilder< ComponentList >::Configure()
     this->PropagateConnectionsWithUniqueComponents();
     nonUniqueComponentNames = this->GetNonUniqueComponentNames();
     this->m_Logger.Log(  LogLevel::INF,
-                         "Performing handshakes between unique and non-unique Components ... Done. {0:d} out of {1:d} components could not be uniquely selected.",
-                         nonUniqueComponentNames.size(),
+                         "Performing handshakes between unique and non-unique Components ... Done. {0:d} out of {1:d} components was uniquely selected.",
+                         m_Blueprint.GetComponentNames().size()-nonUniqueComponentNames.size(),
                          m_Blueprint.GetComponentNames().size() );
     this->m_isConfigured = true;
   }
@@ -82,7 +82,7 @@ NetworkBuilder< ComponentList >::Configure()
 
   if( nonUniqueComponentNames.size() > 0 )
   {
-    this->m_Logger.Log( LogLevel::CRT, "These Nodes need more criteria: [" );
+    this->m_Logger.Log( LogLevel::CRT, "These nodes need more criteria: [" );
     for( const auto & nonUniqueComponentName : nonUniqueComponentNames )
     {
       this->m_Logger.Log( LogLevel::CRT, "  %s: %d",
@@ -155,11 +155,11 @@ NetworkBuilder< ComponentList >::ApplyComponentConfiguration()
       currentComponentSelector->AddCriterion( criterion );
       
       this->m_Logger.Log( LogLevel::DBG,
-                          "{0} components can connect to {1} where {2} equal {3}.",
-                          currentComponentSelector->NumberOfComponents(),
+                          "Finding component for \"{0}\": {1} component(s) satisfies {2} equal {3} and previous criteria.",
                           name,
+                          currentComponentSelector->NumberOfComponents(),
                           criterion.first,
-                          this->m_Logger << criterion.second );
+                          this->m_Logger.m_StreamToString << criterion.second);
     }
 
     if( currentComponentSelector->NumberOfComponents() == 0 )
@@ -188,51 +188,45 @@ NetworkBuilder< ComponentList >::ApplyConnectionConfiguration()
   // interfaces could still be of different types (including different other template arguments)
 
   BlueprintImpl::ComponentNamesType componentNames = this->m_Blueprint.GetComponentNames();
-  for( auto const & name : componentNames )
+  for( auto const & acceptingComponent : componentNames )
   {
-    for( auto const & outgoingName : this->m_Blueprint.GetOutputNames( name ) )
+    for( auto const & providingComponent : this->m_Blueprint.GetOutputNames( acceptingComponent ) )
     {
-      BlueprintImpl::ParameterMapType connectionProperties = this->m_Blueprint.GetConnection( name, outgoingName );
+      BlueprintImpl::ParameterMapType connectionProperties = this->m_Blueprint.GetConnection( acceptingComponent, providingComponent );
 
-      //TODO:
-      //1: this lambda function converts the blueprint properties: map<string,vector<string>> to interfacecriteria: map<string,string>, consider redesign.
-      //2: connection blueprint->addConnection("myfirstnode","mysecondnode",{{}}) creates connectionProperties {"",[]} which is not an empty map.
+      // TODO: Is there a more elegant alternative to manual convertion between types?
       ComponentBase::InterfaceCriteriaType interfaceCriteria;
-      std::for_each( connectionProperties.begin(), connectionProperties.end(), [ &interfaceCriteria ](
-          BlueprintImpl::ParameterMapType::value_type kv ) mutable {
-          if( kv.second.size() > 0 )
-          {
-            interfaceCriteria[ kv.first ] = kv.second[ 0 ];
-          }
-        } );
-
-      this->m_ComponentSelectorContainer[ name ]->AddProvidingInterfaceCriteria( interfaceCriteria );
-      this->m_ComponentSelectorContainer[ outgoingName ]->AddAcceptingInterfaceCriteria( interfaceCriteria );
-
-      this->m_Logger.Log( LogLevel::DBG, " Has Interface: " );
-      std::for_each( interfaceCriteria.begin(), interfaceCriteria.end(), [ ]( ComponentBase::InterfaceCriteriaType::value_type kv ) mutable {
-          // TODO:  This shows why we need << overloading: "error: 'this' cannot be implicitly captured in this context" when using this->Debug()
-          std::cout << "  { " << kv.first << ": " << kv.second << " }" << std::endl;
-        } 
-      );
-
-      std::ostringstream ss;
-      ss << "  " << this->m_ComponentSelectorContainer[ name ]->NumberOfComponents() << ' ' <<  name << ": Providing"; this->m_Logger.Log( LogLevel::DBG, ss.str() ); ss.str( std::string() );
-      ss << "  " << this->m_ComponentSelectorContainer[ outgoingName ]->NumberOfComponents() << ' ' << outgoingName << ": Accepting"; this->m_Logger.Log( LogLevel::DBG, ss.str() ); ss.str( std::string() );
-
-      if( this->m_ComponentSelectorContainer[ outgoingName ]->NumberOfComponents() == 0 )
+      for( const auto& connectionProperty : connectionProperties )
       {
-        std::stringstream msg;
-        msg << outgoingName << " does not accept a connection of given criteria";
-        this->m_Logger.Log( LogLevel::DBG, msg.str() );
-        throw std::runtime_error( msg.str() );
+        assert( connectionProperty.second.size() <= 1 );
+        if( connectionProperty.second.size() == 1 ) {
+          interfaceCriteria[connectionProperty.first] = connectionProperty.second[0];
+        }
       }
-      if( this->m_ComponentSelectorContainer[ name ]->NumberOfComponents() == 0 )
+
+      this->m_ComponentSelectorContainer[ acceptingComponent ]->AddProvidingInterfaceCriteria( interfaceCriteria );
+      this->m_ComponentSelectorContainer[ providingComponent ]->AddAcceptingInterfaceCriteria( interfaceCriteria );
+
+      if( !interfaceCriteria.empty() )
       {
-        std::stringstream msg;
-        msg << name << " does not provide a connection of given criteria";
-        this->m_Logger.Log( LogLevel::DBG, msg.str() );
-        throw std::runtime_error( msg.str() );
+        this->m_Logger.Log( LogLevel::DBG,
+                            "{0} can connect to {1} via {2}:",
+                            providingComponent,
+                            acceptingComponent,
+                            this->m_Logger.m_StreamToString << interfaceCriteria );
+      }
+
+      if( this->m_ComponentSelectorContainer[ providingComponent ]->NumberOfComponents() == 0 )
+      {
+        std::string msg = providingComponent + "does not provide any connections with the given criteria.";
+        this->m_Logger.Log( LogLevel::ERR, msg );
+        throw std::runtime_error( msg );
+      }
+
+      if( this->m_ComponentSelectorContainer[ acceptingComponent ]->NumberOfComponents() == 0 )
+      {
+        std::string msg = acceptingComponent + "does not accept any connections with the given criteria.";
+        this->m_Logger.Log( LogLevel::ERR, msg );
       }
     }
   }

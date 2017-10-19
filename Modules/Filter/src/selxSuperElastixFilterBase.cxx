@@ -137,17 +137,23 @@ SuperElastixFilterBase
     itkExceptionMacro( << msg.str() )
   }
 
+  this->m_Logger->Log( LogLevel::INF, "Connecting Components ..." );
   this->m_IsConnected =  this->m_NetworkBuilder->ConnectComponents();
+  this->m_Logger->Log( LogLevel::INF, "Connecting Components ... Done" );
 
-  std::cout << "Connecting Components: " << ( this->m_IsConnected ? "succeeded" : "failed" ) << std::endl;
-
+  this->m_Logger->Log( LogLevel::INF, "Searcing for missing connections  ..." );
   bool connectionSatisfied = this->m_NetworkBuilder->CheckConnectionsSatisfied();
-  if( connectionSatisfied == false )
+  this->m_Logger->Log( LogLevel::INF, "Searcing for missing connections ... Done" );
+
+  if( this->m_NetworkBuilder->CheckConnectionsSatisfied() )
   {
+    this->m_Logger->Log( LogLevel::INF, "All required connections are satisfied." );
+  }
+  else
+  {
+    this->m_Logger->Log( LogLevel::CRT, "Missing conections found." );
     itkExceptionMacro( << "One or more components has unsatisfied connections" )
   }
-
-  std::cout << "All Components are satisfied with their connections" << std::endl << std::endl;
 
   for( const auto & nameAndInterface : sinks )
   {
@@ -167,7 +173,7 @@ void
 SuperElastixFilterBase
 ::GenerateData( void )
 {
-  std::cout << "Executing Network:" << std::endl;
+  this->m_Logger->Log( LogLevel::INF, "Executing network ..." );
 
   auto fullyConfiguredNetwork = this->m_NetworkBuilder->GetRealizedNetwork();
   // delete the networkbuilder
@@ -185,6 +191,8 @@ SuperElastixFilterBase
     nameAndObject.second->Update();
     this->GetOutput( nameAndObject.first )->Graft( nameAndObject.second );
   }
+
+  this->m_Logger->Log( LogLevel::INF, "Executing network ... Done" );
 }
 
 
