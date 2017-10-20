@@ -164,19 +164,15 @@ ItkToNiftiImage< ItkImageType, NiftiPixelType >::Convert( typename ItkImageType:
     throw std::runtime_error( msg.str() );
   }
 
-  typename ItkImageType::PixelContainerPointer pixelContainer = input->GetPixelContainer();
+  const bool wasCopied = TransferImageData(input->GetBufferPointer(), output );
 
-  bool wasCopied = TransferImageData( pixelContainer->GetBufferPointer(), output );
-
-  if( !wasCopied )
-  {
-    // Take ownership of the pixelbuffer
-    pixelContainer->ContainerManageMemoryOff();
-  }
-
-  //std::shared_ptr< nifti_image > ptr(output, [](nifti_image* ptr){nifti_image_free(ptr); ptr = NULL; });
-  std::shared_ptr< nifti_image > ptr(output);
-  return ptr;
+  // If the data was not copied to the nifti_image, it is shared between the ITK image and the nifti_image. Therefore, in that case, 
+  // the ITK image is captured by the deleter of the shared_ptr, to ensure the lifetime of the ITK Image is extended to the end of 
+  // the nifti_image lifetime. Note that in that case nifti_image_free should free all dynamically allocated memory of nifti_image 
+  // except for its data, therefore its data pointer is in that case set to null. 
+  return wasCopied ?
+    std::shared_ptr< nifti_image >(output, nifti_image_free):
+    std::shared_ptr< nifti_image >(output, [input](nifti_image* ptr) { ptr->data = nullptr; nifti_image_free(ptr); });
 }
 
 
