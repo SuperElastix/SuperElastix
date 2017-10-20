@@ -107,7 +107,7 @@ NiftyregSplineToDisplacementFieldComponent<  TPixel >
     );
 
   reg_getDisplacementFromDeformation(outputTransformationImage);
-  this->m_displacement_image = std::shared_ptr< nifti_image >(outputTransformationImage, [](nifti_image* ptr){nifti_image_free(ptr); ptr = NULL; });
+  this->m_displacement_image = std::shared_ptr< nifti_image >(outputTransformationImage, [](nifti_image* ptr){nifti_image_free(ptr); });
   
   return;
 }
