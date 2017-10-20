@@ -206,7 +206,7 @@ Niftyregf3dComponent<  TPixel >
       }
       else
       {
-        this->Warning( "Criterion {0} has invalid value {1}.", criterion.first, criterion.second );
+        this->Warning( "Criterion {0} has invalid value.", criterion.first );
         return false;
       }
     }
@@ -246,7 +246,7 @@ Niftyregf3dComponent<  TPixel >
       }
       else
       {
-        this->Warning( "Criterion {0} has invalid value {1}.", criterion.first, criterion.second );
+        this->Warning( "Criterion {0} has invalid value.", criterion.first);
         return false;
       }
     }
