@@ -57,9 +57,9 @@ public:
   typedef std::shared_ptr< nifti_image >                 NiftiImagePointer;
 
   typedef NiftyregDisplacementFieldImageInterface< TPixel >             NiftiDisplacementFieldInterfaceType;
-  typedef typename itk::Image< itk::Vector< TPixel, Dimensionality >, Dimensionality >    ItkDisplacementFieldType;
+  typedef itk::Image< itk::Vector< TPixel, Dimensionality >, Dimensionality >    ItkDisplacementFieldType;
   typedef typename ItkDisplacementFieldType::Pointer                                     ItkDisplacementFieldPointer;
-  typedef typename itk::ImageFileWriter< ItkDisplacementFieldType >                      ItkDisplacementFieldWriterType;
+  typedef itk::ImageFileWriter< ItkDisplacementFieldType >                      ItkDisplacementFieldWriterType;
   typedef FileWriterDecorator< ItkDisplacementFieldWriterType >                          DecoratedWriterType;
 
   typedef itk::ImportImageFilter< itk::Vector< TPixel, Dimensionality >, Dimensionality > ImportFilterType;
