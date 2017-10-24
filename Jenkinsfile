@@ -42,8 +42,8 @@ node('shark') {
 				checkout scm
 			}
 		}
-		stage('Build') {
-			dir('build') {
+		stage('Shark') {
+			dir('src') {
 				echo 'Trying to submit to Shark!'
 				sh 'qsub SuperElastix_job.sh'
 			}
