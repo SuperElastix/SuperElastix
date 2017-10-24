@@ -66,7 +66,7 @@ public:
   	}
   }
 
-  StreamToString m_StreamToString;
+  StreamToString & StreamToString( void );
 
 private:
 
@@ -81,6 +81,7 @@ private:
 	LoggerVectorType m_Loggers;
 
   // Helper functions for converting complex types to string
+  class StreamToString m_StreamToString;
 };
 
 } // namespace

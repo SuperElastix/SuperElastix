@@ -162,4 +162,11 @@ LoggerImpl
   }
 }
 
+StreamToString &
+LoggerImpl
+::StreamToString( void )
+{
+  return this->m_StreamToString;
+}
+
 } // namespace

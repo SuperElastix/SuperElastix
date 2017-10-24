@@ -21,12 +21,13 @@
 #define ConfigurationReader_cxx
 
 #include "selxConfigurationReader.h"
+#include "selxLoggerImpl.h"
 #include <ostream>
 
 namespace selx
 {
 ConfigurationReader::ParameterValueType
-ConfigurationReader::VectorizeValues( const ComponentOrConnectionTreeType & componentOrConnectionTree )
+ConfigurationReader::VectorizeValues( ComponentOrConnectionTreeType & componentOrConnectionTree )
 {
   std::string        propertySingleValue = componentOrConnectionTree.data();
   ParameterValueType propertyMultiValue;
@@ -55,7 +56,7 @@ ConfigurationReader::FromFile(const PathType & fileName)
   LoggerImpl logger;
 
   logger.Log( LogLevel::INF, "Loading {0} ... ");
-
+  auto propertyTree = ReadPropertyTree(fileName);
   logger.Log( LogLevel::INF, "Loading {0} ... Done");
 
   logger.Log( LogLevel::INF, "Checking {0} for include files ... ", fileName);
@@ -84,8 +85,10 @@ ConfigurationReader::FromFile(const PathType & fileName)
 void
 ConfigurationReader::MergeFromFile(BlueprintImplPointer blueprint, const PathType & fileName)
 {
+  LoggerImpl logger;
+
   logger.Log( LogLevel::INF, "Loading {0} ... ", fileName);
-  auto propertyTree = ReadPropertyTree(filename);
+  auto propertyTree = ReadPropertyTree(fileName);
   logger.Log( LogLevel::INF, "Loading {0} ... Done", fileName);
 
   logger.Log( LogLevel::INF, "Checking {0} for include files ... ", fileName);
@@ -181,7 +184,7 @@ ConfigurationReader::FromPropertyTree( const PropertyTreeType & pt )
     if( connectionName != "" )
     {
       // TODO: Why is it ignored?
-      logger->Log( LogLevel::WRN, "Connection {0} is ignored.", connectionName);
+      logger.Log( LogLevel::WRN, "Connection {0} is ignored.", connectionName);
     }
     std::string      outName;
     std::string      inName;
@@ -203,7 +206,7 @@ ConfigurationReader::FromPropertyTree( const PropertyTreeType & pt )
       }
       else if( connectionKey == "Name" )
       {
-        logger->Log( LogLevel::WRN, "Connections with key 'Name' are ignored.");
+        logger.Log( LogLevel::WRN, "Connections with key 'Name' are ignored.");
         continue;
       }
       else
@@ -222,6 +225,7 @@ ConfigurationReader::FromPropertyTree( const PropertyTreeType & pt )
 void
 ConfigurationReader::MergeProperties(BlueprintImplPointer blueprint, const PropertyTreeType & pt)
 {
+  LoggerImpl logger;
   BOOST_FOREACH(const PropertyTreeType::value_type & v, pt.equal_range("Component"))
   {
     std::string      componentName;
@@ -295,7 +299,7 @@ ConfigurationReader::MergeProperties(BlueprintImplPointer blueprint, const Prope
     std::string connectionName = v.second.data();
     if (connectionName != "")
     {
-      logger->Log( LogLevel::WRN, "Connection {0} is ignored.", connectionName);
+      logger.Log( LogLevel::WRN, "Connection {0} is ignored.", connectionName);
     }
     std::string      outName;
     std::string      inName;
@@ -317,7 +321,7 @@ ConfigurationReader::MergeProperties(BlueprintImplPointer blueprint, const Prope
       }
       else if (connectionKey == "Name")
       {
-        logger->Log( LogLevel::WRN, "Connections with key 'Name' are ignored.");
+        logger.Log( LogLevel::WRN, "Connections with key 'Name' are ignored.");
         continue;
       }
       else
