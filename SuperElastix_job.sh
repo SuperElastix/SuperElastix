@@ -1,12 +1,12 @@
 #!/bin/bash 
 #$ -S /bin/bash 
 #$ -q all.q 
-#$ -N my_first_job
+#$ -N SuperElastix_job
 #$ -cwd
 #$ -j Y
 #$ -V
 #$ -m be
-#$ -M email@address.lumc 
+#$ -M N.Dekker@lumc.nl 
 
 echo Start time : `date` 
 echo 'Starting job...' 
