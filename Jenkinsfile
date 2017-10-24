@@ -30,7 +30,7 @@ def updateGithubCommitStatus(build) {
 }
 
 
-node('lkeb-vm-test') {
+node('shark') {
 	stage('Init') {
 		echo 'Skipped initializing!'
 	}
@@ -44,7 +44,8 @@ node('lkeb-vm-test') {
 		}
 		stage('Build') {
 			dir('build') {
-				echo 'Skipped building!'
+				echo 'Trying to submit to Shark!'
+				sh 'qsub SuperElastix_job.sh'
 			}
 		}
 		dir('src') {
