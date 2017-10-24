@@ -36,8 +36,8 @@ set( ${APPLICATION}_MODULE_DEPENDENCIES
   ModuleFilter
 )
 
-set( ${MODULE}_TEST_SOURCE_FILES
-  ${${MODULE}_SOURCE_DIR}/test/selxConfigurationReader.cxx
+set( ${APPLICATION}_TEST_SOURCE_FILES
+  ${${APPLICATION}_SOURCE_DIR}/test/selxConfigurationReaderTest.cxx
 )
 
 set( ${APPLICATION}_INTEGRATION_TEST_SOURCE_FILES 
