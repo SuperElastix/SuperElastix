@@ -2,6 +2,8 @@
 #$ -S /bin/bash 
 #$ -q all.q 
 #$ -N SuperElastix_job
+#$ -pe BWA 1
+#$ -l h_vmem=1g
 #$ -cwd
 #$ -j Y
 #$ -V
