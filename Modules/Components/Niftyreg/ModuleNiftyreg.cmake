@@ -53,6 +53,7 @@ set( ${MODULE}_TEST_SOURCE_FILES
   ${${MODULE}_SOURCE_DIR}/test/selxNiftyregComponentTest.cxx
   ${${MODULE}_SOURCE_DIR}/test/selxNiftiNameManglingTest.cxx
   ${${MODULE}_SOURCE_DIR}/test/selxItkNiftiUser.cxx
+  ${${MODULE}_SOURCE_DIR}/test/selxNiftiItkConversionsTest.cxx
 )
 
 set( ${MODULE}_LIBRARIES 
