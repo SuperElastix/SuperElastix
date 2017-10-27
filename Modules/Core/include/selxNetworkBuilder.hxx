@@ -25,7 +25,7 @@
 namespace selx
 {
 template< typename ComponentList >
-NetworkBuilder< ComponentList >::NetworkBuilder( LoggerImpl & logger, BlueprintImpl & blueprint ) : m_Logger( logger ), m_isConfigured( false ), m_Blueprint( blueprint ), m_Name( "NetworkBuilder" )
+NetworkBuilder< ComponentList >::NetworkBuilder( LoggerImpl & logger, BlueprintImpl & blueprint ) : m_Logger( logger ), m_isConfigured( false ), m_Blueprint( blueprint )
 {
 }
 
