@@ -254,6 +254,8 @@ SuperElastixFilterBase
     OutputDataType::Pointer newOutput = this->m_NetworkBuilder->GetInitializedOutput( outputName );
     this->Modified();
 
+    // SetOutput stores this dataObject in the OutputObject list of SuperElastixFilter
+    // By pointing m_source of the objects to SuperElastixFilter it makes SuperElastixFilter update when Object is requested to update.
     Superclass::SetOutput( outputName, newOutput );
 
     return newOutput;
