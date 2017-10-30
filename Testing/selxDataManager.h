@@ -23,6 +23,7 @@
 #include <string>
 #include "itkLightObject.h"
 #include "selxDataDirectories.h"
+#include "itkObjectFactory.h"
 
 class DataManager : public itk::LightObject
 {

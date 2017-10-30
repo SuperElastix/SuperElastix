@@ -19,8 +19,14 @@
 
 #include "gtest/gtest.h"
 
+#include "selxDataManager.h"
+
 #include "selxItkToNiftiImage.h"
 #include "selxNiftiToItkImage.h"
+#include "_reg_ReadWriteImage.h"
+
+#include "itkImageFileReader.h"
+#include "itkTestingComparisonImageFilter.h"
 
 namespace selx
 {
@@ -35,12 +41,13 @@ public:
 
   virtual void SetUp() override
   {
+    dataManager = DataManager::New();
   }
-
 
   virtual void TearDown() override
   {
   }
+  DataManager::Pointer dataManager;
 };
 
 TEST_F(NiftiItkConversionsTest, ItkToNiftiImageSharedDataRemoveNifti)
@@ -96,12 +103,47 @@ TEST_F(NiftiItkConversionsTest, ItkToNiftiImageCopiedData)
   auto initialRefCount = itkImage->GetReferenceCount();
 
   itkImage->SetRegions({ 16, 16, 16 });
-  itkImage->Allocate(true);
-  {
-    auto niftiImage = selx::ItkToNiftiImage<itkImageType, float>::Convert(itkImage);
-    // data is copied, the refcount of the itkimage is not increased
-    ASSERT_EQ(initialRefCount, itkImage->GetReferenceCount());
-  }
+  itkImage->Allocate(); // initializePixels = true has no effect for vector images
+
+  itk::Vector<float, 3>* itkImageData = itkImage->GetBufferPointer();
+  itkImageData[0][0] = 0.0f;
+
+  auto niftiImage = selx::ItkToNiftiImage<itkImageType, float>::Convert(itkImage);
+  // data is copied, the refcount of the itkimage is not increased
+  ASSERT_EQ(initialRefCount, itkImage->GetReferenceCount());
+
+  auto niftiImageData = static_cast<float*>(niftiImage->data);
+
+  ASSERT_EQ(0, niftiImageData[0]);
+  ASSERT_EQ(0, itkImageData[0][0]);
+
+  niftiImageData[0] = 1.0f;
+  itkImageData[0][0] = 2.0f;
+
+  ASSERT_EQ(1.0f, niftiImageData[0]);
+  ASSERT_EQ(2.0f, itkImageData[0][0]);
+}
+
+TEST_F(NiftiItkConversionsTest, NiftiToItkImage)
+{
+  // ordinary itk images have the same data layout as nifti images, so data will be shared
+  std::string fileName("r16slice.nii.gz");
+  using itkImageType = itk::Image<float, 2>;
+  itkImageType::Pointer itkImage;
+  { // nifti_image only exists in this scope
+    std::shared_ptr< nifti_image > niftiImage(reg_io_ReadImageFile(this->dataManager->GetInputFile(fileName).c_str()), nifti_image_free);
+    itkImage = selx::NiftiToItkImage<itkImageType, float>::Convert(niftiImage); 
+  } // itkImage should live
+
+  // access all data in itkImage by a compareFilter to see if it persisted.
+  auto compareFilter = itk::Testing::ComparisonImageFilter<itkImageType, itkImageType>::New();
+  compareFilter->SetTestInput(itkImage);
+
+  auto itkReader = itk::ImageFileReader<itkImageType>::New();
+  itkReader->SetFileName(fileName);
+  compareFilter->SetValidInput(itkReader->GetOutput());
+
+  ASSERT_EQ(0.0f, compareFilter->GetTotalDifference());
 }
 
 }
