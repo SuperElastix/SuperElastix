@@ -20,7 +20,7 @@
 #ifndef selxStreamToString_h
 #define selxStreamToString_h
 
-#endif // selxStreamToString_h
+#include <iterator>
 
 class StreamToString
 {
@@ -70,3 +70,5 @@ public:
     return out.str();
   }
 };
+
+#endif // selxStreamToString_h
