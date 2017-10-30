@@ -8,6 +8,7 @@ clone_folder: c:\superelastix-source
 configuration:
   - Release
 platform:
+  - x86
   - x64
 environment:
   ITK_URL: https://github.com/InsightSoftwareConsortium/ITK
@@ -25,7 +26,7 @@ cache:
   - '%ELASTIX_BUILD_DIR%'
 build_script:
   - cmd: if not exist %ITK_SOURCE_DIR% git clone %ITK_URL% %ITK_SOURCE_DIR% && cd %ITK_SOURCE_DIR% && git checkout v4.12.2
-  - cmd: if not exist %ITK_BUILD_DIR% mkdir -p %ITK_BUILD_DIR% && cd %ITK_BUILD_DIR% && cmake -G "Visual Studio 12 2013 Win64" -DBUILD_EXAMPLES=OFF -DBUILD_TESTING:BOOL=OFF -DITK_BUILD_DEFAULT_MODULES:BOOL=OFF -DITKGroup_IO:BOOL=ON -DModule_ITKDistanceMap:BOOL=ON -DModule_ITKImageFusion:BOOL=ON -DModule_ITKLabelMap:BOOL:=ON -DModule_ITKMathematicalMorphology:BOOL=ON -DModule_ITKOptimizers:BOOL=ON -DModule_ITKOptimizersv4:BOOL=ON -DModule_ITKRegistrationCommon:BOOL=ON -DModule_ITKVideoIO:BOOL=ON-DCMAKE_BUILD_TYPE=Release %ITK_SOURCE_DIR% && cmake --build . --config Release -- /m
-  - cmd: if not exist %ELASTIX_SOURCE_DIR% git clone %ELASTIX_URL% %ELASTIX_SOURCE_DIR% && cd %ELASTIX_SOURCE_DIR%
-  - cmd: if not exist %ELATIX_BUILD_DIR% mkdir -p %ELASTIX_BUILD_DIR% && cd %ELASTIX_BUILD_DIR% && cmake -G "Visual Studio 12 2013 Win64" -DITK_DIR=%ITK_BUILD_DIR% -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF %ELASTIX_SOURCE_DIR% && cmake --build . --config Release -- /m && ctest -j4 -VV -C Release
-  - cmd: mkdir -p %SUPERELASTIX_BUILD_DIR% && cd %SUPERELASTIX_BUILD_DIR% && cmake -G "Visual Studio 12 2013 Win64" -DUSE_SYSTEM_ITK=ON -DITK_DIR=%ITK_BUILD_DIR% -DUSE_SYSTEM_ELASTIX=ON -DELASTIX_DIR=%ELASTIX_BUILD_DIR% -DCMAKE_BUILD_TYPE=Release %SUPERELASTIX_SOURCE_DIR% && cmake --build . --config Release -- /m && cd SuperElastix-build && ctest -j4 -VV -C Release
+  - cmd: if not exist %ITK_BUILD_DIR% mkdir -p %ITK_BUILD_DIR% && cd %ITK_BUILD_DIR% && cmake -DBUILD_EXAMPLES=OFF -DBUILD_TESTING:BOOL=OFF -DITK_BUILD_DEFAULT_MODULES:BOOL=OFF -DITKGroup_IO:BOOL=ON -DModule_ITKDistanceMap:BOOL=ON -DModule_ITKImageFusion:BOOL=ON -DModule_ITKLabelMap:BOOL:=ON -DModule_ITKMathematicalMorphology:BOOL=ON -DModule_ITKOptimizers:BOOL=ON -DModule_ITKOptimizersv4:BOOL=ON -DModule_ITKRegistrationCommon:BOOL=ON -DModule_ITKVideoIO:BOOL=ON-DCMAKE_BUILD_TYPE=Release %ITK_SOURCE_DIR% && cmake --build . --config Release -- /m
+  - cmd: if not exist %ELASTIX_SOURCE_DIR% git clone %ELASTIX_URL% %ELASTIX_SOURCE_DIR% && cd %ELASTIX_SOURCE_DIR% && git checkout e8354222396c6bd78e9fe6d5a39e4ecac4bb0d52
+  - cmd: if not exist %ELATIX_BUILD_DIR% mkdir -p %ELASTIX_BUILD_DIR% && cd %ELASTIX_BUILD_DIR% && cmake -DITK_DIR=%ITK_BUILD_DIR% -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF %ELASTIX_SOURCE_DIR% && cmake --build . --config Release -- /m && ctest -j4 -VV -C Release
+  - cmd: mkdir -p %SUPERELASTIX_BUILD_DIR% && cd %SUPERELASTIX_BUILD_DIR% && cmake -DUSE_SYSTEM_ITK=ON -DITK_DIR=%ITK_BUILD_DIR% -DUSE_SYSTEM_ELASTIX=ON -DELASTIX_DIR=%ELASTIX_BUILD_DIR% -DCMAKE_BUILD_TYPE=Release %SUPERELASTIX_SOURCE_DIR% && cmake --build . --config Release -- /m && cd SuperElastix-build && ctest -j4 -VV -C Release
