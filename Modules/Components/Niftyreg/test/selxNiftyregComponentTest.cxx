@@ -30,6 +30,7 @@
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 #include "selxNiftyregf3dComponent.h"
+#include "selxNiftyregAladinComponent.h"
 #include "selxDataManager.h"
 #include "gtest/gtest.h"
 
@@ -54,6 +55,7 @@ public:
     ItkToNiftiImageSourceComponent< 3, float >,
     NiftiToItkImageSinkComponent< 3, float >,
     ItkImageSourceComponent< 3, float >,
+    NiftyregAladinComponent< float >,
     RegistrationControllerComponent< >> RegisterComponents;
 
   typedef SuperElastixFilterCustomComponents< RegisterComponents > SuperElastixFilterType;
@@ -246,6 +248,55 @@ TEST_F( NiftyregComponentTest, WBIRDemo )
 
   ImageWriter2DType::Pointer resultImageWriter = ImageWriter2DType::New();
   resultImageWriter->SetFileName( dataManager->GetOutputFile( "Niftyreg_WBIR_Image.mhd" ) );
+
+  //DisplacementImageWriter2DType::Pointer resultDisplacementWriter = DisplacementImageWriter2DType::New();
+  //resultDisplacementWriter->SetFileName(dataManager->GetOutputFile("Niftyreg_WBIR_Displacement.mhd"));
+
+  // Connect SuperElastix in an itk pipeline
+  superElastixFilter->SetInput( "FixedImage", fixedImageReader->GetOutput() );
+  superElastixFilter->SetInput( "MovingImage", movingImageReader->GetOutput() );
+  resultImageWriter->SetInput( superElastixFilter->GetOutput< Image2DType >( "ResultImage" ) );
+  //resultDisplacementWriter->SetInput(superElastixFilter->GetOutput< DisplacementImage2DType >("ResultDisplacementFieldSink"));
+
+  EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
+
+  // Update call on the writers triggers SuperElastix to configure and execute
+  EXPECT_NO_THROW(resultImageWriter->Update());
+}
+
+TEST_F( NiftyregComponentTest, AladinWBIRDemo )
+{
+  /** make example blueprint configuration */
+  BlueprintPointer blueprint = Blueprint::New();
+
+  blueprint->SetComponent( "RegistrationMethod", { { "NameOfClass", { "NiftyregAladinComponent" } } } );
+  blueprint->SetComponent( "FixedImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "Dimensionality", { "2" } }, { "PixelType", { "float" } } } );
+  blueprint->SetComponent( "MovingImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "Dimensionality", { "2" } }, { "PixelType", { "float" } } } );
+  blueprint->SetComponent( "ResultImage", { { "NameOfClass", { "NiftiToItkImageSinkComponent" } }, { "Dimensionality", { "2" } }, { "PixelType", { "float" } } } );
+  blueprint->SetComponent( "Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } } );
+
+  blueprint->SetConnection( "FixedImage", "RegistrationMethod", { { "NameOfInterface", { "NiftyregReferenceImageInterface" } } } );
+  blueprint->SetConnection( "MovingImage", "RegistrationMethod", { { "NameOfInterface", { "NiftyregFloatingImageInterface" } } } );
+  blueprint->SetConnection( "FixedImage", "ResultImage", { { "NameOfInterface", { "itkImageDomainFixedInterface" } } } );
+  blueprint->SetConnection( "RegistrationMethod", "ResultImage", { { "NameOfInterface", { "NiftyregWarpedImageInterface" } } } );
+  blueprint->SetConnection( "RegistrationMethod", "Controller", { {} } );
+  blueprint->SetConnection( "ResultImage", "Controller", { {} } );
+
+  blueprint->Write( dataManager->GetOutputFile( "NiftyregAladin_WBIR.dot" ) );
+
+  // Set up the readers and writers
+  typedef itk::Image< float, 2 >              Image2DType;
+  typedef itk::ImageFileReader< Image2DType > ImageReader2DType;
+  typedef itk::ImageFileWriter< Image2DType > ImageWriter2DType;
+
+  ImageReader2DType::Pointer fixedImageReader = ImageReader2DType::New();
+  fixedImageReader->SetFileName( dataManager->GetInputFile( "coneA2d64.mhd" ) );
+
+  ImageReader2DType::Pointer movingImageReader = ImageReader2DType::New();
+  movingImageReader->SetFileName( dataManager->GetInputFile( "coneB2d64.mhd" ) );
+
+  ImageWriter2DType::Pointer resultImageWriter = ImageWriter2DType::New();
+  resultImageWriter->SetFileName( dataManager->GetOutputFile( "NiftyregAladin_WBIR_Image.mhd" ) );
 
   //DisplacementImageWriter2DType::Pointer resultDisplacementWriter = DisplacementImageWriter2DType::New();
   //resultDisplacementWriter->SetFileName(dataManager->GetOutputFile("Niftyreg_WBIR_Displacement.mhd"));
