@@ -120,6 +120,6 @@ ExternalProject_Add( ${proj}
 )
 
 ExternalProject_Get_Property( Elastix binary_dir )
-set( ELASTIX_USE_FILE "${binary_dir}/UseElastix.cmake" )
+set( Elastix_DIR "${binary_dir}" )
 
 list( APPEND SUPERELASTIX_DEPENDENCIES ${proj} )
