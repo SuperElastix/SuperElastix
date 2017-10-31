@@ -97,6 +97,17 @@ function(UPDATE_SELX_SUPERBUILD_COMMAND proj)
   endif()
 endfunction()
 
+option( SUPERELASTIX_USE_OPENMP "If available, use OpenMP to speed up components that support it." OFF )
+mark_as_advanced( SUPERELASTIX_USE_OPENMP )
+
+if(SUPERELASTIX_USE_OPENMP)
+  find_package(OpenMP QUIET)
+  if( OPENMP_FOUND )
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+  endif()
+endif()
+
 # ---------------------------------------------------------------------
 # Build ITK
 
@@ -117,20 +128,19 @@ endif()
 # ---------------------------------------------------------------------
 # Build Elastix
 
-mark_as_advanced( USE_SYSTEM_ELASTIX )
-option( USE_SYSTEM_ELASTIX "Use an installed version of elastix" OFF )
-if( USE_SYSTEM_ELASTIX )
-  if( NOT EXISTS ${ELASTIX_USE_FILE} )
-    # Also try ELASTIX_DIR
-    set( ELASTIX_USE_FILE ${ELASTIX_DIR}/UseElastix.cmake )
-  endif()
+option(USE_SYSTEM_ELASTIX "Use system install of elastix." OFF)
+mark_as_advanced(USE_SYSTEM_ELASTIX)
 
-  if( NOT EXISTS ${ELASTIX_USE_FILE} )
-    set( ELASTIX_USE_FILE "NOT_FOUND" CACHE FILEPATH "Absolute path to UseElastix.cmake." )
-    message( FATAL_ERROR "Could not find the ELASTIX_USE_FILE (${ELASTIX_USE_FILE}). Use the SuperBuild or manually point the ELASTIX_USE_FILE CMake variable to the UseElastix.cmake file in root directory of your Elastix build tree." )
+if(USE_SYSTEM_ELASTIX)
+  if(SUPERELASTIX_USE_OPENMP != ELASTIX_USE_OPENMP)
+    message( FATAL_ERROR "Elastix was compiled with ELASTIX_USE_OPENMP set to ${ELASTIX_USE_OPENMP} while"
+      "SUPERELASTIX_USE_OPENMP is set to ${SUPERELASTIX_USE_OPENMP}" )
   endif()
+  find_package(Elastix)
+  include(${ELASTIX_USE_FILE})
 else()
-  include( ExternalElastix )
+  include(ExternalElastix)
+  list(APPEND ${CMAKE_PROJECT_NAME}_DEPENDENCIES Elastix)
 endif()
 
 # ---------------------------------------------------------------------
