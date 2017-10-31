@@ -33,7 +33,6 @@ endif()
 # Build tests
 
 foreach( ModuleTestSourceFileNames ${SUPERELASTIX_TEST_SOURCE_FILES} )
-  message(STATUS "ModuleTestSourceFileNames: ${ModuleTestSourceFileNames}")
   # Get module name
   string( FIND ${ModuleTestSourceFileNames} "_" FIRST_UNDERSCORE_POS )
   string( SUBSTRING ${ModuleTestSourceFileNames} 0 ${FIRST_UNDERSCORE_POS} ModuleName )

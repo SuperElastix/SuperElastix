@@ -119,7 +119,7 @@ ExternalProject_Add( ${proj}
   BUILD_COMMAND ${SELX_SUPERBUILD_COMMAND}
 )
 
-ExternalProject_Get_Property( Elastix binary_dir )
+ExternalProject_Get_Property( ${proj} binary_dir )
 set( Elastix_DIR "${binary_dir}" )
 
 list( APPEND SUPERELASTIX_DEPENDENCIES ${proj} )

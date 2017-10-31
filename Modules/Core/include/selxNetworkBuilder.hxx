@@ -87,7 +87,7 @@ NetworkBuilder< ComponentList >::Configure()
 
   if( nonUniqueComponentNames.size() > 0 )
   {
-    this->m_Logger.Log( LogLevel::CRT, ( this->m_Logger.StreamToString() << nonUniqueComponentNames ) + " need more criteria." );
+    this->m_Logger.Log( LogLevel::CRT, ( this->m_Logger << nonUniqueComponentNames ) + " need more criteria." );
     return false;
   }
 
@@ -154,7 +154,7 @@ NetworkBuilder< ComponentList >::ApplyComponentConfiguration()
                           componentName,
                           currentComponentSelector->NumberOfComponents(),
                           criterion.first,
-                          this->m_Logger.StreamToString() << criterion.second);
+                          this->m_Logger << criterion.second);
     }
 
     if( currentComponentSelector->NumberOfComponents() == 0 )
@@ -204,10 +204,10 @@ NetworkBuilder< ComponentList >::ApplyConnectionConfiguration()
       if( !interfaceCriteria.empty() )
       {
         this->m_Logger.Log( LogLevel::DBG,
-                            "{0} can connect to {1} via {2}:",
+                            "{0} can connect to {1} via {2}.",
                             providingComponentName,
                             acceptingComponentName,
-                            this->m_Logger.StreamToString() << interfaceCriteria );
+                            this->m_Logger << interfaceCriteria );
       }
 
       if( this->m_ComponentSelectorContainer[ acceptingComponentName ]->NumberOfComponents() == 0 )

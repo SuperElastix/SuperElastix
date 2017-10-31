@@ -21,7 +21,6 @@
 #define selxLoggerImpl_h
 
 #include "selxLogger.h"
-#include "selxStreamToString.h"
 
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/ostream_sink.h"
@@ -66,7 +65,49 @@ public:
   	}
   }
 
-  StreamToString & StreamToString( void );
+  // Stream std:vector to string
+  // TODO: Use std::copy_n to print [n1, n2, ... , n-1, n] if vector is long
+  template < typename T >
+  std::string operator<<( const std::vector< T >& v ) {
+    std::ostringstream out;
+    if( !v.empty() ) {
+      if( v.size() > 1 ) out << '[';
+      std::copy( v.begin(), v.end(), std::ostream_iterator< T >( out, ", " ) );
+      out << "\b\b";
+      if( v.size() > 1 ) out << "]";
+    }
+    return out.str();
+  }
+
+  // Stream std::map< T, T > to string
+  template < typename T >
+  std::string operator<<( const std::map< T, T >& m ) {
+    std::ostringstream out;
+    if( !m.empty() ) {
+      out << "{";
+      for( const auto& item : m )
+      {
+        out << item.first << ": " << item.second << ", ";
+      }
+      out << "\b\b}";
+    }
+    return out.str();
+  }
+
+  // Stream std::map< T, std::vector< T > > to string
+  template < typename T >
+  std::string operator<<( const std::map< T, std::vector< T > >& m ) {
+    std::ostringstream out;
+    if( !m.empty() ) {
+      out << "{";
+      for( const auto& item : m )
+      {
+        out << item.first << ": " << this << item.second << ", ";
+      }
+      out << "\b\b}";
+    }
+    return out.str();
+  }
 
 private:
 
@@ -80,8 +121,6 @@ private:
   typedef std::map< std::string, LoggerType > LoggerVectorType;
 	LoggerVectorType m_Loggers;
 
-  // Helper functions for converting complex types to string
-  class StreamToString m_StreamToString;
 };
 
 } // namespace

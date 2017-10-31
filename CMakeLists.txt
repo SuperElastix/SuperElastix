@@ -184,11 +184,11 @@ endif()
 # ---------------------------------------------------------------------
 # Documentation
 
+option( BUILD_DOXYGEN "Build Doxygen documentation." OFF )
 mark_as_advanced( BUILD_DOXYGEN )
-option( BUILD_DOXYGEN "Enable building Doxygen documentation." OFF )
 
+option( BUILD_READTHEDOCS "Build readthedocs.org documentation." OFF )
 mark_as_advanced( BUILD_READTHEDOCS )
-option( BUILD_READTHEDOCS "Enable building readthedocs.org documentation." OFF )
 
 # ---------------------------------------------------------------------
 # Installation

@@ -24,7 +24,7 @@ namespace selx
 {
 
 LoggerImpl
-::LoggerImpl() : m_Loggers(), m_AsyncQueueSize( 262144 ), m_AsyncQueueOverflowPolicy( spdlog::async_overflow_policy::block_retry ), m_StreamToString()
+::LoggerImpl() : m_Loggers(), m_AsyncQueueSize( 262144 ), m_AsyncQueueOverflowPolicy( spdlog::async_overflow_policy::block_retry )
 {
   this->SetSyncMode();
   this->SetPattern( "[%Y-%m-%d %H:%M:%S.%f] [thread %t] [%l] %v" );
@@ -160,13 +160,6 @@ LoggerImpl
   {
     identifierAndLogger.second->log( spdLogLevel, message.c_str() );
   }
-}
-
-StreamToString &
-LoggerImpl
-::StreamToString( void )
-{
-  return this->m_StreamToString;
 }
 
 } // namespace
