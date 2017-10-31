@@ -132,10 +132,6 @@ option( USE_SYSTEM_ELASTIX "Use system install of elastix." OFF )
 mark_as_advanced( USE_SYSTEM_ELASTIX )
 
 if( USE_SYSTEM_ELASTIX )
-  if( NOT SUPERELASTIX_USE_OPENMP EQUAL ELASTIX_USE_OPENMP )
-    message( FATAL_ERROR "Elastix was compiled with ELASTIX_USE_OPENMP set to ${ELASTIX_USE_OPENMP} while"
-      "SUPERELASTIX_USE_OPENMP is set to ${SUPERELASTIX_USE_OPENMP}" )
-  endif()
   find_package( Elastix )
   include( ${ELASTIX_USE_FILE} )
 else()
