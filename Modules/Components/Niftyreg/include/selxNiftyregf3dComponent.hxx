@@ -43,7 +43,6 @@ Niftyregf3dComponent< TPixel >
 {
   // store the shared_ptr to the data, otherwise it gets freed
   this->m_reference_image = component->GetReferenceNiftiImage();
-  // connect the itk pipeline
   this->m_reg_f3d->SetReferenceImage( this->m_reference_image.get() );
   return 0;
 }
@@ -56,11 +55,18 @@ Niftyregf3dComponent< TPixel >
 {
   // store the shared_ptr to the data, otherwise it gets freed
   this->m_floating_image = component->GetFloatingNiftiImage();
-  // connect the itk pipeline
   this->m_reg_f3d->SetFloatingImage( this->m_floating_image.get() );
   return 0;
 }
 
+template< class TPixel >
+int
+Niftyregf3dComponent< TPixel >
+::Set(typename NiftyregAffineMatrixInterface< TPixel >::Pointer component)
+{
+  this->m_NiftyregAffineMatrixInterface = component;
+  return 0;
+}
 
 template< class TPixel >
 std::shared_ptr< nifti_image >
@@ -80,12 +86,15 @@ Niftyregf3dComponent< TPixel >
 
 template< class TPixel >
 void
-Niftyregf3dComponent<  TPixel >
+Niftyregf3dComponent< TPixel >
 ::RunRegistration()
 {
   //this->m_reg_f3d->UseSSD( 0, true );
   //this->m_reg_f3d->UseCubicSplineInterpolation();
-
+  if (this->m_NiftyregAffineMatrixInterface)
+  {
+    this->m_reg_f3d->SetAffineTransformation(this->m_NiftyregAffineMatrixInterface->GetAffineNiftiMatrix());
+  }
   this->m_reg_f3d->Run();
   nifti_image ** outputWarpedImage = m_reg_f3d->GetWarpedImage();
   memset( outputWarpedImage[ 0 ]->descrip, 0, 80 );
@@ -106,6 +115,26 @@ Niftyregf3dComponent<  TPixel >
 
 }
 
+template< class TPixel >
+bool
+Niftyregf3dComponent< TPixel >
+::ConnectionsSatisfied()
+{
+  // This function overrides the default behavior, in which all accepting interfaces must be set, by allowing the some interfaces not being set.
+  // TODO: see if we can reduce the amount of code with helper (meta-)functions
+  //   Superclass::AcceptingInterfacesTypeList
+  if (((InterfaceAcceptor< NiftyregReferenceImageInterface< TPixel >> *) this)->isSet() == false)
+  {
+    return false;
+  }
+  if (((InterfaceAcceptor< NiftyregFloatingImageInterface< TPixel >> *) this)->isSet() == false)
+  {
+    return false;
+  }
+
+  // Allow other accepting interfaces to be unconnected
+  return true;
+}
 
 /* Niftyreg member functions:
 void SetControlPointGridImage(nifti_image *);

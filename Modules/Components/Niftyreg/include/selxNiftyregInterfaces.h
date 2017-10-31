@@ -81,6 +81,16 @@ public:
 };
 
 template< class TPixel >
+class NiftyregAffineMatrixInterface
+{
+public:
+
+  using Type = NiftyregAffineMatrixInterface< TPixel >;
+  using Pointer = std::shared_ptr< Type >;
+  virtual mat44 * GetAffineNiftiMatrix() = 0;
+};
+
+template< class TPixel >
 struct Properties< NiftyregReferenceImageInterface< TPixel >>
 {
   static const std::map< std::string, std::string > Get()
@@ -124,6 +134,16 @@ struct Properties< NiftyregDisplacementFieldImageInterface< TPixel >>
     return{ { keys::NameOfInterface, "NiftyregDisplacementFieldImageInterface" }, { keys::PixelType, PodString< TPixel >::Get() } };
   }
 };
+
+template< class TPixel >
+struct Properties< NiftyregAffineMatrixInterface< TPixel >>
+{
+  static const std::map< std::string, std::string > Get()
+  {
+    return { { keys::NameOfInterface, "NiftyregAffineMatrixInterface" }, { keys::PixelType, PodString< TPixel >::Get() }  };
+  }
+};
+
 }
 
 #endif // #define selxNiftyregInterfaces_h

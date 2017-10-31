@@ -70,14 +70,19 @@ NiftyregAladinComponent< TPixel >
   return this->m_warped_image;
 }
 
+template< class TPixel >
+mat44 *
+NiftyregAladinComponent< TPixel >
+::GetAffineNiftiMatrix()
+{
+  return this->m_reg_aladin->GetTransformationMatrix();
+}
 
 template< class TPixel >
 void
 NiftyregAladinComponent<  TPixel >
 ::RunRegistration()
 {
-  //this->m_reg_aladin->UseSSD( 0, true );
-  //this->m_reg_aladin->UseCubicSplineInterpolation();
 
   this->m_reg_aladin->Run();
   nifti_image * outputWarpedImage = m_reg_aladin->GetFinalWarpedImage();

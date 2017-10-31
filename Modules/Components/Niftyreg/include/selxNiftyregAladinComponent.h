@@ -34,7 +34,7 @@ template< class TPixel >
 class NiftyregAladinComponent :
   public SuperElastixComponent<
   Accepting< NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >>,
-  Providing< NiftyregWarpedImageInterface< TPixel >, RunRegistrationInterface >
+  Providing< NiftyregWarpedImageInterface< TPixel >, NiftyregAffineMatrixInterface< TPixel >, RunRegistrationInterface >
   >
 {
 public:
@@ -43,7 +43,7 @@ public:
   typedef NiftyregAladinComponent< TPixel > Self;
   typedef SuperElastixComponent<
     Accepting< NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >>,
-    Providing< NiftyregWarpedImageInterface< TPixel >, RunRegistrationInterface >
+    Providing< NiftyregWarpedImageInterface< TPixel >, NiftyregAffineMatrixInterface< TPixel >, RunRegistrationInterface >
     >                                      Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
@@ -56,6 +56,8 @@ public:
   virtual int Set( typename NiftyregFloatingImageInterface< TPixel >::Pointer ) override;
 
   virtual std::shared_ptr< nifti_image > GetWarpedNiftiImage() override;
+
+  virtual mat44 * GetAffineNiftiMatrix() override;
 
   virtual void RunRegistration() override;
 
