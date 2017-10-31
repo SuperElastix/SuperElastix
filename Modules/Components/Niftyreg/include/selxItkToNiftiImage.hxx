@@ -23,104 +23,6 @@
 
 namespace selx
 {
-// returns an ordering array for converting upper triangular symmetric matrix
-// to lower triangular symmetric matrix
-int *
-UpperToLowerOrder( int dim )
-{
-  int ** mat = new int *[ dim ];
-
-  for( int i = 0; i < dim; i++ )
-  {
-    mat[ i ] = new int[ dim ];
-  }
-  // fill in
-  int index( 0 );
-  for( int i = 0; i < dim; i++ )
-  {
-    for( int j = i; j < dim; j++ )
-    {
-      mat[ i ][ j ] = index;
-      mat[ j ][ i ] = index;
-      index++;
-    }
-  }
-  int * rval = new int[ index + 1 ];
-  int   index2( 0 );
-  for( int i = 0; i < dim; i++ )
-  {
-    for( int j = 0; j <= i; j++, index2++ )
-    {
-      rval[ index2 ] = mat[ i ][ j ];
-    }
-  }
-  rval[ index2 ] = -1;
-  for( int i = 0; i < dim; i++ )
-  {
-    delete[] mat[ i ];
-  }
-  delete[] mat;
-  return rval;
-}
-
-
-// returns an ordering array for converting lower triangular symmetric matrix
-// to upper triangular symmetric matrix
-int *
-LowerToUpperOrder( int dim )
-{
-  int ** mat = new int *[ dim ];
-
-  for( int i = 0; i < dim; i++ )
-  {
-    mat[ i ] = new int[ dim ];
-  }
-  // fill in
-  int index( 0 );
-  for( int i = 0; i < dim; i++ )
-  {
-    for( int j = 0; j <= i; j++, index++ )
-    {
-      mat[ i ][ j ] = index;
-      mat[ j ][ i ] = index;
-    }
-  }
-  int * rval = new int[ index + 1 ];
-  int   index2( 0 );
-  for( int i = 0; i < dim; i++ )
-  {
-    for( int j = i; j < dim; j++, index2++ )
-    {
-      rval[ index2 ] = mat[ i ][ j ];
-    }
-  }
-  rval[ index2 ] = -1;
-  for( int i = 0; i < dim; i++ )
-  {
-    delete[] mat[ i ];
-  }
-  delete[] mat;
-  return rval;
-}
-
-
-// compute the rank of the symmetric matrix from
-// the count of the triangular matrix elements
-int
-SymMatDim( int count )
-{
-  int dim = 0;
-  int row = 1;
-
-  while( count > 0 )
-  {
-    count -= row;
-    dim++;
-    row++;
-  }
-  return dim;
-}
-
 
 template< class ItkImageType, class NiftiPixelType >
 std::shared_ptr< nifti_image >
@@ -164,18 +66,15 @@ ItkToNiftiImage< ItkImageType, NiftiPixelType >::Convert( typename ItkImageType:
     throw std::runtime_error( msg.str() );
   }
 
-  typename ItkImageType::PixelContainerPointer pixelContainer = input->GetPixelContainer();
+  const bool wasCopied = TransferImageData(input->GetBufferPointer(), output );
 
-  bool wasCopied = TransferImageData( pixelContainer->GetBufferPointer(), output );
-
-  if( !wasCopied )
-  {
-    // Take ownership of the pixelbuffer
-    pixelContainer->ContainerManageMemoryOff();
-  }
-
-  std::shared_ptr< nifti_image > ptr( output, nifti_image_free );
-  return ptr;
+  // If the data was not copied to the nifti_image, it is shared between the ITK image and the nifti_image. Therefore, in that case, 
+  // the ITK image is captured by the deleter of the shared_ptr, to ensure the lifetime of the ITK Image is extended to the end of 
+  // the nifti_image lifetime. Note that in that case nifti_image_free should free all dynamically allocated memory of nifti_image 
+  // except for its data, therefore its data pointer is in that case set to null. 
+  return wasCopied ?
+    std::shared_ptr< nifti_image >(output, nifti_image_free):
+    std::shared_ptr< nifti_image >(output, [input](nifti_image* ptr) { ptr->data = nullptr; nifti_image_free(ptr); });
 }
 
 

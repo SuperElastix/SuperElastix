@@ -17,13 +17,12 @@
  *
  *=========================================================================*/
 
-#ifndef selxNiftyregf3dComponent_h
-#define selxNiftyregf3dComponent_h
+#ifndef selxNiftyregSplineToDisplacementFieldComponent_h
+#define selxNiftyregSplineToDisplacementFieldComponent_h
 
 #include "selxSuperElastixComponent.h"
 #include "selxInterfaces.h"
 #include "selxNiftyregInterfaces.h"
-#include "_reg_f3d.h"
 
 #include <string.h>
 #include <array>
@@ -31,53 +30,47 @@
 namespace selx
 {
 template< class TPixel >
-class Niftyregf3dComponent :
+class NiftyregSplineToDisplacementFieldComponent :
   public SuperElastixComponent<
-  Accepting< NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >>,
-  Providing< NiftyregWarpedImageInterface< TPixel >, NiftyregControlPointPositionImageInterface< TPixel >, RunRegistrationInterface >
+  Accepting< NiftyregControlPointPositionImageInterface< TPixel >, NiftyregReferenceImageInterface< TPixel > >,
+  Providing< NiftyregDisplacementFieldImageInterface< TPixel >, ReconnectTransformInterface >
   >
 {
 public:
 
   /** Standard ITK typedefs. */
-  typedef Niftyregf3dComponent< TPixel > Self;
+  typedef NiftyregSplineToDisplacementFieldComponent< TPixel > Self;
   typedef SuperElastixComponent<
-    Accepting< NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >>,
-    Providing< NiftyregWarpedImageInterface< TPixel >, NiftyregControlPointPositionImageInterface< TPixel >, RunRegistrationInterface >
+    Accepting< NiftyregControlPointPositionImageInterface< TPixel >, NiftyregReferenceImageInterface< TPixel >>,
+    Providing< NiftyregDisplacementFieldImageInterface< TPixel >, ReconnectTransformInterface >
     >                                      Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
 
-  Niftyregf3dComponent( const std::string & name, LoggerImpl & logger );
-  virtual ~Niftyregf3dComponent();
+  NiftyregSplineToDisplacementFieldComponent( const std::string & name, LoggerImpl & logger );
+  virtual ~NiftyregSplineToDisplacementFieldComponent();
+
+  // Accepting NiftyregControlPointPositionImageInterface
+  virtual int Set( typename NiftyregControlPointPositionImageInterface< TPixel >::Pointer ) override;
 
   // Accepting NiftyregReferenceImageInterface
   virtual int Set( typename NiftyregReferenceImageInterface< TPixel >::Pointer ) override;
 
-  // Accepting NiftyregFloatingImageInterface
-  virtual int Set( typename NiftyregFloatingImageInterface< TPixel >::Pointer ) override;
-
   // Providing NiftyregWarpedImageInterface
-  virtual std::shared_ptr< nifti_image > GetWarpedNiftiImage() override;
+  virtual std::shared_ptr< nifti_image > GetDisplacementFieldNiftiImage() override;
 
-  // Providing NiftyregControlPointPositionImageInterface
-  virtual std::shared_ptr< nifti_image > GetControlPointPositionImage() override;
-
-  // Providing RunRegistrationInterface
-  virtual void RunRegistration() override;
+  // Providing ReconnectTransformInterface
+  virtual void ReconnectTransform() override;
 
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
 
-  static const char * GetDescription() { return "Niftyregf3d Component"; }
+  static const char * GetDescription() { return "NiftyregSplineToDisplacementField Component"; }
 
 private:
-
-  reg_f3d< TPixel > *            m_reg_f3d;
+  typename NiftyregControlPointPositionImageInterface< TPixel >::Pointer m_NiftyregControlPointPositionImageInterface;
   std::shared_ptr< nifti_image > m_reference_image;
-  std::shared_ptr< nifti_image > m_floating_image;
-  // m_warped_images is an array of 2 nifti images. Depending on the use case, typically only [0] is a valid image
-  std::unique_ptr< std::array< std::shared_ptr< nifti_image >, 2 >> m_warped_images;
   std::shared_ptr< nifti_image > m_cpp_image;
+  std::shared_ptr< nifti_image > m_displacement_image;
   
 
 protected:
@@ -85,11 +78,11 @@ protected:
   // return the class name and the template arguments to uniquely identify this component.
   static inline const std::map< std::string, std::string > TemplateProperties()
   {
-    return { { keys::NameOfClass, "Niftyregf3dComponent" }, { keys::PixelType, PodString< TPixel >::Get() } };
+    return { { keys::NameOfClass, "NiftyregSplineToDisplacementFieldComponent" }, { keys::PixelType, PodString< TPixel >::Get() } };
   }
 };
 } //end namespace selx
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "selxNiftyregf3dComponent.hxx"
+#include "selxNiftyregSplineToDisplacementFieldComponent.hxx"
 #endif
-#endif // #define selxNiftyregf3dComponent_h
+#endif // #define selxNiftyregSplineToDisplacementFieldComponent_h
