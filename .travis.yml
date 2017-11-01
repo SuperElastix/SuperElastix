@@ -39,7 +39,7 @@ matrix:
           packages:
             - g++-4.9
       env:
-         - CC=gcc-4.9 && CXX=g++-4.9
+         - GCC="CC=gcc-4.9 && CXX=g++-4.9"
     - os: linux
       dist: trusty
       sudo: required
@@ -51,7 +51,7 @@ matrix:
           packages:
             - g++-5
       env:
-         - CC=gcc-5 && CXX=g++-5
+         - GCC="CC=gcc-5 && CXX=g++-5"
     - os: linux
       dist: trusty
       sudo: required
@@ -63,7 +63,7 @@ matrix:
           packages:
             - g++-6
       env:
-         - CC=gcc-6 && CXX=g++-6
+         - GCC="CC=gcc-6 && CXX=g++-6"
     - os: linux
       dist: trusty
       sudo: required
@@ -75,7 +75,7 @@ matrix:
           packages:
             - g++-7
       env:
-         - CC=gcc-7 && CXX=g++-7
+         - GCC="CC=gcc-7 && CXX=g++-7"
     - os: linux
       dist: trusty
       sudo: required
@@ -84,6 +84,9 @@ matrix:
       compiler: clang
     - os: osx
       compiler: gcc
+
+before_install:
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then eval ${GCC}; fi;
 
 before_script:
   - mkdir -p ${SUPERELASTIX_BUILD_DIR}
