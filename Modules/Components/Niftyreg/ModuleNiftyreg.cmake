@@ -48,11 +48,8 @@ set( ${MODULE}_INCLUDE_DIRS
 set( ${MODULE}_SOURCE_FILES
   )
 
-set( ${MODULE}_TEST_SOURCE_FILES 
-  ${${MODULE}_SOURCE_DIR}/test/selxNiftyregNiftiUser.cxx
+set( ${MODULE}_TEST_SOURCE_FILES
   ${${MODULE}_SOURCE_DIR}/test/selxNiftyregComponentTest.cxx
-  ${${MODULE}_SOURCE_DIR}/test/selxNiftiNameManglingTest.cxx
-  ${${MODULE}_SOURCE_DIR}/test/selxItkNiftiUser.cxx
 )
 
 set( ${MODULE}_LIBRARIES 
