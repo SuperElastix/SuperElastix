@@ -97,14 +97,13 @@ macro( _selxapplication_enable APPLICATION UPSTREAM )
     endif()
 
     add_executable( ${${APPLICATION}_TARGET_NAME} "${${APPLICATION}_HEADER_FILES}" "${${APPLICATION}_SOURCE_FILES}" )
- 
-     if( ${APPLICATION}_LINK_LIBRARIES )
-      target_link_libraries( ${${APPLICATION}_TARGET_NAME} ${${APPLICATION}_LINK_LIBRARIES} ) 
-    endif()
+    target_link_libraries( ${${APPLICATION}_TARGET_NAME} ${SUPERELASTIX_LIBRARIES} ${ITK_LIBRARIES} ${Boost_LIBRARIES} )
 
     if( BUILD_TESTING AND ${APPLICATION}_TEST_SOURCE_FILES )
       list( APPEND SUPERELASTIX_TEST_SOURCE_FILES ${APPLICATION}_TEST_SOURCE_FILES )
     endif()
+
+    add_dependencies( ${${APPLICATION}_TARGET_NAME} ModuleCore )
 
     message( STATUS "${APPLICATION} enabled." ) 
   else()
@@ -113,7 +112,7 @@ macro( _selxapplication_enable APPLICATION UPSTREAM )
 endmacro()
 
 macro( _selxapplication_disable APPLICATION )
-  set( USE_${APPLICATION} FALSE )
+  set( USE_${APPLICATION} OFF )
 endmacro()
 
 macro( add_integration_test )
