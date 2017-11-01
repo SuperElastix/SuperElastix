@@ -20,11 +20,13 @@
 #ifndef selxLoggerImpl_h
 #define selxLoggerImpl_h
 
+#include <iterator>
+
 #include "selxLogger.h"
 
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/ostream_sink.h"
-#include "spdlog/fmt/bundled/ostream.h" // << operator
+#include "spdlog/fmt/bundled/ostream.h"
 
 namespace selx
 {
