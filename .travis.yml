@@ -76,10 +76,6 @@ matrix:
             - g++-7
       env:
          - GCC="CC=gcc-7 && CXX=g++-7"
-    - os: linux
-      dist: trusty
-      sudo: required
-      compiler: gcc
     - os: osx
       compiler: clang
     - os: osx
