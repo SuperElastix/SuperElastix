@@ -32,6 +32,7 @@ endif()
 # ---------------------------------------------------------------------
 # Build tests
 
+message( STATUS "Enabling tests ..." )
 foreach( ModuleTestSourceFileNames ${SUPERELASTIX_TEST_SOURCE_FILES} )
   # Get module name
   string( FIND ${ModuleTestSourceFileNames} "_" FIRST_UNDERSCORE_POS )
@@ -44,4 +45,6 @@ foreach( ModuleTestSourceFileNames ${SUPERELASTIX_TEST_SOURCE_FILES} )
 
   # Add GoogleTest to CTest
   GTEST_ADD_TESTS( ${ModuleName}TestDriver "--gtest_output=xml:${CMAKE_BINARY_DIR}/Testing/Unit/${ModuleName}.xml" AUTO )
+  message( STATUS "${ModuleName} test enabled." )
 endforeach()
+message( STATUS "Enabling tests ... Done" )

@@ -131,24 +131,25 @@ option( BUILD_APPLICATIONS "Build applications." OFF )
 mark_as_advanced( BUILD_SHARED_LIBS )
 option( BUILD_SHARED_LIBS "Build shared libraries." OFF )
 
-mark_as_advanced( BUILD_EXPRESS )
-option( BUILD_EXPRESS "Use express build." OFF )
-
 # ---------------------------------------------------------------------
 # Build SuperElastix
 
 # Initialize the build system and build the core. These calls are mandatory. 
 # Do not change and do not call anywhere else.
+message( STATUS "Enabling modules ..." )
 include( selxModules )
 _selxmodules_initialize()
 _selxmodule_enable( ModuleFilter "SuperElastix" )
+message( STATUS "Enabling modules ... Done" )
 
 # Build applications
-if( ${BUILD_APPLICATIONS} AND NOT ${BUILD_EXPRESS} )
+if( ${BUILD_APPLICATIONS} )
+  message( STATUS "Enabling applications ..." )
   include( selxApplications )
   _selxapplications_initialize()
   enable_applications( SUPERELASTIX_APPLICATIONS )
-endif() 
+  message( STATUS "Enabling applications ... Done" )
+endif()
 
 # TODO: Functionality to disable default modules/applications
 
