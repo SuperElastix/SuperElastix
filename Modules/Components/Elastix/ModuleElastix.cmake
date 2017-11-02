@@ -25,17 +25,7 @@ if (OPENMP_FOUND)
   set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}" )
 endif()
 
-# Find UseElastix.cmake 
-if( NOT EXISTS ${ELASTIX_USE_FILE} )
-  set( ELASTIX_USE_FILE ${ELASTIX_DIR}/UseElastix.cmake )
-endif()
-
-if( NOT EXISTS ${ELASTIX_USE_FILE} )
-  set( ELASTIX_DIR "" CACHE PATH "Path to elastix build folder" )
-  message( FATAL_ERROR "Could not find UseElastix.cmake. Point ELASTIX_DIR to folder containing UseElastix.cmake or use SuperBuild." )
-endif()
-
-# TODO: Add include and link directories manually to avoid elastix polluting CMake environment
+find_package( Elastix REQUIRED )
 include( ${ELASTIX_USE_FILE} )
 
 set( ${MODULE}_INCLUDE_DIRS

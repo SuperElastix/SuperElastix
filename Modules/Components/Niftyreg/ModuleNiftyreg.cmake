@@ -48,17 +48,14 @@ set( ${MODULE}_INCLUDE_DIRS
 set( ${MODULE}_SOURCE_FILES
   )
 
-set( ${MODULE}_TEST_SOURCE_FILES 
-  ${${MODULE}_SOURCE_DIR}/test/selxNiftyregNiftiUser.cxx
+set( ${MODULE}_TEST_SOURCE_FILES
   ${${MODULE}_SOURCE_DIR}/test/selxNiftyregComponentTest.cxx
-  ${${MODULE}_SOURCE_DIR}/test/selxNiftiNameManglingTest.cxx
-  ${${MODULE}_SOURCE_DIR}/test/selxItkNiftiUser.cxx
 )
 
 set( ${MODULE}_LIBRARIES 
   ${PNG_LIBRARIES} 
   ${ZLIB_LIBRARIES}
   ${Niftyreg_LIBRARIES}
-  #${Niftyreg__reg_ReadWriteImage_LIBRARY}
-  #${Niftyreg__reg_f3d_LIBRARY}
+  ${Niftyreg__reg_ReadWriteImage_LIBRARY}
+  ${Niftyreg__reg_f3d_LIBRARY}
 )

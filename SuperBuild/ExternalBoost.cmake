@@ -24,7 +24,7 @@ set( proj BOOST )
 # while on Windows, we need CR/LF line feeds (only available in the .zip)
 
 set( BOOST_CONFIGURE_COMMAND )
-set( B2_ARGS --with-program_options --with-filesystem --with-log --with-date_time --with-chrono --with-thread --with-regex address-model=64 )
+set( B2_ARGS --with-program_options --with-filesystem --with-system --with-regex address-model=64 )
 if( UNIX )
   set( BOOST_URL "http://dl.bintray.com/boostorg/release/1.65.0/source/boost_1_65_0.tar.gz")
   set( BOOST_MD5 d75a27ad1a34cfc7c9b5cb92594410c3 )

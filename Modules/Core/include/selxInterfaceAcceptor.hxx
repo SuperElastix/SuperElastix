@@ -30,7 +30,7 @@ InterfaceAcceptor< InterfaceT >::Connect( ComponentBase::Pointer providerCompone
   if( !providerInterface )
   {
     // TODO: Make logger available here and give name of reqeusted interface InterfaceName < InterfaceT >::Get()
-    // this->m_Logger.Log( ERROR, "Provider does not implement the requested interface.");
+    // this->m_LoggerImpl.Log( ERROR, "Provider does not implement the requested interface.");
     return 0;
   }
   // connect value interfaces

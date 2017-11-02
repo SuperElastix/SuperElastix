@@ -29,6 +29,7 @@
 #include <map>
 #include <vector>
 #include <memory>
+
 #include "selxLoggerImpl.h"
 
 namespace selx
@@ -71,8 +72,44 @@ public:
   // SuperElastixComponent provides a default implementation which may be overridden by the component developer
   virtual bool ConnectionsSatisfied() = 0;
 
+  template <typename ... Args> void Trace(const std::string& fmt, const Args& ... args)
+  {
+    this->m_Logger.Log( LogLevel::TRC, fmt, args ... );
+  }
+
+  template <typename ... Args> void Error(const std::string& fmt, const Args& ... args)
+  {
+    this->m_Logger.Log( LogLevel::ERR, fmt, args ... );
+  }
+
+  template <typename ... Args> void Debug(const std::string& fmt, const Args& ... args)
+  {
+    this->m_Logger.Log( LogLevel::DBG, fmt, args ... );
+  }
+
+  template <typename ... Args> void Info(const std::string& fmt, const Args& ... args)
+  {
+    this->m_Logger.Log( LogLevel::INF, fmt, args ... );
+  }
+
+  template <typename ... Args> void Warning(const std::string& fmt, const Args& ... args)
+  {
+    this->m_Logger.Log( LogLevel::WRN, fmt, args ... );
+  }
+
+  template <typename ... Args> void Critical(const std::string& fmt, const Args& ... args)
+  {
+    this->m_Logger.Log( LogLevel::CRT, fmt, args ... );
+  }
+
+  template <typename ... Args> void OFF(const std::string& fmt, const Args& ... args)
+  {
+    this->m_Logger.Log( LogLevel::OFF, fmt, args ... );
+  }
+
   const std::string m_Name;
   LoggerImpl & m_Logger;
+
 };
 } // end namespace selx
 

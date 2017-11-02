@@ -69,7 +69,8 @@ public:
 
   using RegisterComponents = list_append< CustomComponents, DefaultComponents >::type;
 
-  typedef Blueprint::Pointer  BlueprintPointer;
+  typedef Blueprint::Pointer BlueprintPointer;
+  typedef Logger::Pointer LoggerPointer;
 
   typedef itk::Mesh< float, 2 >           MeshType;
   typedef itk::MeshFileReader< MeshType > MeshReaderType;
@@ -79,6 +80,9 @@ public:
   virtual void SetUp()
   {
     dataManager = DataManagerType::New();
+    logger = Logger::New();
+    logger->SetLogLevel( LogLevel::DBG );
+    logger->AddStream( "cout", std::cout );
   }
 
 
@@ -95,6 +99,9 @@ public:
   BlueprintPointer blueprint;
   // Data manager provides the paths to the input and output data for unit tests
   DataManagerType::Pointer dataManager;
+  // Logger
+  LoggerPointer logger;
+
 };
 
 TEST_F( SuperElastixFilterTest, ImageOnly )
@@ -117,7 +124,7 @@ TEST_F( SuperElastixFilterTest, ImageOnly )
   // register the components we want to have available in SuperElastix
   SuperElastixFilterCustomComponents< RegisterComponents >::Pointer superElastixFilter;
   EXPECT_NO_THROW( superElastixFilter = SuperElastixFilterCustomComponents< RegisterComponents >::New() );
-
+  superElastixFilter->SetLogger( logger );
   superElastixFilter->SetBlueprint( blueprint );
   superElastixFilter->SetInput( "InputImage", imageReader3D->GetOutput() );
   imageWriter3D->SetInput( superElastixFilter->GetOutput< Image3DType >( "OutputImage" ) );
@@ -126,7 +133,6 @@ TEST_F( SuperElastixFilterTest, ImageOnly )
 }
 TEST_F( SuperElastixFilterTest, ImageAndMesh )
 {
-  std::cout << "Starting ..." << std::endl;
   ImageReader3DType::Pointer imageReader3D = ImageReader3DType::New();
   ImageWriter3DType::Pointer imageWriter3D = ImageWriter3DType::New();
 
@@ -155,15 +161,14 @@ TEST_F( SuperElastixFilterTest, ImageAndMesh )
   // register the components we want to have available in SuperElastix
   SuperElastixFilterCustomComponents< RegisterComponents >::Pointer superElastixFilter;
   EXPECT_NO_THROW( superElastixFilter = SuperElastixFilterCustomComponents< RegisterComponents >::New() );
+  superElastixFilter->SetLogger(logger);
   superElastixFilter->SetBlueprint( blueprint );
-
   superElastixFilter->SetInput( "InputMesh", meshReader->GetOutput() );
   meshWriter->SetInput( superElastixFilter->GetOutput< MeshType >( "OutputMesh" ) );
 
   superElastixFilter->SetInput( "InputImage", imageReader3D->GetOutput() );
   imageWriter3D->SetInput( superElastixFilter->GetOutput< Image3DType >( "OutputImage" ) );
 
-  std::cout << "Updating now" << std::endl;
   EXPECT_NO_THROW( meshWriter->Update() );
   EXPECT_NO_THROW( imageWriter3D->Update() );
 }
@@ -183,13 +188,12 @@ TEST_F( SuperElastixFilterTest, TooManyInputs )
   // register the components we want to have available in SuperElastix
   SuperElastixFilterCustomComponents< RegisterComponents >::Pointer superElastixFilter;
   EXPECT_NO_THROW( superElastixFilter = SuperElastixFilterCustomComponents< RegisterComponents >::New() );
+  superElastixFilter->SetLogger(logger);
   EXPECT_NO_THROW( superElastixFilter->SetBlueprint( blueprint ) );
 
-  std::cout << "Set inputs " << std::endl;
   superElastixFilter->SetInput( "Source_A", imageReader3D_A->GetOutput() );
   superElastixFilter->SetInput( "Source_B", imageReader3D_B->GetOutput() );
 
-  std::cout << "Update " << std::endl;
   EXPECT_THROW( superElastixFilter->Update(), itk::ExceptionObject );
 }
 TEST_F( SuperElastixFilterTest, TooManySources )
@@ -206,8 +210,8 @@ TEST_F( SuperElastixFilterTest, TooManySources )
   // register the components we want to have available in SuperElastix
   SuperElastixFilterCustomComponents< RegisterComponents >::Pointer superElastixFilter;
   EXPECT_NO_THROW( superElastixFilter = SuperElastixFilterCustomComponents< RegisterComponents >::New() );
+  superElastixFilter->SetLogger(logger);
   EXPECT_NO_THROW( superElastixFilter->SetBlueprint( blueprint ) );
-
   superElastixFilter->SetInput( "Source_A", imageReader3D_A->GetOutput() );
 
   EXPECT_THROW( superElastixFilter->Update(), itk::ExceptionObject );
@@ -226,7 +230,7 @@ TEST_F( SuperElastixFilterTest, TooManyOutputs )
   // register the components we want to have available in SuperElastix
   SuperElastixFilterCustomComponents< RegisterComponents >::Pointer superElastixFilter;
   EXPECT_NO_THROW( superElastixFilter = SuperElastixFilterCustomComponents< RegisterComponents >::New() );
-
+  superElastixFilter->SetLogger(logger);
   superElastixFilter->SetBlueprint( blueprint );
   imageWriter3D_A->SetInput( superElastixFilter->GetOutput< Image3DType >( "Sink_A" ) );
   imageWriter3D_B->SetInput( superElastixFilter->GetOutput< Image3DType >( "Sink_B" ) );
@@ -244,6 +248,7 @@ TEST_F( SuperElastixFilterTest, TooManySinks )
 
   SuperElastixFilterCustomComponents< RegisterComponents >::Pointer superElastixFilter;
   EXPECT_NO_THROW( superElastixFilter = SuperElastixFilterCustomComponents< RegisterComponents >::New() );
+  superElastixFilter->SetLogger(logger);
   superElastixFilter->SetBlueprint( blueprint );
 
   imageWriter3D_A->SetInput( superElastixFilter->GetOutput< Image3DType >( "Sink_A" ) );
@@ -268,6 +273,7 @@ TEST_F( SuperElastixFilterTest, UnsatisfiedConnections )
   // register the components we want to have available in SuperElastix
   SuperElastixFilterCustomComponents< RegisterComponents >::Pointer superElastixFilter;
   EXPECT_NO_THROW( superElastixFilter = SuperElastixFilterCustomComponents< RegisterComponents >::New() );
+  superElastixFilter->SetLogger(logger);
   superElastixFilter->SetBlueprint( blueprint );
 
   //superElastixFilter->SetInput("InputImage", imageReader3D->GetOutput());

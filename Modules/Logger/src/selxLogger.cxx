@@ -20,63 +20,103 @@
 #include "selxLogger.h"
 #include "selxLoggerImpl.h"
 
-namespace selx
-{
+namespace selx {
 
 Logger
-::Logger()
-{
-  this->m_Logger = LoggerPointer( new LoggerImpl() );
-}
-
-LoggerImpl &
-Logger
-::GetLogger( void)
-{
-  if( this->m_Logger )
-  {
-    return *this->m_Logger;
-  }
-  else
-  {
-    itkExceptionMacro( "LoggerImpl not set." )
-  }
+::Logger() {
+  this->m_LoggerImpl = LoggerImplPointer( new LoggerImpl() );
 }
 
 void
 Logger
-::AddConsole( FormatType format )
+::SetLogLevel( const LogLevel& level )
 {
-  this->m_Logger->AddConsole( format );
+  this->m_LoggerImpl->SetLogLevel( level );
 }
-
-
-// void
-// LoggerImpl
-// :: AddFile( FileNameType fileName, FormatType format )
-// {
-//   this->m_Pimple->AddFile( fileName, format );
-// }
-
-// void
-// LoggerImpl
-// :: AddFile( FileNameType fileName, LoggerImpl::ChannelType channel, FormatType format )
-// {
-//   this->m_Pimple->AddFile( fileName, channel, format );
-// }
 
 void
 Logger
-::Log( SeverityType severity, MessageType message )
+::SetPattern( const std::string& pattern )
 {
-  this->m_Logger->Log( severity, message );
+  this->m_LoggerImpl->SetPattern( pattern );
+}
+
+void
+Logger
+::SetSyncMode()
+{
+  this->m_LoggerImpl->SetSyncMode();
+}
+
+void
+Logger
+::SetAsyncMode()
+{
+  this->m_LoggerImpl->SetAsyncMode();
+}
+
+void
+Logger
+::SetAsyncQueueBlockOnOverflow(void)
+{
+  this->m_LoggerImpl->SetAsyncQueueBlockOnOverflow();
+}
+
+void
+Logger
+::SetAsyncQueueDiscardOnOverflow(void)
+{
+  this->m_LoggerImpl->SetAsyncQueueDiscardOnOverflow();
+}
+
+void
+Logger
+::SetAsyncQueueSize( const size_t& queueSize )
+{
+  this->m_LoggerImpl->SetAsyncQueueSize( queueSize );
+}
+
+void
+Logger
+::AsyncQueueFlush( void )
+{
+  this->m_LoggerImpl->AsyncQueueFlush();
+}
+
+void
+Logger
+::AddStream( const std::string& identifier, std::ostream& stream, const bool& forceFlush )
+{
+  this->m_LoggerImpl->AddStream( identifier, stream, forceFlush);
+}
+
+void
+Logger
+::RemoveStream( const std::string& identifier )
+{
+  this->m_LoggerImpl->RemoveStream( identifier );
+}
+
+void
+Logger
+::RemoveAllStreams( void )
+{
+  this->m_LoggerImpl->RemoveAllStreams();
 }
 
 
-// void
-// LoggerImpl
-// ::Log( ChannelType channel, SeverityType severity, MessageType message )
-// {
-//   this->m_Pimple->Log( channel, severity, message );
-// }
+void
+Logger
+::Log( const LogLevel& level, const std::string& message )
+{
+  this->m_LoggerImpl->Log( level, message );
 }
+
+LoggerImpl&
+Logger
+::GetLogger( void )
+{
+  return *this->m_LoggerImpl;
+}
+
+} // namespace
