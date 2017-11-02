@@ -42,7 +42,7 @@ include_directories( ${Boost_INCLUDE_DIR} )
 # Compile executable
 include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/include" )
 add_executable( SuperElastix ${COMMANDLINE_SOURCE_FILES} ${COMMANDLINE_HEADER_FILES} )
-target_link_libraries( SuperElastix ${SUPERELASTIX_LIBRARIES} ${Boost_LIBRARIES} ${ITK_LIBRARIES} )
+target_link_libraries( SuperElastix ${SUPERELASTIX_LIBRARIES} ${Boost_LIBRARIES} ${ITK_LIBRARIES} ${ELASTIX_LIBRARIES} )
 
 # demo copies SuperElastix executable, image data, configuration files and bat/bash scripts to the DEMO_PREFIX directory
 set( DEMO_PREFIX ${PROJECT_BINARY_DIR}/Demo CACHE PATH "Demo files will be copied to this directory" )
