@@ -28,8 +28,37 @@
 #include "itkImageIOBase.h"
 #include "selxItkImageProperties.h"
 
+// forward declaration of functions declared in ITK\Modules\IO\NIFTI\src\itkNiftiImageIO.cxx,
+// since itk did not declare these in header files. Be aware that dynamic linking to itk might give issues.
+namespace itk
+{
+  int * UpperToLowerOrder(int dim);
+  int * LowerToUpperOrder(int dim);
+  int SymMatDim(int count);
+}
+
 namespace selx
 {
+
+// redirecting functions from itkNiftiImageIO. See forward declarations
+inline int *
+UpperToLowerOrder(int dim)
+{
+  return ::itk::UpperToLowerOrder(dim);
+}
+
+inline int *
+LowerToUpperOrder(int dim)
+{
+  return ::itk::LowerToUpperOrder(dim);
+}
+
+inline int
+SymMatDim(int count)
+{
+  return ::itk::SymMatDim(count);
+}
+
 /** \class ItkToNiftiImage
  * Convert an itk image to an nifti image object.
  * Adapted from itkNiftiImageIO that is originally by Hans J. Johnson, The University of Iowa 2002

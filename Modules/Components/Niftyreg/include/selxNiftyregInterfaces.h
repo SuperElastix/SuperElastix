@@ -61,6 +61,26 @@ public:
 };
 
 template< class TPixel >
+class NiftyregControlPointPositionImageInterface
+{
+public:
+
+  using Type = NiftyregControlPointPositionImageInterface< TPixel >;
+  using Pointer = std::shared_ptr< Type >;
+  virtual std::shared_ptr< nifti_image > GetControlPointPositionImage() = 0;
+};
+
+template< class TPixel >
+class NiftyregDisplacementFieldImageInterface
+{
+public:
+
+  using Type = NiftyregDisplacementFieldImageInterface< TPixel >;
+  using Pointer = std::shared_ptr< Type >;
+  virtual std::shared_ptr< nifti_image > GetDisplacementFieldNiftiImage() = 0;
+};
+
+template< class TPixel >
 struct Properties< NiftyregReferenceImageInterface< TPixel >>
 {
   static const std::map< std::string, std::string > Get()
@@ -84,6 +104,24 @@ struct Properties< NiftyregWarpedImageInterface< TPixel >>
   static const std::map< std::string, std::string > Get()
   {
     return { { keys::NameOfInterface, "NiftyregWarpedImageInterface" }, { keys::PixelType, PodString< TPixel >::Get() } };
+  }
+};
+
+template< class TPixel >
+struct Properties< NiftyregControlPointPositionImageInterface< TPixel >>
+{
+  static const std::map< std::string, std::string > Get()
+  {
+    return{ { keys::NameOfInterface, "NiftyregControlPointPositionImageInterface" }, { keys::PixelType, PodString< TPixel >::Get() } };
+  }
+};
+
+template< class TPixel >
+struct Properties< NiftyregDisplacementFieldImageInterface< TPixel >>
+{
+  static const std::map< std::string, std::string > Get()
+  {
+    return{ { keys::NameOfInterface, "NiftyregDisplacementFieldImageInterface" }, { keys::PixelType, PodString< TPixel >::Get() } };
   }
 };
 }
