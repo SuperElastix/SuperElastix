@@ -39,6 +39,7 @@
 #include "itkMetaDataObject.h"
 #include "itkSpatialOrientationAdapter.h"
 #include "itkImportImageFilter.h"
+#include "itkShiftScaleImageFilter.h"
 
 namespace selx
 {
@@ -86,7 +87,7 @@ NiftiToItkImage< ItkImageType, NiftiPixelType >
   importImageFilter->SetSpacing( spacing );
   importImageFilter->SetDirection( direction );
   //importImageFilter->UpdateOutputInformation();
-  importImageFilter->SetImportPointer( dataFromNifti.buffer, dataFromNifti.numberOfElements, false );
+  importImageFilter->SetImportPointer( dataFromNifti.buffer, dataFromNifti.numberOfElements, true );
 
   importImageFilter->UpdateOutputInformation();
   auto resultImage = importImageFilter->GetOutput();
@@ -122,6 +123,23 @@ RescaleFunction( TBuffer * buffer,
   }
 }
 
+// Internal function to rescale pixel according to Rescale Slope/Intercept
+template< typename TBuffer, unsigned int Dims >
+void
+RescaleFunction(itk::Vector<TBuffer, Dims> * buffer,
+double slope,
+double intercept,
+size_t size)
+{
+  for (size_t i = 0; i < size; i++)
+  {
+    itk::Vector<double, Dims> tmp;
+    tmp.CastFrom(buffer[i]);
+    tmp *= slope;
+    tmp += intercept;
+    buffer[i].CastFrom(tmp);
+  }
+}
 
 template< typename PixelType >
 void
@@ -168,7 +186,7 @@ NiftiToItkImage< ItkImageType, NiftiPixelType >
     _size[i] = 1;
   }
   */
-  unsigned int numComponents = ItkImageProperties< ItkImageType >::GetNumberOfComponents();
+  const unsigned int numComponents = ItkImageProperties< ItkImageType >::GetNumberOfComponents();
   //
   // special case for images of vector pixels
   /*
@@ -243,7 +261,6 @@ NiftiToItkImage< ItkImageType, NiftiPixelType >
     data = _data;
   }
 
-  //void* buffer = (void*) new char[NumBytes];
   typename ItkImageType::PixelType * buffer = new typename ItkImageType::PixelType[ imageSizeInComponents ];
   //
   // if single or complex, nifti layout == itk layout
@@ -310,6 +327,7 @@ NiftiToItkImage< ItkImageType, NiftiPixelType >
     if( data != input_image->data )
     {
       free( data );
+      data = NULL;
     }
     //dumpdata(data);
     //dumpdata(buffer);

@@ -65,6 +65,7 @@ public:
     metric2TransformConnectionParameters[ "NameOfInterface" ] = { "TransformedImageInterface" };
 
     blueprint->SetConnection( "Transform", "Metric", metric2TransformConnectionParameters );
+    logger->SetLogLevel( LogLevel::TRC );
   }
 
 

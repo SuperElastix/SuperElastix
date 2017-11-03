@@ -27,6 +27,7 @@ UPDATE_SELX_SUPERBUILD_COMMAND(${proj})
 ExternalProject_Add( ${proj} 
   GIT_REPOSITORY ${NIFTYREG_GIT_REPOSITORY}
   GIT_TAG ${NIFTYREG_GIT_TAG}
+  TLS_VERIFY OFF
   UPDATE_COMMAND ""
   PATCH_COMMAND "${GIT_EXECUTABLE}" reset --hard && "${GIT_EXECUTABLE}" clean --force && "${GIT_EXECUTABLE}" apply --whitespace=fix "${CMAKE_SOURCE_DIR}/Patches/niftyreg_strtof.patch" && "${GIT_EXECUTABLE}" apply --whitespace=fix "${CMAKE_SOURCE_DIR}/Patches/niftyreg_eigen_assignment.patch"
   SOURCE_DIR ${proj}

@@ -79,7 +79,7 @@ public:
   AnyFileWriterType::Pointer GetOutputFileWriter( const DataObjectIdentifierType & );
 
   /** SetInput accepts any input data as long as it is derived from itk::DataObject */
-  void SetInput( const DataObjectIdentifierType &, InputDataType * );
+  void SetInput( const DataObjectIdentifierType &, InputDataType * ) override;
 
   /** Non type-specific GetOutput */
   OutputDataType * GetOutput( const DataObjectIdentifierType & );

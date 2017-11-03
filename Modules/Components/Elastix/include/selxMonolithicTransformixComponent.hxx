@@ -128,9 +128,6 @@ MonolithicTransformixComponent< Dimensionality, TPixel >::Set( typename elastixT
   return 0;
 }
 
-
-//Since elastixFilter is not a true itkfilter we cannot use itkImageSourceInterface (yet)
-
 template< int Dimensionality, class TPixel >
 typename MonolithicTransformixComponent< Dimensionality, TPixel >::ResultImageType::Pointer
 MonolithicTransformixComponent< Dimensionality, TPixel >::GetItkImage()
@@ -138,6 +135,13 @@ MonolithicTransformixComponent< Dimensionality, TPixel >::GetItkImage()
   return this->m_transformixFilter->GetOutput();
 }
 
+template< int Dimensionality, class TPixel >
+typename MonolithicTransformixComponent< Dimensionality, TPixel >::DisplacementFieldImageType::Pointer
+MonolithicTransformixComponent< Dimensionality, TPixel >::GetDisplacementFieldItkImage()
+{
+  this->m_transformixFilter->ComputeDeformationFieldOn();
+  return this->m_transformixFilter->GetOutputDeformationField();
+}
 
 template< int Dimensionality, class TPixel >
 void

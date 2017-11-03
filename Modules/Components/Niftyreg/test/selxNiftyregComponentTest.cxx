@@ -30,6 +30,10 @@
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 #include "selxNiftyregf3dComponent.h"
+#include "selxNiftyregSplineToDisplacementFieldComponent.h"
+#include "selxDisplacementFieldNiftiToItkImageSinkComponent.h"
+
+
 #include "selxDataManager.h"
 #include "gtest/gtest.h"
 
@@ -54,6 +58,8 @@ public:
     ItkToNiftiImageSourceComponent< 3, float >,
     NiftiToItkImageSinkComponent< 3, float >,
     ItkImageSourceComponent< 3, float >,
+    NiftyregSplineToDisplacementFieldComponent< float>,
+    DisplacementFieldNiftiToItkImageSinkComponent< 2, float>,
     RegistrationControllerComponent< >> RegisterComponents;
 
   typedef SuperElastixFilterCustomComponents< RegisterComponents > SuperElastixFilterType;
@@ -222,6 +228,8 @@ TEST_F( NiftyregComponentTest, WBIRDemo )
   blueprint->SetComponent( "FixedImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "Dimensionality", { "2" } }, { "PixelType", { "float" } } } );
   blueprint->SetComponent( "MovingImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "Dimensionality", { "2" } }, { "PixelType", { "float" } } } );
   blueprint->SetComponent( "ResultImage", { { "NameOfClass", { "NiftiToItkImageSinkComponent" } }, { "Dimensionality", { "2" } }, { "PixelType", { "float" } } } );
+  blueprint->SetComponent( "TransformToDisplacementField", { { "NameOfClass", { "NiftyregSplineToDisplacementFieldComponent" } }, { "PixelType", { "float" } } });
+  blueprint->SetComponent( "ResultDisplacementField", { { "NameOfClass", { "DisplacementFieldNiftiToItkImageSinkComponent" } }, { "Dimensionality", { "2" } }, { "PixelType", { "float" } } });
   blueprint->SetComponent( "Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } } );
 
   blueprint->SetConnection( "FixedImage", "RegistrationMethod", { { "NameOfInterface", { "NiftyregReferenceImageInterface" } } } );
@@ -230,6 +238,12 @@ TEST_F( NiftyregComponentTest, WBIRDemo )
   blueprint->SetConnection( "RegistrationMethod", "ResultImage", { { "NameOfInterface", { "NiftyregWarpedImageInterface" } } } );
   blueprint->SetConnection( "RegistrationMethod", "Controller", { {} } );
   blueprint->SetConnection( "ResultImage", "Controller", { {} } );
+  blueprint->SetConnection( "RegistrationMethod", "TransformToDisplacementField", { {} });
+  blueprint->SetConnection( "FixedImage", "TransformToDisplacementField", { {} });
+  blueprint->SetConnection( "TransformToDisplacementField", "Controller", { {} });
+  blueprint->SetConnection( "TransformToDisplacementField", "ResultDisplacementField", { {} });
+  blueprint->SetConnection( "FixedImage", "ResultDisplacementField", { {} });
+  blueprint->SetConnection( "ResultDisplacementField", "Controller", { {} });
 
   blueprint->Write( dataManager->GetOutputFile( "Niftyreg_WBIR.dot" ) );
 
@@ -237,6 +251,8 @@ TEST_F( NiftyregComponentTest, WBIRDemo )
   typedef itk::Image< float, 2 >              Image2DType;
   typedef itk::ImageFileReader< Image2DType > ImageReader2DType;
   typedef itk::ImageFileWriter< Image2DType > ImageWriter2DType;
+  typedef itk::Image< itk::Vector<float,2>, 2 >              DisplacementImage2DType;
+  typedef itk::ImageFileWriter< DisplacementImage2DType > DisplacementImageWriter2DType;
 
   ImageReader2DType::Pointer fixedImageReader = ImageReader2DType::New();
   fixedImageReader->SetFileName( dataManager->GetInputFile( "coneA2d64.mhd" ) );
@@ -247,18 +263,19 @@ TEST_F( NiftyregComponentTest, WBIRDemo )
   ImageWriter2DType::Pointer resultImageWriter = ImageWriter2DType::New();
   resultImageWriter->SetFileName( dataManager->GetOutputFile( "Niftyreg_WBIR_Image.mhd" ) );
 
-  //DisplacementImageWriter2DType::Pointer resultDisplacementWriter = DisplacementImageWriter2DType::New();
-  //resultDisplacementWriter->SetFileName(dataManager->GetOutputFile("Niftyreg_WBIR_Displacement.mhd"));
+  DisplacementImageWriter2DType::Pointer resultDisplacementWriter = DisplacementImageWriter2DType::New();
+  resultDisplacementWriter->SetFileName(dataManager->GetOutputFile("Niftyreg_WBIR_Displacement.mhd"));
 
   // Connect SuperElastix in an itk pipeline
   superElastixFilter->SetInput( "FixedImage", fixedImageReader->GetOutput() );
   superElastixFilter->SetInput( "MovingImage", movingImageReader->GetOutput() );
   resultImageWriter->SetInput( superElastixFilter->GetOutput< Image2DType >( "ResultImage" ) );
-  //resultDisplacementWriter->SetInput(superElastixFilter->GetOutput< DisplacementImage2DType >("ResultDisplacementFieldSink"));
+  resultDisplacementWriter->SetInput(superElastixFilter->GetOutput< DisplacementImage2DType >("ResultDisplacementField"));
 
   EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
 
   // Update call on the writers triggers SuperElastix to configure and execute
   EXPECT_NO_THROW(resultImageWriter->Update());
+  EXPECT_NO_THROW(resultDisplacementWriter->Update());
 }
 }

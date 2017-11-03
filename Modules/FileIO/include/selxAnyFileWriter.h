@@ -49,7 +49,7 @@ public:
   virtual void SetInput( const InputDataType * ) = 0;
 
   /** This method should be overriden. See fx. the FileWriterDecorator. */
-  virtual void Update( void ) = 0;
+  virtual void Update( void ) override = 0;
 
 protected:
 

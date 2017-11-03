@@ -11,7 +11,7 @@ if( NOT USE_SYSTEM_GTEST )
 endif()
 
 if( NOT USE_SYSTEM_ELASTIX )
-  set( ELASTIX_USE_FILE @ELASTIX_USE_FILE@ )
+  set( Elastix_DIR @Elastix_DIR@ )
 endif()
 
 if( NOT USE_SYSTEM_NIFTIREG )
