@@ -27,18 +27,14 @@ set( ${APPLICATION}_SOURCE_FILES
   ${${APPLICATION}_SOURCE_DIR}/src/selxConfigurationReader.cxx
 )
 
-set( ${APPLICATION}_LINK_LIBRARIES
-  ${ITK_LIBRARIES}
-  ${Boost_LIBRARIES}
-)
-
 set( ${APPLICATION}_MODULE_DEPENDENCIES
   ModuleFilter
 )
 
-set( ${MODULE}_TEST_SOURCE_FILES
-  ${${MODULE}_SOURCE_DIR}/test/selxConfigurationReader.cxx
-)
+# TODO: Find out how to include selxConfigurationReader.cxx in compilation unit
+#set( ${APPLICATION}_TEST_SOURCE_FILES
+#  ${${APPLICATION}_SOURCE_DIR}/test/selxConfigurationReaderTest.cxx
+#)
 
 set( ${APPLICATION}_INTEGRATION_TEST_SOURCE_FILES 
   ${${APPLICATION}_SOURCE_DIR}/test/integration.cmake

@@ -17,26 +17,26 @@
  *
  *=========================================================================*/
 
-// There already is an sitkLogger preprocessor definition in ITK
-#ifndef selxLogger_h
-#define selxLogger_h
-
-#include <string>
-#include <memory>
+#ifndef selxLoggerController_h
+#define selxLoggerController_h
 
 #include "itkDataObject.h"
 #include "itkObjectFactory.h"
 
+#include <memory>  // For unique_ptr.
+
 namespace selx
 {
 
-enum class SeverityType {
-  SELX_TRACE,
-  SELX_DEBUG,
-  SELX_INFO,
-  SELX_WARNING,
-  SELX_ERROR,
-  SELX_FATAL
+enum class LogLevel
+{
+  TRC = 0,
+  DBG = 1,
+  INF = 2,
+  WRN = 3,
+  ERR = 4,
+  CRT = 5,
+  OFF = 6
 };
 
 class LoggerImpl;
@@ -46,7 +46,7 @@ class Logger : public itk::DataObject
 public:
 
   /** Standard ITK typedefs. */
-  typedef Logger                Self;
+  typedef Logger                          Self;
   typedef itk::ProcessObject              Superclass;
   typedef itk::SmartPointer< Self >       Pointer;
   typedef itk::SmartPointer< const Self > ConstPointer;
@@ -57,35 +57,34 @@ public:
   /** Run-time type information (and related methods). */
   itkTypeMacro( Self, itk::DataObject );
 
-  /* m_Logger is initialized in the default constructor */
   Logger();
-  LoggerImpl & GetLogger( void );
 
-  /** The actual logger is a pimpled member variable */
-  typedef std::shared_ptr< LoggerImpl > LoggerPointer;
+  void SetLogLevel( const LogLevel& level );
+  void SetPattern( const std::string& pattern );
 
-  typedef const std::string ChannelType;
-  typedef const std::string FormatType;
-  typedef const std::string MessageType;
+  void SetSyncMode();
+  void SetAsyncMode();
+  void SetAsyncQueueBlockOnOverflow(void);
+  void SetAsyncQueueDiscardOnOverflow(void);
+  void SetAsyncQueueSize( const size_t& queueSize );
+  void AsyncQueueFlush();
 
-  void AddConsole( FormatType format = "[%LineID% %TimeStamp%]: %Message%" );
+  // TODO: AddStreamWithColors, AddRotatingFileBySize, AddRotatingFileByTime
+  void AddStream( const std::string& identifier, std::ostream& stream, const bool& force_flush = false );
+  void RemoveStream( const std::string& identifier );
+  void RemoveAllStreams( void );
 
-  // void AddFile( FileNameType fileName = "SuperElastix_%Y-%m-%d_%H-%M-%S.%N.log",
-  //               FormatType format = "[%LineID% %TimeStamp% %ComponentName% %Channel% %SeverityLevel%]: %Message%" );
-  // void AddFile( FileNameType fileName = "SuperElastix_%Y-%m-%d_%H-%M-%S.%N.log",
-  //               LoggerImpl::ChannelType channel = "SuperElastix",
-  //               FormatType format = "[%LineID% %TimeStamp% %ComponentName% %Channel% %SeverityLevel%]: %Message%" );
+  void Log( const LogLevel& level, const std::string& message );
 
-  virtual void Log( SeverityType severity, MessageType message );
-
-  // void Log( ChannelType channel, SeverityType severity, MessageType message );
-
+  LoggerImpl& GetLogger( void );
 
 
 private:
 
-  LoggerPointer m_Logger;
+  typedef std::unique_ptr< LoggerImpl > LoggerImplPointer;
+  LoggerImplPointer m_LoggerImpl;
+
 };
 } // namespace
 
-#endif // selxLogger_h
+#endif // selxLoggerController_h

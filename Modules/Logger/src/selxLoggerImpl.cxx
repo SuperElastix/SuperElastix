@@ -18,96 +18,148 @@
  *=========================================================================*/
 
 #include "selxLoggerImpl.h"
-
-#include "boost/log/sources/record_ostream.hpp"
-#include "boost/log/utility/setup/file.hpp"
-#include "boost/log/utility/setup/console.hpp"
-#include "boost/log/utility/setup/common_attributes.hpp"
+#include "spdlog/details/registry.h"
 
 namespace selx
 {
+
 LoggerImpl
-::LoggerImpl()
+::LoggerImpl() : m_Loggers(), m_AsyncQueueSize( 262144 ), m_AsyncQueueOverflowPolicy( spdlog::async_overflow_policy::block_retry )
 {
-  this->m_Logger = boost::log::sources::severity_channel_logger< SeverityType, Logger::ChannelType >();
-
-  // Add LineID, TimeStamp, ProcessID and ThreadID
-  boost::log::add_common_attributes();
+  this->SetSyncMode();
+  this->SetPattern( "[%Y-%m-%d %H:%M:%S.%f] [thread %t] [%l] %v" );
 }
-
 
 LoggerImpl
 ::~LoggerImpl()
 {
+  this->RemoveAllStreams();
 }
 
-
-void
+spdlog::level::level_enum
 LoggerImpl
-::AddConsole( Logger::FormatType format )
-{
-  boost::log::add_console_log(
-    std::cout,
-    boost::log::keywords::format = format
-    );
-}
-
-
-// void
-// LoggerImpl::LoggerImpl
-// ::AddFile( FileNameType fileName, FormatType format )
-// {
-//   boost::log::add_file_log(
-//     boost::log::keywords::file_name = fileName,
-//     boost::log::keywords::format = format
-//   );
-// }
-
-// void
-// LoggerImpl::LoggerImpl
-// ::AddFile( FileNameType fileName, Logger::ChannelType channel, Logger::FormatType format )
-// {
-//   boost::log::add_file_log(
-//     boost::log::keywords::file_name = fileName,
-//     boost::log::keywords::filter = channel_filter == channel,
-//     boost::log::keywords::format = format
-//   );
-// }
-
-void
-LoggerImpl
-::Log( SeverityType severity, Logger::MessageType message )
-{
-  boost::log::record record = this->m_Logger.open_record( boost::log::keywords::severity = severity );
-  if( record )
-  {
-    boost::log::record_ostream strm( record );
-    strm << message;
-    strm.flush();
-    this->m_Logger.push_record( boost::move( record ) );
-  }
-  else
-  {
-    assert( false );
+::ToSpdLogLevel( const LogLevel& level ) {
+  switch (level) {
+    case LogLevel::TRC:
+      return spdlog::level::level_enum::trace;
+    case LogLevel::DBG:
+      return spdlog::level::level_enum::debug;
+    case LogLevel::INF:
+      return spdlog::level::level_enum::info;
+    case LogLevel::WRN:
+      return spdlog::level::level_enum::warn;
+    case LogLevel::ERR:
+      return spdlog::level::level_enum::err;
+    case LogLevel::CRT:
+      return spdlog::level::level_enum::critical;
+    case LogLevel::OFF:
+      return spdlog::level::level_enum::off;
+    default:
+      itkGenericExceptionMacro( "Invalid log level." );
   }
 }
 
-
-// void
-// LoggerImpl::LoggerImpl
-// ::Log( LoggerImpl::ChannelType channel, SeverityType severity, const std::string message )
-// {
-//   boost::log::record record = this->m_Logger.open_record( ( boost::log::keywords::channel = channel, boost::log::keywords::severity = severity ) );
-//   if( record )
-//   {
-//     boost::log::record_ostream strm( record );
-//     strm << message;
-//     strm.flush();
-//     this->m_Logger.push_record( boost::move( record ) );
-//   }
-//   else
-//   {
-//     assert( false );
-//   }
-// }
+void
+LoggerImpl
+::SetLogLevel( const LogLevel& level ) {
+  spdlog::level::level_enum spdloglevel = this->ToSpdLogLevel( level );
+  spdlog::set_level( spdloglevel );
+  for( const auto& item : this->m_Loggers )
+  {
+    item.second->set_level( spdloglevel );
+  }
 }
+
+void
+LoggerImpl
+::SetPattern( const std::string& pattern )
+{
+  spdlog::set_pattern( pattern );
+}
+
+void
+LoggerImpl
+::SetSyncMode()
+{
+  spdlog::set_sync_mode();
+}
+
+void
+LoggerImpl
+::SetAsyncMode()
+{
+  spdlog::set_async_mode(this->m_AsyncQueueSize, this->m_AsyncQueueOverflowPolicy);
+}
+
+void
+LoggerImpl
+::SetAsyncQueueBlockOnOverflow(void)
+{
+  this->m_AsyncQueueOverflowPolicy = AsyncQueueOverflowPolicyType::block_retry;
+}
+
+void
+LoggerImpl
+::SetAsyncQueueDiscardOnOverflow(void)
+{
+  this->m_AsyncQueueOverflowPolicy = AsyncQueueOverflowPolicyType::discard_log_msg;
+}
+
+void
+LoggerImpl
+::SetAsyncQueueSize( const size_t& queueSize )
+{
+  this->m_AsyncQueueSize = queueSize;
+}
+
+void
+LoggerImpl
+::AsyncQueueFlush( void )
+{
+  for( const auto& identifierAndLogger : this->m_Loggers )
+  {
+    identifierAndLogger.second->flush();
+  }
+}
+
+void
+LoggerImpl
+::AddStream( const std::string& identifier, std::ostream& stream, const bool& forceFlush )
+{
+  auto sink = std::make_shared< spdlog::sinks::ostream_sink< std::mutex > >(stream, forceFlush);
+  auto logger = spdlog::details::registry::instance().create(identifier, { sink } );
+  this->m_Loggers.insert( std::make_pair( identifier, logger ) );
+}
+
+void
+LoggerImpl
+::RemoveStream( const std::string& name )
+{
+  spdlog::drop( name );
+  this->m_Loggers.erase( name );
+}
+
+void
+LoggerImpl
+::RemoveAllStreams( void )
+{
+  for( const auto& identifierAndLogger : this->m_Loggers )
+  {
+    spdlog::drop( identifierAndLogger.first );
+  }
+
+  this->m_Loggers.clear();
+}
+
+void
+LoggerImpl
+::Log( const LogLevel& level, const std::string& message )
+{
+  auto spdLogLevel = this->ToSpdLogLevel( level );
+  for( const auto& identifierAndLogger : this->m_Loggers )
+  {
+    identifierAndLogger.second->log( spdLogLevel, message.c_str() );
+  }
+}
+
+} // namespace

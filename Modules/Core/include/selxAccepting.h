@@ -20,7 +20,10 @@
 #ifndef Accepting_h
 #define Accepting_h
 
+#include "selxLogger.h"
 #include "selxLoggerImpl.h"
+#include "selxComponentBase.h"
+#include "selxInterfaceAcceptor.h"
 
 namespace selx
 {
@@ -78,10 +81,9 @@ public:
   // Helper function by which a component can check if all its Accepting interfaces have been set after the handshakes
   bool AreAllAccepted();
 
-protected:
-
 private:
-  LoggerImpl & m_Logger;
+
+  LoggerImpl& m_Logger;
 };
 } //end namespace selx
 #ifndef ITK_MANUAL_INSTANTIATION

@@ -20,7 +20,7 @@
 set( proj Elastix )
 
 set( ELASTIX_GIT_REPOSITORY https://github.com/SuperElastix/elastix )
-set( ELASTIX_GIT_TAG 2ac905afdb1a5a841c05ed6abf92a1bf232d1e89 )
+set( ELASTIX_GIT_TAG e8354222396c6bd78e9fe6d5a39e4ecac4bb0d52 )
 
 UPDATE_SELX_SUPERBUILD_COMMAND(${proj})
 
@@ -35,6 +35,7 @@ ExternalProject_Add( ${proj}
   --no-warn-unused-cli
   -DBUILD_TESTING:BOOL=OFF
   -DELASTIX_BUILD_EXECUTABLE:BOOL=OFF
+  -DELASTIX_USE_OPENMP:BOOL=${SUPERELASTIX_USE_OPENMP}
   -DBUILD_SHARED_LIBS:BOOL=${SUPERELASTIX_BUILD_SHARED_LIBS}
   -DCMAKE_CONFIGURATION_TYPES:STRING=${CMAKE_CONFIGURATION_TYPES}
   -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
@@ -119,7 +120,7 @@ ExternalProject_Add( ${proj}
   BUILD_COMMAND ${SELX_SUPERBUILD_COMMAND}
 )
 
-ExternalProject_Get_Property( Elastix binary_dir )
-set( ELASTIX_USE_FILE "${binary_dir}/UseElastix.cmake" )
+ExternalProject_Get_Property( ${proj} binary_dir )
+set( Elastix_DIR "${binary_dir}" )
 
 list( APPEND SUPERELASTIX_DEPENDENCIES ${proj} )

@@ -73,13 +73,6 @@ public:
       }
       typename GradientDescentOptimizerv4Type::DerivativeType gradient = optimizer->GetGradient();
 
-      /* orig
-      std::cout << "  Current level = " << currentLevel << std::endl;
-      std::cout << "    shrink factor = " << shrinkFactors[currentLevel] << std::endl;
-      std::cout << "    smoothing sigma = " << smoothingSigmas[currentLevel] << std::endl;
-      std::cout << "    required fixed parameters = " << adaptors[currentLevel]->GetRequiredFixedParameters() << std::endl;
-      */
-
       //debug:
       std::cout << "  CL Current level:           " << currentLevel << std::endl;
       std::cout << "   SF Shrink factor:          " << shrinkFactors << std::endl;

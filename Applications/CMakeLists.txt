@@ -56,6 +56,7 @@ include( ${SUPERELASTIX_USE_FILE} )
 find_package( ITK )
 include( ${ITK_USE_FILE} )
 
+find_package( Elastix )
 include( ${ELASTIX_USE_FILE} )
 
 add_subdirectory( CommandLineInterface )

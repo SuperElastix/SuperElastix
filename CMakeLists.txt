@@ -119,8 +119,7 @@ include( ${ITK_USE_FILE} )
 set( Boost_USE_STATIC_LIBS ON ) # only find static libs
 set( Boost_USE_MULTITHREADED ON )
 set( Boost_USE_STATIC_RUNTIME OFF )
-
-find_package( Boost 1.65.0 EXACT COMPONENTS filesystem system log_setup log date_time chrono atomic thread regex REQUIRED QUIET ) # graph ?
+find_package( Boost 1.65.0 EXACT COMPONENTS program_options filesystem system regex REQUIRED QUIET ) # graph ?
 include_directories( ${Boost_INCLUDE_DIRS} )
 
 # ---------------------------------------------------------------------
@@ -131,24 +130,25 @@ option( BUILD_APPLICATIONS "Build applications." OFF )
 mark_as_advanced( BUILD_SHARED_LIBS )
 option( BUILD_SHARED_LIBS "Build shared libraries." OFF )
 
-mark_as_advanced( BUILD_EXPRESS )
-option( BUILD_EXPRESS "Use express build." OFF )
-
 # ---------------------------------------------------------------------
 # Build SuperElastix
 
 # Initialize the build system and build the core. These calls are mandatory. 
 # Do not change and do not call anywhere else.
+message( STATUS "Enabling modules ..." )
 include( selxModules )
 _selxmodules_initialize()
 _selxmodule_enable( ModuleFilter "SuperElastix" )
+message( STATUS "Enabling modules ... Done" )
 
 # Build applications
-if( ${BUILD_APPLICATIONS} AND NOT ${BUILD_EXPRESS} )
+if( ${BUILD_APPLICATIONS} )
+  message( STATUS "Enabling applications ..." )
   include( selxApplications )
   _selxapplications_initialize()
   enable_applications( SUPERELASTIX_APPLICATIONS )
-endif() 
+  message( STATUS "Enabling applications ... Done" )
+endif()
 
 # TODO: Functionality to disable default modules/applications
 
@@ -184,11 +184,11 @@ endif()
 # ---------------------------------------------------------------------
 # Documentation
 
+option( BUILD_DOXYGEN "Build Doxygen documentation." OFF )
 mark_as_advanced( BUILD_DOXYGEN )
-option( BUILD_DOXYGEN "Enable building Doxygen documentation." OFF )
 
+option( BUILD_READTHEDOCS "Build readthedocs.org documentation." OFF )
 mark_as_advanced( BUILD_READTHEDOCS )
-option( BUILD_READTHEDOCS "Enable building readthedocs.org documentation." OFF )
 
 # ---------------------------------------------------------------------
 # Installation
