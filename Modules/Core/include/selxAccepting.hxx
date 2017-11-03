@@ -130,12 +130,8 @@ Accepting< FirstInterface, RestInterfaces ... >::AreAllAccepted()
   InterfaceAcceptor< FirstInterface > * acceptIF = ( this );
   if( acceptIF->isSet() == false )
   {
-    auto const & properties = Properties< FirstInterface >::Get();
-    for( auto const & keyvalue : properties )
-    {
-      std::cout << "{ " "" << keyvalue.first << "" ": " "" << keyvalue.second << "" "}" << std::endl;
-    }
-    //std::cout << std::endl;
+    // TODO: Log component names as well
+    this->m_Logger.Log( LogLevel::ERR, "No connection satisfy criteria {0}.", this->m_Logger << Properties< FirstInterface >::Get());
     return false;
   }
 

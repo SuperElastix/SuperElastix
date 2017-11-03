@@ -21,12 +21,13 @@
 #define ConfigurationReader_cxx
 
 #include "selxConfigurationReader.h"
+#include "selxLoggerImpl.h"
 #include <ostream>
 
 namespace selx
 {
 ConfigurationReader::ParameterValueType
-ConfigurationReader::VectorizeValues( const ComponentOrConnectionTreeType & componentOrConnectionTree )
+ConfigurationReader::VectorizeValues( ComponentOrConnectionTreeType & componentOrConnectionTree )
 {
   std::string        propertySingleValue = componentOrConnectionTree.data();
   ParameterValueType propertyMultiValue;
@@ -50,14 +51,20 @@ ConfigurationReader::VectorizeValues( const ComponentOrConnectionTreeType & comp
 
 
 BlueprintImpl
-ConfigurationReader::FromFile(const PathType & filename)
+ConfigurationReader::FromFile(const PathType & fileName)
 {
-  std::cout << "Scanning for Includes: " << filename << std::endl;
-  auto propertyTree = ReadPropertyTree(filename);
+  LoggerImpl logger;
+
+  logger.Log( LogLevel::INF, "Loading {0} ... ");
+  auto propertyTree = ReadPropertyTree(fileName);
+  logger.Log( LogLevel::INF, "Loading {0} ... Done");
+
+  logger.Log( LogLevel::INF, "Checking {0} for include files ... ", fileName);
   auto includesList = FindIncludes(propertyTree);
+
   if (includesList.size() == 0)
   {
-    std::cout << "Load: " << filename << std::endl;
+    logger.Log( LogLevel::INF, "Checking {0} for include files ... Done. No include files specified.", fileName);
     return FromPropertyTree(propertyTree);
   }
   else
@@ -65,28 +72,37 @@ ConfigurationReader::FromFile(const PathType & filename)
     BlueprintImpl baseBlueprint = BlueprintImpl();
     for (auto const & includePath : includesList)
     {
+      logger.Log( LogLevel::INF, "Including file {0} ... ", includePath);
       baseBlueprint.ComposeWith(FromFile(includePath));
-      std::cout << "Compose with: " << filename << std::endl;
+      logger.Log( LogLevel::INF, "Including include file {0} ... Done", includePath);
     }
     baseBlueprint.ComposeWith(FromPropertyTree(propertyTree));
+    logger.Log( LogLevel::INF, "Checking {0} for include files ... Done");
     return baseBlueprint;
   }
 }
 
 void
-ConfigurationReader::MergeFromFile(BlueprintImplPointer blueprint, const PathType & filename)
+ConfigurationReader::MergeFromFile(BlueprintImplPointer blueprint, const PathType & fileName)
 {
-  std::cout << "Scanning for Includes: " << filename << std::endl;
-  auto propertyTree = ReadPropertyTree(filename);
+  LoggerImpl logger;
+
+  logger.Log( LogLevel::INF, "Loading {0} ... ", fileName);
+  auto propertyTree = ReadPropertyTree(fileName);
+  logger.Log( LogLevel::INF, "Loading {0} ... Done", fileName);
+
+  logger.Log( LogLevel::INF, "Checking {0} for include files ... ", fileName);
   auto includesList = FindIncludes(propertyTree);
+
   if (includesList.size() > 0)
   {
     for (auto const & includePath : includesList)
     {
+      logger.Log( LogLevel::INF, "Including file {0} ... ", includePath);
       MergeFromFile(blueprint, includePath);
     }
   }
-  std::cout << "Load: " << filename << std::endl;
+  logger.Log( LogLevel::INF, "Checking {0} for include files ... done", fileName);
   MergeProperties(blueprint, propertyTree);
   return;
 }
@@ -138,6 +154,7 @@ ConfigurationReader::FindIncludes(const PropertyTreeType & propertyTree)
 BlueprintImpl
 ConfigurationReader::FromPropertyTree( const PropertyTreeType & pt )
 {
+  LoggerImpl logger;
   BlueprintImpl blueprint = BlueprintImpl();
 
   BOOST_FOREACH( const PropertyTreeType::value_type & v, pt.equal_range( "Component" ) )
@@ -166,7 +183,8 @@ ConfigurationReader::FromPropertyTree( const PropertyTreeType & pt )
     std::string connectionName = v.second.data();
     if( connectionName != "" )
     {
-      std::cout << "warning connectionName " "" << connectionName << "" " is ignored" << std::endl;
+      // TODO: Why is it ignored?
+      logger.Log( LogLevel::WRN, "Connection {0} is ignored.", connectionName);
     }
     std::string      outName;
     std::string      inName;
@@ -188,7 +206,7 @@ ConfigurationReader::FromPropertyTree( const PropertyTreeType & pt )
       }
       else if( connectionKey == "Name" )
       {
-        std::cout << "Warning: connection 'Name'-s are ignored." << std::endl;
+        logger.Log( LogLevel::WRN, "Connections with key 'Name' are ignored.");
         continue;
       }
       else
@@ -207,6 +225,7 @@ ConfigurationReader::FromPropertyTree( const PropertyTreeType & pt )
 void
 ConfigurationReader::MergeProperties(BlueprintImplPointer blueprint, const PropertyTreeType & pt)
 {
+  LoggerImpl logger;
   BOOST_FOREACH(const PropertyTreeType::value_type & v, pt.equal_range("Component"))
   {
     std::string      componentName;
@@ -280,7 +299,7 @@ ConfigurationReader::MergeProperties(BlueprintImplPointer blueprint, const Prope
     std::string connectionName = v.second.data();
     if (connectionName != "")
     {
-      std::cout << "warning connectionName " "" << connectionName << "" " is ignored" << std::endl;
+      logger.Log( LogLevel::WRN, "Connection {0} is ignored.", connectionName);
     }
     std::string      outName;
     std::string      inName;
@@ -302,7 +321,7 @@ ConfigurationReader::MergeProperties(BlueprintImplPointer blueprint, const Prope
       }
       else if (connectionKey == "Name")
       {
-        std::cout << "Warning: connection 'Name'-s are ignored." << std::endl;
+        logger.Log( LogLevel::WRN, "Connections with key 'Name' are ignored.");
         continue;
       }
       else

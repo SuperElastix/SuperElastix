@@ -32,7 +32,7 @@
     },
     "Component": {
         "Name": "Metric",
-        "NameOfClass": "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component"
+        "NameOfClass": "ItkMeanSquaresImageToImageMetricv4Component"
     },
     "Component": {
         "Name": "Optimizer",

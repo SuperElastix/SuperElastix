@@ -216,14 +216,13 @@ Niftyregf3dComponent<  TPixel >
       }
       else
       {
-        std::cout << "The key " << criterion.first << " is recognized, but not with value " << criterion.second[ 0 ] << std::endl;
+        this->Warning( "Criterion {0} has invalid value.", criterion.first );
         return false;
       }
     }
     else
     {
-      // TODO log error?
-      std::cout << criterion.first << " accepts one number only" << std::endl;
+      this->Error( "Criteria {0} does not accept multiple values." );
       return false;
     }
   }
@@ -237,8 +236,7 @@ Niftyregf3dComponent<  TPixel >
     }
     else
     {
-      // TODO log error?
-      std::cout << "NumberOfIterations accepts one number only" << std::endl;
+      this->Warning( "{0} does not accept multiple values.", criterion.first );
       return false;
     }
   }
@@ -258,14 +256,14 @@ Niftyregf3dComponent<  TPixel >
       }
       else
       {
-        std::cout << "The key " << criterion.first << " is recognized, but not with value " << criterion.second[ 0 ]  << std::endl;
+        this->Warning( "Criterion {0} has invalid value.", criterion.first);
         return false;
       }
     }
     else
     {
       // TODO log error?
-      std::cout << criterion.first << " accepts one number only" << std::endl;
+      this->Warning( "{0} does not accept multiple values.", criterion.first );
       return false;
     }
   }
@@ -280,8 +278,7 @@ Niftyregf3dComponent<  TPixel >
     }
     else
     {
-      // TODO log error?
-      std::cout << criterion.first << " accepts one number only" << std::endl;
+      this->Warning( "{0} does not accept multiple values.", criterion.first );
       return false;
     }
   }
