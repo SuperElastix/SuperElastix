@@ -127,7 +127,7 @@ LoggerImpl
 ::AddStream( const std::string& identifier, std::ostream& stream, const bool& forceFlush )
 {
   auto sink = std::make_shared< spdlog::sinks::ostream_sink< std::mutex > >(stream, forceFlush);
-  auto logger = spdlog::details::registry::instance().create(identifier, { sink } );
+  auto logger = spdlog::details::registry::instance().create(identifier, sink );
   this->m_Loggers.insert( std::make_pair( identifier, logger ) );
 }
 
