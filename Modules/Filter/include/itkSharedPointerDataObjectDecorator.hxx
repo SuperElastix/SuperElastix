@@ -48,7 +48,7 @@ SharedPointerDataObjectDecorator< T >
 template< typename T >
 void
 SharedPointerDataObjectDecorator< T >
-::Accept( std::shared_ptr< T > val )
+::Set( std::shared_ptr< T > val )
 {
   if( m_Component != val )
   {
