@@ -19,7 +19,7 @@
 
 set( proj Niftyreg )
 
-set( NIFTYREG_GIT_REPOSITORY https://cmiclab.cs.ucl.ac.uk/mmodat/niftyreg.git )
+set( NIFTYREG_GIT_REPOSITORY https://github.com/SuperElastix/niftyreg.git )
 set( NIFTYREG_GIT_TAG 88b369becb6bdbda22ea96a0bef2b83bee85b219 )
 
 UPDATE_SELX_SUPERBUILD_COMMAND(${proj})
