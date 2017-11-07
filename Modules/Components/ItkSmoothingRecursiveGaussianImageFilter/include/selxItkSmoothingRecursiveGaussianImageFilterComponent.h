@@ -61,7 +61,7 @@ public:
   typedef typename ItkImageType::Pointer
     ItkImagePointer;
 
-  virtual int Set( typename itkImageInterface< Dimensionality, TPixel >::Pointer ) override;
+  virtual int Accept( typename itkImageInterface< Dimensionality, TPixel >::Pointer ) override;
 
   virtual ItkImagePointer GetItkImage() override;
 

@@ -39,7 +39,7 @@ NiftiToItkImageSinkComponent< Dimensionality, TPixel >::~NiftiToItkImageSinkComp
 
 template< int Dimensionality, class TPixel >
 int
-NiftiToItkImageSinkComponent< Dimensionality, TPixel >::Set( typename WarpedImageInterfaceType::Pointer other )
+NiftiToItkImageSinkComponent< Dimensionality, TPixel >::Accept( typename WarpedImageInterfaceType::Pointer other )
 {
   // Store pointer to the m_WarpedImageInterface for getting the result image after in has been generated (registration).
   // TODO: sanity check that m_WarpedImageInterface was Null to detect if Set was called more than once erroneously.
@@ -50,7 +50,7 @@ NiftiToItkImageSinkComponent< Dimensionality, TPixel >::Set( typename WarpedImag
 
 template< int Dimensionality, class TPixel >
 int
-NiftiToItkImageSinkComponent< Dimensionality, TPixel >::Set( typename ImageDomainInterfaceType::Pointer other )
+NiftiToItkImageSinkComponent< Dimensionality, TPixel >::Accept( typename ImageDomainInterfaceType::Pointer other )
 {
   // Store pointer to the m_ImageDomainInterface for getting the result image after in has been generated (registration).
   // TODO: sanity check that m_ImageDomainInterface was Null to detect if Set was called more than once erroneously.

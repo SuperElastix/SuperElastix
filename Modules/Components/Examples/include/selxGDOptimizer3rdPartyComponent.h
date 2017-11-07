@@ -48,9 +48,9 @@ public:
   Example3rdParty::GDOptimizer3rdParty * theImplementation;
   Metric3rdPartyWrapper *                MetricObject;
 
-  virtual int Set( MetricValueInterface::Pointer ) override;
+  virtual int Accept( MetricValueInterface::Pointer ) override;
 
-  virtual int Set( MetricDerivativeInterface::Pointer ) override;
+  virtual int Accept( MetricDerivativeInterface::Pointer ) override;
 
   virtual int Update() override;
 

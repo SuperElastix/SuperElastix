@@ -79,7 +79,7 @@ public:
   typedef itk::Array< TransformInternalComputationValueType > SmoothingSigmasArrayType;
 
   //Accepting Interfaces:
-  virtual int Set( typename itkImageDomainFixedInterface< Dimensionality >::Pointer ) override;
+  virtual int Accept( typename itkImageDomainFixedInterface< Dimensionality >::Pointer ) override;
 
   //Providing Interfaces:
   virtual TransformParametersAdaptorsContainerType GetItkTransformParametersAdaptorsContainer() override;

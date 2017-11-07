@@ -63,7 +63,7 @@ public:
   typedef FileWriterDecorator< DeformationFieldImageWriterType >                          DecoratedWriterType;
 
   //Accepting Interfaces:
-  virtual int Set( typename AcceptingDisplacementFieldInterfaceType::Pointer ) override;
+  virtual int Accept( typename AcceptingDisplacementFieldInterfaceType::Pointer ) override;
 
   //Providing Interfaces:
   virtual void SetMiniPipelineOutput( itk::DataObject::Pointer ) override;

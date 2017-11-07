@@ -63,7 +63,7 @@ public:
       = typename itk::GaussianExponentialDiffeomorphicTransform< InternalComputationValueType, Dimensionality >;
 
   //Accepting Interfaces:
-  virtual int Set( typename itkImageDomainFixedInterface< Dimensionality >::Pointer ) override;
+  virtual int Accept( typename itkImageDomainFixedInterface< Dimensionality >::Pointer ) override;
 
   //Providing Interfaces:
   virtual TransformPointer GetItkTransform() override;

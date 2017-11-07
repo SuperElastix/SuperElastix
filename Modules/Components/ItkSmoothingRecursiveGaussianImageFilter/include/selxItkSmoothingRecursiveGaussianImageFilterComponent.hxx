@@ -39,7 +39,7 @@ ItkSmoothingRecursiveGaussianImageFilterComponent< Dimensionality, TPixel >::~It
 template< int Dimensionality, class TPixel >
 int
 ItkSmoothingRecursiveGaussianImageFilterComponent< Dimensionality, TPixel >
-::Set( typename itkImageInterface< Dimensionality, TPixel >::Pointer component )
+::Accept( typename itkImageInterface< Dimensionality, TPixel >::Pointer component )
 {
   auto image = component->GetItkImage();
   // connect the itk pipeline

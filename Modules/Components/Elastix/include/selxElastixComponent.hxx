@@ -60,7 +60,7 @@ ElastixComponent< Dimensionality, TPixel >::~ElastixComponent()
 
 template< int Dimensionality, class TPixel >
 int
-ElastixComponent< Dimensionality, TPixel >::Set( typename itkImageFixedInterface< Dimensionality, TPixel >::Pointer component )
+ElastixComponent< Dimensionality, TPixel >::Accept( typename itkImageFixedInterface< Dimensionality, TPixel >::Pointer component )
 {
   auto fixedImage = component->GetItkImageFixed();
   // connect the itk pipeline
@@ -71,7 +71,7 @@ ElastixComponent< Dimensionality, TPixel >::Set( typename itkImageFixedInterface
 
 template< int Dimensionality, class TPixel >
 int
-ElastixComponent< Dimensionality, TPixel >::Set( typename itkImageMovingInterface< Dimensionality, TPixel >::Pointer component )
+ElastixComponent< Dimensionality, TPixel >::Accept( typename itkImageMovingInterface< Dimensionality, TPixel >::Pointer component )
 {
   auto movingImage = component->GetItkImageMoving();
   // connect the itk pipeline

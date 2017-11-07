@@ -44,7 +44,7 @@ Dimensionality >::~ItkGaussianExponentialDiffeomorphicTransformComponent()
 template< class InternalComputationValueType, int Dimensionality >
 int
 ItkGaussianExponentialDiffeomorphicTransformComponent< InternalComputationValueType, Dimensionality >
-::Set( typename itkImageDomainFixedInterface< Dimensionality >::Pointer component )
+::Accept( typename itkImageDomainFixedInterface< Dimensionality >::Pointer component )
 {
   this->m_FixedImageDomain = component->GetItkImageDomainFixed();
 

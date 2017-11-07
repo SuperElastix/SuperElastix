@@ -41,7 +41,7 @@ ItkResampleFilterComponent< Dimensionality, TPixel, TInternalComputationValue >:
 template< int Dimensionality, class TPixel, class TInternalComputationValue >
 int
 ItkResampleFilterComponent< Dimensionality, TPixel, TInternalComputationValue >
-::Set( typename itkImageDomainFixedInterface< Dimensionality >::Pointer component )
+::Accept( typename itkImageDomainFixedInterface< Dimensionality >::Pointer component )
 {
   auto fixedImageDomain = component->GetItkImageDomainFixed();
   // connect the itk pipeline
@@ -59,7 +59,7 @@ ItkResampleFilterComponent< Dimensionality, TPixel, TInternalComputationValue >
 template< int Dimensionality, class TPixel, class TInternalComputationValue >
 int
 ItkResampleFilterComponent< Dimensionality, TPixel, TInternalComputationValue >
-::Set( typename itkImageMovingInterface< Dimensionality, TPixel >::Pointer component )
+::Accept( typename itkImageMovingInterface< Dimensionality, TPixel >::Pointer component )
 {
   auto movingImage = component->GetItkImageMoving();
   // connect the itk pipeline
@@ -71,7 +71,7 @@ ItkResampleFilterComponent< Dimensionality, TPixel, TInternalComputationValue >
 template< int Dimensionality, class TPixel, class TInternalComputationValue >
 int
 ItkResampleFilterComponent< Dimensionality, TPixel, TInternalComputationValue >
-::Set( typename itkTransformInterface< TInternalComputationValue, Dimensionality >::Pointer component )
+::Accept( typename itkTransformInterface< TInternalComputationValue, Dimensionality >::Pointer component )
 {
   //Store interface for later use
   this->m_TransformComponent = component;

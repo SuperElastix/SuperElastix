@@ -70,9 +70,9 @@ public:
 
   
   // accepting interfaces
-  virtual int Set( typename NiftiDisplacementFieldInterfaceType::Pointer ) override;
+  virtual int Accept( typename NiftiDisplacementFieldInterfaceType::Pointer ) override;
 
-  virtual int Set( typename ItkImageDomainInterfaceType::Pointer ) override;
+  virtual int Accept( typename ItkImageDomainInterfaceType::Pointer ) override;
 
   // providing interfaces
   virtual void SetMiniPipelineOutput( itk::DataObject::Pointer ) override;

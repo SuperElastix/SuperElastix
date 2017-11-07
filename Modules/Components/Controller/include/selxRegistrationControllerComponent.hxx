@@ -38,7 +38,7 @@ RegistrationControllerComponent< dummy >::~RegistrationControllerComponent()
 
 template< bool dummy >
 int
-RegistrationControllerComponent< dummy >::Set( RunRegistrationInterface::Pointer other )
+RegistrationControllerComponent< dummy >::Accept( RunRegistrationInterface::Pointer other )
 {
   this->m_RunRegistrationInterfaces.insert( other );
   return 0;
@@ -47,7 +47,7 @@ RegistrationControllerComponent< dummy >::Set( RunRegistrationInterface::Pointer
 
 template< bool dummy >
 int
-RegistrationControllerComponent< dummy >::Set( ReconnectTransformInterface::Pointer other )
+RegistrationControllerComponent< dummy >::Accept( ReconnectTransformInterface::Pointer other )
 {
   this->m_ReconnectTransformInterfaces.insert( other );
   return 0;
@@ -56,7 +56,7 @@ RegistrationControllerComponent< dummy >::Set( ReconnectTransformInterface::Poin
 
 template< bool dummy >
 int
-RegistrationControllerComponent< dummy >::Set( AfterRegistrationInterface::Pointer other )
+RegistrationControllerComponent< dummy >::Accept( AfterRegistrationInterface::Pointer other )
 {
   this->m_AfterRegistrationInterfaces.insert( other );
   return 0;

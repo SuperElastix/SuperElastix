@@ -93,17 +93,17 @@ public:
   typedef itk::RegistrationParameterScalesFromPhysicalShift< ImageMetricType >             ScalesEstimatorType;
 
   //Accepting Interfaces:
-  virtual int Set( typename itkImageFixedInterface< Dimensionality, PixelType >::Pointer ) override;
+  virtual int Accept( typename itkImageFixedInterface< Dimensionality, PixelType >::Pointer ) override;
 
-  virtual int Set( typename itkImageMovingInterface< Dimensionality, PixelType >::Pointer ) override;
+  virtual int Accept( typename itkImageMovingInterface< Dimensionality, PixelType >::Pointer ) override;
 
-  virtual int Set( typename itkTransformInterface< InternalComputationValueType, Dimensionality >::Pointer ) override;
+  virtual int Accept( typename itkTransformInterface< InternalComputationValueType, Dimensionality >::Pointer ) override;
 
-  virtual int Set( typename TransformParametersAdaptorsContainerInterfaceType::Pointer ) override;
+  virtual int Accept( typename TransformParametersAdaptorsContainerInterfaceType::Pointer ) override;
 
-  virtual int Set( typename itkMetricv4Interface< Dimensionality, PixelType, InternalComputationValueType >::Pointer ) override;
+  virtual int Accept( typename itkMetricv4Interface< Dimensionality, PixelType, InternalComputationValueType >::Pointer ) override;
 
-  virtual int Set( typename itkOptimizerv4Interface< InternalComputationValueType >::Pointer ) override;
+  virtual int Accept( typename itkOptimizerv4Interface< InternalComputationValueType >::Pointer ) override;
 
   //Providing Interfaces:
   virtual TransformPointer GetItkTransform() override;

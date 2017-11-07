@@ -36,7 +36,7 @@ GDOptimizer4thPartyComponent::~GDOptimizer4thPartyComponent()
 
 
 int
-GDOptimizer4thPartyComponent::Set( MetricValueInterface::Pointer component )
+GDOptimizer4thPartyComponent::Accept( MetricValueInterface::Pointer component )
 {
   this->MetricObject->SetMetricValueComponent( component );
   return 0;

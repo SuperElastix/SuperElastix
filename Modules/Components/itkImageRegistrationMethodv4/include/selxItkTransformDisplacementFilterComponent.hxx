@@ -41,7 +41,7 @@ ItkTransformDisplacementFilterComponent< Dimensionality, TPixel, TInternalComput
 template< int Dimensionality, class TPixel, class TInternalComputationValue >
 int
 ItkTransformDisplacementFilterComponent< Dimensionality, TPixel, TInternalComputationValue >
-::Set( typename itkImageDomainFixedInterface< Dimensionality >::Pointer component )
+::Accept( typename itkImageDomainFixedInterface< Dimensionality >::Pointer component )
 {
   auto fixedImageDomain = component->GetItkImageDomainFixed();
   // connect the itk pipeline
@@ -59,7 +59,7 @@ ItkTransformDisplacementFilterComponent< Dimensionality, TPixel, TInternalComput
 template< int Dimensionality, class TPixel, class TInternalComputationValue >
 int
 ItkTransformDisplacementFilterComponent< Dimensionality, TPixel, TInternalComputationValue >
-::Set( typename itkTransformInterface< TInternalComputationValue, Dimensionality >::Pointer component )
+::Accept( typename itkTransformInterface< TInternalComputationValue, Dimensionality >::Pointer component )
 {
   //Store interface for later use
   this->m_TransformComponent = component;

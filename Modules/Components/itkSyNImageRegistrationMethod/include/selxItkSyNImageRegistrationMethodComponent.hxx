@@ -46,7 +46,7 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel >::~ItkSyNImageRe
 template< int Dimensionality, class TPixel >
 int
 ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel >
-::Set( itkImageFixedInterface< Dimensionality, TPixel > * component )
+::Accept( itkImageFixedInterface< Dimensionality, TPixel > * component )
 {
   auto fixedImage = component->GetItkImageFixed();
   // connect the itk pipeline
@@ -59,7 +59,7 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel >
 template< int Dimensionality, class TPixel >
 int
 ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel >
-::Set( itkImageMovingInterface< Dimensionality, TPixel > * component )
+::Accept( itkImageMovingInterface< Dimensionality, TPixel > * component )
 {
   auto movingImage = component->GetItkImageMoving();
   // connect the itk pipeline
@@ -70,7 +70,7 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel >
 
 template< int Dimensionality, class TPixel >
 int
-ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel >::Set( itkMetricv4Interface< Dimensionality, TPixel, double > * component )
+ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel >::Accept( itkMetricv4Interface< Dimensionality, TPixel, double > * component )
 {
   this->m_theItkFilter->SetMetric( component->GetItkMetricv4() );
 
