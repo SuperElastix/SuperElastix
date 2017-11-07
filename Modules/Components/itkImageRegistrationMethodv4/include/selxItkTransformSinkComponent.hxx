@@ -38,7 +38,7 @@ ItkTransformSinkComponent< Dimensionality, TInternalComputationValue >::~ItkTran
 
 template< int Dimensionality, class TInternalComputationValue >
 int
-ItkTransformSinkComponent< Dimensionality, TInternalComputationValue >::Set(typename itkTransformInterface< TInternalComputationValue, Dimensionality >::Pointer other)
+ItkTransformSinkComponent< Dimensionality, TInternalComputationValue >::Accept(typename itkTransformInterface< TInternalComputationValue, Dimensionality >::Pointer other)
 {
   // Store pointer to the m_TransformInterface for getting the result transform after in has been generated (registration).
   // TODO: sanity check that m_TransformInterface was Null to detect if Set was called more than once erroneously.

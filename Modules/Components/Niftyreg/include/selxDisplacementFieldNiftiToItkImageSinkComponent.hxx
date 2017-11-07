@@ -39,7 +39,7 @@ DisplacementFieldNiftiToItkImageSinkComponent< Dimensionality, TPixel >::~Displa
 
 template< int Dimensionality, class TPixel >
 int
-DisplacementFieldNiftiToItkImageSinkComponent< Dimensionality, TPixel >::Set( typename NiftiDisplacementFieldInterfaceType::Pointer other )
+DisplacementFieldNiftiToItkImageSinkComponent< Dimensionality, TPixel >::Accept( typename NiftiDisplacementFieldInterfaceType::Pointer other )
 {
   // Store pointer to the m_WarpedImageInterface for getting the result image after in has been generated (registration).
   // TODO: sanity check that m_WarpedImageInterface was Null to detect if Set was called more than once erroneously.
@@ -50,7 +50,7 @@ DisplacementFieldNiftiToItkImageSinkComponent< Dimensionality, TPixel >::Set( ty
 
 template< int Dimensionality, class TPixel >
 int
-DisplacementFieldNiftiToItkImageSinkComponent< Dimensionality, TPixel >::Set( typename ItkImageDomainInterfaceType::Pointer other )
+DisplacementFieldNiftiToItkImageSinkComponent< Dimensionality, TPixel >::Accept( typename ItkImageDomainInterfaceType::Pointer other )
 {
   // Store pointer to the m_ImageDomainInterface for getting the result image after in has been generated (registration).
   // TODO: sanity check that m_ImageDomainInterface was Null to detect if Set was called more than once erroneously.

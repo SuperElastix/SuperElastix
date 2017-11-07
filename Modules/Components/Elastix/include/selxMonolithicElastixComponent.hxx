@@ -48,7 +48,7 @@ MonolithicElastixComponent< Dimensionality, TPixel >::~MonolithicElastixComponen
 
 template< int Dimensionality, class TPixel >
 int
-MonolithicElastixComponent< Dimensionality, TPixel >::Set( typename itkImageFixedInterface< Dimensionality, TPixel >::Pointer component )
+MonolithicElastixComponent< Dimensionality, TPixel >::Accept( typename itkImageFixedInterface< Dimensionality, TPixel >::Pointer component )
 {
   auto fixedImage = component->GetItkImageFixed();
   // connect the itk pipeline
@@ -59,7 +59,7 @@ MonolithicElastixComponent< Dimensionality, TPixel >::Set( typename itkImageFixe
 
 template< int Dimensionality, class TPixel >
 int
-MonolithicElastixComponent< Dimensionality, TPixel >::Set( typename itkImageMovingInterface< Dimensionality, TPixel >::Pointer component )
+MonolithicElastixComponent< Dimensionality, TPixel >::Accept( typename itkImageMovingInterface< Dimensionality, TPixel >::Pointer component )
 {
   auto movingImage = component->GetItkImageMoving();
   // connect the itk pipeline

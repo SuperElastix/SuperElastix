@@ -54,7 +54,7 @@ MonolithicTransformixComponent< Dimensionality, TPixel >::~MonolithicTransformix
 
 template< int Dimensionality, class TPixel >
 int
-MonolithicTransformixComponent< Dimensionality, TPixel >::Set( typename itkImageDomainFixedInterface< Dimensionality >::Pointer component )
+MonolithicTransformixComponent< Dimensionality, TPixel >::Accept( typename itkImageDomainFixedInterface< Dimensionality >::Pointer component )
 {
   // TODO: this is not finished and tested.  Make this component use the provided domain
   // Currently, the fixed image domain is part of the transformParameter map, which will be set by elastix.
@@ -106,7 +106,7 @@ MonolithicTransformixComponent< Dimensionality, TPixel >::Set( typename itkImage
 
 template< int Dimensionality, class TPixel >
 int
-MonolithicTransformixComponent< Dimensionality, TPixel >::Set( typename itkImageMovingInterface< Dimensionality, TPixel >::Pointer component )
+MonolithicTransformixComponent< Dimensionality, TPixel >::Accept( typename itkImageMovingInterface< Dimensionality, TPixel >::Pointer component )
 {
   auto movingImage = component->GetItkImageMoving();
   // connect the itk pipeline
@@ -117,7 +117,7 @@ MonolithicTransformixComponent< Dimensionality, TPixel >::Set( typename itkImage
 
 template< int Dimensionality, class TPixel >
 int
-MonolithicTransformixComponent< Dimensionality, TPixel >::Set( typename elastixTransformParameterObjectInterfaceType::Pointer component )
+MonolithicTransformixComponent< Dimensionality, TPixel >::Accept( typename elastixTransformParameterObjectInterfaceType::Pointer component )
 {
   //auto transformParameterObject = component->GetTransformParameterObject();
   // connect the itk pipeline

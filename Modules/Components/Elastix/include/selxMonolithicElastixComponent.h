@@ -90,9 +90,9 @@ public:
     itk::Image< TPixel, Dimensionality >>::elastixTransformParameterObject elastixTransformParameterObject;
 
   // Accepting Interfaces:
-  virtual int Set( typename itkImageFixedInterface< Dimensionality, TPixel >::Pointer ) override;
+  virtual int Accept( typename itkImageFixedInterface< Dimensionality, TPixel >::Pointer ) override;
 
-  virtual int Set( typename itkImageMovingInterface< Dimensionality, TPixel >::Pointer ) override;
+  virtual int Accept( typename itkImageMovingInterface< Dimensionality, TPixel >::Pointer ) override;
 
   // Providing Interfaces:
   virtual elastixTransformParameterObject * GetTransformParameterObject() override;

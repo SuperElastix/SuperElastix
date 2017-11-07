@@ -34,7 +34,7 @@ InterfaceAcceptor< InterfaceT >::Connect( ComponentBase::Pointer providerCompone
     return 0;
   }
   // connect value interfaces
-  this->Set( providerInterface ); // due to the input argument being uniquely defined in the multiple inheritance tree, all versions of Set() are accessible at component level
+  this->Accept( providerInterface ); // due to the input argument being uniquely defined in the multiple inheritance tree, all versions of Set() are accessible at component level
   this->m_isSet = true;
   return 1;
 }

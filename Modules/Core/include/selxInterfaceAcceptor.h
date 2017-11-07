@@ -34,9 +34,9 @@ class InterfaceAcceptor
 public:
 
   using Pointer = std::shared_ptr< InterfaceAcceptor< InterfaceT >>;
-  // Set() is called by a succesfull Connect()
-  // The implementation of Set() must be provided by component developers.
-  virtual int Set( typename InterfaceT::Pointer ) = 0;
+  // Accept() is called by a succesfull Connect()
+  // The implementation of Accept() must be provided by component developers.
+  virtual int Accept( typename InterfaceT::Pointer ) = 0;
 
   // Connect tries to connect this accepting interface with all interfaces of the provider component.
   int Connect( ComponentBase::Pointer );

@@ -51,7 +51,7 @@ public:
   NiftyregWriteImageComponent(const std::string & name, LoggerImpl & logger);
   virtual ~NiftyregWriteImageComponent();
 
-  virtual int Set( typename NiftyregWarpedImageInterface< TPixel >::Pointer component ) override;
+  virtual int Accept( typename NiftyregWarpedImageInterface< TPixel >::Pointer component ) override;
 
   virtual void AfterRegistration() override;
 

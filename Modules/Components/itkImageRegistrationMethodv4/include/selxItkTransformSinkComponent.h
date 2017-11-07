@@ -65,7 +65,7 @@ public:
   typedef ItkTransfromDataObjectFileWriter< InternalComputationValueType, Dimensionality, Dimensionality> DecoratedWriterType;
 
   // accepting itkTransformInterface
-  virtual int Set( typename AcceptingTransformInterfaceType::Pointer ) override;
+  virtual int Accept( typename AcceptingTransformInterfaceType::Pointer ) override;
 
   // providing SinkInterface
   virtual void SetMiniPipelineOutput( itk::DataObject::Pointer ) override;

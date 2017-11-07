@@ -78,11 +78,11 @@ public:
   typedef itk::ResampleImageFilter< MovingImageType, ResultImageType > ResampleFilterType;
 
   //Accepting Interfaces:
-  virtual int Set( typename itkImageDomainFixedInterface< Dimensionality >::Pointer ) override;
+  virtual int Accept( typename itkImageDomainFixedInterface< Dimensionality >::Pointer ) override;
 
-  virtual int Set( typename itkImageMovingInterface< Dimensionality, TPixel >::Pointer ) override;
+  virtual int Accept( typename itkImageMovingInterface< Dimensionality, TPixel >::Pointer ) override;
 
-  virtual int Set( typename itkTransformInterface< TInternalComputationValue, Dimensionality >::Pointer ) override;
+  virtual int Accept( typename itkTransformInterface< TInternalComputationValue, Dimensionality >::Pointer ) override;
 
   //Providing Interfaces:
   virtual typename ResultImageType::Pointer GetItkImage() override;

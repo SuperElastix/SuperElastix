@@ -38,7 +38,7 @@ DisplacementFieldItkImageFilterSinkComponent< Dimensionality, TPixel >::~Displac
 
 template< int Dimensionality, class TPixel >
 int
-DisplacementFieldItkImageFilterSinkComponent< Dimensionality, TPixel >::Set( typename AcceptingDisplacementFieldInterfaceType::Pointer other )
+DisplacementFieldItkImageFilterSinkComponent< Dimensionality, TPixel >::Accept( typename AcceptingDisplacementFieldInterfaceType::Pointer other )
 {
   //if( this->m_NetworkBuilderOutputImage == nullptr )
   //{

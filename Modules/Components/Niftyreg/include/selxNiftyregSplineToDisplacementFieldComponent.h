@@ -51,10 +51,10 @@ public:
   virtual ~NiftyregSplineToDisplacementFieldComponent();
 
   // Accepting NiftyregControlPointPositionImageInterface
-  virtual int Set( typename NiftyregControlPointPositionImageInterface< TPixel >::Pointer ) override;
+  virtual int Accept( typename NiftyregControlPointPositionImageInterface< TPixel >::Pointer ) override;
 
   // Accepting NiftyregReferenceImageInterface
-  virtual int Set( typename NiftyregReferenceImageInterface< TPixel >::Pointer ) override;
+  virtual int Accept( typename NiftyregReferenceImageInterface< TPixel >::Pointer ) override;
 
   // Providing NiftyregWarpedImageInterface
   virtual std::shared_ptr< nifti_image > GetDisplacementFieldNiftiImage() override;

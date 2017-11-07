@@ -83,11 +83,11 @@ public:
   typedef itk::RegistrationParameterScalesFromPhysicalShift< ImageMetricType > ScalesEstimatorType;
 
   //Accepting Interfaces:
-  virtual int Set( itkImageFixedInterface< Dimensionality, TPixel > * ) override;
+  virtual int Accept( itkImageFixedInterface< Dimensionality, TPixel > * ) override;
 
-  virtual int Set( itkImageMovingInterface< Dimensionality, TPixel > * ) override;
+  virtual int Accept( itkImageMovingInterface< Dimensionality, TPixel > * ) override;
 
-  virtual int Set( itkMetricv4Interface< Dimensionality, TPixel, double > * ) override;
+  virtual int Accept( itkMetricv4Interface< Dimensionality, TPixel, double > * ) override;
 
   //Providing Interfaces:
   virtual TransformPointer GetItkTransform() override;
