@@ -52,6 +52,7 @@ main( int ac, char * av[] )
 {
   // add logger
   selx::Logger::Pointer logger = selx::Logger::New();
+  logger->SetLogLevel( selx::LogLevel::TRC );
 
   try
   {
