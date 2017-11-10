@@ -39,7 +39,7 @@ NiftyregAladinComponent< TPixel >::~NiftyregAladinComponent()
 template< class TPixel >
 int
 NiftyregAladinComponent< TPixel >
-::Set( typename NiftyregReferenceImageInterface< TPixel >::Pointer component )
+::Accept(typename NiftyregReferenceImageInterface< TPixel >::Pointer component)
 {
   // store the shared_ptr to the data, otherwise it gets freed
   this->m_reference_image = component->GetReferenceNiftiImage();
@@ -52,7 +52,7 @@ NiftyregAladinComponent< TPixel >
 template< class TPixel >
 int
 NiftyregAladinComponent< TPixel >
-::Set( typename NiftyregFloatingImageInterface< TPixel >::Pointer component )
+::Accept(typename NiftyregFloatingImageInterface< TPixel >::Pointer component)
 {
   // store the shared_ptr to the data, otherwise it gets freed
   this->m_floating_image = component->GetFloatingNiftiImage();

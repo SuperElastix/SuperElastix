@@ -51,9 +51,9 @@ public:
   NiftyregAladinComponent( const std::string & name, LoggerImpl & logger );
   virtual ~NiftyregAladinComponent();
 
-  virtual int Set( typename NiftyregReferenceImageInterface< TPixel >::Pointer ) override;
+  virtual int Accept( typename NiftyregReferenceImageInterface< TPixel >::Pointer ) override;
 
-  virtual int Set( typename NiftyregFloatingImageInterface< TPixel >::Pointer ) override;
+  virtual int Accept(typename NiftyregFloatingImageInterface< TPixel >::Pointer) override;
 
   virtual std::shared_ptr< nifti_image > GetWarpedNiftiImage() override;
 

@@ -58,7 +58,7 @@ public:
   virtual int Accept( typename NiftyregFloatingImageInterface< TPixel >::Pointer ) override;
 
   // Accepting NiftyregAffineMatrixInterface
-  virtual int Set(typename NiftyregAffineMatrixInterface< TPixel >::Pointer) override;
+  virtual int Accept( typename NiftyregAffineMatrixInterface< TPixel >::Pointer ) override;
 
   // Providing NiftyregWarpedImageInterface
   virtual std::shared_ptr< nifti_image > GetWarpedNiftiImage() override;

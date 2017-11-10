@@ -62,7 +62,7 @@ Niftyregf3dComponent< TPixel >
 template< class TPixel >
 int
 Niftyregf3dComponent< TPixel >
-::Set(typename NiftyregAffineMatrixInterface< TPixel >::Pointer component)
+::Accept( typename NiftyregAffineMatrixInterface< TPixel >::Pointer component )
 {
   this->m_NiftyregAffineMatrixInterface = component;
   return 0;
