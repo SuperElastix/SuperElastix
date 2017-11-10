@@ -44,7 +44,7 @@ public:
 
   MetricComponent1( const std::string & name, LoggerImpl & logger ) : SuperElastixComponent( name, logger ) {}
   virtual ~MetricComponent1(){}
-  virtual int Set( TransformedImageInterface::Pointer ) override;
+  virtual int Accept( TransformedImageInterface::Pointer ) override;
 
   virtual int GetValue() override { return 0; }
 

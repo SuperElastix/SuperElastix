@@ -69,9 +69,9 @@ public:
 
   typedef typename itk::CompositeTransform< InternalComputationValueType, Dimensionality > CompositeTransformType;
 
-  virtual int Set( typename MultiStageTransformInterface< InternalComputationValueType, Dimensionality >::Pointer ) override;
+  virtual int Accept( typename MultiStageTransformInterface< InternalComputationValueType, Dimensionality >::Pointer ) override;
 
-  virtual int Set( ReconnectTransformInterface::Pointer ) override;
+  virtual int Accept( ReconnectTransformInterface::Pointer ) override;
 
   virtual void RegistrationControllerStart() override;
 

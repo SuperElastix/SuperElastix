@@ -36,7 +36,7 @@ NiftyregWriteImageComponent< TPixel >::~NiftyregWriteImageComponent()
 
 template< class TPixel >
 int
-NiftyregWriteImageComponent<  TPixel >::Set( typename NiftyregWarpedImageInterface< TPixel >::Pointer component )
+NiftyregWriteImageComponent<  TPixel >::Accept( typename NiftyregWarpedImageInterface< TPixel >::Pointer component )
 {
   this->m_WarpedImageInterface = component;
   return 1;

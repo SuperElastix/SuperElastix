@@ -42,7 +42,7 @@ ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >::
 template< class InternalComputationValueType, int Dimensionality >
 int
 ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >
-::Set( typename MultiStageTransformInterface< InternalComputationValueType, Dimensionality >::Pointer component )
+::Accept( typename MultiStageTransformInterface< InternalComputationValueType, Dimensionality >::Pointer component )
 {
   // todo how do we organize the fixedtransforms?
   this->m_registrationStages.push_back( component );
@@ -53,7 +53,7 @@ ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >
 template< class InternalComputationValueType, int Dimensionality >
 int
 ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >
-::Set( ReconnectTransformInterface::Pointer other )
+::Accept( ReconnectTransformInterface::Pointer other )
 {
   this->m_ReconnectTransformInterfaces.insert( other );
   return 0;

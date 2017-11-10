@@ -58,7 +58,7 @@ public:
   typedef typename itk::MeshFileWriter< ItkMeshType > ItkMeshWriterType;
   typedef FileWriterDecorator< ItkMeshWriterType >    DecoratedWriterType;
 
-  virtual int Set( typename itkMeshInterface< Dimensionality, TPixel >::Pointer ) override;
+  virtual int Accept( typename itkMeshInterface< Dimensionality, TPixel >::Pointer ) override;
 
   virtual void SetMiniPipelineOutput( itk::DataObject::Pointer ) override;
   virtual itk::DataObject::Pointer GetMiniPipelineOutput( void ) override;

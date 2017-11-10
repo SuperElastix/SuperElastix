@@ -86,9 +86,9 @@ public:
 
   typedef elastix::TransformixFilter< FixedImageType > TransformixFilterType;
 
-  virtual int Set( typename itkImageFixedInterface< Dimensionality, TPixel >::Pointer ) override;
+  virtual int Accept( typename itkImageFixedInterface< Dimensionality, TPixel >::Pointer ) override;
 
-  virtual int Set( typename itkImageMovingInterface< Dimensionality, TPixel >::Pointer ) override;
+  virtual int Accept( typename itkImageMovingInterface< Dimensionality, TPixel >::Pointer ) override;
 
   virtual ItkImagePointer GetItkImage() override;
 

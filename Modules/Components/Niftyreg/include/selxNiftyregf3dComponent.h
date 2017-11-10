@@ -52,10 +52,10 @@ public:
   virtual ~Niftyregf3dComponent();
 
   // Accepting NiftyregReferenceImageInterface
-  virtual int Set( typename NiftyregReferenceImageInterface< TPixel >::Pointer ) override;
+  virtual int Accept( typename NiftyregReferenceImageInterface< TPixel >::Pointer ) override;
 
   // Accepting NiftyregFloatingImageInterface
-  virtual int Set( typename NiftyregFloatingImageInterface< TPixel >::Pointer ) override;
+  virtual int Accept( typename NiftyregFloatingImageInterface< TPixel >::Pointer ) override;
 
   // Accepting NiftyregAffineMatrixInterface
   virtual int Set(typename NiftyregAffineMatrixInterface< TPixel >::Pointer) override;

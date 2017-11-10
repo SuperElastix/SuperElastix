@@ -61,7 +61,7 @@ public:
   typedef typename itk::ImageFileWriter< ItkImageType >      ItkImageWriterType;
   typedef FileWriterDecorator< ItkImageWriterType >          DecoratedWriterType;
 
-  virtual int Set( typename AcceptingImageInterfaceType::Pointer ) override;
+  virtual int Accept( typename AcceptingImageInterfaceType::Pointer ) override;
 
   virtual void SetMiniPipelineOutput( itk::DataObject::Pointer ) override;
   virtual itk::DataObject::Pointer GetMiniPipelineOutput( void ) override;

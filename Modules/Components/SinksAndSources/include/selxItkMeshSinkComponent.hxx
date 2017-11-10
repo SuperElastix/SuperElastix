@@ -38,7 +38,7 @@ ItkMeshSinkComponent< Dimensionality, TPixel >::~ItkMeshSinkComponent()
 
 template< int Dimensionality, class TPixel >
 int
-ItkMeshSinkComponent< Dimensionality, TPixel >::Set( typename itkMeshInterface< Dimensionality, TPixel >::Pointer other )
+ItkMeshSinkComponent< Dimensionality, TPixel >::Accept( typename itkMeshInterface< Dimensionality, TPixel >::Pointer other )
 {
   //if( this->m_NetworkBuilderOutputMesh == nullptr )
   //{

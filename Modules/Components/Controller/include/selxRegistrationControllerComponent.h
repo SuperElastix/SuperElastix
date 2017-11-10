@@ -55,11 +55,11 @@ public:
   virtual ~RegistrationControllerComponent();
 
   // Accepting Interfaces:
-  virtual int Set( RunRegistrationInterface::Pointer ) override;
+  virtual int Accept( RunRegistrationInterface::Pointer ) override;
 
-  virtual int Set( ReconnectTransformInterface::Pointer ) override;
+  virtual int Accept( ReconnectTransformInterface::Pointer ) override;
 
-  virtual int Set( AfterRegistrationInterface::Pointer ) override;
+  virtual int Accept( AfterRegistrationInterface::Pointer ) override;
 
   // Providing Interfaces:
   virtual void RegistrationControllerStart( void ) override;

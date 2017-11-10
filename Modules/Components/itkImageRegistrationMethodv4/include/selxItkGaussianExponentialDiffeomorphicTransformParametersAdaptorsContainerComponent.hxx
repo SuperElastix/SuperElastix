@@ -40,7 +40,7 @@ TransformInternalComputationValueType >::~ItkGaussianExponentialDiffeomorphicTra
 template< int Dimensionality, class TransformInternalComputationValueType >
 int
 ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent< Dimensionality, TransformInternalComputationValueType >
-::Set( typename itkImageDomainFixedInterface< Dimensionality >::Pointer component )
+::Accept( typename itkImageDomainFixedInterface< Dimensionality >::Pointer component )
 {
   auto fixedImageDomain = component->GetItkImageDomainFixed();
 

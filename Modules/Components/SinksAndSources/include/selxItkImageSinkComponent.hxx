@@ -38,7 +38,7 @@ ItkImageSinkComponent< Dimensionality, TPixel >::~ItkImageSinkComponent()
 
 template< int Dimensionality, class TPixel >
 int
-ItkImageSinkComponent< Dimensionality, TPixel >::Set( typename itkImageInterface< Dimensionality, TPixel >::Pointer other )
+ItkImageSinkComponent< Dimensionality, TPixel >::Accept( typename itkImageInterface< Dimensionality, TPixel >::Pointer other )
 {
   //if( this->m_NetworkBuilderOutputImage == nullptr )
   //{

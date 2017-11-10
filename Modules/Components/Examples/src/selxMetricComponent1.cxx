@@ -22,7 +22,7 @@
 namespace selx
 {
 int
-MetricComponent1::Set( TransformedImageInterface::Pointer providingInterface )
+MetricComponent1::Accept( TransformedImageInterface::Pointer providingInterface )
 {
   return 0;
 }

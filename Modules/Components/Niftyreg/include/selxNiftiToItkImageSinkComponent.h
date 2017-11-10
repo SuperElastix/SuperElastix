@@ -67,9 +67,9 @@ public:
   virtual ~NiftiToItkImageSinkComponent();
 
   // accepting interfaces
-  virtual int Set( typename WarpedImageInterfaceType::Pointer ) override;
+  virtual int Accept( typename WarpedImageInterfaceType::Pointer ) override;
 
-  virtual int Set( typename ImageDomainInterfaceType::Pointer ) override;
+  virtual int Accept( typename ImageDomainInterfaceType::Pointer ) override;
 
   // prodiving interfaces
   virtual void SetMiniPipelineOutput( itk::DataObject::Pointer ) override;

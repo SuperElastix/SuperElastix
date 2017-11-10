@@ -75,9 +75,9 @@ public:
   using DisplacementFieldFilterType = itk::TransformToDisplacementFieldFilter< DisplacementFieldImageType >;
 
   //Accepting Interfaces:
-  virtual int Set( typename itkImageDomainFixedInterface< Dimensionality >::Pointer ) override;
+  virtual int Accept( typename itkImageDomainFixedInterface< Dimensionality >::Pointer ) override;
 
-  virtual int Set( typename itkTransformInterface< TInternalComputationValue, Dimensionality >::Pointer ) override;
+  virtual int Accept( typename itkTransformInterface< TInternalComputationValue, Dimensionality >::Pointer ) override;
 
   //Providing Interfaces:
   virtual typename DisplacementFieldImageType::Pointer GetDisplacementFieldItkImage() override;

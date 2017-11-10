@@ -19,8 +19,6 @@
 
 #include "selxSuperElastixFilterCustomComponents.h"
 
-#include "itkUniquePointerDataObjectDecorator.h"
-
 #include "selxItkSmoothingRecursiveGaussianImageFilterComponent.h"
 #include "selxItkImageSinkComponent.h"
 #include "selxItkImageSourceComponent.h"

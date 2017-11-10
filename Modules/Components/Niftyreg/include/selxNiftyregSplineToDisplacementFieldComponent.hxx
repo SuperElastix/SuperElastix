@@ -37,7 +37,7 @@ NiftyregSplineToDisplacementFieldComponent< TPixel >::~NiftyregSplineToDisplacem
 template< class TPixel >
 int
 NiftyregSplineToDisplacementFieldComponent< TPixel >
-::Set( typename NiftyregReferenceImageInterface< TPixel >::Pointer component )
+::Accept( typename NiftyregReferenceImageInterface< TPixel >::Pointer component )
 {
   // store the shared_ptr, otherwise the data might get freed
   this->m_reference_image = component->GetReferenceNiftiImage();
@@ -47,7 +47,7 @@ NiftyregSplineToDisplacementFieldComponent< TPixel >
 template< class TPixel >
 int
 NiftyregSplineToDisplacementFieldComponent< TPixel >
-::Set(typename NiftyregControlPointPositionImageInterface< TPixel >::Pointer component)
+::Accept(typename NiftyregControlPointPositionImageInterface< TPixel >::Pointer component)
 {
   this->m_NiftyregControlPointPositionImageInterface = component;
   return 0;
