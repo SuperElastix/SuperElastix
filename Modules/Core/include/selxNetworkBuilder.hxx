@@ -159,7 +159,7 @@ NetworkBuilder< ComponentList >::ApplyComponentConfiguration()
 
     if( currentComponentSelector->NumberOfComponents() == 0 )
     {
-      std::string msg = "Could not identify unique component for " + componentName + " from the specified criteria.";
+      std::string msg = "No components fulfill all criteria for " + componentName + ".";
       this->m_Logger.Log( LogLevel::CRT, msg );
       throw std::runtime_error( msg );
     }

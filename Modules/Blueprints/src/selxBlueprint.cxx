@@ -37,7 +37,6 @@ Blueprint
   this->m_Blueprint = BlueprintImplPointer( &blueprint );
 }
 
-
 BlueprintImpl &
 Blueprint
 ::GetBlueprint( void)
@@ -52,6 +51,13 @@ Blueprint
   }
 }
 
+void
+Blueprint
+::SetBlueprint( BlueprintImplPointer blueprint )
+{
+  this->Modified();
+  this->m_Blueprint = blueprint;
+}
 
 bool
 Blueprint

@@ -52,6 +52,7 @@ main( int ac, char * av[] )
 {
   // add logger
   selx::Logger::Pointer logger = selx::Logger::New();
+  logger->AddStream( "cout", std::cout );
   logger->SetLogLevel( selx::LogLevel::TRC );
 
   try
@@ -96,7 +97,7 @@ main( int ac, char * av[] )
     }
 
     // create empty blueprint
-    typedef  std::shared_ptr< selx::BlueprintImpl> BlueprintImplPointer;
+    typedef std::shared_ptr< selx::BlueprintImpl > BlueprintImplPointer;
     BlueprintImplPointer blueprintImpl = BlueprintImplPointer(new selx::BlueprintImpl());
     for (const auto & configurationPath : configurationPaths)
     {
@@ -110,7 +111,7 @@ main( int ac, char * av[] )
 
     //turn the blueprint into an itkObject to connect to the superElastix itkFilter
     selx::Blueprint::Pointer blueprint = selx::Blueprint::New();
-    blueprint->SetBlueprint(*blueprintImpl);
+    blueprint->SetBlueprint(blueprintImpl);
     superElastixFilter->SetBlueprint(blueprint);
 
     if( vm.count( "in" ) )
