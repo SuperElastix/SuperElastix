@@ -89,6 +89,7 @@ void
 Niftyregf3dComponent< TPixel >
 ::RunRegistration()
 {
+  this->m_Logger.Log(LogLevel::TRC, "RunRegistration");
   //this->m_reg_f3d->UseSSD( 0, true );
   //this->m_reg_f3d->UseCubicSplineInterpolation();
   if (this->m_NiftyregAffineMatrixInterface)
@@ -120,6 +121,7 @@ bool
 Niftyregf3dComponent< TPixel >
 ::ConnectionsSatisfied()
 {
+  this->m_Logger.Log(LogLevel::TRC, "Niftyregf3dComponent::ConnectionsSatisfied tests if NiftyregReferenceImageInterface and NiftyregFloatingImageInterface are connected.");
   // This function overrides the default behavior, in which all accepting interfaces must be set, by allowing the some interfaces not being set.
   // TODO: see if we can reduce the amount of code with helper (meta-)functions
   //   Superclass::AcceptingInterfacesTypeList

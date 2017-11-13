@@ -58,16 +58,23 @@ public:
     NiftiToItkImageSinkComponent< 3, float >,
     ItkImageSourceComponent< 3, float >,
     NiftyregSplineToDisplacementFieldComponent< float>,
-    DisplacementFieldNiftiToItkImageSinkComponent< 2, float>,    NiftyregAladinComponent< float >,    RegistrationControllerComponent< >> RegisterComponents;
+    DisplacementFieldNiftiToItkImageSinkComponent< 2, float>,
+    NiftyregAladinComponent< float >,
+    RegistrationControllerComponent< >> RegisterComponents;
 
   typedef SuperElastixFilterCustomComponents< RegisterComponents > SuperElastixFilterType;
+
   virtual void SetUp()
   {
     // Instantiate SuperElastixFilter before each test and
     // register the components we want to have available in SuperElastix
-    superElastixFilter = SuperElastixFilterType::New();
-    dataManager        = DataManagerType::New();
+    superElastixFilter = SuperElastixFilterCustomComponents< RegisterComponents >::New();
+    dataManager = DataManagerType::New();
+    logger = Logger::New();
+    logger->AddStream("cout", std::cout);
+    logger->SetLogLevel(LogLevel::TRC);
   }
+
 
 
   virtual void TearDown()
@@ -79,6 +86,7 @@ public:
   }
 
   BlueprintPointer blueprint;
+  Logger::Pointer logger;
   SuperElastixFilterBase::Pointer superElastixFilter;
   DataManagerType::Pointer dataManager;
 };
@@ -100,6 +108,7 @@ TEST_F( NiftyregComponentTest, Register2d_nifti )
   blueprint->SetConnection( "ResultImage", "Controller", { {} } );
 
   EXPECT_NO_THROW( superElastixFilter->SetBlueprint( blueprint ) );
+  EXPECT_NO_THROW(superElastixFilter->SetLogger(logger));
   EXPECT_NO_THROW( superElastixFilter->Update() );
 }
 TEST_F( NiftyregComponentTest, ItkToNiftiImage )
@@ -114,6 +123,7 @@ TEST_F( NiftyregComponentTest, ItkToNiftiImage )
   blueprint->SetConnection( "ResultImage", "Controller", { { "NameOfInterface", { "AfterRegistrationInterface" } } } );
 
   EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
+  EXPECT_NO_THROW(superElastixFilter->SetLogger(logger));
 
   // Set up the readers and writers
   auto fixedImageReader = itk::ImageFileReader< itk::Image< float, 3 >>::New();
@@ -142,6 +152,7 @@ TEST_F( NiftyregComponentTest, NiftiToItkImage )
   blueprint->SetConnection( "ResultImage", "Controller", { { "NameOfInterface", { "AfterRegistrationInterface" } } } );
 
   EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
+  EXPECT_NO_THROW(superElastixFilter->SetLogger(logger));
 
   // Set up the readers and writers
   auto fixedDomainImageReader = itk::ImageFileReader< itk::Image< float, 3 >>::New();
@@ -209,6 +220,7 @@ TEST_F( NiftyregComponentTest, Register2d_itkImages )
   //resultDisplacementWriter->SetInput(superElastixFilter->GetOutput< DisplacementImage2DType >("ResultDisplacementFieldSink"));
 
   EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
+  EXPECT_NO_THROW(superElastixFilter->SetLogger(logger));
 
   //Optional Update call
   //superElastixFilter->Update();
@@ -272,6 +284,7 @@ TEST_F( NiftyregComponentTest, WBIRDemo )
   resultDisplacementWriter->SetInput(superElastixFilter->GetOutput< DisplacementImage2DType >("ResultDisplacementField"));
 
   EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
+  EXPECT_NO_THROW(superElastixFilter->SetLogger(logger));
 
   // Update call on the writers triggers SuperElastix to configure and execute
   EXPECT_NO_THROW(resultImageWriter->Update());
@@ -322,7 +335,7 @@ TEST_F( NiftyregComponentTest, AladinWBIRDemo )
   //resultDisplacementWriter->SetInput(superElastixFilter->GetOutput< DisplacementImage2DType >("ResultDisplacementFieldSink"));
 
   EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
-
+  EXPECT_NO_THROW(superElastixFilter->SetLogger(logger));
   // Update call on the writers triggers SuperElastix to configure and execute
   EXPECT_NO_THROW(resultImageWriter->Update());
 }
@@ -381,6 +394,7 @@ TEST_F(NiftyregComponentTest, AffineAndBSpline)
   //resultDisplacementWriter->SetInput(superElastixFilter->GetOutput< DisplacementImage2DType >("ResultDisplacementFieldSink"));
 
   EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
+  EXPECT_NO_THROW(superElastixFilter->SetLogger(logger));
 
   // Update call on the writers triggers SuperElastix to configure and execute
   EXPECT_NO_THROW(resultImageWriter->Update());

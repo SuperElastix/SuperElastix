@@ -83,7 +83,7 @@ void
 NiftyregAladinComponent<  TPixel >
 ::RunRegistration()
 {
-
+  this->m_Logger.Log(LogLevel::TRC, "RunRegistration");
   this->m_reg_aladin->Run();
   nifti_image * outputWarpedImage = m_reg_aladin->GetFinalWarpedImage();
   memset( outputWarpedImage->descrip, 0, 80 );
