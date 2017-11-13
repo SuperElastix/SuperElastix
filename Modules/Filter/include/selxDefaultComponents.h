@@ -38,16 +38,22 @@
 #include "selxRegistrationControllerComponent.h"
 #include "selxItkTransformSourceComponent.h"
 #include "selxItkTransformSinkComponent.h"
+#include "selxItkImageSourceFixedComponent.h"
+#include "selxItkImageSourceMovingComponent.h"
 
 
 namespace selx
 {
 using DefaultComponents = selx::TypeList<
   DisplacementFieldItkImageFilterSinkComponent< 2, float >,
+  DisplacementFieldItkImageFilterSinkComponent< 3, float >,
   ItkImageSinkComponent< 2, float >,
+  ItkImageSinkComponent< 3, short >,
   ItkImageSourceComponent< 2, float >,
+  ItkImageSourceComponent< 3, short >,
   ElastixComponent< 2, float >,
   MonolithicElastixComponent< 2, float >,
+  MonolithicElastixComponent< 3, short >,
   MonolithicTransformixComponent< 2, float >,
   ItkImageRegistrationMethodv4Component< 2, float, double >,
   ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< 2, float >,
@@ -61,6 +67,10 @@ using DefaultComponents = selx::TypeList<
   RegistrationControllerComponent< >,
   ItkSmoothingRecursiveGaussianImageFilterComponent< 2, float >,
   ItkTransformSourceComponent< 2, double >,
-  ItkTransformSinkComponent< 2, double >
+  ItkTransformSinkComponent< 2, double >,
+  ItkImageSourceFixedComponent< 2, float >,
+  ItkImageSourceMovingComponent< 2, float >,
+  ItkImageSourceFixedComponent< 3, short >,
+  ItkImageSourceMovingComponent< 3, short >
   >;
 }
