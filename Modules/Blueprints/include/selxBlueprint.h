@@ -59,7 +59,7 @@ public:
   Blueprint();
 
   /** The actual blueprint is a pimpled member variable */
-  typedef std::shared_ptr< BlueprintImpl > BlueprintImplPointer;
+  typedef std::unique_ptr< BlueprintImpl > BlueprintImplPointer;
 
   const BlueprintImpl & GetBlueprintImpl( void ) const; 
 
