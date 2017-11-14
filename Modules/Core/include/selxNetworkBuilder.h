@@ -58,9 +58,10 @@ public:
   typedef std::map<
     std::string, RegistrationControllerStartInterface::Pointer > RegistrationControllerStartInterfaceMapType;
 
-  NetworkBuilder( LoggerImpl & logger, BlueprintImpl & blueprint );
+  NetworkBuilder( LoggerImpl & logger, const BlueprintImpl & blueprint );
   virtual ~NetworkBuilder() {}
 
+  //Disabled
   virtual bool AddBlueprint( const BlueprintImpl & blueprint );
 
   /** Read configuration at the blueprints nodes and edges and return true if all components could be uniquely selected*/
@@ -116,7 +117,7 @@ protected:
   ComponentSelectorContainerType  m_ComponentSelectorContainer;
   bool                            m_isConfigured;
   LoggerImpl &                    m_Logger;
-  BlueprintImpl &                 m_Blueprint;
+  const BlueprintImpl &                 m_Blueprint;
 
 private:
 };

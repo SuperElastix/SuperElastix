@@ -29,27 +29,11 @@ Blueprint
   this->m_Blueprint = BlueprintImplPointer( new BlueprintImpl() );
 }
 
-void
+const BlueprintImpl &
 Blueprint
-::SetBlueprint( BlueprintImpl& blueprint )
+::GetBlueprintImpl( void ) const
 {
-  this->Modified();
-  this->m_Blueprint = BlueprintImplPointer( &blueprint );
-}
-
-
-BlueprintImpl &
-Blueprint
-::GetBlueprint( void)
-{
-  if( this->m_Blueprint )
-  {
-    return *this->m_Blueprint;
-  }
-  else
-  {
-    itkExceptionMacro( "BlueprintImpl not set." )
-  }
+  return *this->m_Blueprint;
 }
 
 
@@ -130,10 +114,10 @@ Blueprint
 
 bool
 Blueprint
-::ComposeWith( const BlueprintImpl & other)
+::ComposeWith( Blueprint::ConstPointer other)
 {
   this->Modified();
-  return this->m_Blueprint->ComposeWith( other );
+  return this->m_Blueprint->ComposeWith( other->GetBlueprintImpl() );
 }
 
 

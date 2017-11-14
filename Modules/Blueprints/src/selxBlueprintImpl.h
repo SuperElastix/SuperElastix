@@ -103,7 +103,7 @@ public:
 
   bool ConnectionExists( ComponentNameType upstream, ComponentNameType downstream ) const;
 
-  bool ComposeWith( const BlueprintImpl & other);
+  bool ComposeWith( const BlueprintImpl & other );
 
   // Returns a vector of the Component names at the incoming direction
   ComponentNamesType GetInputNames( const ComponentNameType name ) const;

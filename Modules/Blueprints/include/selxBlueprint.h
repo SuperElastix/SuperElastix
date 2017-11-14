@@ -61,8 +61,7 @@ public:
   /** The actual blueprint is a pimpled member variable */
   typedef std::shared_ptr< BlueprintImpl > BlueprintImplPointer;
 
-  void SetBlueprint( BlueprintImpl & blueprint );
-  BlueprintImpl & GetBlueprint( void );
+  const BlueprintImpl & GetBlueprintImpl( void ) const; 
 
   bool SetComponent( ComponentNameType, ParameterMapType parameterMap );
 
@@ -86,7 +85,7 @@ public:
   //std::unique_ptr<BlueprintImpl> Clone(BlueprintImpl const &other );
 
   // "functional" composition of blueprints is done by adding settings of other to this blueprint. Redefining/overwriting properties is not allowed and returns false.
-  bool ComposeWith( const BlueprintImpl & other );
+  bool ComposeWith( Blueprint::ConstPointer other );
 
   // Returns a vector of the Component names at the incoming direction
   ComponentNamesType GetInputNames( const ComponentNameType name ) const;

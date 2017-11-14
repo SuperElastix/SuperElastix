@@ -25,7 +25,7 @@
 namespace selx
 {
 template< typename ComponentList >
-NetworkBuilder< ComponentList >::NetworkBuilder( LoggerImpl & logger, BlueprintImpl & blueprint ) : m_Logger( logger ), m_isConfigured( false ), m_Blueprint( blueprint )
+NetworkBuilder< ComponentList >::NetworkBuilder( LoggerImpl & logger, const BlueprintImpl & blueprint ) : m_Logger( logger ), m_isConfigured( false ), m_Blueprint( blueprint )
 {
 }
 
@@ -34,7 +34,8 @@ template< typename ComponentList >
 bool
 NetworkBuilder< ComponentList >::AddBlueprint( const BlueprintImpl & blueprint )
 {
-  this->m_Blueprint.ComposeWith( blueprint );
+  //Disabled
+  //this->m_Blueprint.ComposeWith( blueprint );
   //m_Blueprint = std::make_shared< BlueprintImpl >(*blueprint);
   return true;
 }
