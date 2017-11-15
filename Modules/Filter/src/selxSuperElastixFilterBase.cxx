@@ -42,7 +42,7 @@ SuperElastixFilterBase
 {
   if( ( this->m_Blueprint->GetMTime() > this->GetMTime() || !this->m_NetworkBuilder ) )
   {
-    m_NetworkBuilder = m_NetworkBuilderFactory->New( this->m_Logger->GetLogger(), this->m_Blueprint->GetBlueprint() );
+    m_NetworkBuilder = m_NetworkBuilderFactory->New( this->m_Logger->GetLogger(), this->m_Blueprint->GetBlueprintImpl() );
     this->m_AllUniqueComponents = this->m_NetworkBuilder->Configure();
   }
   return this->m_AllUniqueComponents;

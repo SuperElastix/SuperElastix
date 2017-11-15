@@ -20,7 +20,7 @@
 #ifndef ConfigurationReader_h
 #define ConfigurationReader_h
 
-#include "selxBlueprintImpl.h"
+#include "selxBlueprint.h"
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
@@ -44,12 +44,11 @@ public:
   typedef Blueprint::ParameterKeyType   ParameterKeyType;
   typedef Blueprint::ParameterValueType ParameterValueType;
   typedef Blueprint::ParameterMapType   ParameterMapType;
-  typedef std::shared_ptr< BlueprintImpl > BlueprintImplPointer;
 
   using PathType = boost::filesystem::path;
   using PathsType = std::list<PathType>;
-  static BlueprintImpl FromFile(const PathType& filename);
-  static void MergeFromFile(BlueprintImplPointer blueprint, const PathType & filename);
+  static Blueprint::Pointer FromFile(const PathType& filename);
+  static void MergeFromFile(Blueprint::Pointer blueprint, const PathType & filename);
   
 private:
 
@@ -61,8 +60,8 @@ private:
   static PathsType FindIncludes(const PropertyTreeType &);
   static ParameterValueType VectorizeValues(ComponentOrConnectionTreeType componentOrConnectionTree);
 
-  static BlueprintImpl FromPropertyTree(const PropertyTreeType &);
-  static void MergeProperties(BlueprintImplPointer blueprint, const PropertyTreeType &);
+  static Blueprint::Pointer FromPropertyTree(const PropertyTreeType &);
+  static void MergeProperties(Blueprint::Pointer blueprint, const PropertyTreeType &);
 
 
   

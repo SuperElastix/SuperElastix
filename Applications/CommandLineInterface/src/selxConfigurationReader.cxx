@@ -50,7 +50,7 @@ ConfigurationReader::VectorizeValues( ComponentOrConnectionTreeType & componentO
 }
 
 
-BlueprintImpl
+Blueprint::Pointer
 ConfigurationReader::FromFile(const PathType & fileName)
 {
   LoggerImpl logger;
@@ -69,21 +69,21 @@ ConfigurationReader::FromFile(const PathType & fileName)
   }
   else
   {
-    BlueprintImpl baseBlueprint = BlueprintImpl();
+    Blueprint::Pointer baseBlueprint = Blueprint::New();
     for (auto const & includePath : includesList)
     {
       logger.Log( LogLevel::INF, "Including file {0} ... ", includePath);
-      baseBlueprint.ComposeWith(FromFile(includePath));
+      baseBlueprint->ComposeWith(FromFile(includePath).GetPointer());
       logger.Log( LogLevel::INF, "Including include file {0} ... Done", includePath);
     }
-    baseBlueprint.ComposeWith(FromPropertyTree(propertyTree));
+    baseBlueprint->ComposeWith(FromPropertyTree(propertyTree).GetPointer());
     logger.Log( LogLevel::INF, "Checking {0} for include files ... Done");
     return baseBlueprint;
   }
 }
 
 void
-ConfigurationReader::MergeFromFile(BlueprintImplPointer blueprint, const PathType & fileName)
+ConfigurationReader::MergeFromFile(Blueprint::Pointer blueprint, const PathType & fileName)
 {
   LoggerImpl logger;
 
@@ -151,11 +151,11 @@ ConfigurationReader::FindIncludes(const PropertyTreeType & propertyTree)
 }
 
 
-BlueprintImpl
+Blueprint::Pointer
 ConfigurationReader::FromPropertyTree( const PropertyTreeType & pt )
 {
   LoggerImpl logger;
-  BlueprintImpl blueprint = BlueprintImpl();
+  Blueprint::Pointer blueprint = Blueprint::New();
 
   BOOST_FOREACH( const PropertyTreeType::value_type & v, pt.equal_range( "Component" ) )
   {
@@ -175,7 +175,7 @@ ConfigurationReader::FromPropertyTree( const PropertyTreeType & pt )
       componentPropertyMap[ propertyKey ] = propertyMultiValue;
     }
 
-    blueprint.SetComponent( componentName, componentPropertyMap );
+    blueprint->SetComponent( componentName, componentPropertyMap );
   }
 
   BOOST_FOREACH( const PropertyTreeType::value_type & v, pt.equal_range( "Connection" ) )
@@ -217,13 +217,13 @@ ConfigurationReader::FromPropertyTree( const PropertyTreeType & pt )
       }
     }
 
-    blueprint.SetConnection( outName, inName, componentPropertyMap );
+    blueprint->SetConnection( outName, inName, componentPropertyMap );
   }
   return blueprint;
 }
 
 void
-ConfigurationReader::MergeProperties(BlueprintImplPointer blueprint, const PropertyTreeType & pt)
+ConfigurationReader::MergeProperties(Blueprint::Pointer blueprint, const PropertyTreeType & pt)
 {
   LoggerImpl logger;
   BOOST_FOREACH(const PropertyTreeType::value_type & v, pt.equal_range("Component"))

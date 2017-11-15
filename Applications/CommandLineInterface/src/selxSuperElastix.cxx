@@ -50,9 +50,7 @@ operator<<( std::ostream & os, const std::vector< T > & v )
 int
 main( int ac, char * av[] )
 {
-  // add logger
   selx::Logger::Pointer logger = selx::Logger::New();
-
   try
   {
     typedef std::vector< std::string > VectorOfStringsType;
@@ -61,6 +59,9 @@ main( int ac, char * av[] )
     // instantiate a SuperElastixFilter that is loaded with default components
     selx::SuperElastixFilter::Pointer superElastixFilter = selx::SuperElastixFilter::New();
 
+    // add logger
+    logger->AddStream("cout", std::cout);
+    logger->SetLogLevel(selx::LogLevel::TRC);
     superElastixFilter->SetLogger(logger);
 
     boost::filesystem::path            configurationPath;
@@ -95,21 +96,19 @@ main( int ac, char * av[] )
     }
 
     // create empty blueprint
-    typedef  std::shared_ptr< selx::BlueprintImpl> BlueprintImplPointer;
-    BlueprintImplPointer blueprintImpl = BlueprintImplPointer(new selx::BlueprintImpl());
+    selx::Blueprint::Pointer blueprint = selx::Blueprint::New();
     for (const auto & configurationPath : configurationPaths)
     {
-      selx::ConfigurationReader::MergeFromFile(blueprintImpl, configurationPath);
+      selx::ConfigurationReader::MergeFromFile(blueprint, configurationPath);
     }
 
     if( vm.count( "graphout" ) )
     {
-      blueprintImpl->Write( vm[ "graphout" ].as< fs::path >().string() );
+      blueprint->Write(vm["graphout"].as< fs::path >().string());
     }
 
     //turn the blueprint into an itkObject to connect to the superElastix itkFilter
-    selx::Blueprint::Pointer blueprint = selx::Blueprint::New();
-    blueprint->SetBlueprint(*blueprintImpl);
+
     superElastixFilter->SetBlueprint(blueprint);
 
     if( vm.count( "in" ) )

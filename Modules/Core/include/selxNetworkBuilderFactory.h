@@ -32,7 +32,7 @@ public:
   NetworkBuilderFactory() {}
   virtual ~NetworkBuilderFactory() {}
 
-  virtual std::unique_ptr< NetworkBuilderBase > New( LoggerImpl & logger, BlueprintImpl & blueprint );
+  virtual std::unique_ptr< NetworkBuilderBase > New( LoggerImpl & logger, const BlueprintImpl & blueprint );
 };
 } // end namespace selx
 
