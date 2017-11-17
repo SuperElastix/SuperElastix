@@ -127,10 +127,6 @@ public:
 
   void Write( const std::string filename );
 
-  ConnectionIndexType GetConnectionIndex( ComponentNameType upsteam, ComponentNameType downstream ) const;
-
-  //Blueprint::Pointer FromFile(const std::string& filename);
-
   void MergeFromFile(const std::string & filename);
 
 private:
@@ -140,6 +136,8 @@ private:
 
   using PathType = boost::filesystem::path;
   using PathsType = std::list<PathType>;
+
+  ConnectionIndexType GetConnectionIndex(ComponentNameType upsteam, ComponentNameType downstream) const;
 
   PropertyTreeType ReadPropertyTree(const PathType & filename);
 

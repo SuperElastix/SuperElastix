@@ -423,41 +423,6 @@ BlueprintImpl::VectorizeValues(ComponentOrConnectionTreeType & componentOrConnec
   return propertyMultiValue;
 }
 
-/*
-Blueprint::Pointer
-BlueprintImpl::FromFile(const std::string & fileNameString)
-{
-  PathType fileName(fileNameString);
-  LoggerImpl logger;
-
-  logger.Log(LogLevel::INF, "Loading {0} ... ");
-  auto propertyTree = ReadPropertyTree(fileName);
-  logger.Log(LogLevel::INF, "Loading {0} ... Done");
-
-  logger.Log(LogLevel::INF, "Checking {0} for include files ... ", fileName);
-  auto includesList = FindIncludes(propertyTree);
-
-  if (includesList.size() == 0)
-  {
-    logger.Log(LogLevel::INF, "Checking {0} for include files ... Done. No include files specified.", fileName);
-    return FromPropertyTree(propertyTree);
-  }
-  else
-  {
-    Blueprint::Pointer baseBlueprint = Blueprint::New();
-    for (auto const & includePath : includesList)
-    {
-      logger.Log(LogLevel::INF, "Including file {0} ... ", includePath);
-      baseBlueprint->ComposeWith(FromFile(includePath.string()).GetPointer());
-      logger.Log(LogLevel::INF, "Including include file {0} ... Done", includePath);
-    }
-    baseBlueprint->ComposeWith(FromPropertyTree(propertyTree).GetPointer());
-    logger.Log(LogLevel::INF, "Checking {0} for include files ... Done");
-    return baseBlueprint;
-  }
-}
-*/
-
 void
 BlueprintImpl::MergeFromFile(const std::string & fileNameString)
 {
