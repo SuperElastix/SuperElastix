@@ -33,7 +33,13 @@ SuperElastixFilterBase
   m_AllUniqueComponents( false )
 {
   this->m_Blueprint = nullptr;
+
+  // Create default logger which redirects to std::cout
   this->m_Logger = Logger::New();
+  //TODO: cannot have independent loggers redirecting to cout. 
+  //this->m_Logger->AddStream("cout", std::cout);
+  this->m_Logger->SetLogLevel(selx::LogLevel::INF);
+
 } // end Constructor
 
 bool
@@ -42,7 +48,7 @@ SuperElastixFilterBase
 {
   if( ( this->m_Blueprint->GetMTime() > this->GetMTime() || !this->m_NetworkBuilder ) )
   {
-    m_NetworkBuilder = m_NetworkBuilderFactory->New( this->m_Logger->GetLogger(), this->m_Blueprint->GetBlueprintImpl() );
+    m_NetworkBuilder = m_NetworkBuilderFactory->New( this->m_Logger->GetLoggerImpl(), this->m_Blueprint->GetBlueprintImpl() );
     this->m_AllUniqueComponents = this->m_NetworkBuilder->Configure();
   }
   return this->m_AllUniqueComponents;
@@ -272,4 +278,12 @@ SuperElastixFilterBase
   this->GenerateData();
 }
 
-} // namespace elx
+void 
+SuperElastixFilterBase
+::SetLogger( Logger::Pointer logger )
+{
+  this->m_Logger = logger;
+  // no need to call Modified, since logging doesn't change any calculations.
+}
+
+}// namespace elx

@@ -94,6 +94,15 @@ make_edge_label_writer( ParameterMapType p )
   return edge_label_writer< ParameterMapType >( p );
 }
 
+// TODO: remove this argumentless constructor
+BlueprintImpl::BlueprintImpl( void ) : m_LoggerImpl(&(Logger::New()->GetLoggerImpl()))
+{
+}
+
+BlueprintImpl::BlueprintImpl( LoggerImpl & loggerImpl ) : m_LoggerImpl(&loggerImpl)
+{
+}
+
 
 bool
 BlueprintImpl
@@ -427,26 +436,31 @@ void
 BlueprintImpl::MergeFromFile(const std::string & fileNameString)
 {
   PathType fileName(fileNameString);
-  LoggerImpl logger;
 
-  logger.Log(LogLevel::INF, "Loading {0} ... ", fileName);
+  this->m_LoggerImpl->Log(LogLevel::INF, "Loading {0} ... ", fileName);
   auto propertyTree = ReadPropertyTree(fileName);
-  logger.Log(LogLevel::INF, "Loading {0} ... Done", fileName);
+  this->m_LoggerImpl->Log(LogLevel::INF, "Loading {0} ... Done", fileName);
 
-  logger.Log(LogLevel::INF, "Checking {0} for include files ... ", fileName);
+  this->m_LoggerImpl->Log(LogLevel::INF, "Checking {0} for include files ... ", fileName);
   auto includesList = FindIncludes(propertyTree);
 
   if (includesList.size() > 0)
   {
     for (auto const & includePath : includesList)
     {
-      logger.Log(LogLevel::INF, "Including file {0} ... ", includePath);
+      this->m_LoggerImpl->Log(LogLevel::INF, "Including file {0} ... ", includePath);
       this->MergeFromFile(includePath.string());
     }
   }
-  logger.Log(LogLevel::INF, "Checking {0} for include files ... done", fileName);
+  this->m_LoggerImpl->Log(LogLevel::INF, "Checking {0} for include files ... done", fileName);
   this->MergeProperties(propertyTree);
   return;
+}
+
+void
+BlueprintImpl::SetLoggerImpl( LoggerImpl & loggerImpl )
+{
+  this->m_LoggerImpl = &loggerImpl;
 }
 
 BlueprintImpl::PropertyTreeType
@@ -496,7 +510,6 @@ BlueprintImpl::FindIncludes(const PropertyTreeType & propertyTree)
 Blueprint::Pointer
 BlueprintImpl::FromPropertyTree(const PropertyTreeType & pt)
 {
-  LoggerImpl logger;
   Blueprint::Pointer blueprint = Blueprint::New();
 
   BOOST_FOREACH(const PropertyTreeType::value_type & v, pt.equal_range("Component"))
@@ -526,7 +539,7 @@ BlueprintImpl::FromPropertyTree(const PropertyTreeType & pt)
     if (connectionName != "")
     {
       // TODO: Why is it ignored?
-      logger.Log(LogLevel::WRN, "Connection {0} is ignored.", connectionName);
+      this->m_LoggerImpl->Log(LogLevel::WRN, "Connection {0} is ignored.", connectionName);
     }
     std::string      outName;
     std::string      inName;
@@ -548,7 +561,7 @@ BlueprintImpl::FromPropertyTree(const PropertyTreeType & pt)
       }
       else if (connectionKey == "Name")
       {
-        logger.Log(LogLevel::WRN, "Connections with key 'Name' are ignored.");
+        this->m_LoggerImpl->Log(LogLevel::WRN, "Connections with key 'Name' are ignored.");
         continue;
       }
       else
@@ -567,7 +580,6 @@ BlueprintImpl::FromPropertyTree(const PropertyTreeType & pt)
 void
 BlueprintImpl::MergeProperties(const PropertyTreeType & pt)
 {
-  LoggerImpl logger;
   BOOST_FOREACH(const PropertyTreeType::value_type & v, pt.equal_range("Component"))
   {
     std::string      componentName;
@@ -641,7 +653,7 @@ BlueprintImpl::MergeProperties(const PropertyTreeType & pt)
     std::string connectionName = v.second.data();
     if (connectionName != "")
     {
-      logger.Log(LogLevel::WRN, "Connection {0} is ignored.", connectionName);
+      this->m_LoggerImpl->Log(LogLevel::WRN, "Connection {0} is ignored.", connectionName);
     }
     std::string      outName;
     std::string      inName;
@@ -663,7 +675,7 @@ BlueprintImpl::MergeProperties(const PropertyTreeType & pt)
       }
       else if (connectionKey == "Name")
       {
-        logger.Log(LogLevel::WRN, "Connections with key 'Name' are ignored.");
+        this->m_LoggerImpl->Log(LogLevel::WRN, "Connections with key 'Name' are ignored.");
         continue;
       }
       else

@@ -95,6 +95,7 @@ main( int ac, char * av[] )
 
     // create empty blueprint
     selx::Blueprint::Pointer blueprint = selx::Blueprint::New();
+    blueprint->SetLogger(logger);
     for (const auto & configurationPath : configurationPaths)
     {
       blueprint->MergeFromFile(configurationPath.string());
