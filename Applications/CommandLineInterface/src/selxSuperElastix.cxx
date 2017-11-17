@@ -18,7 +18,6 @@
  *=========================================================================*/
 
 #include "selxSuperElastixFilter.h"
-#include "selxConfigurationReader.h"
 #include "selxAnyFileReader.h"
 #include "selxAnyFileWriter.h"
 #include "selxLogger.h"
