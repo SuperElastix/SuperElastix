@@ -93,7 +93,13 @@ public:
   // Returns a vector of the Component names at the outgoing direction
   ComponentNamesType GetOutputNames( const ComponentNameType name ) const;
 
+  // Write graphviz dot file
   void Write( const std::string filename );
+
+  // Read json or XML file
+  //void FromFile(const std::string& filename);
+
+  void MergeFromFile(const std::string& filename);
 
 private:
 

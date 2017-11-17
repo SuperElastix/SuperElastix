@@ -143,4 +143,21 @@ Blueprint
 {
   this->m_Blueprint->Write( filename );
 }
+
+/*
+void
+Blueprint
+::FromFile( const std::string& filename )
+{
+  this->m_Blueprint->FromFile( filename );
+}
+*/
+
+void
+Blueprint
+::MergeFromFile( const std::string& filename )
+{
+  this->m_Blueprint->MergeFromFile( filename );
+}
+
 } // namespace selx

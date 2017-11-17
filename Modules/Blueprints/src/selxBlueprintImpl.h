@@ -25,7 +25,21 @@
 #include "boost/graph/directed_graph.hpp"
 #include "boost/graph/labeled_graph.hpp"
 
-#include "boost/graph/copy.hpp" // for ComposeWith
+// for ComposeWith
+#include "boost/graph/copy.hpp"
+
+// for FromFile and MergeFromFile
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
+#include <boost/property_tree/json_parser.hpp>
+#include <boost/property_tree/info_parser.hpp>
+#include <boost/foreach.hpp>
+#include <boost/filesystem.hpp>
+
+#include <string>
+#include <iostream>
+#include <boost/algorithm/string.hpp>
+
 
 #include "selxBlueprint.h"
 
@@ -115,7 +129,26 @@ public:
 
   ConnectionIndexType GetConnectionIndex( ComponentNameType upsteam, ComponentNameType downstream ) const;
 
+  //Blueprint::Pointer FromFile(const std::string& filename);
+
+  void MergeFromFile(const std::string & filename);
+
 private:
+
+  typedef boost::property_tree::ptree         PropertyTreeType;
+  typedef const boost::property_tree::ptree & ComponentOrConnectionTreeType;
+
+  using PathType = boost::filesystem::path;
+  using PathsType = std::list<PathType>;
+
+  PropertyTreeType ReadPropertyTree(const PathType & filename);
+
+  PathsType FindIncludes(const PropertyTreeType &);
+  ParameterValueType VectorizeValues(ComponentOrConnectionTreeType componentOrConnectionTree);
+
+  Blueprint::Pointer FromPropertyTree(const PropertyTreeType &);
+  void MergeProperties(const PropertyTreeType &);
+
   GraphType m_Graph;
 };
 } // namespace selx
