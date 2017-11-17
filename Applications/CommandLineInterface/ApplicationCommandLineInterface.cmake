@@ -24,17 +24,12 @@ set( ${APPLICATION}_INCLUDE_DIRS
 )
 set( ${APPLICATION}_SOURCE_FILES
   ${${APPLICATION}_SOURCE_DIR}/src/selxSuperElastix.cxx
-  ${${APPLICATION}_SOURCE_DIR}/src/selxConfigurationReader.cxx
 )
 
+// TODO SuperElastix Library should have an install, there should not be changing/configurable dependencies to subpart. 
 set( ${APPLICATION}_MODULE_DEPENDENCIES
   ModuleFilter
 )
-
-# TODO: Find out how to include selxConfigurationReader.cxx in compilation unit
-#set( ${APPLICATION}_TEST_SOURCE_FILES
-#  ${${APPLICATION}_SOURCE_DIR}/test/selxConfigurationReaderTest.cxx
-#)
 
 set( ${APPLICATION}_INTEGRATION_TEST_SOURCE_FILES 
   ${${APPLICATION}_SOURCE_DIR}/test/integration.cmake

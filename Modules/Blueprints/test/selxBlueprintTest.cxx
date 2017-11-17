@@ -20,6 +20,7 @@
 #include "selxBlueprintImpl.h"
 #include "selxBlueprint.h"
 
+#include "selxDataManager.h"
 #include "gtest/gtest.h"
 
 using namespace selx;
@@ -35,11 +36,12 @@ public:
   {
     parameterMap[ "NameOfClass" ]        = ParameterValueType( 1, "TestClassName" );
     anotherParameterMap[ "NameOfClass" ] = ParameterValueType( 1, "AnotherTestClassName" );
+    dataManager = DataManager::New();
   }
 
   typedef Blueprint::Pointer BlueprintPointer;
 
-
+  DataManager::Pointer dataManager;
   ParameterMapType parameterMap;
   ParameterMapType anotherParameterMap;
 };
@@ -234,3 +236,20 @@ TEST_F( BlueprintTest, Compose )
 //
 //  EXPECT_NO_THROW( blueprint->Write( "blueprint.dot" ) );
 //}
+
+
+TEST_F(BlueprintTest, ReadXML)
+{
+  auto blueprint = Blueprint::New();
+
+  EXPECT_NO_THROW(blueprint->MergeFromFile(this->dataManager->GetConfigurationFile("itkv4_SVF_ANTsCC.xml")));
+  blueprint->Write(this->dataManager->GetOutputFile("configurationReaderTest_itkv4_SVF_ANTsCC.xml.dot"));
+}
+
+TEST_F(BlueprintTest, ReadJson)
+{
+  auto blueprint = Blueprint::New();
+
+  EXPECT_NO_THROW(blueprint->MergeFromFile(this->dataManager->GetConfigurationFile("itkv4_SVF_ANTsCC.json")));
+  blueprint->Write(this->dataManager->GetOutputFile("configurationReaderTest_itkv4_SVF_ANTsCC.json.dot"));
+}

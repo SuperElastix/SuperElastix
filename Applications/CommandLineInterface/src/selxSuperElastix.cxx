@@ -18,8 +18,6 @@
  *=========================================================================*/
 
 #include "selxSuperElastixFilter.h"
-#include "selxBlueprintImpl.h"
-#include "selxConfigurationReader.h"
 #include "selxAnyFileReader.h"
 #include "selxAnyFileWriter.h"
 #include "selxLogger.h"
@@ -99,7 +97,7 @@ main( int ac, char * av[] )
     selx::Blueprint::Pointer blueprint = selx::Blueprint::New();
     for (const auto & configurationPath : configurationPaths)
     {
-      selx::ConfigurationReader::MergeFromFile(blueprint, configurationPath);
+      blueprint->MergeFromFile(configurationPath.string());
     }
 
     if( vm.count( "graphout" ) )
