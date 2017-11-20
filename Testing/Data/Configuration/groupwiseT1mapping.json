@@ -44,12 +44,12 @@
     },
     "Component": {
         "Name": "FixedImage",
-        "NameOfClass": "ItkImageSourceFixedComponent",
+        "NameOfClass": "ItkImageSourceComponent",
 		"Dimensionality": "3"
     },
     "Component": {
         "Name": "MovingImage",
-        "NameOfClass": "ItkImageSourceMovingComponent"
+        "NameOfClass": "ItkImageSourceComponent"
     },
     "Component": {
         "Name": "ResultImage",
