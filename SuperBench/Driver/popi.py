@@ -1,4 +1,5 @@
 import os
+import subprocess
 
 class POPI(object):
     def __init__(self, input_directory):
@@ -25,3 +26,14 @@ class POPI(object):
     def data(self):
         for image_pair_file_names, point_set_pair_file_names, relative_output_file_name in zip(self.image_file_names, self.point_set_file_names, self.relative_output_file_names):
             yield image_pair_file_names, point_set_pair_file_names, relative_output_file_name
+
+    def evaluate(self, image_file_names, point_set_file_names, relative_output_file_name, super_elastix_file_name, output_directory):
+        subprocess.call([super_elastix_file_name,
+                         'deformation_field_point_transform_blueprint.json',
+                         point_set_file_names[1],
+                         os.path.join(output_directory, relative_output_file_name),
+                         os.path.join(output_directory, os.path.basename(relative_output_file_name), '.pts')])
+
+        # TODO: Load and compute metrics for point sets
+
+        pass
