@@ -38,7 +38,8 @@ SuperElastixFilterBase
   this->m_Logger = Logger::New();
   //TODO: cannot have independent loggers redirecting to cout. 
   //this->m_Logger->AddStream("cout", std::cout);
-  this->m_Logger->SetLogLevel(selx::LogLevel::INF);
+  //TODO: this seems to affect other instantiated loggers too.
+  //this->m_Logger->SetLogLevel(selx::LogLevel::INF);
 
 } // end Constructor
 
