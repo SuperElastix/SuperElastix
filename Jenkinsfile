@@ -49,7 +49,6 @@ node('lkeb-vm-test') {
 				sh "${ cmake } ../src/SuperBuild"
 				sh 'make clean'
 				sh 'make -j4'
-				sh 'make Nightly'
 			}
 		}
 		dir('src') {
@@ -61,6 +60,7 @@ node('lkeb-vm-test') {
 		stage('Test') {
 			dir('build/SuperElastix-build') {
 				sh "`dirname ${ cmake }`/ctest"
+				sh 'make Nightly'
 			}
 		}
 	}
