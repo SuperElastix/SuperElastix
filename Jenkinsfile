@@ -49,6 +49,7 @@ node('lkeb-vm-test') {
 				sh "${ cmake } ../src/SuperBuild"
 				sh 'make clean'
 				sh 'make -j4'
+				sh 'make Nightly'
 			}
 		}
 		dir('src') {
