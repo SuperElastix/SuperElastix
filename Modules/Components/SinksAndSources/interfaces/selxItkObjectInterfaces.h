@@ -21,6 +21,7 @@
 #define selxItkObjectInterfaces_h
 
 #include "itkImage.h"
+#include "itkVectorImage.h"
 #include "itkMesh.h"
 
 namespace selx
@@ -38,6 +39,19 @@ public:
   using Pointer = std::shared_ptr< Type >;
   typedef typename itk::Image< TPixel, Dimensionality > ItkImageType;
   virtual typename ItkImageType::Pointer GetItkImage() = 0;
+};
+
+template< int Dimensionality, class TPixel >
+class itkVectorImageInterface
+{
+  // An interface that provides the pointer of an output vector image
+
+public:
+
+  using Type    = itkImageInterface< Dimensionality, TPixel >;
+  using Pointer = std::shared_ptr< Type >;
+  typedef typename itk::VectorImage< TPixel, Dimensionality > ItkVectorImageType;
+  virtual typename ItkVectorImageType::Pointer GetItkVectorImage() = 0;
 };
 
 template< int Dimensionality, class TPixel >
