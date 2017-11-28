@@ -30,5 +30,5 @@ set( ${MODULE}_LIBRARIES
 )
 
 set( ${MODULE}_TEST_SOURCE_FILES 
-  # ${${MODULE}_SOURCE_DIR}/test/selxSyNRegistrationItkv4Test.cxx
+   ${${MODULE}_SOURCE_DIR}/test/selxSyNRegistrationItkv4Test.cxx
 )

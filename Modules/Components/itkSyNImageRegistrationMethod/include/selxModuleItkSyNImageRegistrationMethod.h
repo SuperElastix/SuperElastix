@@ -18,25 +18,12 @@
 *=========================================================================*/
 
 #include "selxTypeList.h"
-#include "selxModuleController.h"
-#include "selxModuleElastix.h"
-#include "selxModuleExamples.h"
-#include "selxModuleItkImageRegistrationMethodv4.h"
-//#include "selxModuleItkSmoothingRecursiveGaussianImageFilter.h"
-#include "selxModuleItkSyNImageRegistrationMethod.h"
-#include "selxModuleNiftyreg.h"
-#include "selxModuleSinksAndSources.h"
+#include "selxItkSyNImageRegistrationMethodComponent.h"
 
 namespace selx
 {
-using CompiledLibraryComponents = list_append<
-  ModuleControllerComponents,
-	ModuleElastixComponents, 
-  //ModuleExamplesComponents,
-  ModuleItkImageRegistrationMethodv4Components,
-  //ModuleItkSmoothingRecursiveGaussianImageFilterComponents,
-  ModuleItkSyNImageRegistrationMethodComponents,
-  ModuleNiftyregComponents,
-  ModuleSinksAndSourcesComponents
-    >;
+using ModuleItkSyNImageRegistrationMethodComponents = selx::TypeList<
+  ItkSyNImageRegistrationMethodComponent< 3, double, double >,
+  ItkSyNImageRegistrationMethodComponent< 2, float, double >
+  >;
 }

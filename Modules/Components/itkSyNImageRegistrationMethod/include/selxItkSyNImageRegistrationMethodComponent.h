@@ -24,6 +24,7 @@
 
 #include "selxItkRegistrationMethodv4Interfaces.h"
 #include "selxSinksAndSourcesInterfaces.h"
+#include "selxItkObjectInterfaces.h"
 
 #include "itkSyNImageRegistrationMethod.h"
 #include "itkGradientDescentOptimizerv4.h"
@@ -35,14 +36,14 @@
 
 namespace selx
 {
-template< int Dimensionality, class TPixel >
+template< int Dimensionality, class PixelType, class InternalComputationValueType >
 class ItkSyNImageRegistrationMethodComponent :
   public SuperElastixComponent<
-  Accepting< itkImageFixedInterface< Dimensionality, TPixel >,
-  itkImageMovingInterface< Dimensionality, TPixel >,
-  itkMetricv4Interface< Dimensionality, TPixel, double >
+  Accepting< itkImageFixedInterface< Dimensionality, PixelType >,
+  itkImageMovingInterface< Dimensionality, PixelType >,
+  itkMetricv4Interface< Dimensionality, PixelType, InternalComputationValueType >
   >,
-  Providing< itkTransformInterface< double, Dimensionality >,
+  Providing< itkTransformInterface< InternalComputationValueType, Dimensionality >,
   RunRegistrationInterface
   >
   >
@@ -50,44 +51,43 @@ class ItkSyNImageRegistrationMethodComponent :
 public:
 
   /** Standard ITK typedefs. */
-  typedef ItkSyNImageRegistrationMethodComponent Self;
-  typedef ComponentBase                          Superclass;
-  typedef itk::SmartPointer< Self >              Pointer;
-  typedef itk::SmartPointer< const Self >        ConstPointer;
+  typedef ItkSyNImageRegistrationMethodComponent<
+    Dimensionality, PixelType, InternalComputationValueType
+    >                                     Self;
+  typedef SuperElastixComponent<
+    Accepting<
+    itkImageFixedInterface< Dimensionality, PixelType >,
+    itkImageMovingInterface< Dimensionality, PixelType >,
+    itkMetricv4Interface< Dimensionality, PixelType, InternalComputationValueType >
+    >,
+    Providing< itkTransformInterface< InternalComputationValueType, Dimensionality >,
+    RunRegistrationInterface
+    >
+    >                                     Superclass;
+  typedef std::shared_ptr< Self >       Pointer;
+  typedef std::shared_ptr< const Self > ConstPointer;
 
-  /** Method for creation through the object factory. */
-  itkNewMacro( Self );
-
-  /** Run-time type information (and related methods). */
-  itkTypeMacro( Self, ComponentBase );
-
-  //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
-
-  ItkSyNImageRegistrationMethodComponent();
+  ItkSyNImageRegistrationMethodComponent( const std::string & name, LoggerImpl & logger );
   virtual ~ItkSyNImageRegistrationMethodComponent();
 
-  typedef TPixel PixelType;
-  typedef double InternalComputationValueType;
-
   // Get the type definitions from the interfaces
-  typedef typename itkImageFixedInterface< Dimensionality, TPixel >::ItkImageType                          FixedImageType;
-  typedef typename itkImageMovingInterface< Dimensionality, TPixel >::ItkImageType                         MovingImageType;
-  typedef typename itkTransformInterface< InternalComputationValueType, Dimensionality >::TransformType    TransformType;
-  typedef typename itkTransformInterface< InternalComputationValueType, Dimensionality >::TransformPointer TransformPointer;
 
-  typedef typename itkTransformInterface< InternalComputationValueType,
-    Dimensionality >::InternalComputationValueType TransformInternalComputationValueType;                                                                     //should be from class template
+  using FixedImageType   = typename itkImageFixedInterface< Dimensionality, PixelType >::ItkImageType;
+  using MovingImageType  = typename itkImageMovingInterface< Dimensionality, PixelType >::ItkImageType;
+  using TransformType    = typename itkTransformInterface< InternalComputationValueType, Dimensionality >::TransformType;
+  using TransformPointer = typename itkTransformInterface< InternalComputationValueType, Dimensionality >::TransformPointer;
+
 
   typedef itk::SyNImageRegistrationMethod< FixedImageType, MovingImageType >   TheItkFilterType;
   typedef typename TheItkFilterType::ImageMetricType                           ImageMetricType;
   typedef itk::RegistrationParameterScalesFromPhysicalShift< ImageMetricType > ScalesEstimatorType;
 
   //Accepting Interfaces:
-  virtual int Accept( itkImageFixedInterface< Dimensionality, TPixel > * ) override;
+  virtual int Accept( typename itkImageFixedInterface< Dimensionality, PixelType >::Pointer ) override;
 
-  virtual int Accept( itkImageMovingInterface< Dimensionality, TPixel > * ) override;
+  virtual int Accept( typename itkImageMovingInterface< Dimensionality, PixelType >::Pointer ) override;
 
-  virtual int Accept( itkMetricv4Interface< Dimensionality, TPixel, double > * ) override;
+  virtual int Accept( typename itkMetricv4Interface< Dimensionality, PixelType, InternalComputationValueType >::Pointer ) override;
 
   //Providing Interfaces:
   virtual TransformPointer GetItkTransform() override;
