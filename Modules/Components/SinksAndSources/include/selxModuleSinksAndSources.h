@@ -17,21 +17,18 @@
 *
 *=========================================================================*/
 
-#include "selxSuperElastixFilter.h"
-#include "selxNetworkBuilder.h"
-#include "selxNetworkBuilderFactory.h"
-#include "selxCompiledLibraryComponents.h"
+#include "selxTypeList.h"
+
+//Component group SinksAndSources
+#include "selxDisplacementFieldItkImageFilterSinkComponent.h"
+#include "selxItkImageSourceComponent.h"
+#include "selxItkImageSinkComponent.h"
 
 namespace selx
 {
-/**
- * ********************* Constructor *********************
- */
-
-SuperElastixFilter
-::SuperElastixFilter( void ) : SuperElastixFilterBase()
-{
-  // The default constructor registers the default components.
-  m_NetworkBuilderFactory = std::unique_ptr< NetworkBuilderFactory< CompiledLibraryComponents >>(new NetworkBuilderFactory< CompiledLibraryComponents >);
-} // end Constructor
-} // namespace elx
+using ModuleSinksAndSourcesComponents = selx::TypeList<
+  DisplacementFieldItkImageFilterSinkComponent< 2, float >,
+  ItkImageSinkComponent< 2, float >,
+  ItkImageSourceComponent< 2, float >
+  >;
+}

@@ -17,21 +17,26 @@
 *
 *=========================================================================*/
 
-#include "selxSuperElastixFilter.h"
-#include "selxNetworkBuilder.h"
-#include "selxNetworkBuilderFactory.h"
-#include "selxCompiledLibraryComponents.h"
+#include "selxTypeList.h"
+#include "selxModuleController.h"
+#include "selxModuleElastix.h"
+#include "selxModuleExamples.h"
+#include "selxModuleItkImageRegistrationMethodv4.h"
+//#include "selxModuleItkSmoothingRecursiveGaussianImageFilter.h"
+//#include "selxModuleItkSyNImageRegistrationMethod.h"
+#include "selxModuleNiftyreg.h"
+#include "selxModuleSinksAndSources.h"
 
 namespace selx
 {
-/**
- * ********************* Constructor *********************
- */
-
-SuperElastixFilter
-::SuperElastixFilter( void ) : SuperElastixFilterBase()
-{
-  // The default constructor registers the default components.
-  m_NetworkBuilderFactory = std::unique_ptr< NetworkBuilderFactory< CompiledLibraryComponents >>(new NetworkBuilderFactory< CompiledLibraryComponents >);
-} // end Constructor
-} // namespace elx
+using CompiledLibraryComponents = list_append<
+  ModuleControllerComponents,
+	ModuleElastixComponents, 
+  //ModuleExamplesComponents,
+  ModuleItkImageRegistrationMethodv4Components,
+  //ModuleItkSmoothingRecursiveGaussianImageFilterComponents,
+  //ModuleModuleItkSyNImageRegistrationMethod,
+  ModuleNiftyregComponents,
+  ModuleSinksAndSourcesComponents
+    >;
+}

@@ -46,6 +46,7 @@ set( ${MODULE}_MODULE_DEPENDENCIES
   ModuleElastix
   ModuleExamples
   ModuleItkImageRegistrationMethodv4
+  #ModuleItkSyNImageRegistrationMethod
   ModuleItkSmoothingRecursiveGaussianImageFilter
   ModuleSinksAndSources
   ModuleNiftyreg
