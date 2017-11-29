@@ -2,18 +2,22 @@ import argparse
 import logging
 import os
 import subprocess
+import json
 
 from popi import POPI
 
 
 def run(parameters):
 
-    datasets = []
+    datasets = {
+        'Lung': [],
+        'Brain': []
+    }
 
     logging.info('Adding datasets ...')
     if parameters.popi_input_directory is not None:
-        logging.info('Found POPI.')
-        datasets.append(POPI(parameters.popi_input_directory))
+        logging.info('Found POPI lung dataset.')
+        datasets['Lung'].append(POPI(parameters.popi_input_directory))
 
     logging.info('Adding blueprints ...')
     submissions = [(team_name, os.path.join(parameters.submissions_directory, team_name, file_name))
@@ -26,7 +30,9 @@ def run(parameters):
 
     for team_name, blueprint_file_name in submissions:
         blueprint_name, blueprint_ext = os.path.splitext(os.path.basename(blueprint_file_name))
-        for dataset in datasets:
+        blueprint = json.load(open(blueprint_file_name))
+        category = blueprint.get('SuperBenchCategory')
+        for dataset in datasets[category]:
             for image_file_names, ground_truth_file_name, relative_output_file_name in dataset.generator():
                 try:
                     output_directory = os.path.join(parameters.output_directory, team_name, blueprint_name, os.path.dirname(relative_output_file_name))
@@ -42,11 +48,9 @@ def run(parameters):
                                                       output_file_name])
 
                     logging.info(stdout)
-                    print(stdout)
                 except subprocess.CalledProcessError as e:
                     stderr = e.output
                     logging.error(stderr)
-                    print(stderr)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='SuperBench registration driver.')
