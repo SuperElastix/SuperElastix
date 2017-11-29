@@ -6,20 +6,8 @@ import json
 
 from popi import POPI
 
-
-def run(parameters):
-
-    datasets = {
-        'Lung': [],
-        'Brain': []
-    }
-
-    logging.info('Adding datasets ...')
-    if parameters.popi_input_directory is not None:
-        logging.info('Found POPI lung dataset.')
-        datasets['Lung'].append(POPI(parameters.popi_input_directory))
-
-    logging.info('Adding blueprints ...')
+def load_submissions(parameters):
+    logging.info('Loading blueprints ...')
     submissions = [(team_name, os.path.join(parameters.submissions_directory, team_name, file_name))
                             for team_name in os.listdir(parameters.submissions_directory)
                             for file_name in os.listdir(os.path.join(parameters.submissions_directory, team_name))
@@ -28,10 +16,34 @@ def run(parameters):
     for team_name, blueprint_file_name in submissions:
         logging.info('Found %s by %s.', blueprint_file_name, team_name)
 
+    return submissions
+
+
+def load_datasets(parameters):
+    logging.info('Loading datasets ...')
+    datasets = {
+        'Lung': [],
+        'Brain': []
+    }
+
+    if parameters.popi_input_directory is not None:
+        logging.info('Found POPI lung dataset.')
+        datasets['Lung'].append(POPI(parameters.popi_input_directory))
+
+    return datasets
+
+def get_category(blueprint_file_name):
+    blueprint = json.load(open(blueprint_file_name))
+    return blueprint.get('SuperBenchCategory')
+
+
+def run(parameters):
+    submissions = load_submissions(parameters)
+    datasets = load_datasets(parameters)
+
     for team_name, blueprint_file_name in submissions:
         blueprint_name, blueprint_ext = os.path.splitext(os.path.basename(blueprint_file_name))
-        blueprint = json.load(open(blueprint_file_name))
-        category = blueprint.get('SuperBenchCategory')
+        category = get_category(blueprint_file_name)
         for dataset in datasets[category]:
             for image_file_names, ground_truth_file_name, relative_output_file_name in dataset.generator():
                 try:
@@ -40,7 +52,12 @@ def run(parameters):
 
                     os.makedirs(output_directory, exist_ok=True)
 
-                    logging.info('Running registration %s -> %s with blueprint %s.', image_file_names[0], image_file_names[1], blueprint_file_name)
+                    logging.info('Running %s %s registration with blueprint %s (%s -> %s).',
+                                 dataset.name,
+                                 str.lower(category),
+                                 blueprint_file_name,
+                                 image_file_names[0],
+                                 image_file_names[1])
                     stdout = subprocess.check_output([parameters.registration_driver,
                                                       blueprint_file_name,
                                                       image_file_names[0],
