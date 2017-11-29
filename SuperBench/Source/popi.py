@@ -23,17 +23,15 @@ class POPI(object):
                                               os.path.join(input_directory, sub_directory, 'pts', '00.pts')))
             self.relative_output_file_names.append(os.path.join('POPI', sub_directory, '50->00.mhd'))
 
-    def data(self):
+    def generator(self):
         for image_pair_file_names, point_set_pair_file_names, relative_output_file_name in zip(self.image_file_names, self.point_set_file_names, self.relative_output_file_names):
             yield image_pair_file_names, point_set_pair_file_names, relative_output_file_name
 
-    def evaluate(self, image_file_names, point_set_file_names, relative_output_file_name, super_elastix_file_name, output_directory):
-        subprocess.call([super_elastix_file_name,
+    def evaluate(self, image_file_names, point_set_file_names, output_file_name, superelastix_file_name):
+        subprocess.call([superelastix_file_name,
                          'deformation_field_point_transform_blueprint.json',
                          point_set_file_names[1],
-                         os.path.join(output_directory, relative_output_file_name),
-                         os.path.join(output_directory, os.path.basename(relative_output_file_name), '.pts')])
+                         os.path.join(output_file_name),
+                         os.path.join(os.path.basename(output_file_name), '.pts')])
 
         # TODO: Load and compute metrics for point sets
-
-        pass

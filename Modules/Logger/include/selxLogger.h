@@ -76,7 +76,7 @@ public:
 
   void Log( const LogLevel& level, const std::string& message );
 
-  LoggerImpl& GetLogger( void );
+  LoggerImpl & GetLogger( void );
 
 
 private:

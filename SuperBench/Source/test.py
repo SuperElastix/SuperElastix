@@ -1,0 +1,61 @@
+import argparse
+import logging
+import os
+import subprocess
+
+from popi import POPI
+
+
+def run(parameters):
+
+    datasets = []
+
+    logging.info('Adding datasets ...')
+    if parameters.popi_input_directory is not None:
+        logging.info('Found POPI.')
+        datasets.append(POPI(parameters.popi_input_directory))
+
+    logging.info('Adding blueprints ...')
+    submissions = [(team_name, os.path.join(parameters.submissions_directory, team_name, file_name))
+                            for team_name in os.listdir(parameters.submissions_directory)
+                            for file_name in os.listdir(os.path.join(parameters.submissions_directory, team_name))
+                            if file_name.endswith('.json') or file_name.endswith('.xml')]
+
+    for team_name, blueprint_file_name in submissions:
+        logging.info('Found %s by %s.', blueprint_file_name, team_name)
+
+    for team_name, blueprint_file_name in submissions:
+        blueprint_name, blueprint_ext = os.path.splitext(os.path.basename(blueprint_file_name))
+        for dataset in datasets:
+            for image_file_names, ground_truth_file_name, relative_output_file_name in dataset.generator():
+                try:
+                    output_directory = os.path.join(parameters.output_directory, team_name, blueprint_name, os.path.dirname(relative_output_file_name))
+                    output_file_name = os.path.join(output_directory, os.path.basename(relative_output_file_name))
+
+                    os.makedirs(output_directory, exist_ok=True)
+
+                    logging.info('Running registration %s -> %s with blueprint %s.', image_file_names[0], image_file_names[1], blueprint_file_name)
+                    stdout = subprocess.check_output([parameters.registration_driver,
+                                                      blueprint_file_name,
+                                                      image_file_names[0],
+                                                      image_file_names[1],
+                                                      output_file_name])
+
+                    logging.info(stdout)
+                    print(stdout)
+                except subprocess.CalledProcessError as e:
+                    stderr = e.output
+                    logging.error(stderr)
+                    print(stderr)
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='SuperBench registration driver.')
+
+    parser.add_argument('--registration-driver', '-rd', required=True, help="Program running registrations.")
+    parser.add_argument('--submissions-directory', '-sd', required=True, help='Directory with parameter files.')
+    parser.add_argument('--output-directory', '-od', required=True)
+    parser.add_argument('--popi-input-directory', '-pid')
+
+    parameters = parser.parse_args()
+    run(parameters)
+

@@ -3,3 +3,4 @@ cmd="@SUPERELASTIX_COMMANDLINE_INTERFACE@ --conf $1 --in FixedImage=$2 MovingIma
 echo "Executing $cmd ..."
 ${cmd}
 echo "Executing $cmd ... Done"
+
