@@ -48,7 +48,12 @@ macro( _selxmodules_initialize )
   file( GLOB_RECURSE MODULE_CMAKE_FILES RELATIVE "${CMAKE_SOURCE_DIR}"
      "${CMAKE_SOURCE_DIR}/Modules/*/Module*.cmake"
   )
-
+  
+  # find the Modules that are ComponentGroups (is subset of MODULE_CMAKE_FILES)
+  file( GLOB MODULE_COMPONENT_GROUP_CMAKE_FILES
+     "${CMAKE_SOURCE_DIR}/Modules/Components/*/Module*.cmake"
+  )
+  
   message( STATUS "Found the following SuperElastix modules:")
   foreach( MODULE_CMAKE_FILE ${MODULE_CMAKE_FILES})
     get_filename_component( MODULE ${MODULE_CMAKE_FILE} NAME_WE )
@@ -79,6 +84,9 @@ macro( _selxmodules_initialize )
 
     list( APPEND SUPERELASTIX_MODULES ${MODULE} )
 
+    if ( ${USE_${MODULE}} )
+      _selxmodule_enable( ${MODULE} "User" )
+    endif()
   endforeach()
   
   # Create dummy targets to show header-only Components and Interfaces in the Solution Explorer of Visual Studio
