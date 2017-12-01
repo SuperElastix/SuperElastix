@@ -9,13 +9,21 @@ import numpy as np
 from .test import load_submissions, load_datasets, get_category
 from .popi import POPI
 
-def eval_singularity_ratio(deformation_field):
-    deformation_field_array = sitk.GetArrayViewFromImage(deformation_field)
-    return {
-        'SingularityRatio': np.sum(deformation_field_array < 0)/np.prod(deformation_field_array.shape)
-    }
+def eval_deformation_field(superelastix, point_set_file_name_pair, deformation_field_file_name_pair):
+    # TODO: Implement inverse consistensy
+    # For both point sets, warp points forward->backward, then call eval_point_sets and save TRE
 
-def eval_point_sets(point_set_0, point_set_1):
+    deformation_field_array_0 = sitk.GetArrayViewFromImage(sitk.ReadImage(deformation_field_file_name_pair[0]))
+    deformation_field_array_1 = sitk.GetArrayViewFromImage(sitk.ReadImage(deformation_field_file_name_pair[1]))
+    return ({
+        'SingularityRatio': np.sum(deformation_field_array_0 < 0)/np.prod(deformation_field_array_0.shape),
+    }, {
+        'SingularityRatio': np.sum(deformation_field_array_1 < 0)/np.prod(deformation_field_array_1.shape),
+    })
+
+def eval_point_sets(point_set_file_name_pair):
+    point_set_0 = np.loadtxt(point_set_file_name_pair[0])
+    point_set_1 = np.loadtxt(point_set_file_name_pair[1])
     l2 = np.sqrt(np.sum((point_set_0-point_set_1)**2, 1))
     return {
         'TRE': np.mean(l2),
@@ -38,24 +46,24 @@ def run(parameters):
         results = dict()
         for dataset in datasets[category]:
             results[dataset.name] = dict()
-            for image_file_name_pair, ground_truth_file_name_pair, relative_deformation_field_file_name_pair in dataset.generator():
+            for image_file_name_pair, ground_truth_file_name_pair, deformation_field_relative_file_name_pair in dataset.generator():
                 output_directory = os.path.join(parameters.output_directory,
                                                 team_name,
                                                 blueprint_name,
-                                                os.path.dirname(relative_deformation_field_file_name_pair))
+                                                os.path.dirname(deformation_field_relative_file_name_pair))
                 output_file_name = os.path.join(output_directory,
-                                                relative_deformation_field_file_name_pair)
+                                                deformation_field_relative_file_name_pair)
 
+                logging.info('Evalualting %s and %s.', image_file_name_pair[0], image_file_name_pair[1])
                 try:
-                    logging.info('Evalualting %s and %s.', image_file_name_pair[0], image_file_name_pair[1])
-                    results[dataset.name][relative_deformation_field_file_name_pair[0]],
-                    results[dataset.name][relative_deformation_field_file_name_pair[1]] = dataset.evaluate(parameters.superelastix,
+                    results[dataset.name][deformation_field_relative_file_name_pair[0]],
+                    results[dataset.name][deformation_field_relative_file_name_pair[1]] = dataset.evaluate(parameters.superelastix,
                                                                                                            image_file_name_pair,
                                                                                                            ground_truth_file_name_pair,
-                                                                                                           output_file_name)
+                                                                                                           deformation_field_relative_file_name_pair)
                 except Exception as e:
-                    results[dataset.name][relative_deformation_field_file_name_pair[0]] = e.output
-                    results[dataset.name][relative_deformation_field_file_name_pair[1]] = e.output
+                    results[dataset.name][deformation_field_relative_file_name_pair[0]] = e.output
+                    results[dataset.name][deformation_field_relative_file_name_pair[1]] = e.output
                     logging.error(e.output)
 
     write(results)
