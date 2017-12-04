@@ -114,7 +114,7 @@ Logger
 
 LoggerImpl&
 Logger
-::GetLogger( void )
+::GetLoggerImpl( void )
 {
   return *this->m_LoggerImpl;
 }
