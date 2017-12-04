@@ -8,13 +8,13 @@
     },
     "Component": {
         "Name": "FixedImage",
-        "NameOfClass": "ItkImageSourceFixedComponent",
+        "NameOfClass": "ItkImageSourceComponent",
         "Dimensionality": "2",
 		"PixelType": "float"
     },
     "Component": {
         "Name": "MovingImage",
-        "NameOfClass": "ItkImageSourceMovingComponent",
+        "NameOfClass": "ItkImageSourceComponent",
         "Dimensionality": "2",
 		"PixelType": "float"
     },

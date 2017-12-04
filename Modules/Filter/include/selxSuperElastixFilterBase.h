@@ -79,7 +79,7 @@ public:
   AnyFileWriterType::Pointer GetOutputFileWriter( const DataObjectIdentifierType & );
 
   /** SetInput accepts any input data as long as it is derived from itk::DataObject */
-  void SetInput( const DataObjectIdentifierType &, InputDataType * ) override;
+  void SetInput(const DataObjectIdentifierType &, InputDataType *) ITK_OVERRIDE;
 
   /** Non type-specific GetOutput */
   OutputDataType * GetOutput( const DataObjectIdentifierType & );
@@ -108,8 +108,10 @@ public:
     return newOutput;
   }
 
-
   void Update( void ) ITK_OVERRIDE;
+
+  // The default logger redirects to std::cout 
+  void SetLogger( Logger::Pointer logger );
 
 protected:
 
@@ -126,7 +128,6 @@ protected:
 
 private:
 
-  //TODO make const correct
   BlueprintPointer m_Blueprint;
 
   bool m_IsConnected;
