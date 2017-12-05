@@ -25,9 +25,24 @@
 #include "boost/graph/directed_graph.hpp"
 #include "boost/graph/labeled_graph.hpp"
 
-#include "boost/graph/copy.hpp" // for ComposeWith
+// for ComposeWith
+#include "boost/graph/copy.hpp"
+
+// for FromFile and MergeFromFile
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
+#include <boost/property_tree/json_parser.hpp>
+#include <boost/property_tree/info_parser.hpp>
+#include <boost/foreach.hpp>
+#include <boost/filesystem.hpp>
+
+#include <string>
+#include <iostream>
+#include <boost/algorithm/string.hpp>
+
 
 #include "selxBlueprint.h"
+#include "selxLoggerImpl.h"
 
 namespace selx
 {
@@ -84,6 +99,12 @@ public:
   typedef boost::graph_traits< GraphType >::out_edge_iterator OutputIteratorType;
   typedef std::pair< OutputIteratorType, OutputIteratorType > OutputIteratorPairType;
 
+  // TODO: remove this argumentless constructor
+  BlueprintImpl();
+
+  BlueprintImpl( LoggerImpl & loggerImpl);
+
+
   bool SetComponent( ComponentNameType, ParameterMapType parameterMap );
 
   ParameterMapType GetComponent( ComponentNameType componentName ) const;
@@ -103,7 +124,7 @@ public:
 
   bool ConnectionExists( ComponentNameType upstream, ComponentNameType downstream ) const;
 
-  bool ComposeWith( const BlueprintImpl & other);
+  bool ComposeWith( const BlueprintImpl & other );
 
   // Returns a vector of the Component names at the incoming direction
   ComponentNamesType GetInputNames( const ComponentNameType name ) const;
@@ -113,10 +134,31 @@ public:
 
   void Write( const std::string filename );
 
-  ConnectionIndexType GetConnectionIndex( ComponentNameType upsteam, ComponentNameType downstream ) const;
+  void MergeFromFile(const std::string & filename);
+
+  void SetLoggerImpl( LoggerImpl & loggerImpl );
 
 private:
+
+  typedef boost::property_tree::ptree         PropertyTreeType;
+  typedef const boost::property_tree::ptree & ComponentOrConnectionTreeType;
+
+  using PathType = boost::filesystem::path;
+  using PathsType = std::list<PathType>;
+
+  ConnectionIndexType GetConnectionIndex(ComponentNameType upsteam, ComponentNameType downstream) const;
+
+  PropertyTreeType ReadPropertyTree(const PathType & filename);
+
+  PathsType FindIncludes(const PropertyTreeType &);
+  ParameterValueType VectorizeValues(ComponentOrConnectionTreeType componentOrConnectionTree);
+
+  Blueprint::Pointer FromPropertyTree(const PropertyTreeType &);
+  void MergeProperties(const PropertyTreeType &);
+
   GraphType m_Graph;
+
+  LoggerImpl * m_LoggerImpl;
 };
 } // namespace selx
 

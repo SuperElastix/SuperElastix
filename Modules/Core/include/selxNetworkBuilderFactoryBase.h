@@ -33,7 +33,7 @@ public:
   virtual ~NetworkBuilderFactoryBase() {}
 
   /** To create a derived NetworkBuilderFactory from a NetworkBuilderFactoryBase pointer without knowing the template arguments of the derived*/
-  virtual std::unique_ptr< NetworkBuilderBase > New( LoggerImpl & logger, BlueprintImpl & blueprint ) = 0;
+  virtual std::unique_ptr< NetworkBuilderBase > New( LoggerImpl & logger, const BlueprintImpl & blueprint ) = 0;
 
 private:
 };

@@ -19,13 +19,20 @@
 
 #include "selxTypeList.h"
 
+
+//Component group ItkSmoothingRecursiveGaussianImageFilter
 #include "selxItkSmoothingRecursiveGaussianImageFilterComponent.h"
+//Component group SinksAndSources
 #include "selxDisplacementFieldItkImageFilterSinkComponent.h"
 #include "selxItkImageSourceComponent.h"
+#include "selxItkImageSinkComponent.h"
+
+//Component group Elastix
 #include "selxElastixComponent.h"
 #include "selxMonolithicElastixComponent.h"
 #include "selxMonolithicTransformixComponent.h"
-#include "selxItkImageSinkComponent.h"
+
+//Component group ItkImageRegistrationMethodv4
 #include "selxItkImageRegistrationMethodv4Component.h"
 #include "selxItkANTSNeighborhoodCorrelationImageToImageMetricv4Component.h"
 #include "selxItkMeanSquaresImageToImageMetricv4Component.h"
@@ -35,11 +42,21 @@
 #include "selxItkAffineTransformComponent.h"
 #include "selxItkTransformDisplacementFilterComponent.h"
 #include "selxItkResampleFilterComponent.h"
-#include "selxRegistrationControllerComponent.h"
 #include "selxItkTransformSourceComponent.h"
 #include "selxItkTransformSinkComponent.h"
 #include "selxItkImageSourceFixedComponent.h"
 #include "selxItkImageSourceMovingComponent.h"
+
+//Component group Controller
+#include "selxRegistrationControllerComponent.h"
+
+//Component group Niftyreg
+#include "selxItkToNiftiImageSourceComponent.h"
+#include "selxNiftiToItkImageSinkComponent.h"
+#include "selxNiftyregf3dComponent.h"
+#include "selxNiftyregSplineToDisplacementFieldComponent.h"
+#include "selxDisplacementFieldNiftiToItkImageSinkComponent.h"
+#include "selxNiftyregAladinComponent.h"
 
 
 namespace selx
@@ -68,9 +85,10 @@ using DefaultComponents = selx::TypeList<
   ItkSmoothingRecursiveGaussianImageFilterComponent< 2, float >,
   ItkTransformSourceComponent< 2, double >,
   ItkTransformSinkComponent< 2, double >,
-  ItkImageSourceFixedComponent< 2, float >,
-  ItkImageSourceMovingComponent< 2, float >,
-  ItkImageSourceFixedComponent< 3, short >,
-  ItkImageSourceMovingComponent< 3, short >
+  ItkToNiftiImageSourceComponent< 2, float >,
+  NiftiToItkImageSinkComponent< 2, float >,
+  NiftyregSplineToDisplacementFieldComponent< float>,
+  DisplacementFieldNiftiToItkImageSinkComponent< 2, float>,
+  NiftyregAladinComponent< float >
   >;
 }

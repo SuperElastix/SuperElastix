@@ -26,29 +26,22 @@ namespace selx
 Blueprint
 ::Blueprint()
 {
-  this->m_Blueprint = BlueprintImplPointer( new BlueprintImpl() );
+  // Create default logger which redirects to std::cout
+  this->m_Logger = Logger::New();
+  //TODO: cannot have independent loggers redirecting to cout. 
+  //this->m_Logger->AddStream("cout", std::cout);
+  //TODO: this seems to affect other instantiated loggers too.
+  //this->m_Logger->SetLogLevel(selx::LogLevel::INF);
+
+  this->m_Blueprint = BlueprintImplPointer( new BlueprintImpl( this->m_Logger->GetLoggerImpl() ) );
+  
 }
 
-void
+const BlueprintImpl &
 Blueprint
-::SetBlueprint( BlueprintImpl& blueprint )
+::GetBlueprintImpl( void ) const
 {
-  this->Modified();
-  this->m_Blueprint = BlueprintImplPointer( &blueprint );
-}
-
-BlueprintImpl &
-Blueprint
-::GetBlueprint( void)
-{
-  if( this->m_Blueprint )
-  {
-    return *this->m_Blueprint;
-  }
-  else
-  {
-    itkExceptionMacro( "BlueprintImpl not set." )
-  }
+  return *this->m_Blueprint;
 }
 
 void
@@ -136,10 +129,10 @@ Blueprint
 
 bool
 Blueprint
-::ComposeWith( const BlueprintImpl & other)
+::ComposeWith( Blueprint::ConstPointer other)
 {
   this->Modified();
-  return this->m_Blueprint->ComposeWith( other );
+  return this->m_Blueprint->ComposeWith( other->GetBlueprintImpl() );
 }
 
 
@@ -165,4 +158,21 @@ Blueprint
 {
   this->m_Blueprint->Write( filename );
 }
+
+void
+Blueprint
+::MergeFromFile( const std::string& filename )
+{
+  this->m_Blueprint->MergeFromFile( filename );
+}
+
+void
+Blueprint
+::SetLogger( Logger::Pointer logger )
+{
+  this->m_Logger = logger;
+  this->m_Blueprint->SetLoggerImpl( logger->GetLoggerImpl() );
+}
+
+
 } // namespace selx

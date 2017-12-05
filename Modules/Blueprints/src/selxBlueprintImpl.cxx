@@ -18,6 +18,8 @@
  *=========================================================================*/
 
 #include "selxBlueprintImpl.h"
+#include "selxLoggerImpl.h"
+#include <ostream>
 
 #include <stdexcept>
 
@@ -90,6 +92,15 @@ inline edge_label_writer< ParameterMapType >
 make_edge_label_writer( ParameterMapType p )
 {
   return edge_label_writer< ParameterMapType >( p );
+}
+
+// TODO: remove this argumentless constructor
+BlueprintImpl::BlueprintImpl( void ) : m_LoggerImpl(&(Logger::New()->GetLoggerImpl()))
+{
+}
+
+BlueprintImpl::BlueprintImpl( LoggerImpl & loggerImpl ) : m_LoggerImpl(&loggerImpl)
+{
 }
 
 
@@ -396,5 +407,335 @@ BlueprintImpl
     make_vertex_label_writer( boost::get( &ComponentPropertyType::name, this->m_Graph ),
     boost::get( &ComponentPropertyType::parameterMap, this->m_Graph ) ),
     make_edge_label_writer( boost::get( &ConnectionPropertyType::parameterMap, this->m_Graph ) ) );
+}
+
+BlueprintImpl::ParameterValueType
+BlueprintImpl::VectorizeValues(ComponentOrConnectionTreeType & componentOrConnectionTree)
+{
+  std::string        propertySingleValue = componentOrConnectionTree.data();
+  ParameterValueType propertyMultiValue;
+  for (auto const & value : componentOrConnectionTree)
+  {
+    propertyMultiValue.push_back(value.second.data());
+  }
+  if (propertyMultiValue.size() > 0)
+  {
+    if (propertySingleValue != "")
+    {
+      throw std::invalid_argument("XML tree should have either 1 unnamed element or multiple named properties");
+    }
+  }
+  else
+  {
+    propertyMultiValue.push_back(propertySingleValue);
+  }
+  return propertyMultiValue;
+}
+
+void
+BlueprintImpl::MergeFromFile(const std::string & fileNameString)
+{
+  PathType fileName(fileNameString);
+
+  this->m_LoggerImpl->Log(LogLevel::INF, "Loading {0} ... ", fileName);
+  auto propertyTree = ReadPropertyTree(fileName);
+  this->m_LoggerImpl->Log(LogLevel::INF, "Loading {0} ... Done", fileName);
+
+  this->m_LoggerImpl->Log(LogLevel::INF, "Checking {0} for include files ... ", fileName);
+  auto includesList = FindIncludes(propertyTree);
+
+  if (includesList.size() > 0)
+  {
+    for (auto const & includePath : includesList)
+    {
+      this->m_LoggerImpl->Log(LogLevel::INF, "Including file {0} ... ", includePath);
+      this->MergeFromFile(includePath.string());
+    }
+  }
+  this->m_LoggerImpl->Log(LogLevel::INF, "Checking {0} for include files ... done", fileName);
+  this->MergeProperties(propertyTree);
+  return;
+}
+
+void
+BlueprintImpl::SetLoggerImpl( LoggerImpl & loggerImpl )
+{
+  this->m_LoggerImpl = &loggerImpl;
+}
+
+BlueprintImpl::PropertyTreeType
+BlueprintImpl::ReadPropertyTree(const PathType & filename)
+{
+  // Create empty property tree object
+  PropertyTreeType propertyTree;
+  if (filename.extension() == ".xml")
+  {
+    read_xml(filename.string(), propertyTree, boost::property_tree::xml_parser::trim_whitespace);
+  }
+  else if (filename.extension() == ".json")
+  {
+    read_json(filename.string(), propertyTree);
+  }
+  else
+  {
+    throw std::invalid_argument("Configuration file requires extension .xml or .json");
+  }
+
+  return propertyTree;
+}
+
+BlueprintImpl::PathsType
+BlueprintImpl::FindIncludes(const PropertyTreeType & propertyTree)
+{
+  PathsType paths;
+  bool FoundIncludes = false;
+  BOOST_FOREACH(const PropertyTreeType::value_type & v, propertyTree.equal_range("Include"))
+  {
+    if (FoundIncludes)
+    {
+      std::runtime_error("Only 1 listing of Includes is allowed per Blueprint file");
+    }
+
+    auto const pathsStrings = VectorizeValues(v.second);
+    // convert vector of strings to list of boost::path-s
+    paths.resize(pathsStrings.size());
+    std::transform(pathsStrings.begin(), pathsStrings.end(), paths.begin(),
+      [](std::string p) { return PathType(p); });
+    FoundIncludes = true;
+  }
+  return paths;
+}
+
+
+Blueprint::Pointer
+BlueprintImpl::FromPropertyTree(const PropertyTreeType & pt)
+{
+  Blueprint::Pointer blueprint = Blueprint::New();
+
+  BOOST_FOREACH(const PropertyTreeType::value_type & v, pt.equal_range("Component"))
+  {
+    std::string      componentName;
+    ParameterMapType componentPropertyMap;
+    for (auto const & elm : v.second)
+    {
+      const std::string & componentKey = elm.first;
+      if (componentKey == "Name")
+      {
+        componentName = elm.second.data();
+        continue;
+      }
+
+      ParameterValueType propertyMultiValue = VectorizeValues(elm.second);
+      std::string        propertyKey = elm.first;
+      componentPropertyMap[propertyKey] = propertyMultiValue;
+    }
+
+    blueprint->SetComponent(componentName, componentPropertyMap);
+  }
+
+  BOOST_FOREACH(const PropertyTreeType::value_type & v, pt.equal_range("Connection"))
+  {
+    std::string connectionName = v.second.data();
+    if (connectionName != "")
+    {
+      this->m_LoggerImpl->Log(LogLevel::INF, "Found {0}, but connection names are ignored.", connectionName);
+    }
+    std::string      outName;
+    std::string      inName;
+    ParameterMapType componentPropertyMap;
+
+    for (auto const & elm : v.second)
+    {
+      const std::string & connectionKey = elm.first;
+
+      if (connectionKey == "Out")
+      {
+        outName = elm.second.data();
+        continue;
+      }
+      else if (connectionKey == "In")
+      {
+        inName = elm.second.data();
+        continue;
+      }
+      else if (connectionKey == "Name")
+      {
+        this->m_LoggerImpl->Log(LogLevel::WRN, "Connections with key 'Name' are ignored.");
+        continue;
+      }
+      else
+      {
+        ParameterValueType propertyMultiValue = VectorizeValues(elm.second);
+        std::string        propertyKey = elm.first;
+        componentPropertyMap[propertyKey] = propertyMultiValue;
+      }
+    }
+
+    blueprint->SetConnection(outName, inName, componentPropertyMap);
+  }
+  return blueprint;
+}
+
+void
+BlueprintImpl::MergeProperties(const PropertyTreeType & pt)
+{
+  BOOST_FOREACH(const PropertyTreeType::value_type & v, pt.equal_range("Component"))
+  {
+    std::string      componentName;
+    ParameterMapType newProperties;
+    for (auto const & elm : v.second)
+    {
+      const std::string & componentKey = elm.first;
+      if (componentKey == "Name")
+      {
+        componentName = elm.second.data();
+        continue;
+      }
+
+      ParameterValueType propertyMultiValue = VectorizeValues(elm.second);
+      std::string        propertyKey = elm.first;
+      newProperties[propertyKey] = propertyMultiValue;
+    }
+
+    // Merge newProperies into current blueprint properties
+    // Does blueprint use component with a name that already exists?
+    if (this->ComponentExists(componentName))
+    {
+      // Component exists, check if properties can be merged
+      auto currentProperties = this->GetComponent(componentName);
+
+      for (auto const & othersEntry : newProperties)
+      {
+        // Does other use a property key that already exists in this component?
+        if (currentProperties.count(othersEntry.first))
+        {
+          auto && ownValues = currentProperties[othersEntry.first];
+          auto && otherValues = othersEntry.second;
+          // Are the property values equal?
+          if (ownValues.size() != otherValues.size())
+          {
+            // No, based on the number of values we see that it is different. Blueprints cannot be Composed
+            this->m_LoggerImpl->Log(LogLevel::ERR, "Merging blueprints failed : Component properties cannot be redefined");
+            throw std::invalid_argument("Merging blueprints failed : Component properties cannot be redefined");
+          }
+          else
+          {
+            ParameterValueType::const_iterator ownValue;
+            ParameterValueType::const_iterator otherValue;
+            for (ownValue = ownValues.begin(), otherValue = otherValues.begin(); ownValue != ownValues.end(); ++ownValue, ++otherValue)
+            {
+              if (*otherValue != *ownValue)
+              {
+                // No, at least one value is different. Blueprints cannot be Composed
+                this->m_LoggerImpl->Log(LogLevel::ERR, "Merging blueprints failed : Component properties cannot be redefined");
+                throw std::invalid_argument("Merging blueprints failed: Component properties cannot be redefined");
+              }
+            }
+          }
+        }
+        else
+        {
+          // Property key doesn't exist yet, add entry to this component
+          auto ownProperties = this->GetComponent(componentName);
+          ownProperties[othersEntry.first] = othersEntry.second;
+          this->SetComponent(componentName, ownProperties);
+        }
+      }
+    }
+    else
+    {
+      // Create Component and with the new properties
+      this->SetComponent(componentName, newProperties);
+    }
+  }
+
+  BOOST_FOREACH(const PropertyTreeType::value_type & v, pt.equal_range("Connection"))
+  {
+    std::string connectionName = v.second.data();
+    if (connectionName != "")
+    {
+      this->m_LoggerImpl->Log(LogLevel::INF, "Found {0}, but connection names are ignored.", connectionName);
+    }
+    std::string      outName;
+    std::string      inName;
+    ParameterMapType newProperties;
+
+    for (auto const & elm : v.second)
+    {
+      const std::string & connectionKey = elm.first;
+
+      if (connectionKey == "Out")
+      {
+        outName = elm.second.data();
+        continue;
+      }
+      else if (connectionKey == "In")
+      {
+        inName = elm.second.data();
+        continue;
+      }
+      else if (connectionKey == "Name")
+      {
+        this->m_LoggerImpl->Log(LogLevel::WRN, "Connections with key 'Name' are ignored.");
+        continue;
+      }
+      else
+      {
+        ParameterValueType propertyMultiValue = VectorizeValues(elm.second);
+        std::string        propertyKey = elm.first;
+        newProperties[propertyKey] = propertyMultiValue;
+      }
+    }
+
+    // Does the blueprint have a connection that already exists?
+    if (this->ConnectionExists(outName, inName))
+    {
+      // Connection exists, check if properties can be merged
+      auto ownProperties = this->GetConnection(outName, inName);
+
+      for (auto const & othersEntry : newProperties)
+      {
+        // Does newProperties use a key that already exists in this component?
+        if (ownProperties.count(othersEntry.first))
+        {
+          auto && ownValues = ownProperties[othersEntry.first];
+          auto && otherValues = othersEntry.second;
+          // Are the property values equal?
+          if (ownValues.size() != otherValues.size())
+          {
+            // No, based on the number of values we see that it is different. Blueprints cannot be Composed
+            this->m_LoggerImpl->Log(LogLevel::ERR, "Merging blueprints failed : Component properties cannot be redefined");
+            throw std::invalid_argument("Merging blueprints failed: Component properties cannot be redefined");
+          }
+          else
+          {
+            ParameterValueType::const_iterator ownValue;
+            ParameterValueType::const_iterator otherValue;
+            for (ownValue = ownValues.begin(), otherValue = otherValues.begin(); ownValue != ownValues.end(); ++ownValue, ++otherValue)
+            {
+              if (*otherValue != *ownValue)
+              {
+                // No, at least one value is different. Blueprints cannot be Composed
+                this->m_LoggerImpl->Log(LogLevel::ERR, "Merging blueprints failed : Component properties cannot be redefined");
+                throw std::invalid_argument("Merging blueprints failed: Component properties cannot be redefined");
+              }
+            }
+          }
+        }
+        else
+        {
+          // Property key doesn't exist yet, add entry to this component
+          //auto ownProperties = this->GetConnection(incomingName, componentName);
+          ownProperties[othersEntry.first] = othersEntry.second;
+          this->SetConnection(outName, inName, ownProperties);
+        }
+      }
+    }
+    else
+    {
+      // Create Component copying properties of other
+      this->SetConnection(outName, inName, newProperties);
+    }
+  }
 }
 } // namespace selx

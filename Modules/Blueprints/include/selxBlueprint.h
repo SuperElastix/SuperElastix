@@ -22,6 +22,7 @@
 
 #include "itkDataObject.h"
 #include "itkObjectFactory.h"
+#include "selxLogger.h"
 
 #include <string>
 #include <vector>
@@ -59,10 +60,9 @@ public:
   Blueprint();
 
   /** The actual blueprint is a pimpled member variable */
-  typedef std::shared_ptr< BlueprintImpl > BlueprintImplPointer;
+  typedef std::unique_ptr< BlueprintImpl > BlueprintImplPointer;
 
-  void SetBlueprint( BlueprintImpl & blueprint );
-  BlueprintImpl & GetBlueprint( void );
+  const BlueprintImpl & GetBlueprintImpl( void ) const; 
 
   void SetBlueprint( BlueprintImplPointer blueprint );
 
@@ -88,7 +88,7 @@ public:
   //std::unique_ptr<BlueprintImpl> Clone(BlueprintImpl const &other );
 
   // "functional" composition of blueprints is done by adding settings of other to this blueprint. Redefining/overwriting properties is not allowed and returns false.
-  bool ComposeWith( const BlueprintImpl & other );
+  bool ComposeWith( Blueprint::ConstPointer other );
 
   // Returns a vector of the Component names at the incoming direction
   ComponentNamesType GetInputNames( const ComponentNameType name ) const;
@@ -96,11 +96,19 @@ public:
   // Returns a vector of the Component names at the outgoing direction
   ComponentNamesType GetOutputNames( const ComponentNameType name ) const;
 
+  // Write graphviz dot file
   void Write( const std::string filename );
 
+  // Read json or XML file
+  //void FromFile(const std::string& filename);
+
+  void MergeFromFile(const std::string& filename);
+
+  void SetLogger( Logger::Pointer logger );
 private:
 
   BlueprintImplPointer m_Blueprint;
+  Logger::Pointer m_Logger;
 };
 }
 
