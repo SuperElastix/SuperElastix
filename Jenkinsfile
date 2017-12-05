@@ -48,7 +48,8 @@ node('lkeb-vm-test') {
 			dir('build') {
 				sh "${ cmake } ../src/SuperBuild"
 				sh 'make clean'
-				sh 'make -j4'
+				// Jenkins should continue, even when the build fails, so always evaluate as true:
+				sh 'make -j4' || true
 			}
 		}
 		dir('src') {
