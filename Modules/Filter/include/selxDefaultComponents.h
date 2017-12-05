@@ -56,6 +56,9 @@
 #include "selxDisplacementFieldNiftiToItkImageSinkComponent.h"
 #include "selxNiftyregAladinComponent.h"
 
+//Component group Examples
+#include "selxIdentityTransformRegistrationComponent.h"
+
 
 namespace selx
 {
@@ -83,6 +86,7 @@ using DefaultComponents = selx::TypeList<
   NiftiToItkImageSinkComponent< 2, float >,
   NiftyregSplineToDisplacementFieldComponent< float>,
   DisplacementFieldNiftiToItkImageSinkComponent< 2, float>,
-  NiftyregAladinComponent< float >
+  NiftyregAladinComponent< float >,
+  IdentityTransformRegistrationComponent< 2, float>
   >;
 }
