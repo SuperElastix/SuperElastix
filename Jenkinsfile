@@ -60,7 +60,7 @@ node('lkeb-vm-test') {
 		stage('Test') {
 			dir('build/SuperElastix-build') {
 				sh "`dirname ${ cmake }`/ctest"
-				sh 'make Nightly'
+				sh 'make Continuous'
 			}
 		}
 	}
