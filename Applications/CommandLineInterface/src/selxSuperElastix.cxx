@@ -72,8 +72,6 @@ main( int ac, char * av[] )
 {
 
   selx::Logger::Pointer logger = selx::Logger::New();
-  logger->AddStream( "cout", std::cout );
-  logger->SetLogLevel( selx::LogLevel::TRC );
 
   try
   {
@@ -119,7 +117,7 @@ main( int ac, char * av[] )
       logger->AddStream("logfile", outfile);
     }
 
-    logger->AddStream("SELXcout", std::cout);
+    logger->AddStream("cout", std::cout);
     logger->SetLogLevel(logLevel);
    
     // instantiate a SuperElastixFilter that is loaded with default components
