@@ -64,8 +64,6 @@ public:
 
   const BlueprintImpl & GetBlueprintImpl( void ) const; 
 
-  void SetBlueprint( BlueprintImplPointer blueprint );
-
   bool SetComponent( ComponentNameType, ParameterMapType parameterMap );
 
   ParameterMapType GetComponent( ComponentNameType componentName ) const;
