@@ -37,6 +37,7 @@ Blueprint
   
 }
 
+
 const BlueprintImpl &
 Blueprint
 ::GetBlueprintImpl( void ) const
