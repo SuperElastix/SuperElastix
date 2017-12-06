@@ -24,6 +24,7 @@
 #include "selxItkObjectInterfaces.h"
 
 #include "itkDisplacementFieldTransform.h"
+#include "itkTransformMeshFilter.h"
 
 //
 // Accepting< ItkVectorImageInterface< Dimensionality, TPixel >, ItkMeshInterface< Dimensionality, TCoordinateType > >,
@@ -31,28 +32,28 @@
 
 namespace selx {
 
-template< TPixel, TCoordinateType, int Dimension >
+template< TPixel, TCoordRepType, int Dimension >
 class ItkDisplacementFieldMeshWarperComponent : public
   SuperElastixComponent<
-    Accepting< itkVectorImageInterface< TPixel, Dimensionality >, itkMeshInterface< Dimension, TPixel > >,
-    Providing< itkMeshInterface< Dimension, TPixel > > >
+    Accepting< itkMeshInterface< Dimension, TCoordRepType >, itkVectorImageInterface< TPixel, Dimensiony > >,
+    Providing< itkMeshInterface< Dimension, TCoordRepType > > >
 {
 public:
   typedef DisplacementFieldWarperComponent Self;
   typedef SuperElastixComponent<
-  Accepting< ItkVectorImageInterface, itkMeshInterface >,
-  Providing< ItkMeshInterface > > Superclass;
+    Accepting< itkMeshInterface< Dimension, TCoordRepType >, itkVectorImageInterface< TPixel, Dimensiony > >,
+    Providing< itkMeshInterface< Dimension, TCoordRepType > > > Superclass;
   typedef std::shared_ptr< Self > Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
 
   ItkDisplacementFieldMeshWarperComponent( const std::string & name, LoggerImpl & logger );
   virtual ~ItkDisplacementFieldMeshWarperComponent();
 
-  using DisplacementFieldType = using ItkVectorImageInterface< Dimensionality, TPixel >::Type;
-  typedef DisplacementFieldType::Pointer DisplacementFieldPointer;
+  using ItkVectorImageInterface = using ItkVectorImageInterface< Dimensionality, TPixel >::Type;
+  typedef ItkVectorImageInterface::Pointer DisplacementFieldPointer;
 
-  using MeshType = ItkVectorImageInterface< Dimensionality, TPixel >::Type;
-  typedef MeshType::Pointer MeshPointer;
+  using MeshInterfaceType = ItkMeshInterface< Dimension, TPixel >::Type;
+  typedef MeshInterfaceType::Pointer MeshInterfacePointer;
 
   typedef itk::DisplacementFieldTransform< TPoint, Dimension > DisplacementFieldTransformType;
   typedef typename DisplacementFieldTransformType::Pointer DisplacementFieldTransformPointer ;

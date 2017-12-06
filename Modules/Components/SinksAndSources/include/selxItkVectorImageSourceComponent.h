@@ -62,7 +62,7 @@ public:
   typedef FileReaderDecorator< ItkVectorImageReaderType > DecoratedReaderType;
 
   // Providing interfaces
-  virtual typename ItkVectorImageType::Pointer GetItkDisplacementField()
+  virtual typename ItkVectorImageType::Pointer GetItkDisplacementField();
 
   virtual typename ItkImageDomainType::Pointer GetItkImageDomainFixed() override;
 

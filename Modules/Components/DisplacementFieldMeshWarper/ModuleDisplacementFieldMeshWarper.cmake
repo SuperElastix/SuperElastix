@@ -16,8 +16,9 @@
 #  limitations under the License.
 #
 #=========================================================================
-set(${MODULE}_INCLUDE_DIRS ${${MODULE}_SOURCE_DIR}/include)
+set(${MODULE}_INCLUDE_DIRS
+  ${${MODULE}_SOURCE_DIR}/include
+  ${${MODULE}_SOURCE_DIR}/interfaces)
 
 set( ${MODULE}_TEST_SOURCE_FILES
-  ${${MODULE}_SOURCE_DIR}/test/selxDisplacementFieldMeshWarperTest.cxx
-)
+  ${${MODULE}_SOURCE_DIR}/test/selxDisplacementFieldMeshWarperTest.cxx)
