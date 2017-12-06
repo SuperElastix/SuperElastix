@@ -44,8 +44,6 @@
 #include "selxItkResampleFilterComponent.h"
 #include "selxItkTransformSourceComponent.h"
 #include "selxItkTransformSinkComponent.h"
-#include "selxItkImageSourceFixedComponent.h"
-#include "selxItkImageSourceMovingComponent.h"
 
 //Component group Controller
 #include "selxRegistrationControllerComponent.h"
