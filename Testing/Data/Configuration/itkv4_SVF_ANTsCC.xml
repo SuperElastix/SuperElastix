@@ -6,13 +6,13 @@
 
 <Component>
     <Name>FixedImage</Name>
-	<NameOfClass>ItkImageSourceFixedComponent</NameOfClass>
+	<NameOfClass>ItkImageSourceComponent</NameOfClass>
 	<Dimensionality>2</Dimensionality>
 </Component>
 
 <Component>
     <Name>MovingImage</Name>
-	<NameOfClass>ItkImageSourceMovingComponent</NameOfClass>
+	<NameOfClass>ItkImageSourceComponent</NameOfClass>
 	<Dimensionality>2</Dimensionality>
 </Component>
 

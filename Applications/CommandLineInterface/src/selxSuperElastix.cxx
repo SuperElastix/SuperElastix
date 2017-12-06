@@ -23,12 +23,8 @@
 #include "selxLogger.h"
 
 #include <boost/algorithm/string.hpp>
-
 #include <boost/filesystem.hpp>
-namespace fs = boost::filesystem;
-
 #include <boost/program_options.hpp>
-namespace po = boost::program_options;
 
 #include <iostream>
 #include <algorithm>
@@ -44,23 +40,47 @@ operator<<( std::ostream & os, const std::vector< T > & v )
   return os;
 }
 
+namespace selx
+{
+  // helper function to parse command line arguments for log level
+  std::istream& operator>>(std::istream& in, selx::LogLevel& loglevel)
+  {
+    std::string token;
+    in >> token;
+    if (token == "off")
+      loglevel = selx::LogLevel::OFF;
+    else if (token == "critical")
+      loglevel = selx::LogLevel::CRT;
+    else if (token == "error")
+      loglevel = selx::LogLevel::ERR;
+    else if (token == "warning")
+      loglevel = selx::LogLevel::WRN;
+    else if (token == "info")
+      loglevel = selx::LogLevel::INF;
+    else if (token == "debug")
+      loglevel = selx::LogLevel::DBG;
+    else if (token == "trace")
+      loglevel = selx::LogLevel::TRC;
+    else
+      in.setstate(std::ios_base::failbit);
+    return in;
+  }
+}
 
 int
 main( int ac, char * av[] )
 {
+
   selx::Logger::Pointer logger = selx::Logger::New();
+
   try
   {
     typedef std::vector< std::string > VectorOfStringsType;
     typedef std::vector< boost::filesystem::path > VectorOfPathsType;
 
-    // instantiate a SuperElastixFilter that is loaded with default components
-    selx::SuperElastixFilter::Pointer superElastixFilter = selx::SuperElastixFilter::New();
-
-    // add logger
-    logger->AddStream("cout", std::cout);
-    logger->SetLogLevel(selx::LogLevel::TRC);
-    superElastixFilter->SetLogger(logger);
+    boost::filesystem::path logPath;
+    // default log level
+    selx::LogLevel logLevel = selx::LogLevel::WRN;
 
     boost::filesystem::path            configurationPath;
     VectorOfPathsType                   configurationPaths;
@@ -68,24 +88,20 @@ main( int ac, char * av[] )
     VectorOfStringsType inputPairs;
     VectorOfStringsType outputPairs;
 
-    // Store the reader so that they will not be destroyed before the pipeline is executed.
-    std::vector< selx::AnyFileReader::Pointer > fileReaders;
-    // Store the writers for the update call
-    //vector<ImageWriter2DType::Pointer> fileWriters;
-    std::vector< selx::AnyFileWriter::Pointer > fileWriters;
-
     boost::program_options::options_description desc("Allowed options");
     desc.add_options()
       ( "help", "produce help message" )
       ("conf", boost::program_options::value< VectorOfPathsType >(&configurationPaths)->required()->multitoken(), "Configuration file")
       ("in", boost::program_options::value< VectorOfStringsType >(&inputPairs)->multitoken(), "Input data: images, labels, meshes, etc. Usage <name>=<path>")
-      ( "out", po::value< VectorOfStringsType >( &outputPairs )->multitoken(), "Output data: images, labels, meshes, etc. Usage <name>=<path>" )
-      ( "graphout", po::value< fs::path >(), "Output Graphviz dot file" )
-    ;
+      ("out", boost::program_options::value< VectorOfStringsType >(&outputPairs)->multitoken(), "Output data: images, labels, meshes, etc. Usage <name>=<path>")
+      ("graphout", boost::program_options::value< boost::filesystem::path >(), "Output Graphviz dot file")
+      ("logfile", boost::program_options::value< boost::filesystem::path >(&logPath), "Log output file")
+      ("loglevel", boost::program_options::value< selx::LogLevel >(&logLevel), "Log level")
+      ;
 
-    po::variables_map vm;
-    po::store( po::parse_command_line( ac, av, desc ), vm );
-    po::notify( vm );
+    boost::program_options::variables_map vm;
+    boost::program_options::store(boost::program_options::parse_command_line(ac, av, desc), vm);
+    boost::program_options::notify(vm);
 
     if( vm.count( "help" ) )
     {
@@ -93,8 +109,25 @@ main( int ac, char * av[] )
       return 0;
     }
 
+    // optionally, stream to log file
+    std::ofstream outfile;
+    if ( vm.count("logfile") )
+    {
+      outfile =  std::ofstream(logPath.c_str());
+      logger->AddStream("logfile", outfile);
+    }
+
+    logger->AddStream("SELXcout", std::cout);
+    logger->SetLogLevel(logLevel);
+   
+    // instantiate a SuperElastixFilter that is loaded with default components
+    selx::SuperElastixFilter::Pointer superElastixFilter = selx::SuperElastixFilter::New();
+
+    superElastixFilter->SetLogger(logger);
+
     // create empty blueprint
     selx::Blueprint::Pointer blueprint = selx::Blueprint::New();
+    blueprint->SetLogger(logger);
     for (const auto & configurationPath : configurationPaths)
     {
       blueprint->MergeFromFile(configurationPath.string());
@@ -102,12 +135,16 @@ main( int ac, char * av[] )
 
     if( vm.count( "graphout" ) )
     {
-      blueprint->Write(vm["graphout"].as< fs::path >().string());
+      blueprint->Write(vm["graphout"].as< boost::filesystem::path >().string());
     }
 
-    //turn the blueprint into an itkObject to connect to the superElastix itkFilter
-
+    // The Blueprint needs to be set to superElastixFilter before GetInputFileReader and GetOutputFileWriter should be called.
     superElastixFilter->SetBlueprint(blueprint);
+
+    // Store the readers so that they will not be destroyed before the pipeline is executed.
+    std::vector< selx::AnyFileReader::Pointer > fileReaders;
+    // Store the writers for the update call
+    std::vector< selx::AnyFileWriter::Pointer > fileWriters;
 
     if( vm.count( "in" ) )
     {
@@ -119,8 +156,6 @@ main( int ac, char * av[] )
         boost::split( nameAndPath, inputPair, boost::is_any_of( "=" ) );  // NameAndPath == { "name","path" }
         const std::string & name = nameAndPath[ 0 ];
         const std::string & path = nameAndPath[ 1 ];
-
-
 
         // since we do not know which reader type we should instantiate for input "name",
         // we ask SuperElastix for a reader that matches the type of the source component "name"
