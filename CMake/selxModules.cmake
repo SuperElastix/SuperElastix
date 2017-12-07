@@ -84,9 +84,6 @@ macro( _selxmodules_initialize )
 
     list( APPEND SUPERELASTIX_MODULES ${MODULE} )
 
-    if ( ${USE_${MODULE}} )
-      _selxmodule_enable( ${MODULE} "User" )
-    endif()
   endforeach()
   
   # Create dummy targets to show header-only Components and Interfaces in the Solution Explorer of Visual Studio
@@ -178,19 +175,18 @@ macro( enable_module MODULE )
   _selxmodule_enable( ${MODULE} "user" )
 endmacro()
 
-macro( enable_modules MODULES )
-  foreach( MODULE ${${MODULES}} )
-    enable_module( ${MODULE} )
+# Enable user-selected modules
+macro( enable_modules )
+  foreach( MODULE ${SUPERELASTIX_MODULES} )
+    if( USE_${MODULE})
+      enable_module( ${MODULE} )
+    endif()
   endforeach()
+  foreach( MODULE ${SUPERELASTIX_MODULES} )
+    if( ${${MODULE}_IS_ENABLED})
+      set( USE_${MODULE} TRUE CACHE BOOL "" FORCE)
+    endif()
+  endforeach()  
 endmacro()
 
 # ---------------------------------------------------------------------
-
-# Enable user-selected modules
-# TODO:
-
-# Disable user-selected modules
-# TODO:
-
-
-

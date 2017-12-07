@@ -4,7 +4,7 @@
 #
 
 set( MODULE_COMPONENT_GROUP_INCLUDE_FILES "#include \"selxModuleSinksAndSources.h\"" )
-set( MODULE_COMPONENT_TYPELISTS "ModuleSinksAndSourcesComponents," )
+set( MODULE_COMPONENT_TYPELISTS "ModuleSinksAndSourcesComponents" )
 
 configure_file(
   ${${MODULE}_SOURCE_DIR}/include/selxCompiledLibraryComponents.h.in
