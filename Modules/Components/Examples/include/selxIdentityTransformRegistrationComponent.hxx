@@ -83,13 +83,19 @@ template< int Dimensionality, class TPixel >
 void
 IdentityTransformRegistrationComponent< Dimensionality, TPixel >::RunRegistration( void )
 {
-	auto fixed = this->m_ImageFixedInterface->GetItkImageFixed();
-	auto moving = this->m_ImageMovingInterface->GetItkImageMoving();
-  fixed->UpdateLargestPossibleRegion();
-  moving->UpdateLargestPossibleRegion();
+  auto fixed = this->m_ImageFixedInterface->GetItkImageFixed();
+  auto moving = this->m_ImageMovingInterface->GetItkImageMoving();
+  
+  fixed->SetRequestedRegionToLargestPossibleRegion();
+  fixed->Update();
+  // Raw pixel data is accessible by GetBufferPointer()
+  moving->SetRequestedRegionToLargestPossibleRegion();
+  moving->Update();
+  // Raw pixel data is accessible by GetBufferPointer()
+  
   // Here you can implement your registration algorithm using the fixed and moving image.
-	// For an Identity Transform it is just creating a vector field with zeros.
-	this->m_DisplacementField->Allocate();
+  // For an Identity Transform it is just creating a vector field with zeros.
+  this->m_DisplacementField->Allocate();
 }
 
 
