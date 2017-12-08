@@ -18,8 +18,13 @@
  *=========================================================================*/
 
 #include "selxSuperElastixFilterCustomComponents.h"
-#include "selxItkImageSinkComponent.h"
-#include "selxItkImageSourceComponent.h"
+#include "selxItkVectorImageSourceComponent.h"
+#include "selxItkVectorImageSinkComponent.h"
+#include "selxItkMeshSourceComponent.h"
+#include "selxItkMeshSinkComponent.h"
+#include "itkMeshFileReader.h"
+#include "itkMeshFileWriter.h"
+#include "selxDisplacementFieldMeshWarperComponent.h"
 
 #include "gtest/gtest.h"
 #include "selxDataManager.h"
@@ -28,33 +33,46 @@ namespace selx {
 
 class DisplacementFieldMeshWarperComponentTest : public ::testing::Test {
 public:
+
+  typedef itk::VectorImage< float, 2 >            VectorImageType;
+  typedef typename VectorImageType::Pointer       VectorImagePointer;
+  typedef itk::ImageFileReader< VectorImageType > VectorImageReaderType;
+  typedef typename VectorImageReaderType::Pointer VectorImageReaderPointer;
+  typedef itk::ImageFileWriter< VectorImageType > VectorImageWriterType;
+  typedef typename VectorImageWriterType::Pointer VectorImageWriterPointer;
+
+  typedef itk::Mesh< float, 2 >                   MeshType;
+  typedef typename MeshType::Pointer              MeshPointer;
+  typedef itk::MeshFileReader< MeshType >         MeshReaderType;
+  typedef typename MeshReaderType::Pointer        MeshReaderPointer;
+  typedef itk::MeshFileWriter< MeshType >         MeshWriterType;
+  typedef typename MeshWriterType::Pointer        MeshWriterPointer;
+
   typedef Blueprint::Pointer BlueprintPointer;
 
   typedef TypeList<
-    ItkVectorImageSourceComponent< float, 2 >,
-    ItkVectorImageSourceSinkComponent< float, 2 >,
-    ItkMeshSourceComponent< float, 2 >,
-    ItkMeshSinkComponent< float, 2 >,
-    ItkDisplacementFieldMeshWarperComponent< float, float, 2 > > TestComponents;
+    ItkVectorImageSourceComponent< 2, float >,
+    ItkVectorImageSinkComponent< 2, float >,
+    ItkMeshSourceComponent< 2, float >,
+    ItkMeshSinkComponent< 2, float >,
+    ItkDisplacementFieldMeshWarperComponent< 2, float, float > > TestComponents;
 
-  typedef itk::VectorImage< float, 2 >            VectorImageType;
-  typedef VectorImageType::Pointer                VectorImagePointer;
-  typedef itk::ImageFileReader< VectorImageType > VectorImageReaderType;
-  typedef VectorImageReaderType::Pointer          VectorImageReaderPointer;
-  typedef itk::ImageFileWriter< VectorImageType > VectorImageWriterType;
-  typedef VectorImageWriterType::Pointer          VectorImagePointer;
-
-  typedef itk::Mesh< float, 2 >                   MeshType;
-  typedef MeshType::Pointer                       MeshPointer;
-  typedef itk::MeshFileReader< float, 2 >         MeshReaderType;
-  typedef MeshFileReaderType::Pointer             MeshReaderPointer;
-  typedef MeshFileWriter< float, 2 >              MeshWriterType;
-  typedef MeshWriterType::Pointer                 MeshWriterPointer;
+  typedef SuperElastixFilterCustomComponents< TestComponents > SuperElastixFilterType;
+  typedef typename SuperElastixFilterType::Pointer SuperElastixFilterPointer;
 };
 
 TEST_F( DisplacementFieldMeshWarperComponentTest, SinkAndSource )
 {
+  BlueprintPointer blueprint = Blueprint::New();
+  using ParameterMapType = Blueprint::ParameterMapType;
 
+  ParameterMapType vectorImageSourceParameters;
+  vectorImageSourceParameters[ "NameOfClass" ]    = { "ItkVectorImageSourceComponent" };
+  vectorImageSourceParameters[ "Dimensionality" ] = { "2" };
+  blueprint->SetComponent( "DisplacementFieldSource", vectorImageSourceParameters );
+
+  SuperElastixFilterPointer superElastixFilter = SuperElastixFilterType::New();
+  superElastixFilter->SetBlueprint(blueprint);
 }
 
 } // namespace selx

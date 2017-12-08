@@ -32,18 +32,18 @@
 
 namespace selx
 {
-template< class TPixel, int Dimension >
+template< int Dimensionality, class TPixel  >
 class ItkVectorImageSinkComponent :
   public SuperElastixComponent<
-    Accepting< itkDisplacementFieldInterface< TPixel, Dimension > >,
+    Accepting< itkDisplacementFieldInterface< Dimensionality, TPixel > >,
     Providing< SinkInterface > >
 {
 public:
 
   /** Standard ITK typedefs. */
-  typedef ItkImageSinkComponent< TPixel, Dimension > Self;
+  typedef ItkVectorImageSinkComponent< Dimensionality, TPixel > Self;
   typedef SuperElastixComponent<
-    Accepting< itkVectorImageInterface< TPixel, Dimension > >,
+    Accepting< itkDisplacementFieldInterface< Dimensionality, TPixel > >,
     Providing< SinkInterface > > Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
@@ -51,13 +51,13 @@ public:
   ItkVectorImageSinkComponent( const std::string & name, LoggerImpl & logger );
   virtual ~ItkVectorImageSinkComponent();
 
-  typedef itkVectorImageInterface< TPixel, Dimension >                DispalcementFieldInterfaceType;
-  typedef typename DispalcementFieldInterfaceType::ItkVectorImageType ItkVectorImageType;
+  typedef itkDisplacementFieldInterface< Dimensionality, TPixel >          DisplacementFieldInterfaceType;
+  typedef typename DisplacementFieldInterfaceType::ItkVectorImageType ItkVectorImageType;
   typedef typename ItkVectorImageType::Pointer                        ItkVectorImagePointer;
   typedef typename itk::ImageFileWriter< ItkVectorImageType >         ItkVectorImageWriterType;
   typedef FileWriterDecorator< ItkVectorImageWriterType >             DecoratedWriterType;
 
-  virtual int Accept( typename AcceptingVectorImageInterfaceType::Pointer ) override;
+  virtual int Accept( typename DisplacementFieldInterfaceType::Pointer ) override;
 
   virtual void SetMiniPipelineOutput( itk::DataObject::Pointer ) override;
   virtual itk::DataObject::Pointer GetMiniPipelineOutput( void ) override;
@@ -80,7 +80,7 @@ protected:
   // return the class name and the template arguments to uniquely identify this component.
   static inline const std::map< std::string, std::string > TemplateProperties()
   {
-    return { { keys::NameOfClass, "ItkVectorImageSinkComponent" }, { keys::PixelType, PodString< TPixel >::Get() }, { keys::Dimension, std::to_string( Dimension ) } };
+    return { { keys::NameOfClass, "ItkVectorImageSinkComponent" }, { keys::PixelType, PodString< TPixel >::Get() }, { keys::Dimensionality, std::to_string( Dimensionality ) } };
   }
 };
 

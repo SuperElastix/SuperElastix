@@ -41,16 +41,16 @@ public:
   virtual typename ItkImageType::Pointer GetItkImage() = 0;
 };
 
-template< class TPixel, int Dimension >
+template< int Dimensionality, class TPixel >
 class itkDisplacementFieldInterface
 {
   // An interface that provides the pointer of an output vector image
 
 public:
 
-  using Type    = itkDisplacementFieldInterface< TPixel, Dimension >;
+  using Type    = itkDisplacementFieldInterface< Dimensionality, TPixel >;
   using Pointer = std::shared_ptr< Type >;
-  typedef typename itk::VectorImage< TPixel, Dimension > ItkVectorImageType;
+  typedef typename itk::VectorImage< TPixel, Dimensionality > ItkVectorImageType;
   virtual typename ItkVectorImageType::Pointer GetItkDisplacementField() = 0;
 };
 
@@ -116,7 +116,8 @@ public:
 
   using Type                                                                 = itkMeshInterface< Dimensionality, TPixel >;
   using Pointer                                                              = std::shared_ptr< Type >;
-  virtual typename itk::Mesh< TPixel, Dimensionality >::Pointer GetItkMesh() = 0;
+  typedef typename itk::Mesh< TPixel, Dimensionality > ItkMeshType;
+  virtual typename ItkMeshType::Pointer GetItkMesh() = 0;
 };
 
 // InterfaceName<T>::Get() should return "itkImageSourceInterface" no matter over which arguments itkImageSourceInterface is templated
@@ -127,6 +128,15 @@ struct Properties< itkImageInterface< D, TPixel >>
   {
     return { { keys::NameOfInterface, "itkImageInterface" }, { keys::Dimensionality, std::to_string( D ) }, { keys::PixelType, PodString< TPixel >::Get() } };
   }
+};
+
+template< int D, class TPixel >
+struct Properties< itkDisplacementFieldInterface< D, TPixel >>
+{
+static const std::map< std::string, std::string > Get()
+{
+  return { { keys::NameOfInterface, "itkDisplacementFieldInterface" }, { keys::Dimensionality, std::to_string( D ) }, { keys::PixelType, PodString< TPixel >::Get() } };
+}
 };
 
 template< int D, class TPixel >
@@ -173,6 +183,7 @@ struct Properties< itkMeshInterface< D, TPixel >>
     return { { keys::NameOfInterface, "itkMeshInterface" }, { keys::Dimensionality, std::to_string( D ) }, { keys::PixelType, PodString< TPixel >::Get() } };
   }
 };
+
 } // end namespace selx
 
 #endif // #define selxItkObjectInterfaces_h

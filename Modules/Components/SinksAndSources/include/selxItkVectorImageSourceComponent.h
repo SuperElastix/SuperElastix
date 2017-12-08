@@ -31,38 +31,41 @@
 
 namespace selx
 {
-template< int Dimensionality, class TPixel >
+template<  int Dimensionality, class TPixel >
 class ItkVectorImageSourceComponent :
   public SuperElastixComponent<
     Accepting< >,
     Providing< SourceInterface,
-      itkDisplacementFieldInterface< TPixel, Dimension >,
-      itkImageDomainFixedInterface< Dimension > > >
+      itkDisplacementFieldInterface< Dimensionality, TPixel >,
+      itkImageDomainFixedInterface< Dimensionality > > >
 {
 public:
   /** Standard ITK typedefs. */
-  typedef ItkVectorImageSourceComponent< TPixel, Dimension > Self;
+  typedef ItkVectorImageSourceComponent< Dimensionality, TPixel > Self;
   typedef SuperElastixComponent<
     Accepting< >,
     Providing<
       SourceInterface,
-      itkDisplacementFieldInterface< TPixel, Dimension >,
-      itkImageDomainFixedInterface< Dimension > > > Superclass;
+      itkDisplacementFieldInterface< Dimensionality, TPixel >,
+      itkImageDomainFixedInterface< Dimensionality > > > Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
 
   ItkVectorImageSourceComponent( const std::string & name, LoggerImpl & logger );
   virtual ~ItkVectorImageSourceComponent();
 
-  using ItkVectorImageType = itkDisplacementFieldInterface< TPixel, Dimension >::ItkVectorImageType;
+  using ItkVectorImageType = typename itkDisplacementFieldInterface< Dimensionality, TPixel >::ItkVectorImageType;
   using ItkVectorImagePointer = typename ItkVectorImageType::Pointer;
 
-  using ItkVectorImageReaderType = itk::ImageFileReader< ItkVectorImageType >;
+  using ItkImageDomainType = typename itkImageDomainFixedInterface< Dimensionality >::ItkImageDomainType;
+  using ItkImageDomainPointer = typename ItkImageDomainType::Pointer;
+
+  typedef typename itk::ImageFileReader< ItkVectorImageType > ItkVectorImageReaderType;
   using ItkVectorImageReaderPointer = typename ItkVectorImageReaderType::Pointer;
   typedef FileReaderDecorator< ItkVectorImageReaderType > DecoratedReaderType;
 
   // Providing interfaces
-  virtual typename ItkVectorImageType::Pointer GetItkDisplacementField();
+  virtual typename ItkVectorImageType::Pointer GetItkDisplacementField() override;
 
   virtual typename ItkImageDomainType::Pointer GetItkImageDomainFixed() override;
 

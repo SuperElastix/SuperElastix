@@ -22,23 +22,23 @@
 
 namespace selx
 {
-template< class TPixel, int Dimension >
-ItkImageSourceComponent< Dimensionality, TPixel >
-::ItkVectorImageSourceComponent( const std::string & name, LoggerImpl & logger ) : Superclass( name, logger ), m_VectirImage( nullptr )
-{
-}
-
-
-template< class TPixel, int Dimension >
+template< int Dimensionality, class TPixel >
 ItkVectorImageSourceComponent< Dimensionality, TPixel >
-::~ItkImageSourceComponent()
+::ItkVectorImageSourceComponent( const std::string & name, LoggerImpl & logger ) : Superclass( name, logger ), m_VectorImage( nullptr )
 {
 }
 
 
-template< class TPixel, int Dimension >
-typename ItkVectorImageSourceComponent< TPixel, Dimension >::ItkImageType::Pointer
-ItkImageSourceComponent< TPixel, Dimension >
+template< int Dimensionality, class TPixel >
+ItkVectorImageSourceComponent< Dimensionality, TPixel >
+::~ItkVectorImageSourceComponent()
+{
+}
+
+
+template< int Dimensionality, class TPixel >
+typename ItkVectorImageSourceComponent< Dimensionality, TPixel >::ItkVectorImageType::Pointer
+ItkVectorImageSourceComponent< Dimensionality, TPixel >
 ::GetItkDisplacementField()
 {
   if( this->m_VectorImage == nullptr )
@@ -49,22 +49,22 @@ ItkImageSourceComponent< TPixel, Dimension >
 }
 
 
-template< class TPixel, int Dimension >
-typename ItkVectorImageSourceComponent< TPixel, Dimension >::ItkImageDomainType::Pointer
-ItkImageSourceComponent< TPixel, Dimension >
+template< int Dimensionality, class TPixel >
+typename ItkVectorImageSourceComponent< Dimensionality, TPixel >::ItkImageDomainPointer
+ItkVectorImageSourceComponent< Dimensionality, TPixel >
 ::GetItkImageDomainFixed()
 {
   if( this->m_VectorImage == nullptr )
   {
     throw std::runtime_error( "SourceComponent needs to be initialized by SetMiniPipelineInput()" );
   }
-  return this->m_VectorImage.GetPointer();
+  return m_VectorImage.GetPointer();
 }
 
 
-template< class TPixel, int Dimension >
+template< int Dimensionality, class TPixel >
 void
-ItkImageSourceComponent< TPixel, Dimension >
+ItkVectorImageSourceComponent< Dimensionality, TPixel >
 ::SetMiniPipelineInput( itk::DataObject::Pointer object )
 {
   this->m_VectorImage = dynamic_cast< ItkVectorImageType * >( object.GetPointer() );
@@ -76,7 +76,7 @@ ItkImageSourceComponent< TPixel, Dimension >
 }
 
 
-template< class TPixel, int Dimension>
+template< int Dimensionality, class TPixel>
 typename AnyFileReader::Pointer
 ItkVectorImageSourceComponent< Dimensionality, TPixel >::GetInputFileReader()
 {
@@ -85,9 +85,9 @@ ItkVectorImageSourceComponent< Dimensionality, TPixel >::GetInputFileReader()
 }
 
 
-template< class TPixel, int Dimension >
+template< int Dimensionality, class TPixel >
 bool
-ItkImageSourceComponent< Dimensionality, TPixel >
+ItkVectorImageSourceComponent< Dimensionality, TPixel >
 ::MeetsCriterion( const ComponentBase::CriterionType & criterion )
 {
   bool hasUndefinedCriteria( false );

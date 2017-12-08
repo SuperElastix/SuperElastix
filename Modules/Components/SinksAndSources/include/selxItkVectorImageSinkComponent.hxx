@@ -22,24 +22,25 @@
 
 namespace selx
 {
-template< class TPixel, int Dimensionality >
-ItkVectorImageSinkComponent< TPixel, Dimension >::ItkImageSinkComponent(
-  const std::string & name, LoggerImpl & logger ) : Superclass( name, logger ),
-                                                    m_MiniPipelineOutputImage( nullptr ),
-                                                    m_NetworkBuilderOutputImage( nullptr )
+template< int Dimensionality, class TPixel >
+ItkVectorImageSinkComponent< Dimensionality, TPixel >
+::ItkVectorImageSinkComponent(const std::string & name, LoggerImpl & logger ) : Superclass( name, logger ),
+                                                                                m_MiniPipelineOutputVectorImage( nullptr ),
+                                                                                m_NetworkBuilderOutputVectorImage( nullptr )
 {
 }
 
 
-template< class TPixel, int Dimensionality >
-ItkVectorImageSinkComponent< Dimensionality, TPixel >::~ItkImageSinkComponent()
+template< int Dimensionality, class TPixel >
+ItkVectorImageSinkComponent< Dimensionality, TPixel >
+::~ItkVectorImageSinkComponent()
 {
 }
 
 
-template< class TPixel, int Dimension >
+template< int Dimensionality, class TPixel >
 int
-ItkVectorImageSinkComponent< TPixel, Dimension >::Accept( typename DisplacementFieldInterfaceType::Pointer other )
+ItkVectorImageSinkComponent< Dimensionality, TPixel >::Accept( typename DisplacementFieldInterfaceType::Pointer other )
 {
   //if( this->m_NetworkBuilderOutputImage == nullptr )
   //{
@@ -47,7 +48,7 @@ ItkVectorImageSinkComponent< TPixel, Dimension >::Accept( typename DisplacementF
   //}
 
   // Store pointer to MiniPipelineOutputImage for later grafting onto NetworkBuilder output.
-  this->m_MiniPipelineOutputImage = other->GetItkDisplacemenField();
+  this->m_MiniPipelineOutputVectorImage = other->GetItkDisplacementField();
   //this->m_MiniPipelineOutputImage->Graft(other->GetItkImage());
   // Graft NetworkBuilder output onto MiniPipelineOutputImage.
   //this->m_MiniPipelineOutputImage->Graft(this->m_NetworkBuilderOutputImage);
@@ -55,9 +56,9 @@ ItkVectorImageSinkComponent< TPixel, Dimension >::Accept( typename DisplacementF
 }
 
 
-template< class TPixel, int Dimension >
+template< int Dimensionality, class TPixel >
 void
-ItkVectorImageSinkComponent< TPixel, Dimension >::SetMiniPipelineOutput( itk::DataObject::Pointer NetworkBuilderOutput )
+ItkVectorImageSinkComponent< Dimensionality, TPixel >::SetMiniPipelineOutput( itk::DataObject::Pointer NetworkBuilderOutput )
 {
   /** Tries to cast the NetworkBuilderOutput to an image (data object) and stores the result.
    *  The resulting output image will be grafted into when the sink component is connected to an other component.
@@ -71,34 +72,34 @@ ItkVectorImageSinkComponent< TPixel, Dimension >::SetMiniPipelineOutput( itk::Da
 }
 
 
-template< class TPixel, int Dimension >
+template< int Dimensionality, class TPixel >
 typename itk::DataObject::Pointer
-ItkVectorImageSinkComponent< TPixel, Dimension >::GetMiniPipelineOutput()
+ItkVectorImageSinkComponent< Dimensionality, TPixel >::GetMiniPipelineOutput()
 {
   return this->m_MiniPipelineOutputVectorImage.GetPointer();
 }
 
 
-template< class TPixel, int Dimension >
+template< int Dimensionality, class TPixel >
 typename AnyFileWriter::Pointer
-ItkVectorImageSinkComponent< TPixel, Dimension >::GetOutputFileWriter()
+ItkVectorImageSinkComponent< Dimensionality, TPixel >::GetOutputFileWriter()
 {
   // Instanstiate an image file writer, decorated such that it can be implicitly cast to an AnyFileWriterType
   return DecoratedWriterType::New().GetPointer();
 }
 
 
-template< class TPixel, int Dimension >
+template< int Dimensionality, class TPixel >
 typename itk::DataObject::Pointer
-ItkVectorImageSinkComponent< TPixel, Dimension >::GetInitializedOutput()
+ItkVectorImageSinkComponent< Dimensionality, TPixel >::GetInitializedOutput()
 {
   return ItkVectorImageType::New().GetPointer();
 }
 
 
-template< class TPixel, int Dimension >
+template< int Dimensionality, class TPixel >
 bool
-ItkVectorImageSinkComponent< TPixel, Dimension >::MeetsCriterion( const ComponentBase::CriterionType & criterion )
+ItkVectorImageSinkComponent< Dimensionality, TPixel >::MeetsCriterion( const ComponentBase::CriterionType & criterion )
 {
   bool hasUndefinedCriteria( false );
   bool meetsCriteria( false );

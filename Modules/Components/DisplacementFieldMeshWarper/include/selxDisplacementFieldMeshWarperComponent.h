@@ -32,59 +32,61 @@
 
 namespace selx {
 
-template< TPixel, TCoordRepType, int Dimension >
+template< int Dimensionality, class TPixel, class TCoordRepType >
 class ItkDisplacementFieldMeshWarperComponent : public
   SuperElastixComponent<
-    Accepting< itkMeshInterface< Dimension, TCoordRepType >, itkVectorImageInterface< TPixel, Dimensiony > >,
-    Providing< itkMeshInterface< Dimension, TCoordRepType > > >
+    Accepting< itkMeshInterface< Dimensionality, TCoordRepType >, itkDisplacementFieldInterface< Dimensionality, TPixel > >,
+    Providing< itkMeshInterface< Dimensionality, TCoordRepType > > >
 {
 public:
-  typedef DisplacementFieldWarperComponent Self;
+  typedef ItkDisplacementFieldMeshWarperComponent< Dimensionality, TPixel, TCoordRepType > Self;
   typedef SuperElastixComponent<
-    Accepting< itkMeshInterface< Dimension, TCoordRepType >, itkVectorImageInterface< TPixel, Dimensiony > >,
-    Providing< itkMeshInterface< Dimension, TCoordRepType > > > Superclass;
+    Accepting< itkMeshInterface< Dimensionality, TCoordRepType >, itkDisplacementFieldInterface< Dimensionality, TPixel > >,
+    Providing< itkMeshInterface< Dimensionality, TCoordRepType > > > Superclass;
   typedef std::shared_ptr< Self > Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
 
   ItkDisplacementFieldMeshWarperComponent( const std::string & name, LoggerImpl & logger );
   virtual ~ItkDisplacementFieldMeshWarperComponent();
 
-  using ItkVectorImageInterface = using ItkVectorImageInterface< Dimensionality, TPixel >::Type;
-  typedef ItkVectorImageInterface::Pointer DisplacementFieldPointer;
+  using ItkDisplacementFieldInterfaceType = typename itkDisplacementFieldInterface< Dimensionality, TPixel >::Type;
+  using ItkDisplacementFieldInterfacePointer = typename ItkDisplacementFieldInterfaceType::Pointer;
 
-  using MeshInterfaceType = ItkMeshInterface< Dimension, TPixel >::Type;
-  typedef MeshInterfaceType::Pointer MeshInterfacePointer;
+  using ItkVectorImageType = typename ItkDisplacementFieldInterfaceType::ItkVectorImageType;
+  using ItkVectorImagePointer = typename ItkVectorImageType::Pointer;
 
-  typedef itk::DisplacementFieldTransform< TPoint, Dimension > DisplacementFieldTransformType;
-  typedef typename DisplacementFieldTransformType::Pointer DisplacementFieldTransformPointer ;
+  using ItkMeshInterfaceType = typename itkMeshInterface< Dimensionality, TPixel >::Type;
+  typedef typename ItkMeshInterfaceType::Pointer ItkMeshInterfacePointer;
 
-  typedef ResampleImageFilter<DisplacementFieldType, DisplacementFieldType, Dimension> ResampleImageFilterType;
-  typedef typename ResampleImageFilterType::Pointer ResampleImageFilterPointer;
+  using ItkMeshType = typename itkMeshInterface< Dimensionality, TPixel >::ItkMeshType;
+  using ItkMeshPointer = typename ItkMeshType::Pointer;
 
-  virtual int Accept( DisplacementFieldPointer displacementField );
-  virtual int Accept( MeshPointer mesh );
+  typedef itk::DisplacementFieldTransform< TCoordRepType, Dimensionality > ItkDisplacementFieldTransformType;
+  typedef typename ItkDisplacementFieldTransformType::Pointer ItkDisplacementFieldTransformPointer ;
 
-  MeshType * GetWarpedItkMesh();
+  virtual int Accept( ItkDisplacementFieldInterfaceType * );
+  virtual int Accept( ItkMeshInterfaceType * );
+
+  ItkMeshType * GetWarpedItkMesh();
 
   static const char * GetDescription() { return "Warp a point set based on a deformation field"; };
 
 protected:
 
   // return the class name and the template arguments to identify this component.
-  static inline const TemplatePropertiesType TemplateProperties()
+  static inline const std::map< std::string, std::string > TemplateProperties()
   {
     return {
       { keys::NameOfClass, "ItkDisplacementFieldMeshWarperComponent" },
       { keys::PixelType, PodString< TPixel >::Get() },
-      { keys::InternalCoordinateType, PodString< InternalCoordinateType >::Get() },
+      { keys::TCoordRepType, PodString< TCoordRepType >::Get() },
       { keys::Dimensionality, std::to_string( Dimensionality ) }
     };
   }
 
 private:
 
-  DisplacementFieldTransformType m_DisplacementFieldTransform;
-  ResampleImageFilterPointer m_ResampleImageFilter;
+  ItkDisplacementFieldTransformPointer m_DisplacementFieldTransform;
 
 };
 
