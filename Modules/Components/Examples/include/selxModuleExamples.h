@@ -21,6 +21,6 @@
 
 namespace selx
 {
-using DefaultComponents = selx::TypeList<
+using ModuleExamplesComponents = selx::TypeList<
   >;
 }

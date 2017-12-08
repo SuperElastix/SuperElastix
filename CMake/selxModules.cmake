@@ -61,7 +61,9 @@ macro( _selxmodules_initialize )
     
     message( STATUS "  ${MODULE}" )
 
-    option( USE_${MODULE} OFF )
+    # Any new found module defaults to ON and user-disabled USE_*Modules will be obeyed, since these are cached variable.
+    option( USE_${MODULE} "" ON )
+    # The actually enabling will be done by when enable_modules is called
     set( ${MODULE}_IS_ENABLED FALSE )
 
     set( ${MODULE}_CMAKE_FILE ${PROJECT_SOURCE_DIR}/${${MODULE}_PATH}/${MODULE}.cmake )
@@ -160,14 +162,6 @@ macro( _selxmodule_target_file TARGETS )
   endforeach()
 endmacro()
 
-macro( _selxmodule_disable MODULE )
-  set( USE_${MODULE} FALSE )
-  list( FILTER SUPERELASTIX_INCLUDE_DIRS MATCHES EXCLUDE REGEX "(.*)${MODULE}(.*)" )
-  list( FILTER SUPERELASTIX_LIBRARY_DIRS MATCHES EXCLUDE REGEX "(.*)${MODULE}(.*)" )
-  list( FILTER SUPERELASTIX_LIBRARIES MATCHES EXCLUDE REGEX "(.*)${MODULE}(.*)" )
-  list( FILTER SUPERELASTIX_TEST_SOURCE_FILES MATCHES EXCLUDE REGEX "(.*)${MODULE}(.*)" )
-endmacro()
-
 # ---------------------------------------------------------------------
 # Public macros
 
@@ -178,7 +172,7 @@ endmacro()
 # Enable user-selected modules
 macro( enable_modules )
   foreach( MODULE ${SUPERELASTIX_MODULES} )
-    if( USE_${MODULE})
+    if( USE_${MODULE} )
       enable_module( ${MODULE} )
     endif()
   endforeach()
