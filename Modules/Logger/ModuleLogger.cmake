@@ -37,3 +37,7 @@ set( ${MODULE}_TEST_SOURCE_FILES
 set( ${MODULE}_LIBRARIES
   ${MODULE}
 )
+
+set( ${MODULE}_MODULE_DEPENDENCIES
+  ModuleLogger
+)
