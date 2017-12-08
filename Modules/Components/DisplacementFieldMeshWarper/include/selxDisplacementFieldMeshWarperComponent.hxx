@@ -24,12 +24,43 @@
 
 namespace selx {
 
-template< TPixel, TCoordinateType, int Dimension>
-ItkDisplacementFieldMeshWarperComponent< TPixel, TCoordinateType, int Dimension >
+template< int Dimensionality, class TPixel, class TCoordRepType >
+ItkDisplacementFieldMeshWarperComponent< Dimensionality, TPixel, TCoordRepType >
 ::ItkDisplacementFieldMeshWarperComponent( const std::string & name, LoggerImpl & logger ) : Superclass( name, logger ) {
-  this->m_DisplacementFieldTransform = DisplacementFieldTransformType::New();
-  this->m_ResampleImageFilter = ResmapleImageFilterType::New();
+  this->m_DisplacementFieldTransform = ItkDisplacementFieldTransformType::New();
+  this->m_TransformMeshFilter = ItkTransformMeshFilterType::New();
+  this->m_TransformMeshFilter->SetTransform( this->m_DisplacementFieldTransform );
 };
+
+template< int Dimensionality, class TPixel, class TCoordRepType >
+int
+ItkDisplacementFieldMeshWarperComponent< Dimensionality, TPixel, TCoordRepType >
+::Accept( ItkDisplacementFieldInterfaceType * itkDisplacementFieldInterface )
+{
+  auto displacementField = itkDisplacementFieldInterface->GetItkDisplacementField();
+  this->m_DisplacementFieldTransform->SetDisplacementField( displacementField );
+
+  return 0;
+}
+
+template< int Dimensionality, class TPixel, class TCoordRepType >
+int
+ItkDisplacementFieldMeshWarperComponent< Dimensionality, TPixel, TCoordRepType >
+::Accept( ItkMeshInterfaceType * itkMeshInterface )
+{
+  this->m_TransformMeshFilter->SetInput( itkMeshInterface->GetItkMesh() );
+
+  return 0;
+}
+
+template< int Dimensionality, class TPixel, class TCoordRepType >
+ItkDisplacementFieldMeshWarperComponent< Dimensionality, TPixel, TCoordRepType >::ItkMeshType *
+GetWarpedItkMesh< Dimensionality, TPixel, TCoordRepType >
+::Accept( ItkMeshInterfaceType * itkMeshInterface )
+{
+  this->m_TransformMeshFilter->Update();
+  return itkDynamicCastInDebugMode< ItkMeshType * >(this->m_TransformMeshFilter->GetOutput());
+}
 
 } // namespace selx
 

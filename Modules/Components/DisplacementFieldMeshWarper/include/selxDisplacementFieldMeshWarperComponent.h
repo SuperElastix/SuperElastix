@@ -47,7 +47,6 @@ public:
   typedef std::shared_ptr< const Self > ConstPointer;
 
   ItkDisplacementFieldMeshWarperComponent( const std::string & name, LoggerImpl & logger );
-  virtual ~ItkDisplacementFieldMeshWarperComponent();
 
   using ItkDisplacementFieldInterfaceType = typename itkDisplacementFieldInterface< Dimensionality, TPixel >::Type;
   using ItkDisplacementFieldInterfacePointer = typename ItkDisplacementFieldInterfaceType::Pointer;
@@ -62,7 +61,10 @@ public:
   using ItkMeshPointer = typename ItkMeshType::Pointer;
 
   typedef itk::DisplacementFieldTransform< TCoordRepType, Dimensionality > ItkDisplacementFieldTransformType;
-  typedef typename ItkDisplacementFieldTransformType::Pointer ItkDisplacementFieldTransformPointer ;
+  typedef typename ItkDisplacementFieldTransformType::Pointer ItkDisplacementFieldTransformPointer;
+
+  typedef itk::TransformMeshFilter< ItkMeshType, ItkMeshType, ItkDisplacementFieldTransformType > ItkTransformMeshFilterType;
+  typedef typename ItkTransformMeshFilterType::Pointer ItkTransformMeshFilterPointer;
 
   virtual int Accept( ItkDisplacementFieldInterfaceType * );
   virtual int Accept( ItkMeshInterfaceType * );
@@ -87,6 +89,7 @@ protected:
 private:
 
   ItkDisplacementFieldTransformPointer m_DisplacementFieldTransform;
+  ItkTransformMeshFilterPointer m_TransformMeshFilter;
 
 };
 
