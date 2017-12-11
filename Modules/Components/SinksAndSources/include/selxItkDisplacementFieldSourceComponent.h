@@ -17,8 +17,8 @@
  *
  *=========================================================================*/
 
-#ifndef selxItkVectorImageSourceComponent_h
-#define selxItkVectorImageSourceComponent_h
+#ifndef selxItkDisplacementFieldSourceComponent_h
+#define selxItkDisplacementFieldSourceComponent_h
 
 #include "selxSuperElastixComponent.h"
 #include "selxSinksAndSourcesInterfaces.h"
@@ -32,16 +32,16 @@
 namespace selx
 {
 template<  int Dimensionality, class TPixel >
-class ItkVectorImageSourceComponent :
+class ItkDisplacementFieldSourceComponent :
   public SuperElastixComponent<
     Accepting< >,
     Providing< SourceInterface,
-      itkVectorImageInterface< Dimensionality, TPixel >,
+      itkDisplacementFieldInterface< Dimensionality, TPixel >,
       itkImageDomainFixedInterface< Dimensionality > > >
 {
 public:
   /** Standard ITK typedefs. */
-  typedef ItkVectorImageSourceComponent< Dimensionality, TPixel > Self;
+  typedef ItkDisplacementFieldSourceComponent< Dimensionality, TPixel > Self;
   typedef SuperElastixComponent<
     Accepting< >,
     Providing<
@@ -51,18 +51,18 @@ public:
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
 
-  ItkVectorImageSourceComponent( const std::string & name, LoggerImpl & logger );
-  virtual ~ItkVectorImageSourceComponent();
+  ItkDisplacementFieldSourceComponent( const std::string & name, LoggerImpl & logger );
+  virtual ~ItkDisplacementFieldSourceComponent();
 
-  using ItkVectorImageType = typename itkVectorImageInterface< Dimensionality, TPixel >::ItkVectorImageType;
-  using ItkVectorImagePointer = typename ItkVectorImageType::Pointer;
+  using ItkDisplacementFieldType = typename itkDisplacementFieldInterface< Dimensionality, TPixel >::ItkDisplacementFieldType;
+  using ItkDisplacementFieldPointer = typename ItkDisplacementFieldType::Pointer;
 
   using ItkImageDomainType = typename itkImageDomainFixedInterface< Dimensionality >::ItkImageDomainType;
   using ItkImageDomainPointer = typename ItkImageDomainType::Pointer;
 
-  using ItkVectorImageReaderType = typename itk::ImageFileReader< ItkVectorImageType >;
-  using ItkVectorImageReaderPointer = typename ItkVectorImageReaderType::Pointer;
-  typedef FileReaderDecorator< ItkVectorImageReaderType > DecoratedReaderType;
+  using ItkDisplacementFieldReaderType = typename itk::ImageFileReader< ItkDisplacementFieldType >;
+  using ItkDisplacementFieldReaderPointer = typename ItkDisplacementFieldReaderType::Pointer;
+  typedef FileReaderDecorator< ItkDisplacementFieldReaderType > DecoratedReaderType;
 
   // Source interface
   virtual void SetMiniPipelineInput( itk::DataObject::Pointer ) override;
@@ -70,26 +70,26 @@ public:
 
   // Providing interfaces
   virtual ItkImageDomainPointer GetItkImageDomainFixed() override;
-  virtual ItkVectorImagePointer GetItkVectorImage();
+  virtual ItkDisplacementFieldPointer GetItkDisplacementField();
 
   // Base class methods
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
-  static const char * GetDescription() { return "ItkVectorImageSource Component"; }
+  static const char * GetDescription() { return "ItkDisplacementFieldSource Component"; }
 
 private:
 
-  typename ItkVectorImageType::Pointer m_VectorImage;
+  typename ItkDisplacementFieldType::Pointer m_DisplacementField;
 
 protected:
 
   // return the class name and the template arguments to uniquely identify this component.
   static inline const std::map< std::string, std::string > TemplateProperties()
   {
-    return { { keys::NameOfClass, "ItkVectorImageSourceComponent" }, { keys::PixelType, PodString< TPixel >::Get() }, { keys::Dimensionality, std::to_string( Dimensionality ) } };
+    return { { keys::NameOfClass, "ItkDisplacementFieldSourceComponent" }, { keys::PixelType, PodString< TPixel >::Get() }, { keys::Dimensionality, std::to_string( Dimensionality ) } };
   }
 };
 } //end namespace selx
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "selxItkVectorImageSourceComponent.hxx"
+#include "selxItkDisplacementFieldSourceComponent.hxx"
 #endif
-#endif // #define selxItkVectorImageSourceComponent_h
+#endif // #define selxItkDisplacementFieldSourceComponent_h

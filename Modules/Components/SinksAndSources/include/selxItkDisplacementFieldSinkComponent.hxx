@@ -17,30 +17,30 @@
  *
  *=========================================================================*/
 
-#include "selxItkVectorImageSinkComponent.h"
+#include "selxItkDisplacementFieldSinkComponent.h"
 #include "selxCheckTemplateProperties.h"
 
 namespace selx
 {
 template< int Dimensionality, class TPixel >
-ItkVectorImageSinkComponent< Dimensionality, TPixel >
-::ItkVectorImageSinkComponent(const std::string & name, LoggerImpl & logger ) : Superclass( name, logger ),
-                                                                                m_MiniPipelineOutputVectorImage( nullptr ),
-                                                                                m_NetworkBuilderOutputVectorImage( nullptr )
+ItkDisplacementFieldSinkComponent< Dimensionality, TPixel >
+::ItkDisplacementFieldSinkComponent(const std::string & name, LoggerImpl & logger ) : Superclass( name, logger ),
+                                                                                m_MiniPipelineOutputDisplacementField( nullptr ),
+                                                                                m_NetworkBuilderOutputDisplacementField( nullptr )
 {
 }
 
 
 template< int Dimensionality, class TPixel >
-ItkVectorImageSinkComponent< Dimensionality, TPixel >
-::~ItkVectorImageSinkComponent()
+ItkDisplacementFieldSinkComponent< Dimensionality, TPixel >
+::~ItkDisplacementFieldSinkComponent()
 {
 }
 
 
 template< int Dimensionality, class TPixel >
 int
-ItkVectorImageSinkComponent< Dimensionality, TPixel >::Accept( ItkVectorImagePointer other )
+ItkDisplacementFieldSinkComponent< Dimensionality, TPixel >::Accept( ItkDisplacementFieldPointer other )
 {
   //if( this->m_NetworkBuilderOutputImage == nullptr )
   //{
@@ -48,7 +48,7 @@ ItkVectorImageSinkComponent< Dimensionality, TPixel >::Accept( ItkVectorImagePoi
   //}
 
   // Store pointer to MiniPipelineOutputImage for later grafting onto NetworkBuilder output.
-  this->m_MiniPipelineOutputVectorImage = other->GetItkDisplacementField();
+  this->m_MiniPipelineOutputDisplacementField = other->GetItkDisplacementField();
   //this->m_MiniPipelineOutputImage->Graft(other->GetItkImage());
   // Graft NetworkBuilder output onto MiniPipelineOutputImage.
   //this->m_MiniPipelineOutputImage->Graft(this->m_NetworkBuilderOutputImage);
@@ -58,14 +58,14 @@ ItkVectorImageSinkComponent< Dimensionality, TPixel >::Accept( ItkVectorImagePoi
 
 template< int Dimensionality, class TPixel >
 void
-ItkVectorImageSinkComponent< Dimensionality, TPixel >::SetMiniPipelineOutput( itk::DataObject::Pointer NetworkBuilderOutput )
+ItkDisplacementFieldSinkComponent< Dimensionality, TPixel >::SetMiniPipelineOutput( itk::DataObject::Pointer NetworkBuilderOutput )
 {
   /** Tries to cast the NetworkBuilderOutput to an image (data object) and stores the result.
    *  The resulting output image will be grafted into when the sink component is connected to an other component.
    * */
   //
-  this->m_NetworkBuilderOutputVectorImage = dynamic_cast< ItkVectorImageType * >( NetworkBuilderOutput.GetPointer() );
-  if( this->m_NetworkBuilderOutputVectorImage == nullptr )
+  this->m_NetworkBuilderOutputDisplacementField = dynamic_cast< ItkDisplacementFieldType * >( NetworkBuilderOutput.GetPointer() );
+  if( this->m_NetworkBuilderOutputDisplacementField == nullptr )
   {
     throw std::runtime_error( "SinkComponent cannot cast the NetworkBuilder's Output to the required type" );
   }
@@ -74,15 +74,15 @@ ItkVectorImageSinkComponent< Dimensionality, TPixel >::SetMiniPipelineOutput( it
 
 template< int Dimensionality, class TPixel >
 typename itk::DataObject::Pointer
-ItkVectorImageSinkComponent< Dimensionality, TPixel >::GetMiniPipelineOutput()
+ItkDisplacementFieldSinkComponent< Dimensionality, TPixel >::GetMiniPipelineOutput()
 {
-  return this->m_MiniPipelineOutputVectorImage.GetPointer();
+  return this->m_MiniPipelineOutputDisplacementField.GetPointer();
 }
 
 
 template< int Dimensionality, class TPixel >
 typename AnyFileWriter::Pointer
-ItkVectorImageSinkComponent< Dimensionality, TPixel >::GetOutputFileWriter()
+ItkDisplacementFieldSinkComponent< Dimensionality, TPixel >::GetOutputFileWriter()
 {
   // Instanstiate an image file writer, decorated such that it can be implicitly cast to an AnyFileWriterType
   return DecoratedWriterType::New().GetPointer();
@@ -91,15 +91,15 @@ ItkVectorImageSinkComponent< Dimensionality, TPixel >::GetOutputFileWriter()
 
 template< int Dimensionality, class TPixel >
 typename itk::DataObject::Pointer
-ItkVectorImageSinkComponent< Dimensionality, TPixel >::GetInitializedOutput()
+ItkDisplacementFieldSinkComponent< Dimensionality, TPixel >::GetInitializedOutput()
 {
-  return ItkVectorImageType::New().GetPointer();
+  return ItkDisplacementFieldType::New().GetPointer();
 }
 
 
 template< int Dimensionality, class TPixel >
 bool
-ItkVectorImageSinkComponent< Dimensionality, TPixel >::MeetsCriterion( const ComponentBase::CriterionType & criterion )
+ItkDisplacementFieldSinkComponent< Dimensionality, TPixel >::MeetsCriterion( const ComponentBase::CriterionType & criterion )
 {
   bool hasUndefinedCriteria( false );
   bool meetsCriteria( false );

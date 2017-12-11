@@ -17,60 +17,60 @@
  *
  *=========================================================================*/
 
-#include "selxItkVectorImageSourceComponent.h"
+#include "selxItkDisplacementFieldSourceComponent.h"
 #include "selxCheckTemplateProperties.h"
 
 namespace selx
 {
 template< int Dimensionality, class TPixel >
-ItkVectorImageSourceComponent< Dimensionality, TPixel >
-::ItkVectorImageSourceComponent( const std::string & name, LoggerImpl & logger ) : Superclass( name, logger ), m_VectorImage( nullptr )
+ItkDisplacementFieldSourceComponent< Dimensionality, TPixel >
+::ItkDisplacementFieldSourceComponent( const std::string & name, LoggerImpl & logger ) : Superclass( name, logger ), m_DisplacementField( nullptr )
 {
 }
 
 
 template< int Dimensionality, class TPixel >
-ItkVectorImageSourceComponent< Dimensionality, TPixel >
-::~ItkVectorImageSourceComponent()
+ItkDisplacementFieldSourceComponent< Dimensionality, TPixel >
+::~ItkDisplacementFieldSourceComponent()
 {
 }
 
 
 template< int Dimensionality, class TPixel >
-typename ItkVectorImageSourceComponent< Dimensionality, TPixel >::ItkVectorImageType::Pointer
-ItkVectorImageSourceComponent< Dimensionality, TPixel >
-::GetItkVectorImage()
+typename ItkDisplacementFieldSourceComponent< Dimensionality, TPixel >::ItkDisplacementFieldType::Pointer
+ItkDisplacementFieldSourceComponent< Dimensionality, TPixel >
+::GetItkDisplacementField()
 {
-  if( this->m_VectorImage == nullptr )
+  if( this->m_DisplacementField == nullptr )
   {
     throw std::runtime_error( "SourceComponent needs to be initialized by SetMiniPipelineInput()" );
   }
-  return this->m_VectorImage;
+  return this->m_DisplacementField;
 }
 
 
 template< int Dimensionality, class TPixel >
-typename ItkVectorImageSourceComponent< Dimensionality, TPixel >::ItkImageDomainPointer
-ItkVectorImageSourceComponent< Dimensionality, TPixel >
+typename ItkDisplacementFieldSourceComponent< Dimensionality, TPixel >::ItkImageDomainPointer
+ItkDisplacementFieldSourceComponent< Dimensionality, TPixel >
 ::GetItkImageDomainFixed()
 {
-  if( this->m_VectorImage == nullptr )
+  if( this->m_DisplacementField == nullptr )
   {
     throw std::runtime_error( "SourceComponent needs to be initialized by SetMiniPipelineInput()" );
   }
-  return m_VectorImage.GetPointer();
+  return m_DisplacementField.GetPointer();
 }
 
 
 template< int Dimensionality, class TPixel >
 void
-ItkVectorImageSourceComponent< Dimensionality, TPixel >
+ItkDisplacementFieldSourceComponent< Dimensionality, TPixel >
 ::SetMiniPipelineInput( itk::DataObject::Pointer object )
 {
-  this->m_VectorImage = dynamic_cast< ItkVectorImageType * >( object.GetPointer() );
-  if( this->m_VectorImage == nullptr )
+  this->m_DisplacementField = dynamic_cast< ItkDisplacementFieldType * >( object.GetPointer() );
+  if( this->m_DisplacementField == nullptr )
   {
-    throw std::runtime_error( "DataObject passed by the NetworkBuilder is not of the right VectorImageType or not at all an VectorImageType" );
+    throw std::runtime_error( "DataObject passed by the NetworkBuilder is not of the right DisplacementFieldType or not at all an DisplacementFieldType" );
   }
   return;
 }
@@ -78,7 +78,7 @@ ItkVectorImageSourceComponent< Dimensionality, TPixel >
 
 template< int Dimensionality, class TPixel>
 typename AnyFileReader::Pointer
-ItkVectorImageSourceComponent< Dimensionality, TPixel >::GetInputFileReader()
+ItkDisplacementFieldSourceComponent< Dimensionality, TPixel >::GetInputFileReader()
 {
   // Instanstiate an image file reader, decorated such that it can be implicitly cast to an AnyFileReaderType
   return DecoratedReaderType::New().GetPointer();
@@ -87,7 +87,7 @@ ItkVectorImageSourceComponent< Dimensionality, TPixel >::GetInputFileReader()
 
 template< int Dimensionality, class TPixel >
 bool
-ItkVectorImageSourceComponent< Dimensionality, TPixel >
+ItkDisplacementFieldSourceComponent< Dimensionality, TPixel >
 ::MeetsCriterion( const ComponentBase::CriterionType & criterion )
 {
   bool hasUndefinedCriteria( false );

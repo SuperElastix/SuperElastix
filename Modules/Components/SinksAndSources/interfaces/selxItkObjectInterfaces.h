@@ -42,6 +42,19 @@ public:
 };
 
 template< int Dimensionality, class TPixel >
+class itkVectorImageInterface
+{
+  // An interface that provides the pointer of an output vector image
+
+public:
+
+  using Type    = itkVectorImageInterface< Dimensionality, TPixel >;
+  using Pointer = std::shared_ptr< Type >;
+  typedef typename itk::VectorImage< TPixel, Dimensionality > ItkVectorImageType;
+  virtual typename ItkVectorImageType::Pointer GetItkVectorImage() = 0;
+};
+
+template< int Dimensionality, class TPixel >
 class itkDisplacementFieldInterface
 {
   // An interface that provides the pointer of an output vector image
@@ -50,8 +63,8 @@ public:
 
   using Type    = itkDisplacementFieldInterface< Dimensionality, TPixel >;
   using Pointer = std::shared_ptr< Type >;
-  typedef typename itk::VectorImage< TPixel, Dimensionality > ItkVectorImageType;
-  virtual typename ItkVectorImageType::Pointer GetItkDisplacementField() = 0;
+  typedef itk::Image<itk::Vector< TPixel, Dimensionality >, Dimensionality> DisplacementFieldType;
+  virtual typename DisplacementFieldType::Pointer GetItkDisplacementField() = 0;
 };
 
 template< int Dimensionality, class TPixel >
