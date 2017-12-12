@@ -131,6 +131,8 @@ macro( _selxmodule_enable MODULE UPSTREAM )
       endif()
 
       add_library( ${MODULE} ${${MODULE}_HEADER_FILES} ${${MODULE}_SOURCE_FILES} )
+      target_link_libraries( ${MODULE} ${SUPERELASTIX_LIBRARIES} )
+      
     else()
     # Aggregate all header-only Components in a separate target for Visual Studio IDE.
       target_sources( HeaderOnlyComponents PUBLIC ${${MODULE}_HEADER_FILES} )

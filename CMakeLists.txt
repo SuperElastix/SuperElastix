@@ -142,8 +142,6 @@ _selxmodules_initialize()
 enable_modules()
 message( STATUS "Enabling modules ... Done" )
 
-#TODO: next line seems to be neccesary, but this needs to be done cleanly
-target_link_libraries( ModuleBlueprints ModuleLogger )
 
 include( ${ModuleFilter_SOURCE_DIR}/CompiledLibraryComponents.cmake )
 
