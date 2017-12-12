@@ -18,8 +18,8 @@
  *=========================================================================*/
 
 #include "selxSuperElastixFilterCustomComponents.h"
-#include "selxItkVectorImageSourceComponent.h"
-#include "selxItkVectorImageSinkComponent.h"
+#include "selxItkDisplacementFieldSourceComponent.h"
+#include "selxItkDisplacementFieldSinkComponent.h"
 #include "selxItkMeshSourceComponent.h"
 #include "selxItkMeshSinkComponent.h"
 #include "itkMeshFileReader.h"
@@ -51,14 +51,16 @@ public:
   typedef Blueprint::Pointer BlueprintPointer;
 
   typedef TypeList<
-    ItkVectorImageSourceComponent< 2, float >,
-    ItkVectorImageSinkComponent< 2, float >,
+    ItkDisplacementFieldSourceComponent< 2, float >,
+    ItkDisplacementFieldSinkComponent< 2, float >,
     ItkMeshSourceComponent< 2, float >,
     ItkMeshSinkComponent< 2, float >,
     ItkDisplacementFieldMeshWarperComponent< 2, float, float > > TestComponents;
 
   typedef SuperElastixFilterCustomComponents< TestComponents > SuperElastixFilterType;
   typedef typename SuperElastixFilterType::Pointer SuperElastixFilterPointer;
+
+  DataManager::Pointer dataManager = DataManager::New();
 };
 
 TEST_F( DisplacementFieldMeshWarperComponentTest, SinkAndSource )
@@ -66,13 +68,33 @@ TEST_F( DisplacementFieldMeshWarperComponentTest, SinkAndSource )
   BlueprintPointer blueprint = Blueprint::New();
   using ParameterMapType = Blueprint::ParameterMapType;
 
-  ParameterMapType vectorImageSourceParameters;
-  vectorImageSourceParameters[ "NameOfClass" ]    = { "ItkVectorImageSourceComponent" };
-  vectorImageSourceParameters[ "Dimensionality" ] = { "2" };
-  blueprint->SetComponent( "DisplacementFieldSource", vectorImageSourceParameters );
+  ParameterMapType displacementFieldSourceParameters;
+  displacementFieldSourceParameters[ "NameOfClass" ]    = { "ItkDisplacementFieldSourceComponent" };
+  displacementFieldSourceParameters[ "Dimensionality" ] = { "2" };
+  blueprint->SetComponent( "DisplacementFieldSource", displacementFieldSourceParameters );
+
+  ParameterMapType meshSourceParameters;
+  meshSourceParameters[ "NameOfClass" ]    = { "ItkMeshSourceComponent" };
+  meshSourceParameters[ "Dimensionality" ] = { "2" };
+  blueprint->SetComponent( "MeshSource", meshSourceParameters );
+
+  ParameterMapType meshSinkParameters;
+  meshSinkParameters[ "NameOfClass" ]    = { "ItkMeshSinkComponent" };
+  meshSinkParameters[ "Dimensionality" ] = { "2" };
+  blueprint->SetComponent( "MeshSink", meshSinkParameters );
+
+  ParameterMapType displacementFieldMeshWarperParameters;
+  displacementFieldMeshWarperParameters[ "NameOfClass" ]    = { "ItkDisplacementFieldMeshWarperComponent" };
+  displacementFieldMeshWarperParameters[ "Dimensionality" ] = { "2" };
+  blueprint->SetComponent( "DisplacementFieldMeshWarper", displacementFieldMeshWarperParameters );
 
   SuperElastixFilterPointer superElastixFilter = SuperElastixFilterType::New();
   superElastixFilter->SetBlueprint(blueprint);
+
+  MeshReaderPointer meshReader = MeshReaderType::New();
+  meshReader->SetFileName( this->dataManager->GetInputFile( "2dSquare.vtk" ) );
+
+  superElastixFilter->SetInput( "MeshSource", meshReader->GetOutput() );
 }
 
 } // namespace selx

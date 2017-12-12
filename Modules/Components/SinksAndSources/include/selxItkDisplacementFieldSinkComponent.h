@@ -51,14 +51,17 @@ public:
   ItkDisplacementFieldSinkComponent( const std::string & name, LoggerImpl & logger );
   virtual ~ItkDisplacementFieldSinkComponent();
 
-  using itkDisplacementFieldInterfaceType = itkVectorImageInterface< Dimensionality, TPixel >::Type;
-  using itkDisplacementFieldInterfacePointer = typename itkVectorImageInterfaceType::Pointer;
+  using ItkDisplacementFieldInterfaceType = typename itkDisplacementFieldInterface< Dimensionality, TPixel >::Type;
+  using ItkDisplacementFieldInterfacePointer = typename ItkDisplacementFieldInterfaceType::Pointer;
 
-  using ItkDisplacementFieldType = typename itkDisplacementFieldInterfaceType::ItkDisplacementFieldType;
-  using ItkDisplacementFieldPointer = typename ItkVectorImageType::Pointer
+  using ItkDisplacementFieldType = typename ItkDisplacementFieldInterfaceType::ItkDisplacementFieldType;
+  using ItkDisplacementFieldPointer = typename ItkDisplacementFieldType::Pointer;
 
-  typedef typename itk::ImageFileWriter< ItkDisplacementFieldType >         ItkDisplacementFieldWriterType;
-  typedef FileWriterDecorator< ItkVectorImageWriterType >             DecoratedWriterType;
+  using ItkDisplacementFieldWriterType = itk::ImageFileWriter< ItkDisplacementFieldType >;
+  using ItkDisplacementFieldWriterPointer = typename ItkDisplacementFieldWriterType::Pointer;
+
+  using DecoratedWriterType = FileWriterDecorator< ItkDisplacementFieldWriterType >;
+  using DecoratedWriterPointer = typename DecoratedWriterType::Pointer;
 
   // Sink interfaces
   virtual void SetMiniPipelineOutput( itk::DataObject::Pointer ) override;
@@ -67,7 +70,7 @@ public:
   virtual itk::DataObject::Pointer GetInitializedOutput( void ) override;
 
   // Accept interfaces
-  virtual int Accept( ItkDisplacementFieldWriterType ) override;
+  virtual int Accept( ItkDisplacementFieldInterfacePointer ) override;
 
   // Base class interfaces
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;

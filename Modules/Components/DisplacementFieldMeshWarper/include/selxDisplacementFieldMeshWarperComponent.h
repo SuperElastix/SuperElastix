@@ -26,17 +26,13 @@
 #include "itkDisplacementFieldTransform.h"
 #include "itkTransformMeshFilter.h"
 
-//
-// Accepting< ItkVectorImageInterface< Dimensionality, TPixel >, ItkMeshInterface< Dimensionality, TCoordinateType > >,
-//Providing< ItkMeshInterface< Dimensionality, TCoordinateType > >
-
 namespace selx {
 
 template< int Dimensionality, class TPixel, class TCoordRepType >
 class ItkDisplacementFieldMeshWarperComponent : public
   SuperElastixComponent<
-    Accepting< itkMeshInterface< Dimensionality, TCoordRepType >, itkDisplacementFieldInterface< Dimensionality, TPixel > >,
-    Providing< itkMeshInterface< Dimensionality, TCoordRepType > > >
+  Accepting< itkMeshInterface< Dimensionality, TCoordRepType >, itkDisplacementFieldInterface< Dimensionality, TPixel > >,
+  Providing< itkMeshInterface< Dimensionality, TCoordRepType > > >
 {
 public:
   typedef ItkDisplacementFieldMeshWarperComponent< Dimensionality, TPixel, TCoordRepType > Self;
@@ -51,8 +47,8 @@ public:
   using ItkDisplacementFieldInterfaceType = typename itkDisplacementFieldInterface< Dimensionality, TPixel >::Type;
   using ItkDisplacementFieldInterfacePointer = typename ItkDisplacementFieldInterfaceType::Pointer;
 
-  using ItkVectorImageType = typename ItkDisplacementFieldInterfaceType::ItkVectorImageType;
-  using ItkVectorImagePointer = typename ItkVectorImageType::Pointer;
+  using ItkDisplacementFieldType = typename ItkDisplacementFieldInterfaceType::ItkDisplacementFieldType;
+  using ItkDisplacementFieldPointer = typename ItkDisplacementFieldType::Pointer;
 
   using ItkMeshInterfaceType = typename itkMeshInterface< Dimensionality, TPixel >::Type;
   typedef typename ItkMeshInterfaceType::Pointer ItkMeshInterfacePointer;
@@ -66,11 +62,15 @@ public:
   typedef itk::TransformMeshFilter< ItkMeshType, ItkMeshType, ItkDisplacementFieldTransformType > ItkTransformMeshFilterType;
   typedef typename ItkTransformMeshFilterType::Pointer ItkTransformMeshFilterPointer;
 
-  virtual int Accept( ItkDisplacementFieldInterfaceType * );
-  virtual int Accept( ItkMeshInterfaceType * );
+  // Accept interfaces
+  virtual int Accept( ItkDisplacementFieldInterfacePointer ) override;
+  virtual int Accept( ItkMeshInterfacePointer ) override;
 
-  ItkMeshType * GetWarpedItkMesh();
+  // Provide interfaces
+  virtual typename ItkMeshType::Pointer GetItkMesh() override;
 
+  // Base methods
+  virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
   static const char * GetDescription() { return "Warp a point set based on a deformation field"; };
 
 protected:
@@ -94,5 +94,9 @@ private:
 };
 
 } // namespace selx
+
+#ifndef ITK_MANUAL_INSTANTIATION
+#include "selxDisplacementFieldMeshWarperComponent.hxx"
+#endif
 
 #endif // selxDisplacementFieldWarperComponent_h

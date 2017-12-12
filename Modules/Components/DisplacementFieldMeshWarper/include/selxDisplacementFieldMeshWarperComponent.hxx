@@ -1,3 +1,4 @@
+
 /*=========================================================================
  *
  *  Copyright Leiden University Medical Center, Erasmus University Medical
@@ -17,10 +18,11 @@
  *
  *=========================================================================*/
 
-#ifndef selxDisplacementFieldWarperComponent_h
-#define selxDisplacementFieldWarperComponent_h
+#ifndef selxDisplacementFieldWarperComponent_hxx
+#define selxDisplacementFieldWarperComponent_hxx
 
 #include "selxDisplacementFieldMeshWarperComponent.h"
+#include "selxCheckTemplateProperties.h"
 
 namespace selx {
 
@@ -35,7 +37,7 @@ ItkDisplacementFieldMeshWarperComponent< Dimensionality, TPixel, TCoordRepType >
 template< int Dimensionality, class TPixel, class TCoordRepType >
 int
 ItkDisplacementFieldMeshWarperComponent< Dimensionality, TPixel, TCoordRepType >
-::Accept( ItkDisplacementFieldInterfaceType * itkDisplacementFieldInterface )
+::Accept( ItkDisplacementFieldInterfacePointer itkDisplacementFieldInterface )
 {
   auto displacementField = itkDisplacementFieldInterface->GetItkDisplacementField();
   this->m_DisplacementFieldTransform->SetDisplacementField( displacementField );
@@ -46,7 +48,7 @@ ItkDisplacementFieldMeshWarperComponent< Dimensionality, TPixel, TCoordRepType >
 template< int Dimensionality, class TPixel, class TCoordRepType >
 int
 ItkDisplacementFieldMeshWarperComponent< Dimensionality, TPixel, TCoordRepType >
-::Accept( ItkMeshInterfaceType * itkMeshInterface )
+::Accept( ItkMeshInterfacePointer itkMeshInterface )
 {
   this->m_TransformMeshFilter->SetInput( itkMeshInterface->GetItkMesh() );
 
@@ -54,14 +56,34 @@ ItkDisplacementFieldMeshWarperComponent< Dimensionality, TPixel, TCoordRepType >
 }
 
 template< int Dimensionality, class TPixel, class TCoordRepType >
-ItkDisplacementFieldMeshWarperComponent< Dimensionality, TPixel, TCoordRepType >::ItkMeshType *
-GetWarpedItkMesh< Dimensionality, TPixel, TCoordRepType >
-::Accept( ItkMeshInterfaceType * itkMeshInterface )
+typename ItkDisplacementFieldMeshWarperComponent< Dimensionality, TPixel, TCoordRepType >::ItkMeshType::Pointer
+ItkDisplacementFieldMeshWarperComponent< Dimensionality, TPixel, TCoordRepType >
+::GetItkMesh()
 {
   this->m_TransformMeshFilter->Update();
   return itkDynamicCastInDebugMode< ItkMeshType * >(this->m_TransformMeshFilter->GetOutput());
 }
 
+template< int Dimensionality, class TPixel, class TCoordRepType >
+bool
+ItkDisplacementFieldMeshWarperComponent< Dimensionality, TPixel, TCoordRepType >
+::MeetsCriterion( const ComponentBase::CriterionType & criterion )
+{
+  bool hasUndefinedCriteria( false );
+  bool meetsCriteria( false );
+  auto status = CheckTemplateProperties( this->TemplateProperties(), criterion );
+  if( status == CriterionStatus::Satisfied )
+  {
+    return true;
+  }
+  else if( status == CriterionStatus::Failed )
+  {
+    return false;
+  } // else: CriterionStatus::Unknown
+
+  return meetsCriteria;
+}
+
 } // namespace selx
 
-#endif // selxDisplacementFieldWarperComponent_h
+#endif // selxDisplacementFieldWarperComponent_hxx

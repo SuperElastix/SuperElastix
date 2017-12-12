@@ -70,7 +70,7 @@ public:
 
   // Providing interfaces
   virtual ItkImageDomainPointer GetItkImageDomainFixed() override;
-  virtual ItkDisplacementFieldPointer GetItkDisplacementField();
+  virtual ItkDisplacementFieldPointer GetItkDisplacementField() override;
 
   // Base class methods
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;

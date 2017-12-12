@@ -57,8 +57,8 @@ public:
   using ItkVectorImageType = typename itkVectorImageInterfaceType::ItkVectorImageType;
   using ItkVectorImagePointer = typename ItkVectorImageType::Pointer
 
-  typedef typename itk::ImageFileWriter< ItkVectorImageType >         ItkVectorImageWriterType;
-  typedef FileWriterDecorator< ItkVectorImageWriterType >             DecoratedWriterType;
+  typedef itk::ImageFileWriter< ItkVectorImageType >  ItkVectorImageWriterType;
+  typedef FileWriterDecorator< ItkVectorImageWriterType > DecoratedWriterType;
 
   // Sink interfaces
   virtual void SetMiniPipelineOutput( itk::DataObject::Pointer ) override;
