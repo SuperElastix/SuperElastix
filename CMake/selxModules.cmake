@@ -116,10 +116,6 @@ macro( _selxmodule_enable MODULE UPSTREAM )
       list( APPEND SUPERELASTIX_TEST_SOURCE_FILES ${MODULE}_TEST_SOURCE_FILES )
     endif()
 
-    if( ${MODULE}_LIBRARIES )
-      list( APPEND SUPERELASTIX_LIBRARIES ${${MODULE}_LIBRARIES} )
-    endif()
-
     # Header-only modules should not be compiled
     if( ${MODULE}_SOURCE_FILES )
       # Check if user accidentally tries to compile header-only library
@@ -137,7 +133,11 @@ macro( _selxmodule_enable MODULE UPSTREAM )
     # Aggregate all header-only Components in a separate target for Visual Studio IDE.
       target_sources( HeaderOnlyComponents PUBLIC ${${MODULE}_HEADER_FILES} )
     endif()
-	
+    
+    if( ${MODULE}_LIBRARIES )
+      list( APPEND SUPERELASTIX_LIBRARIES ${${MODULE}_LIBRARIES} )
+    endif()
+    
     # Aggregate all interface headers in a separate target for Visual Studio IDE.
     if( ${MODULE}_INTERFACE_FILES )
         target_sources( Interfaces PUBLIC ${${MODULE}_INTERFACE_FILES} )
