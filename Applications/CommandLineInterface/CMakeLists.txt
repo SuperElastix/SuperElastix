@@ -34,6 +34,9 @@ set(Boost_USE_STATIC_RUNTIME    OFF)
 find_package(Boost COMPONENTS program_options filesystem system regex REQUIRED QUIET ) 
 include_directories( ${Boost_INCLUDE_DIR} )
 
+find_package( SuperElastix )
+include( ${SUPERELASTIX_USE_FILE} )
+
 # Compile executable
 include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/include" )
 add_executable( SuperElastix ${COMMANDLINE_SOURCE_FILES} ${COMMANDLINE_HEADER_FILES} )
