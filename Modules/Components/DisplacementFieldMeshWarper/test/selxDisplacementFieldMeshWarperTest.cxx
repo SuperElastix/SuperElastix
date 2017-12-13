@@ -34,19 +34,19 @@ namespace selx {
 class DisplacementFieldMeshWarperComponentTest : public ::testing::Test {
 public:
 
-  typedef itk::VectorImage< float, 2 >            VectorImageType;
-  typedef typename VectorImageType::Pointer       VectorImagePointer;
-  typedef itk::ImageFileReader< VectorImageType > VectorImageReaderType;
-  typedef typename VectorImageReaderType::Pointer VectorImageReaderPointer;
-  typedef itk::ImageFileWriter< VectorImageType > VectorImageWriterType;
-  typedef typename VectorImageWriterType::Pointer VectorImageWriterPointer;
+  typedef ItkDisplacementFieldMeshWarperComponent< 2, float, float >::ItkDisplacementFieldType DisplacementFieldType;
+  typedef typename DisplacementFieldType::Pointer DisplacementFieldPointer;
+  typedef itk::ImageFileReader< DisplacementFieldType > DisplacementFieldReaderType;
+  typedef typename DisplacementFieldReaderType::Pointer DisplacementFieldReaderPointer;
+  typedef itk::ImageFileWriter< DisplacementFieldType > DisplacementFieldWriterType;
+  typedef typename DisplacementFieldWriterType::Pointer DisplacementFieldWriterPointer;
 
-  typedef itk::Mesh< float, 2 >                   MeshType;
-  typedef typename MeshType::Pointer              MeshPointer;
-  typedef itk::MeshFileReader< MeshType >         MeshReaderType;
-  typedef typename MeshReaderType::Pointer        MeshReaderPointer;
-  typedef itk::MeshFileWriter< MeshType >         MeshWriterType;
-  typedef typename MeshWriterType::Pointer        MeshWriterPointer;
+  typedef itk::Mesh< float, 2 > MeshType;
+  typedef typename MeshType::Pointer MeshPointer;
+  typedef itk::MeshFileReader< MeshType > MeshReaderType;
+  typedef typename MeshReaderType::Pointer MeshReaderPointer;
+  typedef itk::MeshFileWriter< MeshType > MeshWriterType;
+  typedef typename MeshWriterType::Pointer MeshWriterPointer;
 
   typedef Blueprint::Pointer BlueprintPointer;
 
@@ -65,6 +65,56 @@ public:
 
 TEST_F( DisplacementFieldMeshWarperComponentTest, SinkAndSource )
 {
+
+  DisplacementFieldPointer displacementField = DisplacementFieldType::New();
+  displacementField->SetRegions(DisplacementFieldType::Superclass::SizeType({{3, 3}}));
+  displacementField->Allocate();
+
+  DisplacementFieldType::Superclass::IndexType index00, index01, index02,
+                                               index10, index11, index12,
+                                               index20, index21, index22;
+
+  index00[0] = 0; index00[1] = 0;
+  index01[0] = 0; index01[1] = 1;
+  index02[0] = 0; index02[1] = 2;
+  index10[0] = 1; index10[1] = 0;
+  index11[0] = 1; index11[1] = 1;
+  index12[0] = 1; index12[1] = 2;
+  index20[0] = 2; index20[1] = 0;
+  index21[0] = 2; index21[1] = 1;
+  index22[0] = 2; index22[1] = 2;
+
+  typedef itk::Vector<float, 2> VectorType;
+  VectorType displacement00, displacement01, displacement10, displacement11, displacementminus11;
+  displacement00[0] = 0.;
+  displacement00[1] = 0.;
+
+  displacement01[0] = 0.;
+  displacement01[1] = 1.;
+
+  displacement10[0] = 1.;
+  displacement10[1] = 0.;
+
+  displacement11[0] = 1.;
+  displacement11[1] = 1.;
+
+  displacementminus11[0] = -1.;
+  displacementminus11[1] = -1.;
+
+  displacementField->SetPixel(index00, displacement01);
+  displacementField->SetPixel(index01, displacement10);
+  displacementField->SetPixel(index02, displacement00);
+  displacementField->SetPixel(index10, displacement10);
+  displacementField->SetPixel(index11, displacement11);
+  displacementField->SetPixel(index12, displacement00);
+  displacementField->SetPixel(index20, displacement00);
+  displacementField->SetPixel(index21, displacement00);
+  displacementField->SetPixel(index22, displacementminus11);
+
+  Logger::Pointer logger = Logger::New();
+  logger->AddStream( "cout", std::cout );
+  logger->SetLogLevel( LogLevel::TRC );
+
   BlueprintPointer blueprint = Blueprint::New();
   using ParameterMapType = Blueprint::ParameterMapType;
 
@@ -88,13 +138,32 @@ TEST_F( DisplacementFieldMeshWarperComponentTest, SinkAndSource )
   displacementFieldMeshWarperParameters[ "Dimensionality" ] = { "2" };
   blueprint->SetComponent( "DisplacementFieldMeshWarper", displacementFieldMeshWarperParameters );
 
+  ParameterMapType connection0;
+  connection0[ "NameOfInterface" ] = { "itkMeshInterface" };
+  blueprint->SetConnection( "MeshSource", "ItkDisplacementFieldMeshWarperComponent", connection0 );
+
+  ParameterMapType connection1;
+  connection0[ "NameOfInterface" ] = { "itkDisplacementFieldInterface" };
+  blueprint->SetConnection( "DisplacementFieldSource", "ItkDisplacementFieldMeshWarperComponent", connection1 );
+
+  ParameterMapType connection2;
+  connection0[ "NameOfInterface" ] = { "itkMeshInterface" };
+  blueprint->SetConnection( "ItkDisplacementFieldMeshWarperComponent", "MeshSink", connection2 );
+
   SuperElastixFilterPointer superElastixFilter = SuperElastixFilterType::New();
   superElastixFilter->SetBlueprint(blueprint);
+  superElastixFilter->SetLogger(logger);
 
   MeshReaderPointer meshReader = MeshReaderType::New();
   meshReader->SetFileName( this->dataManager->GetInputFile( "2dSquare.vtk" ) );
 
+  superElastixFilter->SetInput( "DisplacementFieldSource", displacementField );
   superElastixFilter->SetInput( "MeshSource", meshReader->GetOutput() );
+
+  MeshWriterPointer meshWriter = MeshWriterType::New();
+  meshWriter->SetFileName( this->dataManager->GetOutputFile( "DisplacementFieldMeshWarperComponentTest.SinkAndSource.WarpedMesh.vtk" ) );
+  meshWriter->SetInput( superElastixFilter->GetOutput< MeshType >( "MeshSink" ) );
+  meshWriter->Update();
 }
 
 } // namespace selx
