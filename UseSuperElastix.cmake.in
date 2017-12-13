@@ -10,3 +10,5 @@ include_directories( ${SUPERELASTIX_INCLUDE_DIRS} )
 
 # Add link directories needed to use SuperElastix
 link_directories( ${SUPERELASTIX_LIBRARY_DIRS} )
+
+include( ${SUPERELASTIX_TARGETS_FILE} )

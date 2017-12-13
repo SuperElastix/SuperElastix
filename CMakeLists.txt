@@ -142,7 +142,6 @@ _selxmodules_initialize()
 enable_modules()
 message( STATUS "Enabling modules ... Done" )
 
-
 include( ${ModuleFilter_SOURCE_DIR}/CompiledLibraryComponents.cmake )
 
 # Build applications
@@ -213,6 +212,7 @@ set( SUPERELASTIX_INSTALL_INCLUDE_DIRS ${SUPERELASTIX_INCLUDE_DIRS} )
 set( SUPERELASTIX_INSTALL_LIBRARY_DIRS ${SUPERELASTIX_LIBRARY_DIRS} )
 set( SUPERELASTIX_INSTALL_LIBRARIES ${SUPERELASTIX_LIBRARIES} )
 set( SUPERELASTIX_INSTALL_USE_FILE "${PROJECT_BINARY_DIR}/UseSuperElastix.cmake" )
+set( SUPERELASTIX_TARGETS_FILE "${CMAKE_BINARY_DIR}/SuperElastixTargets.cmake" )
 configure_file( SuperElastixConfig.cmake.in "${PROJECT_BINARY_DIR}/SuperElastixConfig.cmake" @ONLY)
 configure_file( SuperElastixConfigVersion.cmake.in "${PROJECT_BINARY_DIR}/SuperElastixConfigVersion.cmake" @ONLY)
 configure_file( UseSuperElastix.cmake.in "${SUPERELASTIX_INSTALL_USE_FILE}" @ONLY )

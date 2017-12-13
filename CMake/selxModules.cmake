@@ -127,6 +127,7 @@ macro( _selxmodule_enable MODULE UPSTREAM )
       endif()
 
       add_library( ${MODULE} ${${MODULE}_HEADER_FILES} ${${MODULE}_SOURCE_FILES} )
+      export( TARGETS ${MODULE} APPEND FILE "${CMAKE_BINARY_DIR}/SuperElastixTargets.cmake" )
       target_link_libraries( ${MODULE} ${SUPERELASTIX_LIBRARIES} )
       
     else()
