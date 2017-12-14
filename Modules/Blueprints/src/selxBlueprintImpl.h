@@ -42,6 +42,7 @@
 
 
 #include "selxBlueprint.h"
+#include "selxLoggerImpl.h"
 
 namespace selx
 {
@@ -98,6 +99,12 @@ public:
   typedef boost::graph_traits< GraphType >::out_edge_iterator OutputIteratorType;
   typedef std::pair< OutputIteratorType, OutputIteratorType > OutputIteratorPairType;
 
+  // TODO: remove this argumentless constructor
+  BlueprintImpl();
+
+  BlueprintImpl( LoggerImpl & loggerImpl);
+
+
   bool SetComponent( ComponentNameType, ParameterMapType parameterMap );
 
   ParameterMapType GetComponent( ComponentNameType componentName ) const;
@@ -129,6 +136,8 @@ public:
 
   void MergeFromFile(const std::string & filename);
 
+  void SetLoggerImpl( LoggerImpl & loggerImpl );
+
 private:
 
   typedef boost::property_tree::ptree         PropertyTreeType;
@@ -148,6 +157,8 @@ private:
   void MergeProperties(const PropertyTreeType &);
 
   GraphType m_Graph;
+
+  LoggerImpl * m_LoggerImpl;
 };
 } // namespace selx
 

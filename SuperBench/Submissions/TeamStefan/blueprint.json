@@ -1,18 +1,12 @@
 {
+    "SuperBenchCategory": "Lung",
     "Component": {
         "Name": "RegistrationMethod",
-        "NameOfClass": "MonolithicElastixComponent",
-        "Dimensionality": "2",
-        "Transform": "BSplineTransform",
-        "Metric": "AdvancedMeanSquares",
-        "PixelType": "float",
-        "ResultImagePixelType": "float"
-    },
+        "NameOfClass": "MonolithicElastixComponent"
+		},
     "Component": {
         "Name": "FixedImage",
-        "NameOfClass": "ItkImageSourceComponent",
-        "Dimensionality": "2",
-        "PixelType": "float"
+        "NameOfClass": "ItkImageSourceComponent"
     },
     "Component": {
         "Name": "MovingImage",

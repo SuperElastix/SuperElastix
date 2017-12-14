@@ -22,6 +22,7 @@
 
 #include "itkDataObject.h"
 #include "itkObjectFactory.h"
+#include "selxLogger.h"
 
 #include <string>
 #include <vector>
@@ -101,9 +102,11 @@ public:
 
   void MergeFromFile(const std::string& filename);
 
+  void SetLogger( Logger::Pointer logger );
 private:
 
   BlueprintImplPointer m_Blueprint;
+  Logger::Pointer m_Logger;
 };
 }
 

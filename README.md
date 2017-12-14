@@ -15,8 +15,9 @@ while considering both user-friendliness and algorithm
 modularity.
 
 ## Documentation ##
+- [Read-the-Docs](http://superelastix.readthedocs.io/en/latest/index.html)
+- [Contributing](CONTRIBUTING.md)
 - ["The design of SuperElastix - a unifying framework for a wide range of image registration methodologies"](http://www.cv-foundation.org/openaccess/content_cvpr_2016_workshops/w15/papers/Berendsen_The_Design_of_CVPR_2016_paper.pdf), F. F. Berendsen, K. Marstal, S. Klein and M. Staring, [WBIR2016](http://wbir2016.doc.ic.ac.uk/), [[paper latex source](https://github.com/SuperElastix/Publications/tree/master/paperWBIR16)] [[poster](https://github.com/SuperElastix/Publications/blob/master/posterWBIR16/Poster_SuperElastix_WBIR.svg)]
-- [Build and Usage instructions](http://superelastix.readthedocs.io/en/latest/index.html)
 
 ## Authors ##
 - [Floris Berendsen](https://www.lumc.nl/org/radiologie/medewerkers/BerendsenF)

@@ -28,7 +28,10 @@ namespace selx
 {
 using ModuleSinksAndSourcesComponents = selx::TypeList<
   DisplacementFieldItkImageFilterSinkComponent< 2, float >,
+  DisplacementFieldItkImageFilterSinkComponent< 3, float >,
   ItkImageSinkComponent< 2, float >,
-  ItkImageSourceComponent< 2, float >
+  ItkImageSinkComponent< 3, short >,
+  ItkImageSourceComponent< 2, float >,
+  ItkImageSourceComponent< 2, short >
   >;
 }
