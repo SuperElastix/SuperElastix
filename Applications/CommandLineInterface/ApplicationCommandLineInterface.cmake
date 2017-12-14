@@ -26,7 +26,6 @@ set( ${APPLICATION}_SOURCE_FILES
   ${${APPLICATION}_SOURCE_DIR}/src/selxSuperElastix.cxx
 )
 
-// TODO SuperElastix Library should have an install, there should not be changing/configurable dependencies to subpart. 
 set( ${APPLICATION}_MODULE_DEPENDENCIES
   ModuleFilter
 )

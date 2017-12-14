@@ -17,21 +17,24 @@
 *
 *=========================================================================*/
 
-#include "selxSuperElastixFilter.h"
-#include "selxNetworkBuilder.h"
-#include "selxNetworkBuilderFactory.h"
-#include "selxCompiledLibraryComponents.h"
+#include "selxTypeList.h"
+
+//Component group Niftyreg
+#include "selxItkToNiftiImageSourceComponent.h"
+#include "selxNiftiToItkImageSinkComponent.h"
+#include "selxNiftyregf3dComponent.h"
+#include "selxNiftyregSplineToDisplacementFieldComponent.h"
+#include "selxDisplacementFieldNiftiToItkImageSinkComponent.h"
+#include "selxNiftyregAladinComponent.h"
+
 
 namespace selx
 {
-/**
- * ********************* Constructor *********************
- */
-
-SuperElastixFilter
-::SuperElastixFilter( void ) : SuperElastixFilterBase()
-{
-  // The default constructor registers the default components.
-  m_NetworkBuilderFactory = std::unique_ptr< NetworkBuilderFactory< CompiledLibraryComponents >>(new NetworkBuilderFactory< CompiledLibraryComponents >);
-} // end Constructor
-} // namespace elx
+using ModuleNiftyregComponents = selx::TypeList<
+  ItkToNiftiImageSourceComponent< 2, float >,
+  NiftiToItkImageSinkComponent< 2, float >,
+  NiftyregSplineToDisplacementFieldComponent< float>,
+  DisplacementFieldNiftiToItkImageSinkComponent< 2, float>,
+  NiftyregAladinComponent< float >
+  >;
+}

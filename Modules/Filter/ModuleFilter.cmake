@@ -17,15 +17,14 @@
 #
 #=========================================================================
 
-# TODO: This variable is overwritten by the LoggerImpl
-set( MODULE ModuleFilter )
-
 set( ${MODULE}_INCLUDE_DIRS
   ${${MODULE}_SOURCE_DIR}/include
+  ${${MODULE}_BINARY_DIR}/include/
 )
 
 # Module source files
 set( ${MODULE}_SOURCE_FILES
+  #${${MODULE}_BINARY_DIR}/include/selxCompiledLibraryComponents.h ## TODO
   ${${MODULE}_SOURCE_DIR}/src/selxSuperElastixFilterBase.cxx
   ${${MODULE}_SOURCE_DIR}/src/selxSuperElastixFilter.cxx
 )
@@ -41,13 +40,8 @@ set( ${MODULE}_LIBRARIES
 )
 
 set( ${MODULE}_MODULE_DEPENDENCIES
+  ModuleCore
   ModuleBlueprints
   ModuleController
-  ModuleElastix
-  ModuleExamples
-  ModuleItkImageRegistrationMethodv4
-  ModuleItkSmoothingRecursiveGaussianImageFilter
-  ModuleSinksAndSources
-  ModuleNiftyreg
   ModuleLogger
 )

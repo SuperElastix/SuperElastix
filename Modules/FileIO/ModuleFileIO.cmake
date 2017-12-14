@@ -31,4 +31,5 @@ set( ${MODULE}_TEST_SOURCE_FILES
 )
 
 set( ${MODULE}_MODULE_DEPENDENCIES 
+  ModuleLogger
 )
