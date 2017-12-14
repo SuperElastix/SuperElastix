@@ -131,7 +131,7 @@ mark_as_advanced( BUILD_SHARED_LIBS )
 option( BUILD_SHARED_LIBS "Build shared libraries." OFF )
 
 # ---------------------------------------------------------------------
-# Build SuperElastix
+# SuperElastix Build
 
 # Initialize the build system and build the core. These calls are mandatory. 
 # Do not change and do not call anywhere else.
@@ -151,6 +151,16 @@ if( ${BUILD_APPLICATIONS} )
 endif()
 
 # TODO: Functionality to disable default modules/applications
+
+# ---------------------------------------------------------------------
+# SuperBench
+
+option( BUILD_SUPERBENCH "Build SuperBench continuous challenge framework." OFF )
+mark_as_advanced( BUILD_SUPERBENCH )
+
+if( BUILD_SUPERBENCH )
+  add_subdirectory( SuperBench )
+endif()
 
 # ---------------------------------------------------------------------
 # Testing
