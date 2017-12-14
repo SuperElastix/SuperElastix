@@ -30,7 +30,6 @@ using ModuleElastixComponents = selx::TypeList<
   ElastixComponent< 2, float >,
   MonolithicElastixComponent< 2, float >,
   MonolithicElastixComponent< 3, short >,
-  MonolithicTransformixComponent< 2, float >,
-  MonolithicTransformixComponent< 3, short >
+  MonolithicTransformixComponent< 2, float >
   >;
 }
