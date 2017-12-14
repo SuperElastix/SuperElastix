@@ -17,3 +17,5 @@ which were triggered by having a #define strtof before doing #include <string>, 
 
 It appears that the #define strtof(_s, _t) in reg-lib/cpu/_reg_maths.h was never actually used, so it could safely be removed.
 
+Same holds for _isnan causing at Visual Studio 2013:
+<Superbuild>\itk-prefix\include\itk-4.12\itkBSplineScatteredDataPointSetToImageFilter.hxx(876): error C2039: '_isnan' : is not a member of 'itk::Math'
