@@ -159,12 +159,6 @@ macro( _selxmodule_enable_dependencies UPSTREAM MODULES )
   endforeach()
 endmacro()
 
-macro( _selxmodule_target_file TARGETS )
-  foreach( TARGET ${${TARGETS}} )
-    set( ${TARGET}_FILE $<TARGET_FILE:TARGET> )
-  endforeach()
-endmacro()
-
 # ---------------------------------------------------------------------
 # Public macros
 
@@ -174,11 +168,13 @@ endmacro()
 
 # Enable user-selected modules
 macro( enable_modules )
+  # Check each USE_Module* flag and enable with all its dependencies
   foreach( MODULE ${SUPERELASTIX_MODULES} )
     if( USE_${MODULE} )
       enable_module( ${MODULE} )
     endif()
   endforeach()
+  # Reflect, those components that have been enables as dependencies, in the USE_Module* flags 
   foreach( MODULE ${SUPERELASTIX_MODULES} )
     if( ${${MODULE}_IS_ENABLED})
       set( USE_${MODULE} TRUE CACHE BOOL "" FORCE)

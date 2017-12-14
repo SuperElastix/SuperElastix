@@ -138,7 +138,6 @@ option( BUILD_SHARED_LIBS "Build shared libraries." OFF )
 message( STATUS "Enabling modules ..." )
 include( selxModules )
 _selxmodules_initialize()
-#_selxmodule_enable( ModuleFilter "SuperElastix" )
 enable_modules()
 message( STATUS "Enabling modules ... Done" )
 

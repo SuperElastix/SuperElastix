@@ -17,9 +17,6 @@
 #
 #=========================================================================
 
-# TODO: This variable is overwritten by the LoggerImpl
-# set( MODULE ModuleFilter )
-
 set( ${MODULE}_INCLUDE_DIRS
   ${${MODULE}_SOURCE_DIR}/include
   ${${MODULE}_BINARY_DIR}/include/
