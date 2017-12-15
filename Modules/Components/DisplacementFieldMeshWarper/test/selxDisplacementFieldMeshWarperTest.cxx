@@ -140,15 +140,15 @@ TEST_F( DisplacementFieldMeshWarperComponentTest, SinkAndSource )
 
   ParameterMapType connection0;
   connection0[ "NameOfInterface" ] = { "itkMeshInterface" };
-  blueprint->SetConnection( "MeshSource", "ItkDisplacementFieldMeshWarperComponent", connection0 );
+  blueprint->SetConnection( "MeshSource", "DisplacementFieldMeshWarper", connection0 );
 
   ParameterMapType connection1;
   connection0[ "NameOfInterface" ] = { "itkDisplacementFieldInterface" };
-  blueprint->SetConnection( "DisplacementFieldSource", "ItkDisplacementFieldMeshWarperComponent", connection1 );
+  blueprint->SetConnection( "DisplacementFieldSource", "DisplacementFieldMeshWarper", connection1 );
 
   ParameterMapType connection2;
   connection0[ "NameOfInterface" ] = { "itkMeshInterface" };
-  blueprint->SetConnection( "ItkDisplacementFieldMeshWarperComponent", "MeshSink", connection2 );
+  blueprint->SetConnection( "DisplacementFieldMeshWarper", "MeshSink", connection2 );
 
   SuperElastixFilterPointer superElastixFilter = SuperElastixFilterType::New();
   superElastixFilter->SetBlueprint(blueprint);
