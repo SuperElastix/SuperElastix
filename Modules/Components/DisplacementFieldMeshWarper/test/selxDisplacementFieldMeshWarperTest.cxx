@@ -35,18 +35,18 @@ class DisplacementFieldMeshWarperComponentTest : public ::testing::Test {
 public:
 
   typedef ItkDisplacementFieldMeshWarperComponent< 2, float, float >::ItkDisplacementFieldType DisplacementFieldType;
-  typedef typename DisplacementFieldType::Pointer DisplacementFieldPointer;
+  typedef DisplacementFieldType::Pointer DisplacementFieldPointer;
   typedef itk::ImageFileReader< DisplacementFieldType > DisplacementFieldReaderType;
-  typedef typename DisplacementFieldReaderType::Pointer DisplacementFieldReaderPointer;
+  typedef DisplacementFieldReaderType::Pointer DisplacementFieldReaderPointer;
   typedef itk::ImageFileWriter< DisplacementFieldType > DisplacementFieldWriterType;
-  typedef typename DisplacementFieldWriterType::Pointer DisplacementFieldWriterPointer;
+  typedef DisplacementFieldWriterType::Pointer DisplacementFieldWriterPointer;
 
   typedef itk::Mesh< float, 2 > MeshType;
-  typedef typename MeshType::Pointer MeshPointer;
+  typedef MeshType::Pointer MeshPointer;
   typedef itk::MeshFileReader< MeshType > MeshReaderType;
-  typedef typename MeshReaderType::Pointer MeshReaderPointer;
+  typedef MeshReaderType::Pointer MeshReaderPointer;
   typedef itk::MeshFileWriter< MeshType > MeshWriterType;
-  typedef typename MeshWriterType::Pointer MeshWriterPointer;
+  typedef MeshWriterType::Pointer MeshWriterPointer;
 
   typedef Blueprint::Pointer BlueprintPointer;
 
@@ -58,7 +58,7 @@ public:
     ItkDisplacementFieldMeshWarperComponent< 2, float, float > > TestComponents;
 
   typedef SuperElastixFilterCustomComponents< TestComponents > SuperElastixFilterType;
-  typedef typename SuperElastixFilterType::Pointer SuperElastixFilterPointer;
+  typedef SuperElastixFilterType::Pointer SuperElastixFilterPointer;
 
   DataManager::Pointer dataManager = DataManager::New();
 };
