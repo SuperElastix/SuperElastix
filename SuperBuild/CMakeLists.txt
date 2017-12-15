@@ -175,7 +175,18 @@ if ( USE_SYSTEM_GOOGLETEST )
   find_package( GTest REQUIRED ) 
 else() 
   include( ExternalGoogleTest ) 
-endif() 
+endif()
+
+# ---------------------------------------------------------------------
+# Build ATen
+mark_as_advanced( USE_SYSTEM_ATEN )
+option( USE_SYSTEM_ATEN "Use a pre-compiled version of ATen." OFF )
+
+if ( USE_SYSTEM_ATEN )
+  find_package( ATen REQUIRED )
+else()
+  include( ExternalATen )
+endif()
 
 # ---------------------------------------------------------------------
 # Installation
