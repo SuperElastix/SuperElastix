@@ -104,18 +104,37 @@ bool
 IdentityTransformRegistrationComponent< Dimensionality, TPixel >
 ::MeetsCriterion( const CriterionType & criterion )
 {
-  bool hasUndefinedCriteria( false );
-  bool meetsCriteria( false );
+  // Each criterion is a property key-value pair set at the component by the user and is handled here one at the time.
+  // First, check if the key is a template parameter and if the value corresponds to this component's instantiation.
   auto status = CheckTemplateProperties( this->TemplateProperties(), criterion );
   if( status == CriterionStatus::Satisfied )
   {
-    return true;
+    return true; // The key is recognized and the value is correct
   }
   else if( status == CriterionStatus::Failed )
   {
-    return false;
+    return false; // The key is recognized, but the value is incorrect
   } // else: CriterionStatus::Unknown
-
-  return meetsCriteria;
+  // The key is not known as a template parameter. Check if it is a setting parameter.  
+  else if (criterion.first == "BlurringSigmas") // Try to adhere to parameter names used in other components, since the parameter name itself could be used as selection criterion.
+  {
+    if (criterion.second.size() == 1)
+    {
+      // repeat all
+      this->m_Logger.Log(LogLevel::DBG, "BlurringSigmas: scalar is repeated over all dimensions");
+      this->m_demoParameter.fill(std::stof(criterion.second[0]));
+      return true;
+    }
+    else if (criterion.second.size() == Dimensionality)
+    {
+      std::transform(criterion.second.begin(), criterion.second.end(), this->m_demoParameter.begin(), [](std::string s) -> float { return std::stof(s); });
+      return true;
+    }
+    this->m_Logger.Log(LogLevel::DBG, "BlurringSigmas: number of elements should match Dimensionality or be 1");
+  } // The key is not recognized as a setting parameter.  
+  
+  // More check may follow.
+  
+  return false;
 }
 } //end namespace selx

@@ -25,6 +25,8 @@
 #include "selxItkObjectInterfaces.h"
 
 #include "itkImageSource.h"
+#include <array>
+#include <algorithm>
 
 namespace selx
 {
@@ -89,6 +91,7 @@ private:
   typename itkImageFixedInterface< Dimensionality, TPixel >::Pointer m_ImageFixedInterface;
   typename itkImageMovingInterface< Dimensionality, TPixel >::Pointer m_ImageMovingInterface;
 
+  std::array<float, 3> m_demoParameter;
 
 protected:
 
