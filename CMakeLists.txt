@@ -131,15 +131,17 @@ mark_as_advanced( BUILD_SHARED_LIBS )
 option( BUILD_SHARED_LIBS "Build shared libraries." OFF )
 
 # ---------------------------------------------------------------------
-# Build SuperElastix
+# SuperElastix Build
 
 # Initialize the build system and build the core. These calls are mandatory. 
 # Do not change and do not call anywhere else.
 message( STATUS "Enabling modules ..." )
 include( selxModules )
 _selxmodules_initialize()
-_selxmodule_enable( ModuleFilter "SuperElastix" )
+enable_modules()
 message( STATUS "Enabling modules ... Done" )
+
+include( ${ModuleFilter_SOURCE_DIR}/CompiledLibraryComponents.cmake )
 
 # Build applications
 if( ${BUILD_APPLICATIONS} )
@@ -151,6 +153,16 @@ if( ${BUILD_APPLICATIONS} )
 endif()
 
 # TODO: Functionality to disable default modules/applications
+
+# ---------------------------------------------------------------------
+# SuperBench
+
+option( BUILD_SUPERBENCH "Build SuperBench continuous challenge framework." OFF )
+mark_as_advanced( BUILD_SUPERBENCH )
+
+if( BUILD_SUPERBENCH )
+  add_subdirectory( SuperBench )
+endif()
 
 # ---------------------------------------------------------------------
 # Testing
@@ -209,6 +221,7 @@ set( SUPERELASTIX_INSTALL_INCLUDE_DIRS ${SUPERELASTIX_INCLUDE_DIRS} )
 set( SUPERELASTIX_INSTALL_LIBRARY_DIRS ${SUPERELASTIX_LIBRARY_DIRS} )
 set( SUPERELASTIX_INSTALL_LIBRARIES ${SUPERELASTIX_LIBRARIES} )
 set( SUPERELASTIX_INSTALL_USE_FILE "${PROJECT_BINARY_DIR}/UseSuperElastix.cmake" )
+set( SUPERELASTIX_TARGETS_FILE "${CMAKE_BINARY_DIR}/SuperElastixTargets.cmake" )
 configure_file( SuperElastixConfig.cmake.in "${PROJECT_BINARY_DIR}/SuperElastixConfig.cmake" @ONLY)
 configure_file( SuperElastixConfigVersion.cmake.in "${PROJECT_BINARY_DIR}/SuperElastixConfigVersion.cmake" @ONLY)
 configure_file( UseSuperElastix.cmake.in "${SUPERELASTIX_INSTALL_USE_FILE}" @ONLY )

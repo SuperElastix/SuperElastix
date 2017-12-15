@@ -42,4 +42,5 @@ set( ${MODULE}_LIBRARIES
 set( ${MODULE}_MODULE_DEPENDENCIES
   ModuleCommon
   ModuleFileIO
+  ModuleLogger
 )

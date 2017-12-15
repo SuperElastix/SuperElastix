@@ -21,14 +21,14 @@ set( ${MODULE}_INCLUDE_DIRS
   ${${MODULE}_SOURCE_DIR}/include
 )
 
+# This module is header-only and does not contain any source files
 set( ${MODULE}_SOURCE_FILES
-  ${${MODULE}_SOURCE_DIR}/src/selxItkSyNImageRegistrationMethodComponent.cxx 
 )
 
+# This module is header-only and does not export any libraries
 set( ${MODULE}_LIBRARIES 
-  ${MODULE}
 )
 
 set( ${MODULE}_TEST_SOURCE_FILES 
-  ${${MODULE}_SOURCE_DIR}/test/selxSyNRegistrationItkv4Test.cxx
+   ${${MODULE}_SOURCE_DIR}/test/selxSyNRegistrationItkv4Test.cxx
 )
