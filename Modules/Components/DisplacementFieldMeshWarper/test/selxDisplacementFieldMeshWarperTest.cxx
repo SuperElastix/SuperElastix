@@ -164,6 +164,20 @@ TEST_F( DisplacementFieldMeshWarperComponentTest, SinkAndSource )
   meshWriter->SetFileName( this->dataManager->GetOutputFile( "DisplacementFieldMeshWarperComponentTest.SinkAndSource.WarpedMesh.vtk" ) );
   meshWriter->SetInput( superElastixFilter->GetOutput< MeshType >( "MeshSink" ) );
   meshWriter->Update();
+
+  MeshPointer inputMesh = itkDynamicCastInDebugMode< MeshType * >( meshReader->GetOutput() );
+  MeshPointer outputMesh = superElastixFilter->GetOutput< MeshType >( "MeshSink" );
+
+  DisplacementFieldType::Superclass::IndexType index;
+  displacementField->TransformPhysicalPointToIndex(inputMesh->GetPoint(0), index);
+  EXPECT_EQ(inputMesh->GetPoint(0)+displacementField->GetPixel(index), outputMesh->GetPoint(0));
+  displacementField->TransformPhysicalPointToIndex(inputMesh->GetPoint(1), index);
+  EXPECT_EQ(inputMesh->GetPoint(1)+displacementField->GetPixel(index), outputMesh->GetPoint(1));
+  displacementField->TransformPhysicalPointToIndex(inputMesh->GetPoint(2), index);
+  EXPECT_EQ(inputMesh->GetPoint(2)+displacementField->GetPixel(index), outputMesh->GetPoint(2));
+  displacementField->TransformPhysicalPointToIndex(inputMesh->GetPoint(3), index);
+  EXPECT_EQ(inputMesh->GetPoint(3)+displacementField->GetPixel(index), outputMesh->GetPoint(3));
+  displacementField->TransformPhysicalPointToIndex(inputMesh->GetPoint(0), index);
 }
 
 } // namespace selx
