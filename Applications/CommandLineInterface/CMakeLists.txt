@@ -87,6 +87,7 @@ set( ConfigFiles
   "itkv4_SVF_MSD.json"
   "elastix_Bspline_NC.json"
   "elastix_Bspline_MSD.json"
+  "IdentityTransformRegistration.json"
 )
 
 foreach( ConfigFile ${ConfigFiles} )
@@ -103,6 +104,8 @@ set( ScriptFiles
   "1B_SuperElastix_elastix_MSD"
   "2A_SuperElastix_itkv4_NC"
   "2B_SuperElastix_itkv4_MSD"
+  "IdentityTransformRegistration"
+  "graphviz_to_png"
 )
 
 if(WIN32)
