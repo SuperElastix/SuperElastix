@@ -18,9 +18,12 @@
 *=========================================================================*/
 
 #include "selxTypeList.h"
+#include "selxIdentityTransformRegistrationComponent.h"
 
 namespace selx
 {
 using ModuleExamplesComponents = selx::TypeList<
+	IdentityTransformRegistrationComponent< 2, float>,
+	IdentityTransformRegistrationComponent< 3, float>
   >;
 }
