@@ -117,7 +117,7 @@ ExternalProject_Add( ${proj}
   -DUSE_VarianceOverLastDimensionMetric:BOOL=ON                                           
   -DUSE_ViolaWellsMutualInformationMetric:BOOL=ON                                           
   -DUSE_WeightedCombinationTransformElastix:BOOL=ON
-  DEPENDS ITK
+  DEPENDS ${SUPERELASTIX_DEPENDENCIES}
   BUILD_COMMAND ${SELX_SUPERBUILD_COMMAND}
 )
 
