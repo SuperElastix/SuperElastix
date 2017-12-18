@@ -59,5 +59,5 @@ ExternalProject_Add(${proj}
 )
 
 set( GTEST_ROOT ${GTEST_install_dir} )
-list( APPEND ELASTIX_DEPENDENCIES ${proj} )
+list( APPEND SUPERELASTIX_DEPENDENCIES ${proj} )
 
