@@ -61,7 +61,7 @@ ItkDisplacementFieldMeshWarperComponent< Dimensionality, TPixel, CoordRepType >
 ::GetItkMesh()
 {
   this->m_TransformMeshFilter->Update();
-  return itkDynamicCastInDebugMode< ItkMeshType * >(this->m_TransformMeshFilter->GetOutput());
+  return this->m_TransformMeshFilter->GetOutput();
 }
 
 template< int Dimensionality, class TPixel, class CoordRepType >
