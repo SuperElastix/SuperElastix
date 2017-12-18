@@ -48,6 +48,8 @@ set( SUPERELASTIXSUPERBUILD_MINOR_VERSION 1)
 set( SUPERELASTIXSUPERBUILD_PATCH_VERSION 0)
 set( SUPERELASTIXSUPERBUILD_VERSION ${SUPERELASTIXSUPERBUILD_MAJOR_VERSION}.${SUPERELASTIXSUPERBUILD_MINOR_VERSION}.${SUPERELASTIXSUPERBUILD_PATCH_VERSION})
 
+include (CTest)
+
 find_package( Git REQUIRED )
 
 include( ExternalProject )
@@ -176,8 +178,6 @@ if ( USE_SYSTEM_GOOGLETEST )
 else() 
   include( ExternalGoogleTest ) 
 endif() 
-
-include (CTest)
 
 # ---------------------------------------------------------------------
 # Installation
