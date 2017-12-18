@@ -177,6 +177,8 @@ else()
   include( ExternalGoogleTest ) 
 endif() 
 
+include (CTest)
+
 # ---------------------------------------------------------------------
 # Installation
 
