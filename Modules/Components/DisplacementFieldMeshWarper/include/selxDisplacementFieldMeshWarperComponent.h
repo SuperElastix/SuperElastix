@@ -28,17 +28,17 @@
 
 namespace selx {
 
-template< int Dimensionality, class TPixel, class TCoordRepType >
+template< int Dimensionality, class TPixel, class CoordRepType >
 class ItkDisplacementFieldMeshWarperComponent : public
   SuperElastixComponent<
-  Accepting< itkMeshInterface< Dimensionality, TCoordRepType >, itkDisplacementFieldInterface< Dimensionality, TPixel > >,
-  Providing< itkMeshInterface< Dimensionality, TCoordRepType > > >
+  Accepting< itkMeshInterface< Dimensionality, CoordRepType >, itkDisplacementFieldInterface< Dimensionality, TPixel > >,
+  Providing< itkMeshInterface< Dimensionality, CoordRepType > > >
 {
 public:
-  typedef ItkDisplacementFieldMeshWarperComponent< Dimensionality, TPixel, TCoordRepType > Self;
+  typedef ItkDisplacementFieldMeshWarperComponent< Dimensionality, TPixel, CoordRepType > Self;
   typedef SuperElastixComponent<
-    Accepting< itkMeshInterface< Dimensionality, TCoordRepType >, itkDisplacementFieldInterface< Dimensionality, TPixel > >,
-    Providing< itkMeshInterface< Dimensionality, TCoordRepType > > > Superclass;
+    Accepting< itkMeshInterface< Dimensionality, CoordRepType >, itkDisplacementFieldInterface< Dimensionality, TPixel > >,
+    Providing< itkMeshInterface< Dimensionality, CoordRepType > > > Superclass;
   typedef std::shared_ptr< Self > Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
 
@@ -56,7 +56,7 @@ public:
   using ItkMeshType = typename itkMeshInterface< Dimensionality, TPixel >::ItkMeshType;
   using ItkMeshPointer = typename ItkMeshType::Pointer;
 
-  typedef itk::DisplacementFieldTransform< TCoordRepType, Dimensionality > ItkDisplacementFieldTransformType;
+  typedef itk::DisplacementFieldTransform< CoordRepType, Dimensionality > ItkDisplacementFieldTransformType;
   typedef typename ItkDisplacementFieldTransformType::Pointer ItkDisplacementFieldTransformPointer;
 
   typedef itk::TransformMeshFilter< ItkMeshType, ItkMeshType, ItkDisplacementFieldTransformType > ItkTransformMeshFilterType;
@@ -81,7 +81,7 @@ protected:
     return {
       { keys::NameOfClass, "ItkDisplacementFieldMeshWarperComponent" },
       { keys::PixelType, PodString< TPixel >::Get() },
-      { keys::TCoordRepType, PodString< TCoordRepType >::Get() },
+      { keys::CoordRepType, PodString< CoordRepType >::Get() },
       { keys::Dimensionality, std::to_string( Dimensionality ) }
     };
   }

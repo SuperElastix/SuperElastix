@@ -26,17 +26,17 @@
 
 namespace selx {
 
-template< int Dimensionality, class TPixel, class TCoordRepType >
-ItkDisplacementFieldMeshWarperComponent< Dimensionality, TPixel, TCoordRepType >
+template< int Dimensionality, class TPixel, class CoordRepType >
+ItkDisplacementFieldMeshWarperComponent< Dimensionality, TPixel, CoordRepType >
 ::ItkDisplacementFieldMeshWarperComponent( const std::string & name, LoggerImpl & logger ) : Superclass( name, logger ) {
   this->m_DisplacementFieldTransform = ItkDisplacementFieldTransformType::New();
   this->m_TransformMeshFilter = ItkTransformMeshFilterType::New();
   this->m_TransformMeshFilter->SetTransform( this->m_DisplacementFieldTransform );
 };
 
-template< int Dimensionality, class TPixel, class TCoordRepType >
+template< int Dimensionality, class TPixel, class CoordRepType >
 int
-ItkDisplacementFieldMeshWarperComponent< Dimensionality, TPixel, TCoordRepType >
+ItkDisplacementFieldMeshWarperComponent< Dimensionality, TPixel, CoordRepType >
 ::Accept( ItkDisplacementFieldInterfacePointer itkDisplacementFieldInterface )
 {
   auto displacementField = itkDisplacementFieldInterface->GetItkDisplacementField();
@@ -45,9 +45,9 @@ ItkDisplacementFieldMeshWarperComponent< Dimensionality, TPixel, TCoordRepType >
   return 0;
 }
 
-template< int Dimensionality, class TPixel, class TCoordRepType >
+template< int Dimensionality, class TPixel, class CoordRepType >
 int
-ItkDisplacementFieldMeshWarperComponent< Dimensionality, TPixel, TCoordRepType >
+ItkDisplacementFieldMeshWarperComponent< Dimensionality, TPixel, CoordRepType >
 ::Accept( ItkMeshInterfacePointer itkMeshInterface )
 {
   this->m_TransformMeshFilter->SetInput( itkMeshInterface->GetItkMesh() );
@@ -55,18 +55,18 @@ ItkDisplacementFieldMeshWarperComponent< Dimensionality, TPixel, TCoordRepType >
   return 0;
 }
 
-template< int Dimensionality, class TPixel, class TCoordRepType >
-typename ItkDisplacementFieldMeshWarperComponent< Dimensionality, TPixel, TCoordRepType >::ItkMeshType::Pointer
-ItkDisplacementFieldMeshWarperComponent< Dimensionality, TPixel, TCoordRepType >
+template< int Dimensionality, class TPixel, class CoordRepType >
+typename ItkDisplacementFieldMeshWarperComponent< Dimensionality, TPixel, CoordRepType >::ItkMeshType::Pointer
+ItkDisplacementFieldMeshWarperComponent< Dimensionality, TPixel, CoordRepType >
 ::GetItkMesh()
 {
   this->m_TransformMeshFilter->Update();
   return itkDynamicCastInDebugMode< ItkMeshType * >(this->m_TransformMeshFilter->GetOutput());
 }
 
-template< int Dimensionality, class TPixel, class TCoordRepType >
+template< int Dimensionality, class TPixel, class CoordRepType >
 bool
-ItkDisplacementFieldMeshWarperComponent< Dimensionality, TPixel, TCoordRepType >
+ItkDisplacementFieldMeshWarperComponent< Dimensionality, TPixel, CoordRepType >
 ::MeetsCriterion( const ComponentBase::CriterionType & criterion )
 {
   bool hasUndefinedCriteria( false );

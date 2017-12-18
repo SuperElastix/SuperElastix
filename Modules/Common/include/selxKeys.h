@@ -36,7 +36,7 @@ const char * const NameOfClass                  = "NameOfClass";                
 const char * const Dimensionality               = "Dimensionality";                           // Template int parameter
 const char * const PixelType                    = "PixelType";                                // Template POD parameter
 const char * const InternalComputationValueType = "InternalComputationValueType";             // Template POD parameter for transforms or optimizers etc.
-const char * const TCoordRepType                = "TCoordRepType";
+const char * const CoordRepType                = "CoordRepType";
 
 const char * const SourceInterface                      = "SourceInterface";                      // Special interface that connects to the outside of the SuperElastixFilter
 const char * const SinkInterface                        = "SinkInterface";                        // Special interface that connects to the outside of the SuperElastixFilter
