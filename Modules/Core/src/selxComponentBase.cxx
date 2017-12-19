@@ -34,7 +34,3 @@ ComponentBase::ComponentBase(const std::string & name, LoggerImpl & logger) : m_
 //const std::map< std::string, std::string > ComponentBase::TemplateProperties()
 // { return{}; }
 } // end namespace selx
-
-unsigned short Test_to_see_whether_warning_messages_are_displayed_at_CDash = 1.79769e+308;
-void* Test_to_see_whether_error_messages_are_displayed_at_CDash = 42;
-#error "Test to see whether error messages are displayed at http://my.cdash.org/index.php?project=SuperElastix"
