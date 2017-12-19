@@ -60,7 +60,6 @@ typename ItkDisplacementFieldMeshWarperComponent< Dimensionality, TPixel, CoordR
 ItkDisplacementFieldMeshWarperComponent< Dimensionality, TPixel, CoordRepType >
 ::GetItkMesh()
 {
-  this->m_TransformMeshFilter->Update();
   return this->m_TransformMeshFilter->GetOutput();
 }
 
