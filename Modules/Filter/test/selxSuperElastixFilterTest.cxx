@@ -65,7 +65,7 @@ public:
     ItkMeshSinkComponent< 2, float >,
     ItkMeshSourceComponent< 2, float >> CustomComponents;
 
-  using RegisterComponents = list_append< CustomComponents, DefaultComponents >::type;
+  using RegisterComponents = list_append< CustomComponents, DefaultComponents >;
 
   typedef Blueprint::Pointer BlueprintPointer;
   typedef Logger::Pointer LoggerPointer;

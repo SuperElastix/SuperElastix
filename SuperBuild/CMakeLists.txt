@@ -137,8 +137,7 @@ if( USE_SYSTEM_ELASTIX )
   find_package( Elastix )
   include( ${ELASTIX_USE_FILE} )
 else()
-  include( ExternalElastix)
-  list( APPEND ${CMAKE_PROJECT_NAME}_DEPENDENCIES Elastix )
+  include( ExternalElastix )
 endif()
 
 # ---------------------------------------------------------------------

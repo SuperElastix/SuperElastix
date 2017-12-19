@@ -48,6 +48,24 @@ struct PodString< int >
 };
 
 template< >
+struct PodString< short >
+{
+  static const char * Get()
+  {
+    return "short";
+  }
+};
+
+template< >
+struct PodString< unsigned short >
+{
+  static const char * Get()
+  {
+    return "unsigned short";
+  }
+};
+
+template< >
 struct PodString< float >
 {
   static const char * Get()

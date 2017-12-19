@@ -1,9 +1,12 @@
 --- a/reg-lib/cpu/_reg_maths.h
 +++ b/reg-lib/cpu/_reg_maths.h
-@@ -91,9 +91,6 @@ typedef enum
- #ifndef isnan
- #define isnan(_X) _isnan(_X)
+@@ -88,12 +88,6 @@ typedef enum
+ #ifndef M_PI
+ #define M_PI 3.14159265358979323846
  #endif
+-#ifndef isnan
+-#define isnan(_X) _isnan(_X)
+-#endif
 -#ifndef strtof
 -#define strtof(_s, _t) (float) strtod(_s, _t)
 -#endif

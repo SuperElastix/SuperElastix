@@ -17,21 +17,19 @@
 *
 *=========================================================================*/
 
-#include "selxSuperElastixFilter.h"
-#include "selxNetworkBuilder.h"
-#include "selxNetworkBuilderFactory.h"
-#include "selxCompiledLibraryComponents.h"
+#include "selxTypeList.h"
+
+//Component group Elastix
+#include "selxElastixComponent.h"
+#include "selxMonolithicElastixComponent.h"
+#include "selxMonolithicTransformixComponent.h"
 
 namespace selx
 {
-/**
- * ********************* Constructor *********************
- */
-
-SuperElastixFilter
-::SuperElastixFilter( void ) : SuperElastixFilterBase()
-{
-  // The default constructor registers the default components.
-  m_NetworkBuilderFactory = std::unique_ptr< NetworkBuilderFactory< CompiledLibraryComponents >>(new NetworkBuilderFactory< CompiledLibraryComponents >);
-} // end Constructor
-} // namespace elx
+using ModuleElastixComponents = selx::TypeList<
+  ElastixComponent< 2, float >,
+  MonolithicElastixComponent< 2, float >,
+  MonolithicElastixComponent< 3, short >,
+  MonolithicTransformixComponent< 2, float >
+  >;
+}

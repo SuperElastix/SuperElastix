@@ -19,19 +19,6 @@
 
 #include "selxTypeList.h"
 
-
-//Component group ItkSmoothingRecursiveGaussianImageFilter
-#include "selxItkSmoothingRecursiveGaussianImageFilterComponent.h"
-//Component group SinksAndSources
-#include "selxDisplacementFieldItkImageFilterSinkComponent.h"
-#include "selxItkImageSourceComponent.h"
-#include "selxItkImageSinkComponent.h"
-
-//Component group Elastix
-#include "selxElastixComponent.h"
-#include "selxMonolithicElastixComponent.h"
-#include "selxMonolithicTransformixComponent.h"
-
 //Component group ItkImageRegistrationMethodv4
 #include "selxItkImageRegistrationMethodv4Component.h"
 #include "selxItkANTSNeighborhoodCorrelationImageToImageMetricv4Component.h"
@@ -45,34 +32,9 @@
 #include "selxItkTransformSourceComponent.h"
 #include "selxItkTransformSinkComponent.h"
 
-//Component group Controller
-#include "selxRegistrationControllerComponent.h"
-
-//Component group Niftyreg
-#include "selxItkToNiftiImageSourceComponent.h"
-#include "selxNiftiToItkImageSinkComponent.h"
-#include "selxNiftyregf3dComponent.h"
-#include "selxNiftyregSplineToDisplacementFieldComponent.h"
-#include "selxDisplacementFieldNiftiToItkImageSinkComponent.h"
-#include "selxNiftyregAladinComponent.h"
-
-//Component group Examples
-#include "selxIdentityTransformRegistrationComponent.h"
-
-
 namespace selx
 {
-using DefaultComponents = selx::TypeList<
-  DisplacementFieldItkImageFilterSinkComponent< 2, float >,
-  DisplacementFieldItkImageFilterSinkComponent< 3, float >,
-  ItkImageSinkComponent< 2, float >,
-  ItkImageSinkComponent< 3, short >,
-  ItkImageSourceComponent< 2, float >,
-  ItkImageSourceComponent< 3, short >,
-  ElastixComponent< 2, float >,
-  MonolithicElastixComponent< 2, float >,
-  MonolithicElastixComponent< 3, short >,
-  MonolithicTransformixComponent< 2, float >,
+using ModuleItkImageRegistrationMethodv4Components = selx::TypeList<
   ItkImageRegistrationMethodv4Component< 2, float, double >,
   ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< 2, float >,
   ItkMeanSquaresImageToImageMetricv4Component< 2, float, double >,
@@ -82,15 +44,7 @@ using DefaultComponents = selx::TypeList<
   ItkAffineTransformComponent< double, 2 >,
   ItkTransformDisplacementFilterComponent< 2, float, double >,
   ItkResampleFilterComponent< 2, float, double >,
-  RegistrationControllerComponent< >,
-  ItkSmoothingRecursiveGaussianImageFilterComponent< 2, float >,
   ItkTransformSourceComponent< 2, double >,
-  ItkTransformSinkComponent< 2, double >,
-  ItkToNiftiImageSourceComponent< 2, float >,
-  NiftiToItkImageSinkComponent< 2, float >,
-  NiftyregSplineToDisplacementFieldComponent< float>,
-  DisplacementFieldNiftiToItkImageSinkComponent< 2, float>,
-  NiftyregAladinComponent< float >,
-  IdentityTransformRegistrationComponent< 2, float>
+  ItkTransformSinkComponent< 2, double >
   >;
 }

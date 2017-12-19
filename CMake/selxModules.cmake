@@ -48,7 +48,12 @@ macro( _selxmodules_initialize )
   file( GLOB_RECURSE MODULE_CMAKE_FILES RELATIVE "${CMAKE_SOURCE_DIR}"
      "${CMAKE_SOURCE_DIR}/Modules/*/Module*.cmake"
   )
-
+  
+  # find the Modules that are ComponentGroups (is subset of MODULE_CMAKE_FILES)
+  file( GLOB MODULE_COMPONENT_GROUP_CMAKE_FILES
+     "${CMAKE_SOURCE_DIR}/Modules/Components/*/Module*.cmake"
+  )
+  
   message( STATUS "Found the following SuperElastix modules:")
   foreach( MODULE_CMAKE_FILE ${MODULE_CMAKE_FILES})
     get_filename_component( MODULE ${MODULE_CMAKE_FILE} NAME_WE )
@@ -56,7 +61,9 @@ macro( _selxmodules_initialize )
     
     message( STATUS "  ${MODULE}" )
 
-    option( USE_${MODULE} OFF )
+    # Any new found module defaults to ON and user-disabled USE_*Modules will be obeyed, since these are cached variable.
+    option( USE_${MODULE} "" ON )
+    # The actually enabling will be done by when enable_modules is called
     set( ${MODULE}_IS_ENABLED FALSE )
 
     set( ${MODULE}_CMAKE_FILE ${PROJECT_SOURCE_DIR}/${${MODULE}_PATH}/${MODULE}.cmake )
@@ -109,10 +116,6 @@ macro( _selxmodule_enable MODULE UPSTREAM )
       list( APPEND SUPERELASTIX_TEST_SOURCE_FILES ${MODULE}_TEST_SOURCE_FILES )
     endif()
 
-    if( ${MODULE}_LIBRARIES )
-      list( APPEND SUPERELASTIX_LIBRARIES ${${MODULE}_LIBRARIES} )
-    endif()
-
     # Header-only modules should not be compiled
     if( ${MODULE}_SOURCE_FILES )
       # Check if user accidentally tries to compile header-only library
@@ -124,11 +127,18 @@ macro( _selxmodule_enable MODULE UPSTREAM )
       endif()
 
       add_library( ${MODULE} ${${MODULE}_HEADER_FILES} ${${MODULE}_SOURCE_FILES} )
+      export( TARGETS ${MODULE} APPEND FILE "${CMAKE_BINARY_DIR}/SuperElastixTargets.cmake" )
+      target_link_libraries( ${MODULE} ${SUPERELASTIX_LIBRARIES} )
+      
     else()
     # Aggregate all header-only Components in a separate target for Visual Studio IDE.
       target_sources( HeaderOnlyComponents PUBLIC ${${MODULE}_HEADER_FILES} )
     endif()
-	
+    
+    if( ${MODULE}_LIBRARIES )
+      list( APPEND SUPERELASTIX_LIBRARIES ${${MODULE}_LIBRARIES} )
+    endif()
+    
     # Aggregate all interface headers in a separate target for Visual Studio IDE.
     if( ${MODULE}_INTERFACE_FILES )
         target_sources( Interfaces PUBLIC ${${MODULE}_INTERFACE_FILES} )
@@ -149,20 +159,6 @@ macro( _selxmodule_enable_dependencies UPSTREAM MODULES )
   endforeach()
 endmacro()
 
-macro( _selxmodule_target_file TARGETS )
-  foreach( TARGET ${${TARGETS}} )
-    set( ${TARGET}_FILE $<TARGET_FILE:TARGET> )
-  endforeach()
-endmacro()
-
-macro( _selxmodule_disable MODULE )
-  set( USE_${MODULE} FALSE )
-  list( FILTER SUPERELASTIX_INCLUDE_DIRS MATCHES EXCLUDE REGEX "(.*)${MODULE}(.*)" )
-  list( FILTER SUPERELASTIX_LIBRARY_DIRS MATCHES EXCLUDE REGEX "(.*)${MODULE}(.*)" )
-  list( FILTER SUPERELASTIX_LIBRARIES MATCHES EXCLUDE REGEX "(.*)${MODULE}(.*)" )
-  list( FILTER SUPERELASTIX_TEST_SOURCE_FILES MATCHES EXCLUDE REGEX "(.*)${MODULE}(.*)" )
-endmacro()
-
 # ---------------------------------------------------------------------
 # Public macros
 
@@ -170,19 +166,20 @@ macro( enable_module MODULE )
   _selxmodule_enable( ${MODULE} "user" )
 endmacro()
 
-macro( enable_modules MODULES )
-  foreach( MODULE ${${MODULES}} )
-    enable_module( ${MODULE} )
+# Enable user-selected modules
+macro( enable_modules )
+  # Check each USE_Module* flag and enable with all its dependencies
+  foreach( MODULE ${SUPERELASTIX_MODULES} )
+    if( USE_${MODULE} )
+      enable_module( ${MODULE} )
+    endif()
   endforeach()
+  # Reflect, those components that have been enables as dependencies, in the USE_Module* flags 
+  foreach( MODULE ${SUPERELASTIX_MODULES} )
+    if( ${${MODULE}_IS_ENABLED})
+      set( USE_${MODULE} TRUE CACHE BOOL "" FORCE)
+    endif()
+  endforeach()  
 endmacro()
 
 # ---------------------------------------------------------------------
-
-# Enable user-selected modules
-# TODO:
-
-# Disable user-selected modules
-# TODO:
-
-
-

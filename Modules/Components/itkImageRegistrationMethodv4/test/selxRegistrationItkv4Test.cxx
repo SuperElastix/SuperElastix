@@ -56,8 +56,6 @@
 #include "itkTransformFileWriter.h"
 #include "itkTransformFileReader.h"
 
-#include "selxDefaultComponents.h"
-
 #include "selxDataManager.h"
 #include "gtest/gtest.h"
 
@@ -150,8 +148,6 @@ public:
 
   virtual void TearDown()
   {
-    // Unregister all components after each test
-    itk::ObjectFactoryBase::UnRegisterAllFactories();
     // Delete the SuperElastixFilter after each test
     superElastixFilter = nullptr;
   }
