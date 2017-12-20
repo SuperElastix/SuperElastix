@@ -18,12 +18,12 @@
 *=========================================================================*/
 
 #include "selxTypeList.h"
-#include "selxIdentityTransformRegistrationComponent.h"
+
+#include "selxDisplacementFieldMeshWarperComponent.h"
 
 namespace selx
 {
-using ModuleExamplesComponents = selx::TypeList<
-	IdentityTransformRegistrationComponent< 2, float>,
-	IdentityTransformRegistrationComponent< 3, float>
-  >;
+using ModuleDisplacementFieldMeshWarperComponents = selx::TypeList<
+  ItkDisplacementFieldMeshWarperComponent< 2, float, float >
+>;
 }
