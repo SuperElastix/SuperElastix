@@ -126,7 +126,7 @@ Blueprint
 
 bool
 Blueprint
-::ComposeWith( Blueprint::ConstPointer other)
+::ComposeWith( const Blueprint * other)
 {
   this->Modified();
   return this->m_Blueprint->ComposeWith( other->GetBlueprintImpl() );

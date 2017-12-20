@@ -94,10 +94,6 @@ make_edge_label_writer( ParameterMapType p )
   return edge_label_writer< ParameterMapType >( p );
 }
 
-// TODO: remove this argumentless constructor
-BlueprintImpl::BlueprintImpl( void ) : m_LoggerImpl(&(Logger::New()->GetLoggerImpl()))
-{
-}
 
 BlueprintImpl::BlueprintImpl( LoggerImpl & loggerImpl ) : m_LoggerImpl(&loggerImpl)
 {

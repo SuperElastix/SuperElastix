@@ -87,7 +87,7 @@ public:
   //std::unique_ptr<BlueprintImpl> Clone(BlueprintImpl const &other );
 
   // "functional" composition of blueprints is done by adding settings of other to this blueprint. Redefining/overwriting properties is not allowed and returns false.
-  bool ComposeWith( Blueprint::ConstPointer other );
+  bool ComposeWith( const Blueprint * other );
 
   // Returns a vector of the Component names at the incoming direction
   ComponentNamesType GetInputNames( const ComponentNameType name ) const;
