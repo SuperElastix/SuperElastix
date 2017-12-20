@@ -72,43 +72,58 @@ main( int ac, char * av[] )
 {
 
   selx::Logger::Pointer logger = selx::Logger::New();
+  
+  typedef std::vector< std::string > VectorOfStringsType;
+  typedef std::vector< boost::filesystem::path > VectorOfPathsType;
+
+  boost::filesystem::path logPath;
+  // default log level
+  selx::LogLevel logLevel = selx::LogLevel::WRN;
+
+  boost::filesystem::path            configurationPath;
+  VectorOfPathsType                   configurationPaths;
+
+  VectorOfStringsType inputPairs;
+  VectorOfStringsType outputPairs;
+
+  boost::program_options::variables_map vm;
 
   try
   {
-    typedef std::vector< std::string > VectorOfStringsType;
-    typedef std::vector< boost::filesystem::path > VectorOfPathsType;
-
-    boost::filesystem::path logPath;
-    // default log level
-    selx::LogLevel logLevel = selx::LogLevel::WRN;
-
-    boost::filesystem::path            configurationPath;
-    VectorOfPathsType                   configurationPaths;
-
-    VectorOfStringsType inputPairs;
-    VectorOfStringsType outputPairs;
-
     boost::program_options::options_description desc("Allowed options");
     desc.add_options()
       ( "help", "produce help message" )
-      ("conf", boost::program_options::value< VectorOfPathsType >(&configurationPaths)->required()->multitoken(), "Configuration file")
-      ("in", boost::program_options::value< VectorOfStringsType >(&inputPairs)->multitoken(), "Input data: images, labels, meshes, etc. Usage <name>=<path>")
-      ("out", boost::program_options::value< VectorOfStringsType >(&outputPairs)->multitoken(), "Output data: images, labels, meshes, etc. Usage <name>=<path>")
+      ("conf", boost::program_options::value< VectorOfPathsType >(&configurationPaths)->required()->multitoken(), "Configuration file: single or multiple Blueprints [.xml|.json]")
+      ("in", boost::program_options::value< VectorOfStringsType >(&inputPairs)->multitoken(), "Input data: images, labels, meshes, etc. Usage arg: <name>=<path> (or multiple pairs)")
+      ("out", boost::program_options::value< VectorOfStringsType >(&outputPairs)->multitoken(), "Output data: images, labels, meshes, etc. Usage arg: <name>=<path> (or multiple pairs)")
       ("graphout", boost::program_options::value< boost::filesystem::path >(), "Output Graphviz dot file")
       ("logfile", boost::program_options::value< boost::filesystem::path >(&logPath), "Log output file")
-      ("loglevel", boost::program_options::value< selx::LogLevel >(&logLevel), "Log level")
+      ("loglevel", boost::program_options::value< selx::LogLevel >(&logLevel), "Log level [off|critical|error|warning|info|debug|trace]")
       ;
 
-    boost::program_options::variables_map vm;
     boost::program_options::store(boost::program_options::parse_command_line(ac, av, desc), vm);
-    boost::program_options::notify(vm);
 
     if( vm.count( "help" ) )
     {
       std::cout << desc << "\n";
       return 0;
     }
+    boost::program_options::notify(vm);
+  }
+  catch (std::exception& e)
+  {
+    std::cerr << "Error: " << e.what() << "\n";
+    std::cerr << "See 'SuperElastix --help' for help" << "\n";
+    return 1;
+  }
+  catch (...)
+  {
+    std::cerr << "Unknown error!" << "\n";
+    return 1;
+  }
 
+  try 
+  {
     // optionally, stream to log file
     std::ofstream outfile;
     if ( vm.count("logfile") )
@@ -209,12 +224,15 @@ main( int ac, char * av[] )
   {
     logger->Log( selx::LogLevel::ERR, "Executing ... Error");
     logger->Log( selx::LogLevel::ERR, e.what());
+    std::cerr << e.what();
     return 1;
   }
   catch( ... )
   {
     logger->Log( selx::LogLevel::ERR, "Executing ... Error");
     logger->Log( selx::LogLevel::ERR, "Exception of unknown type!");
+    std::cerr << "Exception of unknown type!";
+    return 1;
   }
 
   return 0;
