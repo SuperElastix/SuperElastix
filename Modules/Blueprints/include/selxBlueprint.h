@@ -58,6 +58,7 @@ public:
 
   /* m_Blueprint is initialized in the default constructor */
   Blueprint();
+  ~Blueprint();
 
   /** The actual blueprint is a pimpled member variable */
   typedef std::unique_ptr< BlueprintImpl > BlueprintImplPointer;
@@ -103,10 +104,13 @@ public:
   void MergeFromFile(const std::string& filename);
 
   void SetLogger( Logger::Pointer logger );
+
 private:
 
-  BlueprintImplPointer m_Blueprint;
+  // The order of the logger and the blueprint matters, since the lifetime of the logger should always exceed that of the blueprint.
   Logger::Pointer m_Logger;
+  BlueprintImplPointer m_Blueprint;
+
 };
 }
 
