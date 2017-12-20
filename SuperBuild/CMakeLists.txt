@@ -174,10 +174,10 @@ endif()
 # ---------------------------------------------------------------------
 # Build GoogleTest
 
-mark_as_advanced( USE_SYSTEM_GOOGLETEST )
-option( USE_SYSTEM_GOOGLETEST "Use a pre-compiled version of GoogleTest. " OFF ) 
+mark_as_advanced( USE_SYSTEM_GTEST )
+option( USE_SYSTEM_GTEST "Use a pre-compiled version of GoogleTest. " OFF )
 
-if ( USE_SYSTEM_GOOGLETEST ) 
+if ( USE_SYSTEM_GTEST )
   find_package( GTest REQUIRED ) 
 else() 
   include( ExternalGoogleTest ) 
