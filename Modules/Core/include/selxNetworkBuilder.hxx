@@ -58,7 +58,7 @@ NetworkBuilder< ComponentList >::Configure()
     this->ApplyComponentConfiguration();
     auto nonUniqueComponentNames = this->GetNonUniqueComponentNames();
     this->m_Logger.Log(  LogLevel::INF,
-                         "Applying component criteria ... Done. {0:d} out of {1:d} components was uniquely selected.",
+                         "Applying component criteria ... Done. {0:d} out of {1:d} components were uniquely selected.",
                          m_Blueprint.GetComponentNames().size()-nonUniqueComponentNames.size(),
                          m_Blueprint.GetComponentNames().size() );
 
@@ -66,18 +66,17 @@ NetworkBuilder< ComponentList >::Configure()
     this->ApplyConnectionConfiguration();
     nonUniqueComponentNames = this->GetNonUniqueComponentNames();
     this->m_Logger.Log(  LogLevel::INF,
-                         "Applying connection criteria ... Done. {0:d} out of {1:d} components was uniquely selected.",
+                         "Applying connection criteria ... Done. {0:d} out of {1:d} components were uniquely selected.",
                          m_Blueprint.GetComponentNames().size()-nonUniqueComponentNames.size(),
                          m_Blueprint.GetComponentNames().size() );
 
     if( nonUniqueComponentNames.size() > 0 )
     {
-      this->m_Logger.Log( LogLevel::INF, "{0} components have unsatisfied connections.", nonUniqueComponentNames.size() );
       this->m_Logger.Log( LogLevel::INF, "Performing handshakes between unique and non-unique component(s) ..." );
       this->PropagateConnectionsWithUniqueComponents();
       nonUniqueComponentNames = this->GetNonUniqueComponentNames();
       this->m_Logger.Log(  LogLevel::INF,
-                           "Performing handshakes between unique and non-unique component(s) ... Done. {0:d} out of {1:d} components was uniquely selected.",
+                           "Performing handshakes between unique and non-unique component(s) ... Done. {0:d} out of {1:d} components were uniquely selected.",
                            m_Blueprint.GetComponentNames().size()-nonUniqueComponentNames.size(),
                            m_Blueprint.GetComponentNames().size() );
     }

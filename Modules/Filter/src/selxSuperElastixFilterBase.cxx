@@ -148,9 +148,9 @@ SuperElastixFilterBase
   this->m_IsConnected =  this->m_NetworkBuilder->ConnectComponents();
   this->m_Logger->Log( LogLevel::INF, "Connecting Components ... Done" );
 
-  this->m_Logger->Log( LogLevel::INF, "Searcing for missing connections  ..." );
+  this->m_Logger->Log( LogLevel::INF, "Searching for missing connections  ..." );
   bool connectionSatisfied = this->m_NetworkBuilder->CheckConnectionsSatisfied();
-  this->m_Logger->Log( LogLevel::INF, "Searcing for missing connections ... Done" );
+  this->m_Logger->Log( LogLevel::INF, "Searching for missing connections ... Done" );
 
   if( this->m_NetworkBuilder->CheckConnectionsSatisfied() )
   {
@@ -158,9 +158,8 @@ SuperElastixFilterBase
   }
   else
   {
-    this->m_Logger->Log( LogLevel::INF, "Missing connections found." );
-    // Commented out by KM: We should throw here if components allow missing connections?
-    // itkExceptionMacro( << "One or more components has unsatisfied connections" )
+    this->m_Logger->Log( LogLevel::CRT, "Missing connections found." );
+    itkExceptionMacro( << "One or more components has unsatisfied connections" )
   }
 
   for( const auto & nameAndInterface : sinks )
