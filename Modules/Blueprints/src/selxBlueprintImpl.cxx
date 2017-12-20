@@ -128,6 +128,7 @@ BlueprintImpl
   {
     std::stringstream msg;
     msg << "BlueprintImpl does not contain component " << name << std::endl;
+    this->m_LoggerImpl->Log(LogLevel::ERR, msg.str());
     throw std::runtime_error( msg.str() );
   }
 
@@ -168,6 +169,7 @@ BlueprintImpl
 {
   if( !this->ComponentExists( upstream ) || !this->ComponentExists( downstream ) )
   {
+    this->m_LoggerImpl->Log(LogLevel::WRN, "Setting a connection between components '{}' and '{}' failed: one or more components do not exist");
     return false;
   }
 
@@ -391,6 +393,7 @@ BlueprintImpl
   // This function is part of the internal API and should fail hard if we use it incorrectly
   if( !this->ConnectionExists( upstream, downstream ) )
   {
+    this->m_LoggerImpl->Log(LogLevel::ERR, "BlueprintImpl does not contain connection from component {} to {}.", upstream, downstream );
     throw std::runtime_error( "BlueprintImpl does not contain connection from component " + upstream + " to " + downstream );
   }
 
@@ -538,7 +541,7 @@ BlueprintImpl::FromPropertyTree(const PropertyTreeType & pt)
     std::string connectionName = v.second.data();
     if (connectionName != "")
     {
-      this->m_LoggerImpl->Log(LogLevel::INF, "Found {0}, but connection names are ignored.", connectionName);
+      this->m_LoggerImpl->Log(LogLevel::TRC, "Found {0}, but connection names are ignored.", connectionName);
     }
     std::string      outName;
     std::string      inName;
@@ -654,7 +657,7 @@ BlueprintImpl::MergeProperties(const PropertyTreeType & pt)
     std::string connectionName = v.second.data();
     if (connectionName != "")
     {
-      this->m_LoggerImpl->Log(LogLevel::INF, "Found {0}, but connection names are ignored.", connectionName);
+      this->m_LoggerImpl->Log(LogLevel::TRC, "Found {0}, but connection names are ignored.", connectionName);
     }
     std::string      outName;
     std::string      inName;
