@@ -38,6 +38,7 @@ ExternalProject_Add( ${proj}
   -DELASTIX_USE_OPENMP:BOOL=${SUPERELASTIX_USE_OPENMP}
   -DBUILD_SHARED_LIBS:BOOL=${SUPERELASTIX_BUILD_SHARED_LIBS}
   -DCMAKE_CONFIGURATION_TYPES:STRING=${CMAKE_CONFIGURATION_TYPES}
+  -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
   -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
   -DITK_DIR:PATH=${ITK_DIR}
   # Elastix components configuration
@@ -116,7 +117,7 @@ ExternalProject_Add( ${proj}
   -DUSE_VarianceOverLastDimensionMetric:BOOL=ON                                           
   -DUSE_ViolaWellsMutualInformationMetric:BOOL=ON                                           
   -DUSE_WeightedCombinationTransformElastix:BOOL=ON
-  DEPENDS ITK
+  DEPENDS ${SUPERELASTIX_DEPENDENCIES}
   BUILD_COMMAND ${SELX_SUPERBUILD_COMMAND}
 )
 

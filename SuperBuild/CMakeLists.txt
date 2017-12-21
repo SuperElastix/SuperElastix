@@ -121,6 +121,7 @@ option( USE_SYSTEM_ITK "Use an installed version of ITK" OFF )
 
 if( USE_SYSTEM_ITK )
   find_package( ITK ${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR} REQUIRED )
+  include( ${ITK_USE_FILE} )
 else()
   include( ExternalITK )
 endif()
@@ -128,14 +129,19 @@ endif()
 # ---------------------------------------------------------------------
 # Build Elastix
 
-option( USE_SYSTEM_ELASTIX "Use system install of elastix." OFF )
-mark_as_advanced( USE_SYSTEM_ELASTIX )
+mark_as_advanced( SUPERELASTIX_BUILD_ELASTIX )
+option( SUPERELASTIX_BUILD_ELASTIX "Build elastix." ON )
 
-if( USE_SYSTEM_ELASTIX )
-  find_package( Elastix )
-  include( ${ELASTIX_USE_FILE} )
-else()
-  include( ExternalElastix )
+if( SUPERELASTIX_BUILD_ELASTIX )
+  option( USE_SYSTEM_ELASTIX "Use system install of elastix." OFF )
+  mark_as_advanced( USE_SYSTEM_ELASTIX )
+
+  if( USE_SYSTEM_ELASTIX )
+    find_package( Elastix )
+    include( ${ELASTIX_USE_FILE} )
+  else()
+    include( ExternalElastix )
+  endif()
 endif()
 
 # ---------------------------------------------------------------------
@@ -143,6 +149,7 @@ endif()
 
 mark_as_advanced( SUPERELASTIX_BUILD_NIFTYREG )
 option( SUPERELASTIX_BUILD_NIFTYREG "Build support for Niftyreg." ON )
+
 if( SUPERELASTIX_BUILD_NIFTYREG )
   mark_as_advanced( USE_SYSTEM_NIFTYREG )
   option( USE_SYSTEM_NIFTYREG "Use an installed version of Niftyreg." OFF )
@@ -167,14 +174,38 @@ endif()
 # ---------------------------------------------------------------------
 # Build GoogleTest
 
-mark_as_advanced( USE_SYSTEM_GOOGLETEST )
-option( USE_SYSTEM_GOOGLETEST "Use a pre-compiled version of GoogleTest. " OFF ) 
+mark_as_advanced( USE_SYSTEM_GTEST )
+option( USE_SYSTEM_GTEST "Use a pre-compiled version of GoogleTest. " OFF )
 
-if ( USE_SYSTEM_GOOGLETEST ) 
+if ( USE_SYSTEM_GTEST )
   find_package( GTest REQUIRED ) 
 else() 
   include( ExternalGoogleTest ) 
-endif() 
+endif()
+
+# ---------------------------------------------------------------------
+# Build ATen
+
+find_package( PythonInterp )
+if( PYTHONINTERP_FOUND )
+  set( SUPERELASTIX_BUILD_ATEN_DEFAULT ON )
+else()
+  set( SUPERELASTIX_BUILD_ATEN_DEFAULT OFF )
+endif()
+
+mark_as_advanced( SUPERELASTIX_BUILD_ATEN )
+option( SUPERELASTIX_BUILD_ATEN "Build ATen." ${SUPERELASTIX_BUILD_ATEN_DEFAULT} )
+
+if( SUPERELASTIX_BUILD_ATEN )
+  mark_as_advanced( USE_SYSTEM_ATEN )
+  option( USE_SYSTEM_ATEN "Use a pre-compiled version of ATen." OFF )
+
+  if ( USE_SYSTEM_ATEN )
+    find_package( ATen REQUIRED )
+  else()
+    include( ExternalATen )
+  endif()
+endif()
 
 # ---------------------------------------------------------------------
 # Installation
