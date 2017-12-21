@@ -186,13 +186,8 @@ endif()
 # ---------------------------------------------------------------------
 # Build ATen
 
-find_package( PythonInterp )
-if( NOT PYTHONINTERP_FOUND )
-  message( FATAL_ERROR "Python not found. ATen requires Python to build. Set SUPERELASTIX_BUILD_ATEN to OFF or install Python." )
-endif()
-
 mark_as_advanced( SUPERELASTIX_BUILD_ATEN )
-option( SUPERELASTIX_BUILD_ATEN "Build ATen." ON )
+option( SUPERELASTIX_BUILD_ATEN "Build ATen." OFF )
 
 if( SUPERELASTIX_BUILD_ATEN )
   mark_as_advanced( USE_SYSTEM_ATEN )
