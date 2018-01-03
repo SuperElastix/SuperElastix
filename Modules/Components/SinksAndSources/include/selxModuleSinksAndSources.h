@@ -21,17 +21,29 @@
 
 //Component group SinksAndSources
 #include "selxDisplacementFieldItkImageFilterSinkComponent.h"
+#include "selxItkDisplacementFieldSourceComponent.h"
+#include "selxItkDisplacementFieldSinkComponent.h"
 #include "selxItkImageSourceComponent.h"
 #include "selxItkImageSinkComponent.h"
+#include "selxItkMeshSourceComponent.h"
+#include "selxItkMeshSinkComponent.h"
 
 namespace selx
 {
 using ModuleSinksAndSourcesComponents = selx::TypeList<
-  DisplacementFieldItkImageFilterSinkComponent< 2, float >,
-  DisplacementFieldItkImageFilterSinkComponent< 3, float >,
+  ItkImageSourceComponent< 2, float >,
+  ItkImageSourceComponent< 2, short >,
   ItkImageSinkComponent< 2, float >,
   ItkImageSinkComponent< 3, short >,
-  ItkImageSourceComponent< 2, float >,
-  ItkImageSourceComponent< 2, short >
+  ItkMeshSourceComponent< 2, float >,
+  ItkMeshSourceComponent< 3, float >,
+  ItkMeshSinkComponent< 2, float >,
+  ItkMeshSinkComponent< 3, float >,
+  DisplacementFieldItkImageFilterSinkComponent< 2, float >,
+  DisplacementFieldItkImageFilterSinkComponent< 3, float >,
+  ItkDisplacementFieldSourceComponent< 2, float >,
+  ItkDisplacementFieldSourceComponent< 3, float >,
+  ItkDisplacementFieldSinkComponent< 2, float >,
+  ItkDisplacementFieldSinkComponent< 3, float >
   >;
 }

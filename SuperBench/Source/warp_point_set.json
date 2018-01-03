@@ -12,12 +12,12 @@
 
     "Component": {
         "Name": "MovingImage",
-        "NameOfClass": "ItkMeshSource",
+        "NameOfClass": "ItkMeshSourceComponent",
 		"Dimensionality": "3"
     },
     "Component": {
         "Name": "ResultImage",
-        "NameOfClass": "ItkMeshSink",
+        "NameOfClass": "ItkMeshSinkComponent",
 		"Dimensionality": "3"
     },
 	"Connection": {

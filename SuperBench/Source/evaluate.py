@@ -28,7 +28,7 @@ def run(parameters):
                 logging.info('Evalualting %s and %s.', image_file_names[0], image_file_names[1])
                 try:
                     results[dataset.name][deformation_field_file_names[0]], results[dataset.name][deformation_field_file_names[1]] = \
-                        dataset.evaluate(parameters,
+                        dataset.evaluate(parameters.registration_driver,
                                          [os.path.join(output_directory, image_file_name) for image_file_name in image_file_names],
                                          [os.path.join(output_directory, ground_truth_file_name) for ground_truth_file_name in ground_truth_file_names],
                                          [os.path.join(output_directory, deformation_field_file_name) for deformation_field_file_name in deformation_field_file_names])
