@@ -1,0 +1,35 @@
+{
+    "Component": {
+        "Name": "DisplacementFieldMeshWarper",
+        "NameOfClass": "ItkDisplacementFieldMeshWarperComponent",
+		"Dimensionality": "3"
+    },
+    "Component": {
+        "Name": "FixedImage",
+        "NameOfClass": "ItkDisplacementFieldSourceComponent",
+        "Dimensionality": "3"
+    },
+
+    "Component": {
+        "Name": "MovingImage",
+        "NameOfClass": "ItkMeshSource",
+		"Dimensionality": "3"
+    },
+    "Component": {
+        "Name": "ResultImage",
+        "NameOfClass": "ItkMeshSink",
+		"Dimensionality": "3"
+    },
+	"Connection": {
+        "Out": "FixedImage",
+        "In": "DisplacementFieldMeshWarper"
+    },
+	"Connection": {
+        "Out": "MovingImage",
+        "In": "DisplacementFieldMeshWarper"
+    },
+	"Connection": {
+        "Out": "DisplacementFieldMeshWarper",
+        "In": "ResultImage"
+    }
+}

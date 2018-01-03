@@ -3,7 +3,8 @@ import subprocess
 import numpy as np
 import scipy
 import SimpleITK as sitk
-from .eval import eval_point_sets, eval_deformation_field
+
+from metrics import tre, hausdorff
 
 class POPI(object):
     def __init__(self, input_directory):
@@ -32,22 +33,20 @@ class POPI(object):
             yield image_file_name_pair, point_set_file_name_pair, relative_deformation_field_file_name_pair
 
     def evaluate(self,
-                 superelastix,
-                 image_file_name_pair,
-                 point_set_file_name_pair,
-                 relative_deformation_field_file_name_pair):
+                 parameters,
+                 image_file_names,
+                 point_set_file_names,
+                 deformation_field_file_names):
 
-        # TODO: Is there a better way to merge dicts?
-        result = {}
-        result.update(eval_point_sets(point_set_file_name_pair))
+        result_0, result_1 = tre(parameters.registration_driver, point_set_file_names, deformation_field_file_names)
 
+        deformation_field_array_0 = sitk.GetArrayViewFromImage(sitk.ReadImage(deformation_field_file_names[0]))
+        deformation_field_array_1 = sitk.GetArrayViewFromImage(sitk.ReadImage(deformation_field_file_names[1]))
         deformation_field_eval_0, deformation_field_eval_1 \
-            = eval_deformation_field(superelastix,
-                                     point_set_file_name_pair,
-                                    relative_deformation_field_file_name_pair)
+            = metrics.eval_deformation_field(parameters.registraiton_driver, point_set_file_names, deformation_field_file_names)
 
-        result_0 = result.update(deformation_field_eval_0)
-        result_1 = result.update(deformation_field_eval_1)
+        result_0.update(deformation_field_eval_0)
+        result_1.update(deformation_field_eval_1)
 
-        return result_0, result_1
+        return deformation_field_eval_0, deformation_field_eval_1
 

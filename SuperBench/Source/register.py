@@ -81,14 +81,4 @@ def run(parameters):
                     stderr = e.output
                     logging.error(stderr)
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='SuperBench registration driver.')
-
-    parser.add_argument('--registration-driver', '-rd', required=True, help="Program running registrations.")
-    parser.add_argument('--submissions-directory', '-sd', required=True, help='Directory with parameter files.')
-    parser.add_argument('--output-directory', '-od', required=True)
-    parser.add_argument('--popi-input-directory', '-pid')
-
-    parameters = parser.parse_args()
-    run(parameters)
 
