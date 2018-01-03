@@ -151,7 +151,7 @@ NetworkBuilder< ComponentList >::ApplyComponentConfiguration()
       currentComponentSelector->AddCriterion( criterion );
       
       this->m_Logger.Log( LogLevel::DBG,
-                          "Finding component for {0}: {1} component(s) satisfies {2} equal {3} and previous criteria.",
+                          "Finding component for {0}: {1} component(s) satisfies \"{2}: {3}\" and previous criteria.",
                           componentName,
                           currentComponentSelector->NumberOfComponents(),
                           criterion.first,
