@@ -4,7 +4,7 @@ import numpy as np
 import scipy
 import SimpleITK as sitk
 
-from metrics import tre, hausdorff, singularity_ratio, inverse_consistency
+from metrics import tre, hausdorff, singularity_ratio, inverse_consistency_points, merge_dicts
 
 class POPI(object):
     def __init__(self, input_directory):
@@ -36,8 +36,11 @@ class POPI(object):
 
         tre_0, tre_1 = tre(registration_driver, point_set_file_names, deformation_field_file_names)
         hausdorff_0, hausdorff_1 = hausdorff(registration_driver, point_set_file_names, deformation_field_file_names)
-        singularity_ratio_0, singularity_ratio_1 = singularity_ratio(registration_driver, deformation_field_file_names)
-        inverse_consistency_0, inverse_consistency_1 = inverse_consistency(registration_driver, point_set_file_names, deformation_field_file_names)
+        singularity_ratio_0, singularity_ratio_1 = singularity_ratio(deformation_field_file_names)
+        inverse_consistency_points_0, inverse_consistency_points_1 = inverse_consistency_points(registration_driver, point_set_file_names, deformation_field_file_names)
 
-        return tre_0.update(hausdorff_0, singularity_ratio_0, inverse_consistency_0), tre_1.update(hausdorff_1, singularity_ratio_1, inverse_consistency_1)
+        result_0 = merge_dicts(tre_0, hausdorff_0, singularity_ratio_0, inverse_consistency_points_0)
+        result_1 = merge_dicts(tre_1, hausdorff_1, singularity_ratio_1, inverse_consistency_points_1)
+
+        return result_0, result_1
 
