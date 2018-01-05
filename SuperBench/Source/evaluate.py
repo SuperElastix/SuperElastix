@@ -1,5 +1,4 @@
 import logging, os, json
-import SimpleITK as sitk, numpy as np
 from register import load_submissions, load_datasets, get_category
 
 def write_json(output_file_name, results):

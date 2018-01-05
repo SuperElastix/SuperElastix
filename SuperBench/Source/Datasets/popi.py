@@ -1,10 +1,6 @@
 import os
-import subprocess
-import numpy as np
-import scipy
-import SimpleITK as sitk
 
-from metrics import tre, hausdorff, singularity_ratio, inverse_consistency_points, merge_dicts
+from evaluation_metrics import tre, hausdorff, singularity_ratio, inverse_consistency_points, merge_dicts
 
 class POPI(object):
     def __init__(self, input_directory):

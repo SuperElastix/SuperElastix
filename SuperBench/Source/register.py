@@ -4,7 +4,7 @@ import os
 import subprocess
 import json
 
-from popi import POPI
+from Datasets.popi import POPI
 
 def load_submissions(parameters):
     logging.info('Loading blueprints ...')
