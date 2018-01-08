@@ -9,6 +9,7 @@ parser.add_argument('--registration-driver', '-rd', required=True, help="Registr
 parser.add_argument('--submissions-directory', '-sd', required=True, help='Directory with parameter files.')
 parser.add_argument('--output-directory', '-od', required=True)
 parser.add_argument('--popi-input-directory', '-pid')
+parser.add_argument('--dirlab-input-directory', '-did')
 
 parameters = parser.parse_args()
 

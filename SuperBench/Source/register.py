@@ -5,6 +5,7 @@ import subprocess
 import json
 
 from Datasets.popi import POPI
+from Datasets.dirlab import DIRLAB
 
 def load_submissions(parameters):
     logging.info('Loading blueprints ...')
@@ -28,7 +29,18 @@ def load_datasets(parameters):
 
     if parameters.popi_input_directory is not None:
         logging.info('Found POPI lung dataset.')
-        datasets['Lung'].append(POPI(parameters.popi_input_directory))
+        popi = POPI(parameters.popi_input_directory)
+        datasets[popi.category].append(popi)
+
+    if parameters.dirlab_input_directory is not None:
+        logging.info('Found DIR-LAB lung dataset.')
+        dirlab = DIRLAB(parameters.dirlab_input_directory)
+        datasets[dirlab.category].append(dirlab)
+
+    if parameters.spread_input_directory is not None:
+        logging.info('Found DIR-LAB lung dataset.')
+        spread = DIRLAB(parameters.spread_input_directory)
+        datasets[spread.category].append(spread)
 
     return datasets
 

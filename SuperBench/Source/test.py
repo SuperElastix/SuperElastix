@@ -43,9 +43,9 @@ class TestEvaulationMetrics(unittest.TestCase):
 
     def test_tre(self):
         point_0 = (10.0, 7.0, 6.0)
-        point_1 = (2.0, 4.0, 8.0)
-        deformation_0 = (-8., -3., 2.)
-        deformation_1 = (8., 3., -2.)
+        point_1 = (9.0, 6.0, 8.0)
+        deformation_0 = (-1., -1., 2.)
+        deformation_1 = (1., 1., -2.)
         with tempfile.TemporaryDirectory() as tmpdir:
             point_set_0 = create_vtk_file(tmpdir, point_0)
             point_set_1 = create_vtk_file(tmpdir, point_1)

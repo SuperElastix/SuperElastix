@@ -1,10 +1,12 @@
 import os
+import glob
 
 from evaluation_metrics import tre, hausdorff, singularity_ratio, inverse_consistency_points, merge_dicts
 
-class POPI(object):
+class DIRLAB(object):
     def __init__(self, input_directory):
-        self.name = 'POPI'
+        self.name = 'DIRLAB'
+        self.category = 'Lung'
         self.input_directory = input_directory
         self.image_file_names = []
         self.point_set_file_names = []
@@ -13,12 +15,16 @@ class POPI(object):
         sub_directories = [directory for directory in os.listdir(self.input_directory) if os.path.isdir(os.path.join(input_directory, directory))]
 
         for sub_directory in sub_directories:
-            self.image_file_names.append((os.path.join(input_directory, sub_directory, 'mhd', '00.mhd'),
-                                          os.path.join(input_directory, sub_directory, 'mhd', '50.mhd')))
-            self.point_set_file_names.append((os.path.join(input_directory, sub_directory, 'pts', '00.pts'),
-                                              os.path.join(input_directory, sub_directory, 'pts', '50.pts')))
-            self.relative_deformation_field_file_names.append((os.path.join(self.name, sub_directory, '00_to_50.mhd'),
-                                                               os.path.join(self.name, sub_directory, '50_to_00.mhd')))
+            image_0 = glob.glob(os.path.join(input_directory, sub_directory, 'Images', '*T00*'))[0]
+            image_1 = glob.glob(os.path.join(input_directory, sub_directory, 'Images', '*T50*'))[0]
+            self.image_file_names.append((image_0, image_1))
+
+            point_set_0 = glob.glob(os.path.join(input_directory, sub_directory, 'ExtremePhases', '*T00_xyz.txt'))[0]
+            point_set_1 = glob.glob(os.path.join(input_directory, sub_directory, 'ExtremePhases', '*T50_xyz.txt'))[0]
+            self.point_set_file_names.append((point_set_0, point_set_1))
+
+            self.relative_deformation_field_file_names.append((os.path.join(self.name, sub_directory, '00_to_50.nii'),
+                                                               os.path.join(self.name, sub_directory, '50_to_00.nii')))
 
 
     def generator(self):
