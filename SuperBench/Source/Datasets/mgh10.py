@@ -10,7 +10,7 @@ class MGH10(object):
 
         self.input_directory = input_directory
         self.image_file_names = []
-        self.point_set_file_names = []
+        self.atlas_file_names = []
         self.relative_deformation_field_file_names = []
 
         self.image_file_names = combinations([image for image in os.listdir(os.path.join(input_directory, 'Heads')) if image.endswith('.hdr')], 2)
@@ -18,7 +18,7 @@ class MGH10(object):
         self.deformation_field_file_names = [(os.path.join(self.name, file_name_0), os.path.join(self.name, file_name_1)) for file_name_0, file_name_1 in self.image_file_names]
 
     def generator(self):
-        for image_file_names, point_set_file_names, deformation_field_file_names in zip(self.image_file_names, self.point_set_file_names, self.relative_deformation_field_file_names):
+        for image_file_names, point_set_file_names, deformation_field_file_names in zip(self.image_file_names, self.atlas_file_names, self.relative_deformation_field_file_names):
             yield image_file_names, point_set_file_names, deformation_field_file_names
 
 

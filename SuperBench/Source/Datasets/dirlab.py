@@ -7,6 +7,7 @@ class DIRLAB(object):
     def __init__(self, input_directory):
         self.name = 'DIRLAB'
         self.category = 'Lung'
+
         self.input_directory = input_directory
         self.image_file_names = []
         self.point_set_file_names = []
