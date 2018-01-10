@@ -8,7 +8,7 @@ from Datasets.cumc12 import CUMC12
 from Datasets.dirlab import DIRLAB
 from Datasets.empire import EMPIRE
 from Datasets.isbr18 import ISBR18
-from Datasets.lbpa40 import LBPA40
+from Datasets.lpba40 import LPBA40
 from Datasets.mgh10 import MGH10
 from Datasets.popi import POPI
 from Datasets.spread import SPREAD
@@ -54,10 +54,10 @@ def load_datasets(parameters):
         datasets[isbr18.category].append(isbr18)
         logging.info('Found MGH10 ' + isbr18.category + ' dataset.')
 
-    if parameters.lbpa40_input_directory is not None:
-        lbpa40 = LBPA40(parameters.mgh10_input_directory)
-        datasets[lbpa40.category].append(lbpa40)
-        logging.info('Found MGH10 ' + lbpa40.category + ' dataset.')
+    if parameters.lpba40_input_directory is not None:
+        lpba40 = LPBA40(parameters.mgh10_input_directory)
+        datasets[lpba40.category].append(lpba40)
+        logging.info('Found MGH10 ' + lpba40.category + ' dataset.')
 
     if parameters.mgh10_input_directory is not None:
         mgh10 = MGH10(parameters.mgh10_input_directory)
