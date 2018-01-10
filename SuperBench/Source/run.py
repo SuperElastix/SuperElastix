@@ -8,8 +8,15 @@ parser = argparse.ArgumentParser(description='SuperBench registration driver.')
 parser.add_argument('--registration-driver', '-rd', required=True, help="Registration driver")
 parser.add_argument('--submissions-directory', '-sd', required=True, help='Directory with parameter files.')
 parser.add_argument('--output-directory', '-od', required=True)
+
 parser.add_argument('--popi-input-directory', '-pid')
 parser.add_argument('--dirlab-input-directory', '-did')
+parser.add_argument('--spread-input-directory', '-sid')
+parser.add_argument('--empire-input-directory', '-eid')
+parser.add_argument('--cumc12-input-directory', '-cid')
+parser.add_argument('--isbr18-input-directory', '-iid')
+parser.add_argument('--lbpa40-input-directory', '-lid')
+parser.add_argument('--mgh10-input-directory', '-mid')
 
 parameters = parser.parse_args()
 

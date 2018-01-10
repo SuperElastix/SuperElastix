@@ -5,6 +5,8 @@ from evaluation_metrics import tre, hausdorff, singularity_ratio, inverse_consis
 class POPI(object):
     def __init__(self, input_directory):
         self.name = 'POPI'
+        self.category = 'Lung'
+
         self.input_directory = input_directory
         self.image_file_names = []
         self.point_set_file_names = []

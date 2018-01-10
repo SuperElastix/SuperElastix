@@ -56,6 +56,7 @@ def warp_point_set(registration_driver, point_set_file_name, deformation_field_f
 
     return output_file_name
 
+
 def tre(registration_driver, point_set_file_names, deformation_field_file_names):
     point_set_0_to_1 = load_vtk(warp_point_set(registration_driver, point_set_file_names[0], deformation_field_file_names[0]))
     point_set_1_to_0 = load_vtk(warp_point_set(registration_driver, point_set_file_names[1], deformation_field_file_names[1]))
@@ -76,6 +77,7 @@ def hausdorff(registration_driver, point_set_file_names, deformation_field_file_
         { 'Hausdorff': np.max(np.sqrt(np.sum((point_set_1_to_0 - point_set_0) ** 2, -1))) }
     )
 
+
 def singularity_ratio(deformation_field_file_names):
     deformation_field_array_0 = sitk.GetArrayViewFromImage(sitk.ReadImage(deformation_field_file_names[0]))
     deformation_field_array_1 = sitk.GetArrayViewFromImage(sitk.ReadImage(deformation_field_file_names[1]))
@@ -84,6 +86,7 @@ def singularity_ratio(deformation_field_file_names):
     }, {
         'SingularityRatio': np.sum(deformation_field_array_1 < 0)/np.prod(deformation_field_array_1.shape),
     })
+
 
 def inverse_consistency_points(registration_driver, point_set_file_names, deformation_field_file_names):
     point_set_0_to_1_file_name = warp_point_set(registration_driver, point_set_file_names[0], deformation_field_file_names[0])
@@ -97,8 +100,10 @@ def inverse_consistency_points(registration_driver, point_set_file_names, deform
         { 'InverseConsistency': np.mean(np.sqrt(np.sum((load_vtk(point_set_1_to_0_to_0_file_name) - point_set_1) ** 2, -1))) }
     )
 
+
 def dice(registration_driver, label_file_names, deformation_field_file_names):
     pass
+
 
 def jaccard(registration_driver, label_file_names, deformation_field_file_names):
     pass

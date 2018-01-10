@@ -4,8 +4,14 @@ import os
 import subprocess
 import json
 
-from Datasets.popi import POPI
+from Datasets.cumc12 import CUMC12
 from Datasets.dirlab import DIRLAB
+from Datasets.empire import EMPIRE
+from Datasets.isbr18 import ISBR18
+from Datasets.lbpa40 import LBPA40
+from Datasets.mgh10 import MGH10
+from Datasets.popi import POPI
+from Datasets.spread import SPREAD
 
 def load_submissions(parameters):
     logging.info('Loading blueprints ...')
@@ -27,20 +33,46 @@ def load_datasets(parameters):
         'Brain': []
     }
 
-    if parameters.popi_input_directory is not None:
-        logging.info('Found POPI lung dataset.')
-        popi = POPI(parameters.popi_input_directory)
-        datasets[popi.category].append(popi)
+
+    if parameters.cumc12_input_directory is not None:
+        cumc12 = CUMC12(parameters.mgh10_input_directory)
+        datasets[cumc12.category].append(cumc12)
+        logging.info('Found MGH10 ' + cumc12.category + ' dataset.')
 
     if parameters.dirlab_input_directory is not None:
-        logging.info('Found DIR-LAB lung dataset.')
         dirlab = DIRLAB(parameters.dirlab_input_directory)
         datasets[dirlab.category].append(dirlab)
+        logging.info('Found EMPIRE ' + dirlab.category + ' dataset.')
+
+    if parameters.empire_input_directory is not None:
+        empire = EMPIRE(parameters.mgh10_input_directory)
+        datasets[empire.category].append(empire)
+        logging.info('Found EMPIRE ' + empire.category + ' dataset.')
+
+    if parameters.isbr18_input_directory is not None:
+        isbr18 = ISBR18(parameters.mgh10_input_directory)
+        datasets[isbr18.category].append(isbr18)
+        logging.info('Found MGH10 ' + isbr18.category + ' dataset.')
+
+    if parameters.lbpa40_input_directory is not None:
+        lbpa40 = LBPA40(parameters.mgh10_input_directory)
+        datasets[lbpa40.category].append(lbpa40)
+        logging.info('Found MGH10 ' + lbpa40.category + ' dataset.')
+
+    if parameters.mgh10_input_directory is not None:
+        mgh10 = MGH10(parameters.mgh10_input_directory)
+        datasets[MGH10.category].append(mgh10)
+        logging.info('Found MGH10 ' + mgh10.category + ' dataset.')
+
+    if parameters.popi_input_directory is not None:
+        popi = POPI(parameters.popi_input_directory)
+        datasets[popi.category].append(popi)
+        logging.info('Found POPI ' + popi.category + ' dataset.')
 
     if parameters.spread_input_directory is not None:
-        logging.info('Found DIR-LAB lung dataset.')
         spread = DIRLAB(parameters.spread_input_directory)
         datasets[spread.category].append(spread)
+        logging.info('Found SPREAD ' + spread.category + ' dataset.')
 
     return datasets
 

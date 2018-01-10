@@ -38,7 +38,7 @@ def create_deformation_field_file(output_directory, deformation):
 class TestEvaulationMetrics(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         # TODO: Pass via command line
-        self.registration_driver = "/Users/kasper/Development/build/SuperElastix/SuperElastix-build/SuperBench/Source/Drivers/localhost.sh"
+        self.registration_driver = "/Users/kasper/Development/SuperElastix/cmake-build-debug/SuperBench/Source/Drivers/localhost.sh"
         super(TestEvaulationMetrics, self).__init__(*args, **kwargs)
 
     def test_tre(self):
@@ -53,7 +53,8 @@ class TestEvaulationMetrics(unittest.TestCase):
             deformation_field_1 = create_deformation_field_file(tmpdir, deformation_1)
             tre_0, tre_1 = tre(self.registration_driver, (point_set_0, point_set_1), (deformation_field_0, deformation_field_1))
 
-        a = 1
+        assert(tre_0['TRE'] == 0.0)
+        assert(tre_1['TRE'] == 0.0)
 
 if __name__ == '__main__':
     unittest.main()
