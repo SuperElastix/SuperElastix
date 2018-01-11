@@ -3,7 +3,7 @@ from itertools import combinations
 
 from evaluation_metrics import singularity_ratio, inverse_consistency_points, merge_dicts
 
-class LPBA(object):
+class LPBA40(object):
     def __init__(self, input_directory):
         self.name = 'LPBA40'
         self.category = 'Brain'

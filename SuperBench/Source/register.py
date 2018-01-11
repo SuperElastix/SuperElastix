@@ -16,9 +16,8 @@ from Datasets.spread import SPREAD
 def load_submissions(parameters):
     logging.info('Loading blueprints ...')
     submissions = [(team_name, os.path.join(parameters.submissions_directory, team_name, file_name))
-                            for team_name in os.listdir(parameters.submissions_directory)
-                            for file_name in os.listdir(os.path.join(parameters.submissions_directory, team_name))
-                            if file_name.endswith('.json') or file_name.endswith('.xml')]
+                   for team_name in os.listdir(parameters.submissions_directory) if os.path.isdir(os.path.join(parameters.submissions_directory, team_name))
+                   for file_name in os.listdir(os.path.join(parameters.submissions_directory, team_name)) if file_name.endswith('.json') or file_name.endswith('.xml')]
 
     for team_name, blueprint_file_name in submissions:
         logging.info('Found %s by %s.', blueprint_file_name, team_name)

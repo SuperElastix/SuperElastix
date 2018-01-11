@@ -1,5 +1,4 @@
-import os
-import glob
+import os, glob, csv, re
 
 from evaluation_metrics import tre, hausdorff, singularity_ratio, inverse_consistency_points, merge_dicts
 
@@ -13,19 +12,54 @@ class DIRLAB(object):
         self.point_set_file_names = []
         self.relative_deformation_field_file_names = []
 
+        # DIR-LAB provides raw binary image only so we write mhd header files for loading the data.
+        # The image information was retrieved from https://www.dir-lab.com/ReferenceData.html
+        dirlab_image_information_file_name = os.path.join(os.path.dirname(__file__), "dirlab_image_information.csv")
+
+        # Find corresponding subdirectory which contains the id and associate it with this line of the csv file.
+        # TODO: Maybe not the prettiest approach
         sub_directories = [directory for directory in os.listdir(self.input_directory) if os.path.isdir(os.path.join(input_directory, directory))]
+        sub_directory_ids = list(map(lambda str: int(re.search(r'\d+', str).group()), sub_directories))
+        dirlab_image_information = dict()
+        for image_information in csv.DictReader(open(dirlab_image_information_file_name)):
+            dirlab_image_information[image_information['id']] = image_information
+            dirlab_image_information[image_information['id']]['sub_directory'] = sub_directories[sub_directory_ids.index(int(image_information['id']))]
 
-        for sub_directory in sub_directories:
-            image_0 = glob.glob(os.path.join(input_directory, sub_directory, 'Images', '*T00*'))[0]
-            image_1 = glob.glob(os.path.join(input_directory, sub_directory, 'Images', '*T50*'))[0]
-            self.image_file_names.append((image_0, image_1))
+        # Now we have all the information necessary for generating the required files.
+        for id in dirlab_image_information:
+            img_0_file_name = glob.glob(os.path.join(input_directory, dirlab_image_information[id]['sub_directory'], 'Images', '*T00*.img'))[0]
+            img_1_file_name = glob.glob(os.path.join(input_directory, dirlab_image_information[id]['sub_directory'], 'Images', '*T50*.img'))[0]
 
-            point_set_0 = glob.glob(os.path.join(input_directory, sub_directory, 'ExtremePhases', '*T00_xyz.txt'))[0]
-            point_set_1 = glob.glob(os.path.join(input_directory, sub_directory, 'ExtremePhases', '*T50_xyz.txt'))[0]
+            # Write mhd header files
+            mhd_0_file_name = os.path.splitext(img_0_file_name)[0] + '.mhd'
+            with open(mhd_0_file_name, 'w') as mhd:
+                mhd.write('ObjectType = Image\n')
+                mhd.write('NDims = 3\n')
+                mhd.write('BinaryData = True\n')
+                mhd.write('DimSize = %s %s %s\n' % (dirlab_image_information[id]['x_size'], dirlab_image_information[id]['y_size'], dirlab_image_information[id]['z_size']))
+                mhd.write('ElementSpacing = %s %s %s\n' % (dirlab_image_information[id]['x_spacing'], dirlab_image_information[id]['y_spacing'], dirlab_image_information[id]['z_spacing']))
+                mhd.write('ElementTYPE = MET_USHORT\n')
+                mhd.write('ElementDataFile = %s\n' % img_0_file_name)
+
+            mhd_1_file_name = os.path.splitext(img_1_file_name)[0] + '.mhd'
+            with open(mhd_1_file_name, 'w') as mhd:
+                mhd.write('ObjectType = Image\n')
+                mhd.write('NDims = 3\n')
+                mhd.write('BinaryData = True\n')
+                mhd.write('DimSize = %s %s %s\n' % (dirlab_image_information[id]['x_size'], dirlab_image_information[id]['y_size'], dirlab_image_information[id]['z_size']))
+                mhd.write('ElementSpacing = %s %s %s\n' % (dirlab_image_information[id]['x_spacing'], dirlab_image_information[id]['y_spacing'], dirlab_image_information[id]['z_spacing']))
+                mhd.write('ElementTYPE = MET_USHORT\n')
+                mhd.write('ElementDataFile = %s\n' % img_1_file_name)
+
+            self.image_file_names.append((mhd_0_file_name, mhd_1_file_name))
+
+            point_set_0 = glob.glob(os.path.join(input_directory, dirlab_image_information[id]['sub_directory'], 'ExtremePhases', '*T00_xyz.txt'))[0]
+            point_set_1 = glob.glob(os.path.join(input_directory, dirlab_image_information[id]['sub_directory'], 'ExtremePhases', '*T50_xyz.txt'))[0]
             self.point_set_file_names.append((point_set_0, point_set_1))
 
-            self.relative_deformation_field_file_names.append((os.path.join(self.name, sub_directory, '00_to_50.nii'),
-                                                               os.path.join(self.name, sub_directory, '50_to_00.nii')))
+            self.relative_deformation_field_file_names.append((os.path.join(self.name, dirlab_image_information[id]['sub_directory'], '00_to_50.nii'),
+                                                               os.path.join(self.name, dirlab_image_information[id]['sub_directory'], '50_to_00.nii')))
+
 
 
     def generator(self):
