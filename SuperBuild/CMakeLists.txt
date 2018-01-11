@@ -50,8 +50,6 @@ set( SUPERELASTIXSUPERBUILD_VERSION ${SUPERELASTIXSUPERBUILD_MAJOR_VERSION}.${SU
 
 include (CTest)
 
-add_test(NAME EmptySuperBuildTest COMMAND "echo")
-
 find_package( Git REQUIRED )
 
 include( ExternalProject )
