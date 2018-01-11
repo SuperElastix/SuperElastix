@@ -38,7 +38,7 @@ class DIRLAB(object):
                 mhd.write('BinaryData = True\n')
                 mhd.write('DimSize = %s %s %s\n' % (dirlab_image_information[id]['x_size'], dirlab_image_information[id]['y_size'], dirlab_image_information[id]['z_size']))
                 mhd.write('ElementSpacing = %s %s %s\n' % (dirlab_image_information[id]['x_spacing'], dirlab_image_information[id]['y_spacing'], dirlab_image_information[id]['z_spacing']))
-                mhd.write('ElementTYPE = MET_USHORT\n')
+                mhd.write('ElementType = MET_USHORT\n')
                 mhd.write('ElementDataFile = %s\n' % img_0_file_name)
 
             mhd_1_file_name = os.path.splitext(img_1_file_name)[0] + '.mhd'
@@ -48,7 +48,7 @@ class DIRLAB(object):
                 mhd.write('BinaryData = True\n')
                 mhd.write('DimSize = %s %s %s\n' % (dirlab_image_information[id]['x_size'], dirlab_image_information[id]['y_size'], dirlab_image_information[id]['z_size']))
                 mhd.write('ElementSpacing = %s %s %s\n' % (dirlab_image_information[id]['x_spacing'], dirlab_image_information[id]['y_spacing'], dirlab_image_information[id]['z_spacing']))
-                mhd.write('ElementTYPE = MET_USHORT\n')
+                mhd.write('ElementType = MET_USHORT\n')
                 mhd.write('ElementDataFile = %s\n' % img_1_file_name)
 
             self.image_file_names.append((mhd_0_file_name, mhd_1_file_name))
@@ -57,8 +57,9 @@ class DIRLAB(object):
             point_set_1 = glob.glob(os.path.join(input_directory, dirlab_image_information[id]['sub_directory'], 'ExtremePhases', '*T50_xyz.txt'))[0]
             self.point_set_file_names.append((point_set_0, point_set_1))
 
-            self.relative_deformation_field_file_names.append((os.path.join(self.name, dirlab_image_information[id]['sub_directory'], '00_to_50.nii'),
-                                                               os.path.join(self.name, dirlab_image_information[id]['sub_directory'], '50_to_00.nii')))
+            deformation_field_file_name_0 = os.path.join(self.name, dirlab_image_information[id]['sub_directory'], '00_to_50.nii')
+            deformation_field_file_name_1 = os.path.join(self.name, dirlab_image_information[id]['sub_directory'], '50_to_00.nii')
+            self.relative_deformation_field_file_names.append((deformation_field_file_name_0, deformation_field_file_name_1))
 
 
 

@@ -44,7 +44,7 @@ def load_datasets(parameters):
         logging.info('Found EMPIRE ' + dirlab.category + ' dataset.')
 
     if parameters.empire_input_directory is not None:
-        empire = EMPIRE(parameters.mgh10_input_directory)
+        empire = EMPIRE(parameters.empire_input_directory)
         datasets[empire.category].append(empire)
         logging.info('Found EMPIRE ' + empire.category + ' dataset.')
 

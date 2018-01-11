@@ -29,5 +29,5 @@ if not os.path.exists(parameters.submissions_directory):
 if not os.path.exists(parameters.output_directory):
     os.mkdir(parameters.output_directory)
 
-# register.run(parameters)
+register.run(parameters)
 evaluate.run(parameters)
