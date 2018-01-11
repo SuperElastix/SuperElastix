@@ -46,7 +46,7 @@ node('lkeb-vm-test') {
 		stage('Build') {
 			dir('build') {
 				sh "${ cmake } ../src/SuperBuild"
-				sh 'make -j2 Continuous'
+				sh 'make Continuous'
 			}
 		}
 		dir('src') {
