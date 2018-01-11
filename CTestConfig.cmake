@@ -9,6 +9,12 @@
 set(CTEST_PROJECT_NAME "SuperElastix")
 set(CTEST_NIGHTLY_START_TIME "00:00:00 EST")
 
+execute_process (
+    COMMAND ${GIT_EXECUTABLE} name-rev --name-only HEAD
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    OUTPUT_VARIABLE BUILDNAME 
+)
+
 set(CTEST_DROP_METHOD "http")
 set(CTEST_DROP_SITE "my.cdash.org")
 set(CTEST_DROP_LOCATION "/submit.php?project=SuperElastix")
