@@ -34,7 +34,7 @@ def load_datasets(parameters):
 
 
     if parameters.cumc12_input_directory is not None:
-        cumc12 = CUMC12(parameters.mgh10_input_directory)
+        cumc12 = CUMC12(parameters.cumc12_input_directory)
         datasets[cumc12.category].append(cumc12)
         logging.info('Found MGH10 ' + cumc12.category + ' dataset.')
 
@@ -49,12 +49,12 @@ def load_datasets(parameters):
         logging.info('Found EMPIRE ' + empire.category + ' dataset.')
 
     if parameters.isbr18_input_directory is not None:
-        isbr18 = ISBR18(parameters.mgh10_input_directory)
+        isbr18 = ISBR18(parameters.isbr18_input_directory)
         datasets[isbr18.category].append(isbr18)
         logging.info('Found MGH10 ' + isbr18.category + ' dataset.')
 
     if parameters.lpba40_input_directory is not None:
-        lpba40 = LPBA40(parameters.mgh10_input_directory)
+        lpba40 = LPBA40(parameters.lpba40_input_directory)
         datasets[lpba40.category].append(lpba40)
         logging.info('Found MGH10 ' + lpba40.category + ' dataset.')
 
