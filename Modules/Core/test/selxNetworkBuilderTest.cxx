@@ -51,7 +51,7 @@ public:
   virtual void SetUp()
   {
     /** make example blueprint configuration */
-    blueprint = BlueprintPointer( new BlueprintImpl() );
+    blueprint = BlueprintPointer( new BlueprintImpl( *logger ) );
     ParameterMapType metricComponentParameters;
     metricComponentParameters[ "NameOfClass" ] = { "MetricComponent1" };
 
@@ -159,7 +159,7 @@ TEST_F( NetworkBuilderTest, DeduceComponentsFromConnections )
     // ItkResampleFilterComponent< 3, float, float >
     >;
 
-  BlueprintPointer blueprint = BlueprintPointer( new BlueprintImpl() ); // override old blueprint
+  BlueprintPointer blueprint = BlueprintPointer( new BlueprintImpl( *logger ) ); // override old blueprint
 
   blueprint->SetComponent( "RegistrationMethod", { { "NameOfClass", { "ItkImageRegistrationMethodv4Component" } },
                                                    { "NumberOfLevels", { "2" } },

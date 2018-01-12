@@ -27,6 +27,11 @@ Logger
   this->m_LoggerImpl = LoggerImplPointer( new LoggerImpl() );
 }
 
+// This class uses the pimpl idiom and therefore needs to implement the destructor explicitly: Effective Modern C++, Scott Meyers, item 22
+Logger
+::~Logger() {
+}
+
 void
 Logger
 ::SetLogLevel( const LogLevel& level )

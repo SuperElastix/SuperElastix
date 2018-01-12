@@ -121,7 +121,7 @@ private:
   // Logger container
   typedef std::shared_ptr< spdlog::logger > LoggerType;
   typedef std::map< std::string, LoggerType > LoggerVectorType;
-	LoggerVectorType m_Loggers;
+  LoggerVectorType m_Loggers;
 
 };
 
