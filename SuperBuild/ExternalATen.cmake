@@ -1,6 +1,6 @@
 #=========================================================================
 #
-#  Copyright Leiden University Medical Center, Erasmus University Medical 
+#  Copyright Leiden University Medical Center, Erasmus University Medical
 #  Center and contributors
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,20 +17,28 @@
 #
 #=========================================================================
 
-set( proj Applications )
+set( proj ATen )
+set( ATen_REPOSITORY https://github.com/zdevito/ATen )
+set( ATen_TAG 635e9ef1f881391539e7426899370ebfe094fabd )
 
 ExternalProject_Add( ${proj}
-  DOWNLOAD_COMMAND ""
-  SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../Applications
+  GIT_REPOSITORY ${ATen_REPOSITORY}
+  GIT_TAG ${ATen_TAG}
+  UPDATE_COMMAND ""
+  SOURCE_DIR ${proj}
   BINARY_DIR ${proj}-build
   CMAKE_ARGS
     --no-warn-unused-cli
+    -DBUILD_SHARED_LIBS:BOOL=${SUPERELASTIX_BUILD_SHARED_LIBS}
+    -DBUILD_EXAMPLES:BOOL=OFF
+    -DBUILD_TESTING:BOOL=OFF
     -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
     -DCMAKE_CONFIGURATION_TYPES:STRING=${CMAKE_CONFIGURATION_TYPES}
-    -DSuperElastixSuperBuild_DIR:PATH=${PROJECT_BINARY_DIR}
-    -DSuperElastix_DIR:PATH=${SuperElastix_DIR}
-    -DITK_DIR:PATH=${ITK_DIR}
-  DEPENDS ${SUPERELASTIX_DEPENDENCIES}
-  INSTALL_COMMAND ""
-  BUILD_ALWAYS 1 
+    -DNO_CUDA=true
+    -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
 )
+
+ExternalProject_Get_Property( ${proj} install_dir )
+set( ATEN_DIR "${install_dir}/share/cmake/ATen" )
+
+list( APPEND SUPERELASTIX_DEPENDENCIES ${proj} )

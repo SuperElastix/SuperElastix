@@ -1,6 +1,6 @@
 #=========================================================================
 #
-#  Copyright Leiden University Medical Center, Erasmus University Medical 
+#  Copyright Leiden University Medical Center, Erasmus University Medical
 #  Center and contributors
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,21 +16,9 @@
 #  limitations under the License.
 #
 #=========================================================================
+set(${MODULE}_INCLUDE_DIRS
+  ${${MODULE}_SOURCE_DIR}/include
+  ${${MODULE}_SOURCE_DIR}/interfaces)
 
-set( proj Applications )
-
-ExternalProject_Add( ${proj}
-  DOWNLOAD_COMMAND ""
-  SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../Applications
-  BINARY_DIR ${proj}-build
-  CMAKE_ARGS
-    --no-warn-unused-cli
-    -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-    -DCMAKE_CONFIGURATION_TYPES:STRING=${CMAKE_CONFIGURATION_TYPES}
-    -DSuperElastixSuperBuild_DIR:PATH=${PROJECT_BINARY_DIR}
-    -DSuperElastix_DIR:PATH=${SuperElastix_DIR}
-    -DITK_DIR:PATH=${ITK_DIR}
-  DEPENDS ${SUPERELASTIX_DEPENDENCIES}
-  INSTALL_COMMAND ""
-  BUILD_ALWAYS 1 
-)
+set( ${MODULE}_TEST_SOURCE_FILES
+  ${${MODULE}_SOURCE_DIR}/test/selxDisplacementFieldMeshWarperTest.cxx)
