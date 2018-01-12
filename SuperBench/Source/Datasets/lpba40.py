@@ -1,4 +1,4 @@
-import os
+import os, glob
 from itertools import combinations
 
 from evaluation_metrics import singularity_ratio, inverse_consistency_points, merge_dicts
@@ -11,20 +11,21 @@ class LPBA40(object):
         self.input_directory = input_directory
         self.image_file_names = []
         self.atlas_file_names = []
-        self.relative_deformation_field_file_names = []
+        self.deformation_field_file_names = []
 
-        # TODO: Random subsample?
-        n = 10
-        for i in range(1, n):
-            for j in range(1, n):
-                self.image_file_names.append((os.path.join(input_directory, 'LPBA40_rigidly_registered_pairs', 'l{0}_to_l{1}.hdr'.format(i, j)),
-                                              os.path.join(input_directory, 'LPBA40_rigidly_registered_pairs', 'l{1}_to_l{0}.hdr'.format(i, j))))
+        image_file_names = [glob.glob(os.path.join(self.input_directory, 'delineation_space', sub_directory, '*.delineation.skullstripped.hdr'))[0] for sub_directory in os.listdir(os.path.join(self.input_directory, 'delineation_space')) if os.path.isdir(os.path.join(self.input_directory, 'delineation_space', sub_directory))]
+        self.image_file_names = [pair for pair in combinations(image_file_names, 2)]
 
-                self.atlas_file_names.append((os.path.join(input_directory, 'LPBA40_rigidly_registered_label_pairs', 'l{0}_to_l{1}.hdr'.format(i, j)),
-                                              os.path.join(input_directory, 'LPBA40_rigidly_registered_label_pairs', 'l{1}_to_l{0}.hdr'.format(i, j))))
+        atlas_file_names = [glob.glob(os.path.join(self.input_directory, 'delineation_space', sub_directory, '*.delineation.skullstripped.hdr'))[0] for sub_directory in os.listdir(os.path.join(self.input_directory, 'delineation_space')) if os.path.isdir(os.path.join(self.input_directory, 'delineation_space', sub_directory))]
+        self.atlas_file_names = [pair for pair in combinations(atlas_file_names, 2)]
 
-                self.deformation_field_file_names.append((os.path.join(self.name, 'l{0}_to_l{1}.hdr'.format(i, j)),
-                                              os.path.join(self.name, 'l{1}_to_l{0}.hdr'.format(i, j))))
+        for image_file_name_0, image_file_name_1 in self.image_file_names:
+            image_file_name_0 = os.path.basename(image_file_name_0)
+            image_file_name_1 = os.path.basename(image_file_name_1)
+            image_file_name_we_0 = os.path.splitext(image_file_name_0)[0]
+            image_file_name_we_1 = os.path.splitext(image_file_name_1)[0]
+            self.deformation_field_file_names.append((os.path.join(self.name, image_file_name_we_0 + "_to_" + image_file_name_we_1 + ".nii"),
+                                                      os.path.join(self.name, image_file_name_we_1 + "_to_" + image_file_name_we_0 + ".nii")))
 
 
     def generator(self):
