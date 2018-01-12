@@ -157,7 +157,7 @@ ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >
 {
   // This function overrides the default behavior, in which all accepting interfaces must be set, by allowing the some interfaces not being set.
   // TODO: see I we can reduce the amount of code with helper (meta-)functions
-  if( this->InterfaceAcceptor< MultiStageTransformInterface< InternalComputationValueType, Dimensionality >>::isSet() == false )
+  if(! this->InterfaceAcceptor< MultiStageTransformInterface< InternalComputationValueType, Dimensionality >>::GetAccepted())
   {
     return false;
   }

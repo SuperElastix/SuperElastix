@@ -428,25 +428,25 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
 
   // This function overrides the default behavior, in which all accepting interfaces must be set, by allowing the itkTransformParametersAdaptorsContainerInterface not being set.
   // TODO: see I we can reduce the amount of code with helper (meta-)functions
-  if( this->InterfaceAcceptor< itkImageFixedInterface< Dimensionality, TPixel >>::isSet() == false )
+  if( !this->InterfaceAcceptor< itkImageFixedInterface< Dimensionality, TPixel >>::GetAccepted())
   {
     return false;
   }
-  if( this->InterfaceAcceptor< itkImageMovingInterface< Dimensionality, TPixel >>::isSet() == false )
+  if( !this->InterfaceAcceptor< itkImageMovingInterface< Dimensionality, TPixel >>::GetAccepted() )
   {
     return false;
   }
-  if( this->InterfaceAcceptor< itkTransformInterface< InternalComputationValueType, Dimensionality >>::isSet() == false )
+  if( !this->InterfaceAcceptor< itkTransformInterface< InternalComputationValueType, Dimensionality >>::GetAccepted() )
   {
     return false;
   }
   // Allow unconnected itkTransformParametersAdaptorsContainerInterface (not needed for affine transform)
   // itkTransformParametersAdaptorsContainerInterface< InternalComputationValueType, Dimensionality >
-  if( this->InterfaceAcceptor< itkMetricv4Interface< Dimensionality, TPixel, InternalComputationValueType >>::isSet() == false )
+  if( !this->InterfaceAcceptor< itkMetricv4Interface< Dimensionality, TPixel, InternalComputationValueType >>::GetAccepted() )
   {
     return false;
   }
-  if( this->InterfaceAcceptor< itkOptimizerv4Interface< InternalComputationValueType >>::isSet() == false )
+  if( !this->InterfaceAcceptor< itkOptimizerv4Interface< InternalComputationValueType >>::GetAccepted() == false )
   {
     return false;
   }
