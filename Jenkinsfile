@@ -48,7 +48,7 @@ node('lkeb-vm-test') {
 			dir('build') {
 				sh "${ cmake } ../src/SuperBuild"
 				sh 'make clean'
-				sh 'make Experimental -j2'
+				sh 'make -j2 Experimental'
 			}
 		}
 		dir('src') {
@@ -59,7 +59,7 @@ node('lkeb-vm-test') {
 	timeout(45) {
 		stage('Test') {
 			dir('build/SuperElastix-build') {
-				sh 'make Experimental -j2'
+				sh 'make -j2 Experimental'
 			}
 		}
 	}
