@@ -122,23 +122,24 @@ TEST_F( BlueprintTest, SetGetDeleteConnection )
   EXPECT_THROW( blueprint->GetConnection( "Component0", "Component1" ), std::runtime_error );
 }
 
-//TEST_F( BlueprintTest, CopyConstuctor )
-//{
-//  std::unique_ptr< BlueprintImpl > baseBlueprint;
-//  EXPECT_NO_THROW( baseBlueprint = std::unique_ptr< BlueprintImpl >( new BlueprintImpl() ) );
-//
-//  baseBlueprint->SetComponent( "Component0", { { "OperationType", { "Transform" } } } );
-//  std::unique_ptr< BlueprintImpl > clonedBaseBlueprint;
-//  EXPECT_NO_THROW( clonedBaseBlueprint = std::make_unique< BlueprintImpl >( *baseBlueprint.get() ) );
-//
-//  EXPECT_NO_THROW( clonedBaseBlueprint->SetComponent( "Component1", { { "OperationType", { "Source" } }, { "Dimensionality", { "3" } } } ) );
-//
-//  BlueprintImpl::ParameterMapType clonedComponent0;
-//  EXPECT_NO_THROW( clonedComponent0 = clonedBaseBlueprint->GetComponent( "Component0" ) );
-//
-//  BlueprintImpl::ParameterMapType component1;
-//  EXPECT_THROW( component1 = baseBlueprint->GetComponent( "Component1" ), std::runtime_error );
-//}
+TEST_F( BlueprintTest, CopyConstuctor )
+{
+  auto baseBlueprint = Blueprint::New();
+  baseBlueprint->SetComponent( "Component0", { { "OperationType", { "Transform" } } } );
+
+  auto baseBlueprintImpl = baseBlueprint->GetBlueprintImpl();
+
+  std::unique_ptr< BlueprintImpl > clonedBaseBlueprint;
+  EXPECT_NO_THROW( clonedBaseBlueprint = std::make_unique< BlueprintImpl >( baseBlueprintImpl ) );
+
+  EXPECT_NO_THROW( clonedBaseBlueprint->SetComponent( "Component1", { { "OperationType", { "Source" } }, { "Dimensionality", { "3" } } } ) );
+
+  BlueprintImpl::ParameterMapType clonedComponent0;
+  EXPECT_NO_THROW( clonedComponent0 = clonedBaseBlueprint->GetComponent( "Component0" ) );
+
+  BlueprintImpl::ParameterMapType component1;
+  EXPECT_THROW( component1 = baseBlueprint->GetComponent( "Component1" ), std::runtime_error );
+}
 
 TEST_F( BlueprintTest, Compose )
 {
