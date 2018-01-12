@@ -72,6 +72,15 @@ struct Properties< SinkInterface >
 };
 
 template< >
+struct Properties< UpdateInterface >
+{
+  static const std::map< std::string, std::string > Get()
+  {
+    return{ { keys::NameOfInterface, "UpdateInterface" } };
+  }
+};
+
+template< >
 struct Properties< RegistrationControllerStartInterface >
 {
   static const std::map< std::string, std::string > Get()
