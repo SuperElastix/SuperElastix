@@ -125,11 +125,11 @@ Niftyregf3dComponent< TPixel >
   // This function overrides the default behavior, in which all accepting interfaces must be set, by allowing the some interfaces not being set.
   // TODO: see if we can reduce the amount of code with helper (meta-)functions
   //   Superclass::AcceptingInterfacesTypeList
-  if (((InterfaceAcceptor< NiftyregReferenceImageInterface< TPixel >> *) this)->isSet() == false)
+  if (this->InterfaceAcceptor< NiftyregReferenceImageInterface< TPixel >>::isSet() == false)
   {
     return false;
   }
-  if (((InterfaceAcceptor< NiftyregFloatingImageInterface< TPixel >> *) this)->isSet() == false)
+  if (this->InterfaceAcceptor< NiftyregFloatingImageInterface< TPixel >>::isSet() == false)
   {
     return false;
   }

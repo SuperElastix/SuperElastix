@@ -17,37 +17,29 @@
  *
  *=========================================================================*/
 
-#ifndef Providing_h
-#define Providing_h
-
-#include "selxConnectionInfo.h"
+#ifndef ConnectionInfo_h
+#define ConnectionInfo_h
 
 namespace selx
 {
-template< typename ... Interfaces >
-class Providing;
-
-template< >
-class Providing< >
+template< class InterfaceT >
+class ConnectionInfo
 {
 public:
-
-  static unsigned int CountMeetsCriteria( const ComponentBase::InterfaceCriteriaType ) { return 0; }
-
-protected:
+	// append the accepting Component name to the list
+  void SetProvidedTo( std::string acceptingComponent )
+  {
+	  m_ProvidedTo.push_back(acceptingComponent);
+  }; 
+  // get the list of Component names
+  std::vector<std::string>& GetProvidedTo() //const InterfaceT &
+  {
+	  return m_ProvidedTo;
+  }
+private:
+	std::vector<std::string> m_ProvidedTo;
 };
 
-template< typename FirstInterface, typename ... RestInterfaces >
-class Providing< FirstInterface, RestInterfaces ... > : public FirstInterface, public ConnectionInfo< FirstInterface >, public Providing< RestInterfaces ... >
-{
-public:
-
-  static unsigned int CountMeetsCriteria( const ComponentBase::InterfaceCriteriaType );
-
-protected:
-};
 } //end namespace selx
-#ifndef ITK_MANUAL_INSTANTIATION
-#include "selxProviding.hxx"
-#endif
-#endif // Providing_h
+
+#endif // ConnectionInfo_h
