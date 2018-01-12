@@ -20,6 +20,8 @@
 #ifndef InterfaceAcceptor_hxx
 #define InterfaceAcceptor_hxx
 
+#include "selxConnectionInfo.h"
+
 namespace selx
 {
 template< class InterfaceT >
