@@ -88,15 +88,15 @@ def run(parameters):
         blueprint_name, blueprint_ext = os.path.splitext(os.path.basename(blueprint_file_name))
         category = get_category(blueprint_file_name)
         for dataset in datasets[category]:
-            for image_file_name_pair, ground_truth_file_name_pair, relative_deformation_field_file_name_pair in dataset.generator():
+            for image_file_name_pair, ground_truth_file_name_pair, deforation_field_file_name_pair in dataset.generator():
                 try:
                     output_directory = os.path.join(parameters.output_directory,
                                                     team_name, blueprint_name,
-                                                    os.path.dirname(relative_deformation_field_file_name_pair[0]))
+                                                    os.path.dirname(deforation_field_file_name_pair[0]))
                     output_file_name_0 = os.path.join(output_directory,
-                                                      os.path.basename(relative_deformation_field_file_name_pair[0]))
+                                                      os.path.basename(deforation_field_file_name_pair[0]))
                     output_file_name_1 = os.path.join(output_directory,
-                                                      os.path.basename(relative_deformation_field_file_name_pair[1]))
+                                                      os.path.basename(deforation_field_file_name_pair[1]))
                     os.makedirs(output_directory, exist_ok=True)
 
                     logging.info('Running blueprint %s for %s -> %s.',

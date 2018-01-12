@@ -10,16 +10,25 @@ class ISBR18(object):
 
         self.input_directory = input_directory
         self.image_file_names = []
-        self.point_set_file_names = []
-        self.relative_deformation_field_file_names = []
+        self.atlas_file_names = []
+        self.deformation_field_file_names = []
 
-        self.image_file_names = combinations([image for image in os.listdir(os.path.join(input_directory, 'Heads')) if image.endswith('.hdr')], 2)
-        self.atlas_file_names = combinations([atlas for atlas in os.listdir(os.path.join(input_directory, 'Atlases')) if atlas.endswith('.hdr')], 2)
-        self.deformation_field_file_names = [(os.path.join(self.name, file_name_0), os.path.join(self.name, file_name_1)) for file_name_0, file_name_1 in self.image_file_names]
+        image_file_names = [os.path.join(input_directory, 'Heads', image) for image in os.listdir(os.path.join(input_directory, 'Heads')) if image.endswith('.hdr')]
+        self.image_file_names = [pair for pair in combinations(image_file_names, 2)]
+
+        atlas_file_names = [os.path.join(input_directory, 'Heads', atlas) for atlas in os.listdir(os.path.join(input_directory, 'Atlases')) if atlas.endswith('.hdr')]
+        self.atlas_file_names = [pair for pair in combinations(atlas_file_names, 2)]
+
+        for image_file_name_0, image_file_name_1 in self.image_file_names:
+            image_file_name_we_0, image_extension_we_0 = os.path.splitext(image_file_name_0)
+            image_file_name_we_1, image_extension_we_1 = os.path.splitext(image_file_name_1)
+            self.deformation_field_file_names.append((os.path.join(self.name, image_file_name_we_0 + "_to_" + image_file_name_we_1 + ".nii"),
+                                                      os.path.join(self.name, image_file_name_we_1 + "_to_" + image_file_name_we_0 + ".nii")))
+
 
 
     def generator(self):
-        for image_file_names, atlas_file_names, deformation_field_file_names in zip(self.image_file_names, self.atlas_file_names, self.relative_deformation_field_file_names):
+        for image_file_names, atlas_file_names, deformation_field_file_names in zip(self.image_file_names, self.atlas_file_names, self.deformation_field_file_names):
             yield image_file_names, atlas_file_names, deformation_field_file_names
 
 

@@ -18,8 +18,8 @@ class EMPIRE(object):
                                           os.path.join(input_directory, 'scans', "%02d" % i + '_Moving.mhd')))
 
             # TODO: Find out output format
-            self.deformation_field_file_names.append(("%02d" % i + '_Fixed.mhd',
-                                                     "%02d" % i + '_Moving.mhd'))
+            self.deformation_field_file_names.append(("%02d" % i + '_Fixed_to_Moving.mhd',
+                                                      "%02d" % i + '_Moving_to_Fixed.mhd'))
 
 
     def generator(self):
