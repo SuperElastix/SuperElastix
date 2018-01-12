@@ -222,15 +222,15 @@ main( int ac, char * av[] )
   }
   catch( std::exception & e )
   {
-    logger->Log( selx::LogLevel::ERR, "Executing ... Error");
-    logger->Log( selx::LogLevel::ERR, e.what());
+    logger->Log( selx::LogLevel::CRT, "Executing ... Error");
+    logger->Log( selx::LogLevel::CRT, e.what());
     std::cerr << e.what();
     return 1;
   }
   catch( ... )
   {
-    logger->Log( selx::LogLevel::ERR, "Executing ... Error");
-    logger->Log( selx::LogLevel::ERR, "Exception of unknown type!");
+    logger->Log( selx::LogLevel::CRT, "Executing ... Error");
+    logger->Log( selx::LogLevel::CRT, "Exception of unknown type!");
     std::cerr << "Exception of unknown type!";
     return 1;
   }

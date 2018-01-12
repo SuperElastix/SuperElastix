@@ -26,7 +26,7 @@ namespace selx
 Blueprint
 ::Blueprint() : 
   m_Logger( Logger::New() ), // Create default logger which redirects to std::cout
-  m_Blueprint( new BlueprintImpl( this->m_Logger->GetLoggerImpl() ) ) 
+  m_BlueprintImpl( new BlueprintImpl( this->m_Logger->GetLoggerImpl() ) ) 
 {
   //TODO: cannot have independent loggers redirecting to cout. 
   //this->m_Logger->AddStream("cout", std::cout);
@@ -45,7 +45,7 @@ const BlueprintImpl &
 Blueprint
 ::GetBlueprintImpl( void ) const
 {
-  return *this->m_Blueprint;
+  return *this->m_BlueprintImpl;
 }
 
 
@@ -54,7 +54,7 @@ Blueprint
 ::SetComponent( ComponentNameType name, ParameterMapType parameterMap )
 {
   this->Modified();
-  return this->m_Blueprint->SetComponent( name, parameterMap );
+  return this->m_BlueprintImpl->SetComponent( name, parameterMap );
 }
 
 
@@ -62,7 +62,7 @@ Blueprint::ParameterMapType
 Blueprint
 ::GetComponent( ComponentNameType componentName ) const
 {
-  return this->m_Blueprint->GetComponent( componentName );
+  return this->m_BlueprintImpl->GetComponent( componentName );
 }
 
 
@@ -71,14 +71,14 @@ Blueprint
 ::DeleteComponent( ComponentNameType componentName )
 {
   this->Modified();
-  return this->m_Blueprint->DeleteComponent( componentName );
+  return this->m_BlueprintImpl->DeleteComponent( componentName );
 }
 
 
 Blueprint::ComponentNamesType
 Blueprint::GetComponentNames( void ) const
 {
-  return this->m_Blueprint->GetComponentNames();
+  return this->m_BlueprintImpl->GetComponentNames();
 }
 
 
@@ -87,7 +87,7 @@ Blueprint
 ::SetConnection( ComponentNameType upstream, ComponentNameType downstream, ParameterMapType parameterMap )
 {
   this->Modified();
-  return this->m_Blueprint->SetConnection( upstream, downstream, parameterMap );
+  return this->m_BlueprintImpl->SetConnection( upstream, downstream, parameterMap );
 }
 
 
@@ -95,7 +95,7 @@ Blueprint::ParameterMapType
 Blueprint
 ::GetConnection( ComponentNameType upstream, ComponentNameType downstream ) const
 {
-  return this->m_Blueprint->GetConnection( upstream, downstream );
+  return this->m_BlueprintImpl->GetConnection( upstream, downstream );
 }
 
 
@@ -104,7 +104,7 @@ Blueprint
 ::DeleteConnection( ComponentNameType upstream, ComponentNameType downstream )
 {
   this->Modified();
-  return this->m_Blueprint->DeleteConnection( upstream, downstream );
+  return this->m_BlueprintImpl->DeleteConnection( upstream, downstream );
 }
 
 
@@ -112,7 +112,7 @@ bool
 Blueprint
 ::ComponentExists( ComponentNameType componentName ) const
 {
-  return this->m_Blueprint->ComponentExists( componentName );
+  return this->m_BlueprintImpl->ComponentExists( componentName );
 }
 
 
@@ -120,7 +120,7 @@ bool
 Blueprint
 ::ConnectionExists( ComponentNameType upstream, ComponentNameType downstream ) const
 {
-  return this->m_Blueprint->ConnectionExists( upstream, downstream );
+  return this->m_BlueprintImpl->ConnectionExists( upstream, downstream );
 }
 
 
@@ -129,7 +129,7 @@ Blueprint
 ::ComposeWith( const Blueprint * other)
 {
   this->Modified();
-  return this->m_Blueprint->ComposeWith( other->GetBlueprintImpl() );
+  return this->m_BlueprintImpl->ComposeWith( other->GetBlueprintImpl() );
 }
 
 
@@ -137,7 +137,7 @@ Blueprint::ComponentNamesType
 Blueprint
 ::GetOutputNames( const ComponentNameType name ) const
 {
-  return this->m_Blueprint->GetOutputNames( name );
+  return this->m_BlueprintImpl->GetOutputNames( name );
 }
 
 
@@ -145,7 +145,7 @@ Blueprint::ComponentNamesType
 Blueprint
 ::GetInputNames( const ComponentNameType name ) const
 {
-  return this->m_Blueprint->GetInputNames( name );
+  return this->m_BlueprintImpl->GetInputNames( name );
 }
 
 
@@ -153,14 +153,14 @@ void
 Blueprint
 ::Write( const std::string filename )
 {
-  this->m_Blueprint->Write( filename );
+  this->m_BlueprintImpl->Write( filename );
 }
 
 void
 Blueprint
 ::MergeFromFile( const std::string& filename )
 {
-  this->m_Blueprint->MergeFromFile( filename );
+  this->m_BlueprintImpl->MergeFromFile( filename );
 }
 
 void
@@ -168,7 +168,7 @@ Blueprint
 ::SetLogger( Logger::Pointer logger )
 {
   this->m_Logger = logger;
-  this->m_Blueprint->SetLoggerImpl( logger->GetLoggerImpl() );
+  this->m_BlueprintImpl->SetLoggerImpl( logger->GetLoggerImpl() );
 }
 
 

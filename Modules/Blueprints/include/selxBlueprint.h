@@ -109,7 +109,7 @@ private:
 
   // The order of the logger and the blueprint matters, since the lifetime of the logger should always exceed that of the blueprint.
   Logger::Pointer m_Logger;
-  BlueprintImplPointer m_Blueprint;
+  BlueprintImplPointer m_BlueprintImpl;
 
 };
 }

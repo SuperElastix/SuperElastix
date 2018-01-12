@@ -124,7 +124,7 @@ BlueprintImpl
   {
     std::stringstream msg;
     msg << "BlueprintImpl does not contain component " << name << std::endl;
-    this->m_LoggerImpl->Log(LogLevel::ERR, msg.str());
+    this->m_LoggerImpl->Log(LogLevel::CRT, msg.str());
     throw std::runtime_error( msg.str() );
   }
 
@@ -389,7 +389,7 @@ BlueprintImpl
   // This function is part of the internal API and should fail hard if we use it incorrectly
   if( !this->ConnectionExists( upstream, downstream ) )
   {
-    this->m_LoggerImpl->Log(LogLevel::ERR, "BlueprintImpl does not contain connection from component {} to {}.", upstream, downstream );
+    this->m_LoggerImpl->Log(LogLevel::CRT, "BlueprintImpl does not contain connection from component {} to {}.", upstream, downstream );
     throw std::runtime_error( "BlueprintImpl does not contain connection from component " + upstream + " to " + downstream );
   }
 

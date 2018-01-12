@@ -393,7 +393,7 @@ NetworkBuilder< ComponentList >::GetSourceInterfaces()
       SourceInterface::Pointer provingSourceInterface = std::dynamic_pointer_cast< SourceInterface >( component );
       if( !provingSourceInterface )  // is actually a double-check for sanity: based on criterion cast should be successful
       {
-        this->m_Logger.Log( LogLevel::ERR, "dynamic_cast<SourceInterface*> fails, but based on component criterion it shouldn't" );
+        this->m_Logger.Log( LogLevel::CRT, "dynamic_cast<SourceInterface*> fails, but based on component criterion it shouldn't" );
         throw std::runtime_error( "dynamic_cast<SourceInterface*> fails, but based on component criterion it shouldn't" );
       }
       sourceInterfaceMap[ componentSelector.first ] = provingSourceInterface;
@@ -418,7 +418,7 @@ NetworkBuilder< ComponentList >::GetSinkInterfaces()
       SinkInterface::Pointer provingSinkInterface = std::dynamic_pointer_cast< SinkInterface >( component );
       if( !provingSinkInterface )  // is actually a double-check for sanity: based on criterion cast should be successful
       {
-        this->m_Logger.Log(LogLevel::ERR, "dynamic_cast<SinkInterface*> fails, but based on component criterion it shouldn't");
+        this->m_Logger.Log(LogLevel::CRT, "dynamic_cast<SinkInterface*> fails, but based on component criterion it shouldn't");
         throw std::runtime_error( "dynamic_cast<SinkInterface*> fails, but based on component criterion it shouldn't" );
       }
       sinkInterfaceMap[ componentSelector.first ] = provingSinkInterface;
@@ -502,7 +502,7 @@ NetworkBuilder< ComponentList >::GetRealizedNetwork()
         SinkInterface::Pointer provingSinkInterface = std::dynamic_pointer_cast< SinkInterface >( component );
         if( !provingSinkInterface )   // is actually a double-check for sanity: based on criterion cast should be successful
         {
-          this->m_Logger.Log(LogLevel::ERR, "dynamic_cast<SinkInterface*> fails, but based on component criterion it shouldn't");
+          this->m_Logger.Log(LogLevel::CRT, "dynamic_cast<SinkInterface*> fails, but based on component criterion it shouldn't");
           throw std::runtime_error( "dynamic_cast<SinkInterface*> fails, but based on component criterion it shouldn't" );
         }
         outputObjectsMap[ componentSelector.first ] = provingSinkInterface->GetMiniPipelineOutput();
