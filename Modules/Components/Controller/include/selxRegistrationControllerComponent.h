@@ -32,7 +32,7 @@ template< bool dummy = true >
 class RegistrationControllerComponent :
   public SuperElastixComponent<
   Accepting< RunRegistrationInterface, ReconnectTransformInterface, AfterRegistrationInterface >,
-  Providing< RegistrationControllerStartInterface >
+  Providing< UpdateInterface >
   >
 {
   // RegistrationControllerComponent is a work-around for broken itk-pipelines.
@@ -46,7 +46,7 @@ public:
   typedef RegistrationControllerComponent Self;
   typedef SuperElastixComponent<
     Accepting< RunRegistrationInterface, ReconnectTransformInterface, AfterRegistrationInterface >,
-    Providing< RegistrationControllerStartInterface >
+    Providing< UpdateInterface >
     >                   Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
@@ -62,7 +62,7 @@ public:
   virtual int Accept( AfterRegistrationInterface::Pointer ) override;
 
   // Providing Interfaces:
-  virtual void RegistrationControllerStart( void ) override;
+  virtual void Update( void ) override;
 
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
 

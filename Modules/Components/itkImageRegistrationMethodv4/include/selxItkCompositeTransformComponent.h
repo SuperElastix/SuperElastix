@@ -39,7 +39,7 @@ class ItkCompositeTransformComponent :
   Providing<
   itkTransformInterface< InternalComputationValueType, Dimensionality
   >,
-  RegistrationControllerStartInterface >
+  UpdateInterface >
   >
 {
 public:
@@ -56,7 +56,7 @@ public:
     Providing<
     itkTransformInterface< InternalComputationValueType, Dimensionality
     >,
-    RegistrationControllerStartInterface >
+    UpdateInterface >
     >                                       Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
@@ -73,7 +73,7 @@ public:
 
   virtual int Accept( ReconnectTransformInterface::Pointer ) override;
 
-  virtual void RegistrationControllerStart() override;
+  virtual void Update() override;
 
   virtual typename TransformType::Pointer GetItkTransform() override;
 

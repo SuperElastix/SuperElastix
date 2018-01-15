@@ -65,7 +65,7 @@ RegistrationControllerComponent< dummy >::Accept( AfterRegistrationInterface::Po
 
 template< bool dummy >
 void
-RegistrationControllerComponent< dummy >::RegistrationControllerStart()
+RegistrationControllerComponent< dummy >::Update()
 {
   for( auto && runRegistrationInterface : this->m_RunRegistrationInterfaces )
   {

@@ -70,7 +70,7 @@ ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >::
 
 template< class InternalComputationValueType, int Dimensionality >
 void
-ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >::RegistrationControllerStart()
+ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >::Update()
 {
   // Check if the names connected stages are compatible with the provided execution order
   // TODO: should we handle such component sanity checks as separate NetworkBuilder check instead of as execution stage?
