@@ -499,7 +499,7 @@ NetworkBuilder< ComponentList >::GetRealizedNetwork()
       /** Scans all Components to find those with Sinking capability and store the outputs in outputObjectsMap */
       if( component->CountProvidingInterfaces( { { keys::NameOfInterface, keys::SinkInterface } } ) == 1 )
       {
-        SinkInterface::Pointer provingSinkInterface = std::dynamic_pointer_cast< SinkInterface >( component );
+        auto provingSinkInterface = std::dynamic_pointer_cast< SinkInterface >( component );
         if( !provingSinkInterface )   // is actually a double-check for sanity: based on criterion cast should be successful
         {
           this->m_Logger.Log(LogLevel::CRT, "dynamic_cast<SinkInterface*> fails, but based on component criterion it shouldn't");
@@ -509,18 +509,18 @@ NetworkBuilder< ComponentList >::GetRealizedNetwork()
       }
     }
 
-    for (const auto & componentName : this->m_Blueprint->GetUpdateOrder())
+    for (const auto & componentName : this->m_Blueprint.GetUpdateOrder())
     {
       auto component = this->m_ComponentSelectorContainer[componentName]->GetComponent();
       if (component->CountProvidingInterfaces({ { keys::NameOfInterface, keys::UpdateInterface } }) == 1)
       {
-        SinkInterface::Pointer provingUpdateInterface = std::dynamic_pointer_cast<UpdateInterface>(component);
+        auto provingUpdateInterface = std::dynamic_pointer_cast<UpdateInterface>(component);
         if (!provingUpdateInterface)   // is actually a double-check for sanity: based on criterion cast should be successful
         {
           this->m_Logger.Log(LogLevel::CRT, "dynamic_cast<provingUpdateInterface*> fails, but based on component criterion it shouldn't");
           throw std::runtime_error("dynamic_cast<provingUpdateInterface*> fails, but based on component criterion it shouldn't");
         }
-        updateOrder->push_back(provingUpdateInterface);
+        updateOrder.push_back(provingUpdateInterface);
       }
 
     }
