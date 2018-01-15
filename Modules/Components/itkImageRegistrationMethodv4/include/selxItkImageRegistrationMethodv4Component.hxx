@@ -446,7 +446,7 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
   {
     return false;
   }
-  if( !this->InterfaceAcceptor< itkOptimizerv4Interface< InternalComputationValueType >>::GetAccepted() == false )
+  if( !this->InterfaceAcceptor< itkOptimizerv4Interface< InternalComputationValueType >>::GetAccepted() )
   {
     return false;
   }
