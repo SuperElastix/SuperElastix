@@ -53,7 +53,7 @@ ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >
 template< class InternalComputationValueType, int Dimensionality >
 int
 ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >
-::Accept( ReconnectTransformInterface::Pointer other )
+::Accept( UpdateInterface::Pointer other )
 {
   this->m_ReconnectTransformInterfaces.insert( other );
   return 0;
@@ -111,7 +111,7 @@ ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >::
         return thisStage->GetComponentName() == stageName;
       } );
     ( *stageIterator )->SetMovingInitialTransform( this->m_CompositeTransform );
-    ( *stageIterator )->RunRegistration();
+    ( *stageIterator )->Update();
 
     this->m_CompositeTransform->AppendTransform( ( *stageIterator )->GetItkTransform() );
   }

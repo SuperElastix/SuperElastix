@@ -206,7 +206,7 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
 
 template< int Dimensionality, class TPixel, class InternalComputationValueType >
 void
-ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >::RunRegistration( void )
+ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >::Update( void )
 {
   typename FixedImageType::ConstPointer fixedImage   = this->m_theItkFilter->GetFixedImage();
   typename MovingImageType::ConstPointer movingImage = this->m_theItkFilter->GetMovingImage();
@@ -424,8 +424,6 @@ bool
 ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >
 ::ConnectionsSatisfied()
 {
-  auto providedTo = this->ConnectionInfo<RunRegistrationInterface>::GetProvidedTo();
-
   // This function overrides the default behavior, in which all accepting interfaces must be set, by allowing the itkTransformParametersAdaptorsContainerInterface not being set.
   // TODO: see I we can reduce the amount of code with helper (meta-)functions
   if( !this->InterfaceAcceptor< itkImageFixedInterface< Dimensionality, TPixel >>::GetAccepted())

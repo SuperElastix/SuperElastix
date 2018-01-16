@@ -81,7 +81,7 @@ ItkTransformSinkComponent< Dimensionality, TInternalComputationValue >::GetIniti
 
 template< int Dimensionality, class TInternalComputationValue >
 void
-ItkTransformSinkComponent< Dimensionality, TInternalComputationValue >::AfterRegistration()
+ItkTransformSinkComponent< Dimensionality, TInternalComputationValue >::Update()
 {
   // Only after having performed the registration we can get the pointer to the result transform.
   auto transform = this->m_TransformInterface->GetItkTransform();  

@@ -55,9 +55,6 @@ public:
   typedef std::map<
     std::string, SinkInterface::Pointer > SinkInterfaceMapType;
 
-  typedef std::map<
-    std::string, RegistrationControllerStartInterface::Pointer > RegistrationControllerStartInterfaceMapType;
-
   NetworkBuilder( LoggerImpl & logger, const BlueprintImpl & blueprint );
   virtual ~NetworkBuilder() {}
 

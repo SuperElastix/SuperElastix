@@ -81,7 +81,7 @@ NiftyregAladinComponent< TPixel >
 template< class TPixel >
 void
 NiftyregAladinComponent<  TPixel >
-::RunRegistration()
+::Update()
 {
   this->m_Logger.Log(LogLevel::TRC, "RunRegistration");
   this->m_reg_aladin->Run();

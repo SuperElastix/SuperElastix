@@ -47,7 +47,7 @@ class ItkImageRegistrationMethodv4Component :
   >,
   Providing< itkTransformInterface< InternalComputationValueType, Dimensionality >,
   MultiStageTransformInterface< InternalComputationValueType, Dimensionality >,
-  RunRegistrationInterface
+  UpdateInterface
   >
   >
 {
@@ -68,7 +68,7 @@ public:
     >,
     Providing< itkTransformInterface< InternalComputationValueType, Dimensionality >,
     MultiStageTransformInterface< InternalComputationValueType, Dimensionality >,
-    RunRegistrationInterface
+    UpdateInterface
     >
     >                                     Superclass;
   typedef std::shared_ptr< Self >       Pointer;
@@ -108,7 +108,7 @@ public:
   //Providing Interfaces:
   virtual TransformPointer GetItkTransform() override;
 
-  virtual void RunRegistration() override;
+  virtual void Update() override;
 
   virtual void SetFixedInitialTransform( typename CompositeTransformType::Pointer fixedInitialTransform ) override;
 

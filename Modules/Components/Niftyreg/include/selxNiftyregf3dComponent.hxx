@@ -87,7 +87,7 @@ Niftyregf3dComponent< TPixel >
 template< class TPixel >
 void
 Niftyregf3dComponent< TPixel >
-::RunRegistration()
+::Update()
 {
   this->m_Logger.Log(LogLevel::TRC, "RunRegistration");
   //this->m_reg_f3d->UseSSD( 0, true );

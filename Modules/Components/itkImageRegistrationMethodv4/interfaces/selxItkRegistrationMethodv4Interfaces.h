@@ -142,7 +142,8 @@ public:
     Dimensionality >;
   virtual void SetFixedInitialTransform( typename CompositeTransformType::Pointer ) = 0;
 
-  virtual void RunRegistration( void ) = 0;
+  // TODO put this in a separate UpdateInterface that needs to connect too.
+  virtual void Update( void ) = 0;
 
   virtual void SetMovingInitialTransform( typename CompositeTransformType::Pointer ) = 0;
 
