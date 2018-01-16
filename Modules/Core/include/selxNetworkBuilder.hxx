@@ -150,7 +150,7 @@ NetworkBuilder< ComponentList >::ApplyComponentConfiguration()
       currentComponentSelector->AddCriterion( criterion );
       
       this->m_Logger.Log( LogLevel::DBG,
-        "Finding component for '{0}': {1} component(s) satisfies {{ '{2}' : '{3}' }}  and previous criteria.",
+                          "Finding component for '{0}': {1} component(s) satisfies {{ '{2}' : '{3}' }}  and previous criteria.",
                           componentName,
                           currentComponentSelector->NumberOfComponents(),
                           criterion.first,
@@ -206,6 +206,13 @@ NetworkBuilder< ComponentList >::ApplyConnectionConfiguration()
         this->m_ComponentSelectorContainer[providingComponentName]->NumberOfComponents(),
         this->m_Logger << interfaceCriteria );
 
+      if( this->m_ComponentSelectorContainer[providingComponentName]->NumberOfComponents() == 0 )
+      {
+        std::string msg = providingComponentName + " does not provide any connection that satisfies all of the above criteria.";
+        this->m_Logger.Log( LogLevel::CRT, msg );
+        throw std::runtime_error( msg );
+      }
+
       this->m_ComponentSelectorContainer[ acceptingComponentName ]->AddAcceptingInterfaceCriteria( interfaceCriteria );
       this->m_Logger.Log(LogLevel::DBG,
         "Finding component for '{0}': {1} component(s) satisfies 'AcceptingInterface' {2} and previous criteria.",
@@ -213,17 +220,11 @@ NetworkBuilder< ComponentList >::ApplyConnectionConfiguration()
         this->m_ComponentSelectorContainer[acceptingComponentName]->NumberOfComponents(),
         this->m_Logger << interfaceCriteria );
 
-      if( this->m_ComponentSelectorContainer[ acceptingComponentName ]->NumberOfComponents() == 0 )
+      if( this->m_ComponentSelectorContainer[acceptingComponentName]->NumberOfComponents() == 0 )
       {
-        std::string msg = acceptingComponentName + "does not provide any connections with the given criteria.";
-        this->m_Logger.Log( LogLevel::ERR, msg );
+        std::string msg = acceptingComponentName + " does not accept any connection that satisfies all of the above criteria.";
+        this->m_Logger.Log( LogLevel::CRT, msg );
         throw std::runtime_error( msg );
-      }
-
-      if( this->m_ComponentSelectorContainer[ providingComponentName ]->NumberOfComponents() == 0 )
-      {
-        std::string msg = providingComponentName + "does not accept any connections with the given criteria.";
-        this->m_Logger.Log( LogLevel::ERR, msg );
       }
     }
   }
@@ -266,16 +267,23 @@ NetworkBuilder< ComponentList >::PropagateConnectionsWithUniqueComponents()
 
           auto               acceptingComponent = this->m_ComponentSelectorContainer[ acceptingComponentName ]->GetComponent();
           const unsigned int beforeCriteria    = this->m_ComponentSelectorContainer[ componentName ]->NumberOfComponents();
-          this->m_Logger.Log( LogLevel::DBG, "Propagating 'ProvidingInterface' properties from '{0}' to {2} components at '{1}' ... ", componentName, acceptingComponentName, beforeCriteria );
+          this->m_Logger.Log( LogLevel::DBG, "Trying to narrow candidates for '{0}' based on the connections that '{0}' provides and '{1}' accepts ... ", componentName, acceptingComponentName );
           this->m_ComponentSelectorContainer[ componentName ]->RequireProvidingInterfaceTo( acceptingComponent, interfaceCriteria );
           const unsigned int afterCriteria = this->m_ComponentSelectorContainer[ componentName ]->NumberOfComponents();
-          this->m_Logger.Log( LogLevel::DBG, "Propagating 'ProvidingInterface' properties from '{0}' to {2} components at '{1}' ... Done. Reduced '{1}' to {3} components", componentName, acceptingComponentName, beforeCriteria, afterCriteria );
+
+          if( afterCriteria == 0 ) {
+            this->m_Logger.Log( LogLevel::DBG, "Trying to narrow candidates for '{0}' based on the connections that '{0}' provides and '{1}' accepts ... Error: No connections can be made from {0} to {1}.", componentName, acceptingComponentName, beforeCriteria, afterCriteria );
+            throw std::runtime_error("No connections can be made from " + componentName + " to " + acceptingComponentName + ".");
+          }
 
           if( beforeCriteria > afterCriteria )
           {
-            anySelectionNarrowed = true;
+            this->m_Logger.Log( LogLevel::DBG, "Trying to narrow candidates for '{0}' based on the connections that '{0}' provides and '{1}' accepts ... Done. Reduced candidates for '{0}' from {2} to {3} components", componentName, acceptingComponentName, beforeCriteria, afterCriteria );
           }
-          this->m_Logger.Log( LogLevel::TRC, "Selection Narrowed: {} ", anySelectionNarrowed );
+          else
+          {
+            this->m_Logger.Log( LogLevel::DBG, "Trying to narrow candidates for '{0}' based on the connections that '{0}' provides and '{1}' accepts ... Done. Could not reduce candidates for '{0}'.", componentName, acceptingComponentName);
+          }
         }
       }
       // check all components that provide to component "componentName"
@@ -300,16 +308,23 @@ NetworkBuilder< ComponentList >::PropagateConnectionsWithUniqueComponents()
           auto providingComponent = this->m_ComponentSelectorContainer[ providingComponentName ]->GetComponent();
 
           const unsigned int beforeCriteria = this->m_ComponentSelectorContainer[ componentName ]->NumberOfComponents();
-          this->m_Logger.Log(LogLevel::DBG, "Propagating 'AcceptingInterface' properties from '{0}' to {2} components at '{1}' ... ", componentName, providingComponentName, beforeCriteria);
+          this->m_Logger.Log( LogLevel::DBG, "Trying to narrow candidates for '{0}' based on the connections that '{0}' accepts and '{1}' provides ... ", componentName, providingComponentName );
           this->m_ComponentSelectorContainer[ componentName ]->RequireAcceptingInterfaceFrom( providingComponent, interfaceCriteria );
           const unsigned int afterCriteria = this->m_ComponentSelectorContainer[ componentName ]->NumberOfComponents();
-          this->m_Logger.Log(LogLevel::DBG, "Propagating 'AcceptingInterface' properties from '{0}' to {2} components at '{1}' ... Done. Reduced '{1}' to {3} components", componentName, providingComponentName, beforeCriteria, afterCriteria);
+
+          if( afterCriteria == 0 ) {
+            this->m_Logger.Log( LogLevel::DBG, "Trying to narrow candidates for '{0}' based on the connections that '{0}' accepts and '{1}' provides ... Error: No connections can be made from {1} to {0}.", componentName, providingComponentName, beforeCriteria, afterCriteria );
+            throw std::runtime_error("No connections can be made from " + providingComponentName + " to " + componentName + ".");
+          }
 
           if( beforeCriteria > afterCriteria )
           {
-            anySelectionNarrowed = true;
+            this->m_Logger.Log( LogLevel::DBG, "Trying to narrow candidates for '{0}' based on the connections that '{0}' accepts and '{1}' provides ... Done. Reduced candidates for '{0}' from {2} to {3} components", componentName, providingComponentName, beforeCriteria, afterCriteria );
           }
-          this->m_Logger.Log( LogLevel::TRC, "Selection Narrowed: {} ", anySelectionNarrowed );
+          else
+          {
+            this->m_Logger.Log( LogLevel::DBG, "Trying to narrow candidates for '{0}' based on the connections that '{0}' accepts and '{1}' provides ... Done. Could not reduce candidates for '{0}'.", componentName, providingComponentName);
+          }
         }
       }
     }
@@ -389,6 +404,12 @@ NetworkBuilder< ComponentList >::GetSourceInterfaces()
   {
     ComponentBase::Pointer component = componentSelector.second->GetComponent();
 
+    if(component == nullptr) {
+      std::string msg = "No component found for '" + componentSelector.first + "'.";
+      this->m_Logger.Log( LogLevel::CRT, msg );
+      throw std::runtime_error(msg);
+    }
+
     if( component->CountProvidingInterfaces( { { keys::NameOfInterface, keys::SourceInterface } } ) == 1 )
     {
       SourceInterface::Pointer provingSourceInterface = std::dynamic_pointer_cast< SourceInterface >( component );
@@ -414,6 +435,13 @@ NetworkBuilder< ComponentList >::GetSinkInterfaces()
   for( auto const & componentSelector : this->m_ComponentSelectorContainer )
   {
     ComponentBase::Pointer component = componentSelector.second->GetComponent();
+
+    if(component == nullptr) {
+      std::string msg = "No component found for '" + componentSelector.first + "'.";
+      this->m_Logger.Log( LogLevel::CRT, msg );
+      throw std::runtime_error(msg);
+    }
+
     if( component->CountProvidingInterfaces( { { keys::NameOfInterface, keys::SinkInterface } } ) == 1 )
     {
       SinkInterface::Pointer provingSinkInterface = std::dynamic_pointer_cast< SinkInterface >( component );

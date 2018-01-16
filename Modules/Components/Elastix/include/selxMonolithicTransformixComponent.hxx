@@ -136,8 +136,8 @@ MonolithicTransformixComponent< Dimensionality, TPixel >::GetItkImage()
 }
 
 template< int Dimensionality, class TPixel >
-typename MonolithicTransformixComponent< Dimensionality, TPixel >::DisplacementFieldImageType::Pointer
-MonolithicTransformixComponent< Dimensionality, TPixel >::GetDisplacementFieldItkImage()
+typename MonolithicTransformixComponent< Dimensionality, TPixel >::ItkDisplacementFieldType::Pointer
+MonolithicTransformixComponent< Dimensionality, TPixel >::GetItkDisplacementField()
 {
   this->m_transformixFilter->ComputeDeformationFieldOn();
   return this->m_transformixFilter->GetOutputDeformationField();
@@ -171,4 +171,5 @@ MonolithicTransformixComponent< Dimensionality, TPixel >
 
   return meetsCriteria;
 }
+
 } //end namespace selx

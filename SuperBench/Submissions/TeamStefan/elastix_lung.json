@@ -1,23 +1,28 @@
 {
     "SuperBenchCategory": "Lung",
     "Component": {
-        "Name": "RegistrationMethod",
-        "NameOfClass": "MonolithicElastixComponent"
-		},
+        "Name": "Elastix",
+        "NameOfClass": "MonolithicElastixComponent",
+        "Dimensionality": "3",
+        "PixelType": "float"
+    },
     "Component": {
         "Name": "FixedImage",
-        "NameOfClass": "ItkImageSourceComponent"
+        "NameOfClass": "ItkImageSourceComponent",
+        "Dimensionality": "3"
     },
     "Component": {
         "Name": "MovingImage",
-        "NameOfClass": "ItkImageSourceComponent"
+        "NameOfClass": "ItkImageSourceComponent",
+        "Dimensionality": "3"
     },
     "Component": {
         "Name": "ResultImage",
-        "NameOfClass": "ItkImageSinkComponent"
+        "NameOfClass": "ItkDisplacementFieldSinkComponent",
+        "Dimensionality": "3"
     },
     "Component": {
-        "Name": "TransformDisplacementField",
+        "Name": "Transformix",
         "NameOfClass": "MonolithicTransformixComponent"
     },
 	"Component": {
@@ -26,42 +31,42 @@
     },
     "Connection": {
         "Out": "FixedImage",
-        "In": "RegistrationMethod",
+        "In": "Elastix",
         "NameOfInterface": "itkImageFixedInterface"
     },
     "Connection": {
         "Out": "MovingImage",
-        "In": "RegistrationMethod",
-        "NameOfInterface": "itkImageMovingInterface"
-    },
-	"Connection": {
-        "Out": "FixedImage",
-        "In": "TransformDisplacementField",
-        "NameOfInterface": "itkImageDomainFixedInterface"
-    },
-	"Connection": {
-        "Out": "MovingImage",
-        "In": "TransformDisplacementField",
+        "In": "Elastix",
         "NameOfInterface": "itkImageMovingInterface"
     },
     "Connection": {
-        "Out": "RegistrationMethod",
-        "In": "TransformDisplacementField",
+        "Out": "Elastix",
+        "In": "Transformix",
 		"NameOfInterface": "elastixTransformParameterObjectInterface"
     },
     "Connection": {
-        "Out": "TransformDisplacementField",
-        "In": "ResultImage",
-		"NameOfInterface": "itkImageInterface"
+        "Out": "MovingImage",
+        "In": "Transformix",
+        "NameOfInterface": "itkImageMovingInterface"
     },
     "Connection": {
-        "Out": "RegistrationMethod",
+        "Out": "Transformix",
+        "In": "ResultImage",
+		"NameOfInterface": "itkDisplacementFieldInterface"
+    },
+    "Connection": {
+        "Out": "Elastix",
         "In": "Controller",
 		"NameOfInterface": "RunRegistrationInterface"
     },
     "Connection": {
-        "Out": "TransformDisplacementField",
+        "Out": "Transformix",
         "In": "Controller",
-		"NameOfInterface": "ReconnectTransformInterface"
+        "NameOfInterface": "ReconnectTransformInterface"
+    },
+    "Connection": {
+        "Out": "FixedImage",
+        "In": "Transformix",
+        "NameOfInterface": "itkImageDomainFixedInterface"
     }
 }

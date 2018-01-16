@@ -33,7 +33,11 @@ namespace selx
 using ModuleSinksAndSourcesComponents = selx::TypeList<
   ItkImageSourceComponent< 2, float >,
   ItkImageSourceComponent< 2, short >,
+  ItkImageSourceComponent< 3, float >,
+  ItkImageSourceComponent< 3, short >,
   ItkImageSinkComponent< 2, float >,
+  ItkImageSinkComponent< 2, short >,
+  ItkImageSinkComponent< 3, float >,
   ItkImageSinkComponent< 3, short >,
   ItkMeshSourceComponent< 2, float >,
   ItkMeshSourceComponent< 3, float >,
