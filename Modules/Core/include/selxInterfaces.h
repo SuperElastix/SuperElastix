@@ -70,56 +70,6 @@ public:
   virtual void Update() = 0;
 };
 
-class RegistrationControllerStartInterface
-{
-  // A special interface: the NetworkBuilder checks components for this type of interface.
-  // This interface is to control the execution of the network
-
-public:
-
-  using Pointer                              = std::shared_ptr< RegistrationControllerStartInterface >;
-  virtual void RegistrationControllerStart() = 0;
-};
-
-class RunRegistrationInterface
-{
-  // This interface is to control the execution of the network
-
-public:
-
-  using Pointer                  = std::shared_ptr< RunRegistrationInterface >;
-  virtual void RunRegistration() = 0;
-};
-
-class AfterRegistrationInterface
-{
-  // This interface is to control the execution of the network
-
-public:
-
-  using Pointer                    = std::shared_ptr< AfterRegistrationInterface >;
-  virtual void AfterRegistration() = 0;
-};
-
-class RunResolutionInterface
-{
-  // This interface is to control the execution of the network
-
-public:
-
-  using Pointer                = std::shared_ptr< RunResolutionInterface >;
-  virtual bool RunResolution() = 0;
-};
-
-class ReconnectTransformInterface
-{
-  // This interface is to control the execution of the network
-
-public:
-
-  using Pointer                     = std::shared_ptr< ReconnectTransformInterface >;
-  virtual void ReconnectTransform() = 0;
-};
 } // end namespace selx
 
 #endif // #define selxInterfaces_h
