@@ -125,7 +125,7 @@ include_directories( ${Boost_INCLUDE_DIRS} )
 # ---------------------------------------------------------------------
 # SuperElastix configuration 
 
-option( BUILD_APPLICATIONS "Build applications." OFF )
+option( BUILD_APPLICATIONS "Build applications." ON )
 
 mark_as_advanced( BUILD_SHARED_LIBS )
 option( BUILD_SHARED_LIBS "Build shared libraries." OFF )
@@ -157,7 +157,7 @@ endif()
 # ---------------------------------------------------------------------
 # SuperBench
 
-option( BUILD_SUPERBENCH "Build SuperBench continuous challenge framework." OFF )
+option( BUILD_SUPERBENCH "Build SuperBench continuous challenge framework." ON )
 mark_as_advanced( BUILD_SUPERBENCH )
 
 if( BUILD_SUPERBENCH )
