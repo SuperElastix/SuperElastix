@@ -25,7 +25,7 @@
 #include "selxMonolithicTransformixComponent.h"
 #include "selxItkImageSinkComponent.h"
 #include "selxItkImageSourceComponent.h"
-#include "selxDisplacementFieldItkImageFilterSinkComponent.h"
+#include "selxItkDisplacementFieldSinkComponent.h"
 
 #include "selxRegistrationControllerComponent.h"
 
@@ -52,7 +52,7 @@ public:
     MonolithicElastixComponent< 2, float >,
     MonolithicTransformixComponent< 2, float >,
     ItkImageSinkComponent< 2, float >,
-    DisplacementFieldItkImageFilterSinkComponent< 2, float >,
+    ItkDisplacementFieldSinkComponent< 2, float >,
     ItkImageSourceComponent< 2, float >,
     ItkImageSourceComponent< 3, double >,
     RegistrationControllerComponent< >> RegisterComponents;
@@ -66,9 +66,14 @@ public:
 
   virtual void SetUp()
   {
+    Logger::Pointer logger = Logger::New();
+    logger->AddStream( "cout", std::cout );
+    logger->SetLogLevel( LogLevel::TRC );
+
     // Instantiate SuperElastixFilter before each test
     // Register the components we want to have available in SuperElastix
     superElastixFilter = SuperElastixFilterCustomComponents< RegisterComponents >::New();
+    superElastixFilter->SetLogger(logger);
 
     dataManager = DataManagerType::New();
   }
@@ -159,6 +164,7 @@ TEST_F( ElastixComponentTest, ImagesOnly )
 
 TEST_F( ElastixComponentTest, MonolithicElastixTransformix )
 {
+
   /** make example blueprint configuration */
   BlueprintPointer blueprint = Blueprint::New();
 
@@ -175,7 +181,7 @@ TEST_F( ElastixComponentTest, MonolithicElastixTransformix )
 
   blueprint->SetComponent( "ResultImageSink", { { "NameOfClass", { "ItkImageSinkComponent" } }, { "Dimensionality", { "2" } } } );
 
-  blueprint->SetComponent( "ResultDisplacementFieldSink", { { "NameOfClass", { "DisplacementFieldItkImageFilterSinkComponent" } }, { "Dimensionality", { "2" } } });
+  blueprint->SetComponent( "ResultDisplacementFieldSink", { { "NameOfClass", { "ItkDisplacementFieldSinkComponent" } }, { "Dimensionality", { "2" } } });
 
   blueprint->SetComponent( "Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } } );
 
@@ -191,13 +197,14 @@ TEST_F( ElastixComponentTest, MonolithicElastixTransformix )
 
   blueprint->SetConnection( "TransformDisplacementField", "ResultImageSink", { { "NameOfInterface", { "itkImageInterface" } } } ); // ;
 
-  blueprint->SetConnection( "TransformDisplacementField", "ResultDisplacementFieldSink", { { "NameOfInterface", { "DisplacementFieldItkImageSourceInterface" } } }); // ;
+  blueprint->SetConnection( "TransformDisplacementField", "ResultDisplacementFieldSink", { { "NameOfInterface", { "itkDisplacementFieldInterface" } } }); // ;
 
-  blueprint->SetConnection( "RegistrationMethod", "Controller", { {} } );         //
-  blueprint->SetConnection( "TransformDisplacementField", "Controller", { {} } ); //
-  blueprint->SetConnection( "ResultImageSink", "Controller", { {} } );            //
-  blueprint->SetConnection( "ResultDisplacementFieldSink", "Controller", { {} });            //
+  blueprint->SetConnection( "RegistrationMethod", "Controller", { {} } );
+  blueprint->SetConnection( "TransformDisplacementField", "Controller", { {} } );
+  blueprint->SetConnection( "ResultImageSink", "Controller", { {} } );
+  blueprint->SetConnection( "ResultDisplacementFieldSink", "Controller", { {} });
 
+  std::cout << "Blueprint done." << std::endl;
   // Set up the readers and writers
   ImageReader2DType::Pointer fixedImageReader = ImageReader2DType::New();
   fixedImageReader->SetFileName( dataManager->GetInputFile( "BrainProtonDensitySliceBorder20.png" ) );
@@ -218,6 +225,8 @@ TEST_F( ElastixComponentTest, MonolithicElastixTransformix )
   resultDisplacementWriter->SetInput(superElastixFilter->GetOutput< DisplacementImage2DType >("ResultDisplacementFieldSink"));
 
   EXPECT_NO_THROW( superElastixFilter->SetBlueprint( blueprint ) );
+
+  std::cout << "Setting supereastix done." << std::endl;
 
   // Update call on the writers triggers SuperElastix to configure and execute
   EXPECT_NO_THROW( resultImageWriter->Update() );

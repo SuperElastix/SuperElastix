@@ -73,9 +73,9 @@ ItkTransformDisplacementFilterComponent< Dimensionality, TPixel, TInternalComput
 
 
 template< int Dimensionality, class TPixel, class TInternalComputationValue >
-typename ItkTransformDisplacementFilterComponent< Dimensionality, TPixel, TInternalComputationValue >::DisplacementFieldImageType::Pointer
+typename ItkTransformDisplacementFilterComponent< Dimensionality, TPixel, TInternalComputationValue >::DisplacementFieldType::Pointer
 ItkTransformDisplacementFilterComponent< Dimensionality, TPixel, TInternalComputationValue >
-::GetDisplacementFieldItkImage()
+::GetItkDisplacementField()
 {
   return this->m_DisplacementFieldFilter->GetOutput();
 }

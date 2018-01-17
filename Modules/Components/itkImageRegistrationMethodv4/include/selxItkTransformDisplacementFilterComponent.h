@@ -41,7 +41,7 @@ class ItkTransformDisplacementFilterComponent :
   Accepting< itkTransformInterface< TInternalComputationValue, Dimensionality >,
   itkImageDomainFixedInterface< Dimensionality >
   >,
-  Providing< DisplacementFieldItkImageSourceInterface< Dimensionality, TPixel >,
+  Providing< itkDisplacementFieldInterface< Dimensionality, TPixel >,
   ReconnectTransformInterface
   >
   >
@@ -56,7 +56,7 @@ public:
     Accepting< itkTransformInterface< TInternalComputationValue, Dimensionality >,
     itkImageDomainFixedInterface< Dimensionality >
     >,
-    Providing< DisplacementFieldItkImageSourceInterface< Dimensionality, TPixel >,
+    Providing< itkDisplacementFieldInterface< Dimensionality, TPixel >,
     ReconnectTransformInterface
     >
     >                                     Superclass;
@@ -70,9 +70,9 @@ public:
 
   // Get the type definitions from the interfaces
   using itkImageDomainFixedType    = typename itkImageDomainFixedInterface< Dimensionality >::ItkImageDomainType;
-  using DisplacementFieldImageType =  typename DisplacementFieldItkImageSourceInterface< Dimensionality, TPixel >::ItkImageType;
+  using DisplacementFieldType =  typename itkDisplacementFieldInterface< Dimensionality, TPixel >::ItkDisplacementFieldType;
 
-  using DisplacementFieldFilterType = itk::TransformToDisplacementFieldFilter< DisplacementFieldImageType >;
+  using DisplacementFieldFilterType = itk::TransformToDisplacementFieldFilter< DisplacementFieldType >;
 
   //Accepting Interfaces:
   virtual int Accept( typename itkImageDomainFixedInterface< Dimensionality >::Pointer ) override;
@@ -80,7 +80,7 @@ public:
   virtual int Accept( typename itkTransformInterface< TInternalComputationValue, Dimensionality >::Pointer ) override;
 
   //Providing Interfaces:
-  virtual typename DisplacementFieldImageType::Pointer GetDisplacementFieldItkImage() override;
+  virtual typename DisplacementFieldType::Pointer GetItkDisplacementField() override;
 
   virtual void ReconnectTransform() override;
 
