@@ -204,7 +204,6 @@ TEST_F( ElastixComponentTest, MonolithicElastixTransformix )
   blueprint->SetConnection( "ResultImageSink", "Controller", { {} } );
   blueprint->SetConnection( "ResultDisplacementFieldSink", "Controller", { {} });
 
-  std::cout << "Blueprint done." << std::endl;
   // Set up the readers and writers
   ImageReader2DType::Pointer fixedImageReader = ImageReader2DType::New();
   fixedImageReader->SetFileName( dataManager->GetInputFile( "BrainProtonDensitySliceBorder20.png" ) );
@@ -225,8 +224,6 @@ TEST_F( ElastixComponentTest, MonolithicElastixTransformix )
   resultDisplacementWriter->SetInput(superElastixFilter->GetOutput< DisplacementImage2DType >("ResultDisplacementFieldSink"));
 
   EXPECT_NO_THROW( superElastixFilter->SetBlueprint( blueprint ) );
-
-  std::cout << "Setting supereastix done." << std::endl;
 
   // Update call on the writers triggers SuperElastix to configure and execute
   EXPECT_NO_THROW( resultImageWriter->Update() );
