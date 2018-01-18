@@ -278,6 +278,7 @@ NetworkBuilder< ComponentList >::PropagateConnectionsWithUniqueComponents()
 
           if( beforeCriteria > afterCriteria )
           {
+            anySelectionNarrowed = true;
             this->m_Logger.Log( LogLevel::DBG, "Trying to narrow candidates for '{0}' based on the connections that '{0}' provides and '{1}' accepts ... Done. Reduced candidates for '{0}' from {2} to {3} components", componentName, acceptingComponentName, beforeCriteria, afterCriteria );
           }
           else
@@ -319,6 +320,7 @@ NetworkBuilder< ComponentList >::PropagateConnectionsWithUniqueComponents()
 
           if( beforeCriteria > afterCriteria )
           {
+            anySelectionNarrowed = true;
             this->m_Logger.Log( LogLevel::DBG, "Trying to narrow candidates for '{0}' based on the connections that '{0}' accepts and '{1}' provides ... Done. Reduced candidates for '{0}' from {2} to {3} components", componentName, providingComponentName, beforeCriteria, afterCriteria );
           }
           else
