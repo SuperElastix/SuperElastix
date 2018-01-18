@@ -89,7 +89,7 @@ void
 Niftyregf3dComponent< TPixel >
 ::Update()
 {
-  this->m_Logger.Log(LogLevel::TRC, "RunRegistration");
+  this->m_Logger.Log(LogLevel::TRC, "Update: run registration");
   //this->m_reg_f3d->UseSSD( 0, true );
   //this->m_reg_f3d->UseCubicSplineInterpolation();
   if (this->m_NiftyregAffineMatrixInterface)

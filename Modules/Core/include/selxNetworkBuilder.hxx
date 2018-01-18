@@ -520,7 +520,13 @@ NetworkBuilder< ComponentList >::GetRealizedNetwork()
           this->m_Logger.Log(LogLevel::CRT, "dynamic_cast<provingUpdateInterface*> fails, but based on component criterion it shouldn't");
           throw std::runtime_error("dynamic_cast<provingUpdateInterface*> fails, but based on component criterion it shouldn't");
         }
-        updateOrder.push_back(provingUpdateInterface);
+        // check if the UpdateInterface has been connected to a (controller) component. If so don't take over the control by adding it into updateOrder.
+        auto connectionInfoUpdateInterface = std::dynamic_pointer_cast<ConnectionInfo<UpdateInterface>>(component);
+        
+        if (connectionInfoUpdateInterface->GetProvidedTo() == "")
+        {
+          updateOrder.push_back(provingUpdateInterface);
+        }
       }
 
     }

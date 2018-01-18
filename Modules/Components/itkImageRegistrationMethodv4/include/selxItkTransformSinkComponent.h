@@ -73,7 +73,7 @@ public:
   virtual AnyFileWriter::Pointer GetOutputFileWriter( void ) override;
   virtual itk::DataObject::Pointer GetInitializedOutput( void ) override;
 
-  // providing AfterRegistrationInterface
+  // providing UpdateInterface
   virtual void Update() override;
 
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
