@@ -117,7 +117,7 @@ ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >::
   }
   for( auto && reconnectTransformInterface : this->m_ReconnectTransformInterfaces )
   {
-    reconnectTransformInterface->ReconnectTransform();
+    reconnectTransformInterface->Update();
   }
   return;
 }
