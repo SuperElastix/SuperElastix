@@ -523,9 +523,10 @@ NetworkBuilder< ComponentList >::GetRealizedNetwork()
         // check if the UpdateInterface has been connected to a (controller) component. If so don't take over the control by adding it into updateOrder.
         auto connectionInfoUpdateInterface = std::dynamic_pointer_cast<ConnectionInfo<UpdateInterface>>(component);
         
-        if (connectionInfoUpdateInterface->GetProvidedTo() == "")
+        if (connectionInfoUpdateInterface->GetProvidedTo().size() == 0)
         {
           updateOrder.push_back(provingUpdateInterface);
+          connectionInfoUpdateInterface->SetProvidedTo("NetworkBuilder");
         }
       }
 
