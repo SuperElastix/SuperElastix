@@ -17,9 +17,9 @@
 #
 #=========================================================================
 
-# Directories relative to the current directory (either src or build).
-set(CTEST_SOURCE_DIRECTORY "../src")
-set(CTEST_BINARY_DIRECTORY "../build")
+# Directories relative to the current directory.
+set(CTEST_SOURCE_DIRECTORY "src")
+set(CTEST_BINARY_DIRECTORY "build")
 
 set(CTEST_SITE "lkeb-selx01")
 
