@@ -45,7 +45,7 @@ node('lkeb-vm-test') {
 			}
 		}
 		stage('CTest') {
-			dir('build') {
+			dir('.') {
 			sh "`dirname ${ cmake }`/ctest --script ../src/CTest.cmake"
 			}
 		}
