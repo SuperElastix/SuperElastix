@@ -44,23 +44,13 @@ node('lkeb-vm-test') {
 				checkout scm
 			}
 		}
-		stage('Build') {
+		stage('CTest') {
 			dir('build') {
-				sh "${ cmake } ../src/SuperBuild"
-				sh 'make clean'
-				sh 'make -j2 Experimental'
+				sh "ctest --script CTest.cmake"
 			}
 		}
 		dir('src') {
 			updateGithubCommitStatus(currentBuild)
-		}
-	}
-
-	timeout(45) {
-		stage('Test') {
-			dir('build/SuperElastix-build') {
-				sh 'make -j2 Experimental'
-			}
 		}
 	}
 }
