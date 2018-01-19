@@ -204,9 +204,23 @@ TEST_F(BlueprintTest, ReadJsonWriteDot)
   blueprint->Write(this->dataManager->GetOutputFile("configurationReaderTest_itkv4_SVF_ANTsCC.json.dot"));
 }
 
-TEST_F(BlueprintTest, Read2Connections) //#150: Blueprint reader cannot handle two connections between the same components
+TEST_F(BlueprintTest, ParallelConnections) //#150: Let Blueprint handle two connections between the same components
 {
   auto blueprint = Blueprint::New();
-  EXPECT_NO_THROW(blueprint->MergeFromFile(this->dataManager->GetConfigurationFile("Read2Connections.json")));
+  blueprint->SetComponent("ComponentA", { });
+  blueprint->SetComponent("ComponentB", { });
+  blueprint->SetConnection("ComponentA", "ComponentB", {{"NameOfInterface", {"FirstInterface"}}},"FirstConnection");
+  blueprint->SetConnection("ComponentA", "ComponentB", {{"NameOfInterface", {"SecondInterface"}}},"SecondConnection");
+
+  auto connection1 = blueprint->GetConnection("ComponentA", "ComponentB","FirstConnection");
+  auto connection2 = blueprint->GetConnection("ComponentA", "ComponentB","SecondConnection");
+  //auto item = connection1[0];
+
+}
+
+TEST_F(BlueprintTest, ReadParallelConnections) //#150: Let Blueprint reader handle two connections between the same components
+{
+  auto blueprint = Blueprint::New();
+  EXPECT_NO_THROW(blueprint->MergeFromFile(this->dataManager->GetConfigurationFile("ReadParallelConnections.json")));
 
 }

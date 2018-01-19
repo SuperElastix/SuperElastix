@@ -84,18 +84,18 @@ Blueprint::GetComponentNames( void ) const
 
 bool
 Blueprint
-::SetConnection( ComponentNameType upstream, ComponentNameType downstream, ParameterMapType parameterMap )
+::SetConnection( ComponentNameType upstream, ComponentNameType downstream, ParameterMapType parameterMap, ConnectionNameType name )
 {
   this->Modified();
-  return this->m_BlueprintImpl->SetConnection( upstream, downstream, parameterMap );
+  return this->m_BlueprintImpl->SetConnection( upstream, downstream, parameterMap, name );
 }
 
 
 Blueprint::ParameterMapType
 Blueprint
-::GetConnection( ComponentNameType upstream, ComponentNameType downstream ) const
+::GetConnection( ComponentNameType upstream, ComponentNameType downstream, ConnectionNameType name ) const
 {
-  return this->m_BlueprintImpl->GetConnection( upstream, downstream );
+  return this->m_BlueprintImpl->GetConnection( upstream, downstream, name );
 }
 
 
@@ -118,9 +118,9 @@ Blueprint
 
 bool
 Blueprint
-::ConnectionExists( ComponentNameType upstream, ComponentNameType downstream ) const
+::ConnectionExists( ComponentNameType upstream, ComponentNameType downstream,  ConnectionNameType name  ) const
 {
-  return this->m_BlueprintImpl->ConnectionExists( upstream, downstream );
+  return this->m_BlueprintImpl->ConnectionExists( upstream, downstream, name );
 }
 
 

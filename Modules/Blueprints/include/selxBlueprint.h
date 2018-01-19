@@ -78,13 +78,13 @@ public:
   // Returns a vector of the all Component names in the graph.
   ComponentNamesType GetComponentNames( void ) const;
 
-  bool SetConnection( ComponentNameType upstream, ComponentNameType downstream, ParameterMapType parameterMap );
+  bool SetConnection( ComponentNameType upstream, ComponentNameType downstream, ParameterMapType parameterMap, ConnectionNameType name = "" );
 
-  ParameterMapType GetConnection( ComponentNameType upstream, ComponentNameType downstream ) const;
+  ParameterMapType GetConnection( ComponentNameType upstream, ComponentNameType downstream, ConnectionNameType name = ""  ) const;
 
   bool DeleteConnection( ComponentNameType upstream, ComponentNameType downstream );
 
-  bool ConnectionExists( ComponentNameType upstream, ComponentNameType downstream ) const;
+  bool ConnectionExists( ComponentNameType upstream, ComponentNameType downstream, ConnectionNameType name = "" ) const;
 
   //std::unique_ptr<BlueprintImpl> Clone(BlueprintImpl const &other );
 

@@ -75,7 +75,7 @@ public:
   // and holds component connection configuration settings
   struct ConnectionPropertyType
   {
-    ConnectionPropertyType( ConnectionNameType name = "", ParameterMapType parameterMap = {} ) :  parameterMap( parameterMap ) {}
+    ConnectionPropertyType( ConnectionNameType name = "", ParameterMapType parameterMap = {} ) :name( name ),  parameterMap( parameterMap ) {}
     ConnectionNameType name;
     ParameterMapType parameterMap;
   };
@@ -122,11 +122,11 @@ public:
   // The connection name is to distinguish parallel connections. For single connections name = "" is typical. 
   bool SetConnection( ComponentNameType upstream, ComponentNameType downstream, ParameterMapType parameterMap, ConnectionNameType name = "");
 
-  ParameterMapType GetConnection( ComponentNameType upstream, ComponentNameType downstream ) const;
+  ParameterMapType GetConnection( ComponentNameType upstream, ComponentNameType downstream, ConnectionNameType name = "" ) const;
 
   bool DeleteConnection( ComponentNameType upstream, ComponentNameType downstream );
 
-  bool ConnectionExists( ComponentNameType upstream, ComponentNameType downstream ) const;
+  bool ConnectionExists( ComponentNameType upstream, ComponentNameType downstream, ConnectionNameType name = "" ) const;
 
   bool ComposeWith( const BlueprintImpl & other );
 
@@ -149,8 +149,6 @@ private:
 
   using PathType = boost::filesystem::path;
   using PathsType = std::list<PathType>;
-
-  ConnectionIndexType GetConnectionIndex(ComponentNameType upsteam, ComponentNameType downstream) const;
 
   PropertyTreeType ReadPropertyTree(const PathType & filename);
 
