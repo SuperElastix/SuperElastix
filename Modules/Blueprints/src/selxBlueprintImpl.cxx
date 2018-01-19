@@ -161,7 +161,7 @@ BlueprintImpl
 
 bool
 BlueprintImpl
-::SetConnection( ComponentNameType upstream, ComponentNameType downstream, ParameterMapType parameterMap )
+::SetConnection( ComponentNameType upstream, ComponentNameType downstream, ParameterMapType parameterMap, ConnectionNameType name )
 {
   if( !this->ComponentExists( upstream ) || !this->ComponentExists( downstream ) )
   {
@@ -171,7 +171,7 @@ BlueprintImpl
 
   if( !this->ConnectionExists( upstream, downstream ) )
   {
-    boost::add_edge_by_label( upstream, downstream,  { parameterMap }, this->m_Graph );
+    boost::add_edge_by_label( upstream, downstream,  { name, parameterMap }, this->m_Graph );
   }
   else
   {

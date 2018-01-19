@@ -1,0 +1,18 @@
+{
+    "Component": {
+        "Name": "ComponentA"
+    },
+    "Component": {
+        "Name": "ComponentB"
+    },
+    "Connection": {
+        "Out": "ComponentA",
+        "In": "ComponentB",
+        "NameOfInterface": "FirstInterface"
+    },
+    "Connection": {
+        "Out": "ComponentA",
+        "In": "ComponentB",
+        "NameOfInterface": "SecondInterface"
+    }
+}
