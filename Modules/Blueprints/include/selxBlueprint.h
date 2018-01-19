@@ -55,6 +55,8 @@ public:
   typedef std::map< ParameterKeyType, ParameterValueType > ParameterMapType;
   typedef std::string                                      ComponentNameType;
   typedef std::vector< ComponentNameType >                 ComponentNamesType;
+  typedef std::string                                      ConnectionNameType;
+  typedef std::vector< ConnectionNameType >                ConnectionNamesType;
 
   /* m_Blueprint is initialized in the default constructor */
   Blueprint();

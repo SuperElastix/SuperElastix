@@ -703,8 +703,8 @@ BlueprintImpl::MergeProperties(const PropertyTreeType & pt)
           if (ownValues.size() != otherValues.size())
           {
             // No, based on the number of values we see that it is different. Blueprints cannot be Composed
-            this->m_LoggerImpl->Log(LogLevel::ERR, "Merging blueprints failed : Component properties cannot be redefined");
-            throw std::invalid_argument("Merging blueprints failed: Component properties cannot be redefined");
+            this->m_LoggerImpl->Log(LogLevel::ERR, "Merging blueprints failed : Connection properties cannot be redefined");
+            throw std::invalid_argument("Merging blueprints failed: Connection properties cannot be redefined");
           }
           else
           {
@@ -715,8 +715,8 @@ BlueprintImpl::MergeProperties(const PropertyTreeType & pt)
               if (*otherValue != *ownValue)
               {
                 // No, at least one value is different. Blueprints cannot be Composed
-                this->m_LoggerImpl->Log(LogLevel::ERR, "Merging blueprints failed : Component properties cannot be redefined");
-                throw std::invalid_argument("Merging blueprints failed: Component properties cannot be redefined");
+                this->m_LoggerImpl->Log(LogLevel::ERR, "Merging blueprints failed : Connection properties cannot be redefined");
+                throw std::invalid_argument("Merging blueprints failed: Connection properties cannot be redefined");
               }
             }
           }
