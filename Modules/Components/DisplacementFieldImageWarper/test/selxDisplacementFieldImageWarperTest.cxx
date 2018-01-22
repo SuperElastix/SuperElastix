@@ -34,7 +34,7 @@ namespace selx {
 class DisplacementFieldImageWarperComponentTest : public ::testing::Test {
 public:
 
-  typedef ItkDisplacementFieldImageWarperComponent< 2, float, float >::ItkDisplacementFieldType DisplacementFieldType;
+  typedef ItkDisplacementFieldImageWarperComponent< 2, float, float >::DisplacementFieldType DisplacementFieldType;
   typedef DisplacementFieldType::Pointer DisplacementFieldPointer;
   typedef itk::ImageFileReader< DisplacementFieldType > DisplacementFieldReaderType;
   typedef DisplacementFieldReaderType::Pointer DisplacementFieldReaderPointer;
