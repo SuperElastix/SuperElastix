@@ -17,8 +17,8 @@
  *
  *=========================================================================*/
 
-#ifndef selxDisplacementFieldWarperComponent_h
-#define selxDisplacementFieldWarperComponent_h
+#ifndef selxDisplacementFieldMeshWarperComponent_h
+#define selxDisplacementFieldMeshWarperComponent_h
 
 #include "selxSuperElastixComponent.h"
 #include "selxItkObjectInterfaces.h"
@@ -99,4 +99,4 @@ private:
 #include "selxDisplacementFieldMeshWarperComponent.hxx"
 #endif
 
-#endif // selxDisplacementFieldWarperComponent_h
+#endif // selxDisplacementFieldMeshWarperComponent_h

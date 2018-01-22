@@ -18,26 +18,26 @@
  *
  *=========================================================================*/
 
-#ifndef selxDisplacementFieldMeshWarperComponent_hxx
-#define selxDisplacementFieldMeshWarperComponent_hxx
+#ifndef selxDisplacementFieldImageWarperComponent_hxx
+#define selxDisplacementFieldImageWarperComponent_hxx
 
-#include "selxDisplacementFieldMeshWarperComponent.h"
+#include "selxDisplacementFieldImageWarperComponent.h"
 #include "selxCheckTemplateProperties.h"
 
 namespace selx {
 
 template< int Dimensionality, class TPixel, class CoordRepType >
-ItkDisplacementFieldMeshWarperComponent< Dimensionality, TPixel, CoordRepType >
-::ItkDisplacementFieldMeshWarperComponent( const std::string & name, LoggerImpl & logger ) : Superclass( name, logger ) {
-  this->m_DisplacementFieldTransform = ItkDisplacementFieldTransformType::New();
-  this->m_TransformMeshFilter = ItkTransformMeshFilterType::New();
-  this->m_TransformMeshFilter->SetTransform( this->m_DisplacementFieldTransform );
+ItkDisplacementFieldImageWarperComponent< Dimensionality, TPixel, CoordRepType >
+::ItkDisplacementFieldImageWarperComponent( const std::string & name, LoggerImpl & logger ) : Superclass( name, logger ) {
+  this->m_DisplacementFieldTransform = DisplacementFieldTransformType::New();
+  this->m_ResampleImageFilter = ResampleImageFilterType::New();
+  this->m_ResampleImageFilter->SetTransform(this->m_DisplacementFieldTransform.GetPointer());
 };
 
 template< int Dimensionality, class TPixel, class CoordRepType >
 int
-ItkDisplacementFieldMeshWarperComponent< Dimensionality, TPixel, CoordRepType >
-::Accept( ItkDisplacementFieldInterfacePointer itkDisplacementFieldInterface )
+ItkDisplacementFieldImageWarperComponent< Dimensionality, TPixel, CoordRepType >
+::Accept( DisplacementFieldInterfacePointer itkDisplacementFieldInterface )
 {
   auto displacementField = itkDisplacementFieldInterface->GetItkDisplacementField();
   displacementField->SetBufferedRegion(displacementField->GetRequestedRegion());
@@ -48,25 +48,25 @@ ItkDisplacementFieldMeshWarperComponent< Dimensionality, TPixel, CoordRepType >
 
 template< int Dimensionality, class TPixel, class CoordRepType >
 int
-ItkDisplacementFieldMeshWarperComponent< Dimensionality, TPixel, CoordRepType >
-::Accept( ItkMeshInterfacePointer itkMeshInterface )
+ItkDisplacementFieldImageWarperComponent< Dimensionality, TPixel, CoordRepType >
+::Accept( MovingImageInterfacePointer movingImageInterface )
 {
-  this->m_TransformMeshFilter->SetInput( itkMeshInterface->GetItkMesh() );
+  this->m_ResampleImageFilter->SetInput( movingImageInterface->GetItkImageMoving() );
 
   return 0;
 }
 
 template< int Dimensionality, class TPixel, class CoordRepType >
-typename ItkDisplacementFieldMeshWarperComponent< Dimensionality, TPixel, CoordRepType >::ItkMeshType::Pointer
-ItkDisplacementFieldMeshWarperComponent< Dimensionality, TPixel, CoordRepType >
-::GetItkMesh()
+typename ItkDisplacementFieldImageWarperComponent< Dimensionality, TPixel, CoordRepType >::ResultImagePointer
+ItkDisplacementFieldImageWarperComponent< Dimensionality, TPixel, CoordRepType >
+::GetItkImage()
 {
-  return this->m_TransformMeshFilter->GetOutput();
+  return this->m_ResampleImageFilter->GetOutput();
 }
 
 template< int Dimensionality, class TPixel, class CoordRepType >
 bool
-ItkDisplacementFieldMeshWarperComponent< Dimensionality, TPixel, CoordRepType >
+ItkDisplacementFieldImageWarperComponent< Dimensionality, TPixel, CoordRepType >
 ::MeetsCriterion( const ComponentBase::CriterionType & criterion )
 {
   bool hasUndefinedCriteria( false );
@@ -86,4 +86,4 @@ ItkDisplacementFieldMeshWarperComponent< Dimensionality, TPixel, CoordRepType >
 
 } // namespace selx
 
-#endif // selxDisplacementFieldMeshWarperComponent_hxx
+#endif // selxDisplacementFieldImageWarperComponent_hxx
