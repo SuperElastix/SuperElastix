@@ -224,12 +224,20 @@ BlueprintImpl
 {
   if( this->ConnectionExists( upstream, downstream, name ) )
   {
-    // this removes all connections between upstream and downstream
-    //TODO: remove only connection named "name"
-    boost::remove_edge_by_label( upstream, downstream, this->m_Graph );
+    boost::graph_traits<GraphType>::out_edge_iterator ei, ei_end;
+    // too bad edge_range_by_label doesn't exist
+    boost::tie(ei, ei_end) = boost::edge_range(this->m_Graph.vertex(upstream), this->m_Graph.vertex(downstream), this->m_Graph.graph());
+    for (; ei != ei_end; ++ei) {
+      auto existingName = boost::get(&ConnectionPropertyType::name, this->m_Graph.graph(), *ei);
+      if (name == existingName)
+      {
+        boost::remove_edge(*ei, this->m_Graph.graph());
+        return true;
+      }
+    }
   }
 
-  return !this->ConnectionExists( upstream, downstream, name );
+  return false;
 }
 
 

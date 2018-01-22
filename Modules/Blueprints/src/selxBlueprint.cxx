@@ -101,10 +101,10 @@ Blueprint
 
 bool
 Blueprint
-::DeleteConnection( ComponentNameType upstream, ComponentNameType downstream )
+::DeleteConnection( ComponentNameType upstream, ComponentNameType downstream, ConnectionNameType name )
 {
   this->Modified();
-  return this->m_BlueprintImpl->DeleteConnection( upstream, downstream );
+  return this->m_BlueprintImpl->DeleteConnection( upstream, downstream, name );
 }
 
 

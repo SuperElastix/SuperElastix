@@ -209,13 +209,21 @@ TEST_F(BlueprintTest, ParallelConnections) //#150: Let Blueprint handle two conn
   auto blueprint = Blueprint::New();
   blueprint->SetComponent("ComponentA", { });
   blueprint->SetComponent("ComponentB", { });
-  blueprint->SetConnection("ComponentA", "ComponentB", {{"NameOfInterface", {"FirstInterface"}}},"FirstConnection");
-  blueprint->SetConnection("ComponentA", "ComponentB", {{"NameOfInterface", {"SecondInterface"}}},"SecondConnection");
+  ParameterMapType firstConnection = {{"NameOfInterface", {"FirstInterface"}}};
+  blueprint->SetConnection("ComponentA", "ComponentB", firstConnection, "FirstConnection");
+  ParameterMapType secondConnection = {{"NameOfInterface", {"SecondInterface"}}};
+  blueprint->SetConnection("ComponentA", "ComponentB", secondConnection, "SecondConnection");
 
   auto connection1 = blueprint->GetConnection("ComponentA", "ComponentB","FirstConnection");
+  EXPECT_EQ(firstConnection["NameOfInterface"][0], connection1["NameOfInterface"][0]);
   auto connection2 = blueprint->GetConnection("ComponentA", "ComponentB","SecondConnection");
-  //auto item = connection1[0];
+  EXPECT_EQ(secondConnection["NameOfInterface"][0], connection2["NameOfInterface"][0]);
 
+  blueprint->DeleteConnection("ComponentA", "ComponentB", "FirstConnection");
+  EXPECT_FALSE(blueprint->ConnectionExists("ComponentA", "ComponentB", "FirstConnection"));
+  EXPECT_TRUE(blueprint->ConnectionExists("ComponentA", "ComponentB", "SecondConnection"));
+  blueprint->DeleteConnection("ComponentA", "ComponentB", "SecondConnection");
+  EXPECT_FALSE(blueprint->ConnectionExists("ComponentA", "ComponentB", "SecondConnection"));
 }
 
 TEST_F(BlueprintTest, ReadParallelConnections) //#150: Let Blueprint reader handle two connections between the same components

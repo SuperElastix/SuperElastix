@@ -82,7 +82,7 @@ public:
 
   ParameterMapType GetConnection( ComponentNameType upstream, ComponentNameType downstream, ConnectionNameType name = ""  ) const;
 
-  bool DeleteConnection( ComponentNameType upstream, ComponentNameType downstream );
+  bool DeleteConnection( ComponentNameType upstream, ComponentNameType downstream, ConnectionNameType name = "" );
 
   bool ConnectionExists( ComponentNameType upstream, ComponentNameType downstream, ConnectionNameType name = "" ) const;
 
