@@ -31,20 +31,20 @@ namespace selx {
 template< int Dimensionality, class TPixel, class CoordRepType >
 class ItkDisplacementFieldImageWarperComponent : public
   SuperElastixComponent<
-  Accepting< itkImageMovingInterface< Dimensionality, TPixel >, itkDisplacementFieldInterface< Dimensionality, TPixel > >,
+  Accepting< itkImageMovingInterface< Dimensionality, TPixel >, itkDisplacementFieldInterface< Dimensionality, CoordRepType > >,
   Providing< itkImageInterface< Dimensionality, TPixel > > >
 {
 public:
   typedef ItkDisplacementFieldImageWarperComponent< Dimensionality, TPixel, CoordRepType > Self;
   typedef SuperElastixComponent<
-    Accepting< itkImageMovingInterface< Dimensionality, TPixel >, itkDisplacementFieldInterface< Dimensionality, TPixel > >,
+    Accepting< itkImageMovingInterface< Dimensionality, TPixel >, itkDisplacementFieldInterface< Dimensionality, CoordRepType > >,
     Providing< itkImageInterface< Dimensionality, TPixel > > > Superclass;
   typedef std::shared_ptr< Self > Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
 
   ItkDisplacementFieldImageWarperComponent( const std::string & name, LoggerImpl & logger );
 
-  using DisplacementFieldInterfaceType = typename itkDisplacementFieldInterface< Dimensionality, TPixel >::Type;
+  using DisplacementFieldInterfaceType = typename itkDisplacementFieldInterface< Dimensionality, CoordRepType >::Type;
   using DisplacementFieldInterfacePointer = typename DisplacementFieldInterfaceType::Pointer;
 
   using DisplacementFieldType = typename DisplacementFieldInterfaceType::ItkDisplacementFieldType;
@@ -65,7 +65,7 @@ public:
   using DisplacementFieldTransformType = itk::DisplacementFieldTransform< CoordRepType, Dimensionality >;
   using DisplacementFieldTransformPointer = typename DisplacementFieldTransformType::Pointer;
 
-  using ResampleImageFilterType = itk::ResampleImageFilter< MovingImageType, ResultImageType >;
+  using ResampleImageFilterType = itk::ResampleImageFilter< MovingImageType, ResultImageType, CoordRepType >;
   using ResampleImageFilterPointer = typename ResampleImageFilterType::Pointer;
 
   // Accept interfaces
