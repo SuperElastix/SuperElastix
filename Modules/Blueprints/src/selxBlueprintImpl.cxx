@@ -388,6 +388,7 @@ BlueprintImpl
   ComponentNamesType     container;
  
   std::vector< ComponentIndexType > indexContainer;
+  
   boost::topological_sort(this->m_Graph, std::back_inserter(indexContainer));
 
   for (std::vector< ComponentIndexType >::reverse_iterator ii = indexContainer.rbegin(); ii != indexContainer.rend(); ++ii)

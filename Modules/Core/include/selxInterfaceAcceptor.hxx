@@ -44,16 +44,23 @@ InterfaceAcceptor< InterfaceT >::Connect( ComponentBase::Pointer providerCompone
   // store the interface for access by the user defined component 
   this->m_AcceptedInterface = providerInterface;
 
-  // TODO: see if we can get rid of all (dynamic) casts below.
+  // TODO: see if we can get rid of all (dynamic) casts below. Perhaps a "static_cast in release mode"?
   auto providerConnectionInfo = std::dynamic_pointer_cast<ConnectionInfo< InterfaceT >>( providerComponent);
-  if (!providerConnectionInfo) // by definition should not fail
+  if (!providerConnectionInfo) 
   {
+    // By definition should not fail, since providerComponent always is a base 
+    // class pointer of an SuperElastixComponent object and 
+    // SuperElastixComponents that are derived from InterfaceT (checked 
+    // previously) also derive from ConnectionInfo< InterfaceT>
     throw std::runtime_error( "std::dynamic_pointer_cast<ConnectionInfo< InterfaceT > should not fail by definition " );
   }
 
   ComponentBase* AcceptorBaseComponent = dynamic_cast<ComponentBase*>( this );
-  if (!AcceptorBaseComponent) // by definition should not fail
+  if (!AcceptorBaseComponent)
   {
+    // By definition should not fail, since 'this', the AcceptorInterface, and 
+    // ComponentBase are both base classes from the SuperElastixComponent 
+    // object on which this functionality is called.
     throw std::runtime_error("dynamic_cast<ComponentBase*> should not fail by definition ");
   }
 
