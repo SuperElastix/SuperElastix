@@ -120,13 +120,13 @@ public:
 
   // SetConnection with parameters parameterMap between components upstream and downstream. 
   // The connection name is to distinguish parallel connections. For single connections name = "" is typical. 
-  bool SetConnection( ComponentNameType upstream, ComponentNameType downstream, ParameterMapType parameterMap, ConnectionNameType name = "");
+  bool SetConnection( ComponentNameType upstream, ComponentNameType downstream, ParameterMapType parameterMap, ConnectionNameType name );
 
-  ParameterMapType GetConnection( ComponentNameType upstream, ComponentNameType downstream, ConnectionNameType name = "" ) const;
+  ParameterMapType GetConnection( ComponentNameType upstream, ComponentNameType downstream, ConnectionNameType name ) const;
 
-  bool DeleteConnection( ComponentNameType upstream, ComponentNameType downstream, ConnectionNameType name = "" );
+  bool DeleteConnection( ComponentNameType upstream, ComponentNameType downstream, ConnectionNameType name );
 
-  bool ConnectionExists( ComponentNameType upstream, ComponentNameType downstream, ConnectionNameType name = "" ) const;
+  bool ConnectionExists( ComponentNameType upstream, ComponentNameType downstream, ConnectionNameType name ) const;
 
   bool ComposeWith( const BlueprintImpl & other );
 
@@ -135,6 +135,9 @@ public:
 
   // Returns a vector of the Component names at the outgoing direction
   ComponentNamesType GetOutputNames( const ComponentNameType name ) const;
+
+  // Returns a vector of the connection names between upstream and downstream
+  ComponentNamesType GetConnectionNames(const ComponentNameType upstream, const ComponentNameType downstream) const;
 
   void Write( const std::string filename );
 

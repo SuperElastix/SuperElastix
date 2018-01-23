@@ -64,7 +64,7 @@ public:
     ParameterMapType metric2TransformConnectionParameters;
     metric2TransformConnectionParameters[ "NameOfInterface" ] = { "TransformedImageInterface" };
 
-    blueprint->SetConnection( "Transform", "Metric", metric2TransformConnectionParameters );
+    blueprint->SetConnection( "Transform", "Metric", metric2TransformConnectionParameters, "" );
     logger->SetLogLevel( LogLevel::TRC );
   }
 
@@ -209,39 +209,39 @@ TEST_F( NetworkBuilderTest, DeduceComponentsFromConnections )
 
   ParameterMapType connection1Parameters;
   connection1Parameters[ "NameOfInterface" ] = { "itkImageFixedInterface" };
-  blueprint->SetConnection( "FixedImageSource", "RegistrationMethod", connection1Parameters );
+  blueprint->SetConnection( "FixedImageSource", "RegistrationMethod", connection1Parameters, "" );
 
   ParameterMapType connection2Parameters;
   connection2Parameters[ "NameOfInterface" ] = { "itkImageMovingInterface" };
-  blueprint->SetConnection( "MovingImageSource", "RegistrationMethod", connection2Parameters );
+  blueprint->SetConnection( "MovingImageSource", "RegistrationMethod", connection2Parameters, "" );
 
   ParameterMapType connection3Parameters;
   connection3Parameters[ "NameOfInterface" ] = { "itkImageInterface" };
-  blueprint->SetConnection( "ResampleFilter", "ResultImageSink", connection3Parameters );
+  blueprint->SetConnection( "ResampleFilter", "ResultImageSink", connection3Parameters, "" );
 
   ParameterMapType connection4Parameters;
   connection4Parameters[ "NameOfInterface" ] = { "DisplacementFieldItkImageSourceInterface" };
-  blueprint->SetConnection( "TransformDisplacementFilter", "ResultDisplacementFieldSink", connection4Parameters );
+  blueprint->SetConnection( "TransformDisplacementFilter", "ResultDisplacementFieldSink", connection4Parameters, "" );
 
   ParameterMapType connection5Parameters;
   connection5Parameters[ "NameOfInterface" ] = { "itkMetricv4Interface" };
-  blueprint->SetConnection( "Metric", "RegistrationMethod", connection5Parameters );
+  blueprint->SetConnection( "Metric", "RegistrationMethod", connection5Parameters, "" );
 
-  blueprint->SetConnection( "FixedImageSource", "Transform", { {} } );
-  blueprint->SetConnection( "Transform", "RegistrationMethod", { {} } );
+  blueprint->SetConnection( "FixedImageSource", "Transform", { {} }, "" );
+  blueprint->SetConnection( "Transform", "RegistrationMethod", { {} }, "" );
 
-  blueprint->SetConnection( "FixedImageSource", "TransformResolutionAdaptor", { {} } );
-  blueprint->SetConnection( "TransformResolutionAdaptor", "RegistrationMethod", { {} } );
-  blueprint->SetConnection( "Optimizer", "RegistrationMethod", { { "InternalComputationValueType", { "double" } } } );
-  blueprint->SetConnection( "RegistrationMethod", "TransformDisplacementFilter", { {} } );
-  blueprint->SetConnection( "FixedImageSource", "TransformDisplacementFilter", { {} } );
-  blueprint->SetConnection( "RegistrationMethod", "ResampleFilter", { {} } );
-  blueprint->SetConnection( "FixedImageSource", "ResampleFilter", { {} } );
-  blueprint->SetConnection( "MovingImageSource", "ResampleFilter", { { keys::NameOfInterface, { "itkImageMovingInterface" } } } );
+  blueprint->SetConnection( "FixedImageSource", "TransformResolutionAdaptor", { {} }, "" );
+  blueprint->SetConnection( "TransformResolutionAdaptor", "RegistrationMethod", { {} }, "" );
+  blueprint->SetConnection( "Optimizer", "RegistrationMethod", { { "InternalComputationValueType", { "double" } } }, "" );
+  blueprint->SetConnection( "RegistrationMethod", "TransformDisplacementFilter", { {} }, "" );
+  blueprint->SetConnection( "FixedImageSource", "TransformDisplacementFilter", { {} }, "" );
+  blueprint->SetConnection( "RegistrationMethod", "ResampleFilter", { {} }, "" );
+  blueprint->SetConnection( "FixedImageSource", "ResampleFilter", { {} }, "" );
+  blueprint->SetConnection( "MovingImageSource", "ResampleFilter", { { keys::NameOfInterface, { "itkImageMovingInterface" } } }, "" );
 
-  blueprint->SetConnection( "RegistrationMethod", "Controller", { {} } );          //RunRegistrationInterface
-  blueprint->SetConnection( "ResampleFilter", "Controller", { {} } );              //ReconnectTransformInterface
-  blueprint->SetConnection( "TransformDisplacementFilter", "Controller", { {} } ); //ReconnectTransformInterface
+  blueprint->SetConnection( "RegistrationMethod", "Controller", { {} }, "" );          //RunRegistrationInterface
+  blueprint->SetConnection( "ResampleFilter", "Controller", { {} }, "" );              //ReconnectTransformInterface
+  blueprint->SetConnection( "TransformDisplacementFilter", "Controller", { {} }, "" ); //ReconnectTransformInterface
 
   std::unique_ptr< NetworkBuilderBase > networkBuilder( new NetworkBuilder< RegisterComponents >( *logger, *blueprint ) );
   bool allUniqueComponents;

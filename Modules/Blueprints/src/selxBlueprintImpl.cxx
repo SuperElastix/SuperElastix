@@ -169,26 +169,23 @@ BlueprintImpl
     return false;
   }
 
-  if( this->ConnectionExists( upstream, downstream ) )
-  {
-    // a connection exists, but multiple parallel connections are allowed. Depending on the existing names, it should be added or overridden 
+  // Multiple parallel connections are allowed. If a connection with the name "name" exists it should be overridden, otherwise just added.
     
-    boost::graph_traits<GraphType>::out_edge_iterator ei, ei_end;
-    // too bad edge_range_by_label doesn't exist
-    boost::tie(ei, ei_end) = boost::edge_range(this->m_Graph.vertex(upstream), this->m_Graph.vertex(downstream), this->m_Graph.graph());
+  boost::graph_traits<GraphType>::out_edge_iterator ei, ei_end;
+  // too bad edge_range_by_label doesn't exist
+  boost::tie(ei, ei_end) = boost::edge_range(this->m_Graph.vertex(upstream), this->m_Graph.vertex(downstream), this->m_Graph.graph());
 
-    for (; ei != ei_end; ++ei) 
+  for (; ei != ei_end; ++ei) 
+  {
+    auto existingName = boost::get(&ConnectionPropertyType::name, this->m_Graph.graph(), *ei);
+    if (name == existingName)
     {
-      auto existingName = boost::get(&ConnectionPropertyType::name, this->m_Graph.graph(), *ei);
-      if (name == existingName)
-      {
-        // override previous parameterMap
-        boost::put(&ConnectionPropertyType::parameterMap, this->m_Graph.graph(), *ei, parameterMap);
-        return true;
-      }
+      // override previous parameterMap
+      boost::put(&ConnectionPropertyType::parameterMap, this->m_Graph.graph(), *ei, parameterMap);
+      return true;
     }
-  } // no existing connections named "name" were found.
-
+  }// no existing connections named "name" were found.
+ 
   boost::add_edge_by_label(upstream, downstream, { name, parameterMap }, this->m_Graph);
   return true;
 }
@@ -348,60 +345,64 @@ BlueprintImpl
   {
     for( auto incomingName : other.GetInputNames( componentName ) )
     {
-      // Does other blueprint have a connection that already exists?
-      if( this->ConnectionExists( incomingName, componentName ) )
+      for (auto connectionName : other.GetConnectionNames(incomingName, componentName ) )
       {
-        // Connection exists, check if properties can be merged
-        auto ownProperties    = this->GetConnection( incomingName, componentName );
-        auto othersProperties = other.GetConnection( incomingName, componentName );
-
-        for( auto const & othersEntry : othersProperties )
+        // Does other blueprint have a connection that already exists?
+        if (this->ConnectionExists(incomingName, componentName, connectionName ))
         {
-          // Does other use a property key that already exists in this component?
-          if( ownProperties.count( othersEntry.first ) )
+          // Connection exists, check if properties can be merged
+          auto ownProperties    = this->GetConnection( incomingName, componentName, connectionName );
+          auto othersProperties = other.GetConnection( incomingName, componentName, connectionName );
+
+          for( auto const & othersEntry : othersProperties )
           {
-            auto && ownValues   = ownProperties[ othersEntry.first ];
-            auto && otherValues = othersEntry.second;
-            // Are the property values equal?
-            if( ownValues.size() != otherValues.size() )
+            // Does other use a property key that already exists in this component?
+            if( ownProperties.count( othersEntry.first ) )
             {
-              // No, based on the number of values we see that it is different. Blueprints cannot be Composed
-              this->m_Graph = graph_backup;
-              return false;
-            }
-            else
-            {
-              ParameterValueType::const_iterator ownValue;
-              ParameterValueType::const_iterator otherValue;
-              for( ownValue = ownValues.begin(), otherValue = otherValues.begin(); ownValue != ownValues.end(); ++ownValue, ++otherValue )
+              auto && ownValues   = ownProperties[ othersEntry.first ];
+              auto && otherValues = othersEntry.second;
+              // Are the property values equal?
+              if( ownValues.size() != otherValues.size() )
               {
-                if( *otherValue != *ownValue )
+                // No, based on the number of values we see that it is different. Blueprints cannot be Composed
+                this->m_Graph = graph_backup;
+                return false;
+              }
+              else
+              {
+                ParameterValueType::const_iterator ownValue;
+                ParameterValueType::const_iterator otherValue;
+                for( ownValue = ownValues.begin(), otherValue = otherValues.begin(); ownValue != ownValues.end(); ++ownValue, ++otherValue )
                 {
-                  // No, at least one value is different. Blueprints cannot be Composed
-                  this->m_Graph = graph_backup;
-                  return false;
+                  if( *otherValue != *ownValue )
+                  {
+                    // No, at least one value is different. Blueprints cannot be Composed
+                    this->m_Graph = graph_backup;
+                    return false;
+                  }
                 }
               }
             }
-          }
-          else
-          {
-            // Property key doesn't exist yet, add entry to this component
-            auto ownProperties = this->GetConnection( incomingName, componentName );
-            ownProperties[ othersEntry.first ] = othersEntry.second;
-            this->SetConnection( incomingName, componentName, ownProperties );
-          }
+            else
+            {
+              // Property key doesn't exist yet, add entry to this component
+              auto ownProperties = this->GetConnection( incomingName, componentName, connectionName );
+              ownProperties[ othersEntry.first ] = othersEntry.second;
+              this->SetConnection( incomingName, componentName, ownProperties, connectionName );
+              return true;
+            }
+          } // end loop otherProperties
         }
-      }
-      else
-      {
-        // Create Component copying properties of other
-        this->SetConnection( incomingName, componentName, other.GetConnection( incomingName, componentName ) );
+        else // connection with connectionName does not exist
+        {
+          // Create Connection copying properties of other
+          this->SetConnection( incomingName, componentName, other.GetConnection( incomingName, componentName, connectionName ),  connectionName );
+        }
       }
     }
   }
 
-  return true;
+  
 }
 
 BlueprintImpl::ComponentNamesType
@@ -434,6 +435,25 @@ BlueprintImpl
 
   return container;
 }
+
+BlueprintImpl::ConnectionNamesType
+BlueprintImpl
+::GetConnectionNames(const ComponentNameType upstream, const ComponentNameType downstream) const
+{
+  ConnectionNamesType     container;
+
+  boost::graph_traits<GraphType>::out_edge_iterator ei, ei_end;
+  // too bad edge_range_by_label doesn't exist
+  boost::tie(ei, ei_end) = boost::edge_range(this->m_Graph.vertex(upstream), this->m_Graph.vertex(downstream), this->m_Graph.graph());
+
+  for (; ei != ei_end; ++ei)
+  {
+    container.push_back(boost::get(&ConnectionPropertyType::name, this->m_Graph.graph(), *ei));
+  }
+  return container;
+}
+
+
 
 void
 BlueprintImpl
