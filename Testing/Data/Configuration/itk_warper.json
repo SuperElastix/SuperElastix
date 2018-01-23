@@ -21,10 +21,6 @@
 		"Dimensionality": "2",
 		"PixelType": "float"
     },
-    "Component": {
-        "Name": "Controller",
-        "NameOfClass": "RegistrationControllerComponent"
-    },
 	"Connection": {
         "Out": "FixedAndMovingImageSource",
         "In": "ResampleFilter"
@@ -37,9 +33,5 @@
         "Out": "ResampleFilter",
         "In": "ResultImageSink",
         "NameOfInterface": "itkImageInterface"
-    },
-	"Connection": {
-        "Out": "ResampleFilter",
-        "In": "Controller"
     }
 }

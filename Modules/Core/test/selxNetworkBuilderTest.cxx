@@ -122,7 +122,6 @@ TEST_F( NetworkBuilderTest, DeduceComponentsFromConnections )
     ItkImageRegistrationMethodv4Component< 3, float, float >,
     ItkGradientDescentOptimizerv4Component< double >,
     ItkGradientDescentOptimizerv4Component< float >,
-    RegistrationControllerComponent< >,
     ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< 2, double >,
     ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< 2, float >,
     ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< 3, double >,
@@ -205,8 +204,6 @@ TEST_F( NetworkBuilderTest, DeduceComponentsFromConnections )
     { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent" } },
       { "ShrinkFactorsPerLevel", { "2", "1" } } } );
 
-  blueprint->SetComponent( "Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } } );
-
   ParameterMapType connection1Parameters;
   connection1Parameters[ "NameOfInterface" ] = { "itkImageFixedInterface" };
   blueprint->SetConnection( "FixedImageSource", "RegistrationMethod", connection1Parameters );
@@ -238,10 +235,6 @@ TEST_F( NetworkBuilderTest, DeduceComponentsFromConnections )
   blueprint->SetConnection( "RegistrationMethod", "ResampleFilter", { {} } );
   blueprint->SetConnection( "FixedImageSource", "ResampleFilter", { {} } );
   blueprint->SetConnection( "MovingImageSource", "ResampleFilter", { { keys::NameOfInterface, { "itkImageMovingInterface" } } } );
-
-  blueprint->SetConnection( "RegistrationMethod", "Controller", { {} } );          //RunRegistrationInterface
-  blueprint->SetConnection( "ResampleFilter", "Controller", { {} } );              //ReconnectTransformInterface
-  blueprint->SetConnection( "TransformDisplacementFilter", "Controller", { {} } ); //ReconnectTransformInterface
 
   std::unique_ptr< NetworkBuilderBase > networkBuilder( new NetworkBuilder< RegisterComponents >( *logger, *blueprint ) );
   bool allUniqueComponents;

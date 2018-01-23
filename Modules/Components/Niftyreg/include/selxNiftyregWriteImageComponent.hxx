@@ -45,7 +45,7 @@ NiftyregWriteImageComponent<  TPixel >::Accept( typename NiftyregWarpedImageInte
 
 template< class TPixel >
 void
-NiftyregWriteImageComponent<  TPixel >::AfterRegistration()
+NiftyregWriteImageComponent<  TPixel >::Update()
 {
   auto warpedImage = this->m_WarpedImageInterface->GetWarpedNiftiImage();
   reg_io_WriteImageFile( warpedImage.get(), this->m_ImageFileName.c_str() );

@@ -23,7 +23,9 @@
 
 namespace selx
 {
-NetworkContainer::NetworkContainer( ComponentContainerType components, OutputObjectsMapType outputObjectsMap ) : m_ComponentContainer( components ),
+NetworkContainer::NetworkContainer( ComponentContainerType components, UpdateOrderType updateOrder, OutputObjectsMapType outputObjectsMap ) :
+  m_ComponentContainer( components ),
+  m_UpdateOrder( updateOrder),
   m_OutputObjectsMap( outputObjectsMap )
 {
 }
@@ -32,19 +34,10 @@ NetworkContainer::NetworkContainer( ComponentContainerType components, OutputObj
 void
 NetworkContainer::Execute()
 {
-  /** Scans all Components to find those with RegistrationControllerStart capability and call them */
-  for( auto const & component : this->m_ComponentContainer )
+  /** For those components that have an update interface the update is executed in the right pipeline order. **/
+  for( auto updateInterface : this->m_UpdateOrder )
   {
-    if( component->CountProvidingInterfaces( { { keys::NameOfInterface, keys::RegistrationControllerStartInterface } } ) == 1 )
-    {
-      std::shared_ptr< RegistrationControllerStartInterface > providingInterface = std::dynamic_pointer_cast< RegistrationControllerStartInterface >(
-        component );
-      if( !providingInterface )   // is actually a double-check for sanity: based on criterion cast should always be successful
-      {
-        throw std::runtime_error( "dynamic_cast<RegistrationControllerStartInterface*> fails, but based on component criterion it shouldn't" );
-      }
-      providingInterface->RegistrationControllerStart();
-    }
+    updateInterface->Update();
   }
 }
 

@@ -81,7 +81,7 @@ IdentityTransformRegistrationComponent< Dimensionality, TPixel >::GetDisplacemen
 
 template< int Dimensionality, class TPixel >
 void
-IdentityTransformRegistrationComponent< Dimensionality, TPixel >::RunRegistration( void )
+IdentityTransformRegistrationComponent< Dimensionality, TPixel >::Update( void )
 {
   auto fixed = this->m_ImageFixedInterface->GetItkImageFixed();
   auto moving = this->m_ImageMovingInterface->GetItkImageMoving();

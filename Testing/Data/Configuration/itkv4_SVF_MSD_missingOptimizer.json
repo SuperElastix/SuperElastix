@@ -52,10 +52,6 @@
         "Name": "TransformDisplacementFilter",
         "NameOfClass": "ItkTransformDisplacementFilterComponent"
     },
-	"Component": {
-        "Name": "Controller",
-        "NameOfClass": "RegistrationControllerComponent"
-    },  
     "Connection": {
         "Out": "FixedImage",
         "In": "RegistrationMethod",
@@ -124,20 +120,5 @@
         "Out": "MovingImage",
         "In": "ResampleFilter",
         "NameOfInterface": "itkImageMovingInterface"
-    },
-	"Connection": {
-        "Out": "RegistrationMethod",
-        "In": "Controller",
-        "NameOfInterface": "RunRegistrationInterface"
-    },
-	"Connection": {
-        "Out": "ResampleFilter",
-        "In": "Controller",
-        "NameOfInterface": "ReconnectTransformInterface"
-    },
-	"Connection": {
-        "Out": "TransformDisplacementFilter",
-        "In": "Controller",
-        "NameOfInterface": "ReconnectTransformInterface"
     }
 }

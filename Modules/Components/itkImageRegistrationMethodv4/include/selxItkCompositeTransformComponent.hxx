@@ -53,7 +53,7 @@ ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >
 template< class InternalComputationValueType, int Dimensionality >
 int
 ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >
-::Accept( ReconnectTransformInterface::Pointer other )
+::Accept( UpdateInterface::Pointer other )
 {
   this->m_ReconnectTransformInterfaces.insert( other );
   return 0;
@@ -70,7 +70,7 @@ ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >::
 
 template< class InternalComputationValueType, int Dimensionality >
 void
-ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >::RegistrationControllerStart()
+ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >::Update()
 {
   // Check if the names connected stages are compatible with the provided execution order
   // TODO: should we handle such component sanity checks as separate NetworkBuilder check instead of as execution stage?
@@ -111,13 +111,13 @@ ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >::
         return thisStage->GetComponentName() == stageName;
       } );
     ( *stageIterator )->SetMovingInitialTransform( this->m_CompositeTransform );
-    ( *stageIterator )->RunRegistration();
+    ( *stageIterator )->Update();
 
     this->m_CompositeTransform->AppendTransform( ( *stageIterator )->GetItkTransform() );
   }
   for( auto && reconnectTransformInterface : this->m_ReconnectTransformInterfaces )
   {
-    reconnectTransformInterface->ReconnectTransform();
+    reconnectTransformInterface->Update();
   }
   return;
 }
@@ -157,7 +157,7 @@ ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >
 {
   // This function overrides the default behavior, in which all accepting interfaces must be set, by allowing the some interfaces not being set.
   // TODO: see I we can reduce the amount of code with helper (meta-)functions
-  if( ( ( InterfaceAcceptor< MultiStageTransformInterface< InternalComputationValueType, Dimensionality >> * ) this )->isSet() == false )
+  if(! this->InterfaceAcceptor< MultiStageTransformInterface< InternalComputationValueType, Dimensionality >>::GetAccepted())
   {
     return false;
   }
