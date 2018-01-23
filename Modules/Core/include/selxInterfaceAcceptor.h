@@ -43,15 +43,14 @@ public:
 
   bool CanAcceptConnectionFrom( ComponentBase::ConstPointer );
 
-  bool isSet()
+  std::shared_ptr< InterfaceT > GetAccepted()
   {
-    return m_isSet;
+    return m_AcceptedInterface;
   }
-
 
 private:
 
-  bool m_isSet = false;
+  std::shared_ptr< InterfaceT > m_AcceptedInterface;
 };
 } //end namespace selx
 

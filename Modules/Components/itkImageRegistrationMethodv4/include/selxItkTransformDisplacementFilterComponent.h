@@ -42,7 +42,7 @@ class ItkTransformDisplacementFilterComponent :
   itkImageDomainFixedInterface< Dimensionality >
   >,
   Providing< DisplacementFieldItkImageSourceInterface< Dimensionality, TPixel >,
-  ReconnectTransformInterface
+  UpdateInterface
   >
   >
 {
@@ -57,7 +57,7 @@ public:
     itkImageDomainFixedInterface< Dimensionality >
     >,
     Providing< DisplacementFieldItkImageSourceInterface< Dimensionality, TPixel >,
-    ReconnectTransformInterface
+    UpdateInterface
     >
     >                                     Superclass;
   typedef std::shared_ptr< Self >       Pointer;
@@ -82,7 +82,7 @@ public:
   //Providing Interfaces:
   virtual typename DisplacementFieldImageType::Pointer GetDisplacementFieldItkImage() override;
 
-  virtual void ReconnectTransform() override;
+  virtual void Update() override;
 
   //BaseClass methods
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;

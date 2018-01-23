@@ -20,10 +20,6 @@
         "Name": "TransformDisplacementField",
         "NameOfClass": "MonolithicTransformixComponent"
     },
-	"Component": {
-        "Name": "Controller",
-        "NameOfClass": "RegistrationControllerComponent"
-    },
     "Connection": {
         "Out": "FixedImage",
         "In": "RegistrationMethod",
@@ -53,15 +49,5 @@
         "Out": "TransformDisplacementField",
         "In": "ResultImage",
 		"NameOfInterface": "itkImageInterface"
-    },
-    "Connection": {
-        "Out": "RegistrationMethod",
-        "In": "Controller",
-		"NameOfInterface": "RunRegistrationInterface"
-    },
-    "Connection": {
-        "Out": "TransformDisplacementField",
-        "In": "Controller",
-		"NameOfInterface": "ReconnectTransformInterface"
     }
 }

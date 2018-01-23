@@ -85,7 +85,7 @@ TPixel >::elastixTransformParameterObject * MonolithicElastixComponent< Dimensio
 
 template< int Dimensionality, class TPixel >
 void
-MonolithicElastixComponent< Dimensionality, TPixel >::RunRegistration( void )
+MonolithicElastixComponent< Dimensionality, TPixel >::Update( void )
 {
   this->m_elastixFilter->Update();
 }

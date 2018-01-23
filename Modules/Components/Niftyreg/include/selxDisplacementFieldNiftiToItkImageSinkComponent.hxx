@@ -106,7 +106,7 @@ DisplacementFieldNiftiToItkImageSinkComponent< Dimensionality, TPixel >::GetInit
 
 template< int Dimensionality, class TPixel >
 void
-DisplacementFieldNiftiToItkImageSinkComponent< Dimensionality, TPixel >::AfterRegistration()
+DisplacementFieldNiftiToItkImageSinkComponent< Dimensionality, TPixel >::Update()
 {
   auto displacementFieldNiftiImage = this->m_DisplacementFieldInterface->GetDisplacementFieldNiftiImage();
   auto displacementFieldItkImage   = NiftiToItkImage< ItkDisplacementFieldType, TPixel >::Convert( displacementFieldNiftiImage );

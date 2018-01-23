@@ -25,6 +25,9 @@
 #include "boost/graph/directed_graph.hpp"
 #include "boost/graph/labeled_graph.hpp"
 
+// for UpdateOrder
+#include <boost/graph/topological_sort.hpp>
+
 // for ComposeWith
 #include "boost/graph/copy.hpp"
 
@@ -128,6 +131,8 @@ public:
 
   // Returns a vector of the Component names at the outgoing direction
   ComponentNamesType GetOutputNames( const ComponentNameType name ) const;
+
+  ComponentNamesType GetUpdateOrder() const;
 
   void Write( const std::string filename );
 

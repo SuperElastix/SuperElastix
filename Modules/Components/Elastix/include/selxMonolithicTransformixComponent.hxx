@@ -145,7 +145,7 @@ MonolithicTransformixComponent< Dimensionality, TPixel >::GetDisplacementFieldIt
 
 template< int Dimensionality, class TPixel >
 void
-MonolithicTransformixComponent< Dimensionality, TPixel >::ReconnectTransform( void )
+MonolithicTransformixComponent< Dimensionality, TPixel >::Update( void )
 {
   // TODO currently, the pipeline with elastix and tranformix can only be created after the update of elastix
   this->m_transformixFilter->SetTransformParameterObject( this->m_TransformParameterObjectInterface->GetTransformParameterObject() );

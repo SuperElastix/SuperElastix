@@ -87,9 +87,9 @@ Niftyregf3dComponent< TPixel >
 template< class TPixel >
 void
 Niftyregf3dComponent< TPixel >
-::RunRegistration()
+::Update()
 {
-  this->m_Logger.Log(LogLevel::TRC, "RunRegistration");
+  this->m_Logger.Log(LogLevel::TRC, "Update: run registration");
   //this->m_reg_f3d->UseSSD( 0, true );
   //this->m_reg_f3d->UseCubicSplineInterpolation();
   if (this->m_NiftyregAffineMatrixInterface)
@@ -125,11 +125,11 @@ Niftyregf3dComponent< TPixel >
   // This function overrides the default behavior, in which all accepting interfaces must be set, by allowing the some interfaces not being set.
   // TODO: see if we can reduce the amount of code with helper (meta-)functions
   //   Superclass::AcceptingInterfacesTypeList
-  if (((InterfaceAcceptor< NiftyregReferenceImageInterface< TPixel >> *) this)->isSet() == false)
+  if ( !this->InterfaceAcceptor< NiftyregReferenceImageInterface< TPixel >>::GetAccepted() )
   {
     return false;
   }
-  if (((InterfaceAcceptor< NiftyregFloatingImageInterface< TPixel >> *) this)->isSet() == false)
+  if ( !this->InterfaceAcceptor< NiftyregFloatingImageInterface< TPixel >>::GetAccepted() )
   {
     return false;
   }

@@ -17,10 +17,6 @@
         "Name": "DisplacementField",
         "NameOfClass": "DisplacementFieldItkImageFilterSinkComponent"
     },
-    "Component": {
-        "Name": "Controller",
-        "NameOfClass": "RegistrationControllerComponent"
-    },
     "Connection": {
         "Out": "FixedImage",
         "In": "RegistrationMethod",
@@ -34,10 +30,5 @@
     "Connection": {
         "Out": "RegistrationMethod",
         "In": "DisplacementField"
-    },
-    "Connection": {
-        "Out": "RegistrationMethod",
-        "In": "Controller",
-        "NameOfInterface": "RunRegistrationInterface"
     }
 }

@@ -30,8 +30,8 @@ namespace selx
 
 class SourceInterface
 {
-  // A special interface: the Overlord checks components for this type of interface.
-  // By this interface only Source Components can to talk to the Overlord.
+  // A special interface: the NetworkBuilder checks components for this type of interface.
+  // By this interface only Source Components can to talk to the NetworkBuilder.
   // How specific Source Components connect to the graph is up to them, i.e. they might adapt the passed Object to other types.
 
 public:
@@ -43,8 +43,8 @@ public:
 
 class SinkInterface
 {
-  // A special interface: the Overlord checks components for this type of interface.
-  // By this interface only Sink Components can to talk to the Overlord
+  // A special interface: the NetworkBuilder checks components for this type of interface.
+  // By this interface only Sink Components can to talk to the NetworkBuilder
   // How specific Sink Components connect to the graph is up to them, i.e. they might adapt the passed Object to other types.
 
 public:
@@ -59,56 +59,17 @@ public:
   virtual DataObjectPointer GetInitializedOutput( void ) = 0;
 };
 
-class RegistrationControllerStartInterface
+class UpdateInterface
 {
   // A special interface: the NetworkBuilder checks components for this type of interface.
   // This interface is to control the execution of the network
 
 public:
 
-  using Pointer                              = std::shared_ptr< RegistrationControllerStartInterface >;
-  virtual void RegistrationControllerStart() = 0;
+  using Pointer = std::shared_ptr< UpdateInterface >;
+  virtual void Update() = 0;
 };
 
-class RunRegistrationInterface
-{
-  // This interface is to control the execution of the network
-
-public:
-
-  using Pointer                  = std::shared_ptr< RunRegistrationInterface >;
-  virtual void RunRegistration() = 0;
-};
-
-class AfterRegistrationInterface
-{
-  // This interface is to control the execution of the network
-
-public:
-
-  using Pointer                    = std::shared_ptr< AfterRegistrationInterface >;
-  virtual void AfterRegistration() = 0;
-};
-
-class RunResolutionInterface
-{
-  // This interface is to control the execution of the network
-
-public:
-
-  using Pointer                = std::shared_ptr< RunResolutionInterface >;
-  virtual bool RunResolution() = 0;
-};
-
-class ReconnectTransformInterface
-{
-  // This interface is to control the execution of the network
-
-public:
-
-  using Pointer                     = std::shared_ptr< ReconnectTransformInterface >;
-  virtual void ReconnectTransform() = 0;
-};
 } // end namespace selx
 
 #endif // #define selxInterfaces_h

@@ -43,7 +43,7 @@ class ItkResampleFilterComponent :
   itkImageMovingInterface< Dimensionality, TPixel >
   >,
   Providing< itkImageInterface< Dimensionality, TPixel >,
-  ReconnectTransformInterface
+  UpdateInterface
   >
   >
 {
@@ -59,7 +59,7 @@ public:
     itkImageMovingInterface< Dimensionality, TPixel >
     >,
     Providing< itkImageInterface< Dimensionality, TPixel >,
-    ReconnectTransformInterface
+    UpdateInterface
     >
     >                                     Superclass;
   typedef std::shared_ptr< Self >       Pointer;
@@ -87,7 +87,7 @@ public:
   //Providing Interfaces:
   virtual typename ResultImageType::Pointer GetItkImage() override;
 
-  virtual void ReconnectTransform() override;
+  virtual void Update() override;
 
   //BaseClass methods
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;

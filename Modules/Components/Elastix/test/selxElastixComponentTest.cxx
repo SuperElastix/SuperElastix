@@ -27,8 +27,6 @@
 #include "selxItkImageSourceComponent.h"
 #include "selxDisplacementFieldItkImageFilterSinkComponent.h"
 
-#include "selxRegistrationControllerComponent.h"
-
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 
@@ -54,8 +52,7 @@ public:
     ItkImageSinkComponent< 2, float >,
     DisplacementFieldItkImageFilterSinkComponent< 2, float >,
     ItkImageSourceComponent< 2, float >,
-    ItkImageSourceComponent< 3, double >,
-    RegistrationControllerComponent< >> RegisterComponents;
+    ItkImageSourceComponent< 3, double >> RegisterComponents;
 
   typedef itk::Image< float, 2 >              Image2DType;
   typedef itk::ImageFileReader< Image2DType > ImageReader2DType;
@@ -119,8 +116,6 @@ TEST_F( ElastixComponentTest, ImagesOnly )
   component3Parameters[ "Dimensionality" ] = { "2" }; // should be derived from the inputs
   blueprint->SetComponent( "ResultImageSink", component3Parameters );
 
-  blueprint->SetComponent( "Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } } );
-
   ParameterMapType connection1Parameters;
   //connection1Parameters["NameOfInterface"] = { "itkImageFixedInterface" };
   blueprint->SetConnection( "FixedImageSource", "RegistrationMethod", connection1Parameters );
@@ -132,9 +127,6 @@ TEST_F( ElastixComponentTest, ImagesOnly )
   ParameterMapType connection3Parameters;
   //connection3Parameters["NameOfInterface"] = { "GetItkImageInterface" };
   blueprint->SetConnection( "RegistrationMethod", "ResultImageSink", connection3Parameters );
-
-  blueprint->SetConnection( "RegistrationMethod", "Controller", { {} } ); //
-  blueprint->SetConnection( "ResultImageSink", "Controller", { {} } );    //
 
   // Set up the readers and writers
   ImageReader2DType::Pointer fixedImageReader = ImageReader2DType::New();
@@ -177,8 +169,6 @@ TEST_F( ElastixComponentTest, MonolithicElastixTransformix )
 
   blueprint->SetComponent( "ResultDisplacementFieldSink", { { "NameOfClass", { "DisplacementFieldItkImageFilterSinkComponent" } }, { "Dimensionality", { "2" } } });
 
-  blueprint->SetComponent( "Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } } );
-
   blueprint->SetConnection( "FixedImageSource", "RegistrationMethod", { { "NameOfInterface", { "itkImageFixedInterface" } } } ); // ;
 
   blueprint->SetConnection( "MovingImageSource", "RegistrationMethod", { { "NameOfInterface", { "itkImageMovingInterface" } } } ); // ;
@@ -193,10 +183,6 @@ TEST_F( ElastixComponentTest, MonolithicElastixTransformix )
 
   blueprint->SetConnection( "TransformDisplacementField", "ResultDisplacementFieldSink", { { "NameOfInterface", { "DisplacementFieldItkImageSourceInterface" } } }); // ;
 
-  blueprint->SetConnection( "RegistrationMethod", "Controller", { {} } );         //
-  blueprint->SetConnection( "TransformDisplacementField", "Controller", { {} } ); //
-  blueprint->SetConnection( "ResultImageSink", "Controller", { {} } );            //
-  blueprint->SetConnection( "ResultDisplacementFieldSink", "Controller", { {} });            //
 
   // Set up the readers and writers
   ImageReader2DType::Pointer fixedImageReader = ImageReader2DType::New();

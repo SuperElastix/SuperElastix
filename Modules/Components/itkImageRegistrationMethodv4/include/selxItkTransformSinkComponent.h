@@ -38,7 +38,7 @@ template< int Dimensionality, class InternalComputationValueType >
 class ItkTransformSinkComponent :
   public SuperElastixComponent<
   Accepting< itkTransformInterface< InternalComputationValueType, Dimensionality >>,
-  Providing< SinkInterface, AfterRegistrationInterface >
+  Providing< SinkInterface, UpdateInterface >
   >
 {
 public:
@@ -49,7 +49,7 @@ public:
     >                                     Self;
   typedef SuperElastixComponent<
     Accepting< itkTransformInterface< InternalComputationValueType, Dimensionality >>,
-    Providing< SinkInterface, AfterRegistrationInterface >
+    Providing< SinkInterface, UpdateInterface >
     >                                     Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
@@ -73,8 +73,8 @@ public:
   virtual AnyFileWriter::Pointer GetOutputFileWriter( void ) override;
   virtual itk::DataObject::Pointer GetInitializedOutput( void ) override;
 
-  // providing AfterRegistrationInterface
-  virtual void AfterRegistration() override;
+  // providing UpdateInterface
+  virtual void Update() override;
 
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
 

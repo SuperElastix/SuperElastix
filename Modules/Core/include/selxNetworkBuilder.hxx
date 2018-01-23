@@ -484,9 +484,9 @@ NetworkContainer
 NetworkBuilder< ComponentList >::GetRealizedNetwork()
 {
   // vector that stores all components
-  std::vector< ComponentBase::Pointer > components;
-
-  std::map< std::string, itk::DataObject::Pointer > outputObjectsMap;
+  NetworkContainer::ComponentContainerType components;
+  NetworkContainer::UpdateOrderType updateOrder;
+  NetworkContainer::OutputObjectsMapType outputObjectsMap;
 
   if( this->Configure() )
   {
@@ -499,7 +499,7 @@ NetworkBuilder< ComponentList >::GetRealizedNetwork()
       /** Scans all Components to find those with Sinking capability and store the outputs in outputObjectsMap */
       if( component->CountProvidingInterfaces( { { keys::NameOfInterface, keys::SinkInterface } } ) == 1 )
       {
-        SinkInterface::Pointer provingSinkInterface = std::dynamic_pointer_cast< SinkInterface >( component );
+        auto provingSinkInterface = std::dynamic_pointer_cast< SinkInterface >( component );
         if( !provingSinkInterface )   // is actually a double-check for sanity: based on criterion cast should be successful
         {
           this->m_Logger.Log(LogLevel::CRT, "dynamic_cast<SinkInterface*> fails, but based on component criterion it shouldn't");
@@ -509,7 +509,30 @@ NetworkBuilder< ComponentList >::GetRealizedNetwork()
       }
     }
 
-    return NetworkContainer( components, outputObjectsMap );
+    for (const auto & componentName : this->m_Blueprint.GetUpdateOrder())
+    {
+      auto component = this->m_ComponentSelectorContainer[componentName]->GetComponent();
+      if (component->CountProvidingInterfaces({ { keys::NameOfInterface, keys::UpdateInterface } }) == 1)
+      {
+        auto provingUpdateInterface = std::dynamic_pointer_cast<UpdateInterface>(component);
+        if (!provingUpdateInterface)   // is actually a double-check for sanity: based on criterion cast should be successful
+        {
+          this->m_Logger.Log(LogLevel::CRT, "dynamic_cast<provingUpdateInterface*> fails, but based on component criterion it shouldn't");
+          throw std::runtime_error("dynamic_cast<provingUpdateInterface*> fails, but based on component criterion it shouldn't");
+        }
+        // check if the UpdateInterface has been connected to a (controller) component. If so don't take over the control by adding it into updateOrder.
+        auto connectionInfoUpdateInterface = std::dynamic_pointer_cast<ConnectionInfo<UpdateInterface>>(component);
+        
+        if (connectionInfoUpdateInterface->GetProvidedTo().size() == 0)
+        {
+          updateOrder.push_back(provingUpdateInterface);
+          connectionInfoUpdateInterface->SetProvidedTo("NetworkBuilder");
+        }
+      }
+
+    }
+
+    return NetworkContainer( components, updateOrder, outputObjectsMap );
   }
   else
   {
@@ -517,7 +540,7 @@ NetworkBuilder< ComponentList >::GetRealizedNetwork()
     msg << "Network is not realized yet";
     this->m_Logger.Log(LogLevel::ERR, "{}", msg.str() );
     throw std::runtime_error( msg.str() );
-    return NetworkContainer( components, outputObjectsMap );
+    return NetworkContainer( components, updateOrder, outputObjectsMap );
   }
 }
 } // end namespace selx

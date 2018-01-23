@@ -45,9 +45,6 @@
 #include "selxItkTransformSourceComponent.h"
 #include "selxItkTransformSinkComponent.h"
 
-//Component group Controller
-#include "selxRegistrationControllerComponent.h"
-
 //Component group Niftyreg
 #include "selxItkToNiftiImageSourceComponent.h"
 #include "selxNiftiToItkImageSinkComponent.h"
@@ -82,7 +79,6 @@ using DefaultComponents = selx::TypeList<
   ItkAffineTransformComponent< double, 2 >,
   ItkTransformDisplacementFilterComponent< 2, float, double >,
   ItkResampleFilterComponent< 2, float, double >,
-  RegistrationControllerComponent< >,
   ItkSmoothingRecursiveGaussianImageFilterComponent< 2, float >,
   ItkTransformSourceComponent< 2, double >,
   ItkTransformSinkComponent< 2, double >,

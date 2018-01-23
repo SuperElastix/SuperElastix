@@ -72,39 +72,13 @@ struct Properties< SinkInterface >
 };
 
 template< >
-struct Properties< RegistrationControllerStartInterface >
+struct Properties< UpdateInterface >
 {
   static const std::map< std::string, std::string > Get()
   {
-    return { { keys::NameOfInterface, "RegistrationControllerStartInterface" } };
+    return{ { keys::NameOfInterface, "UpdateInterface" } };
   }
 };
 
-template< >
-struct Properties< RunRegistrationInterface >
-{
-  static const std::map< std::string, std::string > Get()
-  {
-    return { { keys::NameOfInterface, "RunRegistrationInterface" } };
-  }
-};
-
-template< >
-struct Properties< AfterRegistrationInterface >
-{
-  static const std::map< std::string, std::string > Get()
-  {
-    return { { keys::NameOfInterface, "AfterRegistrationInterface" } };
-  }
-};
-
-template< >
-struct Properties< ReconnectTransformInterface >
-{
-  static const std::map< std::string, std::string > Get()
-  {
-    return { { keys::NameOfInterface, "ReconnectTransformInterface" } };
-  }
-};
 } // end namespace selx
 #endif // #define InterfaceTraits_h

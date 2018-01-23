@@ -101,7 +101,7 @@ ElastixComponent< Dimensionality, TPixel >::GetItkImage()
 
 template< int Dimensionality, class TPixel >
 void
-ElastixComponent< Dimensionality, TPixel >::RunRegistration( void )
+ElastixComponent< Dimensionality, TPixel >::Update( void )
 {
   // TODO currently, the pipeline with elastix and tranformix can only be created after the update of elastix
   this->m_elastixFilter->Update();
