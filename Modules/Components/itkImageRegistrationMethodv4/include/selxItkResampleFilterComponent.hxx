@@ -96,7 +96,7 @@ ItkResampleFilterComponent< Dimensionality, TPixel, TInternalComputationValue >
 template< int Dimensionality, class TPixel, class TInternalComputationValue >
 void
 ItkResampleFilterComponent< Dimensionality, TPixel, TInternalComputationValue >
-::ReconnectTransform()
+::Update()
 {
   auto transform = this->m_TransformComponent->GetItkTransform();
   // reconnect the tranform, since it does not comply with the itk pipeline

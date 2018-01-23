@@ -35,7 +35,7 @@ template< int Dimensionality, class TPixel >
 class ItkMeshSinkComponent :
   public SuperElastixComponent<
   Accepting< itkMeshInterface< Dimensionality, TPixel >>,
-  Providing< SinkInterface, AfterRegistrationInterface >
+  Providing< SinkInterface, UpdateInterface >
   >
 {
 public:
@@ -46,7 +46,7 @@ public:
     >                                     Self;
   typedef SuperElastixComponent<
     Accepting< itkMeshInterface< Dimensionality, TPixel >>,
-    Providing< SinkInterface, AfterRegistrationInterface >
+    Providing< SinkInterface, UpdateInterface >
     >                                     Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
@@ -67,7 +67,7 @@ public:
 
   virtual itk::DataObject::Pointer GetInitializedOutput( void ) override;
 
-  virtual void AfterRegistration() override;
+  virtual void Update() override;
 
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
 

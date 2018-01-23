@@ -83,7 +83,7 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
 
 template< int Dimensionality, class TPixel, class InternalComputationValueType >
 void
-ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputationValueType >::RunRegistration( void )
+ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputationValueType >::Update( void )
 {
   typename FixedImageType::ConstPointer fixedImage   = this->m_theItkFilter->GetFixedImage();
   typename MovingImageType::ConstPointer movingImage = this->m_theItkFilter->GetMovingImage();

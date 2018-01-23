@@ -39,7 +39,7 @@ template< int Dimensionality, class TPixel >
 class NiftiToItkImageSinkComponent :
   public SuperElastixComponent<
   Accepting< NiftyregWarpedImageInterface< TPixel >, itkImageDomainFixedInterface< Dimensionality >>,
-  Providing< SinkInterface, AfterRegistrationInterface >
+  Providing< SinkInterface, UpdateInterface >
   >
 {
 public:
@@ -48,7 +48,7 @@ public:
   typedef NiftiToItkImageSinkComponent< Dimensionality, TPixel > Self;
   typedef SuperElastixComponent<
     Accepting< NiftyregWarpedImageInterface< TPixel >, itkImageDomainFixedInterface< Dimensionality >>,
-    Providing< SinkInterface, AfterRegistrationInterface >
+    Providing< SinkInterface, UpdateInterface >
     >                                            Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
@@ -79,7 +79,7 @@ public:
 
   virtual itk::DataObject::Pointer GetInitializedOutput( void ) override;
 
-  virtual void AfterRegistration() override;
+  virtual void Update() override;
 
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
 

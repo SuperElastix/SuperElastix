@@ -25,6 +25,9 @@
 #include "boost/graph/directed_graph.hpp"
 #include "boost/graph/labeled_graph.hpp"
 
+// for UpdateOrder
+#include <boost/graph/topological_sort.hpp>
+
 // for ComposeWith
 #include "boost/graph/copy.hpp"
 
@@ -138,6 +141,8 @@ public:
 
   // Returns a vector of the connection names between upstream and downstream
   ComponentNamesType GetConnectionNames(const ComponentNameType upstream, const ComponentNameType downstream) const;
+
+  ComponentNamesType GetUpdateOrder() const;
 
   void Write( const std::string filename );
 

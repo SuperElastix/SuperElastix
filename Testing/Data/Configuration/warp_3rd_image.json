@@ -30,10 +30,5 @@
         "Out": "ImageTransformer",
         "In": "WarpOutputImage",
         "NameOfInterface": "itkImageInterface"
-    },
-    "Connection": {
-        "Out": "ImageTransformer",
-        "In": "Controller",
-		"NameOfInterface": "ReconnectTransformInterface"
     }
 }

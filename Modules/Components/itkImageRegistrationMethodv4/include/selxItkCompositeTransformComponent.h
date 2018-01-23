@@ -34,12 +34,12 @@ class ItkCompositeTransformComponent :
   public SuperElastixComponent<
   Accepting< MultiStageTransformInterface<
   InternalComputationValueType, Dimensionality >,
-  ReconnectTransformInterface
+  UpdateInterface
   >,
   Providing<
   itkTransformInterface< InternalComputationValueType, Dimensionality
   >,
-  RegistrationControllerStartInterface >
+  UpdateInterface >
   >
 {
 public:
@@ -51,12 +51,12 @@ public:
   typedef SuperElastixComponent<
     Accepting< MultiStageTransformInterface<
     InternalComputationValueType, Dimensionality >,
-    ReconnectTransformInterface
+    UpdateInterface
     >,
     Providing<
     itkTransformInterface< InternalComputationValueType, Dimensionality
     >,
-    RegistrationControllerStartInterface >
+    UpdateInterface >
     >                                       Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
@@ -71,9 +71,9 @@ public:
 
   virtual int Accept( typename MultiStageTransformInterface< InternalComputationValueType, Dimensionality >::Pointer ) override;
 
-  virtual int Accept( ReconnectTransformInterface::Pointer ) override;
+  virtual int Accept( UpdateInterface::Pointer ) override;
 
-  virtual void RegistrationControllerStart() override;
+  virtual void Update() override;
 
   virtual typename TransformType::Pointer GetItkTransform() override;
 
@@ -89,7 +89,7 @@ private:
   typename CompositeTransformType::Pointer m_CompositeTransform;
   typename std::vector< typename MultiStageTransformInterface< InternalComputationValueType, Dimensionality >::Pointer > m_registrationStages;
 
-  std::set< ReconnectTransformInterface::Pointer > m_ReconnectTransformInterfaces;
+  std::set< UpdateInterface::Pointer > m_ReconnectTransformInterfaces;
   std::vector< std::string >                       m_ExecutionOrder;
 
 protected:

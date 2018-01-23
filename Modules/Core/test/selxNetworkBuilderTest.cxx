@@ -20,7 +20,6 @@
 #include "selxNetworkBuilder.h"
 #include "selxLogger.h"
 
-//#include "ComponentFactory.h"
 #include "selxTransformComponent1.h"
 #include "selxMetricComponent1.h"
 #include "selxGDOptimizer3rdPartyComponent.h"
@@ -122,7 +121,6 @@ TEST_F( NetworkBuilderTest, DeduceComponentsFromConnections )
     ItkImageRegistrationMethodv4Component< 3, float, float >,
     ItkGradientDescentOptimizerv4Component< double >,
     ItkGradientDescentOptimizerv4Component< float >,
-    RegistrationControllerComponent< >,
     ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< 2, double >,
     ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< 2, float >,
     ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< 3, double >,
@@ -205,8 +203,6 @@ TEST_F( NetworkBuilderTest, DeduceComponentsFromConnections )
     { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent" } },
       { "ShrinkFactorsPerLevel", { "2", "1" } } } );
 
-  blueprint->SetComponent( "Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } } );
-
   ParameterMapType connection1Parameters;
   connection1Parameters[ "NameOfInterface" ] = { "itkImageFixedInterface" };
   blueprint->SetConnection( "FixedImageSource", "RegistrationMethod", connection1Parameters, "" );
@@ -225,11 +221,10 @@ TEST_F( NetworkBuilderTest, DeduceComponentsFromConnections )
 
   ParameterMapType connection5Parameters;
   connection5Parameters[ "NameOfInterface" ] = { "itkMetricv4Interface" };
-  blueprint->SetConnection( "Metric", "RegistrationMethod", connection5Parameters, "" );
 
+  blueprint->SetConnection( "Metric", "RegistrationMethod", connection5Parameters, "" );
   blueprint->SetConnection( "FixedImageSource", "Transform", { {} }, "" );
   blueprint->SetConnection( "Transform", "RegistrationMethod", { {} }, "" );
-
   blueprint->SetConnection( "FixedImageSource", "TransformResolutionAdaptor", { {} }, "" );
   blueprint->SetConnection( "TransformResolutionAdaptor", "RegistrationMethod", { {} }, "" );
   blueprint->SetConnection( "Optimizer", "RegistrationMethod", { { "InternalComputationValueType", { "double" } } }, "" );
@@ -238,10 +233,6 @@ TEST_F( NetworkBuilderTest, DeduceComponentsFromConnections )
   blueprint->SetConnection( "RegistrationMethod", "ResampleFilter", { {} }, "" );
   blueprint->SetConnection( "FixedImageSource", "ResampleFilter", { {} }, "" );
   blueprint->SetConnection( "MovingImageSource", "ResampleFilter", { { keys::NameOfInterface, { "itkImageMovingInterface" } } }, "" );
-
-  blueprint->SetConnection( "RegistrationMethod", "Controller", { {} }, "" );          //RunRegistrationInterface
-  blueprint->SetConnection( "ResampleFilter", "Controller", { {} }, "" );              //ReconnectTransformInterface
-  blueprint->SetConnection( "TransformDisplacementFilter", "Controller", { {} }, "" ); //ReconnectTransformInterface
 
   std::unique_ptr< NetworkBuilderBase > networkBuilder( new NetworkBuilder< RegisterComponents >( *logger, *blueprint ) );
   bool allUniqueComponents;

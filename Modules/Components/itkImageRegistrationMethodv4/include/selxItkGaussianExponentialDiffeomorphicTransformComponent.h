@@ -34,7 +34,7 @@ class ItkGaussianExponentialDiffeomorphicTransformComponent :
   public SuperElastixComponent<
   Accepting< itkImageDomainFixedInterface< Dimensionality >>,
   Providing< itkTransformInterface< InternalComputationValueType, Dimensionality >,
-  RunRegistrationInterface >
+  UpdateInterface >
   >
 {
 public:
@@ -46,7 +46,7 @@ public:
   typedef SuperElastixComponent<
     Accepting< itkImageDomainFixedInterface< Dimensionality >>,
     Providing< itkTransformInterface< InternalComputationValueType, Dimensionality >,
-    RunRegistrationInterface >
+    UpdateInterface >
     >                                       Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
@@ -68,7 +68,7 @@ public:
   //Providing Interfaces:
   virtual TransformPointer GetItkTransform() override;
 
-  virtual void RunRegistration() override;
+  virtual void Update() override;
 
   //BaseClass methods
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
