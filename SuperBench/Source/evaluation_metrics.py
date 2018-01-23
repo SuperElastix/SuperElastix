@@ -96,10 +96,12 @@ def inverse_consistency_points(registration_driver, point_set_file_names, deform
     point_set_0 = load_point_set(point_set_file_names[0])
     point_set_1 = load_point_set(point_set_file_names[1])
     return (
-        { 'InverseConsistency': np.mean(np.sqrt(np.sum((load_vtk(point_set_0_to_1_to_0_file_name) - point_set_0) ** 2, -1))) },
-        { 'InverseConsistency': np.mean(np.sqrt(np.sum((load_vtk(point_set_1_to_0_to_0_file_name) - point_set_1) ** 2, -1))) }
+        { 'InverseConsistencyTRE': np.mean(np.sqrt(np.sum((load_vtk(point_set_0_to_1_to_0_file_name) - point_set_0) ** 2, -1))) },
+        { 'InverseConsistencyTRE': np.mean(np.sqrt(np.sum((load_vtk(point_set_1_to_0_to_0_file_name) - point_set_1) ** 2, -1))) }
     )
 
+def inverse_consistency_atlas(registration_driver, label_file_names, deformation_field_file_names):
+    pass
 
 def dice(registration_driver, label_file_names, deformation_field_file_names):
     pass

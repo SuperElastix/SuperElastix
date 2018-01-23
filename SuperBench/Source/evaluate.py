@@ -19,21 +19,21 @@ def run(parameters):
         results = { team_name: { blueprint_name: dict() } }
         for dataset in datasets[category]:
             results[team_name][blueprint_name][dataset.name] = dict()
-            for image_file_names, ground_truth_file_names, deformation_field_file_names in dataset.generator():
+            for file_names in dataset.generator():
                 output_directory = os.path.join(parameters.output_directory, team_name, blueprint_name)
-                logging.info('Evalualting %s and %s.', image_file_names[0], image_file_names[1])
+                logging.info('Evalualting %s and %s.', file_names.image_file_names[0], file_names.image_file_names[1])
                 try:
-                    result_0, result_1 = dataset.evaluate(
-                        parameters.registration_driver,
-                        [os.path.join(output_directory, image_file_name) for image_file_name in image_file_names],
-                        [os.path.join(output_directory, ground_truth_file_name) for ground_truth_file_name in ground_truth_file_names],
-                        [os.path.join(output_directory, deformation_field_file_name) for deformation_field_file_name in deformation_field_file_names])
+                    file_names.deformation_field_file_names_full_path = [
+                        (os.path.join(output_directory, file_names.deformation_field_file_names[0]),
+                         os.path.join(output_directory, file_names.deformation_field_file_names[1]))]
 
-                    results[team_name][blueprint_name][dataset.name][deformation_field_file_names[0]] = result_0
-                    results[team_name][blueprint_name][dataset.name][deformation_field_file_names[1]] = result_1
+                    result_0, result_1 = dataset.evaluate(parameters.registration_driver, file_names)
+
+                    results[team_name][blueprint_name][dataset.name][file_names.deformation_field_file_names[0]] = result_0
+                    results[team_name][blueprint_name][dataset.name][file_names.deformation_field_file_names[1]] = result_1
                 except Exception as e:
-                    results[team_name][blueprint_name][dataset.name][deformation_field_file_names[0]] = 'Error during evaluation'
-                    results[team_name][blueprint_name][dataset.name][deformation_field_file_names[1]] = 'Error during evaluation'
+                    results[team_name][blueprint_name][dataset.name][file_names.deformation_field_file_names[0]] = 'Error during evaluation'
+                    results[team_name][blueprint_name][dataset.name][file_names.deformation_field_file_names[1]] = 'Error during evaluation'
                     logging.error('Error during evaulation of %s, %s, %s' % (team_name, blueprint_name, dataset.name))
 
         write_json(os.path.join(parameters.output_directory, "results.json"), results)

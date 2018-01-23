@@ -16,7 +16,7 @@
 		"Dimensionality": "3"
     },
     "Component": {
-        "Name": "ResultImage",
+        "Name": "ResultMesh",
         "NameOfClass": "ItkMeshSinkComponent",
 		"Dimensionality": "3"
     },
@@ -30,6 +30,6 @@
     },
 	"Connection": {
         "Out": "DisplacementFieldMeshWarper",
-        "In": "ResultImage"
+        "In": "ResultMesh"
     }
 }

@@ -88,38 +88,35 @@ def run(parameters):
         blueprint_name, blueprint_ext = os.path.splitext(os.path.basename(blueprint_file_name))
         category = get_category(blueprint_file_name)
         for dataset in datasets[category]:
-            for image_file_name_pair, ground_truth_file_name_pair, deforation_field_file_name_pair in dataset.generator():
+            for file_names in dataset.generator():
                 try:
-                    output_directory = os.path.join(parameters.output_directory,
-                                                    team_name, blueprint_name,
-                                                    os.path.dirname(deforation_field_file_name_pair[0]))
-                    output_file_name_0 = os.path.join(output_directory,
-                                                      os.path.basename(deforation_field_file_name_pair[0]))
-                    output_file_name_1 = os.path.join(output_directory,
-                                                      os.path.basename(deforation_field_file_name_pair[1]))
+                    output_directory = os.path.join(parameters.output_directory, team_name, blueprint_name, os.path.dirname(file_names['deformation_field_file_names'][0]))
+                    output_file_name_0 = os.path.join(output_directory, os.path.basename(file_names['deformation_field_file_names'][0]))
+                    output_file_name_1 = os.path.join(output_directory, os.path.basename(file_names['deformation_field_file_names'][1]))
+
                     os.makedirs(output_directory, exist_ok=True)
 
                     logging.info('Running blueprint %s for %s -> %s.',
                                  blueprint_file_name,
-                                 image_file_name_pair[0],
-                                 image_file_name_pair[1])
+                                 file_names['image_file_names'][0],
+                                 file_names['image_file_names'][1])
                     stdout = subprocess.check_output([parameters.registration_driver,
                                                       blueprint_file_name,
-                                                      image_file_name_pair[0],
-                                                      image_file_name_pair[1],
+                                                      file_names['image_file_names'][0],
+                                                      file_names['image_file_names'][1],
                                                       output_file_name_0])
-                    logging.info(stdout)
+                    logging.debug(stdout)
 
                     logging.info('Running blueprint %s for %s <- %s.',
                                  blueprint_file_name,
-                                 image_file_name_pair[1],
-                                 image_file_name_pair[0])
+                                 file_names['image_file_names'][0],
+                                 file_names['image_file_names'][1])
                     stdout = subprocess.check_output([parameters.registration_driver,
                                                       blueprint_file_name,
-                                                      image_file_name_pair[1],
-                                                      image_file_name_pair[0],
+                                                      file_names['image_file_names'][1],
+                                                      file_names['image_file_names'][0],
                                                       output_file_name_1])
-                    logging.info(stdout)
+                    logging.debug(stdout)
                 except subprocess.CalledProcessError as e:
                     stderr = e.output
                     logging.error(stderr)
