@@ -58,6 +58,7 @@ public:
   itkTypeMacro( Self, itk::DataObject );
 
   Logger();
+  ~Logger();
 
   void SetLogLevel( const LogLevel& level );
   void SetPattern( const std::string& pattern );

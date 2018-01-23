@@ -99,9 +99,6 @@ public:
   typedef boost::graph_traits< GraphType >::out_edge_iterator OutputIteratorType;
   typedef std::pair< OutputIteratorType, OutputIteratorType > OutputIteratorPairType;
 
-  // TODO: remove this argumentless constructor
-  BlueprintImpl();
-
   BlueprintImpl( LoggerImpl & loggerImpl);
 
 
