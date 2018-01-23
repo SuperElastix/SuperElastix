@@ -45,8 +45,8 @@ node('lkeb-vm-test') {
       }
     }
     stage('SuperBuild') {
-      dir('.') {
-        sh "`dirname ${ cmake }`/ctest --script src/CTest.cmake"
+      dir('build') {
+        sh "`dirname ${ cmake }`/ctest --script ../src/SuperBuild/CTest.cmake"
       }
     }
     stage('Test') {

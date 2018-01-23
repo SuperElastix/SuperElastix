@@ -17,9 +17,9 @@
 #
 #=========================================================================
 
-# Directories relative to the current directory.
-set(CTEST_SOURCE_DIRECTORY "src")
-set(CTEST_BINARY_DIRECTORY "build")
+# Directories relative to the build directory.
+set(CTEST_SOURCE_DIRECTORY "../src")
+set(CTEST_BINARY_DIRECTORY ".")
 
 set(CTEST_SITE "lkeb-selx01")
 
@@ -36,7 +36,7 @@ execute_process (
     OUTPUT_VARIABLE SELX_GIT_BRANCH_NAME 
 )
 
-set(CTEST_BUILD_NAME "${SELX_GIT_BRANCH_NAME};commit=SHA\\:${SELX_GIT_COMMIT_SHA}")
+set(CTEST_BUILD_NAME "${SELX_GIT_BRANCH_NAME};Build;commit=SHA\\:${SELX_GIT_COMMIT_SHA}")
 
 set(CTEST_CMAKE_GENERATOR "Unix Makefiles")
 set(CTEST_BUILD_CONFIGURATION Release)
@@ -50,5 +50,6 @@ set(CTEST_CONFIGURE_COMMAND "${CTEST_CONFIGURE_COMMAND} \"../${CTEST_SOURCE_DIRE
 ctest_start("Nightly")
 ctest_configure()
 ctest_build()
-ctest_test()
-ctest_submit(RETURN_VALUE 0)
+set( submit_return_value )
+ctest_submit( PARTS Configure Build RETURN_VALUE submit_return_value)
+message(STATUS "submit_return_value: " ${submit_return_value} )
