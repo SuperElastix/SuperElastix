@@ -18,14 +18,15 @@
 #=========================================================================
 
 set( proj ATen )
-set( ATen_REPOSITORY https://github.com/zdevito/ATen )
-set( ATen_TAG 635e9ef1f881391539e7426899370ebfe094fabd )
+set( ATen_REPOSITORY https://github.com/pytorch/pytorch )
+set( ATen_TAG 82e995e0b9bc73cedf98016b910297b44563342f )
 
 ExternalProject_Add( ${proj}
   GIT_REPOSITORY ${ATen_REPOSITORY}
   GIT_TAG ${ATen_TAG}
   UPDATE_COMMAND ""
   SOURCE_DIR ${proj}
+  SOURCE_SUBDIR aten
   BINARY_DIR ${proj}-build
   CMAKE_ARGS
     --no-warn-unused-cli
@@ -34,7 +35,7 @@ ExternalProject_Add( ${proj}
     -DBUILD_TESTING:BOOL=OFF
     -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
     -DCMAKE_CONFIGURATION_TYPES:STRING=${CMAKE_CONFIGURATION_TYPES}
-    -DNO_CUDA=true
+    -DNO_CUDA:BOOL=TRUE
     -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
 )
 
