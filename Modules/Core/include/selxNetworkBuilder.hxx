@@ -186,48 +186,50 @@ NetworkBuilder< ComponentList >::ApplyConnectionConfiguration()
   {
     for( auto const & acceptingComponentName : this->m_Blueprint.GetOutputNames( providingComponentName ) )
     {
-      BlueprintImpl::ParameterMapType connectionProperties = this->m_Blueprint.GetConnection( providingComponentName, acceptingComponentName );
-
-      // TODO: #110
-      ComponentBase::InterfaceCriteriaType interfaceCriteria;
-      for( const auto& connectionProperty : connectionProperties )
+      for ( auto const & connectionName : this->m_Blueprint.GetConnectionNames( providingComponentName, acceptingComponentName ) )
       {
-        assert( connectionProperty.second.size() <= 1 );
-        if( connectionProperty.second.size() == 1 ) {
-          interfaceCriteria[connectionProperty.first] = connectionProperty.second[0];
+        BlueprintImpl::ParameterMapType connectionProperties = this->m_Blueprint.GetConnection( providingComponentName, acceptingComponentName, connectionName );
+
+        // TODO: #110
+        ComponentBase::InterfaceCriteriaType interfaceCriteria;
+        for( const auto& connectionProperty : connectionProperties )
+        {
+          assert( connectionProperty.second.size() <= 1 );
+          if( connectionProperty.second.size() == 1 ) {
+            interfaceCriteria[connectionProperty.first] = connectionProperty.second[0];
+          }
         }
-      }
 
-      this->m_ComponentSelectorContainer[ providingComponentName ]->AddProvidingInterfaceCriteria( interfaceCriteria );
-      this->m_Logger.Log(LogLevel::DBG,
-        "Finding component for '{0}': {1} component(s) satisfies 'ProvidingInterface' {2} and previous criteria.",
-        providingComponentName,
-        this->m_ComponentSelectorContainer[providingComponentName]->NumberOfComponents(),
-        this->m_Logger << interfaceCriteria );
+        // TODO: connectionName in log message
+        this->m_ComponentSelectorContainer[ providingComponentName ]->AddProvidingInterfaceCriteria( interfaceCriteria );
+        this->m_Logger.Log(LogLevel::DBG,
+          "Finding component for '{0}': {1} component(s) satisfies 'ProvidingInterface' {2} and previous criteria.",
+          providingComponentName,
+          this->m_ComponentSelectorContainer[providingComponentName]->NumberOfComponents(),
+          this->m_Logger << interfaceCriteria );
 
-      this->m_ComponentSelectorContainer[ acceptingComponentName ]->AddAcceptingInterfaceCriteria( interfaceCriteria );
-      this->m_Logger.Log(LogLevel::DBG,
-        "Finding component for '{0}': {1} component(s) satisfies 'AcceptingInterface' {2} and previous criteria.",
-        acceptingComponentName,
-        this->m_ComponentSelectorContainer[acceptingComponentName]->NumberOfComponents(),
-        this->m_Logger << interfaceCriteria );
+        this->m_ComponentSelectorContainer[ acceptingComponentName ]->AddAcceptingInterfaceCriteria( interfaceCriteria );
+        this->m_Logger.Log(LogLevel::DBG,
+          "Finding component for '{0}': {1} component(s) satisfies 'AcceptingInterface' {2} and previous criteria.",
+          acceptingComponentName,
+          this->m_ComponentSelectorContainer[acceptingComponentName]->NumberOfComponents(),
+          this->m_Logger << interfaceCriteria );
 
-      if( this->m_ComponentSelectorContainer[ acceptingComponentName ]->NumberOfComponents() == 0 )
-      {
-        std::string msg = acceptingComponentName + "does not provide any connections with the given criteria.";
-        this->m_Logger.Log( LogLevel::ERR, msg );
-        throw std::runtime_error( msg );
-      }
+        if( this->m_ComponentSelectorContainer[ acceptingComponentName ]->NumberOfComponents() == 0 )
+        {
+          std::string msg = acceptingComponentName + "does not provide any connections with the given criteria.";
+          this->m_Logger.Log( LogLevel::ERR, msg );
+          throw std::runtime_error( msg );
+        }
 
-      if( this->m_ComponentSelectorContainer[ providingComponentName ]->NumberOfComponents() == 0 )
-      {
-        std::string msg = providingComponentName + "does not accept any connections with the given criteria.";
-        this->m_Logger.Log( LogLevel::ERR, msg );
+        if( this->m_ComponentSelectorContainer[ providingComponentName ]->NumberOfComponents() == 0 )
+        {
+          std::string msg = providingComponentName + "does not accept any connections with the given criteria.";
+          this->m_Logger.Log( LogLevel::ERR, msg );
+        }
       }
     }
   }
-
-  return;
 }
 
 
@@ -251,30 +253,34 @@ NetworkBuilder< ComponentList >::PropagateConnectionsWithUniqueComponents()
         // if the accepting component is also not uniquely selected, we do not try to check all valid combinations, since this would make the handshake logic too complicated
         if( std::find( nonUniqueComponentNames.begin(), nonUniqueComponentNames.end(), acceptingComponentName ) == nonUniqueComponentNames.end() )
         {
-          BlueprintImpl::ParameterMapType          connectionProperties = this->m_Blueprint.GetConnection( componentName, acceptingComponentName );
-
-          // TODO: #110
-          ComponentBase::InterfaceCriteriaType interfaceCriteria;
-          for( const auto& connectionProperty : connectionProperties )
+          for ( const auto & connectionName : this->m_Blueprint.GetConnectionNames( componentName, acceptingComponentName ) )
           {
-            assert( connectionProperty.second.size() <= 1 );
-            if( connectionProperty.second.size() == 1 ) {
-              interfaceCriteria[connectionProperty.first] = connectionProperty.second[0];
+            BlueprintImpl::ParameterMapType connectionProperties = this->m_Blueprint.GetConnection( componentName, acceptingComponentName, connectionName );
+
+            // TODO: #110
+            ComponentBase::InterfaceCriteriaType interfaceCriteria;
+            for( const auto& connectionProperty : connectionProperties )
+            {
+              assert( connectionProperty.second.size() <= 1 );
+              if( connectionProperty.second.size() == 1 ) {
+                interfaceCriteria[connectionProperty.first] = connectionProperty.second[0];
+              }
             }
-          }
 
-          auto               acceptingComponent = this->m_ComponentSelectorContainer[ acceptingComponentName ]->GetComponent();
-          const unsigned int beforeCriteria    = this->m_ComponentSelectorContainer[ componentName ]->NumberOfComponents();
-          this->m_Logger.Log( LogLevel::DBG, "Propagating 'ProvidingInterface' properties from '{0}' to {2} components at '{1}' ... ", componentName, acceptingComponentName, beforeCriteria );
-          this->m_ComponentSelectorContainer[ componentName ]->RequireProvidingInterfaceTo( acceptingComponent, interfaceCriteria );
-          const unsigned int afterCriteria = this->m_ComponentSelectorContainer[ componentName ]->NumberOfComponents();
-          this->m_Logger.Log( LogLevel::DBG, "Propagating 'ProvidingInterface' properties from '{0}' to {2} components at '{1}' ... Done. Reduced '{1}' to {3} components", componentName, acceptingComponentName, beforeCriteria, afterCriteria );
+            // TODO: connectionName in log message
+            auto               acceptingComponent = this->m_ComponentSelectorContainer[ acceptingComponentName ]->GetComponent();
+            const unsigned int beforeCriteria    = this->m_ComponentSelectorContainer[ componentName ]->NumberOfComponents();
+            this->m_Logger.Log( LogLevel::DBG, "Propagating 'ProvidingInterface' properties from '{0}' to {2} components at '{1}' ... ", componentName, acceptingComponentName, beforeCriteria );
+            this->m_ComponentSelectorContainer[ componentName ]->RequireProvidingInterfaceTo( acceptingComponent, interfaceCriteria );
+            const unsigned int afterCriteria = this->m_ComponentSelectorContainer[ componentName ]->NumberOfComponents();
+            this->m_Logger.Log( LogLevel::DBG, "Propagating 'ProvidingInterface' properties from '{0}' to {2} components at '{1}' ... Done. Reduced '{1}' to {3} components", componentName, acceptingComponentName, beforeCriteria, afterCriteria );
 
-          if( beforeCriteria > afterCriteria )
-          {
-            anySelectionNarrowed = true;
+            if( beforeCriteria > afterCriteria )
+            {
+              anySelectionNarrowed = true;
+            }
+            this->m_Logger.Log( LogLevel::TRC, "Selection Narrowed: {} ", anySelectionNarrowed );
           }
-          this->m_Logger.Log( LogLevel::TRC, "Selection Narrowed: {} ", anySelectionNarrowed );
         }
       }
       // check all components that provide to component "componentName"
@@ -283,32 +289,35 @@ NetworkBuilder< ComponentList >::PropagateConnectionsWithUniqueComponents()
         // if the providing component is also not uniquely selected, we do not try to check all valid combinations, since this would make the handshake logic too complicated
         if( std::find( nonUniqueComponentNames.begin(), nonUniqueComponentNames.end(), providingComponentName ) == nonUniqueComponentNames.end() )
         {
-          BlueprintImpl::ParameterMapType          connectionProperties = this->m_Blueprint.GetConnection( providingComponentName, componentName );
-
-          // TODO:#110
-          ComponentBase::InterfaceCriteriaType interfaceCriteria;
-          for( const auto& connectionProperty : connectionProperties )
+          for (const auto & connectionName : this->m_Blueprint.GetConnectionNames( providingComponentName, componentName ) )
           {
-            assert( connectionProperty.second.size() <= 1 );
-            if( connectionProperty.second.size() == 1 ) {
-              interfaceCriteria[connectionProperty.first] = connectionProperty.second[0];
+            BlueprintImpl::ParameterMapType connectionProperties = this->m_Blueprint.GetConnection( providingComponentName, componentName, connectionName);
+
+            // TODO:#110
+            ComponentBase::InterfaceCriteriaType interfaceCriteria;
+            for( const auto& connectionProperty : connectionProperties )
+            {
+              assert( connectionProperty.second.size() <= 1 );
+              if( connectionProperty.second.size() == 1 ) {
+                interfaceCriteria[connectionProperty.first] = connectionProperty.second[0];
+              }
             }
+
+            // TODO(FB): Use this to provide more info to user
+            auto providingComponent = this->m_ComponentSelectorContainer[ providingComponentName ]->GetComponent();
+
+            const unsigned int beforeCriteria = this->m_ComponentSelectorContainer[ componentName ]->NumberOfComponents();
+            this->m_Logger.Log(LogLevel::DBG, "Propagating 'AcceptingInterface' properties from '{0}' to {2} components at '{1}' ... ", componentName, providingComponentName, beforeCriteria);
+            this->m_ComponentSelectorContainer[ componentName ]->RequireAcceptingInterfaceFrom( providingComponent, interfaceCriteria );
+            const unsigned int afterCriteria = this->m_ComponentSelectorContainer[ componentName ]->NumberOfComponents();
+            this->m_Logger.Log(LogLevel::DBG, "Propagating 'AcceptingInterface' properties from '{0}' to {2} components at '{1}' ... Done. Reduced '{1}' to {3} components", componentName, providingComponentName, beforeCriteria, afterCriteria);
+
+            if( beforeCriteria > afterCriteria )
+            {
+              anySelectionNarrowed = true;
+            }
+            this->m_Logger.Log( LogLevel::TRC, "Selection Narrowed: {} ", anySelectionNarrowed );
           }
-
-          // TODO(FB): Use this to provide more info to user
-          auto providingComponent = this->m_ComponentSelectorContainer[ providingComponentName ]->GetComponent();
-
-          const unsigned int beforeCriteria = this->m_ComponentSelectorContainer[ componentName ]->NumberOfComponents();
-          this->m_Logger.Log(LogLevel::DBG, "Propagating 'AcceptingInterface' properties from '{0}' to {2} components at '{1}' ... ", componentName, providingComponentName, beforeCriteria);
-          this->m_ComponentSelectorContainer[ componentName ]->RequireAcceptingInterfaceFrom( providingComponent, interfaceCriteria );
-          const unsigned int afterCriteria = this->m_ComponentSelectorContainer[ componentName ]->NumberOfComponents();
-          this->m_Logger.Log(LogLevel::DBG, "Propagating 'AcceptingInterface' properties from '{0}' to {2} components at '{1}' ... Done. Reduced '{1}' to {3} components", componentName, providingComponentName, beforeCriteria, afterCriteria);
-
-          if( beforeCriteria > afterCriteria )
-          {
-            anySelectionNarrowed = true;
-          }
-          this->m_Logger.Log( LogLevel::TRC, "Selection Narrowed: {} ", anySelectionNarrowed );
         }
       }
     }
@@ -330,26 +339,42 @@ NetworkBuilder< ComponentList >::ConnectComponents()
       ComponentBase::Pointer providingComponent = this->m_ComponentSelectorContainer[ providingComponentName ]->GetComponent();
       ComponentBase::Pointer acceptingComponent = this->m_ComponentSelectorContainer[ acceptingComponentName ]->GetComponent();
 
-      BlueprintImpl::ParameterMapType          connectionProperties = this->m_Blueprint.GetConnection( providingComponentName, acceptingComponentName );
-      
-      // TODO:#110
-      ComponentBase::InterfaceCriteriaType interfaceCriteria;
-      std::for_each( connectionProperties.begin(), connectionProperties.end(), [ &interfaceCriteria ](
-          BlueprintImpl::ParameterMapType::value_type kv ) mutable {
-          if( kv.second.size() > 0 )
-          {
-            interfaceCriteria[ kv.first ] = kv.second[ 0 ];
-          }
-        } );
-
-      this->m_Logger.Log(LogLevel::DBG, "Connect '{0}' to '{1}' ... ", providingComponentName, acceptingComponentName );
-      int numberOfConnections = acceptingComponent->AcceptConnectionFrom( providingComponent, interfaceCriteria );
-      this->m_Logger.Log(LogLevel::DBG, "Connect '{0}' to '{1}' ... Done, by {2} interface(s).", providingComponentName, acceptingComponentName, numberOfConnections );
-
-      if( numberOfConnections == 0 )
+      // multiple parallel 'named' connections between 2 components can exist
+      auto connectionNames = this->m_Blueprint.GetConnectionNames( providingComponentName, acceptingComponentName );
+      for ( auto connectionName : connectionNames )
       {
-        isAllSuccess = false;
-        this->m_Logger.Log( LogLevel::CRT, "Connection from '{0}' to '{1}' was specified but no compatible interfaces were found.", providingComponentName, acceptingComponentName);
+        BlueprintImpl::ParameterMapType          connectionProperties = this->m_Blueprint.GetConnection( providingComponentName, acceptingComponentName, connectionName );
+      
+        // TODO:#110
+        ComponentBase::InterfaceCriteriaType interfaceCriteria;
+        std::for_each( connectionProperties.begin(), connectionProperties.end(), [ &interfaceCriteria ](
+            BlueprintImpl::ParameterMapType::value_type kv ) mutable {
+            if( kv.second.size() > 0 )
+            {
+              interfaceCriteria[ kv.first ] = kv.second[ 0 ];
+            }
+          } );
+
+        std::string message1, message2;
+        if (connectionNames.size() > 1) // specialize log messages if multiple parallel connections exist
+        {
+          message1 = "Connect '{0}' to '{1}' by connection '{2}' ... ";
+          message2 = "Connect '{0}' to '{1}' by connection '{3}' ... Done, by {2} interface(s).";
+        }
+        else
+        {
+          message1 = "Connect '{0}' to '{1}' ... ";
+          message2 = "Connect '{0}' to '{1}' ... Done, by {2} interface(s).";
+
+        }
+        this->m_Logger.Log(LogLevel::DBG, message1 , providingComponentName, acceptingComponentName, connectionName);
+        int numberOfConnections = acceptingComponent->AcceptConnectionFrom(providingComponent, interfaceCriteria);
+        this->m_Logger.Log(LogLevel::DBG, message2 , providingComponentName, acceptingComponentName, numberOfConnections, connectionName);
+        if( numberOfConnections == 0 )
+        {
+          isAllSuccess = false;
+          this->m_Logger.Log( LogLevel::CRT, "Connection from '{0}' to '{1}' was specified but no compatible interfaces were found.", providingComponentName, acceptingComponentName);
+        }
       }
     }
   }
