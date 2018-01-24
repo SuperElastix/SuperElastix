@@ -186,15 +186,8 @@ endif()
 # ---------------------------------------------------------------------
 # Build ATen
 
-find_package( PythonInterp )
-if( PYTHONINTERP_FOUND )
-  set( SUPERELASTIX_BUILD_ATEN_DEFAULT ON )
-else()
-  set( SUPERELASTIX_BUILD_ATEN_DEFAULT OFF )
-endif()
-
 mark_as_advanced( SUPERELASTIX_BUILD_ATEN )
-option( SUPERELASTIX_BUILD_ATEN "Build ATen." ${SUPERELASTIX_BUILD_ATEN_DEFAULT} )
+option( SUPERELASTIX_BUILD_ATEN "Build ATen." OFF )
 
 if( SUPERELASTIX_BUILD_ATEN )
   mark_as_advanced( USE_SYSTEM_ATEN )
