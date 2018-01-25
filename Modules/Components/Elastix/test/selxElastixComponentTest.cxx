@@ -51,11 +51,15 @@ public:
     ItkImageSinkComponent< 2, float >,
     DisplacementFieldItkImageFilterSinkComponent< 2, float >,
     ItkImageSourceComponent< 2, float >,
+    ItkImageSourceComponent< 2, unsigned char >, //for masks
     ItkImageSourceComponent< 3, double >> RegisterComponents;
 
   typedef itk::Image< float, 2 >              Image2DType;
   typedef itk::ImageFileReader< Image2DType > ImageReader2DType;
   typedef itk::ImageFileWriter< Image2DType > ImageWriter2DType;
+
+  typedef itk::Image< unsigned char, 2 >      Mask2DType;
+  typedef itk::ImageFileReader< Mask2DType >  MaskReader2DType;
 
   typedef itk::Image< itk::Vector< float, 2 >, 2 >       DisplacementImage2DType;
   typedef itk::ImageFileWriter< DisplacementImage2DType > DisplacementImageWriter2DType;
@@ -101,6 +105,10 @@ TEST_F( ElastixComponentTest, MonolithicElastixTransformix )
 
   blueprint->SetComponent( "MovingImageSource", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "Dimensionality", { "2" } } } );
 
+  blueprint->SetComponent( "FixedMaskImageSource", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "Dimensionality", { "2" } } } );
+
+  blueprint->SetComponent( "MovingMaskImageSource", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "Dimensionality", { "2" } } } );
+
   blueprint->SetComponent( "ResultImageSink", { { "NameOfClass", { "ItkImageSinkComponent" } }, { "Dimensionality", { "2" } } } );
 
   blueprint->SetComponent( "ResultDisplacementFieldSink", { { "NameOfClass", { "DisplacementFieldItkImageFilterSinkComponent" } }, { "Dimensionality", { "2" } } });
@@ -115,19 +123,29 @@ TEST_F( ElastixComponentTest, MonolithicElastixTransformix )
 
   blueprint->SetConnection( "MovingImageSource", "TransformDisplacementField", { { "NameOfInterface", { "itkImageMovingInterface" } } } ); //;
 
+  blueprint->SetConnection( "FixedMaskImageSource", "RegistrationMethod", { { "NameOfInterface", { "itkImageFixedMaskInterface" } } } ); // ;
+
+  blueprint->SetConnection( "MovingMaskImageSource", "RegistrationMethod", { { "NameOfInterface", { "itkImageMovingMaskInterface" } } } ); //;
+
   blueprint->SetConnection( "TransformDisplacementField", "ResultImageSink", { { "NameOfInterface", { "itkImageInterface" } } } ); // ;
 
   blueprint->SetConnection( "TransformDisplacementField", "ResultDisplacementFieldSink", { { "NameOfInterface", { "DisplacementFieldItkImageSourceInterface" } } }); // ;
 
 
   // Set up the readers and writers
-  ImageReader2DType::Pointer fixedImageReader = ImageReader2DType::New();
+  auto fixedImageReader = ImageReader2DType::New();
   fixedImageReader->SetFileName( dataManager->GetInputFile( "BrainProtonDensitySliceBorder20.png" ) );
 
-  ImageReader2DType::Pointer movingImageReader = ImageReader2DType::New();
+  auto movingImageReader = ImageReader2DType::New();
   movingImageReader->SetFileName( dataManager->GetInputFile( "BrainProtonDensitySliceR10X13Y17.png" ) );
 
-  ImageWriter2DType::Pointer resultImageWriter = ImageWriter2DType::New();
+  auto fixedMaskReader = MaskReader2DType::New();
+  fixedMaskReader->SetFileName( dataManager->GetInputFile( "BrainProtonDensitySliceBorder20Mask.png" ) );
+  
+  auto movingMaskReader = MaskReader2DType::New();
+  movingMaskReader->SetFileName(dataManager->GetInputFile("BrainProtonDensitySliceBorder20Mask.png")); // same as fixedmask: good enough for unit test, but probably bad practice for registration.  
+
+  auto resultImageWriter = ImageWriter2DType::New();
   resultImageWriter->SetFileName( dataManager->GetOutputFile( "ElastixComponentTest_BrainProtonDensity.mhd" ) );
 
   DisplacementImageWriter2DType::Pointer resultDisplacementWriter = DisplacementImageWriter2DType::New();
@@ -136,6 +154,9 @@ TEST_F( ElastixComponentTest, MonolithicElastixTransformix )
   // Connect SuperElastix in an itk pipeline
   superElastixFilter->SetInput( "FixedImageSource", fixedImageReader->GetOutput() );
   superElastixFilter->SetInput( "MovingImageSource", movingImageReader->GetOutput() );
+  superElastixFilter->SetInput( "FixedMaskImageSource", fixedMaskReader->GetOutput() );
+  superElastixFilter->SetInput( "MovingMaskImageSource", movingMaskReader->GetOutput() );
+
   resultImageWriter->SetInput( superElastixFilter->GetOutput< Image2DType >( "ResultImageSink" ) );
   resultDisplacementWriter->SetInput(superElastixFilter->GetOutput< DisplacementImage2DType >("ResultDisplacementFieldSink"));
 
