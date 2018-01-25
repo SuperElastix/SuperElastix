@@ -115,10 +115,10 @@ if(WIN32)
 			COMMAND ${CMAKE_COMMAND} -E make_directory ${DEMO_PREFIX}/Scripts
       COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/Demo/Scripts_Windows/${ScriptFile}.bat" "${DEMO_PREFIX}/Scripts/${ScriptFile}.bat")
   endforeach()
-else( WIN32 )
+else(WIN32)
   foreach( ScriptFile ${ScriptFiles} )
     add_custom_command(
-      TARGET demo PRE_BUILD
+      TARGET demo POST_BUILD
 			COMMAND ${CMAKE_COMMAND} -E make_directory ${DEMO_PREFIX}/Scripts
       COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/Demo/Scripts_Linux/${ScriptFile}.sh" "${DEMO_PREFIX}/Scripts/${ScriptFile}.sh")
   endforeach()
