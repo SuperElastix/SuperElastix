@@ -31,36 +31,31 @@ def updateGithubCommitStatus(build) {
 
 
 node('lkeb-vm-test') {
-	stage('Init') {
-		cmake = tool 'CMake 3.5.1'
-		sh 'rm -rf build'
-		sh 'mkdir -p build'
-	}
+  stage('Init') {
+    cmake = tool 'CMake 3.5.1'
+    sh 'rm -rf build'
+    sh 'mkdir -p build'
+  }
 
-	timeout(120) {
-		stage('Checkout') {
-			sh 'mkdir -p src'
-			dir('src') {
-				checkout scm
-			}
-		}
-		stage('Build') {
-			dir('build') {
-				sh "${ cmake } ../src/SuperBuild"
-				sh 'make clean'
-				sh 'make -j4'
-			}
-		}
-		dir('src') {
-			updateGithubCommitStatus(currentBuild)
-		}
-	}
-
-	timeout(45) {
-		stage('Test') {
-			dir('build/SuperElastix-build') {
-				sh "`dirname ${ cmake }`/ctest"
-			}
-		}
-	}
+  timeout(120) {
+    stage('Checkout') {
+      sh 'mkdir -p src'
+      dir('src') {
+        checkout scm
+      }
+    }
+    stage('SuperBuild') {
+      dir('build') {
+        sh "`dirname ${ cmake }`/ctest --script ../src/SuperBuild/CTest.cmake"
+      }
+    }
+    stage('Test') {
+      dir('build/SuperElastix-build') {
+        sh "`dirname ${ cmake }`/ctest --script ../../src/CTest.cmake"
+      }
+    }
+    dir('src') {
+      updateGithubCommitStatus(currentBuild)
+    }
+  }
 }
