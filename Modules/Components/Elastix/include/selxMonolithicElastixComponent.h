@@ -43,7 +43,7 @@ class MonolithicElastixComponent :
   Providing<
   elastixTransformParameterObjectInterface< itk::Image< TPixel, Dimensionality >, itk::Image< TPixel, Dimensionality >>,
   itkImageInterface< Dimensionality, TPixel >,
-  RunRegistrationInterface
+  UpdateInterface
   >
   >
 {
@@ -61,7 +61,7 @@ public:
     Providing<
     elastixTransformParameterObjectInterface< itk::Image< TPixel, Dimensionality >, itk::Image< TPixel, Dimensionality >>,
     itkImageInterface< Dimensionality, TPixel >,
-    RunRegistrationInterface
+    UpdateInterface
     >
     >                                     Superclass;
   typedef std::shared_ptr< Self >       Pointer;
@@ -99,7 +99,7 @@ public:
 
   virtual ItkImagePointer GetItkImage() override;
 
-  virtual void RunRegistration() override;
+  virtual void Update() override;
 
   virtual bool MeetsCriterion( const CriterionType & criterion ) override;
 

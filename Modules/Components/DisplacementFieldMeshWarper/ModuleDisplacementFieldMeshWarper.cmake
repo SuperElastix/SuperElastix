@@ -1,6 +1,6 @@
 #=========================================================================
 #
-#  Copyright Leiden University Medical Center, Erasmus University Medical 
+#  Copyright Leiden University Medical Center, Erasmus University Medical
 #  Center and contributors
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,18 +16,9 @@
 #  limitations under the License.
 #
 #=========================================================================
-
-set( ${MODULE}_INCLUDE_DIRS
+set(${MODULE}_INCLUDE_DIRS
   ${${MODULE}_SOURCE_DIR}/include
-)
-
-# This module is header-only and does not contain any source files
-set( ${MODULE}_SOURCE_FILES
-)
-
-# This module is header-only and does not export any libraries
-set( ${MODULE}_LIBRARIES
-)
+  ${${MODULE}_SOURCE_DIR}/interfaces)
 
 set( ${MODULE}_TEST_SOURCE_FILES
-)
+  ${${MODULE}_SOURCE_DIR}/test/selxDisplacementFieldMeshWarperTest.cxx)

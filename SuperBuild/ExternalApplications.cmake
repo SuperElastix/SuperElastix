@@ -25,6 +25,7 @@ ExternalProject_Add( ${proj}
   BINARY_DIR ${proj}-build
   CMAKE_ARGS
     --no-warn-unused-cli
+    -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
     -DCMAKE_CONFIGURATION_TYPES:STRING=${CMAKE_CONFIGURATION_TYPES}
     -DSuperElastixSuperBuild_DIR:PATH=${PROJECT_BINARY_DIR}
     -DSuperElastix_DIR:PATH=${SuperElastix_DIR}

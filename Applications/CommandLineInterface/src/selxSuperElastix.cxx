@@ -72,43 +72,58 @@ main( int ac, char * av[] )
 {
 
   selx::Logger::Pointer logger = selx::Logger::New();
+  
+  typedef std::vector< std::string > VectorOfStringsType;
+  typedef std::vector< boost::filesystem::path > VectorOfPathsType;
+
+  boost::filesystem::path logPath;
+  // default log level
+  selx::LogLevel logLevel = selx::LogLevel::WRN;
+
+  boost::filesystem::path            configurationPath;
+  VectorOfPathsType                   configurationPaths;
+
+  VectorOfStringsType inputPairs;
+  VectorOfStringsType outputPairs;
+
+  boost::program_options::variables_map vm;
 
   try
   {
-    typedef std::vector< std::string > VectorOfStringsType;
-    typedef std::vector< boost::filesystem::path > VectorOfPathsType;
-
-    boost::filesystem::path logPath;
-    // default log level
-    selx::LogLevel logLevel = selx::LogLevel::WRN;
-
-    boost::filesystem::path            configurationPath;
-    VectorOfPathsType                   configurationPaths;
-
-    VectorOfStringsType inputPairs;
-    VectorOfStringsType outputPairs;
-
     boost::program_options::options_description desc("Allowed options");
     desc.add_options()
       ( "help", "produce help message" )
-      ("conf", boost::program_options::value< VectorOfPathsType >(&configurationPaths)->required()->multitoken(), "Configuration file")
-      ("in", boost::program_options::value< VectorOfStringsType >(&inputPairs)->multitoken(), "Input data: images, labels, meshes, etc. Usage <name>=<path>")
-      ("out", boost::program_options::value< VectorOfStringsType >(&outputPairs)->multitoken(), "Output data: images, labels, meshes, etc. Usage <name>=<path>")
+      ("conf", boost::program_options::value< VectorOfPathsType >(&configurationPaths)->required()->multitoken(), "Configuration file: single or multiple Blueprints [.xml|.json]")
+      ("in", boost::program_options::value< VectorOfStringsType >(&inputPairs)->multitoken(), "Input data: images, labels, meshes, etc. Usage arg: <name>=<path> (or multiple pairs)")
+      ("out", boost::program_options::value< VectorOfStringsType >(&outputPairs)->multitoken(), "Output data: images, labels, meshes, etc. Usage arg: <name>=<path> (or multiple pairs)")
       ("graphout", boost::program_options::value< boost::filesystem::path >(), "Output Graphviz dot file")
       ("logfile", boost::program_options::value< boost::filesystem::path >(&logPath), "Log output file")
-      ("loglevel", boost::program_options::value< selx::LogLevel >(&logLevel), "Log level")
+      ("loglevel", boost::program_options::value< selx::LogLevel >(&logLevel), "Log level [off|critical|error|warning|info|debug|trace]")
       ;
 
-    boost::program_options::variables_map vm;
     boost::program_options::store(boost::program_options::parse_command_line(ac, av, desc), vm);
-    boost::program_options::notify(vm);
 
     if( vm.count( "help" ) )
     {
       std::cout << desc << "\n";
       return 0;
     }
+    boost::program_options::notify(vm);
+  }
+  catch (std::exception& e)
+  {
+    std::cerr << "Error: " << e.what() << "\n";
+    std::cerr << "See 'SuperElastix --help' for help" << "\n";
+    return 1;
+  }
+  catch (...)
+  {
+    std::cerr << "Unknown error!" << "\n";
+    return 1;
+  }
 
+  try 
+  {
     // optionally, stream to log file
     std::ofstream outfile;
     if ( vm.count("logfile") )
@@ -149,7 +164,6 @@ main( int ac, char * av[] )
     if( vm.count( "in" ) )
     {
       logger->Log( selx::LogLevel::INF, "Preparing input data ... ");
-      int index = 0;
       for( const auto & inputPair : inputPairs )
       {
         VectorOfStringsType nameAndPath;
@@ -159,15 +173,12 @@ main( int ac, char * av[] )
 
         // since we do not know which reader type we should instantiate for input "name",
         // we ask SuperElastix for a reader that matches the type of the source component "name"
-        logger->Log( selx::LogLevel::INF, "Preparing input " + name + " ..." );
+        logger->Log( selx::LogLevel::INF, "Preparing input '" + name + "': " + path + " ..." );
         selx::AnyFileReader::Pointer reader = superElastixFilter->GetInputFileReader( name );
         reader->SetFileName( path );
         superElastixFilter->SetInput( name, reader->GetOutput() );
         fileReaders.push_back( reader );
-
-        logger->Log( selx::LogLevel::INF, "Preparing input " + name +  "... Done" );
-        std::cout << "Input data " << index << " " << name << " : " << path << "\n";
-        ++index;
+        logger->Log( selx::LogLevel::INF, "Preparing input '" + name + "': " + path + " ... Done" );
       }
       logger->Log( selx::LogLevel::INF, "Preparing input data ... Done");
     }
@@ -179,7 +190,6 @@ main( int ac, char * av[] )
     if( vm.count( "out" ) )
     {
       logger->Log( selx::LogLevel::INF, "Preparing output data ... ");
-      int index = 0;
       for( const auto & outputPair : outputPairs )
       {
         VectorOfStringsType nameAndPath;
@@ -189,16 +199,12 @@ main( int ac, char * av[] )
 
         // since we do not know which writer type we should instantiate for output "name",
         // we ask SuperElastix for a writer that matches the type of the sink component "name"
-        logger->Log( selx::LogLevel::INF, "Preparing output " + name + " ..." );
+        logger->Log( selx::LogLevel::INF, "Preparing output '" + name + "': " + path + " ..." );
         selx::AnyFileWriter::Pointer writer = superElastixFilter->GetOutputFileWriter( name );
-        //ImageWriter2DType::Pointer writer = ImageWriter2DType::New();
         writer->SetFileName( path );
-        //writer->SetInput(superElastixFilter->GetOutput<Image2DType>(name));
         writer->SetInput( superElastixFilter->GetOutput( name ) );
         fileWriters.push_back( writer );
-        logger->Log( selx::LogLevel::INF, "Preparing output " + name + " ... Done" );
-        ++index;
-
+        logger->Log( selx::LogLevel::INF, "Preparing output '" + name + "': " + path + " ... Done" );
       }
     }
     else
@@ -216,14 +222,17 @@ main( int ac, char * av[] )
   }
   catch( std::exception & e )
   {
-    logger->Log( selx::LogLevel::ERR, "Executing ... Error");
-    std::cerr << "error: " << e.what() << "\n";
+    logger->Log( selx::LogLevel::CRT, "Executing ... Error");
+    logger->Log( selx::LogLevel::CRT, e.what());
+    std::cerr << e.what();
     return 1;
   }
   catch( ... )
   {
-    logger->Log( selx::LogLevel::ERR, "Executing ... Error");
-    std::cerr << "Exception of unknown type!\n";
+    logger->Log( selx::LogLevel::CRT, "Executing ... Error");
+    logger->Log( selx::LogLevel::CRT, "Exception of unknown type!");
+    std::cerr << "Exception of unknown type!";
+    return 1;
   }
 
   return 0;

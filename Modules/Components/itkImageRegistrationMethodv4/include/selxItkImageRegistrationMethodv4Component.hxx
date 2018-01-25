@@ -206,7 +206,7 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
 
 template< int Dimensionality, class TPixel, class InternalComputationValueType >
 void
-ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >::RunRegistration( void )
+ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >::Update( void )
 {
   typename FixedImageType::ConstPointer fixedImage   = this->m_theItkFilter->GetFixedImage();
   typename MovingImageType::ConstPointer movingImage = this->m_theItkFilter->GetMovingImage();
@@ -426,25 +426,25 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
 {
   // This function overrides the default behavior, in which all accepting interfaces must be set, by allowing the itkTransformParametersAdaptorsContainerInterface not being set.
   // TODO: see I we can reduce the amount of code with helper (meta-)functions
-  if( ( ( InterfaceAcceptor< itkImageFixedInterface< Dimensionality, TPixel >> * ) this )->isSet() == false )
+  if( !this->InterfaceAcceptor< itkImageFixedInterface< Dimensionality, TPixel >>::GetAccepted())
   {
     return false;
   }
-  if( ( ( InterfaceAcceptor< itkImageMovingInterface< Dimensionality, TPixel >> * ) this )->isSet() == false )
+  if( !this->InterfaceAcceptor< itkImageMovingInterface< Dimensionality, TPixel >>::GetAccepted() )
   {
     return false;
   }
-  if( ( ( InterfaceAcceptor< itkTransformInterface< InternalComputationValueType, Dimensionality >> * ) this )->isSet() == false )
+  if( !this->InterfaceAcceptor< itkTransformInterface< InternalComputationValueType, Dimensionality >>::GetAccepted() )
   {
     return false;
   }
   // Allow unconnected itkTransformParametersAdaptorsContainerInterface (not needed for affine transform)
   // itkTransformParametersAdaptorsContainerInterface< InternalComputationValueType, Dimensionality >
-  if( ( ( InterfaceAcceptor< itkMetricv4Interface< Dimensionality, TPixel, InternalComputationValueType >> * ) this )->isSet() == false )
+  if( !this->InterfaceAcceptor< itkMetricv4Interface< Dimensionality, TPixel, InternalComputationValueType >>::GetAccepted() )
   {
     return false;
   }
-  if( ( ( InterfaceAcceptor< itkOptimizerv4Interface< InternalComputationValueType >> * ) this )->isSet() == false )
+  if( !this->InterfaceAcceptor< itkOptimizerv4Interface< InternalComputationValueType >>::GetAccepted() )
   {
     return false;
   }

@@ -19,12 +19,11 @@
 
 #include "selxTypeList.h"
 
-//Component group Controller
-#include "selxRegistrationControllerComponent.h"
+#include "selxDisplacementFieldMeshWarperComponent.h"
 
 namespace selx
 {
-using ModuleControllerComponents = selx::TypeList<
-  RegistrationControllerComponent< >
-  >;
+using ModuleDisplacementFieldMeshWarperComponents = selx::TypeList<
+  ItkDisplacementFieldMeshWarperComponent< 2, float, float >
+>;
 }

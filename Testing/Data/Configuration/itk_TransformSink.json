@@ -6,9 +6,5 @@
     "Connection": {
         "Out": "RegistrationMethod",
         "In": "ResultTransform"
-    },
-    "Connection": {
-        "Out": "ResultTransform",
-        "In": "Controller"
     }
 }

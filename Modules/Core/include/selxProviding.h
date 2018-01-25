@@ -20,6 +20,8 @@
 #ifndef Providing_h
 #define Providing_h
 
+#include "selxConnectionInfo.h"
+
 namespace selx
 {
 template< typename ... Interfaces >
@@ -36,7 +38,7 @@ protected:
 };
 
 template< typename FirstInterface, typename ... RestInterfaces >
-class Providing< FirstInterface, RestInterfaces ... > : public FirstInterface, public Providing< RestInterfaces ... >
+class Providing< FirstInterface, RestInterfaces ... > : public FirstInterface, public ConnectionInfo< FirstInterface >, public Providing< RestInterfaces ... >
 {
 public:
 

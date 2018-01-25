@@ -34,7 +34,7 @@ template< class TPixel >
 class Niftyregf3dComponent :
   public SuperElastixComponent<
   Accepting< NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >, NiftyregAffineMatrixInterface< TPixel >>,
-  Providing< NiftyregWarpedImageInterface< TPixel >, NiftyregControlPointPositionImageInterface< TPixel >, RunRegistrationInterface >
+  Providing< NiftyregWarpedImageInterface< TPixel >, NiftyregControlPointPositionImageInterface< TPixel >, UpdateInterface >
   >
 {
 public:
@@ -43,7 +43,7 @@ public:
   typedef Niftyregf3dComponent< TPixel > Self;
   typedef SuperElastixComponent<
     Accepting< NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >, NiftyregAffineMatrixInterface< TPixel >>,
-    Providing< NiftyregWarpedImageInterface< TPixel >, NiftyregControlPointPositionImageInterface< TPixel >, RunRegistrationInterface >
+    Providing< NiftyregWarpedImageInterface< TPixel >, NiftyregControlPointPositionImageInterface< TPixel >, UpdateInterface >
     >                                      Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
@@ -66,8 +66,8 @@ public:
   // Providing NiftyregControlPointPositionImageInterface
   virtual std::shared_ptr< nifti_image > GetControlPointPositionImage() override;
 
-  // Providing RunRegistrationInterface
-  virtual void RunRegistration() override;
+  // Providing UpdateInterface
+  virtual void Update() override;
 
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
 

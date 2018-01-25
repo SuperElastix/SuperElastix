@@ -48,8 +48,7 @@ public:
 
 TEST_F( BlueprintTest, SetGetDeleteComponent )
 {
-  std::unique_ptr< BlueprintImpl > blueprint;
-  EXPECT_NO_THROW( blueprint = std::unique_ptr< BlueprintImpl >( new BlueprintImpl() ) );
+  auto blueprint = Blueprint::New();
 
   bool success0;
   EXPECT_NO_THROW( success0 = blueprint->SetComponent( "MyComponentName", parameterMap ) );
@@ -80,8 +79,7 @@ TEST_F( BlueprintTest, BlueprintObjectSetGetDeleteComponent )
 
 TEST_F( BlueprintTest, SetGetDeleteConnection )
 {
-  std::unique_ptr< BlueprintImpl > blueprint;
-  EXPECT_NO_THROW( blueprint = std::unique_ptr< BlueprintImpl >( new BlueprintImpl() ) );
+  auto blueprint = Blueprint::New();
 
   blueprint->SetComponent( "Component0", parameterMap );
   blueprint->SetComponent( "Component1", parameterMap );
@@ -126,12 +124,13 @@ TEST_F( BlueprintTest, SetGetDeleteConnection )
 
 TEST_F( BlueprintTest, CopyConstuctor )
 {
-  std::unique_ptr< BlueprintImpl > baseBlueprint;
-  EXPECT_NO_THROW( baseBlueprint = std::unique_ptr< BlueprintImpl >( new BlueprintImpl() ) );
-
+  auto baseBlueprint = Blueprint::New();
   baseBlueprint->SetComponent( "Component0", { { "OperationType", { "Transform" } } } );
+
+  auto baseBlueprintImpl = baseBlueprint->GetBlueprintImpl();
+
   std::unique_ptr< BlueprintImpl > clonedBaseBlueprint;
-  EXPECT_NO_THROW( clonedBaseBlueprint = std::make_unique< BlueprintImpl >( *baseBlueprint.get() ) );
+  EXPECT_NO_THROW( clonedBaseBlueprint = std::make_unique< BlueprintImpl >( baseBlueprintImpl ) );
 
   EXPECT_NO_THROW( clonedBaseBlueprint->SetComponent( "Component1", { { "OperationType", { "Source" } }, { "Dimensionality", { "3" } } } ) );
 
@@ -144,101 +143,52 @@ TEST_F( BlueprintTest, CopyConstuctor )
 
 TEST_F( BlueprintTest, Compose )
 {
-  std::unique_ptr< BlueprintImpl > baseBlueprint;
-  EXPECT_NO_THROW( baseBlueprint = std::unique_ptr< BlueprintImpl >( new BlueprintImpl() ) );
+  auto baseBlueprint = Blueprint::New();
 
   baseBlueprint->SetComponent( "Component0", { { "OperationType", { "Transform" } } } );
   baseBlueprint->SetComponent( "Component1", { { "OperationType", { "Source" } }, { "Dimensionality", { "3" } } } );
 
   // compose-in a new 3rd component Component2
-  std::unique_ptr< BlueprintImpl > nonConflictingBlueprint0;
-  EXPECT_NO_THROW( nonConflictingBlueprint0 = std::unique_ptr< BlueprintImpl >( new BlueprintImpl() ) );
-
+  auto nonConflictingBlueprint0 = Blueprint::New();
+  
   nonConflictingBlueprint0->SetComponent( "Component2", { { "OperationType", { "Sink" } } } );
 
-  EXPECT_TRUE( baseBlueprint->ComposeWith( *nonConflictingBlueprint0 ) );
+  EXPECT_TRUE( baseBlueprint->ComposeWith( nonConflictingBlueprint0 ) );
   EXPECT_STREQ( "Sink", baseBlueprint->GetComponent( "Component2" )[ "OperationType" ][ 0 ].c_str() );
 
   // compose-in additional properties of Component0 and Component1
-  std::unique_ptr< BlueprintImpl > nonConflictingBlueprint1;
-  EXPECT_NO_THROW( nonConflictingBlueprint1 = std::unique_ptr< BlueprintImpl >( new BlueprintImpl() ) );
-
+  auto nonConflictingBlueprint1 = Blueprint::New();
+  
   nonConflictingBlueprint1->SetComponent( "Component0", { { "TranformationGroup", { "Diffeomorphic" } }, { "PixelType", { "float" } } } );
   nonConflictingBlueprint1->SetComponent( "Component1", { { "NameOfClass", { "ImageSourceClass" } } } );
 
-  EXPECT_TRUE( baseBlueprint->ComposeWith( *nonConflictingBlueprint1 ) );
+  EXPECT_TRUE( baseBlueprint->ComposeWith( nonConflictingBlueprint1 ) );
   EXPECT_STREQ( "Transform", baseBlueprint->GetComponent( "Component0" )[ "OperationType" ][ 0 ].c_str() );
   EXPECT_STREQ( "Diffeomorphic", baseBlueprint->GetComponent( "Component0" )[ "TranformationGroup" ][ 0 ].c_str() );
   EXPECT_STREQ( "ImageSourceClass", baseBlueprint->GetComponent( "Component1" )[ "NameOfClass" ][ 0 ].c_str() );
 
   // compose-in existing component with existing property key, but equal property value(s). Nothing happens actually (i.e. idempotency)
-  std::unique_ptr< BlueprintImpl > nonConflictingBlueprint2;
-  EXPECT_NO_THROW( nonConflictingBlueprint2 = std::unique_ptr< BlueprintImpl >( new BlueprintImpl() ) );
+  auto nonConflictingBlueprint2 = Blueprint::New();
 
   nonConflictingBlueprint2->SetComponent( "Component0", { { "PixelType", { "float" } } } );
 
-  EXPECT_TRUE( baseBlueprint->ComposeWith( *nonConflictingBlueprint2 ) );
+  EXPECT_TRUE( baseBlueprint->ComposeWith( nonConflictingBlueprint2 ) );
 
   // trying to overwrite properties fails
-  std::unique_ptr< BlueprintImpl > conflictingBlueprint0;
-  EXPECT_NO_THROW( conflictingBlueprint0 = std::unique_ptr< BlueprintImpl >( new BlueprintImpl() ) );
+  auto conflictingBlueprint0 = Blueprint::New();
   conflictingBlueprint0->SetComponent( "Component1", { { "Dimensionality", { "2" } }, { "InternalComputationValueType", { "float" } } } );
 
   // Compose fails and returns false
-  EXPECT_FALSE( baseBlueprint->ComposeWith( *conflictingBlueprint0 ) );
+  EXPECT_FALSE( baseBlueprint->ComposeWith( conflictingBlueprint0 ) );
 
   //baseBlueprint should not have been altered by a failing compose operation
   EXPECT_STREQ( "3", baseBlueprint->GetComponent( "Component1" )[ "Dimensionality" ][ 0 ].c_str() );
 
   EXPECT_EQ( 0, baseBlueprint->GetComponent( "Component1" ).count( "InternalComputationValueType" ) );
 }
-//TEST_F( BlueprintTest, WriteBlueprint )
-//{
-//  std::unique_ptr< BlueprintImpl > blueprint;
-//  EXPECT_NO_THROW( blueprint = std::unique_ptr< BlueprintImpl >( new BlueprintImpl() ) );
-//
-//  // create some made up configuration to show graphviz output
-//  ParameterMapType component0Parameters;
-//  component0Parameters[ "NameOfClass" ]    = { "MyMetric" };
-//  component0Parameters[ "Dimensionality" ] = { "3" };
-//  component0Parameters[ "Kernel" ]         = { "5", "5", "5" };
-//  blueprint->SetComponent( "Metric", component0Parameters );
-//
-//  ParameterMapType component1Parameters;
-//  component1Parameters[ "NameOfClass" ] = { "MyFiniteDifferenceCalculator" };
-//  component1Parameters[ "Delta" ]       = { "0.01" };
-//  blueprint->SetComponent( "MetricGradient", component1Parameters );
-//
-//  ParameterMapType component2Parameters;
-//  component2Parameters[ "NameOfClass" ] = { "MyOptimizer" };
-//  blueprint->SetComponent( "Optimizer", component2Parameters );
-//
-//  ParameterMapType component3Parameters;
-//  component3Parameters[ "NameOfClass" ] = { "MyTransform" };
-//  blueprint->SetComponent( "Transform", component3Parameters );
-//
-//  blueprint->SetConnection( "Metric", "MetricGradient", parameterMap );
-//  blueprint->SetConnection( "MetricGradient", "Optimizer", parameterMap );
-//
-//  ParameterMapType connection0Parameters;
-//  // Example use case: The connection between the metric and optimizer should
-//  // only be by "MetricValue", not by "MetricDerivative" as well. Since we want
-//  // to redirect the "MetricDerivative" through the MetricGradient component,
-//  // we need to specify "NameOfInterface" otherwise there is an ambiguity in
-//  // which "MetricDerivative" to connect to the optimizer.
-//
-//  connection0Parameters[ "NameOfInterface" ] = { "MetricValue" };
-//  blueprint->SetConnection( "Metric", "Optimizer", connection0Parameters );
-//
-//  blueprint->SetConnection( "MetricGradient", "Optimizer", parameterMap );
-//  blueprint->SetConnection( "Optimizer", "Transform", parameterMap );
-//  blueprint->SetConnection( "Transform", "Metric", parameterMap );
-//
-//  EXPECT_NO_THROW( blueprint->Write( "blueprint.dot" ) );
-//}
 
 
-TEST_F(BlueprintTest, ReadXML)
+TEST_F(BlueprintTest, ReadXMLWriteDot)
 {
   auto blueprint = Blueprint::New();
 
@@ -246,10 +196,39 @@ TEST_F(BlueprintTest, ReadXML)
   blueprint->Write(this->dataManager->GetOutputFile("configurationReaderTest_itkv4_SVF_ANTsCC.xml.dot"));
 }
 
-TEST_F(BlueprintTest, ReadJson)
+TEST_F(BlueprintTest, ReadJsonWriteDot)
 {
   auto blueprint = Blueprint::New();
 
   EXPECT_NO_THROW(blueprint->MergeFromFile(this->dataManager->GetConfigurationFile("itkv4_SVF_ANTsCC.json")));
   blueprint->Write(this->dataManager->GetOutputFile("configurationReaderTest_itkv4_SVF_ANTsCC.json.dot"));
+}
+
+TEST_F(BlueprintTest, ParallelConnections) //#150: Let Blueprint handle two connections between the same components
+{
+  auto blueprint = Blueprint::New();
+  blueprint->SetComponent("ComponentA", { });
+  blueprint->SetComponent("ComponentB", { });
+  ParameterMapType firstConnection = {{"NameOfInterface", {"FirstInterface"}}};
+  blueprint->SetConnection("ComponentA", "ComponentB", firstConnection, "FirstConnection");
+  ParameterMapType secondConnection = {{"NameOfInterface", {"SecondInterface"}}};
+  blueprint->SetConnection("ComponentA", "ComponentB", secondConnection, "SecondConnection");
+
+  auto connection1 = blueprint->GetConnection("ComponentA", "ComponentB","FirstConnection");
+  EXPECT_EQ(firstConnection["NameOfInterface"][0], connection1["NameOfInterface"][0]);
+  auto connection2 = blueprint->GetConnection("ComponentA", "ComponentB","SecondConnection");
+  EXPECT_EQ(secondConnection["NameOfInterface"][0], connection2["NameOfInterface"][0]);
+
+  blueprint->DeleteConnection("ComponentA", "ComponentB", "FirstConnection");
+  EXPECT_FALSE(blueprint->ConnectionExists("ComponentA", "ComponentB", "FirstConnection"));
+  EXPECT_TRUE(blueprint->ConnectionExists("ComponentA", "ComponentB", "SecondConnection"));
+  blueprint->DeleteConnection("ComponentA", "ComponentB", "SecondConnection");
+  EXPECT_FALSE(blueprint->ConnectionExists("ComponentA", "ComponentB", "SecondConnection"));
+}
+
+TEST_F(BlueprintTest, ReadParallelConnections) //#150: Let Blueprint reader handle two connections between the same components
+{
+  auto blueprint = Blueprint::New();
+  EXPECT_NO_THROW(blueprint->MergeFromFile(this->dataManager->GetConfigurationFile("ReadParallelConnections.json")));
+
 }

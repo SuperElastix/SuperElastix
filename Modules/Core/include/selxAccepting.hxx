@@ -127,8 +127,8 @@ template< typename FirstInterface, typename ... RestInterfaces >
 bool
 Accepting< FirstInterface, RestInterfaces ... >::AreAllAccepted()
 {
-  InterfaceAcceptor< FirstInterface > * acceptIF = ( this );
-  if( acceptIF->isSet() == false )
+  // The interface acceptor has stored the last accepted interface, which is empty if no connection was made.
+  if (!this->InterfaceAcceptor< FirstInterface >::GetAccepted())
   {
     // TODO: Log component names as well
     this->m_Logger.Log( LogLevel::ERR, "No connection satisfy criteria {0}.", this->m_Logger << Properties< FirstInterface >::Get());

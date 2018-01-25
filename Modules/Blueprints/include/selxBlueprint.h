@@ -55,9 +55,12 @@ public:
   typedef std::map< ParameterKeyType, ParameterValueType > ParameterMapType;
   typedef std::string                                      ComponentNameType;
   typedef std::vector< ComponentNameType >                 ComponentNamesType;
+  typedef std::string                                      ConnectionNameType;
+  typedef std::vector< ConnectionNameType >                ConnectionNamesType;
 
   /* m_Blueprint is initialized in the default constructor */
   Blueprint();
+  ~Blueprint();
 
   /** The actual blueprint is a pimpled member variable */
   typedef std::unique_ptr< BlueprintImpl > BlueprintImplPointer;
@@ -75,18 +78,18 @@ public:
   // Returns a vector of the all Component names in the graph.
   ComponentNamesType GetComponentNames( void ) const;
 
-  bool SetConnection( ComponentNameType upstream, ComponentNameType downstream, ParameterMapType parameterMap );
+  bool SetConnection( ComponentNameType upstream, ComponentNameType downstream, ParameterMapType parameterMap, ConnectionNameType name = "" );
 
-  ParameterMapType GetConnection( ComponentNameType upstream, ComponentNameType downstream ) const;
+  ParameterMapType GetConnection( ComponentNameType upstream, ComponentNameType downstream, ConnectionNameType name = ""  ) const;
 
-  bool DeleteConnection( ComponentNameType upstream, ComponentNameType downstream );
+  bool DeleteConnection( ComponentNameType upstream, ComponentNameType downstream, ConnectionNameType name = "" );
 
-  bool ConnectionExists( ComponentNameType upstream, ComponentNameType downstream ) const;
+  bool ConnectionExists( ComponentNameType upstream, ComponentNameType downstream, ConnectionNameType name = "" ) const;
 
   //std::unique_ptr<BlueprintImpl> Clone(BlueprintImpl const &other );
 
   // "functional" composition of blueprints is done by adding settings of other to this blueprint. Redefining/overwriting properties is not allowed and returns false.
-  bool ComposeWith( Blueprint::ConstPointer other );
+  bool ComposeWith( const Blueprint * other );
 
   // Returns a vector of the Component names at the incoming direction
   ComponentNamesType GetInputNames( const ComponentNameType name ) const;
@@ -103,10 +106,13 @@ public:
   void MergeFromFile(const std::string& filename);
 
   void SetLogger( Logger::Pointer logger );
+
 private:
 
-  BlueprintImplPointer m_Blueprint;
+  // The order of the logger and the blueprint matters, since the lifetime of the logger should always exceed that of the blueprint.
   Logger::Pointer m_Logger;
+  BlueprintImplPointer m_BlueprintImpl;
+
 };
 }
 

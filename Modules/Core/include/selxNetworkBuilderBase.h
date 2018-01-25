@@ -55,9 +55,6 @@ public:
   typedef std::map<
     std::string, SinkInterface::Pointer > SinkInterfaceMapType;
 
-  typedef std::map<
-    std::string, RegistrationControllerStartInterface * > RegistrationControllerStartInterfaceMapType;
-
   NetworkBuilderBase() {}
 
   virtual ~NetworkBuilderBase() {}

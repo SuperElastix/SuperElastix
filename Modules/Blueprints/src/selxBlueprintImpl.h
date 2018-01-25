@@ -25,6 +25,9 @@
 #include "boost/graph/directed_graph.hpp"
 #include "boost/graph/labeled_graph.hpp"
 
+// for UpdateOrder
+#include <boost/graph/topological_sort.hpp>
+
 // for ComposeWith
 #include "boost/graph/copy.hpp"
 
@@ -57,6 +60,10 @@ public:
   typedef Blueprint::ParameterMapType ParameterMapType;
   typedef Blueprint::ComponentNameType ComponentNameType;
   typedef Blueprint::ComponentNamesType ComponentNamesType;
+  typedef Blueprint::ConnectionNameType ConnectionNameType;
+  typedef Blueprint::ConnectionNamesType ConnectionNamesType;
+
+  
 
   // Component parameter map that sits on a node in the graph
   // and holds component configuration settings
@@ -71,17 +78,18 @@ public:
   // and holds component connection configuration settings
   struct ConnectionPropertyType
   {
-    ConnectionPropertyType( ParameterMapType parameterMap = {} ) :  parameterMap( parameterMap ) {}
+    ConnectionPropertyType( ConnectionNameType name = "", ParameterMapType parameterMap = {} ) :name( name ),  parameterMap( parameterMap ) {}
+    ConnectionNameType name;
     ParameterMapType parameterMap;
   };
 
   typedef boost::labeled_graph<
     boost::adjacency_list<
-    boost::vecS,
-    boost::vecS,
-    boost::bidirectionalS,
-    ComponentPropertyType,
-    ConnectionPropertyType
+    boost::multisetS, //OutEdgeList: allow multiple parallel connections
+    boost::vecS, // VertexList, 
+    boost::bidirectionalS, //Directed: directed graph, but give access to traverse in both directions
+    ComponentPropertyType, //VertexProperties
+    ConnectionPropertyType //GraphProperties
     >,
     ComponentNameType > GraphType;
 
@@ -99,9 +107,6 @@ public:
   typedef boost::graph_traits< GraphType >::out_edge_iterator OutputIteratorType;
   typedef std::pair< OutputIteratorType, OutputIteratorType > OutputIteratorPairType;
 
-  // TODO: remove this argumentless constructor
-  BlueprintImpl();
-
   BlueprintImpl( LoggerImpl & loggerImpl);
 
 
@@ -116,13 +121,15 @@ public:
   // Returns a vector of the all Component names in the graph.
   ComponentNamesType GetComponentNames( void ) const;
 
-  bool SetConnection( ComponentNameType upstream, ComponentNameType downstream, ParameterMapType parameterMap );
+  // SetConnection with parameters parameterMap between components upstream and downstream. 
+  // The connection name is to distinguish parallel connections. For single connections name = "" is typical. 
+  bool SetConnection( ComponentNameType upstream, ComponentNameType downstream, ParameterMapType parameterMap, ConnectionNameType name );
 
-  ParameterMapType GetConnection( ComponentNameType upstream, ComponentNameType downstream ) const;
+  ParameterMapType GetConnection( ComponentNameType upstream, ComponentNameType downstream, ConnectionNameType name ) const;
 
-  bool DeleteConnection( ComponentNameType upstream, ComponentNameType downstream );
+  bool DeleteConnection( ComponentNameType upstream, ComponentNameType downstream, ConnectionNameType name );
 
-  bool ConnectionExists( ComponentNameType upstream, ComponentNameType downstream ) const;
+  bool ConnectionExists( ComponentNameType upstream, ComponentNameType downstream, ConnectionNameType name ) const;
 
   bool ComposeWith( const BlueprintImpl & other );
 
@@ -131,6 +138,11 @@ public:
 
   // Returns a vector of the Component names at the outgoing direction
   ComponentNamesType GetOutputNames( const ComponentNameType name ) const;
+
+  // Returns a vector of the connection names between upstream and downstream
+  ComponentNamesType GetConnectionNames(const ComponentNameType upstream, const ComponentNameType downstream) const;
+
+  ComponentNamesType GetUpdateOrder() const;
 
   void Write( const std::string filename );
 
@@ -145,8 +157,6 @@ private:
 
   using PathType = boost::filesystem::path;
   using PathsType = std::list<PathType>;
-
-  ConnectionIndexType GetConnectionIndex(ComponentNameType upsteam, ComponentNameType downstream) const;
 
   PropertyTreeType ReadPropertyTree(const PathType & filename);
 
