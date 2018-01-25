@@ -20,7 +20,6 @@
 #include "selxSuperElastixFilterCustomComponents.h"
 #include "elxParameterObject.h"
 
-#include "selxElastixComponent.h"
 #include "selxMonolithicElastixComponent.h"
 #include "selxMonolithicTransformixComponent.h"
 #include "selxItkImageSinkComponent.h"
@@ -46,7 +45,7 @@ public:
   typedef DataManager DataManagerType;
 
   /** Make a list of components to be registered for this test*/
-  typedef TypeList< ElastixComponent< 2, float >,
+  typedef TypeList< 
     MonolithicElastixComponent< 2, float >,
     MonolithicTransformixComponent< 2, float >,
     ItkImageSinkComponent< 2, float >,
@@ -85,69 +84,6 @@ public:
   // Data manager provides the paths to the input and output data for unit tests
   DataManagerType::Pointer dataManager;
 };
-
-TEST_F( ElastixComponentTest, ImagesOnly )
-{
-  /** make example blueprint configuration */
-  BlueprintPointer blueprint = Blueprint::New();
-
-  ParameterMapType component0Parameters;
-  component0Parameters[ "NameOfClass" ]               = { "ElastixComponent" };
-  component0Parameters[ "RegistrationSettings" ]      = { "rigid" };
-  component0Parameters[ "MaximumNumberOfIterations" ] = { "2" };
-  component0Parameters[ "Dimensionality" ]            = { "2" };
-  component0Parameters[ "PixelType" ]                 = { "float" };
-  component0Parameters[ "ResultImagePixelType" ]      = { "float" };
-
-  blueprint->SetComponent( "RegistrationMethod", component0Parameters );
-
-  ParameterMapType component1Parameters;
-  component1Parameters[ "NameOfClass" ]    = { "ItkImageSourceComponent" };
-  component1Parameters[ "Dimensionality" ] = { "2" }; // should be derived from the inputs
-  blueprint->SetComponent( "FixedImageSource", component1Parameters );
-
-  ParameterMapType component2Parameters;
-  component2Parameters[ "NameOfClass" ]    = { "ItkImageSourceComponent" };
-  component2Parameters[ "Dimensionality" ] = { "2" }; // should be derived from the inputs
-  blueprint->SetComponent( "MovingImageSource", component2Parameters );
-
-  ParameterMapType component3Parameters;
-  component3Parameters[ "NameOfClass" ]    = { "ItkImageSinkComponent" };
-  component3Parameters[ "Dimensionality" ] = { "2" }; // should be derived from the inputs
-  blueprint->SetComponent( "ResultImageSink", component3Parameters );
-
-  ParameterMapType connection1Parameters;
-  //connection1Parameters["NameOfInterface"] = { "itkImageFixedInterface" };
-  blueprint->SetConnection( "FixedImageSource", "RegistrationMethod", connection1Parameters );
-
-  ParameterMapType connection2Parameters;
-  //connection2Parameters["NameOfInterface"] = { "itkImageMovingInterface" };
-  blueprint->SetConnection( "MovingImageSource", "RegistrationMethod", connection2Parameters );
-
-  ParameterMapType connection3Parameters;
-  //connection3Parameters["NameOfInterface"] = { "GetItkImageInterface" };
-  blueprint->SetConnection( "RegistrationMethod", "ResultImageSink", connection3Parameters );
-
-  // Set up the readers and writers
-  ImageReader2DType::Pointer fixedImageReader = ImageReader2DType::New();
-  fixedImageReader->SetFileName( dataManager->GetInputFile( "BrainProtonDensitySliceBorder20.png" ) );
-
-  ImageReader2DType::Pointer movingImageReader = ImageReader2DType::New();
-  movingImageReader->SetFileName( dataManager->GetInputFile( "BrainProtonDensitySliceR10X13Y17.png" ) );
-
-  ImageWriter2DType::Pointer resultImageWriter = ImageWriter2DType::New();
-  resultImageWriter->SetFileName( dataManager->GetOutputFile( "ElastixComponentTest_BrainProtonDensity.mhd" ) );
-
-  superElastixFilter->SetInput( "FixedImageSource", fixedImageReader->GetOutput() );
-  superElastixFilter->SetInput( "MovingImageSource", movingImageReader->GetOutput() );
-
-  resultImageWriter->SetInput( superElastixFilter->GetOutput< Image2DType >( "ResultImageSink" ) );
-
-  EXPECT_NO_THROW( superElastixFilter->SetBlueprint( blueprint ) );
-
-  // Update call on the writers triggers SuperElastix to configure and execute
-  resultImageWriter->Update();
-}
 
 TEST_F( ElastixComponentTest, MonolithicElastixTransformix )
 {
