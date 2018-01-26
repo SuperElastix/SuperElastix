@@ -31,6 +31,7 @@ using ModuleSinksAndSourcesComponents = selx::TypeList<
   DisplacementFieldItkImageFilterSinkComponent< 3, float >,
   ItkImageSinkComponent< 2, float >,
   ItkImageSinkComponent< 3, short >,
+  ItkImageSinkComponent< 3, float >,
   ItkImageSourceComponent< 2, float >,
   ItkImageSourceComponent< 2, short >,
   ItkImageSourceComponent< 2, unsigned char >, // for masks
