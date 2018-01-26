@@ -19,6 +19,7 @@
 
 #include "selxItkANTSNeighborhoodCorrelationImageToImageMetricv4Component.h"
 #include "selxCheckTemplateProperties.h"
+#include "itkImageMaskSpatialObject.h"
 
 namespace selx
 {
@@ -38,6 +39,30 @@ ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< Dimensionality, TPi
 {
 }
 
+template< int Dimensionality, class TPixel >
+int
+ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< Dimensionality, TPixel >::Accept(typename itkImageFixedMaskInterface< Dimensionality, unsigned char >::Pointer component)
+{
+  auto fixedMaskImage = component->GetItkImageFixedMask();
+  // connect the itk pipeline
+  auto fixedMaskSpatialObject = itk::ImageMaskSpatialObject< Dimensionality >::New();
+  fixedMaskSpatialObject->SetImage( fixedMaskImage );
+
+  this->m_theItkFilter->SetFixedImageMask(fixedMaskSpatialObject);
+  return 0;
+}
+
+template< int Dimensionality, class TPixel >
+int
+ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< Dimensionality, TPixel >::Accept(typename itkImageMovingMaskInterface< Dimensionality, unsigned char >::Pointer component)
+{
+  auto movingMaskImage = component->GetItkImageMovingMask();
+  // connect the itk pipeline
+  auto movingMaskSpatialObject = itk::ImageMaskSpatialObject< Dimensionality >::New();
+  movingMaskSpatialObject->SetImage(movingMaskImage);
+  this->m_theItkFilter->SetMovingImageMask(movingMaskSpatialObject);
+  return 0;
+}
 
 template< int Dimensionality, class TPixel >
 typename ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< Dimensionality, TPixel >::ItkMetricv4Pointer
