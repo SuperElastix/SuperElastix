@@ -226,6 +226,7 @@ NetworkBuilder< ComponentList >::ApplyConnectionConfiguration()
         {
           std::string msg = providingComponentName + "does not accept any connections with the given criteria.";
           this->m_Logger.Log( LogLevel::ERR, msg );
+          throw std::runtime_error( msg );
         }
       }
     }
@@ -280,6 +281,13 @@ NetworkBuilder< ComponentList >::PropagateConnectionsWithUniqueComponents()
               anySelectionNarrowed = true;
             }
             this->m_Logger.Log( LogLevel::TRC, "Selection Narrowed: {} ", anySelectionNarrowed );
+            
+            if (afterCriteria == 0)
+            {
+              std::string msg = "No component exists for '" + componentName + "' that has a suitable interface to provide to '" + acceptingComponentName + "'" ;
+              this->m_Logger.Log(LogLevel::ERR, msg);
+              throw std::runtime_error( msg );
+            }
           }
         }
       }
@@ -317,6 +325,13 @@ NetworkBuilder< ComponentList >::PropagateConnectionsWithUniqueComponents()
               anySelectionNarrowed = true;
             }
             this->m_Logger.Log( LogLevel::TRC, "Selection Narrowed: {} ", anySelectionNarrowed );
+            if (afterCriteria == 0)
+            {
+              std::string msg = "No component exists for '" + componentName + "' that has a suitable interface to accept from '" + providingComponentName + "'";
+              this->m_Logger.Log(LogLevel::ERR, msg);
+              throw std::runtime_error(msg);
+            }
+
           }
         }
       }
