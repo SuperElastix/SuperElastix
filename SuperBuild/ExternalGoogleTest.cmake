@@ -20,7 +20,7 @@
 set( proj GoogleTest )
 
 set( GTEST_TARGET_VERSION 1.7.0 )
-set( GTEST_DOWNLOAD_SOURCE_HASH "2d6ec8ccdf5c46b05ba54a9fd1d130d7" )
+set( GTEST_DOWNLOAD_SOURCE_HASH "b3a2048beb0f8d6cbb2d5c95e7f639780eff5805" )
 
 set( GTEST_binary_dir ${CMAKE_CURRENT_BINARY_DIR}/${proj}-prefix/src/${proj}-build )
 set( GTEST_source_dir ${CMAKE_CURRENT_BINARY_DIR}/${proj}-prefix/src/${proj} )
