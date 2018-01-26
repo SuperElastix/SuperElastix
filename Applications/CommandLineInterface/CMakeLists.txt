@@ -88,6 +88,7 @@ set( ConfigFiles
   "elastix_Bspline_NC.json"
   "elastix_Bspline_MSD.json"
   "IdentityTransformRegistration.json"
+  "elastix3d.json"
 )
 
 foreach( ConfigFile ${ConfigFiles} )
@@ -105,6 +106,7 @@ set( ScriptFiles
   "2A_SuperElastix_itkv4_NC"
   "2B_SuperElastix_itkv4_MSD"
   "IdentityTransformRegistration"
+  "elastix3d"
   "graphviz_to_png"
 )
 
