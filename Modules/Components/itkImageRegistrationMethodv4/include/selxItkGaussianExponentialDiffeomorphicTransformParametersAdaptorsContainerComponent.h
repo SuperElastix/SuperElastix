@@ -21,14 +21,14 @@
 #define selxItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent_h
 
 #include "selxSuperElastixComponent.h"
-#include "selxInterfaces.h"
+
+#include "selxItkRegistrationMethodv4Interfaces.h"
+#include "selxSinksAndSourcesInterfaces.h"
+
 #include "itkImageRegistrationMethodv4.h"
 #include "itkGradientDescentOptimizerv4.h"
 #include "itkImageSource.h"
-#include <itkTransformToDisplacementFieldFilter.h>
-#include <string.h>
-#include "selxMacro.h"
-
+#include "itkTransformToDisplacementFieldFilter.h"
 #include "itkComposeDisplacementFieldsImageFilter.h"
 #include "itkGaussianExponentialDiffeomorphicTransform.h"
 #include "itkGaussianExponentialDiffeomorphicTransformParametersAdaptor.h"
@@ -39,19 +39,26 @@ namespace selx
 template< int Dimensionality, class TransformInternalComputationValueType >
 class ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent :
   public SuperElastixComponent<
-  Accepting< itkImageDomainFixedInterface< Dimensionality >
-  >,
+  Accepting< itkImageDomainFixedInterface< Dimensionality >>,
   Providing< itkTransformParametersAdaptorsContainerInterface< TransformInternalComputationValueType, Dimensionality >
   >
   >
 {
 public:
 
-  selxNewMacro( ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent, ComponentBase );
+  /** Standard ITK typedefs. */
+  typedef ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent<
+    Dimensionality, TransformInternalComputationValueType
+    >                                       Self;
+  typedef SuperElastixComponent<
+    Accepting< itkImageDomainFixedInterface< Dimensionality >>,
+    Providing< itkTransformParametersAdaptorsContainerInterface< TransformInternalComputationValueType, Dimensionality >
+    >
+    >                                       Superclass;
+  typedef std::shared_ptr< Self >       Pointer;
+  typedef std::shared_ptr< const Self > ConstPointer;
 
-  //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
-
-  ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent();
+  ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent( const std::string & name, LoggerImpl & logger );
   virtual ~ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent();
 
   // Get the type definitions from the interfaces
@@ -72,7 +79,7 @@ public:
   typedef itk::Array< TransformInternalComputationValueType > SmoothingSigmasArrayType;
 
   //Accepting Interfaces:
-  virtual int Set( itkImageDomainFixedInterface< Dimensionality > * ) override;
+  virtual int Accept( typename itkImageDomainFixedInterface< Dimensionality >::Pointer ) override;
 
   //Providing Interfaces:
   virtual TransformParametersAdaptorsContainerType GetItkTransformParametersAdaptorsContainer() override;

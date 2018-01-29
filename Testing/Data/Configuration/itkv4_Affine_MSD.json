@@ -1,0 +1,51 @@
+{
+    "Component": {
+        "Name": "RegistrationMethod",
+        "NumberOfLevels":  "3" ,
+        "ShrinkFactorsPerLevel": [ "4", "2", "1" ],
+        "SmoothingSigmasPerLevel": [ "4", "2", "1" ] 
+    },
+    "Component": {
+        "Name": "FixedImage",
+        "Dimensionality": "2",
+        "PixelType": "float"
+    },
+    "Component": {
+        "Name": "MovingImage",
+        "Dimensionality": "2",
+        "PixelType": "float"
+    },
+    "Component": {
+        "Name": "ResultImage",
+        "Dimensionality": "2",
+        "PixelType": "float"
+    },
+    "Component": {
+        "Name": "ResultDisplacementField",
+        "NameOfClass": "DisplacementFieldItkImageFilterSinkComponent",
+        "Dimensionality": "2",
+        "PixelType": "float"
+    },
+    "Component": {
+        "Name": "Metric",
+        "NameOfClass": "ItkMeanSquaresImageToImageMetricv4Component"
+    },
+    "Component": {
+        "Name": "Optimizer",
+        "NameOfClass": "ItkGradientDescentOptimizerv4Component",
+        "NumberOfIterations": "100",
+        "LearningRate": "0.001"
+    },
+    "Component": {
+        "Name": "Transform",
+        "NameOfClass": "ItkAffineTransformComponent"
+    },
+    "Component": {
+        "Name": "ResampleFilter",
+        "NameOfClass": "ItkResampleFilterComponent"
+    },
+    "Component": {
+        "Name": "TransformDisplacementFilter",
+        "NameOfClass": "ItkTransformDisplacementFilterComponent"
+    }
+}

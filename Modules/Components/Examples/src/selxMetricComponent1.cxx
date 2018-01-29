@@ -16,20 +16,13 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef MetricComponent1_hxx
-#define MetricComponent1_hxx
 
 #include "selxMetricComponent1.h"
 
 namespace selx
 {
-MetricComponent1::MetricComponent1()
-{
-}
-
-
 int
-MetricComponent1::Set( TransformedImageInterface * providingInterface )
+MetricComponent1::Accept( TransformedImageInterface::Pointer providingInterface )
 {
   return 0;
 }
@@ -53,12 +46,12 @@ MetricComponent1
       }
     }
   }
-  else if (criterion.first == "ComponentProperty")
+  else if( criterion.first == "ComponentProperty" )
   {
     meetsCriteria = true;
-    for (auto const & criterionValue : criterion.second) // auto&& preferred?
+    for( auto const & criterionValue : criterion.second ) // auto&& preferred?
     {
-      if (criterionValue != "SomeProperty")  // e.g. "GradientDescent", "SupportsSparseSamples
+      if( criterionValue != "SomeProperty" )  // e.g. "GradientDescent", "SupportsSparseSamples
       {
         meetsCriteria = false;
         return false;
@@ -80,5 +73,3 @@ MetricComponent1
   return meetsCriteria;
 }
 } // end namespace selx
-
-#endif

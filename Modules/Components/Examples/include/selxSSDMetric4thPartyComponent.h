@@ -20,9 +20,8 @@
 #ifndef SSDMetric4thPartyComponent_h
 #define SSDMetric4thPartyComponent_h
 
-#include "selxComponentBase.h"
-#include "selxInterfaces.h"
 #include "selxSuperElastixComponent.h"
+#include "selxExamplesInterfaces.h"
 #include "selxExample4thPartyCode.h"
 
 namespace selx
@@ -37,18 +36,15 @@ class SSDMetric4thPartyComponent :
 public:
 
   /** Standard class typedefs. */
-  typedef SSDMetric4thPartyComponent      Self;
-  typedef ComponentBase                   Superclass;
-  typedef itk::SmartPointer< Self >       Pointer;
-  typedef itk::SmartPointer< const Self > ConstPointer;
+  typedef SSDMetric4thPartyComponent Self;
+  typedef SuperElastixComponent<
+    Accepting< >,
+    Providing< MetricValueInterface >
+    >                 Superclass;
+  typedef std::shared_ptr< Self >       Pointer;
+  typedef std::shared_ptr< const Self > ConstPointer;
 
-  /** New macro for creation of through the object factory. */
-  itkNewMacro( Self );
-
-  /** Run-time type information (and related methods). */
-  itkTypeMacro( SSDMetric4thPartyComponent, Superclass );
-
-  SSDMetric4thPartyComponent();
+  SSDMetric4thPartyComponent( const std::string & name, LoggerImpl & logger );
   virtual ~SSDMetric4thPartyComponent();
   Example4thParty::SSDMetric4thParty * theImplementation;
   virtual int GetValue() override;

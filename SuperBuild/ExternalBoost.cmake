@@ -24,29 +24,35 @@ set( proj BOOST )
 # while on Windows, we need CR/LF line feeds (only available in the .zip)
 
 set( BOOST_CONFIGURE_COMMAND )
-set( B2_ARGS --with-program_options --with-filesystem --with-log address-model=64 )
+set( B2_ARGS --with-program_options --with-filesystem --with-system --with-regex address-model=64 )
 if( UNIX )
-  set( BOOST_URL "http://sourceforge.net/projects/boost/files/boost/1.59.0/boost_1_59_0.tar.gz")
-  set( BOOST_MD5 51528a0e3b33d9e10aaa311d9eb451e3 )
+  set( BOOST_URL "http://dl.bintray.com/boostorg/release/1.65.0/source/boost_1_65_0.tar.gz")
+  set( BOOST_MD5 d75a27ad1a34cfc7c9b5cb92594410c3 )
   set( BOOST_CONFIGURE_COMMAND ./bootstrap.sh )
   set( BOOST_BUILD_COMMAND ./b2 ${B2_ARGS})
 else()
   if( WIN32 )
+    # If building on Windows: The target machine should be Windows 7 or higher.
+    # Note that BOOST_USE_WINAPI_VERSION should match with _WIN32_WINNT. 
+    set(B2_ARGS "define=BOOST_USE_WINAPI_VERSION=0x0601" ${B2_ARGS})
     if(MSVC11)
       set(B2_ARGS "--toolset=msvc-11.0" ${B2_ARGS})
     elseif(MSVC12)
       set(B2_ARGS "--toolset=msvc-12.0" ${B2_ARGS})
     elseif(MSVC14)
-      set(B2_ARGS "--toolset=msvc-14.0" ${B2_ARGS})
+      # CMake defines MSVC14 for both VS2015 and VS2017!
+      if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 19.10)
+        set(B2_ARGS "--toolset=msvc-14.0" ${B2_ARGS})
+      else()
+        set(B2_ARGS "--toolset=msvc-14.1" ${B2_ARGS})
+      endif()
     endif(MSVC11)
-    set( BOOST_URL "http://sourceforge.net/projects/boost/files/boost/1.59.0/boost_1_59_0.zip")
-    set( BOOST_MD5 08d29a2d85db3ebc8c6fdfa3a1f2b83c )
+    set( BOOST_URL "http://dl.bintray.com/boostorg/release/1.65.0/source/boost_1_65_0.zip")
+    set( BOOST_MD5 eb1e11262e0cfc6949d054f6d8d25dc6 )
     set( BOOST_CONFIGURE_COMMAND cmd /C bootstrap.bat msvc )
     set( BOOST_BUILD_COMMAND b2.exe ${B2_ARGS})
   endif()
 endif()
-
-set( BOOST_BUILD_DIR "${CMAKE_INSTALL_PREFIX}/${proj}-build/" )
 
 ExternalProject_Add( BOOST
   BUILD_IN_SOURCE 1
@@ -58,7 +64,7 @@ ExternalProject_Add( BOOST
   INSTALL_COMMAND ""
 )
 
-set( BOOST_ROOT "${CMAKE_INSTALL_PREFIX}/${proj}-prefix/src/BOOST" )
+set( BOOST_ROOT "${PROJECT_BINARY_DIR}/${proj}-prefix/src/BOOST" )
 set( BOOST_LIBRARYDIR "${BOOST_ROOT}/stage/lib/" )
 
 list( APPEND SUPERELASTIX_DEPENDENCIES ${proj} )

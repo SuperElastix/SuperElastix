@@ -20,28 +20,48 @@
 #ifndef selxItkCompositeTransformComponent_h
 #define selxItkCompositeTransformComponent_h
 
-#include "selxComponentBase.h"
-#include "selxInterfaces.h"
+#include "selxSuperElastixComponent.h"
+
+#include "selxItkRegistrationMethodv4Interfaces.h"
+#include "selxSinksAndSourcesInterfaces.h"
+
 #include "itkCompositeTransform.h"
-#include <string.h>
-#include "selxMacro.h"
+
 namespace selx
 {
 template< class InternalComputationValueType, int Dimensionality >
 class ItkCompositeTransformComponent :
   public SuperElastixComponent<
-  Accepting<MultiStageTransformInterface< InternalComputationValueType, Dimensionality >, ReconnectTransformInterface >,
-  Providing<itkTransformInterface<InternalComputationValueType, Dimensionality>,
-  RegistrationControllerStartInterface>
+  Accepting< MultiStageTransformInterface<
+  InternalComputationValueType, Dimensionality >,
+  UpdateInterface
+  >,
+  Providing<
+  itkTransformInterface< InternalComputationValueType, Dimensionality
+  >,
+  UpdateInterface >
   >
 {
 public:
 
-  selxNewMacro(ItkCompositeTransformComponent, ComponentBase);
+  /** Standard ITK typedefs. */
+  typedef ItkCompositeTransformComponent<
+    InternalComputationValueType, Dimensionality
+    >                                       Self;
+  typedef SuperElastixComponent<
+    Accepting< MultiStageTransformInterface<
+    InternalComputationValueType, Dimensionality >,
+    UpdateInterface
+    >,
+    Providing<
+    itkTransformInterface< InternalComputationValueType, Dimensionality
+    >,
+    UpdateInterface >
+    >                                       Superclass;
+  typedef std::shared_ptr< Self >       Pointer;
+  typedef std::shared_ptr< const Self > ConstPointer;
 
-  //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
-
-  ItkCompositeTransformComponent();
+  ItkCompositeTransformComponent( const std::string & name, LoggerImpl & logger );
   virtual ~ItkCompositeTransformComponent();
 
   /**  Type of the optimizer. */
@@ -49,15 +69,17 @@ public:
 
   typedef typename itk::CompositeTransform< InternalComputationValueType, Dimensionality > CompositeTransformType;
 
-  virtual int Set(MultiStageTransformInterface< InternalComputationValueType, Dimensionality > *) override;
-  
-  virtual int Set(ReconnectTransformInterface * ) override;
-  
-  virtual void RegistrationControllerStart() override;
+  virtual int Accept( typename MultiStageTransformInterface< InternalComputationValueType, Dimensionality >::Pointer ) override;
+
+  virtual int Accept( UpdateInterface::Pointer ) override;
+
+  virtual void Update() override;
 
   virtual typename TransformType::Pointer GetItkTransform() override;
 
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
+
+  virtual bool ConnectionsSatisfied() override;
 
   //static const char * GetName() { return "ItkCompositeTransform"; } ;
   static const char * GetDescription() { return "ItkCompositeTransform Component"; }
@@ -65,10 +87,11 @@ public:
 private:
 
   typename CompositeTransformType::Pointer m_CompositeTransform;
-  typename std::vector<MultiStageTransformInterface< InternalComputationValueType, Dimensionality >*> m_registrationStages;
+  typename std::vector< typename MultiStageTransformInterface< InternalComputationValueType, Dimensionality >::Pointer > m_registrationStages;
 
-  std::set< ReconnectTransformInterface * > m_ReconnectTransformInterfaces;
-  std::vector<std::string> m_ExecutionOrder;
+  std::set< UpdateInterface::Pointer > m_ReconnectTransformInterfaces;
+  std::vector< std::string >                       m_ExecutionOrder;
+
 protected:
 
   // return the class name and the template arguments to uniquely identify this component.

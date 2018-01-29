@@ -1,0 +1,10 @@
+{
+    "Component": {
+        "Name": "ResultTransform",
+        "NameOfClass": "ItkTransformSinkComponent"
+    },
+    "Connection": {
+        "Out": "RegistrationMethod",
+        "In": "ResultTransform"
+    }
+}

@@ -73,13 +73,6 @@ public:
       }
       typename GradientDescentOptimizerv4Type::DerivativeType gradient = optimizer->GetGradient();
 
-      /* orig
-      std::cout << "  Current level = " << currentLevel << std::endl;
-      std::cout << "    shrink factor = " << shrinkFactors[currentLevel] << std::endl;
-      std::cout << "    smoothing sigma = " << smoothingSigmas[currentLevel] << std::endl;
-      std::cout << "    required fixed parameters = " << adaptors[currentLevel]->GetRequiredFixedParameters() << std::endl;
-      */
-
       //debug:
       std::cout << "  CL Current level:           " << currentLevel << std::endl;
       std::cout << "   SF Shrink factor:          " << shrinkFactors << std::endl;
@@ -118,7 +111,9 @@ public:
 
 template< int Dimensionality, class TPixel, class InternalComputationValueType >
 ItkImageRegistrationMethodv4Component< Dimensionality, TPixel,
-InternalComputationValueType >::ItkImageRegistrationMethodv4Component() : m_TransformAdaptorsContainerInterface(
+InternalComputationValueType >::ItkImageRegistrationMethodv4Component( const std::string & name, LoggerImpl & logger ) : Superclass( name,
+    logger ),
+  m_TransformAdaptorsContainerInterface(
     nullptr )
 {
   m_theItkFilter = TheItkFilterType::New();
@@ -138,7 +133,7 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
 template< int Dimensionality, class TPixel, class InternalComputationValueType >
 int
 ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >
-::Set( itkImageFixedInterface< Dimensionality, TPixel > * component )
+::Accept( typename itkImageFixedInterface< Dimensionality, TPixel >::Pointer component )
 {
   auto fixedImage = component->GetItkImageFixed();
   // connect the itk pipeline
@@ -151,7 +146,7 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
 template< int Dimensionality, class TPixel, class InternalComputationValueType >
 int
 ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >
-::Set( itkImageMovingInterface< Dimensionality, TPixel > * component )
+::Accept( typename itkImageMovingInterface< Dimensionality, TPixel >::Pointer component )
 {
   auto movingImage = component->GetItkImageMoving();
   // connect the itk pipeline
@@ -162,9 +157,9 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
 
 template< int Dimensionality, class TPixel, class InternalComputationValueType >
 int
-ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >::Set(
+ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >::Accept( typename
   itkTransformInterface< InternalComputationValueType,
-  Dimensionality > * component )
+  Dimensionality >::Pointer component )
 {
   this->m_theItkFilter->SetInitialTransform( component->GetItkTransform() );
   return 0;
@@ -173,8 +168,8 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
 
 template< int Dimensionality, class TPixel, class InternalComputationValueType >
 int
-ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >::Set(
-  TransformParametersAdaptorsContainerInterfaceType * component )
+ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >::Accept(
+  typename TransformParametersAdaptorsContainerInterfaceType::Pointer component )
 {
   // store the interface to the ParametersAdaptorsContainer since during the setup of the connections the TransformParametersAdaptorComponent might not be fully connected and thus does not have the adaptors ready.
   this->m_TransformAdaptorsContainerInterface = component;
@@ -184,8 +179,9 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
 
 template< int Dimensionality, class TPixel, class InternalComputationValueType >
 int
-ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >::Set( itkMetricv4Interface< Dimensionality, TPixel,
-  InternalComputationValueType > * component )
+ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >::Accept( typename itkMetricv4Interface< Dimensionality,
+  TPixel,
+  InternalComputationValueType >::Pointer component )
 {
   //TODO: The optimizer must be set explicitly, since this is a work-around for a bug in itkRegistrationMethodv4.
   //TODO: report bug to itk: when setting a metric, the optimizer must be set explicitly as well, since default optimizer setup breaks.
@@ -197,8 +193,8 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
 
 template< int Dimensionality, class TPixel, class InternalComputationValueType >
 int
-ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >::Set(
-  itkOptimizerv4Interface< InternalComputationValueType > * component )
+ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >::Accept( typename
+  itkOptimizerv4Interface< InternalComputationValueType >::Pointer component )
 {
   //TODO: The optimizer must be set explicitly, since this is a work-around for a bug in itkRegistrationMethodv4.
   //TODO: report bug to itk: when setting a metric, the optimizer must be set explicitly as well, since default optimizer setup breaks.
@@ -210,7 +206,7 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
 
 template< int Dimensionality, class TPixel, class InternalComputationValueType >
 void
-ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >::RunRegistration( void )
+ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >::Update( void )
 {
   typename FixedImageType::ConstPointer fixedImage   = this->m_theItkFilter->GetFixedImage();
   typename MovingImageType::ConstPointer movingImage = this->m_theItkFilter->GetMovingImage();
@@ -232,7 +228,7 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
   }
   else
   {
-    itkExceptionMacro( "Error casting to ImageMetricv4Type failed" );
+    throw std::runtime_error( "Error casting to ImageMetricv4Type failed" );
   }
 
   //std::cout << "estimated step scale: " << scalesEstimator->EstimateStepScale(1.0);
@@ -270,21 +266,24 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
   return this->m_theItkFilter->GetModifiableTransform();
 }
 
-template< int Dimensionality, class TPixel, class InternalComputationValueType >
-void
-ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >
-::SetFixedInitialTransform(typename CompositeTransformType::Pointer fixedInitialTransform)
-{
-  return this->m_theItkFilter->SetFixedInitialTransform(fixedInitialTransform);
-}
 
 template< int Dimensionality, class TPixel, class InternalComputationValueType >
 void
 ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >
-::SetMovingInitialTransform(typename CompositeTransformType::Pointer movingInitialTransform)
+::SetFixedInitialTransform( typename CompositeTransformType::Pointer fixedInitialTransform )
 {
-  return this->m_theItkFilter->SetMovingInitialTransform(movingInitialTransform);
+  return this->m_theItkFilter->SetFixedInitialTransform( fixedInitialTransform );
 }
+
+
+template< int Dimensionality, class TPixel, class InternalComputationValueType >
+void
+ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >
+::SetMovingInitialTransform( typename CompositeTransformType::Pointer movingInitialTransform )
+{
+  return this->m_theItkFilter->SetMovingInitialTransform( movingInitialTransform );
+}
+
 
 template< int Dimensionality, class TPixel, class InternalComputationValueType >
 const typename std::string
@@ -293,6 +292,7 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
 {
   return this->m_Name; //from ComponentBase
 }
+
 
 template< int Dimensionality, class TPixel, class InternalComputationValueType >
 bool
@@ -416,5 +416,38 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
   }
 
   return meetsCriteria;
+}
+
+
+template< int Dimensionality, class TPixel, class InternalComputationValueType >
+bool
+ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >
+::ConnectionsSatisfied()
+{
+  // This function overrides the default behavior, in which all accepting interfaces must be set, by allowing the itkTransformParametersAdaptorsContainerInterface not being set.
+  // TODO: see I we can reduce the amount of code with helper (meta-)functions
+  if( !this->InterfaceAcceptor< itkImageFixedInterface< Dimensionality, TPixel >>::GetAccepted())
+  {
+    return false;
+  }
+  if( !this->InterfaceAcceptor< itkImageMovingInterface< Dimensionality, TPixel >>::GetAccepted() )
+  {
+    return false;
+  }
+  if( !this->InterfaceAcceptor< itkTransformInterface< InternalComputationValueType, Dimensionality >>::GetAccepted() )
+  {
+    return false;
+  }
+  // Allow unconnected itkTransformParametersAdaptorsContainerInterface (not needed for affine transform)
+  // itkTransformParametersAdaptorsContainerInterface< InternalComputationValueType, Dimensionality >
+  if( !this->InterfaceAcceptor< itkMetricv4Interface< Dimensionality, TPixel, InternalComputationValueType >>::GetAccepted() )
+  {
+    return false;
+  }
+  if( !this->InterfaceAcceptor< itkOptimizerv4Interface< InternalComputationValueType >>::GetAccepted() )
+  {
+    return false;
+  }
+  return true;
 }
 } //end namespace selx

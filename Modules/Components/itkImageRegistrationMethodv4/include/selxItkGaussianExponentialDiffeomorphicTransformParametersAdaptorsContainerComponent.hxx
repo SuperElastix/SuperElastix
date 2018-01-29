@@ -23,7 +23,9 @@ namespace selx
 {
 template< int Dimensionality, class TransformInternalComputationValueType >
 ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent< Dimensionality,
-TransformInternalComputationValueType >::ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent()
+TransformInternalComputationValueType >::ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent( const std::string & name,
+  LoggerImpl & logger )
+  : Superclass( name, logger )
 {
 }
 
@@ -38,7 +40,7 @@ TransformInternalComputationValueType >::~ItkGaussianExponentialDiffeomorphicTra
 template< int Dimensionality, class TransformInternalComputationValueType >
 int
 ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent< Dimensionality, TransformInternalComputationValueType >
-::Set( itkImageDomainFixedInterface< Dimensionality > * component )
+::Accept( typename itkImageDomainFixedInterface< Dimensionality >::Pointer component )
 {
   auto fixedImageDomain = component->GetItkImageDomainFixed();
 
@@ -88,14 +90,14 @@ bool
 ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent< Dimensionality, TransformInternalComputationValueType >
 ::MeetsCriterion( const ComponentBase::CriterionType & criterion )
 {
-  bool hasUndefinedCriteria(false);
-  bool meetsCriteria(false);
-  auto status = CheckTemplateProperties(this->TemplateProperties(), criterion);
-  if (status == CriterionStatus::Satisfied)
+  bool hasUndefinedCriteria( false );
+  bool meetsCriteria( false );
+  auto status = CheckTemplateProperties( this->TemplateProperties(), criterion );
+  if( status == CriterionStatus::Satisfied )
   {
     return true;
   }
-  else if (status == CriterionStatus::Failed)
+  else if( status == CriterionStatus::Failed )
   {
     return false;
   } // else: CriterionStatus::Unknown

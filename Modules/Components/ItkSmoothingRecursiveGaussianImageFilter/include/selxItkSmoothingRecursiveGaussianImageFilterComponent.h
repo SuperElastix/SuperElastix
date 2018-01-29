@@ -21,37 +21,47 @@
 #define selxItkSmoothingRecursiveGaussianImageFilterComponent_h
 
 #include "selxSuperElastixComponent.h"
-#include "selxInterfaces.h"
+
+#include "selxItkRegistrationMethodv4Interfaces.h"
+#include "selxSinksAndSourcesInterfaces.h"
+#include "selxItkObjectInterfaces.h"
+
 #include "itkSmoothingRecursiveGaussianImageFilter.h"
 #include "itkImageSource.h"
-#include <string.h>
-#include "selxMacro.h"
+
 namespace selx
 {
 template< int Dimensionality, class TPixel >
 class ItkSmoothingRecursiveGaussianImageFilterComponent :
   public SuperElastixComponent<
-  Accepting< itkImageInterface< Dimensionality, TPixel > >,
-  Providing< itkImageInterface< Dimensionality, TPixel > >
+  Accepting< itkImageInterface< Dimensionality, TPixel >>,
+  Providing< itkImageInterface< Dimensionality, TPixel >>
   >
 {
 public:
 
-  selxNewMacro( ItkSmoothingRecursiveGaussianImageFilterComponent, ComponentBase );
+  /** Standard typedefs. */
+  typedef ItkSmoothingRecursiveGaussianImageFilterComponent<
+    Dimensionality, TPixel
+    >                                      Self;
+  typedef SuperElastixComponent<
+    Accepting< itkImageInterface< Dimensionality, TPixel >>,
+    Providing< itkImageInterface< Dimensionality, TPixel >>
+    >                                      Superclass;
+  typedef std::shared_ptr< Self >       Pointer;
+  typedef std::shared_ptr< const Self > ConstPointer;
 
-  // itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
-
-  ItkSmoothingRecursiveGaussianImageFilterComponent();
+  ItkSmoothingRecursiveGaussianImageFilterComponent( const std::string & name, LoggerImpl & logger );
   virtual ~ItkSmoothingRecursiveGaussianImageFilterComponent();
 
   typedef TPixel PixelType;
   typedef itk::SmoothingRecursiveGaussianImageFilter< itk::Image< PixelType, Dimensionality >,
-    itk::Image< PixelType, Dimensionality > > TheItkFilterType;
+    itk::Image< PixelType, Dimensionality >> TheItkFilterType;
   typedef itk::Image< PixelType, Dimensionality > ItkImageType;
   typedef typename ItkImageType::Pointer
     ItkImagePointer;
 
-  virtual int Set( itkImageInterface< Dimensionality, TPixel > * ) override;
+  virtual int Accept( typename itkImageInterface< Dimensionality, TPixel >::Pointer ) override;
 
   virtual ItkImagePointer GetItkImage() override;
 
@@ -69,10 +79,9 @@ protected:
   // return the class name and the template arguments to uniquely identify this component.
   static inline const std::map< std::string, std::string > TemplateProperties()
   {
-    return{ { keys::NameOfClass, "ItkSmoothingRecursiveGaussianImageFilterComponent" }, { keys::PixelType, PodString< TPixel >::Get() }, { keys::Dimensionality, std::to_string(Dimensionality) } };
+    return { { keys::NameOfClass, "ItkSmoothingRecursiveGaussianImageFilterComponent" }, { keys::PixelType, PodString< TPixel >::Get() }, { keys::Dimensionality, std::to_string( Dimensionality ) } };
   }
 };
-
 } //end namespace selx
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "selxItkSmoothingRecursiveGaussianImageFilterComponent.hxx"

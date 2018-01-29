@@ -26,8 +26,10 @@
 
 namespace selx
 {
-template< int Dimensionality, class TPixel >
-ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel >::ItkSyNImageRegistrationMethodComponent()
+template< int Dimensionality, class TPixel , class InternalComputationValueType >
+ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputationValueType >
+  ::ItkSyNImageRegistrationMethodComponent( const std::string & name, LoggerImpl & logger ) 
+  : Superclass( name, logger )
 {
   m_theItkFilter = TheItkFilterType::New();
   m_theItkFilter->InPlaceOn();
@@ -37,16 +39,16 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel >::ItkSyNImageReg
 }
 
 
-template< int Dimensionality, class TPixel >
-ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel >::~ItkSyNImageRegistrationMethodComponent()
+template< int Dimensionality, class TPixel, class InternalComputationValueType >
+ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputationValueType >::~ItkSyNImageRegistrationMethodComponent()
 {
 }
 
 
-template< int Dimensionality, class TPixel >
+template< int Dimensionality, class TPixel, class InternalComputationValueType >
 int
-ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel >
-::Set( itkImageFixedInterface< Dimensionality, TPixel > * component )
+ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputationValueType >
+::Accept( typename itkImageFixedInterface< Dimensionality, TPixel >::Pointer component )
 {
   auto fixedImage = component->GetItkImageFixed();
   // connect the itk pipeline
@@ -56,10 +58,10 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel >
 }
 
 
-template< int Dimensionality, class TPixel >
+template< int Dimensionality, class TPixel, class InternalComputationValueType >
 int
-ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel >
-::Set( itkImageMovingInterface< Dimensionality, TPixel > * component )
+ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputationValueType >
+::Accept( typename itkImageMovingInterface< Dimensionality, TPixel >::Pointer component )
 {
   auto movingImage = component->GetItkImageMoving();
   // connect the itk pipeline
@@ -68,9 +70,10 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel >
 }
 
 
-template< int Dimensionality, class TPixel >
+template< int Dimensionality, class TPixel, class InternalComputationValueType >
 int
-ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel >::Set( itkMetricv4Interface< Dimensionality, TPixel, double > * component )
+ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputationValueType >
+::Accept( typename itkMetricv4Interface< Dimensionality, TPixel, InternalComputationValueType >::Pointer component )
 {
   this->m_theItkFilter->SetMetric( component->GetItkMetricv4() );
 
@@ -78,9 +81,9 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel >::Set( itkMetric
 }
 
 
-template< int Dimensionality, class TPixel >
+template< int Dimensionality, class TPixel, class InternalComputationValueType >
 void
-ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel >::RunRegistration( void )
+ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputationValueType >::Update( void )
 {
   typename FixedImageType::ConstPointer fixedImage   = this->m_theItkFilter->GetFixedImage();
   typename MovingImageType::ConstPointer movingImage = this->m_theItkFilter->GetMovingImage();
@@ -93,7 +96,7 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel >::RunRegistratio
   auto optimizer = dynamic_cast< itk::GradientDescentOptimizerv4 * >( this->m_theItkFilter->GetModifiableOptimizer() );
   //auto optimizer = dynamic_cast<itk::ObjectToObjectOptimizerBaseTemplate< InternalComputationValueType > *>(this->m_theItkFilter->GetModifiableOptimizer());
 
-  typedef itk::Vector< TransformInternalComputationValueType, Dimensionality > VectorType;
+  typedef itk::Vector< InternalComputationValueType, Dimensionality > VectorType;
   VectorType zeroVector( 0.0 );
 
   typedef itk::Image< VectorType, Dimensionality > DisplacementFieldType;
@@ -125,10 +128,9 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel >::RunRegistratio
   }
   else
   {
-    itkExceptionMacro( "Error casting to ImageMetricv4Type failed" );
+    throw std::runtime_error( "Error casting to ImageMetricv4Type failed" );
   }
 
-  //std::cout << "estimated step scale: " << scalesEstimator->EstimateStepScale(1.0);
   scalesEstimator->SetTransformForward( true );
   scalesEstimator->SetSmallParameterVariation( 1.0 );
 
@@ -207,32 +209,32 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel >::RunRegistratio
 }
 
 
-template< int Dimensionality, class TPixel >
-typename ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel >::TransformPointer
-ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel >
+template< int Dimensionality, class TPixel, class InternalComputationValueType >
+typename ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputationValueType >::TransformPointer
+ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputationValueType >
 ::GetItkTransform()
 {
   return this->m_theItkFilter->GetModifiableTransform();
 }
 
 
-template< int Dimensionality, class TPixel >
+template< int Dimensionality, class TPixel, class InternalComputationValueType >
 bool
-ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel >
+ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputationValueType >
 ::MeetsCriterion( const ComponentBase::CriterionType & criterion )
 {
-  bool hasUndefinedCriteria(false);
-  bool meetsCriteria(false);
+  bool hasUndefinedCriteria( false );
+  bool meetsCriteria( false );
 
-  auto status = CheckTemplateProperties(this->TemplateProperties(), criterion);
-  if (status == CriterionStatus::Satisfied)
+  auto status = CheckTemplateProperties( this->TemplateProperties(), criterion );
+  if( status == CriterionStatus::Satisfied )
   {
     return true;
   }
-  else if (status == CriterionStatus::Failed)
+  else if( status == CriterionStatus::Failed )
   {
     return false;
-  } 
+  }
   return meetsCriteria;
 }
 } //end namespace selx

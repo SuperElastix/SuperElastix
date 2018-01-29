@@ -22,6 +22,8 @@
 
 #include "selxExample3rdPartyCode.h"
 #include "selxInterfaces.h"
+#include "selxInterfaceTraits.h"
+#include "selxExamplesInterfaces.h"
 namespace selx
 {
 // An Optimizer3rdParty expects that Metric3rdParty will be set as input. All accepted interfaces by the Optimizer3rdPartyCompoment will be delegated to the Metric3rdPartyWrapper object.
@@ -29,9 +31,9 @@ class Metric3rdPartyWrapper : public Example3rdParty::Metric3rdPartyBase
 {
 public:
 
-  void SetMetricValueComponent( MetricValueInterface * );
+  void SetMetricValueComponent( MetricValueInterface::Pointer );
 
-  void SetMetricDerivativeComponent( MetricDerivativeInterface * );
+  void SetMetricDerivativeComponent( MetricDerivativeInterface::Pointer );
 
   virtual int GetValue();
 
@@ -39,8 +41,8 @@ public:
 
 private:
 
-  MetricValueInterface *      metricval;
-  MetricDerivativeInterface * metricderiv;
+  MetricValueInterface::Pointer      metricval;
+  MetricDerivativeInterface::Pointer metricderiv;
 };
 } // end namespace selx
 #endif // #define Metric3rdPartyWrapper_h

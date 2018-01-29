@@ -17,16 +17,14 @@
  *
  *=========================================================================*/
 
-#include "selxSuperElastixFilter.h"
+#include "selxSuperElastixFilterCustomComponents.h"
 
 #include "selxItkSmoothingRecursiveGaussianImageFilterComponent.h"
-#include "selxItkImageSink.h"
-#include "selxItkImageSource.h"
+#include "selxItkImageSinkComponent.h"
+#include "selxItkImageSourceComponent.h"
 
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
-
-#include "selxDefaultComponents.h"
 
 #include "selxDataManager.h"
 #include "gtest/gtest.h"
@@ -38,7 +36,7 @@
  - All the nodes are identified by their Class names
  - All Connections are identified by their Interface names
 
- The overlord finds the Source and Sink Components and connects these to it's external pipeline (internal reader and writer filters, currently).
+ The NetworkBuilder finds the Source and Sink Components and connects these to it's external pipeline (internal reader and writer filters, currently).
 */
 
 namespace selx
@@ -46,15 +44,20 @@ namespace selx
 class itkImageFilterTest : public ::testing::Test
 {
 public:
-  using BlueprintITKType = itk::SharedPointerDataObjectDecorator< Blueprint >;
-  typedef BlueprintITKType::Pointer                                 BlueprintITKPointer;
 
-  typedef std::shared_ptr< Blueprint >        BlueprintPointer;
-  typedef Blueprint::ParameterMapType         ParameterMapType;
-  typedef Blueprint::ParameterValueType       ParameterValueType;
-  typedef DataManager                         DataManagerType;
+  typedef Blueprint::Pointer  BlueprintPointer;
+  typedef BlueprintImpl::ParameterMapType   ParameterMapType;
+  typedef BlueprintImpl::ParameterValueType ParameterValueType;
+  typedef DataManager                   DataManagerType;
 
-  typedef SuperElastixFilter< TypeList< > >   SuperElastixFilterType;
+  /** list the required components for the test */
+  typedef TypeList< ItkSmoothingRecursiveGaussianImageFilterComponent< 3, double >,     // For testing the itkfilter pipeline
+    ItkImageSinkComponent< 3, double >,
+    ItkImageSourceComponent< 3, double >,
+    ItkSmoothingRecursiveGaussianImageFilterComponent< 2, double >,                  // For testing templated components
+    ItkSmoothingRecursiveGaussianImageFilterComponent< 3, float >,
+    ItkSmoothingRecursiveGaussianImageFilterComponent< 2, float >
+    > RegisterComponents;
 
   typedef itk::Image< double, 3 >             Image3DType;
   typedef itk::ImageFileReader< Image3DType > ImageReader3DType;
@@ -62,18 +65,15 @@ public:
 
   virtual void SetUp()
   {
-    /** register all components used for this test */
-    // For testing the itkfilter pipeline
-    ComponentFactory< ItkSmoothingRecursiveGaussianImageFilterComponent< 3, double >>::RegisterOneFactory();
-    ComponentFactory< ItkImageSinkComponent< 3, double >>::RegisterOneFactory();
-    ComponentFactory< ItkImageSourceComponent< 3, double >>::RegisterOneFactory();
-    // For testing templated components
-    ComponentFactory< ItkSmoothingRecursiveGaussianImageFilterComponent< 2, double >>::RegisterOneFactory();
-    ComponentFactory< ItkSmoothingRecursiveGaussianImageFilterComponent< 3, float >>::RegisterOneFactory();
-    ComponentFactory< ItkSmoothingRecursiveGaussianImageFilterComponent< 2, float >>::RegisterOneFactory();
+    // Instantiate SuperElastixFilter before each test and
+    // register the components we want to have available in SuperElastix
+
+    superElastixFilter = SuperElastixFilterCustomComponents< RegisterComponents >::New();
+
+    dataManager = DataManagerType::New();
 
     /** make example blueprint configuration */
-    BlueprintPointer blueprint = BlueprintPointer( new Blueprint() );
+    blueprint = Blueprint::New();
 
     /** the 2 itkImageFilter Components are ItkSmoothingRecursiveGaussianImageFilterComponent*/
     ParameterMapType componentParameters;
@@ -109,30 +109,26 @@ public:
     /** Connect Sink and Source to the itkImageFilter Components*/
     blueprint->SetConnection( "Source", "FistStageFilter", connectionParameters ); //
     blueprint->SetConnection( "SecondStageFilter", "Sink", connectionParameters );
-
-    ITKBlueprint = BlueprintITKType::New();
-    ITKBlueprint->Set( blueprint );
   }
 
 
   virtual void TearDown()
   {
+    // Unregister all components after each test
     itk::ObjectFactoryBase::UnRegisterAllFactories();
+    // Delete the SuperElastixFilter after each test
+    superElastixFilter = nullptr;
   }
 
-
-  BlueprintITKPointer ITKBlueprint;
+  // Blueprint holds a configuration for SuperElastix
+  BlueprintPointer blueprint;
+  SuperElastixFilterBase::Pointer superElastixFilter;
+  // Data manager provides the paths to the input and output data for unit tests
+  DataManagerType::Pointer dataManager;
 };
 
 TEST_F( itkImageFilterTest, Run )
 {
-  // Instantiate SuperElastix
-  SuperElastixFilterType::Pointer superElastixFilter;
-  EXPECT_NO_THROW( superElastixFilter = SuperElastixFilterType::New() );
-
-  // Data manager provides the paths to the input and output data for unit tests
-  DataManagerType::Pointer dataManager = DataManagerType::New();
-
   // Set up the readers and writers
   ImageReader3DType::Pointer inputImageReader = ImageReader3DType::New();
   inputImageReader->SetFileName( dataManager->GetInputFile( "sphereA3d.mhd" ) );
@@ -144,7 +140,7 @@ TEST_F( itkImageFilterTest, Run )
   superElastixFilter->SetInput( "Source", inputImageReader->GetOutput() );
   resultImageWriter->SetInput( superElastixFilter->GetOutput< Image3DType >( "Sink" ) );
 
-  EXPECT_NO_THROW( superElastixFilter->SetBlueprint( ITKBlueprint ) );
+  EXPECT_NO_THROW( superElastixFilter->SetBlueprint( blueprint ) );
 
   //Optional Update call
   //superElastixFilter->Update();

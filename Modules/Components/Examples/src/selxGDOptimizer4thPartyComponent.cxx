@@ -21,7 +21,7 @@
 
 namespace selx
 {
-GDOptimizer4thPartyComponent::GDOptimizer4thPartyComponent()
+GDOptimizer4thPartyComponent::GDOptimizer4thPartyComponent( const std::string & name, LoggerImpl & logger ) : Superclass( name, logger )
 {
   this->theImplementation = new Example4thParty::GDOptimizer4thParty();
   this->MetricObject      = new Metric4thPartyWrapper();
@@ -36,7 +36,7 @@ GDOptimizer4thPartyComponent::~GDOptimizer4thPartyComponent()
 
 
 int
-GDOptimizer4thPartyComponent::Set( MetricValueInterface * component )
+GDOptimizer4thPartyComponent::Accept( MetricValueInterface::Pointer component )
 {
   this->MetricObject->SetMetricValueComponent( component );
   return 0;
@@ -68,12 +68,12 @@ GDOptimizer4thPartyComponent
       }
     }
   }
-  else if (criterion.first == "ComponentProperty")
+  else if( criterion.first == "ComponentProperty" )
   {
     meetsCriteria = true;
-    for (auto const & criterionValue : criterion.second) // auto&& preferred?
+    for( auto const & criterionValue : criterion.second ) // auto&& preferred?
     {
-      if (criterionValue != "SomeProperty")  // e.g. "GradientDescent", "SupportsSparseSamples
+      if( criterionValue != "SomeProperty" )  // e.g. "GradientDescent", "SupportsSparseSamples
       {
         meetsCriteria = false;
       }

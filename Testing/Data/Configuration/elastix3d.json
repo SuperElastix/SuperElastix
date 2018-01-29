@@ -1,0 +1,66 @@
+{
+    "Component": {
+        "Name": "RegistrationMethod",
+        "NameOfClass": "MonolithicElastixComponent",
+        "Dimensionality": "3",
+        "Transform": "BSplineTransform",
+        "Metric": "AdvancedMeanSquares",
+        "PixelType": "float",
+        "ResultImagePixelType": "float"
+    },
+    "Component": {
+        "Name": "FixedImage",
+        "NameOfClass": "ItkImageSourceComponent"
+    },
+    "Component": {
+        "Name": "MovingImage",
+        "NameOfClass": "ItkImageSourceComponent"
+    },
+    "Component": {
+        "Name": "ResultImage",
+        "NameOfClass": "ItkImageSinkComponent"
+    },
+    "Component": {
+        "Name": "ResultDisplacementField",
+        "NameOfClass": "DisplacementFieldItkImageFilterSinkComponent",
+        "PixelType": "float",
+        "Dimensionality": "3"
+    },
+    "Component": {
+        "Name": "TransformDisplacementField",
+        "NameOfClass": "MonolithicTransformixComponent"
+    },
+    "Connection": {
+        "Out": "FixedImage",
+        "In": "RegistrationMethod",
+        "NameOfInterface": "itkImageFixedInterface"
+    },
+    "Connection": {
+        "Out": "MovingImage",
+        "In": "RegistrationMethod",
+        "NameOfInterface": "itkImageMovingInterface"
+    },
+    "Connection": {
+        "Out": "FixedImage",
+        "In": "TransformDisplacementField",
+        "NameOfInterface": "itkImageDomainFixedInterface"
+    },
+    "Connection": {
+        "Out": "MovingImage",
+        "In": "TransformDisplacementField",
+        "NameOfInterface": "itkImageMovingInterface"
+    },
+    "Connection": {
+        "Out": "RegistrationMethod",
+        "In": "TransformDisplacementField",
+        "NameOfInterface": "elastixTransformParameterObjectInterface"
+    },
+    "Connection": {
+        "Out": "TransformDisplacementField",
+        "In": "ResultImage"
+    },
+    "Connection": {
+        "Out": "TransformDisplacementField",
+        "In": "ResultDisplacementField"
+    }
+}

@@ -21,8 +21,8 @@
 #define itkTransformComponent1_h
 
 #include "selxSuperElastixComponent.h"
-#include "selxInterfaces.h"
-#include "selxMacro.h"
+
+#include "selxExamplesInterfaces.h"
 
 namespace selx
 {
@@ -35,17 +35,13 @@ class TransformComponent1 :
 public:
 
   /** Standard class typedefs. */
-  typedef TransformComponent1             Self;
-  typedef ComponentBase                   Superclass;
-  typedef itk::SmartPointer< Self >       Pointer;
-  typedef itk::SmartPointer< const Self > ConstPointer;
+  typedef TransformComponent1           Self;
+  typedef ComponentBase                 Superclass;
+  typedef std::shared_ptr< Self >       Pointer;
+  typedef std::shared_ptr< const Self > ConstPointer;
 
-  /** New macro for creation of through the object factory. */
-  //selxNewMacro(Self, ComponentBase);
-  itkNewMacro( Self );
-
-  /** Run-time type information (and related methods). */
-  itkTypeMacro( TransformComponent1, ComponentBase );
+  TransformComponent1( const std::string & name, LoggerImpl & logger ) : SuperElastixComponent( name, logger ){}
+  virtual ~TransformComponent1(){}
 
   typedef Superclass::CriteriaType  CriteriaType;
   typedef Superclass::CriterionType CriterionType;
@@ -58,10 +54,6 @@ public:
 protected:
 
   TransformComponent1();
-  virtual ~TransformComponent1()
-  {
-  }
-
 
 private:
 

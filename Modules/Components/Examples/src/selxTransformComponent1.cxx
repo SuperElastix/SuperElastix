@@ -16,18 +16,11 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef TransformComponent1_hxx
-#define TransformComponent1_hxx
 
 #include "selxTransformComponent1.h"
 
 namespace selx
 {
-TransformComponent1::TransformComponent1()
-{
-}
-
-
 bool
 TransformComponent1::MeetsCriterion( const CriterionType & criterion )
 {
@@ -45,12 +38,12 @@ TransformComponent1::MeetsCriterion( const CriterionType & criterion )
       }
     }
   }
-  if (criterion.first == "ComponentProperty")
+  if( criterion.first == "ComponentProperty" )
   {
     meetsCriteria = true;
-    for (auto const & criterionValue : criterion.second) // auto&& preferred?
+    for( auto const & criterionValue : criterion.second ) // auto&& preferred?
     {
-      if (criterionValue != "SomeProperty")  // e.g. "GradientDescent", "SupportsSparseSamples
+      if( criterionValue != "SomeProperty" )  // e.g. "GradientDescent", "SupportsSparseSamples
       {
         meetsCriteria = false;
         return false;
@@ -84,5 +77,3 @@ TransformComponent1::MeetsCriterion( const CriterionType & criterion )
   return meetsCriteria;
 }
 } // end namespace selx
-
-#endif

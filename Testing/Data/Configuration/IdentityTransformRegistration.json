@@ -1,0 +1,34 @@
+{
+    "Component": {
+        "Name": "RegistrationMethod",
+        "NameOfClass": "IdentityTransformRegistrationComponent"
+    },
+    "Component": {
+        "Name": "FixedImage",
+        "NameOfClass": "ItkImageSourceComponent",
+        "Dimensionality": "2",
+        "PixelType": "float"
+    },
+    "Component": {
+        "Name": "MovingImage",
+        "NameOfClass": "ItkImageSourceComponent"
+    },
+    "Component": {
+        "Name": "DisplacementField",
+        "NameOfClass": "DisplacementFieldItkImageFilterSinkComponent"
+    },
+    "Connection": {
+        "Out": "FixedImage",
+        "In": "RegistrationMethod",
+        "Role": "Fixed"
+    },
+    "Connection": {
+        "Out": "MovingImage",
+        "In": "RegistrationMethod",
+        "Role": "Moving"
+    },
+    "Connection": {
+        "Out": "RegistrationMethod",
+        "In": "DisplacementField"
+    }
+}

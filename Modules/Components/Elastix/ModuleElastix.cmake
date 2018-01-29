@@ -17,58 +17,41 @@
 #
 #=========================================================================
 
-set( MODULE ModuleElastix )
-
 # If OpenMP is supported by this machine, elastix will be compiled with
 # OpenMP flags, and we need to add them here as well
-find_package( OpenMP )
+find_package( OpenMP QUIET )
 if (OPENMP_FOUND)
   set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}" )
   set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}" )
 endif()
 
-# Find UseElastix.cmake 
-if( NOT EXISTS ${ELASTIX_USE_FILE} )
-  set( ELASTIX_USE_FILE ${ELASTIX_DIR}/UseElastix.cmake )
-endif()
-
-if( NOT EXISTS ${ELASTIX_USE_FILE} )
-  set( ELASTIX_DIR "" CACHE PATH "Path to elastix build folder" )
-  message(FATAL_ERROR "Could not find UseElastix.cmake. Point ELASTIX_DIR to folder containing UseElastix.cmake or use SuperBuild.")
-endif()
-
-# Export include files
+find_package( Elastix REQUIRED )
 include( ${ELASTIX_USE_FILE} )
 
-# Export include files
 set( ${MODULE}_INCLUDE_DIRS
   ${${MODULE}_SOURCE_DIR}/include
+  ${${MODULE}_SOURCE_DIR}/interfaces
 )
 
-# Collect header files for Visual Studio Project
-file(GLOB ${MODULE}_HEADER_FILES "${${MODULE}_SOURCE_DIR}/include/*.*")
+set( ${MODULE}_SOURCE_FILES
+)
 
-# Export libraries
+set( ${MODULE}_TEST_SOURCE_FILES 
+  ${${MODULE}_SOURCE_DIR}/test/selxElastixComponentTest.cxx
+)
+
 set( ${MODULE}_LIBRARIES 
-  ${MODULE}
   elastix
   transformix
 )
 
-# Export tests
-set( ${MODULE}_TESTS 
-  ${${MODULE}_SOURCE_DIR}/test/selxElastixComponentTest.cxx
+set( ${MODULE}_LIBRARY_DIRS 
+  ${ELASTIX_LINK_DIRECTORIES}
 )
 
-# Module source files
-set( ${MODULE}_SOURCE_FILES
-  ${${MODULE}_SOURCE_DIR}/src/selxElastixComponent.cxx 
-  ${${MODULE}_SOURCE_DIR}/src/selxMonolithicElastix.cxx 
-  ${${MODULE}_SOURCE_DIR}/src/selxMonolithicTransformix.cxx 
-  )
-
-# Compile library
-
-add_library( ${MODULE} STATIC ${${MODULE}_SOURCE_FILES} ${${MODULE}_HEADER_FILES})
-
-target_link_libraries( ${MODULE} ${ELASTIX_LIBRARIES} )
+# https://public.kitware.com/Bug/view.php?id=14311
+# add_library( elastix STATIC IMPORTED )
+# set_property( TARGET elastix PROPERTY IMPORTED_LOCATION ${ELASTIX_DIR}/src/bin/elastix.a )
+#
+# add_library( transformix STATIC IMPORTED )
+# set_property( TARGET transformix PROPERTY IMPORTED_LOCATION ${ELASTIX_DIR}/src/bin/transformix.a )

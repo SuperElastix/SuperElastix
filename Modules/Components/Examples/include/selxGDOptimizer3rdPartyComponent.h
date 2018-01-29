@@ -21,7 +21,7 @@
 #define GDOptimizer3rdPartyComponent_h
 
 #include "selxSuperElastixComponent.h"
-#include "selxInterfaces.h"
+#include "selxExamplesInterfaces.h"
 #include "selxExample3rdPartyCode.h"
 #include "selxMetric3rdPartyWrapper.h"
 #include <string.h>
@@ -37,25 +37,20 @@ class GDOptimizer3rdPartyComponent :
 public:
 
   /** Standard class typedefs. */
-  typedef GDOptimizer3rdPartyComponent    Self;
-  typedef ComponentBase                   Superclass;
-  typedef itk::SmartPointer< Self >       Pointer;
-  typedef itk::SmartPointer< const Self > ConstPointer;
+  typedef GDOptimizer3rdPartyComponent Self;
 
-  /** New macro for creation of through the object factory. */
-  itkNewMacro( Self );
+  typedef SuperElastixComponent< Accepting< MetricValueInterface, MetricDerivativeInterface >, Providing< OptimizerUpdateInterface   >> Superclass;
+  typedef std::shared_ptr< Self >                                                                                                       Pointer;
+  typedef std::shared_ptr< const Self >                                                                                                 ConstPointer;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro( GDOptimizer3rdPartyComponent, Superclass );
-
-  GDOptimizer3rdPartyComponent();
+  GDOptimizer3rdPartyComponent( const std::string & name, LoggerImpl & logger );
   virtual ~GDOptimizer3rdPartyComponent();
   Example3rdParty::GDOptimizer3rdParty * theImplementation;
   Metric3rdPartyWrapper *                MetricObject;
-  //virtual int ConnectFrom(const char *, ComponentBase*);
-  virtual int Set( MetricValueInterface * ) override;
 
-  virtual int Set( MetricDerivativeInterface * ) override;
+  virtual int Accept( MetricValueInterface::Pointer ) override;
+
+  virtual int Accept( MetricDerivativeInterface::Pointer ) override;
 
   virtual int Update() override;
 

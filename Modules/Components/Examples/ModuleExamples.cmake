@@ -17,22 +17,11 @@
 #
 #=========================================================================
 
-set( MODULE ModuleExamples )
-
-# Export include files
 set( ${MODULE}_INCLUDE_DIRS
   ${${MODULE}_SOURCE_DIR}/include
+  ${${MODULE}_SOURCE_DIR}/interfaces
 )
 
-# Collect header files for Visual Studio Project
-file(GLOB ${MODULE}_HEADER_FILES "${${MODULE}_SOURCE_DIR}/include/*.*")
-
-# Export libraries
-set( ${MODULE}_LIBRARIES 
-  ${MODULE}
-)
-
-# Module source files
 set( ${MODULE}_SOURCE_FILES
   ${${MODULE}_SOURCE_DIR}/src/selxExample3rdPartyCode.cxx
   ${${MODULE}_SOURCE_DIR}/src/selxExample4thPartyCode.cxx
@@ -46,8 +35,10 @@ set( ${MODULE}_SOURCE_FILES
   ${${MODULE}_SOURCE_DIR}/src/selxMetricComponent1.cxx
 )
 
-# Compile library
+set( ${MODULE}_LIBRARIES 
+  ${MODULE}
+)
 
-add_library( ${MODULE} STATIC "${${MODULE}_SOURCE_FILES}" ${${MODULE}_HEADER_FILES})
-
-target_link_libraries( ${MODULE} ${SUPERELASTIX_LIBRARIES} )
+set( ${MODULE}_MODULE_DEPENDENCIES 
+  ModuleCore
+)

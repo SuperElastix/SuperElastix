@@ -21,7 +21,7 @@
 
 namespace selx
 {
-GDOptimizer3rdPartyComponent::GDOptimizer3rdPartyComponent()
+GDOptimizer3rdPartyComponent::GDOptimizer3rdPartyComponent( const std::string & name, LoggerImpl & logger ) : Superclass( name, logger )
 {
   this->theImplementation = new Example3rdParty::GDOptimizer3rdParty();
   this->MetricObject      = new Metric3rdPartyWrapper();
@@ -36,7 +36,7 @@ GDOptimizer3rdPartyComponent::~GDOptimizer3rdPartyComponent()
 
 
 int
-GDOptimizer3rdPartyComponent::Set( MetricValueInterface * component )
+GDOptimizer3rdPartyComponent::Accept( MetricValueInterface::Pointer component )
 {
   this->MetricObject->SetMetricValueComponent( component );
   return 0;
@@ -44,7 +44,7 @@ GDOptimizer3rdPartyComponent::Set( MetricValueInterface * component )
 
 
 int
-GDOptimizer3rdPartyComponent::Set( MetricDerivativeInterface * component )
+GDOptimizer3rdPartyComponent::Accept( MetricDerivativeInterface::Pointer component )
 {
   this->MetricObject->SetMetricDerivativeComponent( component );
   return 0;
@@ -76,12 +76,12 @@ GDOptimizer3rdPartyComponent
       }
     }
   }
-  else if (criterion.first == "ComponentProperty")
+  else if( criterion.first == "ComponentProperty" )
   {
     meetsCriteria = true;
-    for (auto const & criterionValue : criterion.second) // auto&& preferred?
+    for( auto const & criterionValue : criterion.second ) // auto&& preferred?
     {
-      if (criterionValue != "SomeProperty")  // e.g. "GradientDescent", "SupportsSparseSamples
+      if( criterionValue != "SomeProperty" )  // e.g. "GradientDescent", "SupportsSparseSamples
       {
         meetsCriteria = false;
       }

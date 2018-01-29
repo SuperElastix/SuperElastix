@@ -21,14 +21,15 @@
 #define selxItkImageRegistrationMethodv4Component_h
 
 #include "selxSuperElastixComponent.h"
-#include "selxInterfaces.h"
+
+#include "selxItkRegistrationMethodv4Interfaces.h"
+#include "selxSinksAndSourcesInterfaces.h"
+#include "selxItkObjectInterfaces.h"
+
 #include "itkImageRegistrationMethodv4.h"
 #include "itkGradientDescentOptimizerv4.h"
 #include "itkImageSource.h"
-#include <itkTransformToDisplacementFieldFilter.h>
-#include <string.h>
-#include "selxMacro.h"
-
+#include "itkTransformToDisplacementFieldFilter.h"
 #include "itkComposeDisplacementFieldsImageFilter.h"
 
 namespace selx
@@ -36,7 +37,8 @@ namespace selx
 template< int Dimensionality, class PixelType, class InternalComputationValueType >
 class ItkImageRegistrationMethodv4Component :
   public SuperElastixComponent<
-  Accepting< itkImageFixedInterface< Dimensionality, PixelType >,
+  Accepting<
+  itkImageFixedInterface< Dimensionality, PixelType >,
   itkImageMovingInterface< Dimensionality, PixelType >,
   itkTransformInterface< InternalComputationValueType, Dimensionality >,
   itkTransformParametersAdaptorsContainerInterface< InternalComputationValueType, Dimensionality >,
@@ -45,17 +47,34 @@ class ItkImageRegistrationMethodv4Component :
   >,
   Providing< itkTransformInterface< InternalComputationValueType, Dimensionality >,
   MultiStageTransformInterface< InternalComputationValueType, Dimensionality >,
-  RunRegistrationInterface
+  UpdateInterface
   >
   >
 {
 public:
 
-  selxNewMacro( ItkImageRegistrationMethodv4Component, ComponentBase );
+  /** Standard ITK typedefs. */
+  typedef ItkImageRegistrationMethodv4Component<
+    Dimensionality, PixelType, InternalComputationValueType
+    >                                     Self;
+  typedef SuperElastixComponent<
+    Accepting<
+    itkImageFixedInterface< Dimensionality, PixelType >,
+    itkImageMovingInterface< Dimensionality, PixelType >,
+    itkTransformInterface< InternalComputationValueType, Dimensionality >,
+    itkTransformParametersAdaptorsContainerInterface< InternalComputationValueType, Dimensionality >,
+    itkMetricv4Interface< Dimensionality, PixelType, InternalComputationValueType >,
+    itkOptimizerv4Interface< InternalComputationValueType >
+    >,
+    Providing< itkTransformInterface< InternalComputationValueType, Dimensionality >,
+    MultiStageTransformInterface< InternalComputationValueType, Dimensionality >,
+    UpdateInterface
+    >
+    >                                     Superclass;
+  typedef std::shared_ptr< Self >       Pointer;
+  typedef std::shared_ptr< const Self > ConstPointer;
 
-  //itkStaticConstMacro(Dimensionality, unsigned int, Dimensionality);
-
-  ItkImageRegistrationMethodv4Component();
+  ItkImageRegistrationMethodv4Component( const std::string & name, LoggerImpl & logger );
   virtual ~ItkImageRegistrationMethodv4Component();
 
   // Get the type definitions from the interfaces
@@ -74,30 +93,33 @@ public:
   typedef itk::RegistrationParameterScalesFromPhysicalShift< ImageMetricType >             ScalesEstimatorType;
 
   //Accepting Interfaces:
-  virtual int Set( itkImageFixedInterface< Dimensionality, PixelType > * ) override;
+  virtual int Accept( typename itkImageFixedInterface< Dimensionality, PixelType >::Pointer ) override;
 
-  virtual int Set( itkImageMovingInterface< Dimensionality, PixelType > * ) override;
+  virtual int Accept( typename itkImageMovingInterface< Dimensionality, PixelType >::Pointer ) override;
 
-  virtual int Set( itkTransformInterface< InternalComputationValueType, Dimensionality > * ) override;
+  virtual int Accept( typename itkTransformInterface< InternalComputationValueType, Dimensionality >::Pointer ) override;
 
-  virtual int Set( TransformParametersAdaptorsContainerInterfaceType * ) override;
+  virtual int Accept( typename TransformParametersAdaptorsContainerInterfaceType::Pointer ) override;
 
-  virtual int Set( itkMetricv4Interface< Dimensionality, PixelType, InternalComputationValueType > * ) override;
+  virtual int Accept( typename itkMetricv4Interface< Dimensionality, PixelType, InternalComputationValueType >::Pointer ) override;
 
-  virtual int Set( itkOptimizerv4Interface< InternalComputationValueType > * ) override;
+  virtual int Accept( typename itkOptimizerv4Interface< InternalComputationValueType >::Pointer ) override;
 
   //Providing Interfaces:
   virtual TransformPointer GetItkTransform() override;
 
-  virtual void RunRegistration() override;
+  virtual void Update() override;
 
-  virtual void SetFixedInitialTransform(typename CompositeTransformType::Pointer fixedInitialTransform) override;
-  virtual void SetMovingInitialTransform(typename CompositeTransformType::Pointer movingInitialTransform) override;
+  virtual void SetFixedInitialTransform( typename CompositeTransformType::Pointer fixedInitialTransform ) override;
+
+  virtual void SetMovingInitialTransform( typename CompositeTransformType::Pointer movingInitialTransform ) override;
 
   virtual const typename std::string GetComponentName() override;
 
   //BaseClass methods
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
+
+  virtual bool ConnectionsSatisfied() override;
 
   //static const char * GetName() { return "ItkImageRegistrationMethodv4"; } ;
   static const char * GetDescription() { return "ItkImageRegistrationMethodv4 Component"; }
@@ -108,8 +130,8 @@ private:
 
   // The settings SmoothingSigmas and ShrinkFactors imply NumberOfLevels, if the user
   // provides inconsistent numbers we should detect that and report about it.
-  std::string                                         m_NumberOfLevelsLastSetBy;
-  TransformParametersAdaptorsContainerInterfaceType * m_TransformAdaptorsContainerInterface;
+  std::string m_NumberOfLevelsLastSetBy;
+  typename TransformParametersAdaptorsContainerInterfaceType::Pointer m_TransformAdaptorsContainerInterface;
 
 protected:
 

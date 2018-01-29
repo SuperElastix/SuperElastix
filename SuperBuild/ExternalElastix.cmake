@@ -19,8 +19,10 @@
 
 set( proj Elastix )
 
-set( ELASTIX_GIT_REPOSITORY http://github.com/kaspermarstal/elastix )
-set( ELASTIX_GIT_TAG fa451dd33ac72dbded40dbf408db2c4e958469ac )
+set( ELASTIX_GIT_REPOSITORY https://github.com/SuperElastix/elastix )
+set( ELASTIX_GIT_TAG e8354222396c6bd78e9fe6d5a39e4ecac4bb0d52 )
+
+UPDATE_SELX_SUPERBUILD_COMMAND(${proj})
 
 ExternalProject_Add( ${proj} 
   GIT_REPOSITORY ${ELASTIX_GIT_REPOSITORY}
@@ -31,13 +33,14 @@ ExternalProject_Add( ${proj}
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS
   --no-warn-unused-cli
-  -DELASTIX_BUILD_TESTING:BOOL=OFF
+  -DBUILD_TESTING:BOOL=OFF
   -DELASTIX_BUILD_EXECUTABLE:BOOL=OFF
-  -DELASTIX_BUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
+  -DELASTIX_USE_OPENMP:BOOL=${SUPERELASTIX_USE_OPENMP}
+  -DBUILD_SHARED_LIBS:BOOL=${SUPERELASTIX_BUILD_SHARED_LIBS}
+  -DCMAKE_CONFIGURATION_TYPES:STRING=${CMAKE_CONFIGURATION_TYPES}
+  -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
   -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
   -DITK_DIR:PATH=${ITK_DIR}
-  # explicitly set the types for 3d
-  # -DELASTIX_IMAGE_3D_PIXELTYPES:STRING={"float;double"}
   # Elastix components configuration
   -DUSE_AdaptiveStochasticGradientDescent:BOOL=ON                                           
   -DUSE_AdvancedAffineTransformElastix:BOOL=ON
@@ -114,10 +117,11 @@ ExternalProject_Add( ${proj}
   -DUSE_VarianceOverLastDimensionMetric:BOOL=ON                                           
   -DUSE_ViolaWellsMutualInformationMetric:BOOL=ON                                           
   -DUSE_WeightedCombinationTransformElastix:BOOL=ON
-  DEPENDS ITK
+  DEPENDS ${SUPERELASTIX_DEPENDENCIES}
+  BUILD_COMMAND ${SELX_SUPERBUILD_COMMAND}
 )
 
-ExternalProject_Get_Property( Elastix binary_dir )
-set( ELASTIX_USE_FILE "${binary_dir}/src/UseElastix.cmake" )
+ExternalProject_Get_Property( ${proj} binary_dir )
+set( Elastix_DIR "${binary_dir}" )
 
 list( APPEND SUPERELASTIX_DEPENDENCIES ${proj} )

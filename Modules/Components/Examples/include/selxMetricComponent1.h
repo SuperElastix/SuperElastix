@@ -21,8 +21,7 @@
 #define itkMetricComponent1_h
 
 #include "selxSuperElastixComponent.h"
-#include "selxInterfaces.h"
-#include "selxMacro.h"
+#include "selxExamplesInterfaces.h"
 
 namespace selx
 {
@@ -35,22 +34,17 @@ class MetricComponent1 :
 public:
 
   /** Standard class typedefs. */
-  typedef MetricComponent1                Self;
-  typedef ComponentBase                   Superclass;
-  typedef itk::SmartPointer< Self >       Pointer;
-  typedef itk::SmartPointer< const Self > ConstPointer;
-
-  /** New macro for creation of through the object factory. */
-  //selxNewMacro(Self, ComponentBase);
-  itkNewMacro( Self );
-
-  /** Run-time type information (and related methods). */
-  itkTypeMacro( MetricComponent1, ComponentBase );
+  typedef MetricComponent1              Self;
+  typedef ComponentBase                 Superclass;
+  typedef std::shared_ptr< Self >       Pointer;
+  typedef std::shared_ptr< const Self > ConstPointer;
 
   typedef Superclass::CriteriaType  CriteriaType;
   typedef Superclass::CriterionType CriterionType;
 
-  virtual int Set( TransformedImageInterface * ) override;
+  MetricComponent1( const std::string & name, LoggerImpl & logger ) : SuperElastixComponent( name, logger ) {}
+  virtual ~MetricComponent1(){}
+  virtual int Accept( TransformedImageInterface::Pointer ) override;
 
   virtual int GetValue() override { return 0; }
 
@@ -58,20 +52,12 @@ public:
   //static const char * GetName(){ return "MetricComponent1"; };
   static const char * GetDescription(){ return "Example Metric Component 1"; }
 
-protected:
-
-  MetricComponent1();
-  virtual ~MetricComponent1()
-  {
-  }
-
-
 private:
 
   MetricComponent1( const Self & ); // purposely not implemented
   void operator=( const Self & );   // purposely not implemented
 
-  virtual bool MeetsCriterion( const CriterionType & criterion );
+  virtual bool MeetsCriterion( const CriterionType & criterion ) override;
 
   //virtual bool MeetsCriteria(const CriteriaType&);
 };
