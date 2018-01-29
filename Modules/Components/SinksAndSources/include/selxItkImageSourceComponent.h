@@ -37,7 +37,9 @@ class ItkImageSourceComponent :
   Providing< SourceInterface, itkImageInterface< Dimensionality, TPixel >,
   itkImageFixedInterface< Dimensionality, TPixel >,
   itkImageMovingInterface< Dimensionality, TPixel >,
-  itkImageDomainFixedInterface< Dimensionality >>
+  itkImageDomainFixedInterface< Dimensionality >,
+  itkImageMovingMaskInterface< Dimensionality, TPixel >,
+  itkImageFixedMaskInterface< Dimensionality, TPixel >>
   >
 {
 public:
@@ -51,7 +53,9 @@ public:
     Providing< SourceInterface, itkImageInterface< Dimensionality, TPixel >,
     itkImageFixedInterface< Dimensionality, TPixel >,
     itkImageMovingInterface< Dimensionality, TPixel >,
-    itkImageDomainFixedInterface< Dimensionality >>
+    itkImageDomainFixedInterface< Dimensionality >,
+    itkImageMovingMaskInterface< Dimensionality, TPixel >,
+    itkImageFixedMaskInterface< Dimensionality, TPixel >>
     >                                       Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
@@ -73,6 +77,10 @@ public:
   virtual typename ItkImageType::Pointer GetItkImageMoving() override;
 
   virtual typename ItkImageDomainType::Pointer GetItkImageDomainFixed() override;
+
+  virtual typename ItkImageType::Pointer GetItkImageFixedMask() override;
+
+  virtual typename ItkImageType::Pointer GetItkImageMovingMask() override;
 
   virtual void SetMiniPipelineInput( itk::DataObject::Pointer ) override;
   virtual AnyFileReader::Pointer GetInputFileReader( void ) override;

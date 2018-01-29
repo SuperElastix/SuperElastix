@@ -30,6 +30,33 @@ struct PodString
 };
 
 template< >
+struct PodString< bool >
+{
+  static const char * Get()
+  {
+    return "bool";
+  }
+};
+
+template< >
+struct PodString< unsigned char >
+{
+  static const char * Get()
+  {
+    return "unsigned char";
+  }
+};
+
+template< >
+struct PodString< char >
+{
+  static const char * Get()
+  {
+    return "char";
+  }
+};
+
+template< >
 struct PodString< unsigned int >
 {
   static const char * Get()
