@@ -20,16 +20,16 @@
 #include "selxTypeList.h"
 
 //Component group Elastix
-#include "selxElastixComponent.h"
 #include "selxMonolithicElastixComponent.h"
 #include "selxMonolithicTransformixComponent.h"
 
 namespace selx
 {
 using ModuleElastixComponents = selx::TypeList<
-  ElastixComponent< 2, float >,
   MonolithicElastixComponent< 2, float >,
+  MonolithicElastixComponent< 3, float >,
   MonolithicElastixComponent< 3, short >,
-  MonolithicTransformixComponent< 2, float >
+  MonolithicTransformixComponent< 2, float >,
+  MonolithicTransformixComponent< 3, float >
   >;
 }

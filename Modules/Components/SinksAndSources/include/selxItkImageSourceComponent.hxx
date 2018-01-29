@@ -87,6 +87,30 @@ ItkImageSourceComponent< Dimensionality, TPixel >
   return this->m_Image.GetPointer();
 }
 
+template< int Dimensionality, class TPixel >
+typename ItkImageSourceComponent< Dimensionality, TPixel >::ItkImageType::Pointer
+ItkImageSourceComponent< Dimensionality, TPixel >
+::GetItkImageFixedMask()
+{
+  if (this->m_Image == nullptr)
+  {
+    throw std::runtime_error("SourceComponent needs to be initialized by SetMiniPipelineInput()");
+  }
+  return this->m_Image;
+}
+
+
+template< int Dimensionality, class TPixel >
+typename ItkImageSourceComponent< Dimensionality, TPixel >::ItkImageType::Pointer
+ItkImageSourceComponent< Dimensionality, TPixel >
+::GetItkImageMovingMask()
+{
+  if (this->m_Image == nullptr)
+  {
+    throw std::runtime_error("SourceComponent needs to be initialized by SetMiniPipelineInput()");
+  }
+  return this->m_Image;
+}
 
 template< int Dimensionality, class TPixel >
 void

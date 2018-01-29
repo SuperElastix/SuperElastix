@@ -67,6 +67,26 @@ MonolithicElastixComponent< Dimensionality, TPixel >::Accept( typename itkImageM
   return 0;
 }
 
+template< int Dimensionality, class TPixel >
+int
+MonolithicElastixComponent< Dimensionality, TPixel >::Accept(typename itkImageFixedMaskInterface< Dimensionality, unsigned char >::Pointer component)
+{
+  auto fixedMaskImage = component->GetItkImageFixedMask();
+  // connect the itk pipeline
+  this->m_elastixFilter->SetFixedMask(fixedMaskImage);
+  return 0;
+}
+
+
+template< int Dimensionality, class TPixel >
+int
+MonolithicElastixComponent< Dimensionality, TPixel >::Accept(typename itkImageMovingMaskInterface< Dimensionality, unsigned char >::Pointer component)
+{
+  auto movingMaskImage = component->GetItkImageMovingMask();
+  // connect the itk pipeline
+  this->m_elastixFilter->SetMovingMask(movingMaskImage);
+  return 0;
+}
 
 template< int Dimensionality, class TPixel >
 typename MonolithicElastixComponent< Dimensionality, TPixel >::ItkImagePointer
@@ -146,4 +166,25 @@ MonolithicElastixComponent< Dimensionality, TPixel >
   }
   return meetsCriteria;
 }
+
+template< int Dimensionality, class TPixel >
+bool
+MonolithicElastixComponent< Dimensionality, TPixel >
+::ConnectionsSatisfied()
+{
+  // This function overrides the default behavior, in which all accepting interfaces must be set.
+  // Only Fixed and Moving images are required
+  // TODO: see I we can reduce the amount of code with helper (meta-)functions
+  if (!this->InterfaceAcceptor< itkImageFixedInterface< Dimensionality, TPixel >>::GetAccepted())
+  {
+    return false;
+  }
+  if (!this->InterfaceAcceptor< itkImageMovingInterface< Dimensionality, TPixel >>::GetAccepted())
+  {
+    return false;
+  }
+  
+  return true;
+}
+
 } //end namespace selx

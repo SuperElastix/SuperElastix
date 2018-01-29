@@ -32,7 +32,8 @@ namespace selx
 template< int Dimensionality, class TPixel >
 class ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component :
   public SuperElastixComponent<
-  Accepting< >,
+  Accepting< itkImageFixedMaskInterface< Dimensionality, unsigned char >,
+             itkImageMovingMaskInterface< Dimensionality, unsigned char > >,
   Providing< itkMetricv4Interface< Dimensionality, TPixel, double >>
   >
 {
@@ -43,7 +44,8 @@ public:
     Dimensionality, TPixel
     >                                      Self;
   typedef SuperElastixComponent<
-    Accepting< >,
+    Accepting< itkImageFixedMaskInterface< Dimensionality, unsigned char >,
+               itkImageMovingMaskInterface< Dimensionality, unsigned char > >,
     Providing< itkMetricv4Interface< Dimensionality, TPixel, double >>
     >                                      Superclass;
   typedef std::shared_ptr< Self >       Pointer;
@@ -59,15 +61,24 @@ public:
   typedef itk::Image< PixelType, Dimensionality > MovingImageType;
 
   typedef typename itk::ImageToImageMetricv4< FixedImageType, MovingImageType > ImageToImageMetricv4Type;
-  //typedef typename ItkMetricv4Interface<Dimensionality, TPixel>::ImageToImageMetricv4Type ImageToImageMetricv4Type;
-  //typedef ItkMetricv4Interface<Dimensionality, TPixel>::ImageToImageMetricv4Type ItkMetricv4Pointer
+
   typedef typename ImageToImageMetricv4Type::Pointer ItkMetricv4Pointer;
 
   typedef typename itk::ANTSNeighborhoodCorrelationImageToImageMetricv4< FixedImageType, MovingImageType > TheItkFilterType;
 
+  // accepting Interfaces:
+  virtual int Accept(typename itkImageFixedMaskInterface< Dimensionality, unsigned char >::Pointer) override;
+
+  virtual int Accept(typename itkImageMovingMaskInterface< Dimensionality, unsigned char >::Pointer) override;
+
+
+  // providing Interfaces:
   virtual ItkMetricv4Pointer GetItkMetricv4() override;
 
+  // Base class methods:
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
+
+  virtual bool ConnectionsSatisfied() override {return true;} // all of the accepting interfaces are optional
 
   static const char * GetDescription() { return "ItkANTSNeighborhoodCorrelationImageToImageMetricv4 Component"; }
 

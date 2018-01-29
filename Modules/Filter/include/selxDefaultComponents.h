@@ -28,7 +28,6 @@
 #include "selxItkImageSinkComponent.h"
 
 //Component group Elastix
-#include "selxElastixComponent.h"
 #include "selxMonolithicElastixComponent.h"
 #include "selxMonolithicTransformixComponent.h"
 
@@ -66,7 +65,6 @@ using DefaultComponents = selx::TypeList<
   ItkImageSinkComponent< 3, short >,
   ItkImageSourceComponent< 2, float >,
   ItkImageSourceComponent< 3, short >,
-  ElastixComponent< 2, float >,
   MonolithicElastixComponent< 2, float >,
   MonolithicElastixComponent< 3, short >,
   MonolithicTransformixComponent< 2, float >,
