@@ -48,5 +48,6 @@ set(CTEST_CONFIGURE_COMMAND "${CTEST_CONFIGURE_COMMAND} \"-G${CTEST_CMAKE_GENERA
 set(CTEST_CONFIGURE_COMMAND "${CTEST_CONFIGURE_COMMAND} \"${CTEST_SOURCE_DIRECTORY}\"")
 
 ctest_start("Nightly")
+ctest_update()
 ctest_test()
 ctest_submit( PARTS Test )
