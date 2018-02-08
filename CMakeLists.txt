@@ -155,16 +155,6 @@ endif()
 # TODO: Functionality to disable default modules/applications
 
 # ---------------------------------------------------------------------
-# SuperBench
-
-option( BUILD_SUPERBENCH "Build SuperBench continuous challenge framework." ON )
-mark_as_advanced( BUILD_SUPERBENCH )
-
-if( BUILD_SUPERBENCH )
-  add_subdirectory( SuperBench )
-endif()
-
-# ---------------------------------------------------------------------
 # Testing
 
 set( SUPERELASTIX_INPUT_DATA_DIR ${PROJECT_BINARY_DIR}/Testing/Data/Input )
