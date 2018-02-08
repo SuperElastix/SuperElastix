@@ -1,5 +1,5 @@
 {
-    "SuperBenchCategory": "Brain",
+    "Datasets": ["MGH10", "ISBR18"],
     "Component": {
         "Name": "RegistrationMethod",
         "NameOfClass": "MonolithicElastixComponent"
