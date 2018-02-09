@@ -97,7 +97,7 @@ class DIRLAB(Dataset):
         self.input_directory = input_directory
         self.image_file_names = []
         self.point_set_file_names = []
-        self.relative_deformation_field_file_names = []
+        self.deformation_field_file_names = []
 
         # DIR-LAB provides raw binary image only so we write mhd header files for loading the data.
         # The image information was retrieved from https://www.dir-lab.com/ReferenceData.html

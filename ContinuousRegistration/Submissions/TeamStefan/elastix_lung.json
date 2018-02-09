@@ -1,5 +1,5 @@
 {
-    "Datasets": ["POPI"],
+    "Datasets": ["POPI", "DIRLAB", "EMPIRE"],
     "Component": {
         "Name": "Elastix",
         "NameOfClass": "MonolithicElastixComponent",

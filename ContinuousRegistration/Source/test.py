@@ -2,7 +2,7 @@ import unittest, os, tempfile
 from datetime import datetime
 import SimpleITK as sitk
 
-from evaluation_metrics import tre
+from metrics import tre
 
 def create_vtk_file(output_directory, point):
     output_file_name = os.path.join(output_directory, "{:%Y-%m-%d-%H:%M:%S.%f}".format(datetime.now()) + ".vtk")
@@ -38,7 +38,7 @@ def create_deformation_field_file(output_directory, deformation):
 class TestEvaulationMetrics(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         # TODO: Pass via command line
-        self.registration_driver = "/Users/kasper/Development/SuperElastix/cmake-build-debug/SuperBench/Source/Drivers/localhost.sh"
+        self.registration_driver = ""
         super(TestEvaulationMetrics, self).__init__(*args, **kwargs)
 
     def test_tre(self):
