@@ -104,13 +104,13 @@ def run(parameters):
                 file_names['output_file_names'] = (os.path.join(blueprint_output_directory, os.path.basename(file_names['deformation_field_file_names'][0])),
                                                    os.path.join(blueprint_output_directory, os.path.basename(file_names['deformation_field_file_names'][1])))
 
-                script_base_name = os.path.join(parameters.output_directory, team_name, blueprint_name)
+                output_directory = os.path.join(parameters.output_directory, team_name, blueprint_name)
 
                 if parameters.make_shell_scripts:
-                    dataset.make_shell_script(parameters.superelastix, blueprint_file_name, file_names, script_base_name, parameters.output_directory)
+                    dataset.make_shell_script(parameters.superelastix, blueprint_file_name, file_names, output_directory)
 
                 if parameters.make_batch_scripts:
-                    dataset.make_batch_script(parameters.superelastix, blueprint_file_name, file_names, script_base_name, parameters.output_directory)
+                    dataset.make_batch_script(parameters.superelastix, blueprint_file_name, file_names, output_directory)
 
 
 if __name__ == '__main__':

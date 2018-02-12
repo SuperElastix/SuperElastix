@@ -16,24 +16,24 @@ class Dataset(object):
     def evaluate(self):
         pass
 
-    def make_shell_script(self, superelastix, blueprint_file_name, file_names, script_base_name, output_directory):
-        shell_script_file_name_0 = os.path.join(script_base_name, file_names['deformation_field_file_names'][0] \
+    def make_shell_script(self, superelastix, blueprint_file_name, file_names, output_directory):
+        shell_script_file_name_0 = os.path.join(output_directory, os.path.splitext(file_names['deformation_field_file_names'][0])[0] \
             .replace('/', '_').replace('\\', '_').replace('.', '_') + '.sh')
-        shell_script_file_name_1 = os.path.join(script_base_name, file_names['deformation_field_file_names'][1] \
+        shell_script_file_name_1 = os.path.join(output_directory, os.path.splitext(file_names['deformation_field_file_names'][1])[0] \
             .replace('/', '_').replace('\\', '_').replace('.', '_') + '.sh')
 
         with open(shell_script_file_name_0, 'w') as shell_script:
-            shell_script.write('%s --conf %s --in FixedImage=%s MovingImage=%s --out ResultImage=%s --loglevel trace --logfile %s' % (
+            shell_script.write('%s --conf %s --in FixedImage=%s MovingImage=%s --out DisplacementField=%s --loglevel trace --logfile %s' % (
                 superelastix,
                 blueprint_file_name,
                 file_names['image_file_names'][0],
                 file_names['image_file_names'][1],
                 os.path.join(output_directory, file_names['deformation_field_file_names'][0]),
-                os.path.join(output_directory, os.path.basename(file_names['deformation_field_file_names'][0]) + '.log')))
+                os.path.join(output_directory, os.path.splitext(file_names['deformation_field_file_names'][0])[0] + '.log')))
 
 
         with open(shell_script_file_name_1, 'w') as shell_script:
-            shell_script.write('%s --conf %s --in FixedImage=%s MovingImage=%s --out ResultImage=%s --loglevel trace --logfile %s' % (
+            shell_script.write('%s --conf %s --in FixedImage=%s MovingImage=%s --out DisplacementField=%s --loglevel trace --logfile %s' % (
                 superelastix,
                 blueprint_file_name,
                 file_names['image_file_names'][1],
