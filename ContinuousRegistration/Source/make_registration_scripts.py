@@ -5,6 +5,8 @@ import json
 
 from datasets import CUMC12, DIRLAB, EMPIRE, ISBR18, LPBA40, MGH10, POPI, SPREAD
 
+max_registrations_per_dataset=50
+
 def load_submissions(parameters):
     logging.info('Loading blueprints ...')
     submissions = [(team_name, os.path.join(parameters.submissions_directory, team_name, file_name))
@@ -95,14 +97,20 @@ def run(parameters):
                 continue
 
             dataset = datasets[dataset_name]
+            counter = 0
             for file_names in dataset.generator():
-                blueprint_output_directory = os.path.join(parameters.output_directory, team_name, blueprint_name, os.path.dirname(file_names['deformation_field_file_names'][0]))
+                if(2*counter > max_registrations_per_dataset):
+                    continue
+                else:
+                    counter = counter+1
+
+                blueprint_output_directory = os.path.join(parameters.output_directory, team_name, blueprint_name, os.path.dirname(file_names['displacement_field_file_names'][0]))
 
                 if not os.path.exists(blueprint_output_directory):
                     os.makedirs(blueprint_output_directory)
 
-                file_names['output_file_names'] = (os.path.join(blueprint_output_directory, os.path.basename(file_names['deformation_field_file_names'][0])),
-                                                   os.path.join(blueprint_output_directory, os.path.basename(file_names['deformation_field_file_names'][1])))
+                file_names['output_file_names'] = (os.path.join(blueprint_output_directory, os.path.basename(file_names['displacement_field_file_names'][0])),
+                                                   os.path.join(blueprint_output_directory, os.path.basename(file_names['displacement_field_file_names'][1])))
 
                 output_directory = os.path.join(parameters.output_directory, team_name, blueprint_name)
 
