@@ -77,7 +77,7 @@ ItkGaussianExponentialDiffeomorphicTransformComponent< InternalComputationValueT
 
 template< class InternalComputationValueType, int Dimensionality >
 void
-ItkGaussianExponentialDiffeomorphicTransformComponent< InternalComputationValueType, Dimensionality >::RunRegistration()
+ItkGaussianExponentialDiffeomorphicTransformComponent< InternalComputationValueType, Dimensionality >::Update()
 {
 }
 

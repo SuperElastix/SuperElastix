@@ -20,14 +20,11 @@
 #include "selxSuperElastixFilterCustomComponents.h"
 #include "elxParameterObject.h"
 
-#include "selxElastixComponent.h"
 #include "selxMonolithicElastixComponent.h"
 #include "selxMonolithicTransformixComponent.h"
 #include "selxItkImageSinkComponent.h"
 #include "selxItkImageSourceComponent.h"
 #include "selxItkDisplacementFieldSinkComponent.h"
-
-#include "selxRegistrationControllerComponent.h"
 
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
@@ -48,18 +45,21 @@ public:
   typedef DataManager DataManagerType;
 
   /** Make a list of components to be registered for this test*/
-  typedef TypeList< ElastixComponent< 2, float >,
+  typedef TypeList< 
     MonolithicElastixComponent< 2, float >,
     MonolithicTransformixComponent< 2, float >,
     ItkImageSinkComponent< 2, float >,
     ItkDisplacementFieldSinkComponent< 2, float >,
     ItkImageSourceComponent< 2, float >,
-    ItkImageSourceComponent< 3, double >,
-    RegistrationControllerComponent< >> RegisterComponents;
+    ItkImageSourceComponent< 2, unsigned char >, //for masks
+    ItkImageSourceComponent< 3, double >> RegisterComponents;
 
   typedef itk::Image< float, 2 >              Image2DType;
   typedef itk::ImageFileReader< Image2DType > ImageReader2DType;
   typedef itk::ImageFileWriter< Image2DType > ImageWriter2DType;
+
+  typedef itk::Image< unsigned char, 2 >      Mask2DType;
+  typedef itk::ImageFileReader< Mask2DType >  MaskReader2DType;
 
   typedef itk::Image< itk::Vector< float, 2 >, 2 >       DisplacementImage2DType;
   typedef itk::ImageFileWriter< DisplacementImage2DType > DisplacementImageWriter2DType;
@@ -94,74 +94,6 @@ public:
   DataManagerType::Pointer dataManager;
 };
 
-TEST_F( ElastixComponentTest, ImagesOnly )
-{
-  /** make example blueprint configuration */
-  BlueprintPointer blueprint = Blueprint::New();
-
-  ParameterMapType component0Parameters;
-  component0Parameters[ "NameOfClass" ]               = { "ElastixComponent" };
-  component0Parameters[ "RegistrationSettings" ]      = { "rigid" };
-  component0Parameters[ "MaximumNumberOfIterations" ] = { "2" };
-  component0Parameters[ "Dimensionality" ]            = { "2" };
-  component0Parameters[ "PixelType" ]                 = { "float" };
-  component0Parameters[ "ResultImagePixelType" ]      = { "float" };
-
-  blueprint->SetComponent( "RegistrationMethod", component0Parameters );
-
-  ParameterMapType component1Parameters;
-  component1Parameters[ "NameOfClass" ]    = { "ItkImageSourceComponent" };
-  component1Parameters[ "Dimensionality" ] = { "2" }; // should be derived from the inputs
-  blueprint->SetComponent( "FixedImageSource", component1Parameters );
-
-  ParameterMapType component2Parameters;
-  component2Parameters[ "NameOfClass" ]    = { "ItkImageSourceComponent" };
-  component2Parameters[ "Dimensionality" ] = { "2" }; // should be derived from the inputs
-  blueprint->SetComponent( "MovingImageSource", component2Parameters );
-
-  ParameterMapType component3Parameters;
-  component3Parameters[ "NameOfClass" ]    = { "ItkImageSinkComponent" };
-  component3Parameters[ "Dimensionality" ] = { "2" }; // should be derived from the inputs
-  blueprint->SetComponent( "ResultImageSink", component3Parameters );
-
-  blueprint->SetComponent( "Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } } );
-
-  ParameterMapType connection1Parameters;
-  //connection1Parameters["NameOfInterface"] = { "itkImageFixedInterface" };
-  blueprint->SetConnection( "FixedImageSource", "RegistrationMethod", connection1Parameters );
-
-  ParameterMapType connection2Parameters;
-  //connection2Parameters["NameOfInterface"] = { "itkImageMovingInterface" };
-  blueprint->SetConnection( "MovingImageSource", "RegistrationMethod", connection2Parameters );
-
-  ParameterMapType connection3Parameters;
-  //connection3Parameters["NameOfInterface"] = { "GetItkImageInterface" };
-  blueprint->SetConnection( "RegistrationMethod", "ResultImageSink", connection3Parameters );
-
-  blueprint->SetConnection( "RegistrationMethod", "Controller", { {} } ); //
-  blueprint->SetConnection( "ResultImageSink", "Controller", { {} } );    //
-
-  // Set up the readers and writers
-  ImageReader2DType::Pointer fixedImageReader = ImageReader2DType::New();
-  fixedImageReader->SetFileName( dataManager->GetInputFile( "BrainProtonDensitySliceBorder20.png" ) );
-
-  ImageReader2DType::Pointer movingImageReader = ImageReader2DType::New();
-  movingImageReader->SetFileName( dataManager->GetInputFile( "BrainProtonDensitySliceR10X13Y17.png" ) );
-
-  ImageWriter2DType::Pointer resultImageWriter = ImageWriter2DType::New();
-  resultImageWriter->SetFileName( dataManager->GetOutputFile( "ElastixComponentTest_BrainProtonDensity.mhd" ) );
-
-  superElastixFilter->SetInput( "FixedImageSource", fixedImageReader->GetOutput() );
-  superElastixFilter->SetInput( "MovingImageSource", movingImageReader->GetOutput() );
-
-  resultImageWriter->SetInput( superElastixFilter->GetOutput< Image2DType >( "ResultImageSink" ) );
-
-  EXPECT_NO_THROW( superElastixFilter->SetBlueprint( blueprint ) );
-
-  // Update call on the writers triggers SuperElastix to configure and execute
-  resultImageWriter->Update();
-}
-
 TEST_F( ElastixComponentTest, MonolithicElastixTransformix )
 {
 
@@ -179,11 +111,13 @@ TEST_F( ElastixComponentTest, MonolithicElastixTransformix )
 
   blueprint->SetComponent( "MovingImageSource", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "Dimensionality", { "2" } } } );
 
+  blueprint->SetComponent( "FixedMaskImageSource", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "Dimensionality", { "2" } } } );
+
+  blueprint->SetComponent( "MovingMaskImageSource", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "Dimensionality", { "2" } } } );
+
   blueprint->SetComponent( "ResultImageSink", { { "NameOfClass", { "ItkImageSinkComponent" } }, { "Dimensionality", { "2" } } } );
 
   blueprint->SetComponent( "ResultDisplacementFieldSink", { { "NameOfClass", { "ItkDisplacementFieldSinkComponent" } }, { "Dimensionality", { "2" } } });
-
-  blueprint->SetComponent( "Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } } );
 
   blueprint->SetConnection( "FixedImageSource", "RegistrationMethod", { { "NameOfInterface", { "itkImageFixedInterface" } } } ); // ;
 
@@ -195,23 +129,29 @@ TEST_F( ElastixComponentTest, MonolithicElastixTransformix )
 
   blueprint->SetConnection( "MovingImageSource", "TransformDisplacementField", { { "NameOfInterface", { "itkImageMovingInterface" } } } ); //;
 
+  blueprint->SetConnection( "FixedMaskImageSource", "RegistrationMethod", { { "NameOfInterface", { "itkImageFixedMaskInterface" } } } ); // ;
+
+  blueprint->SetConnection( "MovingMaskImageSource", "RegistrationMethod", { { "NameOfInterface", { "itkImageMovingMaskInterface" } } } ); //;
+
   blueprint->SetConnection( "TransformDisplacementField", "ResultImageSink", { { "NameOfInterface", { "itkImageInterface" } } } ); // ;
 
   blueprint->SetConnection( "TransformDisplacementField", "ResultDisplacementFieldSink", { { "NameOfInterface", { "itkDisplacementFieldInterface" } } }); // ;
 
-  blueprint->SetConnection( "RegistrationMethod", "Controller", { {} } );
-  blueprint->SetConnection( "TransformDisplacementField", "Controller", { {} } );
-  blueprint->SetConnection( "ResultImageSink", "Controller", { {} } );
-  blueprint->SetConnection( "ResultDisplacementFieldSink", "Controller", { {} });
 
   // Set up the readers and writers
-  ImageReader2DType::Pointer fixedImageReader = ImageReader2DType::New();
+  auto fixedImageReader = ImageReader2DType::New();
   fixedImageReader->SetFileName( dataManager->GetInputFile( "BrainProtonDensitySliceBorder20.png" ) );
 
-  ImageReader2DType::Pointer movingImageReader = ImageReader2DType::New();
+  auto movingImageReader = ImageReader2DType::New();
   movingImageReader->SetFileName( dataManager->GetInputFile( "BrainProtonDensitySliceR10X13Y17.png" ) );
 
-  ImageWriter2DType::Pointer resultImageWriter = ImageWriter2DType::New();
+  auto fixedMaskReader = MaskReader2DType::New();
+  fixedMaskReader->SetFileName( dataManager->GetInputFile( "BrainProtonDensitySliceBorder20Mask.png" ) );
+  
+  auto movingMaskReader = MaskReader2DType::New();
+  movingMaskReader->SetFileName(dataManager->GetInputFile("BrainProtonDensitySliceBorder20Mask.png")); // same as fixedmask: good enough for unit test, but probably bad practice for registration.  
+
+  auto resultImageWriter = ImageWriter2DType::New();
   resultImageWriter->SetFileName( dataManager->GetOutputFile( "ElastixComponentTest_BrainProtonDensity.mhd" ) );
 
   DisplacementImageWriter2DType::Pointer resultDisplacementWriter = DisplacementImageWriter2DType::New();
@@ -220,6 +160,9 @@ TEST_F( ElastixComponentTest, MonolithicElastixTransformix )
   // Connect SuperElastix in an itk pipeline
   superElastixFilter->SetInput( "FixedImageSource", fixedImageReader->GetOutput() );
   superElastixFilter->SetInput( "MovingImageSource", movingImageReader->GetOutput() );
+  superElastixFilter->SetInput( "FixedMaskImageSource", fixedMaskReader->GetOutput() );
+  superElastixFilter->SetInput( "MovingMaskImageSource", movingMaskReader->GetOutput() );
+
   resultImageWriter->SetInput( superElastixFilter->GetOutput< Image2DType >( "ResultImageSink" ) );
   resultDisplacementWriter->SetInput(superElastixFilter->GetOutput< DisplacementImage2DType >("ResultDisplacementFieldSink"));
 

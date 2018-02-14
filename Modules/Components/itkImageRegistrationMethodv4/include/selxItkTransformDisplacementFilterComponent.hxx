@@ -84,7 +84,7 @@ ItkTransformDisplacementFilterComponent< Dimensionality, TPixel, TInternalComput
 template< int Dimensionality, class TPixel, class TInternalComputationValue >
 void
 ItkTransformDisplacementFilterComponent< Dimensionality, TPixel, TInternalComputationValue >
-::ReconnectTransform()
+::Update()
 {
   auto transform = this->m_TransformComponent->GetItkTransform();
   // reconnect the tranform, since it does not comply with the itk pipeline

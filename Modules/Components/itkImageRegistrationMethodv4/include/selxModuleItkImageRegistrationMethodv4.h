@@ -36,15 +36,25 @@ namespace selx
 {
 using ModuleItkImageRegistrationMethodv4Components = selx::TypeList<
   ItkImageRegistrationMethodv4Component< 2, float, double >,
+  ItkImageRegistrationMethodv4Component< 3, float, double >,
   ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< 2, float >,
+  ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< 3, float >,
   ItkMeanSquaresImageToImageMetricv4Component< 2, float, double >,
+  ItkMeanSquaresImageToImageMetricv4Component< 3, float, double >,
   ItkGradientDescentOptimizerv4Component< double >,
   ItkGaussianExponentialDiffeomorphicTransformComponent< double, 2 >,
+  ItkGaussianExponentialDiffeomorphicTransformComponent< double, 3 >,
   ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent< 2, double >,
+  ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent< 3, double >,
   ItkAffineTransformComponent< double, 2 >,
+  ItkAffineTransformComponent< double, 3 >,
   ItkTransformDisplacementFilterComponent< 2, float, double >,
+  ItkTransformDisplacementFilterComponent< 3, float, double >,
   ItkResampleFilterComponent< 2, float, double >,
+  ItkResampleFilterComponent< 3, float, double >,
   ItkTransformSourceComponent< 2, double >,
-  ItkTransformSinkComponent< 2, double >
+  ItkTransformSourceComponent< 3, double >,
+  ItkTransformSinkComponent< 2, double >,
+  ItkTransformSinkComponent< 3, double >
   >;
 }

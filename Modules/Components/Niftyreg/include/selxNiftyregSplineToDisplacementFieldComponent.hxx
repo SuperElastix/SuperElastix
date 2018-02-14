@@ -57,7 +57,7 @@ NiftyregSplineToDisplacementFieldComponent< TPixel >
 template< class TPixel >
 void
 NiftyregSplineToDisplacementFieldComponent<  TPixel >
-::ReconnectTransform()
+::Update()
 {
   
   nifti_image * inputTransformationImage = this->m_NiftyregControlPointPositionImageInterface->GetControlPointPositionImage().get();

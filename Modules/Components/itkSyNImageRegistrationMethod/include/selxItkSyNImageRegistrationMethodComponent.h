@@ -44,7 +44,7 @@ class ItkSyNImageRegistrationMethodComponent :
   itkMetricv4Interface< Dimensionality, PixelType, InternalComputationValueType >
   >,
   Providing< itkTransformInterface< InternalComputationValueType, Dimensionality >,
-  RunRegistrationInterface
+  UpdateInterface
   >
   >
 {
@@ -61,7 +61,7 @@ public:
     itkMetricv4Interface< Dimensionality, PixelType, InternalComputationValueType >
     >,
     Providing< itkTransformInterface< InternalComputationValueType, Dimensionality >,
-    RunRegistrationInterface
+    UpdateInterface
     >
     >                                     Superclass;
   typedef std::shared_ptr< Self >       Pointer;
@@ -92,7 +92,7 @@ public:
   //Providing Interfaces:
   virtual TransformPointer GetItkTransform() override;
 
-  virtual void RunRegistration() override;
+  virtual void Update() override;
 
   //BaseClass methods
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;

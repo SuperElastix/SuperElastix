@@ -144,7 +144,7 @@ struct Properties< itkImageFixedInterface< D, TPixel >>
 {
   static const std::map< std::string, std::string > Get()
   {
-    return { { keys::NameOfInterface, "itkImageFixedInterface" }, { keys::Dimensionality, std::to_string( D ) }, { keys::PixelType, PodString< TPixel >::Get() }, { "Role", "Fixed" } };
+    return { { keys::NameOfInterface, "itkImageFixedInterface" }, { keys::Dimensionality, std::to_string( D ) }, { keys::PixelType, PodString< TPixel >::Get() }, { "Role", "Fixed" } };// TODO replace "Role" by "Domain"
   }
 };
 
@@ -162,7 +162,7 @@ struct Properties< itkImageMovingInterface< D, TPixel >>
 {
   static const std::map< std::string, std::string > Get()
   {
-    return { { keys::NameOfInterface, "itkImageMovingInterface" }, { keys::Dimensionality, std::to_string( D ) }, { keys::PixelType, PodString< TPixel >::Get() }, { "Role", "Moving" } };
+    return { { keys::NameOfInterface, "itkImageMovingInterface" }, { keys::Dimensionality, std::to_string( D ) }, { keys::PixelType, PodString< TPixel >::Get() }, { "Role", "Moving" } }; // TODO replace "Role" by "Domain"
   }
 };
 

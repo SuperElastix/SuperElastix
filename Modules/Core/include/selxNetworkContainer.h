@@ -21,6 +21,8 @@
 #define selxNetworkContainer_h
 
 #include "selxComponentBase.h"
+#include "selxInterfaces.h"
+
 #include "itkDataObject.h"
 
 #include <map>
@@ -36,9 +38,10 @@ class NetworkContainer
 public:
 
   using ComponentContainerType = std::vector< std::shared_ptr< ComponentBase >>;
+  using UpdateOrderType = std::vector<std::shared_ptr< UpdateInterface >>;
   using OutputObjectsMapType   = std::map< std::string, itk::DataObject::Pointer >;
 
-  NetworkContainer( ComponentContainerType components, OutputObjectsMapType outputObjectsMap );
+  NetworkContainer( ComponentContainerType components, UpdateOrderType updateOrder, OutputObjectsMapType outputObjectsMap );
   ~NetworkContainer() {}
 
   /** Run the (registration) algorithm */
@@ -50,6 +53,7 @@ public:
 private:
 
   const ComponentContainerType m_ComponentContainer;
+  const UpdateOrderType m_UpdateOrder;
   const OutputObjectsMapType   m_OutputObjectsMap;
 };
 } // end namespace selx

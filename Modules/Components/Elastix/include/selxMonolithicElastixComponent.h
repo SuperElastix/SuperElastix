@@ -38,12 +38,14 @@ class MonolithicElastixComponent :
   public SuperElastixComponent<
   Accepting<
   itkImageFixedInterface< Dimensionality, TPixel >,
-  itkImageMovingInterface< Dimensionality, TPixel >
+  itkImageMovingInterface< Dimensionality, TPixel >,
+  itkImageFixedMaskInterface< Dimensionality, unsigned char >,
+  itkImageMovingMaskInterface< Dimensionality, unsigned char >
   >,
   Providing<
   elastixTransformParameterObjectInterface< itk::Image< TPixel, Dimensionality >, itk::Image< TPixel, Dimensionality >>,
   itkImageInterface< Dimensionality, TPixel >,
-  RunRegistrationInterface
+  UpdateInterface
   >
   >
 {
@@ -56,12 +58,14 @@ public:
   typedef SuperElastixComponent<
     Accepting<
     itkImageFixedInterface< Dimensionality, TPixel >,
-    itkImageMovingInterface< Dimensionality, TPixel >
+    itkImageMovingInterface< Dimensionality, TPixel >,
+    itkImageFixedMaskInterface< Dimensionality, unsigned char >,
+    itkImageMovingMaskInterface< Dimensionality, unsigned char >
     >,
     Providing<
     elastixTransformParameterObjectInterface< itk::Image< TPixel, Dimensionality >, itk::Image< TPixel, Dimensionality >>,
     itkImageInterface< Dimensionality, TPixel >,
-    RunRegistrationInterface
+    UpdateInterface
     >
     >                                     Superclass;
   typedef std::shared_ptr< Self >       Pointer;
@@ -94,14 +98,21 @@ public:
 
   virtual int Accept( typename itkImageMovingInterface< Dimensionality, TPixel >::Pointer ) override;
 
+  virtual int Accept( typename itkImageFixedMaskInterface< Dimensionality, unsigned char >::Pointer ) override;
+
+  virtual int Accept( typename itkImageMovingMaskInterface< Dimensionality, unsigned char >::Pointer ) override;
+
   // Providing Interfaces:
   virtual elastixTransformParameterObject * GetTransformParameterObject() override;
 
   virtual ItkImagePointer GetItkImage() override;
 
-  virtual void RunRegistration() override;
+  virtual void Update() override;
 
+  //Base class methods:
   virtual bool MeetsCriterion( const CriterionType & criterion ) override;
+
+  virtual bool ConnectionsSatisfied() override;
 
   static const char * GetDescription() { return "MonolithicElastix Component"; }
 

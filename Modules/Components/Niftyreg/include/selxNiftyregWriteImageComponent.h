@@ -34,7 +34,7 @@ template< class TPixel >
 class NiftyregWriteImageComponent :
   public SuperElastixComponent<
   Accepting< NiftyregWarpedImageInterface< TPixel >>,
-  Providing< AfterRegistrationInterface >
+  Providing< UpdateInterface >
   >
 {
 public:
@@ -43,7 +43,7 @@ public:
   typedef NiftyregWriteImageComponent< TPixel > Self;
   typedef SuperElastixComponent<
     Accepting< NiftyregWarpedImageInterface< TPixel >>,
-    Providing< AfterRegistrationInterface >
+    Providing< UpdateInterface >
     >                                            Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
@@ -53,7 +53,7 @@ public:
 
   virtual int Accept( typename NiftyregWarpedImageInterface< TPixel >::Pointer component ) override;
 
-  virtual void AfterRegistration() override;
+  virtual void Update() override;
 
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
 

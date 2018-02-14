@@ -106,7 +106,7 @@ NiftiToItkImageSinkComponent< Dimensionality, TPixel >::GetInitializedOutput()
 
 template< int Dimensionality, class TPixel >
 void
-NiftiToItkImageSinkComponent< Dimensionality, TPixel >::AfterRegistration()
+NiftiToItkImageSinkComponent< Dimensionality, TPixel >::Update()
 {
   auto warpedNiftiImage = this->m_WarpedImageInterface->GetWarpedNiftiImage();
   auto warpedItkImage   = NiftiToItkImage< ItkImageType, TPixel >::Convert( warpedNiftiImage );

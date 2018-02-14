@@ -42,7 +42,6 @@
 #include "selxItkTransformSinkComponent.h"
 #include "selxItkTransformSourceComponent.h"
 
-#include "selxRegistrationControllerComponent.h"
 #include "selxItkCompositeTransformComponent.h"
 
 #include "itkImageFileReader.h"
@@ -91,8 +90,7 @@ public:
     ItkTransformDisplacementFilterComponent< 2, float, double >,
     ItkTransformDisplacementFilterComponent< 3, double, double >,
     ItkResampleFilterComponent< 2, float, double >,
-    ItkResampleFilterComponent< 3, double, double >,
-    RegistrationControllerComponent< >> RegisterComponents;
+    ItkResampleFilterComponent< 3, double, double >> RegisterComponents;
 
   typedef Blueprint::Pointer BlueprintPointer;
 
@@ -171,7 +169,6 @@ TEST_F(SyNRegistrationItkv4Test, FullyConfigured3d)
   blueprint->SetComponent("TransformDisplacementFilter", { { "NameOfClass", { "ItkTransformDisplacementFilterComponent" } }, { "Dimensionality", { "3" } } });
  blueprint->SetComponent("ResampleFilter", { { "NameOfClass", { "ItkResampleFilterComponent" } },
   { "Dimensionality", { "3" } } });
-  blueprint->SetComponent("Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } });
 
   // Connections
   blueprint->SetConnection("FixedImageSource", "RegistrationMethod", { { "NameOfInterface", { "itkImageFixedInterface" } } });
@@ -188,10 +185,6 @@ TEST_F(SyNRegistrationItkv4Test, FullyConfigured3d)
   blueprint->SetConnection( "RegistrationMethod", "ResampleFilter", { {} } );
   blueprint->SetConnection( "FixedImageSource", "ResampleFilter", { {} } );
   blueprint->SetConnection( "MovingImageSource", "ResampleFilter", { {} } );
-
-  blueprint->SetConnection( "RegistrationMethod", "Controller", { {} } );          //RunRegistrationInterface
-  blueprint->SetConnection( "ResampleFilter", "Controller", { {} } );              //ReconnectTransformInterface
-  blueprint->SetConnection( "TransformDisplacementFilter", "Controller", { {} } ); //ReconnectTransformInterface
 
   blueprint->Write( dataManager->GetOutputFile( "SyNRegistrationItkv4Test_FullyConfigured3d.dot" ) );
 
@@ -238,8 +231,6 @@ TEST_F( SyNRegistrationItkv4Test, WBIRDemo )
   blueprint->SetComponent("TransformToDisplacementField", { { "NameOfClass", { "ItkTransformDisplacementFilterComponent" } }, { "PixelType", { "float" } } });
   blueprint->SetComponent("ResultDisplacementField", { { "NameOfClass", { "ItkDisplacementFieldSinkComponent" } }, { "Dimensionality", { "2" } }, { "PixelType", { "float" } } });
 
-  blueprint->SetComponent("Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } });
-
   blueprint->SetConnection("FixedImage", "RegistrationMethod", { { "NameOfInterface", { "itkImageFixedInterface" } } });
   blueprint->SetConnection("MovingImage", "RegistrationMethod", { { "NameOfInterface", { "itkImageMovingInterface" } } });
   blueprint->SetConnection("Metric", "RegistrationMethod", { { "NameOfInterface", { "itkMetricv4Interface" } } });
@@ -251,12 +242,6 @@ TEST_F( SyNRegistrationItkv4Test, WBIRDemo )
   blueprint->SetConnection("TransformToDisplacementField", "ResultDisplacementField", { {} });
   blueprint->SetConnection("FixedImage", "ResampleFilter", { { "NameOfInterface", { "itkImageDomainFixedInterface" } } });
   blueprint->SetConnection("MovingImage", "ResampleFilter", { { "NameOfInterface", { "itkImageMovingInterface" } } });
-
-  blueprint->SetConnection( "RegistrationMethod", "Controller", { {} } );          //RunRegistrationInterface
-  blueprint->SetConnection( "ResampleFilter", "Controller", { {} } );              //ReconnectTransformInterface
-  blueprint->SetConnection( "TransformToDisplacementField", "Controller", { {} } ); //ReconnectTransformInterface
-  blueprint->SetConnection( "ResultImage", "Controller", { {} } );             //AfterRegistrationInterface
-  blueprint->SetConnection( "ResultDisplacementField", "Controller", { {} } ); //AfterRegistrationInterface
 
   blueprint->Write( dataManager->GetOutputFile( "SyN_ANTSCC.dot" ) );
 

@@ -37,8 +37,8 @@ class IdentityTransformRegistrationComponent :
   itkImageFixedInterface< Dimensionality, TPixel >,
   itkImageMovingInterface< Dimensionality, TPixel >
   >,
-  Providing< RunRegistrationInterface,
-  itkDisplacementFieldInterface< Dimensionality, TPixel >
+  Providing< UpdateInterface,
+  DisplacementFieldItkImageSourceInterface< Dimensionality, TPixel >
   >
   >
 {
@@ -53,8 +53,8 @@ public:
     itkImageFixedInterface< Dimensionality, TPixel >,
     itkImageMovingInterface< Dimensionality, TPixel >
     >,
-    Providing< RunRegistrationInterface,
-    itkDisplacementFieldInterface< Dimensionality, TPixel >
+    Providing< UpdateInterface,
+    DisplacementFieldItkImageSourceInterface< Dimensionality, TPixel >
     >
     > Superclass;
   typedef std::shared_ptr< Self >       Pointer;
@@ -79,7 +79,7 @@ public:
   // Providing Interfaces:
   virtual typename DisplacementFieldType::Pointer GetItkDisplacementField() override;
 
-  virtual void RunRegistration() override;
+  virtual void Update() override;
 
   virtual bool MeetsCriterion( const CriterionType & criterion ) override;
 

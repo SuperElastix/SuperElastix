@@ -19,8 +19,6 @@
 
 #include "selxSuperElastixFilterCustomComponents.h"
 
-#include "selxRegistrationControllerComponent.h"
-
 #include "selxNiftyregReadImageComponent.h"
 #include "selxNiftyregWriteImageComponent.h"
 #include "selxNiftyregWriteImageComponent.h"
@@ -59,8 +57,7 @@ public:
     ItkImageSourceComponent< 3, float >,
     NiftyregSplineToDisplacementFieldComponent< float>,
     DisplacementFieldNiftiToItkImageSinkComponent< 2, float>,
-    NiftyregAladinComponent< float >,
-    RegistrationControllerComponent< >> RegisterComponents;
+    NiftyregAladinComponent< float >> RegisterComponents;
 
   typedef SuperElastixFilterCustomComponents< RegisterComponents > SuperElastixFilterType;
 
@@ -99,13 +96,10 @@ TEST_F( NiftyregComponentTest, Register2d_nifti )
   blueprint->SetComponent( "MovingImage", { { "NameOfClass", { "NiftyregReadImageComponent" } }, { "FileName", { this->dataManager->GetInputFile( "r64slice.nii.gz" ) } } } );
   blueprint->SetComponent( "RegistrationMethod", { { "NameOfClass", { "Niftyregf3dComponent" } } } );
   blueprint->SetComponent( "ResultImage", { { "NameOfClass", { "NiftyregWriteImageComponent" } }, { "FileName", { this->dataManager->GetOutputFile( "Nifty_warped_r64to16.nii.gz" ) } } } );
-  blueprint->SetComponent( "Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } } );
 
   blueprint->SetConnection( "FixedImage", "RegistrationMethod", { { "NameOfInterface", { "NiftyregReferenceImageInterface" } } } );
   blueprint->SetConnection( "MovingImage", "RegistrationMethod", { { "NameOfInterface", { "NiftyregFloatingImageInterface" } } } );
   blueprint->SetConnection( "RegistrationMethod", "ResultImage", { {} } ); //{ { "NameOfInterface", { "NiftyregWarpedImageInterface" } } });
-  blueprint->SetConnection( "RegistrationMethod", "Controller", { {} } );
-  blueprint->SetConnection( "ResultImage", "Controller", { {} } );
 
   EXPECT_NO_THROW( superElastixFilter->SetBlueprint( blueprint ) );
   EXPECT_NO_THROW(superElastixFilter->SetLogger(logger));
@@ -117,10 +111,8 @@ TEST_F( NiftyregComponentTest, ItkToNiftiImage )
   BlueprintPointer blueprint = Blueprint::New();
   blueprint->SetComponent( "FixedImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } } );
   blueprint->SetComponent( "ResultImage", { { "NameOfClass", { "NiftyregWriteImageComponent" } }, { "FileName", { this->dataManager->GetOutputFile( "ItkToNiftiImage_converted.nii.gz" ) } } } );
-  blueprint->SetComponent( "Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } } );
 
   blueprint->SetConnection( "FixedImage", "ResultImage", { { "NameOfInterface", { "NiftyregWarpedImageInterface" } } } );
-  blueprint->SetConnection( "ResultImage", "Controller", { { "NameOfInterface", { "AfterRegistrationInterface" } } } );
 
   EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
   EXPECT_NO_THROW(superElastixFilter->SetLogger(logger));
@@ -145,11 +137,9 @@ TEST_F( NiftyregComponentTest, NiftiToItkImage )
   blueprint->SetComponent( "FixedImage", { { "NameOfClass", { "NiftyregReadImageComponent" } }, { "FileName", { this->dataManager->GetOutputFile( "ItkToNiftiImage_converted.nii.gz" ) } } } );
   blueprint->SetComponent( "ResultDomainImage", { { "NameOfClass", { "ItkImageSourceComponent" } } } );
   blueprint->SetComponent( "ResultImage", { { "NameOfClass", { "NiftiToItkImageSinkComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } } );
-  blueprint->SetComponent( "Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } } );
 
   blueprint->SetConnection( "FixedImage", "ResultImage", { { "NameOfInterface", { "NiftyregWarpedImageInterface" } } } );
   blueprint->SetConnection( "ResultDomainImage", "ResultImage", { { "NameOfInterface", { "itkImageDomainFixedInterface" } } } );
-  blueprint->SetConnection( "ResultImage", "Controller", { { "NameOfInterface", { "AfterRegistrationInterface" } } } );
 
   EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
   EXPECT_NO_THROW(superElastixFilter->SetLogger(logger));
@@ -185,14 +175,11 @@ TEST_F( NiftyregComponentTest, Register2d_itkImages )
   blueprint->SetComponent( "FixedImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "Dimensionality", { "2" } }, { "PixelType", { "float" } } } );
   blueprint->SetComponent( "MovingImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "Dimensionality", { "2" } }, { "PixelType", { "float" } } } );
   blueprint->SetComponent( "ResultImage", { { "NameOfClass", { "NiftiToItkImageSinkComponent" } }, { "Dimensionality", { "2" } }, { "PixelType", { "float" } } } );
-  blueprint->SetComponent( "Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } } );
 
   blueprint->SetConnection( "FixedImage", "RegistrationMethod", { { "NameOfInterface", { "NiftyregReferenceImageInterface" } } } );
   blueprint->SetConnection( "MovingImage", "RegistrationMethod", { { "NameOfInterface", { "NiftyregFloatingImageInterface" } } } );
   blueprint->SetConnection( "FixedImage", "ResultImage", { { "NameOfInterface", { "itkImageDomainFixedInterface" } } } );
   blueprint->SetConnection( "RegistrationMethod", "ResultImage", { { "NameOfInterface", { "NiftyregWarpedImageInterface" } } } );
-  blueprint->SetConnection( "RegistrationMethod", "Controller", { {} } );
-  blueprint->SetConnection( "ResultImage", "Controller", { {} } );
 
   blueprint->Write( dataManager->GetOutputFile( "Niftyreg_WBIR.dot" ) );
 
@@ -240,20 +227,16 @@ TEST_F( NiftyregComponentTest, WBIRDemo )
   blueprint->SetComponent( "ResultImage", { { "NameOfClass", { "NiftiToItkImageSinkComponent" } }, { "Dimensionality", { "2" } }, { "PixelType", { "float" } } } );
   blueprint->SetComponent( "TransformToDisplacementField", { { "NameOfClass", { "NiftyregSplineToDisplacementFieldComponent" } }, { "PixelType", { "float" } } });
   blueprint->SetComponent( "ResultDisplacementField", { { "NameOfClass", { "DisplacementFieldNiftiToItkImageSinkComponent" } }, { "Dimensionality", { "2" } }, { "PixelType", { "float" } } });
-  blueprint->SetComponent( "Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } } );
 
   blueprint->SetConnection( "FixedImage", "RegistrationMethod", { { "NameOfInterface", { "NiftyregReferenceImageInterface" } } } );
   blueprint->SetConnection( "MovingImage", "RegistrationMethod", { { "NameOfInterface", { "NiftyregFloatingImageInterface" } } } );
   blueprint->SetConnection( "FixedImage", "ResultImage", { { "NameOfInterface", { "itkImageDomainFixedInterface" } } } );
   blueprint->SetConnection( "RegistrationMethod", "ResultImage", { { "NameOfInterface", { "NiftyregWarpedImageInterface" } } } );
-  blueprint->SetConnection( "RegistrationMethod", "Controller", { {} } );
-  blueprint->SetConnection( "ResultImage", "Controller", { {} } );
+
   blueprint->SetConnection( "RegistrationMethod", "TransformToDisplacementField", { {} });
   blueprint->SetConnection( "FixedImage", "TransformToDisplacementField", { {} });
-  blueprint->SetConnection( "TransformToDisplacementField", "Controller", { {} });
   blueprint->SetConnection( "TransformToDisplacementField", "ResultDisplacementField", { {} });
   blueprint->SetConnection( "FixedImage", "ResultDisplacementField", { {} });
-  blueprint->SetConnection( "ResultDisplacementField", "Controller", { {} });
 
   blueprint->Write( dataManager->GetOutputFile( "Niftyreg_WBIR.dot" ) );
 
@@ -300,14 +283,11 @@ TEST_F( NiftyregComponentTest, AladinWBIRDemo )
   blueprint->SetComponent( "FixedImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "Dimensionality", { "2" } }, { "PixelType", { "float" } } } );
   blueprint->SetComponent( "MovingImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "Dimensionality", { "2" } }, { "PixelType", { "float" } } } );
   blueprint->SetComponent( "ResultImage", { { "NameOfClass", { "NiftiToItkImageSinkComponent" } }, { "Dimensionality", { "2" } }, { "PixelType", { "float" } } } );
-  blueprint->SetComponent( "Controller", { { "NameOfClass", { "RegistrationControllerComponent" } } } );
 
   blueprint->SetConnection( "FixedImage", "RegistrationMethod", { { "NameOfInterface", { "NiftyregReferenceImageInterface" } } } );
   blueprint->SetConnection( "MovingImage", "RegistrationMethod", { { "NameOfInterface", { "NiftyregFloatingImageInterface" } } } );
   blueprint->SetConnection( "FixedImage", "ResultImage", { { "NameOfInterface", { "itkImageDomainFixedInterface" } } } );
   blueprint->SetConnection( "RegistrationMethod", "ResultImage", { { "NameOfInterface", { "NiftyregWarpedImageInterface" } } } );
-  blueprint->SetConnection( "RegistrationMethod", "Controller", { {} } );
-  blueprint->SetConnection( "ResultImage", "Controller", { {} } );
 
   blueprint->Write( dataManager->GetOutputFile( "NiftyregAladin_WBIR.dot" ) );
 
@@ -349,23 +329,18 @@ TEST_F(NiftyregComponentTest, AffineAndBSpline)
   blueprint->SetComponent("FixedImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "Dimensionality", { "2" } }, { "PixelType", { "float" } } });
   blueprint->SetComponent("MovingImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "Dimensionality", { "2" } }, { "PixelType", { "float" } } });
   blueprint->SetComponent("ResultImage", { { "NameOfClass", { "NiftiToItkImageSinkComponent" } }, { "Dimensionality", { "2" } }, { "PixelType", { "float" } } });
-  blueprint->SetComponent("Controller1", { { "NameOfClass", { "RegistrationControllerComponent" } } });
 
   blueprint->SetComponent("RegistrationMethod2", { { "NameOfClass", { "Niftyregf3dComponent" } } });
-  blueprint->SetComponent("Controller2", { { "NameOfClass", { "RegistrationControllerComponent" } } });
 
   blueprint->SetConnection("FixedImage", "RegistrationMethod1", { { "NameOfInterface", { "NiftyregReferenceImageInterface" } } });
   blueprint->SetConnection("MovingImage", "RegistrationMethod1", { { "NameOfInterface", { "NiftyregFloatingImageInterface" } } });
   blueprint->SetConnection("FixedImage", "ResultImage", { { "NameOfInterface", { "itkImageDomainFixedInterface" } } });
-  blueprint->SetConnection("RegistrationMethod1", "Controller1", { {} });
 
   blueprint->SetConnection("FixedImage", "RegistrationMethod2", { { "NameOfInterface", { "NiftyregReferenceImageInterface" } } });
   blueprint->SetConnection("MovingImage", "RegistrationMethod2", { { "NameOfInterface", { "NiftyregFloatingImageInterface" } } });
   blueprint->SetConnection("RegistrationMethod1", "RegistrationMethod2", { { "NameOfInterface", { "NiftyregAffineMatrixInterface" } } });
 
   blueprint->SetConnection("RegistrationMethod2", "ResultImage", { { "NameOfInterface", { "NiftyregWarpedImageInterface" } } });
-  blueprint->SetConnection("RegistrationMethod2", "Controller2", { {} });
-  blueprint->SetConnection("ResultImage", "Controller2", { {} });
 
 
   blueprint->Write(dataManager->GetOutputFile("NiftyregAffineAndBspline.dot"));

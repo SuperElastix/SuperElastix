@@ -33,6 +33,5 @@ set( ${MODULE}_LIBRARIES
 set( ${MODULE}_TEST_SOURCE_FILES )
 
 set( ${MODULE}_MODULE_DEPENDENCIES 
-  ModuleController
 )
 

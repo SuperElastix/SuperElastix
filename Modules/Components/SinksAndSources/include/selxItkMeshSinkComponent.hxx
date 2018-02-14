@@ -55,7 +55,7 @@ ItkMeshSinkComponent< Dimensionality, TPixel >::Accept( typename itkMeshInterfac
 
 template< int Dimensionality, class TPixel >
 void
-ItkMeshSinkComponent< Dimensionality, TPixel >::AfterRegistration()
+ItkMeshSinkComponent< Dimensionality, TPixel >::Update()
 {
   this->m_MiniPipelineOutputMesh->Update();
 }

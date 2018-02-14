@@ -30,7 +30,6 @@
 #include "selxItkDisplacementFieldSinkComponent.h"
 
 //Component group Elastix
-#include "selxElastixComponent.h"
 #include "selxMonolithicElastixComponent.h"
 #include "selxMonolithicTransformixComponent.h"
 
@@ -46,9 +45,6 @@
 #include "selxItkResampleFilterComponent.h"
 #include "selxItkTransformSourceComponent.h"
 #include "selxItkTransformSinkComponent.h"
-
-//Component group Controller
-#include "selxRegistrationControllerComponent.h"
 
 //Component group Niftyreg
 #include "selxItkToNiftiImageSourceComponent.h"
@@ -71,7 +67,6 @@ using DefaultComponents = selx::TypeList<
   ItkImageSinkComponent< 3, short >,
   ItkImageSourceComponent< 2, float >,
   ItkImageSourceComponent< 3, short >,
-  ElastixComponent< 2, float >,
   MonolithicElastixComponent< 2, float >,
   MonolithicElastixComponent< 3, short >,
   MonolithicTransformixComponent< 2, float >,
@@ -84,7 +79,6 @@ using DefaultComponents = selx::TypeList<
   ItkAffineTransformComponent< double, 2 >,
   ItkTransformDisplacementFilterComponent< 2, float, double >,
   ItkResampleFilterComponent< 2, float, double >,
-  RegistrationControllerComponent< >,
   ItkSmoothingRecursiveGaussianImageFilterComponent< 2, float >,
   ItkTransformSourceComponent< 2, double >,
   ItkTransformSinkComponent< 2, double >,

@@ -22,8 +22,8 @@ cmake_minimum_required( VERSION 3.5.1 )
 # ---------------------------------------------------------------------
 project( SuperElastix )
 
-set( SUPERELASTIX_MAJOR_VERSION 0)
-set( SUPERELASTIX_MINOR_VERSION 1)
+set( SUPERELASTIX_MAJOR_VERSION 1)
+set( SUPERELASTIX_MINOR_VERSION 0)
 set( SUPERELASTIX_PATCH_VERSION 0)
 set( SUPERELASTIX_VERSION ${SUPERELASTIX_MAJOR_VERSION}.${SUPERELASTIX_MINOR_VERSION}.${SUPERELASTIX_PATCH_VERSION})
 
@@ -224,6 +224,7 @@ set( SUPERELASTIX_INSTALL_USE_FILE ${CMAKE_INSTALL_DIR}/UseSuperElastix.cmake )
 configure_file( SuperElastixConfig.cmake.in install/SuperElastixConfig.cmake @ONLY)
 configure_file( SuperElastixConfigVersion.cmake.in install/SuperElastixConfigVersion.cmake @ONLY)
 configure_file( UseSuperElastix.cmake.in install/UseSuperElastix.cmake @ONLY ) 
+configure_file(CMake/CTestCustom.cmake.in CTestCustom.cmake @ONLY)
 
 install( FILES 
          ${PROJECT_BINARY_DIR}/install/SuperElastixConfig.cmake

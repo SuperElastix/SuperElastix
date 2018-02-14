@@ -44,8 +44,8 @@ class MonolithicTransformixComponent :
   >,
   Providing<
   itkImageInterface< Dimensionality, TPixel >,
-  itkDisplacementFieldInterface< Dimensionality, TPixel >,
-  ReconnectTransformInterface
+  DisplacementFieldItkImageSourceInterface< Dimensionality, TPixel >,
+  UpdateInterface
   >
   >
 {
@@ -63,8 +63,8 @@ public:
     >,
     Providing<
     itkImageInterface< Dimensionality, TPixel >,
-    itkDisplacementFieldInterface< Dimensionality, TPixel >,
-    ReconnectTransformInterface
+    DisplacementFieldItkImageSourceInterface< Dimensionality, TPixel >,
+    UpdateInterface
     >
     >                                      Superclass;
   typedef std::shared_ptr< Self >       Pointer;
@@ -100,7 +100,7 @@ public:
 
   virtual typename ItkDisplacementFieldType::Pointer GetItkDisplacementField() override;
 
-  virtual void ReconnectTransform() override;
+  virtual void Update() override;
 
   virtual bool MeetsCriterion( const CriterionType & criterion ) override;
 

@@ -33,7 +33,7 @@ template< class TPixel >
 class NiftyregSplineToDisplacementFieldComponent :
   public SuperElastixComponent<
   Accepting< NiftyregControlPointPositionImageInterface< TPixel >, NiftyregReferenceImageInterface< TPixel > >,
-  Providing< NiftyregDisplacementFieldImageInterface< TPixel >, ReconnectTransformInterface >
+  Providing< NiftyregDisplacementFieldImageInterface< TPixel >, UpdateInterface >
   >
 {
 public:
@@ -42,7 +42,7 @@ public:
   typedef NiftyregSplineToDisplacementFieldComponent< TPixel > Self;
   typedef SuperElastixComponent<
     Accepting< NiftyregControlPointPositionImageInterface< TPixel >, NiftyregReferenceImageInterface< TPixel >>,
-    Providing< NiftyregDisplacementFieldImageInterface< TPixel >, ReconnectTransformInterface >
+    Providing< NiftyregDisplacementFieldImageInterface< TPixel >, UpdateInterface >
     >                                      Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
@@ -59,8 +59,8 @@ public:
   // Providing NiftyregWarpedImageInterface
   virtual std::shared_ptr< nifti_image > GetDisplacementFieldNiftiImage() override;
 
-  // Providing ReconnectTransformInterface
-  virtual void ReconnectTransform() override;
+  // Providing UpdateInterface
+  virtual void Update() override;
 
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
 

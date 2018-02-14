@@ -24,7 +24,6 @@
 #include "selxItkImageSourceComponent.h"
 #include "selxItkMeshSinkComponent.h"
 #include "selxItkMeshSourceComponent.h"
-#include "selxRegistrationControllerComponent.h"
 
 #include "itkImage.h"
 #include "itkImageFileReader.h"

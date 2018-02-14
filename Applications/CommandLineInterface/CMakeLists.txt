@@ -88,6 +88,7 @@ set( ConfigFiles
   "elastix_Bspline_NC.json"
   "elastix_Bspline_MSD.json"
   "IdentityTransformRegistration.json"
+  "elastix3d.json"
 )
 
 foreach( ConfigFile ${ConfigFiles} )
@@ -105,6 +106,7 @@ set( ScriptFiles
   "2A_SuperElastix_itkv4_NC"
   "2B_SuperElastix_itkv4_MSD"
   "IdentityTransformRegistration"
+  "elastix3d"
   "graphviz_to_png"
 )
 
@@ -115,10 +117,10 @@ if(WIN32)
 			COMMAND ${CMAKE_COMMAND} -E make_directory ${DEMO_PREFIX}/Scripts
       COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/Demo/Scripts_Windows/${ScriptFile}.bat" "${DEMO_PREFIX}/Scripts/${ScriptFile}.bat")
   endforeach()
-else( WIN32 )
+else(WIN32)
   foreach( ScriptFile ${ScriptFiles} )
     add_custom_command(
-      TARGET demo PRE_BUILD
+      TARGET demo POST_BUILD
 			COMMAND ${CMAKE_COMMAND} -E make_directory ${DEMO_PREFIX}/Scripts
       COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/Demo/Scripts_Linux/${ScriptFile}.sh" "${DEMO_PREFIX}/Scripts/${ScriptFile}.sh")
   endforeach()
