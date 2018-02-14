@@ -38,7 +38,7 @@ class IdentityTransformRegistrationComponent :
   itkImageMovingInterface< Dimensionality, TPixel >
   >,
   Providing< UpdateInterface,
-  DisplacementFieldItkImageSourceInterface< Dimensionality, TPixel >
+  itkDisplacementFieldInterface< Dimensionality, TPixel >
   >
   >
 {
@@ -54,7 +54,7 @@ public:
     itkImageMovingInterface< Dimensionality, TPixel >
     >,
     Providing< UpdateInterface,
-    DisplacementFieldItkImageSourceInterface< Dimensionality, TPixel >
+    itkDisplacementFieldInterface< Dimensionality, TPixel >
     >
     > Superclass;
   typedef std::shared_ptr< Self >       Pointer;

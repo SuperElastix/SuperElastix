@@ -44,7 +44,7 @@ class MonolithicTransformixComponent :
   >,
   Providing<
   itkImageInterface< Dimensionality, TPixel >,
-  DisplacementFieldItkImageSourceInterface< Dimensionality, TPixel >,
+  itkDisplacementFieldInterface< Dimensionality, TPixel >,
   UpdateInterface
   >
   >
@@ -63,7 +63,7 @@ public:
     >,
     Providing<
     itkImageInterface< Dimensionality, TPixel >,
-    DisplacementFieldItkImageSourceInterface< Dimensionality, TPixel >,
+    itkDisplacementFieldInterface< Dimensionality, TPixel >,
     UpdateInterface
     >
     >                                      Superclass;

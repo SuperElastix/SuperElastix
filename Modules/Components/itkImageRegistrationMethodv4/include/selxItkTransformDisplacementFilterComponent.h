@@ -41,7 +41,7 @@ class ItkTransformDisplacementFilterComponent :
   Accepting< itkTransformInterface< TInternalComputationValue, Dimensionality >,
   itkImageDomainFixedInterface< Dimensionality >
   >,
-  Providing< DisplacementFieldItkImageSourceInterface< Dimensionality, TPixel >,
+  Providing< itkDisplacementFieldInterface< Dimensionality, TPixel >,
   UpdateInterface
   >
   >
@@ -56,7 +56,7 @@ public:
     Accepting< itkTransformInterface< TInternalComputationValue, Dimensionality >,
     itkImageDomainFixedInterface< Dimensionality >
     >,
-    Providing< DisplacementFieldItkImageSourceInterface< Dimensionality, TPixel >,
+    Providing< itkDisplacementFieldInterface< Dimensionality, TPixel >,
     UpdateInterface
     >
     >                                     Superclass;

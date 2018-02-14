@@ -108,6 +108,32 @@ public:
 };
 
 template< int Dimensionality, class TPixel >
+class itkImageFixedMaskInterface
+{
+  // An interface that provides the smart pointer to an itk image
+
+public:
+
+  using Type = itkImageFixedMaskInterface< Dimensionality, TPixel >;
+  using Pointer = std::shared_ptr< Type >;
+  typedef typename itk::Image< TPixel, Dimensionality > ItkImageType;
+  virtual typename ItkImageType::Pointer GetItkImageFixedMask() = 0;
+};
+
+template< int Dimensionality, class TPixel >
+class itkImageMovingMaskInterface
+{
+  // An interface that provides the smart pointer to an itk image
+
+public:
+
+  using Type = itkImageMovingMaskInterface< Dimensionality, TPixel >;
+  using Pointer = std::shared_ptr< Type >;
+  typedef typename itk::Image< TPixel, Dimensionality > ItkImageType;
+  virtual typename ItkImageType::Pointer GetItkImageMovingMask() = 0;
+};
+
+template< int Dimensionality, class TPixel >
 class itkMeshInterface
 {
   // An interface that passes the pointer of an output mesh
@@ -163,6 +189,24 @@ struct Properties< itkImageMovingInterface< D, TPixel >>
   static const std::map< std::string, std::string > Get()
   {
     return { { keys::NameOfInterface, "itkImageMovingInterface" }, { keys::Dimensionality, std::to_string( D ) }, { keys::PixelType, PodString< TPixel >::Get() }, { "Role", "Moving" } }; // TODO replace "Role" by "Domain"
+  }
+};
+
+template< int D, class TPixel >
+struct Properties< itkImageFixedMaskInterface< D, TPixel >>
+{
+  static const std::map< std::string, std::string > Get()
+  {
+    return { { keys::NameOfInterface, "itkImageFixedMaskInterface" }, { keys::Dimensionality, std::to_string( D ) }, { keys::PixelType, PodString< TPixel >::Get() }, { "Role", "FixedMask" } };// TODO replace "Role" by "Domain"
+  }
+};
+
+template< int D, class TPixel >
+struct Properties< itkImageMovingMaskInterface< D, TPixel >>
+{
+  static const std::map< std::string, std::string > Get()
+  {
+    return { { keys::NameOfInterface, "itkImageMovingMaskInterface" }, { keys::Dimensionality, std::to_string( D ) }, { keys::PixelType, PodString< TPixel >::Get() }, { "Role", "MovingMask" } };// TODO replace "Role" by "Domain"
   }
 };
 

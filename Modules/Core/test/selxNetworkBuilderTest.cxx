@@ -222,14 +222,14 @@ TEST_F( NetworkBuilderTest, DeduceComponentsFromConnections )
   blueprint->SetConnection( "ResampleFilter", "ResultImageSink", connection3Parameters, "" );
 
   ParameterMapType connection4Parameters;
-  // connection4Parameters[ "NameOfInterface" ] = { "itkDisplacementFieldInterface" };
-  blueprint->SetConnection( "TransformDisplacementFilter", "ResultDisplacementFieldSink", connection4Parameters );
+  connection4Parameters[ "NameOfInterface" ] = { "itkDisplacementFieldInterface" };
+  blueprint->SetConnection( "TransformDisplacementFilter", "ResultDisplacementFieldSink", connection4Parameters, "" );
 
   ParameterMapType connection5Parameters;
   connection5Parameters[ "NameOfInterface" ] = { "itkMetricv4Interface" };
   connection5Parameters[ "Dimensionality" ] = { "3" };
   connection5Parameters[ "PixelType" ] = { "float" };
-  blueprint->SetConnection( "Metric", "RegistrationMethod", connection5Parameters );
+  blueprint->SetConnection( "Metric", "RegistrationMethod", connection5Parameters, "" );
 
   blueprint->SetConnection( "Metric", "RegistrationMethod", connection5Parameters, "" );
   blueprint->SetConnection( "FixedImageSource", "Transform", { {} }, "" );
