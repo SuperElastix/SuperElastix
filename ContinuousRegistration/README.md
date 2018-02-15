@@ -8,7 +8,7 @@ Open a pull request that creates a directory under `Submissions` which contains 
 `make_registration_scripts.py` in `Source` generate shell scripts or batch scripts for running the registrations. Each script will register one pair of images. The following command will generate shell scripts for all submissions for POPI, DIRLAB, and EMPIRE data sets:
 
    $ python make_registration_scripts.py
-      --superelastix /path/to/superelastix/build/tree/bin/superelastix
+      --superelastix /path/to/superelastix/build/tree/SuperElastix-build/bin/superelastix
       --submissions-directory /path/to/superelastix/source/tree/ContinuousRegistration/Submissions
       --output-directory /tmp
       --popi-input-directory /path/to/POPI
@@ -19,7 +19,7 @@ Open a pull request that creates a directory under `Submissions` which contains 
       --mgh10-input-directory /path/to/MGH10
       --cumc12-input-directory /path/to/CUMC12
 
-On Linux, navigate to the output directory and run
+This generates shell scripts to running the registrations, one for each registration. For example, on Linux you can navigate to the output directory and run
 
     $ find . -type f -exec chmod +x "{}" \;
     $ find . -type f -exec "{}" \;

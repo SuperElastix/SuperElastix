@@ -174,7 +174,7 @@ TEST_F( DisplacementFieldImageWarperComponentTest, SinkAndSource )
   blueprint->SetComponent( "DisplacementFieldImageWarper", displacementFieldImageWarperParameters );
 
   ParameterMapType connection0;
-  connection0[ "NameOfInterface" ] = { "itkImageInterface" };
+  connection0[ "NameOfInterface" ] = { "itkImageMovingInterface" };
   blueprint->SetConnection( "ImageSource", "DisplacementFieldImageWarper", connection0 );
 
   ParameterMapType connection1;

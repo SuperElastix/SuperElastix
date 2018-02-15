@@ -51,7 +51,7 @@ def load_datasets(parameters):
 
     if parameters.mgh10_input_directory is not None:
         mgh10 = MGH10(parameters.mgh10_input_directory)
-        datasets[MGH10.name] = mgh10
+        datasets[mgh10.name] = mgh10
         logging.info('Found ' + mgh10.name + ' ' + mgh10.category + ' dataset.')
 
     if parameters.popi_input_directory is not None:
