@@ -25,6 +25,7 @@
 
 #include "itkDisplacementFieldTransform.h"
 #include "itkResampleImageFilter.h"
+#include "itkNearestNeighborInterpolateImageFunction.h"
 
 namespace selx {
 
@@ -68,6 +69,10 @@ public:
   using ResampleImageFilterType = itk::ResampleImageFilter< MovingImageType, ResultImageType, CoordRepType >;
   using ResampleImageFilterPointer = typename ResampleImageFilterType::Pointer;
 
+  using NearestNeighborInterpolatorType = itk::NearestNeighborInterpolateImageFunction<
+          ResultImageType, typename ResultImageType::PixelType>;
+  using NearestNeighborInterpolatorTypePointer = typename NearestNeighborInterpolatorType::Pointer;
+
   // Accept interfaces
   virtual int Accept( DisplacementFieldInterfacePointer ) override;
   virtual int Accept( MovingImageInterfacePointer ) override;
@@ -97,6 +102,7 @@ private:
   DisplacementFieldTransformPointer m_DisplacementFieldTransform;
   ResampleImageFilterPointer m_ResampleImageFilter;
 
+  bool m_UseNearestNeighborInterpolation;
 };
 
 } // namespace selx

@@ -171,6 +171,7 @@ TEST_F( DisplacementFieldImageWarperComponentTest, SinkAndSource )
   ParameterMapType displacementFieldImageWarperParameters;
   displacementFieldImageWarperParameters[ "NameOfClass" ]    = { "ItkDisplacementFieldImageWarperComponent" };
   displacementFieldImageWarperParameters[ "Dimensionality" ] = { "2" };
+  displacementFieldSourceParameters[ "Interpolator" ] = { "NearestNeighbor" };
   blueprint->SetComponent( "DisplacementFieldImageWarper", displacementFieldImageWarperParameters );
 
   ParameterMapType connection0;

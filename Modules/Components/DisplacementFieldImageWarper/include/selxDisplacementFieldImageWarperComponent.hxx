@@ -32,6 +32,7 @@ ItkDisplacementFieldImageWarperComponent< Dimensionality, TPixel, CoordRepType >
   this->m_DisplacementFieldTransform = DisplacementFieldTransformType::New();
   this->m_ResampleImageFilter = ResampleImageFilterType::New();
   this->m_ResampleImageFilter->SetTransform(this->m_DisplacementFieldTransform.GetPointer());
+  this->m_UseNearestNeighborInterpolation = false;
 };
 
 template< int Dimensionality, class TPixel, class CoordRepType >
@@ -79,7 +80,15 @@ ItkDisplacementFieldImageWarperComponent< Dimensionality, TPixel, CoordRepType >
   else if( status == CriterionStatus::Failed )
   {
     return false;
-  } // else: CriterionStatus::Unknown
+  }
+  else if( criterion.first == "Interpolator" && criterion.second.size() > 0 )
+  {
+    if( criterion.second[0] == "NearestNeighbor" ) {
+      NearestNeighborInterpolatorTypePointer nearestNeighborInterpolator = NearestNeighborInterpolatorType::New();
+      this->m_ResampleImageFilter->SetInterpolator(nearestNeighborInterpolator);
+      return true;
+    }
+  }
 
   return meetsCriteria;
 }
