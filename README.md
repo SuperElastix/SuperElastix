@@ -1,4 +1,4 @@
-# SuperElastix image registation toolbox #
+# SuperElastix image registration toolbox #
 
 The objective of image registration is to find the spatial
 relationship between two or more images.
