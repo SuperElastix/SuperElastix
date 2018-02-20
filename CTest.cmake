@@ -48,8 +48,6 @@ set(CTEST_CONFIGURE_COMMAND "${CTEST_CONFIGURE_COMMAND} \"-G${CTEST_CMAKE_GENERA
 set(CTEST_CONFIGURE_COMMAND "${CTEST_CONFIGURE_COMMAND} \"${CTEST_SOURCE_DIRECTORY}\"")
 
 ctest_start("Nightly")
-# Added ctest_update() to ensure that the commit SHA will be passed to CDash, and GitHub.
-# TODO Find out if and/or why this triggers "ERROR: script returned exit code 255"
-ctest_update()
+# TODO Add ctest_update() to ensure that the commit SHA will be passed to CDash, and GitHub.
 ctest_test()
 ctest_submit( PARTS Test )
