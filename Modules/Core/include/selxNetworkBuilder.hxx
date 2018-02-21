@@ -85,6 +85,7 @@ NetworkBuilder< ComponentList >::Configure()
 
   auto nonUniqueComponentNames = this->GetNonUniqueComponentNames();
 
+  // TODO: Print the available criteria
   if( nonUniqueComponentNames.size() > 0 )
   {
     this->m_Logger.Log( LogLevel::CRT, ( this->m_Logger << nonUniqueComponentNames ) + " need more criteria." );
@@ -404,6 +405,7 @@ NetworkBuilder< ComponentList >::CheckConnectionsSatisfied()
 {
   bool isAllSatisfied = true;
 
+  // TODO: Print the unsatisfied connections
   for( auto const & name : this->m_Blueprint.GetComponentNames() )
   {
     ComponentBase::Pointer component   = this->m_ComponentSelectorContainer[ name ]->GetComponent();
