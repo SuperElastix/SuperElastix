@@ -125,10 +125,12 @@ def inverse_consistency_labels(registration_driver, label_file_names, deformatio
     label_image_1_to_0_file_name = warp_label_image(registration_driver, label_file_names[1], deformation_field_file_names[1])
     label_image_1_to_0_to_0_file_name = warp_label_image(registration_driver, label_image_1_to_0_file_name, deformation_field_file_names[0])
 
-    labelOverlapMeasurer.Execute(sitk.ReadImage(label_file_names[0]), sitk.ReadImage(label_image_0_to_1_to_0_file_name))
+    label_image_0 = sitk.ReadImage(label_file_names[0])
+    labelOverlapMeasurer.Execute(label_image_0, sitk.Cast(sitk.ReadImage(label_image_0_to_1_to_0_file_name), label_image_0.GetPixelID()))
     dsc_0 = [lambda dsc: labelOverlapMeasurer.GetDiceCoefficient(label) for label in labelOverlapMeasurer.GetLabels()]
 
-    labelOverlapMeasurer.Execute(sitk.ReadImage(label_file_names[1]), sitk.ReadImage(label_image_1_to_0_to_0_file_name))
+    label_image_1 = sitk.ReadImage(label_file_names[1])
+    labelOverlapMeasurer.Execute(label_image_1, sitk.Cast(sitk.ReadImage(label_image_1_to_0_to_0_file_name), label_image_1.GetPixelID()))
     dsc_1 = [lambda dsc: labelOverlapMeasurer.GetDiceCoefficient(label) for label in labelOverlapMeasurer.GetLabels()]
 
     return (
