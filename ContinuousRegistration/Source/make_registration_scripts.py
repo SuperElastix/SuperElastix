@@ -5,7 +5,30 @@ import json
 
 from datasets import CUMC12, DIRLAB, EMPIRE, ISBR18, LPBA40, MGH10, POPI, SPREAD
 
-max_registrations_per_dataset=50
+parser = argparse.ArgumentParser(description='Continuous Registration Challenge command line interface.')
+
+parser.add_argument('--superelastix', '-selx', required=True, help="Path to SuperElastix executable.")
+parser.add_argument('--submissions-directory', '-sd', required=True, help='Directory with parameter files.')
+parser.add_argument('--output-directory', '-od', required=True)
+parser.add_argument('--make-shell-scripts', '-mss', type=bool, default=True)
+parser.add_argument('--make-batch-scripts', '-mbs', type=bool, default=False)
+
+parser.add_argument('--cumc12-input-directory', '-cid')
+parser.add_argument('--dirlab-input-directory', '-did')
+parser.add_argument('--empire-input-directory', '-eid')
+parser.add_argument('--isbr18-input-directory', '-iid')
+parser.add_argument('--lpba40-input-directory', '-lid')
+parser.add_argument('--mgh10-input-directory', '-mid')
+parser.add_argument('--spread-input-directory', '-sid')
+parser.add_argument('--popi-input-directory', '-pid')
+
+parser.add_argument('--team-name', '-tn')
+parser.add_argument('--blueprint-file-name', '-bfn', help='Generate scripts only for this blueprint file name (including .json). '
+                                                          'May produce scripts for multiple blueprints if they share the same name '
+                                                          ' and --team-name is not provided.')
+
+parser.add_argument('--max-registrations-per-dataset', '-mrpd', default=50)
+
 
 def load_submissions(parameters):
     logging.info('Loading blueprints ...')
@@ -99,7 +122,7 @@ def run(parameters):
             dataset = datasets[dataset_name]
             counter = 0
             for file_names in dataset.generator():
-                if(2*counter > max_registrations_per_dataset):
+                if(2*counter > parameters.max_registrations_per_dataset):
                     continue
                 else:
                     counter = counter+1
@@ -120,30 +143,7 @@ def run(parameters):
                 if parameters.make_batch_scripts:
                     dataset.make_batch_script(parameters.superelastix, blueprint_file_name, file_names, output_directory)
 
-
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='SuperBench registration driver.')
-
-    parser.add_argument('--superelastix', '-selx', required=True, help="Path to SuperElastix executable.")
-    parser.add_argument('--submissions-directory', '-sd', required=True, help='Directory with parameter files.')
-    parser.add_argument('--output-directory', '-od', required=True)
-    parser.add_argument('--make-shell-scripts', '-mss', type=bool, default=True)
-    parser.add_argument('--make-batch-scripts', '-mbs', type=bool, default=False)
-
-    parser.add_argument('--cumc12-input-directory', '-cid')
-    parser.add_argument('--dirlab-input-directory', '-did')
-    parser.add_argument('--empire-input-directory', '-eid')
-    parser.add_argument('--isbr18-input-directory', '-iid')
-    parser.add_argument('--lpba40-input-directory', '-lid')
-    parser.add_argument('--mgh10-input-directory', '-mid')
-    parser.add_argument('--spread-input-directory', '-sid')
-    parser.add_argument('--popi-input-directory', '-pid')
-
-    parser.add_argument('--team-name', '-tn')
-    parser.add_argument('--blueprint-file-name', '-bfn', help='Generate scripts only for this blueprint file name (including .json). '
-                                                              'May produce scripts for multiple blueprints if they share the same name '
-                                                              ' and --team-name is not provided.')
-
     parameters = parser.parse_args()
 
     if not os.path.isfile(parameters.superelastix):

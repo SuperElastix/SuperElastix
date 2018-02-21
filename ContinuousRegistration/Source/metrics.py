@@ -58,20 +58,17 @@ def warp_point_set(registration_driver, point_set_file_name, deformation_field_f
 
     return output_file_name
 
-def warp_label_image(superelastix, label_file_name, deformation_field_file_name, output_label_file_name):
-    output_label_file_name = os.path.splitext(deformation_field_file_name)[0] + '_' + "{:%Y-%m-%d-%H:%M:%S.%f}".format(datetime.now()) + '.vtk'
+def warp_label_image(superelastix, label_file_name, deformation_field_file_name):
+    output_label_file_name = os.path.splitext(deformation_field_file_name)[0] + '_' + "{:%Y-%m-%d-%H:%M:%S.%f}".format(datetime.now()) + '.nii'
 
     try:
-        stdout = subprocess.checkoutput(
-            '%s --conf warp_labels.json ' +
-            '--in LabelImage=%s ' +
-            'DeformationField=%s ' +
-            '--out WarpedLabelImage=%s ' +
-            '--loglevel trace' % (
-            superelastix,
-            label_file_name,
-            deformation_field_file_name,
-            output_label_file_name))
+        stdout = subprocess.check_output([superelastix,
+                                          '--conf', 'warp_labels.json',
+                                          '--in', 'LabelImage=%s' % label_file_name,
+                                          'DisplacementField=%s' % deformation_field_file_name,
+                                          '--out', 'WarpedLabelImage=%s' % output_label_file_name,
+                                          '--loglevel', 'trace',
+                                          '--logfile', os.path.splitext(output_label_file_name)[0] + '.log'])
     except:
         logging.error('Failed to warp %s.' % label_file_name)
 
@@ -129,27 +126,27 @@ def inverse_consistency_labels(registration_driver, label_file_names, deformatio
     label_image_1_to_0_to_0_file_name = warp_label_image(registration_driver, label_image_1_to_0_file_name, deformation_field_file_names[0])
 
     labelOverlapMeasurer.Execute(sitk.ReadImage(label_file_names[0]), sitk.ReadImage(label_image_0_to_1_to_0_file_name))
-    dsc_0 = labelOverlapMeasurer.GetDiceCoefficient()
+    dsc_0 = [lambda dsc: labelOverlapMeasurer.GetDiceCoefficient(label) for label in labelOverlapMeasurer.GetLabels()]
 
     labelOverlapMeasurer.Execute(sitk.ReadImage(label_file_names[1]), sitk.ReadImage(label_image_1_to_0_to_0_file_name))
-    dsc_1 = labelOverlapMeasurer.GetDiceCoefficient()
+    dsc_1 = [lambda dsc: labelOverlapMeasurer.GetDiceCoefficient(label) for label in labelOverlapMeasurer.GetLabels()]
 
     return (
-        {'InverseConsistencyDSC': dsc_0},
-        {'InverseConsistencyDSC': dsc_1}
+        {'InverseConsistencyDSC': np.mean(dsc_0)},
+        {'InverseConsistencyDSC': np.mean(dsc_1)}
     )
 
 
 def dice(registration_driver, label_file_names, deformation_field_file_names):
     label_image_0_to_1_file_name = warp_label_image(registration_driver, label_file_names[0], deformation_field_file_names[0])
     labelOverlapMeasurer.Execute(sitk.ReadImage(label_file_names[0]), sitk.ReadImage(label_image_0_to_1_file_name))
-    dsc_0 = labelOverlapMeasurer.GetDiceCoefficient()
+    dsc_0 = [lambda dsc: labelOverlapMeasurer.GetDiceCoefficient(label) for label in labelOverlapMeasurer.GetLabels()]
 
     label_image_1_to_0_file_name = warp_label_image(registration_driver, label_file_names[1], deformation_field_file_names[1])
     labelOverlapMeasurer.Execute(sitk.ReadImage(label_file_names[1]), sitk.ReadImage(label_image_1_to_0_file_name))
-    dsc_1 = labelOverlapMeasurer.GetDiceCoefficient()
+    dsc_1 = [lambda dsc: labelOverlapMeasurer.GetDiceCoefficient(label) for label in labelOverlapMeasurer.GetLabels()]
 
     return (
-        {'DSC': dsc_0},
-        {'DSC': dsc_1}
+        {'DSC': np.mean(dsc_0)},
+        {'DSC': np.mean(dsc_1)}
     )

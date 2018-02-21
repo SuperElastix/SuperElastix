@@ -2,8 +2,8 @@ import os, glob, csv, re
 from abc import ABCMeta, abstractmethod
 from itertools import combinations
 
-from metrics import tre, hausdorff, inverse_consistency_atlas, inverse_consistency_points, \
-    singularity_ratio, dice, jaccard, merge_dicts
+from metrics import tre, hausdorff, inverse_consistency_labels, inverse_consistency_points, \
+    singularity_ratio, dice, merge_dicts
 
 class Dataset(object):
     __metaclass__ = ABCMeta
@@ -31,7 +31,7 @@ class Dataset(object):
                 file_names['image_file_names'][0],
                 file_names['image_file_names'][1],
                 os.path.join(output_directory, file_names['displacement_field_file_names'][0]),
-                os.path.join(output_directory, os.path.splitext(file_names['displacement_field_file_names'][0])[0] + '.log')))
+                os.path.join(output_directory, 'sh', os.path.splitext(file_names['displacement_field_file_names'][0])[0] + '.log')))
 
 
         with open(shell_script_file_name_1, 'w') as shell_script:
@@ -40,8 +40,8 @@ class Dataset(object):
                 blueprint_file_name,
                 file_names['image_file_names'][1],
                 file_names['image_file_names'][0],
-                os.path.join(output_directory, file_names['displacement_field_file_names'][0]),
-                os.path.join(output_directory, os.path.basename(file_names['displacement_field_file_names'][0]) + '.log')))
+                os.path.join(output_directory, file_names['displacement_field_file_names'][1]),
+                os.path.join(output_directory, os.path.basename(file_names['displacement_field_file_names'][1]) + '.log')))
 
 
     def make_batch_script(self):
@@ -76,7 +76,7 @@ class CUMC12(Dataset):
 
 
     def generator(self):
-        for image_file_names, atlas_file_names, displacement_field_file_names in zip(self.image_file_names, self.atlas_file_names, self.relative_displacement_field_file_names):
+        for image_file_names, atlas_file_names, displacement_field_file_names in zip(self.image_file_names, self.atlas_file_names, self.displacement_field_file_names):
             yield {
                 "image_file_names": image_file_names,
                 "ground_truth_file_names": atlas_file_names,
@@ -316,6 +316,8 @@ class MGH10(Dataset):
         self.atlas_file_names = [pair for pair in combinations(atlas_file_names, 2)]
 
         for image_file_name_0, image_file_name_1 in self.image_file_names:
+            image_file_name_0 = os.path.basename(image_file_name_0)
+            image_file_name_1 = os.path.basename(image_file_name_1)
             image_file_name_we_0, image_extension_we_0 = os.path.splitext(image_file_name_0)
             image_file_name_we_1, image_extension_we_1 = os.path.splitext(image_file_name_1)
             self.displacement_field_file_names.append((os.path.join(self.name, image_file_name_we_0 + "_to_" + image_file_name_we_1 + ".nii"),
@@ -326,15 +328,15 @@ class MGH10(Dataset):
         for image_file_names, atlas_file_names, displacement_field_file_names in zip(self.image_file_names, self.atlas_file_names, self.displacement_field_file_names):
             yield {
                 "image_file_names": image_file_names,
-                "ground_truth_file_names": atlas_file_names,
+                "atlas_file_names": atlas_file_names,
                 "displacement_field_file_names": displacement_field_file_names
             }
 
 
-    def evaluate(self, registration_driver, file_names):
+    def evaluate(self, superelastix, file_names):
 
-        singularity_ratio_0, singularity_ratio_1 = singularity_ratio(file_names.displacement_field_file_names_fullpath)
-        inverse_consistency_atlas_0, inverse_consistency_atlas_1 = inverse_consistency_atlas(registration_driver, file_names.atlas_file_names, file_names.displacement_field_file_names_fullpath)
+        singularity_ratio_0, singularity_ratio_1 = singularity_ratio(file_names['displacement_field_file_names_full_path'])
+        inverse_consistency_atlas_0, inverse_consistency_atlas_1 = inverse_consistency_labels(superelastix, file_names['atlas_file_names'], file_names['displacement_field_file_names_full_path'])
 
         result_0 = merge_dicts(singularity_ratio_0, inverse_consistency_atlas_0)
         result_1 = merge_dicts(singularity_ratio_1, inverse_consistency_atlas_1)
