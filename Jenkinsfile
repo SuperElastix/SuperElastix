@@ -46,12 +46,20 @@ node('lkeb-vm-test') {
     }
     stage('SuperBuild') {
       dir('build') {
-        sh "`dirname ${ cmake }`/ctest --script ../src/SuperBuild/CTest.cmake"
+        // sh "`dirname ${ cmake }`/ctest --script ../src/SuperBuild/CTest.cmake"
       }
     }
     stage('Test') {
       dir('build/SuperElastix-build') {
-        sh "`dirname ${ cmake }`/ctest --script ../../src/CTest.cmake"
+        // sh "`dirname ${ cmake }`/ctest --script ../../src/CTest.cmake"
+      }
+    }
+    stage('Deploy') {
+      when {
+        branch "SELX-172-Deploy-develop-on-shark"
+      }
+      steps {
+        sh "scp -r src sa_lkeb@shark:~/SuperElastix"
       }
     }
     dir('src') {
