@@ -88,6 +88,7 @@ public:
 
   typedef elastixTransformParameterObjectInterface< itk::Image< TPixel, Dimensionality >,
     itk::Image< TPixel, Dimensionality >> elastixTransformParameterObjectInterfaceType;
+
   // Accepting Interfaces:
   virtual int Accept( typename itkImageDomainFixedInterface< Dimensionality >::Pointer ) override;
 
