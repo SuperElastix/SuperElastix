@@ -36,6 +36,11 @@ execute_process (
     OUTPUT_VARIABLE SELX_GIT_BRANCH_NAME 
 )
 
+if(NOT DEFINED CTEST_GIT_COMMAND)
+  find_program(CTEST_GIT_COMMAND NAMES git git.cmd)
+endif()
+set(CTEST_GIT_UPDATE_CUSTOM "${CTEST_GIT_COMMAND}" pull origin)
+
 set(CTEST_BUILD_NAME "${SELX_GIT_BRANCH_NAME};Tests;commit=SHA\\:${SELX_GIT_COMMIT_SHA}")
 
 set(CTEST_CMAKE_GENERATOR "Unix Makefiles")
@@ -48,6 +53,7 @@ set(CTEST_CONFIGURE_COMMAND "${CTEST_CONFIGURE_COMMAND} \"-G${CTEST_CMAKE_GENERA
 set(CTEST_CONFIGURE_COMMAND "${CTEST_CONFIGURE_COMMAND} \"${CTEST_SOURCE_DIRECTORY}\"")
 
 ctest_start("Nightly")
-# TODO Add ctest_update() to ensure that the commit SHA will be passed to CDash, and GitHub.
+# Added ctest_update() to ensure that the commit SHA will be passed to CDash, and GitHub.
+ctest_update()
 ctest_test()
 ctest_submit( PARTS Test )
