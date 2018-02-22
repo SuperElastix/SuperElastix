@@ -1,5 +1,5 @@
 {
-    "Datasets": ["POPI", "DIRLAB", "EMPIRE", "LPBA40", "ISBR18", "MGH10", "CUMC12"],
+    "Datasets": ["MGH10"],
     "Component": {
         "Name": "IdentityRegistrationMethod",
         "NameOfClass": "IdentityTransformRegistrationComponent",
