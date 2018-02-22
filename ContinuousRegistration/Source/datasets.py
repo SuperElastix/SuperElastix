@@ -31,7 +31,7 @@ class Dataset(object):
                 file_names['image_file_names'][0],
                 file_names['image_file_names'][1],
                 os.path.join(output_directory, file_names['displacement_field_file_names'][0]),
-                os.path.join(output_directory, 'sh', os.path.splitext(file_names['displacement_field_file_names'][0])[0] + '.log')))
+                os.path.splitext(shell_script_file_name_0)[0] + '.log'))
 
 
         with open(shell_script_file_name_1, 'w') as shell_script:
@@ -41,7 +41,7 @@ class Dataset(object):
                 file_names['image_file_names'][1],
                 file_names['image_file_names'][0],
                 os.path.join(output_directory, file_names['displacement_field_file_names'][1]),
-                os.path.join(output_directory, os.path.basename(file_names['displacement_field_file_names'][1]) + '.log')))
+                os.path.splitext(shell_script_file_name_1)[0] + '.log'))
 
 
     def make_batch_script(self):
