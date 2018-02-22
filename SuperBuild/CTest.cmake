@@ -36,6 +36,11 @@ execute_process (
     OUTPUT_VARIABLE SELX_GIT_BRANCH_NAME 
 )
 
+if(NOT DEFINED CTEST_GIT_COMMAND)
+  find_program(CTEST_GIT_COMMAND NAMES git git.cmd)
+endif()
+set(CTEST_GIT_UPDATE_CUSTOM "${CTEST_GIT_COMMAND}" pull origin)
+
 set(CTEST_BUILD_NAME "${SELX_GIT_BRANCH_NAME};Build;commit=SHA\\:${SELX_GIT_COMMIT_SHA}")
 
 set(CTEST_CMAKE_GENERATOR "Unix Makefiles")
