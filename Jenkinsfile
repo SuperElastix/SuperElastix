@@ -57,7 +57,7 @@ node('lkeb-vm-test') {
     stage('Deploy') {
       GIT_BRANCH = sh(returnStdout: true, script: 'git rev-parse --abbrev-ref HEAD').trim()
       when {
-        expression { GIT_BRANCH=='SELX-172-Deploy-develop-on-shark'
+        expression { GIT_BRANCH=='SELX-172-Deploy-develop-on-shark' }
       }
       steps {
         sh "scp -r src sa_lkeb@shark:~/SuperElastix"
