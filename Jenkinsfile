@@ -30,8 +30,8 @@ def updateGithubCommitStatus(build) {
 }
 
 
-node('lkeb-vm-test') {
-  pipeline {
+pipeline {
+  node('lkeb-vm-test') {
     stages {
       stage('Init') {
         cmake = tool 'CMake 3.5.1'
