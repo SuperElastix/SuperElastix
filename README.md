@@ -1,17 +1,15 @@
 # SuperElastix image registration toolbox #
 
-The objective of image registration is to find the spatial
-relationship between two or more images.
-In the last decades numerous image registration methods
-and tools have emerged from the research community.
-Implementation of these methods, however, are scattered
-over a plethora of toolboxes each with their own interface,
-limitations and modus operandi.
+The objective of image registration is to find the spatial relationship between two or more images. 
+In the last decades numerous image registration methods and tools have emerged from the research community. 
+Implementation of these methods, however, are scattered over a plethora of toolboxes each with their own interface, limitations and modus operandi. 
 
-SuperElastix is a collaborative toolbox written in C++ that incorporates a diverse set of registration algorithms from third-party sources. Its modular and flexible architecture aims at the integration of registration algorithms that adhere to any paradigm, while fully supporting cross-fertilization.
-It provides a unified user interface by means of a configuration file. The toolbox comes as a single executable to make many different registration algorithms easily accessible to experts in other domains that just uses image registration as a tool. Secondly, the toolbox has a full library interface to embed it into any other C++ application.
-
-SuperElastix is developed in conjunction with the [Continuous Registration Challenge](https://continuousregistration.grand-challenge.org/), in which all the methods that are included in SuperElastix are benchmarked continuously during development.
+SuperElastix is an image registration toolbox written in C++ that incorporates a diverse set of registration algorithms from third-party sources. 
+Its modular and flexible architecture enables the integration of algorithms from any registration paradigm, while fully supporting cross-fertilization. 
+It provides a unified user-interface by means of a configuration file. 
+Commandline as well as library interfaces are readily available. 
+SuperElastix leverages social coding practices from GitHub to make it a collaborative effort from the image registration community. 
+It is developed in conjunction with the [Continuous Registration Challenge(https://continuousregistration.grand-challenge.org/), in which all the methods that are included in SuperElastix are automatically and continuously benchmarked on a diverse dataset.
 
 ## Documentation ##
 - [Read-the-Docs](http://superelastix.readthedocs.io/en/latest/index.html)
