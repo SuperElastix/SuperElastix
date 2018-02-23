@@ -31,46 +31,46 @@ def updateGithubCommitStatus(build) {
 
 
 pipeline {
-  node('lkeb-vm-test') {
-    stages {
-      stage('Init') {
-        cmake = tool 'CMake 3.5.1'
-        sh 'rm -rf build'
-        sh 'mkdir -p build'
-      }
+  agent 'lkeb-vm-test' 
+  stages {
+    stage('Init') {
+      cmake = tool 'CMake 3.5.1'
+      sh 'rm -rf build'
+      sh 'mkdir -p build'
+    }
 
-      timeout(120) {
-        stage('Checkout') {
-          sh 'mkdir -p src'
-          dir('src') {
-            checkout scm
-          }
-        }
-        stage('SuperBuild') {
-          dir('build') {
-            // sh "`dirname ${ cmake }`/ctest --script ../src/SuperBuild/CTest.cmake"
-          }
-        }
-        stage('Test') {
-          dir('build/SuperElastix-build') {
-            // sh "`dirname ${ cmake }`/ctest --script ../../src/CTest.cmake"
-          }
-        }
-        stage('Deploy') {
-          dir('src') {
-            GIT_BRANCH = sh(returnStdout: true, script: 'git rev-parse --abbrev-ref HEAD').trim()
-          }
-          when {
-            expression { GIT_BRANCH=='SELX-172-Deploy-develop-on-shark' }
-          }
-          steps {
-            sh "scp -r src sa_lkeb@shark:~/SuperElastix"
-          }
-        }
+    timeout(120) {
+      stage('Checkout') {
+        sh 'mkdir -p src'
         dir('src') {
-          updateGithubCommitStatus(currentBuild)
+          checkout scm
         }
+      }
+      stage('SuperBuild') {
+        dir('build') {
+          // sh "`dirname ${ cmake }`/ctest --script ../src/SuperBuild/CTest.cmake"
+        }
+      }
+      stage('Test') {
+        dir('build/SuperElastix-build') {
+          // sh "`dirname ${ cmake }`/ctest --script ../../src/CTest.cmake"
+        }
+      }
+      stage('Deploy') {
+        dir('src') {
+          GIT_BRANCH = sh(returnStdout: true, script: 'git rev-parse --abbrev-ref HEAD').trim()
+        }
+        when {
+          expression { GIT_BRANCH=='SELX-172-Deploy-develop-on-shark' }
+        }
+        steps {
+          sh "scp -r src sa_lkeb@shark:~/SuperElastix"
+        }
+      }
+      dir('src') {
+        updateGithubCommitStatus(currentBuild)
       }
     }
   }
+
 }
