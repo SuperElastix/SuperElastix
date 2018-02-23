@@ -57,9 +57,9 @@ node('lkeb-vm-test') {
     stage('Deploy') {
       dir('src') {
         sh '''
-            GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+            GIT_BRANCH=$(git name-rev --name-only HEAD)
             echo $GIT_BRANCH
-            if [ "$GIT_BRANCH" = "SELX-172-Deploy-develop-on-shark" ]
+            if [ "$GIT_BRANCH" = "remotes/origin/SELX-172-Deploy-develop-on-shark" ]
             then
               echo "Deploy this build of develop on shark cluster"
               scp -r src sa_lkeb@shark:~/SuperElastix
