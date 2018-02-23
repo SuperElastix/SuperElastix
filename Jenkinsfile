@@ -31,7 +31,7 @@ def updateGithubCommitStatus(build) {
 
 
 pipeline {
-  agent 'lkeb-vm-test' 
+  agent { label 'lkeb-vm-test' }
   stages {
     stage('Init') {
       cmake = tool 'CMake 3.5.1'
