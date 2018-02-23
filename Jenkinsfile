@@ -46,12 +46,12 @@ node('lkeb-vm-test') {
     }
     stage('SuperBuild') {
       dir('build') {
-        // sh "`dirname ${ cmake }`/ctest --script ../src/SuperBuild/CTest.cmake"
+        sh "`dirname ${ cmake }`/ctest --script ../src/SuperBuild/CTest.cmake"
       }
     }
     stage('Test') {
       dir('build/SuperElastix-build') {
-        // sh "`dirname ${ cmake }`/ctest --script ../../src/CTest.cmake"
+        sh "`dirname ${ cmake }`/ctest --script ../../src/CTest.cmake"
       }
     }
     stage('Deploy') {
@@ -64,6 +64,7 @@ node('lkeb-vm-test') {
               echo "Deploy this build of develop on shark cluster"
               cd ..
               scp -r src sa_lkeb@shark:~/SuperElastix
+              scp build/Applications-build/CommandLineInterface/SuperElastix sa_lkeb@shark:~/SuperElastix/builds/latest/
             else
               echo "This is not the develop branch, thus do not deploy"
             fi
