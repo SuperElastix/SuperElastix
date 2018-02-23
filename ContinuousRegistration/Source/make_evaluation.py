@@ -1,4 +1,4 @@
-import logging, os, json
+import logging, os, json, datetime
 from make_registration_scripts import parser, load_submissions, load_datasets
 
 def write_json(output_file_name, results):
@@ -26,7 +26,12 @@ def run(parameters):
 
             dataset = datasets[dataset_name]
             results[team_name][blueprint_name][dataset_name] = dict()
+            counter = 0
             for file_names in dataset.generator():
+                if counter >= parameters.max_number_of_registrations_per_dataset:
+                    continue
+                else:
+                    counter = counter+2
                 output_directory = os.path.join(parameters.output_directory, team_name, blueprint_name)
                 logging.info('Evaluating %s and %s.', file_names['image_file_names'][0], file_names['image_file_names'][1])
 
@@ -39,11 +44,11 @@ def run(parameters):
                     results[team_name][blueprint_name][dataset.name][file_names['displacement_field_file_names'][0]] = result_0
                     results[team_name][blueprint_name][dataset.name][file_names['displacement_field_file_names'][1]] = result_1
                 except Exception as e:
-                    results[team_name][blueprint_name][dataset.name][file_names['displacement_field_file_names']][0] = 'Error during evaluation'
-                    results[team_name][blueprint_name][dataset.name][file_names['displacement_field_file_names']][1] = 'Error during evaluation'
+                    results[team_name][blueprint_name][dataset.name][file_names['displacement_field_file_names'][0]] = str(e)
+                    results[team_name][blueprint_name][dataset.name][file_names['displacement_field_file_names'][1]] = str(e)
                     logging.error('Error during evaulation of %s, %s, %s' % (team_name, blueprint_name, dataset.name))
 
-        write_json(os.path.join(parameters.output_directory, "results.json"), results)
+        write_json(os.path.join(parameters.output_directory, 'results_{:%Y-%m-%d-%H:%M:%S.%f}'.format(datetime.now()) + '.json'), results)
 
 if __name__ == '__main__':
     parameters = parser.parse_args()

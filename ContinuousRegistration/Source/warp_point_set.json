@@ -5,31 +5,31 @@
 		"Dimensionality": "3"
     },
     "Component": {
-        "Name": "FixedImage",
+        "Name": "DisplacementField",
         "NameOfClass": "ItkDisplacementFieldSourceComponent",
         "Dimensionality": "3"
     },
 
     "Component": {
-        "Name": "MovingImage",
+        "Name": "InputPointSet",
         "NameOfClass": "ItkMeshSourceComponent",
 		"Dimensionality": "3"
     },
     "Component": {
-        "Name": "ResultMesh",
+        "Name": "OutputPointSet",
         "NameOfClass": "ItkMeshSinkComponent",
 		"Dimensionality": "3"
     },
 	"Connection": {
-        "Out": "FixedImage",
+        "Out": "DisplacementField",
         "In": "DisplacementFieldMeshWarper"
     },
 	"Connection": {
-        "Out": "MovingImage",
+        "Out": "InputPointSet",
         "In": "DisplacementFieldMeshWarper"
     },
 	"Connection": {
         "Out": "DisplacementFieldMeshWarper",
-        "In": "ResultMesh"
+        "In": "OutputPointSet"
     }
 }

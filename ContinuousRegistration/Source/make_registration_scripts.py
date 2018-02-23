@@ -3,7 +3,7 @@ import logging
 import os
 import json
 
-from datasets import CUMC12, DIRLAB, EMPIRE, ISBR18, LPBA40, MGH10, POPI, SPREAD
+from datasets import CUMC12, DIRLAB, EMPIRE, ISBR18, LPBA40, POPI, SPREAD
 
 parser = argparse.ArgumentParser(description='Continuous Registration Challenge command line interface.')
 
@@ -23,11 +23,9 @@ parser.add_argument('--spread-input-directory', '-sid')
 parser.add_argument('--popi-input-directory', '-pid')
 
 parser.add_argument('--team-name', '-tn')
-parser.add_argument('--blueprint-file-name', '-bfn', help='Generate scripts only for this blueprint file name (including .json). '
-                                                          'May produce scripts for multiple blueprints if they share the same name '
-                                                          ' and --team-name is not provided.')
+parser.add_argument('--blueprint-file-name', '-bfn', help='Generate scripts only for this blueprint file name.' )
 
-parser.add_argument('--max-registrations-per-dataset', '-mrpd', default=50)
+parser.add_argument('--max-number-of-registrations-per-dataset', '-mnorpd', type=int, default=64)
 
 
 def load_submissions(parameters):
@@ -122,10 +120,10 @@ def run(parameters):
             dataset = datasets[dataset_name]
             counter = 0
             for file_names in dataset.generator():
-                if(2*counter > parameters.max_registrations_per_dataset):
+                if(counter >= parameters.max_number_of_registrations_per_dataset):
                     continue
                 else:
-                    counter = counter+1
+                    counter = counter+2
 
                 blueprint_output_directory = os.path.join(parameters.output_directory, team_name, blueprint_name, os.path.dirname(file_names['displacement_field_file_names'][0]))
 
@@ -138,10 +136,10 @@ def run(parameters):
                 output_directory = os.path.join(parameters.output_directory, team_name, blueprint_name)
 
                 if parameters.make_shell_scripts:
-                    dataset.make_shell_script(parameters.superelastix, blueprint_file_name, file_names, output_directory)
+                    dataset.make_shell_scripts(parameters.superelastix, blueprint_file_name, file_names, output_directory)
 
                 if parameters.make_batch_scripts:
-                    dataset.make_batch_script(parameters.superelastix, blueprint_file_name, file_names, output_directory)
+                    dataset.make_batch_scripts(parameters.superelastix, blueprint_file_name, file_names, output_directory)
 
 if __name__ == '__main__':
     parameters = parser.parse_args()
