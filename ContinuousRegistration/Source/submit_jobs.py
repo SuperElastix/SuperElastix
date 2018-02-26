@@ -116,53 +116,53 @@ def create_native_spec(queue, walltime, memory, ncores, outputLog,
         
             # FIXME This needs to be more generic! This is for our SGE cluster only!
 
-    def send_job(session, command, arguments, queue=None, walltime=None,
-                 job_name=None, memory=None, ncores=None, joinLogFiles=False,
-                 outputLog=None, errorLog=None, hold_job=None, hold=False):
+def send_job(session, command, arguments, queue=None, walltime=None,
+             job_name=None, memory=None, ncores=None, joinLogFiles=False,
+             outputLog=None, errorLog=None, hold_job=None, hold=False):
 
-        # Create job template
-        jt = session.createJobTemplate()
-        jt.remoteCommand = command
+    # Create job template
+    jt = session.createJobTemplate()
+    jt.remoteCommand = command
 
-        jt.args = arguments
-        jt.joinFiles = joinLogFiles
-        env = os.environ
-        # Make sure environment modules do not annoy use with bash warnings
-        # after the shellshock bug was fixed
-        env.pop('BASH_FUNC_module()', None)
-        env['PBS_O_INITDIR'] = os.path.abspath(os.curdir)
-        jt.jobEnvironment = env
+    jt.args = arguments
+    jt.joinFiles = joinLogFiles
+    env = os.environ
+    # Make sure environment modules do not annoy use with bash warnings
+    # after the shellshock bug was fixed
+    env.pop('BASH_FUNC_module()', None)
+    env['PBS_O_INITDIR'] = os.path.abspath(os.curdir)
+    jt.jobEnvironment = env
 
-        if queue is None:
-            queue = "all.q"
+    if queue is None:
+        queue = "all.q"
 
-        # Get native spec from subclass
-        native_spec = create_native_spec(
-            queue=queue,
-            walltime=walltime,
-            memory=memory,
-            ncores=ncores,
-            outputLog=outputLog,
-            errorLog=errorLog,
-            hold_job=hold_job,
-            hold=hold
-        )
+    # Get native spec from subclass
+    native_spec = create_native_spec(
+        queue=queue,
+        walltime=walltime,
+        memory=memory,
+        ncores=ncores,
+        outputLog=outputLog,
+        errorLog=errorLog,
+        hold_job=hold_job,
+        hold=hold
+    )
 
-        print('Setting native spec to: {}'.format(native_spec))
-        jt.nativeSpecification = native_spec
-        if job_name is None:
-            job_name = command
-            job_name = job_name.replace(' ', '_')
-            job_name = job_name.replace('"', '')
-            if len(job_name) > 32:
-                job_name = job_name[0:32]
+    print('Setting native spec to: {}'.format(native_spec))
+    jt.nativeSpecification = native_spec
+    if job_name is None:
+        job_name = command
+        job_name = job_name.replace(' ', '_')
+        job_name = job_name.replace('"', '')
+        if len(job_name) > 32:
+            job_name = job_name[0:32]
 
-        jt.jobName = job_name
+    jt.jobName = job_name
 
-        # Send job to cluster
-        job_id = session.runJob(jt)
+    # Send job to cluster
+    job_id = session.runJob(jt)
 
-        # Remove job template
-        session.deleteJobTemplate(jt)
+    # Remove job template
+    session.deleteJobTemplate(jt)
 
-        return job_id
+    return job_id
