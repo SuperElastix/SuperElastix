@@ -134,19 +134,6 @@ public:
 };
 
 template< int Dimensionality, class TPixel >
-class DisplacementFieldItkImageSourceInterface
-{
-  // An interface that passes the pointer of an output image
-
-public:
-
-  using Type    = DisplacementFieldItkImageSourceInterface< Dimensionality, TPixel >;
-  using Pointer = std::shared_ptr< Type >;
-  typedef typename itk::Image< itk::Vector< TPixel, Dimensionality >, Dimensionality > ItkImageType;
-  virtual typename ItkImageType::Pointer GetDisplacementFieldItkImage() = 0;
-};
-
-template< int Dimensionality, class TPixel >
 class itkMeshInterface
 {
   // An interface that passes the pointer of an output mesh
@@ -210,7 +197,7 @@ struct Properties< itkImageFixedMaskInterface< D, TPixel >>
 {
   static const std::map< std::string, std::string > Get()
   {
-    return{ { keys::NameOfInterface, "itkImageFixedMaskInterface" }, { keys::Dimensionality, std::to_string(D) }, { keys::PixelType, PodString< TPixel >::Get() } };
+    return { { keys::NameOfInterface, "itkImageFixedMaskInterface" }, { keys::Dimensionality, std::to_string( D ) }, { keys::PixelType, PodString< TPixel >::Get() }, { "Role", "FixedMask" } };// TODO replace "Role" by "Domain"
   }
 };
 
@@ -219,16 +206,7 @@ struct Properties< itkImageMovingMaskInterface< D, TPixel >>
 {
   static const std::map< std::string, std::string > Get()
   {
-    return{ { keys::NameOfInterface, "itkImageMovingMaskInterface" }, { keys::Dimensionality, std::to_string(D) }, { keys::PixelType, PodString< TPixel >::Get() } };
-  }
-};
-
-template< int D, class TPixel >
-struct Properties< DisplacementFieldItkImageSourceInterface< D, TPixel >>
-{
-  static const std::map< std::string, std::string > Get()
-  {
-    return { { keys::NameOfInterface, "DisplacementFieldItkImageSourceInterface" }, { keys::Dimensionality, std::to_string( D ) }, { keys::PixelType, PodString< TPixel >::Get() } };
+    return { { keys::NameOfInterface, "itkImageMovingMaskInterface" }, { keys::Dimensionality, std::to_string( D ) }, { keys::PixelType, PodString< TPixel >::Get() }, { "Role", "MovingMask" } };// TODO replace "Role" by "Domain"
   }
 };
 

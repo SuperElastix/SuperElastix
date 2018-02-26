@@ -50,6 +50,7 @@ public:
   virtual void SetUp()
   {
     /** make example blueprint configuration */
+    logger->AddStream( "cout", std::cout );
     blueprint = BlueprintPointer( new BlueprintImpl( *logger ) );
     ParameterMapType metricComponentParameters;
     metricComponentParameters[ "NameOfClass" ] = { "MetricComponent1" };
@@ -101,10 +102,14 @@ TEST_F( NetworkBuilderTest, DeduceComponentsFromConnections )
 {
   // Fill the component database with all combinations of Dimensionality:[2,3], PixelType:[float,double] and InternalComputationValueType:[float,double]
   using RegisterComponents = TypeList<
-    DisplacementFieldItkImageFilterSinkComponent< 2, double >,
-    DisplacementFieldItkImageFilterSinkComponent< 2, float >,
-    DisplacementFieldItkImageFilterSinkComponent< 3, double >,
-    DisplacementFieldItkImageFilterSinkComponent< 3, float >,
+    ItkDisplacementFieldSourceComponent< 2, double >,
+    ItkDisplacementFieldSourceComponent< 2, float >,
+    ItkDisplacementFieldSourceComponent< 3, double >,
+    ItkDisplacementFieldSourceComponent< 3, float >,
+    ItkDisplacementFieldSinkComponent< 2, double >,
+    ItkDisplacementFieldSinkComponent< 2, float >,
+    ItkDisplacementFieldSinkComponent< 3, double >,
+    ItkDisplacementFieldSinkComponent< 3, float >,
     ItkImageSinkComponent< 2, double >,
     ItkImageSinkComponent< 2, float >,
     ItkImageSinkComponent< 3, double >,
@@ -174,9 +179,10 @@ TEST_F( NetworkBuilderTest, DeduceComponentsFromConnections )
   ParameterMapType component3Parameters;
   component3Parameters[ "NameOfClass" ]    = { "ItkImageSinkComponent" };
   component3Parameters[ "Dimensionality" ] = { "3" }; // should be derived from the outputs
+  component3Parameters[ "PixelType" ] = { "float" }; // should be derived from the outputs
   blueprint->SetComponent( "ResultImageSink", component3Parameters );
 
-  blueprint->SetComponent( "ResultDisplacementFieldSink", { { "NameOfClass", { "DisplacementFieldItkImageFilterSinkComponent" } },
+  blueprint->SetComponent( "ResultDisplacementFieldSink", { { "NameOfClass", { "ItkDisplacementFieldSinkComponent" } },
                                                             { "Dimensionality", { "3" } },
                                                             { "PixelType", { "float" } } } );
 
@@ -197,11 +203,11 @@ TEST_F( NetworkBuilderTest, DeduceComponentsFromConnections )
 
   blueprint->SetComponent( "ResampleFilter", { { "NameOfClass", { "ItkResampleFilterComponent" } } } );
 
-  blueprint->SetComponent( "Transform", { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformComponent" } } } );
+  blueprint->SetComponent( "Transform", { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformComponent" } }, { "Dimensionality", { "3" } } } );
 
   blueprint->SetComponent( "TransformResolutionAdaptor",
     { { "NameOfClass", { "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent" } },
-      { "ShrinkFactorsPerLevel", { "2", "1" } } } );
+      { "ShrinkFactorsPerLevel", { "2", "1" } }, { "Dimensionality", { "3" } } } );
 
   ParameterMapType connection1Parameters;
   connection1Parameters[ "NameOfInterface" ] = { "itkImageFixedInterface" };
@@ -216,11 +222,14 @@ TEST_F( NetworkBuilderTest, DeduceComponentsFromConnections )
   blueprint->SetConnection( "ResampleFilter", "ResultImageSink", connection3Parameters, "" );
 
   ParameterMapType connection4Parameters;
-  connection4Parameters[ "NameOfInterface" ] = { "DisplacementFieldItkImageSourceInterface" };
+  connection4Parameters[ "NameOfInterface" ] = { "itkDisplacementFieldInterface" };
   blueprint->SetConnection( "TransformDisplacementFilter", "ResultDisplacementFieldSink", connection4Parameters, "" );
 
   ParameterMapType connection5Parameters;
   connection5Parameters[ "NameOfInterface" ] = { "itkMetricv4Interface" };
+  connection5Parameters[ "Dimensionality" ] = { "3" };
+  connection5Parameters[ "PixelType" ] = { "float" };
+  blueprint->SetConnection( "Metric", "RegistrationMethod", connection5Parameters, "" );
 
   blueprint->SetConnection( "Metric", "RegistrationMethod", connection5Parameters, "" );
   blueprint->SetConnection( "FixedImageSource", "Transform", { {} }, "" );
