@@ -62,7 +62,7 @@ node('lkeb-vm-test') {
             if [ "$GIT_BRANCH" = "remotes/origin/SELX-172-Deploy-develop-on-shark" ]
             then
               echo "Deploy this build of develop on shark cluster"
-              scp -rp SuperBench sa_lkeb@shark:~/SuperElastix/deployed/
+              scp -rp ContinuousRegistration sa_lkeb@shark:~/SuperElastix/deployed/
               scp -p ../build/Applications-build/CommandLineInterface/SuperElastix sa_lkeb@shark:~/SuperElastix/deployed/
             else
               echo "This is not the develop branch, thus do not deploy"
