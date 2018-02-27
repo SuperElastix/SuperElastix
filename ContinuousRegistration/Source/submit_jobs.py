@@ -14,7 +14,7 @@ def main():
     Note, need file called sleeper.sh in home directory.
     """
     with drmaa.Session() as s:
-        
+        s.initialize()
         command = "TeamIdentityTransform/IdentityTransform/sh/CUMC12_m2_to_m10.sh"
         arguments = ""
         
@@ -25,8 +25,6 @@ def main():
         retval = s.wait(jobid, drmaa.Session.TIMEOUT_WAIT_FOREVER)
         print('Job: {0} finished with status {1}'.format(retval.jobId, retval.hasExited))
 
-        print('Cleaning up')
-        s.deleteJobTemplate(jt)
 
 if __name__=='__main__':
     main()
@@ -110,7 +108,7 @@ def create_native_spec(queue, walltime, memory, ncores, outputLog,
 
         if hold:
             # Add a user hold to the job
-            native_spec.append(self.spec_fields['HOLD'])
+            native_spec.append(GE_NATIVE_SPEC['HOLD'])
 
         return ' '.join(native_spec)
         
