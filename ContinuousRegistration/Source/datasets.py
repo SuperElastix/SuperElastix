@@ -2,6 +2,7 @@ import os, glob, csv, re
 from abc import ABCMeta, abstractmethod
 import numpy as np
 from itertools import islice, combinations
+import SimpleITK as sitk
 
 from metrics import tre, hausdorff, inverse_consistency_labels, inverse_consistency_points, \
     dice, merge_dicts
@@ -13,6 +14,22 @@ def take(iterable, n):
 
 def sort_file_names(file_names):
     return sorted(file_names, key=lambda dictionary: dictionary['image_file_names'][0])
+
+
+def copy_information_from_images_to_labels(image_file_names, label_file_names):
+        new_label_file_names = []
+        for image_file_name, label_file_name in zip(image_file_names, label_file_names):
+            label_file_name_we, label_file_name_e = os.path.splitext(label_file_name)
+            output_file_name = label_file_name_we + '-copied-information' + label_file_name_e
+            if not os.path.isfile(output_file_name):
+                image = sitk.ReadImage(image_file_name)
+                label = sitk.ReadImage(label_file_name)
+                label.CopyInformation(image)
+                sitk.WriteImage(label, output_file_name)
+
+            new_label_file_names.append(output_file_name)
+
+        return tuple(new_label_file_names)
 
 
 class Dataset(object):
@@ -244,11 +261,19 @@ class ISBR18(Dataset):
         self.input_directory = input_directory
         file_names = []
 
-        image_file_names = [os.path.join(input_directory, 'Heads', image) for image in os.listdir(os.path.join(input_directory, 'Heads')) if image.endswith('.hdr')]
+        image_file_names = [os.path.join(input_directory, 'Heads', image)
+                            for image in os.listdir(os.path.join(input_directory, 'Heads'))
+                            if image.endswith('.hdr')]
         image_file_names = [pair for pair in combinations(image_file_names, 2)]
 
-        label_file_names = [os.path.join(input_directory, 'Atlases', atlas) for atlas in os.listdir(os.path.join(input_directory, 'Atlases')) if atlas.endswith('.hdr')]
+        label_file_names = [os.path.join(input_directory, 'Atlases', atlas)
+                            for atlas in os.listdir(os.path.join(input_directory, 'Atlases'))
+                            if atlas.endswith('.hdr') and not "copied-information" in atlas]
         label_file_names = [pair for pair in combinations(label_file_names, 2)]
+
+        # Label images do not have any world coordinate information
+        label_file_names = [copy_information_from_images_to_labels(image_file_name_pair, label_file_name_pair)
+                            for image_file_name_pair, label_file_name_pair in zip(image_file_names, label_file_names)]
 
         displacement_field_file_names = []
         for image_file_name_0, image_file_name_1 in image_file_names:
@@ -266,7 +291,7 @@ class ISBR18(Dataset):
                 'displacement_field_file_names': displacement_field_file_name
             })
 
-            self.file_names = take(sort_file_names(file_names), max_number_of_registrations // 2)
+        self.file_names = take(sort_file_names(file_names), max_number_of_registrations // 2)
 
     def evaluate(self, superelastix, file_names, output_directory):
         return self.evaluate_label_image(superelastix, file_names, output_directory)
@@ -296,6 +321,51 @@ class LPBA40(Dataset):
                                                   os.path.join(self.name, image_file_name_we_0 + "_to_" + image_file_name_we_1 + ".nii")))
 
         for image_file_name, label_file_name, displacement_field_file_name in zip(image_file_names, label_file_names, displacement_field_file_names):
+            file_names.append({
+                'image_file_names': image_file_name,
+                'ground_truth_file_names': label_file_name,
+                'displacement_field_file_names': displacement_field_file_name
+            })
+
+        self.file_names = take(sort_file_names(file_names), max_number_of_registrations // 2)
+
+    def evaluate(self, superelastix, file_names, output_directory):
+        return self.evaluate_label_image(superelastix, file_names, output_directory)
+
+
+class MGH10(Dataset):
+    def __init__(self, input_directory, max_number_of_registrations):
+        self.name = 'MGH10'
+        self.category = 'Brain'
+
+        self.input_directory = input_directory
+        file_names = []
+
+        image_file_names = [os.path.join(input_directory, 'Heads', image) for image in
+                            os.listdir(os.path.join(input_directory, 'Heads')) if image.endswith('.hdr')]
+        image_file_names = [pair for pair in combinations(image_file_names, 2)]
+
+        label_file_names = [os.path.join(input_directory, 'Atlases', atlas) for atlas in
+                            os.listdir(os.path.join(input_directory, 'Atlases')) if atlas.endswith('.hdr')]
+        label_file_names = [pair for pair in combinations(label_file_names, 2)]
+
+        # Label images do not have any world coordinate information
+        label_file_names = [copy_information_from_images_to_labels(image_file_name_pair, label_file_name_pair)
+                            for image_file_name_pair, label_file_name_pair in zip(image_file_names, label_file_names)]
+
+
+        displacement_field_file_names = []
+        for image_file_name_0, image_file_name_1 in image_file_names:
+            image_file_name_0 = os.path.basename(image_file_name_0)
+            image_file_name_1 = os.path.basename(image_file_name_1)
+            image_file_name_we_0, image_extension_we_0 = os.path.splitext(image_file_name_0)
+            image_file_name_we_1, image_extension_we_1 = os.path.splitext(image_file_name_1)
+            displacement_field_file_names.append(
+                (os.path.join(self.name, image_file_name_we_1 + "_to_" + image_file_name_we_0 + ".nii"),
+                 os.path.join(self.name, image_file_name_we_0 + "_to_" + image_file_name_we_1 + ".nii")))
+
+        for image_file_name, label_file_name, displacement_field_file_name in zip(image_file_names, label_file_names,
+                                                                                  displacement_field_file_names):
             file_names.append({
                 'image_file_names': image_file_name,
                 'ground_truth_file_names': label_file_name,

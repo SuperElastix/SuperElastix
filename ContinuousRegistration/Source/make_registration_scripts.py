@@ -3,7 +3,7 @@ import logging
 import os
 import json
 
-from datasets import CUMC12, DIRLAB, EMPIRE, ISBR18, LPBA40, POPI, SPREAD
+from datasets import CUMC12, DIRLAB, EMPIRE, ISBR18, LPBA40, MGH10, POPI, SPREAD
 
 parser = argparse.ArgumentParser(description='Continuous Registration Challenge command line interface.')
 
@@ -20,6 +20,7 @@ parser.add_argument('--isbr18-input-directory', '-iid')
 parser.add_argument('--lpba40-input-directory', '-lid')
 parser.add_argument('--spread-input-directory', '-sid')
 parser.add_argument('--popi-input-directory', '-pid')
+parser.add_argument('--mgh10-input-directory', '-mid')
 
 parser.add_argument('--team-name', '-tn', help="If specified, only generated shell scripts for this team.")
 parser.add_argument('--blueprint-file-name', '-bfn', help="If specified, only generated shell scripts for this blueprint.")
@@ -67,6 +68,12 @@ def load_datasets(parameters):
         lpba40 = LPBA40(parameters.lpba40_input_directory, parameters.max_number_of_registrations_per_dataset)
         datasets[lpba40.name] = lpba40
         logging.info('Found ' + lpba40.name + ' ' + lpba40.category + ' dataset.')
+
+    if parameters.mgh10_input_directory is not None:
+        mgh10 = MGH10(parameters.lpba40_input_directory, parameters.max_number_of_registrations_per_dataset)
+        datasets[mgh10.name] = mgh10
+        logging.info('Found ' + mgh10.name + ' ' + mgh10.category + ' dataset.')
+
 
     if parameters.popi_input_directory is not None:
         popi = POPI(parameters.popi_input_directory, parameters.max_number_of_registrations_per_dataset)
