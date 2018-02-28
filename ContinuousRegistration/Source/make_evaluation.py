@@ -21,34 +21,21 @@ def run(parameters):
         results = {team_name: {blueprint_name: dict()}}
         for dataset_name in blueprint['Datasets']:
             if not dataset_name in datasets:
-                logging.error('Dataset ' + dataset_name + ' requested by ' + blueprint_file_name + ' but no directory provided. See \'--help\' for usage.')
+                logging.error('Dataset ' + dataset_name + ' requested by ' + blueprint_file_name + ' but no data directory provided. See \'--help\' for usage.')
                 continue
 
             dataset = datasets[dataset_name]
             results[team_name][blueprint_name][dataset_name] = dict()
-            counter = 0
             for file_names in dataset.generator():
-                if counter >= parameters.max_number_of_registrations_per_dataset:
-                    continue
-                else:
-                    counter = counter+2
                 output_directory = os.path.join(parameters.output_directory, team_name, blueprint_name)
-                logging.info('Evaluating %s and %s.', file_names['image_file_names'][0], file_names['image_file_names'][1])
 
                 try:
-                    file_names['displacement_field_file_names_full_path'] = (
-                        os.path.join(output_directory, file_names['displacement_field_file_names'][0]),
-                        os.path.join(output_directory, file_names['displacement_field_file_names'][1]))
-
-                    result_0, result_1 = dataset.evaluate(parameters.superelastix, file_names)
-                    results[team_name][blueprint_name][dataset.name][file_names['displacement_field_file_names'][0]] = result_0
-                    results[team_name][blueprint_name][dataset.name][file_names['displacement_field_file_names'][1]] = result_1
+                    results[team_name][blueprint_name][dataset.name] = dataset.evaluate(
+                        parameters.superelastix, file_names, output_directory)
                 except Exception as e:
-                    results[team_name][blueprint_name][dataset.name][file_names['displacement_field_file_names'][0]] = str(e)
-                    results[team_name][blueprint_name][dataset.name][file_names['displacement_field_file_names'][1]] = str(e)
-                    logging.error('Error during evaulation of %s, %s, %s' % (team_name, blueprint_name, dataset.name))
+                    logging.error('Error during evaluation of %s\'s blueprint %s on dataset %s: %s' % (team_name, blueprint_name, dataset.name, str(e)))
 
-        write_json(os.path.join(parameters.output_directory, 'results_{:%Y-%m-%d-%H:%M:%S.%f}'.format(datetime.now()) + '.json'), results)
+        write_json(os.path.join(parameters.output_directory, 'results_{:%Y-%m-%d-%H:%M:%S.%f}'.format(datetime.datetime.now()) + '.json'), results)
 
 if __name__ == '__main__':
     parameters = parser.parse_args()
