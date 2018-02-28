@@ -4,6 +4,7 @@ from datetime import datetime
 import SimpleITK as sitk, numpy as np
 
 labelOverlapMeasurer = sitk.LabelOverlapMeasuresImageFilter()
+labelOverlapMeasurer.SetGlobalDefaultCoordinateTolerance(1)
 
 def merge_dicts(*dicts):
     return { key: value for dict in dicts for key, value in dict.items() }

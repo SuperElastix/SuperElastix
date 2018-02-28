@@ -33,10 +33,12 @@ def run(parameters):
                     results[team_name][blueprint_name][dataset.name] = dataset.evaluate(
                         parameters.superelastix, file_names, output_directory)
                 except Exception as e:
-                    logging.error('Error during evaluation of %s\'s blueprint %s on dataset %s: %s' % (team_name, blueprint_name, dataset.name, str(e)))
+                    logging.error('Error during evaluation of %s\'s blueprint %s on dataset %s: %s'
+                                  % (team_name, blueprint_name, dataset.name, str(e)))
 
-        write_json(os.path.join(parameters.output_directory, 'results_{:%Y-%m-%d-%H:%M:%S.%f}'.format(datetime.datetime.now()) + '.json'), results)
+        write_json(os.path.join(parameters.output_directory,
+                                'results-{:%Y-%m-%d-%H-%M-%S-%f}'.format(datetime.datetime.now()) + '.json'),
+                   results)
 
 if __name__ == '__main__':
-    parameters = parser.parse_args()
-    run(parameters)
+    run(parser.parse_args())
