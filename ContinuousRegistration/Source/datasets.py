@@ -25,7 +25,7 @@ def copy_information_from_images_to_labels(image_file_names, label_file_names):
                 image = sitk.ReadImage(image_file_name)
                 label = sitk.ReadImage(label_file_name)
                 label.CopyInformation(image)
-                sitk.WriteImage(label, output_file_name)
+                sitk.WriteImage(label, output_file_name) # TODO: Information is not actually saved?!
 
             new_label_file_names.append(output_file_name)
 
