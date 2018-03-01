@@ -2,6 +2,7 @@ import drmaa
 import os
 
 with drmaa.Session() as s:
+    joblist = []
     jt = s.createJobTemplate()
     
     #jt.joinFiles = True
@@ -19,4 +20,12 @@ with drmaa.Session() as s:
                 #jt.args = arguments
                 job_id = s.runJob(jt)
                 print("{0} got job_id {1}".format(command, job_id))
+                joblist.append(job_id)
     s.deleteJobTemplate(jt)
+    
+    s.synchronize(joblist, drmaa.Session.TIMEOUT_WAIT_FOREVER, False)
+    for curjob in joblist:
+        print('Collecting job ' + curjob)
+        retval = s.wait(curjob, drmaa.Session.TIMEOUT_WAIT_FOREVER)
+        print('Job: {0} finished with status {1}'.format(retval.jobId,
+                                                     retval.hasExited))
