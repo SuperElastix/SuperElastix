@@ -20,12 +20,12 @@ def run(parameters):
 
         results = {team_name: {blueprint_name: dict()}}
         for dataset_name in blueprint['Datasets']:
-            dataset = datasets[dataset_name]
-            results[team_name][blueprint_name][dataset_name] = dict()
-
             if not dataset_name in datasets:
                 logging.error('Dataset ' + dataset_name + ' requested by ' + blueprint_file_name + ' but no data directory provided. See \'--help\' for usage.')
                 continue
+                
+            dataset = datasets[dataset_name]
+            results[team_name][blueprint_name][dataset_name] = dict()
 
             for file_names in dataset.generator():
                 output_directory = os.path.join(parameters.output_directory, team_name, blueprint_name)
