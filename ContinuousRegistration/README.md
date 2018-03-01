@@ -16,12 +16,10 @@ Open a pull request that creates a directory under `Submissions` which contains 
       --empire-input-directory /path/to/EMPIRE
       --lpba40-input-directory /path/to/LPBA40
       --isbr18-input-directory /path/to/ISBR18
-      --mgh10-input-directory /path/to/MGH10
       --cumc12-input-directory /path/to/CUMC12
 
 This generates shell scripts to running the registrations, one for each registration. For example, on Linux you can navigate to the output directory and run
+    $ find . -name "*.sh" -exec chmod +x "{}" \;
+    $ find . -name "*.sh" -exec "{}" \;
 
-    $ find . -type f -exec chmod +x "{}" \;
-    $ find . -type f -exec "{}" \;
-
-to make the scripts executable and execute them.
+to recursively find scripts, make them executable, and run them.

@@ -3,27 +3,27 @@ import logging
 import os
 import json
 
-from datasets import CUMC12, DIRLAB, EMPIRE, ISBR18, LPBA40, POPI, SPREAD
+from datasets import CUMC12, DIRLAB, EMPIRE, ISBR18, LPBA40, MGH10, POPI, SPREAD
 
 parser = argparse.ArgumentParser(description='Continuous Registration Challenge command line interface.')
 
 parser.add_argument('--superelastix', '-selx', required=True, help="Path to SuperElastix executable.")
 parser.add_argument('--submissions-directory', '-sd', required=True, help='Directory with parameter files.')
-parser.add_argument('--output-directory', '-od', required=True)
-parser.add_argument('--make-shell-scripts', '-mss', type=bool, default=True)
-parser.add_argument('--make-batch-scripts', '-mbs', type=bool, default=False)
+parser.add_argument('--output-directory', '-od', required=True, help="Directory where results will be saved.")
+parser.add_argument('--make-shell-scripts', '-mss', type=bool, default=True, help="Generate shell scripts (default: True).")
+parser.add_argument('--make-batch-scripts', '-mbs', type=bool, default=False, help="Generate shell scripts (default: False).")
 
 parser.add_argument('--cumc12-input-directory', '-cid')
 parser.add_argument('--dirlab-input-directory', '-did')
 parser.add_argument('--empire-input-directory', '-eid')
 parser.add_argument('--isbr18-input-directory', '-iid')
 parser.add_argument('--lpba40-input-directory', '-lid')
-parser.add_argument('--mgh10-input-directory', '-mid')
 parser.add_argument('--spread-input-directory', '-sid')
 parser.add_argument('--popi-input-directory', '-pid')
+parser.add_argument('--mgh10-input-directory', '-mid')
 
-parser.add_argument('--team-name', '-tn')
-parser.add_argument('--blueprint-file-name', '-bfn', help='Generate scripts only for this blueprint file name.' )
+parser.add_argument('--team-name', '-tn', help="If specified, only generated shell scripts for this team.")
+parser.add_argument('--blueprint-file-name', '-bfn', help="If specified, only generated shell scripts for this blueprint.")
 
 parser.add_argument('--max-number-of-registrations-per-dataset', '-mnorpd', type=int, default=64)
 
@@ -44,44 +44,44 @@ def load_datasets(parameters):
     logging.info('Loading datasets ...')
     datasets = dict()
 
-
     if parameters.cumc12_input_directory is not None:
-        cumc12 = CUMC12(parameters.cumc12_input_directory)
+        cumc12 = CUMC12(parameters.cumc12_input_directory, parameters.max_number_of_registrations_per_dataset)
         datasets[cumc12.name] = cumc12
         logging.info('Found ' + cumc12.name + ' ' + cumc12.category + ' dataset.')
 
     if parameters.dirlab_input_directory is not None:
-        dirlab = DIRLAB(parameters.dirlab_input_directory)
+        dirlab = DIRLAB(parameters.dirlab_input_directory, parameters.max_number_of_registrations_per_dataset)
         datasets[dirlab.name] = dirlab
         logging.info('Found ' + dirlab.name + ' ' + dirlab.category + ' dataset.')
 
     if parameters.empire_input_directory is not None:
-        empire = EMPIRE(parameters.empire_input_directory)
+        empire = EMPIRE(parameters.empire_input_directory, parameters.max_number_of_registrations_per_dataset)
         datasets[empire.name] = empire
         logging.info('Found ' + empire.name + ' ' + empire.category + ' dataset.')
 
     if parameters.isbr18_input_directory is not None:
-        isbr18 = ISBR18(parameters.isbr18_input_directory)
+        isbr18 = ISBR18(parameters.isbr18_input_directory, parameters.max_number_of_registrations_per_dataset)
         datasets[isbr18.name] = isbr18
         logging.info('Found ' + isbr18.name + ' ' + isbr18.category + ' dataset.')
 
     if parameters.lpba40_input_directory is not None:
-        lpba40 = LPBA40(parameters.lpba40_input_directory)
+        lpba40 = LPBA40(parameters.lpba40_input_directory, parameters.max_number_of_registrations_per_dataset)
         datasets[lpba40.name] = lpba40
         logging.info('Found ' + lpba40.name + ' ' + lpba40.category + ' dataset.')
 
     if parameters.mgh10_input_directory is not None:
-        mgh10 = MGH10(parameters.mgh10_input_directory)
+        mgh10 = MGH10(parameters.lpba40_input_directory, parameters.max_number_of_registrations_per_dataset)
         datasets[mgh10.name] = mgh10
         logging.info('Found ' + mgh10.name + ' ' + mgh10.category + ' dataset.')
 
+
     if parameters.popi_input_directory is not None:
-        popi = POPI(parameters.popi_input_directory)
+        popi = POPI(parameters.popi_input_directory, parameters.max_number_of_registrations_per_dataset)
         datasets[popi.name] = popi
         logging.info('Found ' + popi.name + ' ' + popi.category + ' dataset.')
 
     if parameters.spread_input_directory is not None:
-        spread = SPREAD(parameters.spread_input_directory)
+        spread = SPREAD(parameters.spread_input_directory, parameters.max_number_of_registrations_per_dataset)
         datasets[spread.name] = spread
         logging.info('Found ' + spread.name + ' ' + spread.category + ' dataset.')
 
@@ -118,20 +118,11 @@ def run(parameters):
                 continue
 
             dataset = datasets[dataset_name]
-            counter = 0
             for file_names in dataset.generator():
-                if(counter >= parameters.max_number_of_registrations_per_dataset):
-                    continue
-                else:
-                    counter = counter+2
-
                 blueprint_output_directory = os.path.join(parameters.output_directory, team_name, blueprint_name, os.path.dirname(file_names['displacement_field_file_names'][0]))
 
                 if not os.path.exists(blueprint_output_directory):
                     os.makedirs(blueprint_output_directory)
-
-                file_names['output_file_names'] = (os.path.join(blueprint_output_directory, os.path.basename(file_names['displacement_field_file_names'][0])),
-                                                   os.path.join(blueprint_output_directory, os.path.basename(file_names['displacement_field_file_names'][1])))
 
                 output_directory = os.path.join(parameters.output_directory, team_name, blueprint_name)
 
@@ -140,6 +131,8 @@ def run(parameters):
 
                 if parameters.make_batch_scripts:
                     dataset.make_batch_scripts(parameters.superelastix, blueprint_file_name, file_names, output_directory)
+
+
 
 if __name__ == '__main__':
     parameters = parser.parse_args()
