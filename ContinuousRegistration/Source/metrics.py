@@ -1,4 +1,4 @@
-import subprocess, os, logging
+import subprocess, os, logging, sys
 from datetime import datetime
 
 import SimpleITK as sitk, numpy as np
@@ -50,6 +50,10 @@ def txt2vtk(point_set_file_name, displacement_field_file_name):
     return output_file_name
 
 
+def get_script_path():
+    return os.path.dirname(os.path.realpath(sys.argv[0]))
+
+
 def warp_point_set(superelastix, point_set_file_name, displacement_field_file_name):
     blueprint_file_name = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'warp_point_set.json')
 
@@ -62,7 +66,7 @@ def warp_point_set(superelastix, point_set_file_name, displacement_field_file_na
 
     try:
         stdout = subprocess.check_output([superelastix,
-                                          '--conf', 'warp_point_set.json',
+                                          '--conf', os.path.join(get_script_path(), 'warp_point_set.json'),
                                           '--in', 'InputPointSet=%s' % point_set_file_name,
                                           'DisplacementField=%s' % displacement_field_file_name,
                                           '--out', 'OutputPointSet=%s' % output_point_set_file_name,
@@ -81,7 +85,7 @@ def warp_label_image(superelastix, label_file_name, displacement_field_file_name
 
     try:
         stdout = subprocess.check_output([superelastix,
-                                          '--conf', 'warp_label_image.json',
+                                          '--conf', os.path.join(get_script_path(), 'warp_label_image.json'),
                                           '--in', 'LabelImage=%s' % label_file_name,
                                           'DisplacementField=%s' % displacement_field_file_name,
                                           '--out', 'WarpedLabelImage=%s' % output_label_file_name,
