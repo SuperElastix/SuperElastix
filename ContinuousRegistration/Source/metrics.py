@@ -79,6 +79,7 @@ def warp_point_set(superelastix, point_set_file_name, displacement_field_file_na
 
     return output_point_set_file_name
 
+
 def warp_label_image(superelastix, label_file_name, displacement_field_file_name):
     output_label_file_name = os.path.splitext(displacement_field_file_name)[0] + '-' \
                              + "{:%Y-%m-%d-%H-%M-%S-%f}".format(datetime.now()) + '.nii'
