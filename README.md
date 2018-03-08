@@ -9,7 +9,7 @@ Its modular and flexible architecture enables the integration of algorithms from
 It provides a unified user-interface by means of a configuration file. 
 Commandline as well as library interfaces are readily available. 
 SuperElastix leverages social coding practices from GitHub to make it a collaborative effort from the image registration community. 
-It is developed in conjunction with the [Continuous Registration Challenge(https://continuousregistration.grand-challenge.org/), in which all the methods that are included in SuperElastix are automatically and continuously benchmarked on a diverse dataset.
+It is developed in conjunction with the [Continuous Registration Challenge](https://continuousregistration.grand-challenge.org/), in which all the methods that are included in SuperElastix are automatically and continuously benchmarked on a diverse dataset.
 
 ## Documentation ##
 - [Read-the-Docs](http://superelastix.readthedocs.io/en/latest/index.html)
