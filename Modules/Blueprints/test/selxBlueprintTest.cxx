@@ -130,7 +130,7 @@ TEST_F( BlueprintTest, CopyConstuctor )
   auto baseBlueprintImpl = baseBlueprint->GetBlueprintImpl();
 
   std::unique_ptr< BlueprintImpl > clonedBaseBlueprint;
-  EXPECT_NO_THROW( clonedBaseBlueprint = std::make_unique< BlueprintImpl >( baseBlueprintImpl ) );
+  EXPECT_NO_THROW( clonedBaseBlueprint = std::unique_ptr< BlueprintImpl >( new BlueprintImpl( baseBlueprintImpl ) ) );
 
   EXPECT_NO_THROW( clonedBaseBlueprint->SetComponent( "Component1", { { "OperationType", { "Source" } }, { "Dimensionality", { "3" } } } ) );
 
