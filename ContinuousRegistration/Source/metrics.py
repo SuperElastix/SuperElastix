@@ -173,7 +173,7 @@ def dice(registration_driver, label_file_names, deformation_field_file_names):
     label_image_1_to_0_file_name = warp_label_image(registration_driver, label_file_names[1], deformation_field_file_names[0])
 
     try:
-        label_image_0 = sitk.ReadImage(label_file_names[1])
+        label_image_0 = sitk.ReadImage(label_file_names[0])
         labelOverlapMeasurer.Execute(label_image_0, sitk.Cast(sitk.ReadImage(label_image_1_to_0_file_name), label_image_0.GetPixelID()))
         dsc_1 = labelOverlapMeasurer.GetDiceCoefficient()
     except Exception as e:
