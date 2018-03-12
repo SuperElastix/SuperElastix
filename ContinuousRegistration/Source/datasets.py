@@ -15,23 +15,43 @@ def take(iterable, n):
 def sort_file_names(file_names):
     return sorted(file_names, key=lambda dictionary: dictionary['image_file_names'][0])
 
-
-def copy_information_from_images_to_labels(image_file_names, label_file_names):
+# Some data sets come without world coordinate information for the label images. This is a problem
+# when measuring overlap. Here, we write a new header file for the labels with the correct
+# information.
+copy_information_from_images_to_labels_ext = '.mhd'
+def copy_information_from_images_to_labels(image_file_names, label_file_names, displacement_field_file_names, output_directory, mhd_pixel_type):
         new_label_file_names = []
-        for image_file_name, label_file_name in zip(image_file_names, label_file_names):
-            label_file_name_we, label_file_name_e = os.path.splitext(label_file_name)
-            output_file_name = label_file_name_we + '-copied-information' + label_file_name_e
+        for image_file_name, label_file_name, displacement_field_file_name in zip(image_file_names, label_file_names, displacement_field_file_names):
+            label_file_name_we, label_file_name_ext = os.path.splitext(label_file_name)
+            dataset_output_directory = os.path.join(output_directory, os.path.dirname(displacement_field_file_name))
+            output_file_name = os.path.join(dataset_output_directory, os.path.basename(label_file_name_we) + '_label_with_copied_info' + copy_information_from_images_to_labels_ext)
+
+            if not os.path.isdir(dataset_output_directory):
+                os.mkdir(dataset_output_directory)
+
+            # File info is read from corresponding image file
+            image = sitk.ReadImage(image_file_name)
+
             if not os.path.isfile(output_file_name):
-                image = sitk.ReadImage(image_file_name)
-                label = sitk.ReadImage(label_file_name)
-                label.CopyInformation(image)
-                sitk.WriteImage(label, output_file_name) # TODO: Information is not actually saved?!
+                with open(output_file_name, 'w') as mhd:
+                    mhd.write('ObjectType = Image\n')
+                    mhd.write('NDims = 3\n')
+                    mhd.write('BinaryData = True\n')
+                    mhd.write('DimSize = %d %d %d\n' % image.GetSize())
+                    mhd.write('Offset = %f %f %f\n' % image.GetOrigin())
+                    mhd.write('ElementSpacing = %f %f %f\n' % image.GetSpacing())
+                    mhd.write('Orientation = %f %f %f %f %f %f %f %f %f\n' % image.GetDirection())
+                    mhd.write('ElementType = %s\n' % mhd_pixel_type)
+                    mhd.write('ElementDataFile = %s\n' % (label_file_name_we + '.img'))
 
             new_label_file_names.append(output_file_name)
 
         return tuple(new_label_file_names)
 
 
+# Base class for datasets. The derived classes need only to implement the file layout on disk
+# and how to evaluate the dataset.  Everything else is handled by this class. See metrics.py
+# for available metrics.
 class Dataset(object):
     __metaclass__ = ABCMeta
 
@@ -113,6 +133,7 @@ class Dataset(object):
             superelastix,
             file_names['ground_truth_file_names'],
             displacement_field_paths)
+
         dice_0, dice_1 = dice(superelastix,
             file_names['ground_truth_file_names'],
             displacement_field_paths)
@@ -254,7 +275,7 @@ class EMPIRE(Dataset):
 
 
 class ISBR18(Dataset):
-    def __init__(self, input_directory, max_number_of_registrations):
+    def __init__(self, input_directory, output_directory, max_number_of_registrations):
         self.name = 'ISBR18'
         self.category = 'Brain'
 
@@ -271,10 +292,6 @@ class ISBR18(Dataset):
                             if atlas.endswith('.hdr') and not "copied-information" in atlas]
         label_file_names = [pair for pair in combinations(label_file_names, 2)]
 
-        # Label images do not have any world coordinate information
-        label_file_names = [copy_information_from_images_to_labels(image_file_name_pair, label_file_name_pair)
-                            for image_file_name_pair, label_file_name_pair in zip(image_file_names, label_file_names)]
-
         displacement_field_file_names = []
         for image_file_name_0, image_file_name_1 in image_file_names:
             image_file_name_0 = os.path.basename(image_file_name_0)
@@ -284,7 +301,21 @@ class ISBR18(Dataset):
             displacement_field_file_names.append((os.path.join(self.name, image_file_name_we_1 + "_to_" + image_file_name_we_0 + ".nii"),
                                                   os.path.join(self.name, image_file_name_we_0 + "_to_" + image_file_name_we_1 + ".nii")))
 
-        for image_file_name, label_file_name, displacement_field_file_name in zip(image_file_names, label_file_names, displacement_field_file_names):
+        # Label images do not have any world coordinate information
+        label_file_names = [copy_information_from_images_to_labels(image_file_name_pair,
+                                                                   label_file_name_pair,
+                                                                   displacement_field_file_name_pair,
+                                                                   output_directory,
+                                                                   'MET_USHORT')
+                            for image_file_name_pair,
+                                label_file_name_pair,
+                                displacement_field_file_name_pair in zip(image_file_names,
+                                                                         label_file_names,
+                                                                         displacement_field_file_names)]
+
+        for image_file_name, label_file_name, displacement_field_file_name in zip(image_file_names,
+                                                                                  label_file_names,
+                                                                                  displacement_field_file_names):
             file_names.append({
                 'image_file_names': image_file_name,
                 'ground_truth_file_names': label_file_name,
@@ -293,8 +324,21 @@ class ISBR18(Dataset):
 
         self.file_names = take(sort_file_names(file_names), max_number_of_registrations // 2)
 
-    def evaluate(self, superelastix, file_names, output_directory):
-        return self.evaluate_label_image(superelastix, file_names, output_directory)
+    # TODO: Find out why inverse consistency does not work with this dataset
+    def evaluate_label_image(self, superelastix, file_names, output_directory):
+        displacement_field_paths = (
+            os.path.join(output_directory, file_names['displacement_field_file_names'][0]),
+            os.path.join(output_directory, file_names['displacement_field_file_names'][1]),
+        )
+
+        dice_0, dice_1 = dice(superelastix,
+                              file_names['ground_truth_file_names'],
+                              displacement_field_paths)
+
+        return {
+            file_names['displacement_field_file_names'][0]: dice_0,
+            file_names['displacement_field_file_names'][1]: dice_1
+        }
 
 
 class LPBA40(Dataset):
@@ -334,7 +378,7 @@ class LPBA40(Dataset):
 
 
 class MGH10(Dataset):
-    def __init__(self, input_directory, max_number_of_registrations):
+    def __init__(self, input_directory, output_directory, max_number_of_registrations):
         self.name = 'MGH10'
         self.category = 'Brain'
 
@@ -349,11 +393,6 @@ class MGH10(Dataset):
                             os.listdir(os.path.join(input_directory, 'Atlases')) if atlas.endswith('.hdr')]
         label_file_names = [pair for pair in combinations(label_file_names, 2)]
 
-        # Label images do not have any world coordinate information
-        label_file_names = [copy_information_from_images_to_labels(image_file_name_pair, label_file_name_pair)
-                            for image_file_name_pair, label_file_name_pair in zip(image_file_names, label_file_names)]
-
-
         displacement_field_file_names = []
         for image_file_name_0, image_file_name_1 in image_file_names:
             image_file_name_0 = os.path.basename(image_file_name_0)
@@ -364,7 +403,18 @@ class MGH10(Dataset):
                 (os.path.join(self.name, image_file_name_we_1 + "_to_" + image_file_name_we_0 + ".nii"),
                  os.path.join(self.name, image_file_name_we_0 + "_to_" + image_file_name_we_1 + ".nii")))
 
-        for image_file_name, label_file_name, displacement_field_file_name in zip(image_file_names, label_file_names,
+
+        # Label images do not have any world coordinate information
+        label_file_names = [copy_information_from_images_to_labels(image_file_name_pair,
+                                                                   label_file_name_pair,
+                                                                   displacement_field_file_name_pair,
+                                                                   output_directory,
+                                                                   'MET_USHORT')
+                            for image_file_name_pair, label_file_name_pair, displacement_field_file_name_pair
+                            in zip(image_file_names, label_file_names, displacement_field_file_names)]
+
+        for image_file_name, label_file_name, displacement_field_file_name in zip(image_file_names,
+                                                                                  label_file_names,
                                                                                   displacement_field_file_names):
             file_names.append({
                 'image_file_names': image_file_name,

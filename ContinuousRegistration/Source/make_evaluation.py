@@ -21,7 +21,7 @@ def run(parameters):
         results = {team_name: {blueprint_name: dict()}}
         for dataset_name in blueprint['Datasets']:
             if not dataset_name in datasets:
-                logging.error('Dataset ' + dataset_name + ' requested by ' + blueprint_file_name + ' but no data directory provided. See \'--help\' for usage.')
+                logging.error('Dataset ' + dataset_name + ' requested by blueprint ' + blueprint_file_name + ' but no data directory provided. See \'--help\' for usage.')
                 continue
 
             dataset = datasets[dataset_name]
