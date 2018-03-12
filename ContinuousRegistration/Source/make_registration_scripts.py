@@ -45,43 +45,53 @@ def load_datasets(parameters):
     datasets = dict()
 
     if parameters.cumc12_input_directory is not None:
-        cumc12 = CUMC12(parameters.cumc12_input_directory, parameters.max_number_of_registrations_per_dataset)
+        cumc12 = CUMC12(parameters.cumc12_input_directory,
+                        parameters.max_number_of_registrations_per_dataset)
         datasets[cumc12.name] = cumc12
         logging.info('Found ' + cumc12.name + ' ' + cumc12.category + ' dataset.')
 
     if parameters.dirlab_input_directory is not None:
-        dirlab = DIRLAB(parameters.dirlab_input_directory, parameters.max_number_of_registrations_per_dataset)
+        dirlab = DIRLAB(parameters.dirlab_input_directory,
+                        parameters.max_number_of_registrations_per_dataset)
         datasets[dirlab.name] = dirlab
         logging.info('Found ' + dirlab.name + ' ' + dirlab.category + ' dataset.')
 
     if parameters.empire_input_directory is not None:
-        empire = EMPIRE(parameters.empire_input_directory, parameters.max_number_of_registrations_per_dataset)
+        empire = EMPIRE(parameters.empire_input_directory,
+                        parameters.max_number_of_registrations_per_dataset)
         datasets[empire.name] = empire
         logging.info('Found ' + empire.name + ' ' + empire.category + ' dataset.')
 
     if parameters.isbr18_input_directory is not None:
-        isbr18 = ISBR18(parameters.isbr18_input_directory, parameters.max_number_of_registrations_per_dataset)
+        isbr18 = ISBR18(parameters.isbr18_input_directory,
+                        parameters.output_directory,
+                        parameters.max_number_of_registrations_per_dataset)
         datasets[isbr18.name] = isbr18
         logging.info('Found ' + isbr18.name + ' ' + isbr18.category + ' dataset.')
 
     if parameters.lpba40_input_directory is not None:
-        lpba40 = LPBA40(parameters.lpba40_input_directory, parameters.max_number_of_registrations_per_dataset)
+        lpba40 = LPBA40(parameters.lpba40_input_directory,
+                        parameters.max_number_of_registrations_per_dataset)
         datasets[lpba40.name] = lpba40
         logging.info('Found ' + lpba40.name + ' ' + lpba40.category + ' dataset.')
 
     if parameters.mgh10_input_directory is not None:
-        mgh10 = MGH10(parameters.lpba40_input_directory, parameters.max_number_of_registrations_per_dataset)
+        mgh10 = MGH10(parameters.mgh10_input_directory,
+                      parameters.output_directory,
+                      parameters.max_number_of_registrations_per_dataset)
         datasets[mgh10.name] = mgh10
         logging.info('Found ' + mgh10.name + ' ' + mgh10.category + ' dataset.')
 
 
     if parameters.popi_input_directory is not None:
-        popi = POPI(parameters.popi_input_directory, parameters.max_number_of_registrations_per_dataset)
+        popi = POPI(parameters.popi_input_directory,
+                    parameters.max_number_of_registrations_per_dataset)
         datasets[popi.name] = popi
         logging.info('Found ' + popi.name + ' ' + popi.category + ' dataset.')
 
     if parameters.spread_input_directory is not None:
-        spread = SPREAD(parameters.spread_input_directory, parameters.max_number_of_registrations_per_dataset)
+        spread = SPREAD(parameters.spread_input_directory,
+                        parameters.max_number_of_registrations_per_dataset)
         datasets[spread.name] = spread
         logging.info('Found ' + spread.name + ' ' + spread.category + ' dataset.')
 

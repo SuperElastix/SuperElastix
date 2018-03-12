@@ -137,13 +137,21 @@ def inverse_consistency_labels(registration_driver, label_file_names, deformatio
     label_image_1_to_0_file_name = warp_label_image(registration_driver, label_file_names[1], deformation_field_file_names[0])
     label_image_1_to_0_to_0_file_name = warp_label_image(registration_driver, label_image_1_to_0_file_name, deformation_field_file_names[1])
 
-    label_image_0 = sitk.ReadImage(label_file_names[0])
-    labelOverlapMeasurer.Execute(label_image_0, sitk.Cast(sitk.ReadImage(label_image_0_to_1_to_0_file_name), label_image_0.GetPixelID()))
-    dsc_0 = labelOverlapMeasurer.GetDiceCoefficient()
+    try:
+        label_image_0 = sitk.ReadImage(label_file_names[0])
+        labelOverlapMeasurer.Execute(label_image_0, sitk.Cast(sitk.ReadImage(label_image_0_to_1_to_0_file_name), label_image_0.GetPixelID()))
+        dsc_0 = labelOverlapMeasurer.GetDiceCoefficient()
+    except Exception as e:
+        logging.error('Failed to compute inverse consistency DSC for %s' % label_file_names[0])
+        raise(e)
 
-    label_image_1 = sitk.ReadImage(label_file_names[1])
-    labelOverlapMeasurer.Execute(label_image_1, sitk.Cast(sitk.ReadImage(label_image_1_to_0_to_0_file_name), label_image_1.GetPixelID()))
-    dsc_1 = labelOverlapMeasurer.GetDiceCoefficient()
+    try:
+        label_image_1 = sitk.ReadImage(label_file_names[1])
+        labelOverlapMeasurer.Execute(label_image_1, sitk.Cast(sitk.ReadImage(label_image_1_to_0_to_0_file_name), label_image_1.GetPixelID()))
+        dsc_1 = labelOverlapMeasurer.GetDiceCoefficient()
+    except Exception as e:
+        logging.error('Failed to compute inverse consistency DSC for %s' % label_file_names[1])
+        raise(e)
 
     return (
         {'InverseConsistencyDSC': dsc_0},
@@ -152,15 +160,25 @@ def inverse_consistency_labels(registration_driver, label_file_names, deformatio
 
 
 def dice(registration_driver, label_file_names, deformation_field_file_names):
-    label_image_0 = sitk.ReadImage(label_file_names[0])
     label_image_0_to_1_file_name = warp_label_image(registration_driver, label_file_names[0], deformation_field_file_names[1])
-    labelOverlapMeasurer.Execute(label_image_0, sitk.Cast(sitk.ReadImage(label_image_0_to_1_file_name), label_image_0.GetPixelID()))
-    dsc_0 = labelOverlapMeasurer.GetDiceCoefficient()
 
-    label_image_1 = sitk.ReadImage(label_file_names[1])
+    try:
+        label_image_1 = sitk.ReadImage(label_file_names[1])
+        labelOverlapMeasurer.Execute(label_image_1, sitk.Cast(sitk.ReadImage(label_image_0_to_1_file_name), label_image_1.GetPixelID()))
+        dsc_0 = labelOverlapMeasurer.GetDiceCoefficient()
+    except Exception as e:
+        logging.error('Failed to compute DSC for %s' % label_file_names[0])
+        raise(e)
+
     label_image_1_to_0_file_name = warp_label_image(registration_driver, label_file_names[1], deformation_field_file_names[0])
-    labelOverlapMeasurer.Execute(label_image_0, sitk.Cast(sitk.ReadImage(label_image_1_to_0_file_name), label_image_1.GetPixelID()))
-    dsc_1 = labelOverlapMeasurer.GetDiceCoefficient()
+
+    try:
+        label_image_0 = sitk.ReadImage(label_file_names[0])
+        labelOverlapMeasurer.Execute(label_image_0, sitk.Cast(sitk.ReadImage(label_image_1_to_0_file_name), label_image_0.GetPixelID()))
+        dsc_1 = labelOverlapMeasurer.GetDiceCoefficient()
+    except Exception as e:
+        logging.error('Failed to compute DSC for %s' % label_file_names[1])
+        raise(e)
 
     return (
         {'DSC': dsc_0},
