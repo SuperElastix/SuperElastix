@@ -352,7 +352,7 @@ class LPBA40(Dataset):
         image_file_names = [glob.glob(os.path.join(self.input_directory, 'delineation_space', sub_directory, '*.delineation.skullstripped.hdr'))[0] for sub_directory in os.listdir(os.path.join(self.input_directory, 'delineation_space')) if os.path.isdir(os.path.join(self.input_directory, 'delineation_space', sub_directory))]
         image_file_names = [pair for pair in combinations(image_file_names, 2)]
 
-        label_file_names = [glob.glob(os.path.join(self.input_directory, 'delineation_space', sub_directory, '*.delineation.skullstripped.hdr'))[0] for sub_directory in os.listdir(os.path.join(self.input_directory, 'delineation_space')) if os.path.isdir(os.path.join(self.input_directory, 'delineation_space', sub_directory))]
+        label_file_names = [glob.glob(os.path.join(self.input_directory, 'delineation_space', sub_directory, '*.delineation.structure.label.hdr'))[0] for sub_directory in os.listdir(os.path.join(self.input_directory, 'delineation_space')) if os.path.isdir(os.path.join(self.input_directory, 'delineation_space', sub_directory))]
         label_file_names = [pair for pair in combinations(label_file_names, 2)]
 
         displacement_field_file_names = []
