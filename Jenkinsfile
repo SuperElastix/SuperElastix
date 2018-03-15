@@ -59,7 +59,7 @@ node('lkeb-vm-test') {
         sh '''
             GIT_BRANCH=$(git name-rev --name-only HEAD)
             echo $GIT_BRANCH
-            if [ "$GIT_BRANCH" = "remotes/origin/SELX-172-Deploy-develop-on-shark" ]
+            if [ "$GIT_BRANCH" = "remotes/origin/develop" ]
             then
               echo "Deploy this build of develop on shark cluster"
               rsync -vr --delete ContinuousRegistration sa_lkeb@shark:/exports/lkeb-hpc/sa_lkeb/SuperElastix-deployed/
