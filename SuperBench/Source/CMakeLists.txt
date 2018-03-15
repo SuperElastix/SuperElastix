@@ -1,6 +1,0 @@
-if( ApplicationCommandLineInterface_IS_ENABLED )
-  set( SUPERELASTIX_COMMANDLINE_INTERFACE "${CMAKE_BINARY_DIR}/bin/${ApplicationCommandLineInterface_TARGET_NAME}" )
-  configure_file( "${CMAKE_CURRENT_SOURCE_DIR}/Drivers/localhost.sh.in" "${CMAKE_CURRENT_BINARY_DIR}/Drivers/localhost.sh" @ONLY )
-else()
-  message( WARNING "ApplicationCommandLineInterface is not enabled, cannot run SuperBench on local host." )
-endif()
