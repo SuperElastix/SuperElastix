@@ -26,27 +26,30 @@ def load_results_from_json(filename):
             for dataset_name, dataset_results in blueprint_results.items():
 
                 # If no registration or evaluations completed
-                if not dataset_results:
-                    column_names[dataset_name] = dict()
+                if all(dataset_result is None for dataset_result in dataset_results):
+                    del results[team_name][blueprint_name][dataset_name]
                     continue
 
-                dataset_result_names = [[result_name
-                                         for result_name, result_value in registration_results.items()]
-                                         for registration_name, registration_results in dataset_results.items()]
+                # TODO: Rewrite to list comprehension
+                dataset_metric_names = []
+                for result in dataset_results:
+                    for result_name, result_values in result.items():
+                        dataset_metric_names.append(result_values.keys())
 
                 # All registrations should have been evaluated with the same metrics
-                dataset_result_names = set(tuple(x) for x in dataset_result_names)
-                assert(len(dataset_result_names) == 1)
+                dataset_metric_names = set(tuple(x) for x in dataset_metric_names)
+                assert(len(dataset_metric_names) == 1)
 
                 # Save column names
                 if not column_names.has_key(dataset_name):
-                    column_names[dataset_name] = dataset_result_names.pop()
+                    column_names[dataset_name] = dataset_metric_names.pop()
 
 
                 # Average stats
-                dataset_result_array = np.array([[result_value
-                                                  for result_name, result_value in registration_results.items()]
-                                                  for registration_name, registration_results in dataset_results.items()])
+                dataset_result_array = []
+                for result in dataset_results:
+                    for result_name, result_values in result.items():
+                        dataset_result_array.append(result_values.values())
 
                 dataset_result_means = np.mean(dataset_result_array, axis=0)
                 dataset_result_stds = np.std(dataset_result_array, axis=0)
@@ -60,6 +63,8 @@ def load_results_from_json(filename):
 
 def run(parameters):
     result_file_names = glob.glob(os.path.join(parameters.output_directory, 'results*'))
+
+    # Most recent first
     result_file_names.sort(reverse=True)
 
     if not result_file_names:
@@ -85,20 +90,33 @@ def run(parameters):
     # http: // tristen.ca / tablesort / demo /
 
     for dataset_name, dataset_results in tables.items():
+        table = '<!DOCTYPE html>'
+        table += '<html>'
 
-        table = '<table id="sort" class="sort">'
+        table += '<head>'
+        table += '<link href="https://rawgit.com/tristen/tablesort/gh-pages/tablesort.css" rel="stylesheet">'
+        table += '<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">'
+        table += '<script src="https://rawgit.com/tristen/tablesort/gh-pages/dist/tablesort.min.js"></script>'
+        table += '<style>'
+        table += 'table { width: 100%; } th, td { padding: 5px; text-align: left; }'
+        table += '</style>'
+        table += '</head>'
+
+        table += '<body>'
+        table += '<table id="leaderboard-%s" class="sort">' % dataset_name
 
         # Add table header
         table += '<thead>'
         table += '<tr>'
-        table += '<th role="columnheader">Team ::after</th>'
-        table += '<th role="columnheader">Blueprint ::after</th>'
+        table += '<th role="columnheader">Team</th>'
+        table += '<th role="columnheader">Blueprint</th>'
 
         for column_name in latest_column_names[dataset_name]:
-            table += '<th role="columnheader">%s ::after</th>' % column_name
+            table += '<th role="columnheader">%s</th>' % column_name
 
         table += '</tr>'
         table += '</thead>'
+        table += '<tbody>'
 
         for team_name, team_result in tables[dataset_name].items():
             for blueprint_name, blueprint_results in team_results.items():
@@ -109,16 +127,22 @@ def run(parameters):
 
                     means, stds = blueprint_results[dataset_name]
                     for mean, std in zip(means, stds):
-                        table+= '<td>%f \pm %f</td>' % (mean, std)
+                        table+= '<td>%.2f \pm %.2f</td>' % (mean, std)
 
                     table += '</tr>'
 
-        table += '<tbody>'
         table += '</tbody>'
         table += '</table>'
 
+        table += '<script>new Tablesort(document.getElementById("leaderboard-%s"));</script>' % dataset_name
+
+        table += '</body>'
+        table += '</html>'
+
+        # + '-{:%Y-%m-%d-%H-%M-%S-%f}'.format(datetime.datetime.now())
         table_file = open(os.path.join(parameters.output_directory,
-                                       'leaderboard-' + dataset_name + '-{:%Y-%m-%d-%H-%M-%S-%f}'.format(datetime.datetime.now()) + '.html'), "w")
+                                       'leaderboard-' + dataset_name + '.html'), "w")
+
         table_file.write(table)
         table_file.close()
 
