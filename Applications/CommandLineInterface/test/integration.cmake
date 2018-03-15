@@ -17,22 +17,13 @@
 #
 #=========================================================================
 
-add_integration_test(
-  NAME SuperElastixIntegrationTest
-  DRIVER SuperElastix
-  ARGUMENTS --conf ${CMAKE_SOURCE_DIR}/Testing/Data/Configuration/itkv4_SVF_ANTsCC.json --in FixedImage=${CMAKE_BINARY_DIR}/Testing/Data/Input/coneA2d64.mhd MovingImage=${CMAKE_BINARY_DIR}/Testing/Data/Input/coneB2d64.mhd --out ResultImage=2A_image_itkv4_NC.mhd ResultDisplacementField=2A_deformation_itkv4_NC.mhd
-)
+# Integration tests are "short" tests that typically test a combination of components by using the SuperElastix commandline interface with a configuration file.
 
-# Possible grand challenge CMake interface:
-# 
-# add_grand_challenge_submission( 
-#   NAME username
-#   DRIVER GrandChallengeDriver
-#   ARGUMENTS ...
-# )
-#  
-# The CMake mechanism would be similar to that of integration tests, except
-# we would allow users to write their own driver and/or use an executable that 
-# contains additional functionality for saving results. The macro would also
-# invoke a script that uploads results and configurition files to website.
-
+add_test(NAME Integration_WarperItkTransform COMMAND SuperElastix
+  --logfile ${SUPERELASTIX_OUTPUT_DATA_DIR}/Integration_WarperItkTransform.log 
+  --loglevel trace
+  --conf ${SUPERELASTIX_CONFIGURATION_DATA_DIR}/itk_warper.json
+  --graphout ${SUPERELASTIX_OUTPUT_DATA_DIR}/Integration_WarperItkTransform.dot 
+  --in FixedAndMovingImageSource=${SUPERELASTIX_INPUT_DATA_DIR}/coneA2d64.mhd 
+       TransformSource=${SUPERELASTIX_INPUT_DATA_DIR}/ItkAffine2Dtransform.tfm 
+  --out ResultImageSink=${SUPERELASTIX_OUTPUT_DATA_DIR}/Integration_WarperItkTransform.mhd)
