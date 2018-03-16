@@ -27,29 +27,23 @@ def load_results_from_json(filename):
 
                 # If no registration or evaluations completed
                 if all(dataset_result is None for dataset_result in dataset_results):
-                    del results[team_name][blueprint_name][dataset_name]
+                    results[team_name][blueprint_name][dataset_name] = None
                     continue
 
                 # TODO: Rewrite to list comprehension
-                dataset_metric_names = []
-                for result in dataset_results:
-                    for result_name, result_values in result.items():
-                        dataset_metric_names.append(result_values.keys())
+                dataset_metric_names = set()
+                dataset_result_array = []
+                for dataset_result in dataset_results:
+                    for dataset_result_key, dataset_result_values in dataset_result.items():
+                        dataset_metric_names.add(tuple(dataset_result_values.keys()))
+                        dataset_result_array.append(list(dataset_result_values.values()))
 
                 # All registrations should have been evaluated with the same metrics
-                dataset_metric_names = set(tuple(x) for x in dataset_metric_names)
                 assert(len(dataset_metric_names) == 1)
 
                 # Save column names
-                if not column_names.has_key(dataset_name):
+                if not dataset_name in column_names:
                     column_names[dataset_name] = dataset_metric_names.pop()
-
-
-                # Average stats
-                dataset_result_array = []
-                for result in dataset_results:
-                    for result_name, result_values in result.items():
-                        dataset_result_array.append(result_values.values())
 
                 dataset_result_means = np.mean(dataset_result_array, axis=0)
                 dataset_result_stds = np.std(dataset_result_array, axis=0)
@@ -72,24 +66,23 @@ def run(parameters):
 
     latest_results, latest_column_names = load_results_from_json(result_file_names[0])
 
-    tables = dict()
+    tables = {}
     for team_name, team_results in latest_results.items():
         for blueprint_name, blueprint_results in team_results.items():
             for dataset_name, dataset_results in blueprint_results.items():
 
-                if not tables.has_key(dataset_name):
-                    tables[dataset_name] = dict()
+                if not dataset_name in tables:
+                    tables[dataset_name] = {}
 
-                if not tables[dataset_name].has_key(team_name):
-                    tables[dataset_name][team_name] = dict()
+                if not team_name in tables[dataset_name]:
+                    tables[dataset_name][team_name] = {}
 
                 tables[dataset_name][team_name][blueprint_name] = latest_results[team_name][blueprint_name][dataset_name]
 
-
-    # TODO: Assert that all teams have the same number of results (columns)
-    # http: // tristen.ca / tablesort / demo /
-
     for dataset_name, dataset_results in tables.items():
+        if not dataset_name in latest_column_names:
+            continue
+
         table = '<!DOCTYPE html>'
         table += '<html>'
 
@@ -118,9 +111,9 @@ def run(parameters):
         table += '</thead>'
         table += '<tbody>'
 
-        for team_name, team_result in tables[dataset_name].items():
+        for team_name, team_result in dataset_results.items():
             for blueprint_name, blueprint_results in team_results.items():
-                if blueprint_results.has_key(dataset_name) and bool(blueprint_results[dataset_name]):
+                if dataset_name in blueprint_results and not blueprint_results[dataset_name] is None:
                     table += '<tr>'
                     table += '<th>%s</th>' % team_name
                     table += '<th>%s</th>' % blueprint_name
