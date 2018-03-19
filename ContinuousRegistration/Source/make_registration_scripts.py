@@ -92,6 +92,7 @@ def load_datasets(parameters):
 
     if parameters.spread_input_directory is not None:
         spread = SPREAD(parameters.spread_input_directory,
+                        parameters.output_directory,
                         parameters.max_number_of_registrations_per_dataset)
         datasets[spread.name] = spread
         logging.info('Found ' + spread.name + ' ' + spread.category + ' dataset.')

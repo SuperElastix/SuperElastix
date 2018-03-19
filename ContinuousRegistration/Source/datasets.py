@@ -461,29 +461,37 @@ class POPI(Dataset):
 
 
 class SPREAD(Dataset):
-    def __init__(self, input_directory, max_number_of_registrations):
+    def __init__(self, input_directory, output_directory, max_number_of_registrations):
         self.name = 'SPREAD'
         self.category = 'Lung'
 
         self.input_directory = input_directory
         file_names = []
 
-        sub_directories = [directory for directory in os.listdir(self.input_directory) if os.path.isdir(os.path.join(input_directory, directory))]
+        sub_directories = [directory
+                           for directory in os.listdir(os.path.join(self.input_directory, 'mhd'))
+                           if os.path.isdir(os.path.join(self.input_directory, 'mhd', directory))]
 
         for sub_directory in sub_directories:
             image_file_names = (os.path.join(input_directory, 'mhd', sub_directory, 'baseline_1.mha'),
                                 os.path.join(input_directory, 'mhd', sub_directory, 'followup_1.mha'))
 
-            baseline_point_set_file_name_we = os.path.join(input_directory, 'ground_truth', 'distinctivePoints', sub_directory + '_baseline_1_Cropped_point')
+            if not os.path.exists(os.path.join(output_directory, self.name)):
+                os.mkdir(os.path.join(output_directory, self.name))
+
+            baseline_point_set_file_name_we = os.path.join(input_directory, 'groundtruth', 'distinctivePoints', sub_directory + '_baseline_1_Cropped_point')
             point_set = np.loadtxt(baseline_point_set_file_name_we + '.txt', skiprows=2)
-            np.savetxt(baseline_point_set_file_name_we + '_without_header.txt', point_set)
+            baseline_point_set_file_name_we_without_header = os.path.join(output_directory, self.name, sub_directory + '_baseline_1_Cropped_point.txt')
+            np.savetxt(baseline_point_set_file_name_we_without_header, point_set)
 
-            follow_up_point_set_file_name_we = os.path.join(input_directory, 'ground_truth', 'annotate', 'Consensus', sub_directory, sub_directory + '_b1f1_point')
+            follow_up_point_set_file_name_we = os.path.join(input_directory, 'groundtruth', 'annotate', 'Consensus', sub_directory + '_b1f1_point')
             point_set = np.loadtxt(follow_up_point_set_file_name_we + '.txt', skiprows=2)
-            np.savetxt(follow_up_point_set_file_name_we + '_without_header.txt', point_set)
+            follow_up_point_set_file_name_we_without_header = os.path.join(output_directory, self.name, sub_directory + '_baseline_1_Cropped_point.txt')
+            np.savetxt(follow_up_point_set_file_name_we_without_header, point_set)
 
-            point_set_file_names = (baseline_point_set_file_name_we + '_without_header.txt',
-                                    follow_up_point_set_file_name_we + '_without_header.txt')
+
+            point_set_file_names = (baseline_point_set_file_name_we_without_header,
+                                    follow_up_point_set_file_name_we_without_header)
 
             displacement_field_file_names = (os.path.join(self.name, sub_directory, 'followup_to_baseline.nii'),
                                              os.path.join(self.name, sub_directory, 'baseline_to_followup.nii'))

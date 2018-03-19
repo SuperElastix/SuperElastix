@@ -66,6 +66,7 @@ def run(parameters):
 
     latest_results, latest_column_names = load_results_from_json(result_file_names[0])
 
+    # Fill tables with team data
     tables = {}
     for team_name, team_results in latest_results.items():
         for blueprint_name, blueprint_results in team_results.items():
