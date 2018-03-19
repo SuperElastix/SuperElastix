@@ -20,7 +20,7 @@
 set( proj Elastix )
 
 set( ELASTIX_GIT_REPOSITORY https://github.com/SuperElastix/elastix )
-set( ELASTIX_GIT_TAG e8354222396c6bd78e9fe6d5a39e4ecac4bb0d52 )
+set( ELASTIX_GIT_TAG 058253a1e7804e2e0d704dae372b97d853defbe5 )
 
 UPDATE_SELX_SUPERBUILD_COMMAND(${proj})
 

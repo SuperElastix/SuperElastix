@@ -54,6 +54,23 @@ node('lkeb-vm-test') {
         sh "`dirname ${ cmake }`/ctest --script ../../src/CTest.cmake"
       }
     }
+    stage('Deploy') {
+      dir('src') {
+        sh '''
+            GIT_BRANCH=$(git name-rev --name-only HEAD)
+            echo $GIT_BRANCH
+            if [ "$GIT_BRANCH" = "remotes/origin/develop" ]
+            then
+              echo "Deploy this build of develop on shark cluster"
+              rsync -vr --delete ContinuousRegistration sa_lkeb@shark:/exports/lkeb-hpc/sa_lkeb/SuperElastix-deployed/
+              scp -p ../build/Applications-build/CommandLineInterface/SuperElastix sa_lkeb@shark:/exports/lkeb-hpc/sa_lkeb/SuperElastix-deployed/
+
+            else
+              echo "This is not the develop branch, thus do not deploy"
+            fi
+        '''
+      }
+    }
     dir('src') {
       updateGithubCommitStatus(currentBuild)
     }
