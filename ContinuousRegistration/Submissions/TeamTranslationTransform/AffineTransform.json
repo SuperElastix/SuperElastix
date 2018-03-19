@@ -81,10 +81,5 @@
         "Out": "Transformix",
         "In": "DisplacementField",
         "NameOfInterface": "itkDisplacementFieldInterface"
-    },
-    "Connection": {
-        "Out": "Transformix",
-        "In": "ResultImage",
-        "NameOfInterface": "itkImageInterface"
     }
 }
