@@ -1,6 +1,0 @@
-#!/bin/bash
-cmd="@SUPERELASTIX_COMMANDLINE_INTERFACE@ --conf $1 --in FixedImage=$2 MovingImage=$3 --out ResultImage=$4"
-echo "Executing $cmd ..."
-${cmd}
-echo "Executing $cmd ... Done"
-

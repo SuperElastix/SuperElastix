@@ -24,6 +24,7 @@
 namespace selx
 {
 using ModuleDisplacementFieldMeshWarperComponents = selx::TypeList<
-  ItkDisplacementFieldMeshWarperComponent< 2, float, float >
+  ItkDisplacementFieldMeshWarperComponent< 2, float, float >,
+  ItkDisplacementFieldMeshWarperComponent< 3, float, float >
 >;
 }

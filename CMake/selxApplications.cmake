@@ -51,7 +51,7 @@ macro( _selxapplications_initialize )
 
     message( STATUS "  ${APPLICATION}" )
 
-    option( "USE_${APPLICATION}" OFF )
+    option( "USE_${APPLICATION}" ON )
     set( "${APPLICATION}_CMAKE_FILE" ${CMAKE_SOURCE_DIR}/${APPLICATION_CMAKE_FILE} )
     set( "${APPLICATION}_IS_ENABLED" FALSE )
 
