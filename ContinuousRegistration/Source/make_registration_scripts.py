@@ -30,12 +30,13 @@ parser.add_argument('--max-number-of-registrations-per-dataset', '-mnorpd', type
 
 def load_submissions(parameters):
     logging.info('Loading blueprints ...')
-    submissions = [(team_name, os.path.join(parameters.submissions_directory, team_name, file_name))
-                   for team_name in os.listdir(parameters.submissions_directory) if os.path.isdir(os.path.join(parameters.submissions_directory, team_name))
-                   for file_name in os.listdir(os.path.join(parameters.submissions_directory, team_name)) if file_name.endswith('.json') or file_name.endswith('.xml')]
 
-    for team_name, blueprint_file_name in submissions:
-        logging.info('Found %s by %s.', blueprint_file_name, team_name)
+    submissions = dict()
+    team_names = [team_name for team_name in os.listdir(parameters.submissions_directory) if os.path.isdir(os.path.join(parameters.submissions_directory, team_name))]
+    for team_name in team_names:
+        submissions[team_name] = [os.path.join(parameters.submissions_directory, team_name, blueprint_file_name)
+                                  for blueprint_file_name in os.listdir(os.path.join(parameters.submissions_directory, team_name))
+                                  if blueprint_file_name.endswith('.json') or blueprint_file_name.endswith('.xml')]
 
     return submissions
 
@@ -107,40 +108,41 @@ def run(parameters):
     submissions = load_submissions(parameters)
     datasets = load_datasets(parameters)
 
-    for team_name, blueprint_file_name in submissions:
-        blueprint_name, blueprint_ext = os.path.splitext(os.path.basename(blueprint_file_name))
+    for team_name, blueprint_file_names in submissions.items():
 
         if hasattr(parameters, 'team') and not parameters.team is None:
             # User requested to have scripts generated only for this team
             if not parameters.team == team_name:
                 continue
 
-        if hasattr(parameters, 'blueprint_file_name') and not parameters.blueprint_file_name is None:
-            # User requested to have scripts generated only for this blueprint
-            if not parameters.blueprint_file_name == blueprint_file_name:
-                continue
+        for blueprint_file_name in blueprint_file_names:
+            blueprint_name, blueprint_ext = os.path.splitext(os.path.basename(blueprint_file_name))
 
-        blueprint = json.load(open(blueprint_file_name))
+            if hasattr(parameters, 'blueprint_file_name') and not parameters.blueprint_file_name is None:
+                # User requested to have scripts generated only for this blueprint
+                if not parameters.blueprint_file_name == blueprint_file_name:
+                    continue
 
-        for dataset_name in blueprint['Datasets']:
-            if not dataset_name in datasets:
-                logging.error('Dataset ' + dataset_name + ' requested by ' + blueprint_file_name + ' but no directory provided. See \'--help\' for usage.')
-                continue
+            blueprint = json.load(open(blueprint_file_name))
+            for dataset_name in blueprint['Datasets']:
+                if not dataset_name in datasets:
+                    logging.error('Dataset ' + dataset_name + ' requested by ' + blueprint_file_name + ' but no directory provided. See \'--help\' for usage.')
+                    continue
 
-            dataset = datasets[dataset_name]
-            for file_names in dataset.generator():
-                blueprint_output_directory = os.path.join(parameters.output_directory, team_name, blueprint_name, os.path.dirname(file_names['displacement_field_file_names'][0]))
+                dataset = datasets[dataset_name]
+                for file_names in dataset.generator():
+                    blueprint_output_directory = os.path.join(parameters.output_directory, team_name, blueprint_name, os.path.dirname(file_names['displacement_field_file_names'][0]))
 
-                if not os.path.exists(blueprint_output_directory):
-                    os.makedirs(blueprint_output_directory)
+                    if not os.path.exists(blueprint_output_directory):
+                        os.makedirs(blueprint_output_directory)
 
-                output_directory = os.path.join(parameters.output_directory, team_name, blueprint_name)
+                    output_directory = os.path.join(parameters.output_directory, team_name, blueprint_name)
 
-                if parameters.make_shell_scripts:
-                    dataset.make_shell_scripts(parameters.superelastix, blueprint_file_name, file_names, output_directory)
+                    if parameters.make_shell_scripts:
+                        dataset.make_shell_scripts(parameters.superelastix, blueprint_file_name, file_names, output_directory)
 
-                if parameters.make_batch_scripts:
-                    dataset.make_batch_scripts(parameters.superelastix, blueprint_file_name, file_names, output_directory)
+                    if parameters.make_batch_scripts:
+                        dataset.make_batch_scripts(parameters.superelastix, blueprint_file_name, file_names, output_directory)
 
 
 
