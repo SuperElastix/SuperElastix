@@ -27,6 +27,7 @@ parser.add_argument('--blueprint-file-name', '-bfn', help="If specified, only ge
 
 parser.add_argument('--max-number-of-registrations-per-dataset', '-mnorpd', type=int, default=64)
 
+logging.basicConfig(level=logging.INFO)
 
 def load_submissions(parameters):
     logging.info('Loading blueprints ...')
@@ -125,9 +126,17 @@ def run(parameters):
                     continue
 
             blueprint = json.load(open(blueprint_file_name))
+
+            if not 'Datasets' in blueprint:
+                logging.error('Missing key \'Datasets\' in blueprint %s. '
+                              'Blueprint must specify on which datasets it should be evaluated. '
+                              'Example: { Datasets: [\"SPREAD\", \"POPI\", \"LPBA40\"] }. '
+                              'Skipping blueprint.' % blueprint_file_name)
+                continue
+
             for dataset_name in blueprint['Datasets']:
                 if not dataset_name in datasets:
-                    logging.error('Dataset ' + dataset_name + ' requested by ' + blueprint_file_name + ' but no directory provided. See \'--help\' for usage.')
+                    logging.error('Dataset ' + dataset_name + ' requested by ' + blueprint_file_name + ' but no directory provided. Skipping dataset for this blueprint. See \'--help\' for usage.')
                     continue
 
                 dataset = datasets[dataset_name]
@@ -145,7 +154,7 @@ def run(parameters):
                     if parameters.make_batch_scripts:
                         dataset.make_batch_scripts(parameters.superelastix, blueprint_file_name, file_names, output_directory)
 
-
+            logging.info('Generated registration scripts for %s.' % blueprint_file_name)
 
 if __name__ == '__main__':
     parameters = parser.parse_args()
