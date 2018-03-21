@@ -5,29 +5,28 @@
         "NameOfClass": "ItkImageRegistrationMethodv4Component",
 		"NumberOfLevels":  "3" ,
 		"ShrinkFactorsPerLevel": [ "4", "2", "1" ],
-        "SmoothingSigmasPerLevel": [ "4", "2", "1" ]
+        "SmoothingSigmasPerLevel": [ "4", "2", "1" ],
+        "Dimensionality": "3"
     },
     "Component": {
         "Name": "FixedImage",
         "NameOfClass": "ItkImageSourceComponent",
-        "Dimensionality": "2",
-		"PixelType": "float"
+        "Dimensionality": "3"
     },
     "Component": {
         "Name": "MovingImage",
         "NameOfClass": "ItkImageSourceComponent",
-        "Dimensionality": "2",
-		"PixelType": "float"
+        "Dimensionality": "3"
     },
     "Component": {
         "Name": "DisplacementField",
-        "NameOfClass": "DisplacementFieldItkImageFilterSinkComponent",
-        "Dimensionality": "3",
-		"PixelType": "float"
+        "NameOfClass": "ItkDisplacementFieldSinkComponent",
+        "Dimensionality": "3"
     },
     "Component": {
         "Name": "Metric",
-        "NameOfClass": "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component"
+        "NameOfClass": "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component",
+        "Dimensionality": "3"
     },
     "Component": {
         "Name": "Optimizer",
@@ -38,20 +37,19 @@
     "Component": {
         "Name": "Transform",
         "NameOfClass": "ItkGaussianExponentialDiffeomorphicTransformComponent",
-  		"InternalComputationValueType": "double"
+  		"InternalComputationValueType": "double",
+        "Dimensionality": "3"
     },
 	"Component": {
         "Name": "TransformResolutionAdaptor",
         "NameOfClass": "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent",
-  		"ShrinkFactorsPerLevel": [ "4", "2", "1" ]
-    },
-    "Component": {
-        "Name": "ResampleFilter",
-        "NameOfClass": "ItkResampleFilterComponent"
+  		"ShrinkFactorsPerLevel": [ "4", "2", "1" ],
+        "Dimensionality": "3"
     },
     "Component": {
         "Name": "TransformDisplacementFilter",
-        "NameOfClass": "ItkTransformDisplacementFilterComponent"
+        "NameOfClass": "ItkTransformDisplacementFilterComponent",
+        "Dimensionality": "3"
     },
     "Connection": {
         "Out": "FixedImage",
@@ -65,23 +63,13 @@
     },
     "Connection": {
         "Out": "RegistrationMethod",
-        "In": "ResampleFilter",
-        "NameOfInterface": "itkTransformInterface"
-    },
-    "Connection": {
-        "Out": "RegistrationMethod",
         "In": "TransformDisplacementFilter",
         "NameOfInterface": "itkTransformInterface"
     },
     "Connection": {
-        "Out": "ResampleFilter",
-        "In": "ResultImage",
-        "NameOfInterface": "itkImageInterface"
-	},
-    "Connection": {
         "Out": "TransformDisplacementFilter",
-        "In": "ResultDisplacementField",
-        "NameOfInterface": "DisplacementSourceInterface"
+        "In": "DisplacementField",
+        "NameOfInterface": "itkDisplacementFieldInterface"
     },
     "Connection": {
         "Out": "Metric",
@@ -116,15 +104,5 @@
         "Out": "FixedImage",
         "In": "TransformDisplacementFilter",
         "NameOfInterface": "itkImageDomainFixedInterface"
-    },
-	"Connection": {
-        "Out": "FixedImage",
-        "In": "ResampleFilter",
-        "NameOfInterface": "itkImageDomainFixedInterface"
-    },
-	"Connection": {
-        "Out": "MovingImage",
-        "In": "ResampleFilter",
-        "NameOfInterface": "itkImageMovingInterface"
     }
 }
