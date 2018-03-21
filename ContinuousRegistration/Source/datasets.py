@@ -164,8 +164,8 @@ class CUMC12(Dataset):
             image_file_name_1 = os.path.basename(image_file_name_1)
             image_file_name_we_0, image_extension_we_0 = os.path.splitext(image_file_name_0)
             image_file_name_we_1, image_extension_we_1 = os.path.splitext(image_file_name_1)
-            displacement_field_file_names.append((os.path.join(self.name, image_file_name_we_1 + "_to_" + image_file_name_we_0 + ".nii"),
-                                                  os.path.join(self.name, image_file_name_we_0 + "_to_" + image_file_name_we_1 + ".nii")))
+            displacement_field_file_names.append((os.path.join(self.name, image_file_name_we_1 + "_to_" + image_file_name_we_0 + ".nii.gz"),
+                                                  os.path.join(self.name, image_file_name_we_0 + "_to_" + image_file_name_we_1 + ".nii.gz")))
 
         for image_file_name, label_file_name, displacement_field_file_name in zip(image_file_names, label_file_names, displacement_field_file_names):
             file_names.append({
@@ -230,8 +230,8 @@ class DIRLAB(Dataset):
             point_set_0 = glob.glob(os.path.join(input_directory, dirlab_image_information[id]['sub_directory'], 'ExtremePhases', '*T00_xyz.txt'))[0]
             point_set_1 = glob.glob(os.path.join(input_directory, dirlab_image_information[id]['sub_directory'], 'ExtremePhases', '*T50_xyz.txt'))[0]
 
-            displacement_field_file_name_0 = os.path.join(self.name, dirlab_image_information[id]['sub_directory'], '50_to_00.nii')
-            displacement_field_file_name_1 = os.path.join(self.name, dirlab_image_information[id]['sub_directory'], '00_to_50.nii')
+            displacement_field_file_name_0 = os.path.join(self.name, dirlab_image_information[id]['sub_directory'], '50_to_00.nii.gz')
+            displacement_field_file_name_1 = os.path.join(self.name, dirlab_image_information[id]['sub_directory'], '00_to_50.nii.gz')
 
             file_names.append({
                 'image_file_names': (mhd_0_file_name, mhd_1_file_name),
@@ -258,8 +258,8 @@ class EMPIRE(Dataset):
                                              os.path.join(input_directory, 'scans', "%02d" % i + '_Moving.mhd'))
 
             # TODO: Find out output format
-            displacement_field_file_names = (os.path.join(self.name, "%02d" % i + '_Moving_to_Fixed.mhd'),
-                                             os.path.join(self.name, "%02d" % i + '_Fixed_to_Moving.mhd'))
+            displacement_field_file_names = (os.path.join(self.name, "%02d" % i + '_Moving_to_Fixed.nii.gz'),
+                                             os.path.join(self.name, "%02d" % i + '_Fixed_to_Moving.nii.gz'))
 
             file_names.append({
                 "image_file_names": image_file_names,
@@ -298,8 +298,8 @@ class ISBR18(Dataset):
             image_file_name_1 = os.path.basename(image_file_name_1)
             image_file_name_we_0, image_extension_we_0 = os.path.splitext(image_file_name_0)
             image_file_name_we_1, image_extension_we_1 = os.path.splitext(image_file_name_1)
-            displacement_field_file_names.append((os.path.join(self.name, image_file_name_we_1 + "_to_" + image_file_name_we_0 + ".nii"),
-                                                  os.path.join(self.name, image_file_name_we_0 + "_to_" + image_file_name_we_1 + ".nii")))
+            displacement_field_file_names.append((os.path.join(self.name, image_file_name_we_1 + "_to_" + image_file_name_we_0 + ".nii.gz"),
+                                                  os.path.join(self.name, image_file_name_we_0 + "_to_" + image_file_name_we_1 + ".nii.gz")))
 
         # Label images do not have any world coordinate information
         label_file_names = [copy_information_from_images_to_labels(image_file_name_pair,
@@ -349,10 +349,28 @@ class LPBA40(Dataset):
         self.input_directory = input_directory
         file_names = []
 
-        image_file_names = [glob.glob(os.path.join(self.input_directory, 'delineation_space', sub_directory, '*.delineation.skullstripped.hdr'))[0] for sub_directory in os.listdir(os.path.join(self.input_directory, 'delineation_space')) if os.path.isdir(os.path.join(self.input_directory, 'delineation_space', sub_directory))]
+        image_file_names = [glob.glob(os.path.join(self.input_directory,
+                                                   'delineation_space',
+                                                   sub_directory,
+                                                   '*.delineation.skullstripped.hdr'))[0]
+                            for sub_directory in os.listdir(os.path.join(self.input_directory,
+                                                                         'delineation_space'))
+                            if os.path.isdir(os.path.join(self.input_directory,
+                                                          'delineation_space',
+                                                          sub_directory))]
+
         image_file_names = [pair for pair in combinations(image_file_names, 2)]
 
-        label_file_names = [glob.glob(os.path.join(self.input_directory, 'delineation_space', sub_directory, '*.delineation.structure.label.hdr'))[0] for sub_directory in os.listdir(os.path.join(self.input_directory, 'delineation_space')) if os.path.isdir(os.path.join(self.input_directory, 'delineation_space', sub_directory))]
+        label_file_names = [glob.glob(os.path.join(self.input_directory,
+                                                   'delineation_space',
+                                                   sub_directory,
+                                                   '*.delineation.structure.label.hdr'))[0]
+                            for sub_directory in os.listdir(os.path.join(self.input_directory,
+                                                                         'delineation_space'))
+                            if os.path.isdir(os.path.join(self.input_directory,
+                                                          'delineation_space',
+                                                          sub_directory))]
+
         label_file_names = [pair for pair in combinations(label_file_names, 2)]
 
         displacement_field_file_names = []
@@ -361,8 +379,8 @@ class LPBA40(Dataset):
             image_file_name_1 = os.path.basename(image_file_name_1)
             image_file_name_we_0 = os.path.splitext(image_file_name_0)[0]
             image_file_name_we_1 = os.path.splitext(image_file_name_1)[0]
-            displacement_field_file_names.append((os.path.join(self.name, image_file_name_we_1 + "_to_" + image_file_name_we_0 + ".nii"),
-                                                  os.path.join(self.name, image_file_name_we_0 + "_to_" + image_file_name_we_1 + ".nii")))
+            displacement_field_file_names.append((os.path.join(self.name, image_file_name_we_1 + "_to_" + image_file_name_we_0 + ".nii.gz"),
+                                                  os.path.join(self.name, image_file_name_we_0 + "_to_" + image_file_name_we_1 + ".nii.gz")))
 
         for image_file_name, label_file_name, displacement_field_file_name in zip(image_file_names, label_file_names, displacement_field_file_names):
             file_names.append({
@@ -400,8 +418,8 @@ class MGH10(Dataset):
             image_file_name_we_0, image_extension_we_0 = os.path.splitext(image_file_name_0)
             image_file_name_we_1, image_extension_we_1 = os.path.splitext(image_file_name_1)
             displacement_field_file_names.append(
-                (os.path.join(self.name, image_file_name_we_1 + "_to_" + image_file_name_we_0 + ".nii"),
-                 os.path.join(self.name, image_file_name_we_0 + "_to_" + image_file_name_we_1 + ".nii")))
+                (os.path.join(self.name, image_file_name_we_1 + "_to_" + image_file_name_we_0 + ".nii.gz"),
+                 os.path.join(self.name, image_file_name_we_0 + "_to_" + image_file_name_we_1 + ".nii.gz")))
 
 
         # Label images do not have any world coordinate information
@@ -445,8 +463,8 @@ class POPI(Dataset):
             #                              os.path.join(input_directory, sub_directory, 'mhd', '50.mhd')))
             point_set_file_names = (os.path.join(input_directory, sub_directory, 'pts', '00.pts'),
                                     os.path.join(input_directory, sub_directory, 'pts', '50.pts'))
-            displacement_field_file_names = (os.path.join(self.name, sub_directory, '50_to_00.mhd'),
-                                             os.path.join(self.name, sub_directory, '00_to_50.mhd'))
+            displacement_field_file_names = (os.path.join(self.name, sub_directory, '50_to_00.nii.gz'),
+                                             os.path.join(self.name, sub_directory, '00_to_50.nii.gz'))
 
             file_names.append({
                 "image_file_names": image_file_names,
@@ -493,8 +511,8 @@ class SPREAD(Dataset):
             point_set_file_names = (baseline_point_set_file_name_we_without_header,
                                     follow_up_point_set_file_name_we_without_header)
 
-            displacement_field_file_names = (os.path.join(self.name, sub_directory, 'followup_to_baseline.nii'),
-                                             os.path.join(self.name, sub_directory, 'baseline_to_followup.nii'))
+            displacement_field_file_names = (os.path.join(self.name, sub_directory, 'followup_to_baseline.nii.gz'),
+                                             os.path.join(self.name, sub_directory, 'baseline_to_followup.nii.gz'))
 
             file_names.append({
                 "image_file_names": image_file_names,
