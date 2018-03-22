@@ -41,7 +41,7 @@ ItkDisplacementFieldSinkComponent< Dimensionality, TPixel >
 template< int Dimensionality, class TPixel >
 int
 ItkDisplacementFieldSinkComponent< Dimensionality, TPixel >
-::Accept( ItkDisplacementFieldInterfacePointer other )
+::Accept( itkDisplacementFieldInterfacePointer other )
 {
   //if( this->m_NetworkBuilderOutputImage == nullptr )
   //{

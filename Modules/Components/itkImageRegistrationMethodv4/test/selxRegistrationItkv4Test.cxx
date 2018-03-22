@@ -27,9 +27,9 @@
 #include "selxSSDMetric4thPartyComponent.h"
 
 #include "selxItkSmoothingRecursiveGaussianImageFilterComponent.h"
-#include "selxDisplacementFieldItkImageFilterSinkComponent.h"
 #include "selxItkImageSourceComponent.h"
 #include "selxItkImageSinkComponent.h"
+#include "selxItkDisplacementFieldSinkComponent.h"
 
 #include "selxItkImageRegistrationMethodv4Component.h"
 #include "selxItkANTSNeighborhoodCorrelationImageToImageMetricv4Component.h"
@@ -71,8 +71,8 @@ public:
     GDOptimizer4thPartyComponent,
     SSDMetric3rdPartyComponent,
     SSDMetric4thPartyComponent,
-    DisplacementFieldItkImageFilterSinkComponent< 3, double >,
-    DisplacementFieldItkImageFilterSinkComponent< 2, float >,
+    ItkDisplacementFieldSinkComponent< 3, double >,
+    ItkDisplacementFieldSinkComponent< 2, float >,
     ItkImageSinkComponent< 3, double >,
     ItkImageSinkComponent< 2, float >,
     ItkImageSourceComponent< 2, float >,
@@ -403,7 +403,7 @@ TEST_F(RegistrationItkv4Test, FullyConfigured3d)
 
   blueprint->SetComponent("ResultImageSink", { { "NameOfClass", { "ItkImageSinkComponent" } }, { "Dimensionality", { "3" } } });
 
-  blueprint->SetComponent("ResultDisplacementFieldSink", { { "NameOfClass", { "DisplacementFieldItkImageFilterSinkComponent" } }, { "Dimensionality", { "3" } } });
+  blueprint->SetComponent("ResultDisplacementFieldSink", { { "NameOfClass", { "ItkDisplacementFieldSinkComponent" } }, { "Dimensionality", { "3" } } });
 
   blueprint->SetComponent("Metric", { { "NameOfClass", { "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component" } }, { "Dimensionality", { "3" } } });
 
@@ -428,7 +428,7 @@ TEST_F(RegistrationItkv4Test, FullyConfigured3d)
 
   blueprint->SetConnection("ResampleFilter", "ResultImageSink", { { "NameOfInterface", { "itkImageInterface" } } });
 
-  blueprint->SetConnection("TransformDisplacementFilter", "ResultDisplacementFieldSink", { { "NameOfInterface", { "DisplacementFieldItkImageSourceInterface" } } });
+  blueprint->SetConnection("TransformDisplacementFilter", "ResultDisplacementFieldSink", { { "NameOfInterface", { "itkDisplacementFieldInterface" } } });
 
   blueprint->SetConnection("Metric", "RegistrationMethod", { { "NameOfInterface", { "itkMetricv4Interface" } } });
 
@@ -500,7 +500,7 @@ TEST_F( RegistrationItkv4Test, FullyConfigured3dAffine )
   blueprint->SetComponent( "ResultImageSink", component3Parameters );
 
   ParameterMapType component4Parameters;
-  component4Parameters[ "NameOfClass" ]    = { "DisplacementFieldItkImageFilterSinkComponent" };
+  component4Parameters[ "NameOfClass" ]    = { "ItkDisplacementFieldSinkComponent" };
   component4Parameters[ "Dimensionality" ] = { "3" }; // should be derived from the outputs
   blueprint->SetComponent( "ResultDisplacementFieldSink", component4Parameters );
 
@@ -538,7 +538,7 @@ TEST_F( RegistrationItkv4Test, FullyConfigured3dAffine )
   blueprint->SetConnection( "ResampleFilter", "ResultImageSink", connection3Parameters );
 
   ParameterMapType connection4Parameters;
-  connection4Parameters[ "NameOfInterface" ] = { "DisplacementFieldItkImageSourceInterface" };
+  connection4Parameters[ "NameOfInterface" ] = { "itkDisplacementFieldInterface" };
   blueprint->SetConnection( "TransformDisplacementFilter", "ResultDisplacementFieldSink", connection4Parameters );
 
   ParameterMapType connection5Parameters;
@@ -595,7 +595,7 @@ TEST_F( RegistrationItkv4Test, CompositeTransform )
 
   blueprint->SetComponent( "FixedImageSource", { { "NameOfClass", { "ItkImageSourceComponent" } } } );
   blueprint->SetComponent( "MovingImageSource", { { "NameOfClass", { "ItkImageSourceComponent" } } } );
-  blueprint->SetComponent( "ResultImageSink", { { "NameOfClass", { "ItkImageSinkComponent" } } } );
+  blueprint->SetComponent( "ResultImageSink", { { "NameOfClass", { "ItkImageSinkComponent" } }, { "Dimensionality", { "2" } } } );
 
   blueprint->SetComponent( "ResampleFilter", { { "NameOfClass", { "ItkResampleFilterComponent" } } } );
   blueprint->SetConnection( "FixedImageSource", "ResampleFilter", { {} } );
@@ -692,7 +692,7 @@ TEST_F(RegistrationItkv4Test, TransformSink)
 
   blueprint->SetComponent("ResultImageSink", { { "NameOfClass", { "ItkImageSinkComponent" } }, { "Dimensionality", { "3" } } });
 
-  blueprint->SetComponent("ResultDisplacementFieldSink", { { "NameOfClass", { "DisplacementFieldItkImageFilterSinkComponent" } }, { "Dimensionality", { "3" } } });
+  blueprint->SetComponent("ResultDisplacementFieldSink", { { "NameOfClass", { "ItkDisplacementFieldSinkComponent" } }, { "Dimensionality", { "3" } } });
 
   blueprint->SetComponent("Metric", { { "NameOfClass", { "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component" } }, { "Dimensionality", { "3" } } });
 
@@ -720,7 +720,7 @@ TEST_F(RegistrationItkv4Test, TransformSink)
 
   blueprint->SetConnection("ResampleFilter", "ResultImageSink", { { "NameOfInterface", { "itkImageInterface" } } });
 
-  blueprint->SetConnection("TransformDisplacementFilter", "ResultDisplacementFieldSink", { { "NameOfInterface", { "DisplacementFieldItkImageSourceInterface" } } });
+  blueprint->SetConnection("TransformDisplacementFilter", "ResultDisplacementFieldSink", { { "NameOfInterface", { "itkDisplacementFieldInterface" } } });
 
   blueprint->SetConnection("Metric", "RegistrationMethod", { { "NameOfInterface", { "itkMetricv4Interface" } } });
 
@@ -762,6 +762,7 @@ TEST_F(RegistrationItkv4Test, TransformSink)
   //Itk lacks a support to use transform objects in a itk-pipeline. We need to store the output placeholder (=smartpointer to empty decortator) here...
   auto decoratedTransform = superElastixFilter->GetOutput< Transform3DType >("TransformSink");
   EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
+  EXPECT_NO_THROW(superElastixFilter->SetLogger(logger));
 
   //Optional Update call
   //superElastixFilter->Update();
@@ -790,7 +791,7 @@ TEST_F(RegistrationItkv4Test, TransformSource)
 
   blueprint->SetComponent("ResultImageSink", { { "NameOfClass", { "ItkImageSinkComponent" } }, { "Dimensionality", { "3" } } });
 
-  blueprint->SetComponent("ResultDisplacementFieldSink", { { "NameOfClass", { "DisplacementFieldItkImageFilterSinkComponent" } }, { "Dimensionality", { "3" } } });
+  blueprint->SetComponent("ResultDisplacementFieldSink", { { "NameOfClass", { "ItkDisplacementFieldSinkComponent" } }, { "Dimensionality", { "3" } } });
 
   blueprint->SetComponent("TransformDisplacementFilter", { { "NameOfClass", { "ItkTransformDisplacementFilterComponent" } }, { "Dimensionality", { "3" } } });
 
