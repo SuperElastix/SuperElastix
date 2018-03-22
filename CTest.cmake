@@ -60,4 +60,4 @@ ctest_start("Nightly")
 # Added ctest_update() to ensure that the commit SHA will be passed to CDash, and GitHub.
 ctest_update()
 ctest_test()
-ctest_submit( PARTS Test )
+ctest_submit( PARTS Test Update )
