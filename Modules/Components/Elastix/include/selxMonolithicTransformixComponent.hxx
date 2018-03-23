@@ -73,15 +73,19 @@ MonolithicTransformixComponent< Dimensionality, TPixel >::Accept( typename itkIm
   auto origin = fixedImageDomain->GetOrigin();
   typename TransformixFilterType::ParameterValueVectorType originParameters;
 
-  //auto direction = fixedImageDomain->GetDirectionCosines();
-  //TransformixFilterType::ParameterValueVectorType DirectionParameters;
+  auto direction = fixedImageDomain->GetDirection();
+  typename TransformixFilterType::ParameterValueVectorType directionParameters;
 
-  for( int d = 0; d < Dimensionality; ++d )
+  for( unsigned int d = 0; d < Dimensionality; ++d )
   {
     sizeParameters.push_back( std::to_string( size[ d ] ) );
     spacingParameters.push_back( std::to_string( spacing[ d ] ) );
     indexParameters.push_back( std::to_string( index[ d ] ) );
     originParameters.push_back( std::to_string( origin[ d ] ) );
+    for( unsigned int j = 0; j < Dimensionality; ++j)
+    {
+      directionParameters.push_back( std::to_string( direction(j,d) ) );
+    }
   }
 
   elxParameterObjectPointer trxParameterObject = elxParameterObjectType::New();
@@ -94,11 +98,16 @@ MonolithicTransformixComponent< Dimensionality, TPixel >::Accept( typename itkIm
     { "Index", indexParameters },
     { "Spacing", spacingParameters },
     { "Origin", originParameters },
-    //{ "Direction", { "1", "0", "0", "1" } },
+    { "Direction", directionParameters },
     { "UseDirectionCosines", { "true" } }
   };
   trxParameterObject->SetParameterMap( trxParameterMap );
   this->m_transformixFilter->SetTransformParameterObject( trxParameterObject );
+
+  auto warpedImage = this->m_transformixFilter->GetOutput();
+  warpedImage->CopyInformation(fixedImageDomain);
+  auto displacementField = this->m_transformixFilter->GetOutputDeformationField();
+  displacementField->CopyInformation(fixedImageDomain);
 
   return 0;
 }
