@@ -131,15 +131,15 @@ endif()
 # ---------------------------------------------------------------------
 # Build Elastix
 
-mark_as_advanced( SUPERELASTIX_BUILD_ELASTIX )
-option( SUPERELASTIX_BUILD_ELASTIX "Build elastix." ON )
+mark_as_advanced( SUPERELASTIX_USE_ELASTIX )
+option( SUPERELASTIX_USE_ELASTIX "Let SuperElastix use Components based on elastix." ON )
 
-if( SUPERELASTIX_BUILD_ELASTIX )
+if( SUPERELASTIX_USE_ELASTIX )
   option( USE_SYSTEM_ELASTIX "Use system install of elastix." OFF )
   mark_as_advanced( USE_SYSTEM_ELASTIX )
 
   if( USE_SYSTEM_ELASTIX )
-    find_package( Elastix )
+    find_package( Elastix REQUIRED )
     include( ${ELASTIX_USE_FILE} )
   else()
     include( ExternalElastix )
@@ -149,10 +149,10 @@ endif()
 # ---------------------------------------------------------------------
 # Build Niftyreg
 
-mark_as_advanced( SUPERELASTIX_BUILD_NIFTYREG )
-option( SUPERELASTIX_BUILD_NIFTYREG "Build support for Niftyreg." ON )
+mark_as_advanced( SUPERELASTIX_USE_NIFTYREG )
+option( SUPERELASTIX_USE_NIFTYREG "Let SuperElastix use Components based on Niftyreg." ON )
 
-if( SUPERELASTIX_BUILD_NIFTYREG )
+if( SUPERELASTIX_USE_NIFTYREG )
   mark_as_advanced( USE_SYSTEM_NIFTYREG )
   option( USE_SYSTEM_NIFTYREG "Use an installed version of Niftyreg." OFF )
   if( USE_SYSTEM_NIFTYREG )
@@ -188,10 +188,10 @@ endif()
 # ---------------------------------------------------------------------
 # Build ATen
 
-mark_as_advanced( SUPERELASTIX_BUILD_ATEN )
-option( SUPERELASTIX_BUILD_ATEN "Build ATen." OFF )
+mark_as_advanced( SUPERELASTIX_USE_ATEN )
+option( SUPERELASTIX_USE_ATEN "Let SuperElastix use Components based on ATen." OFF )
 
-if( SUPERELASTIX_BUILD_ATEN )
+if( SUPERELASTIX_USE_ATEN )
   mark_as_advanced( USE_SYSTEM_ATEN )
   option( USE_SYSTEM_ATEN "Use a pre-compiled version of ATen." OFF )
 
