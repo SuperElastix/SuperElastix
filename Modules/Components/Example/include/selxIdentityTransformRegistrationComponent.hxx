@@ -27,7 +27,7 @@ template< int Dimensionality, class TPixel >
 IdentityTransformRegistrationComponent< Dimensionality, TPixel >::IdentityTransformRegistrationComponent( const std::string & name,
   LoggerImpl & logger ) : Superclass( name, logger )
 {
-	this->m_DisplacementField = DisplacementFieldImageType::New();
+	this->m_DisplacementField = DisplacementFieldType::New();
 }
 
 
@@ -72,8 +72,8 @@ IdentityTransformRegistrationComponent< Dimensionality, TPixel >::Accept( typena
 
 
 template< int Dimensionality, class TPixel >
-typename IdentityTransformRegistrationComponent< Dimensionality, TPixel >::DisplacementFieldImageType::Pointer
-IdentityTransformRegistrationComponent< Dimensionality, TPixel >::GetDisplacementFieldItkImage()
+typename IdentityTransformRegistrationComponent< Dimensionality, TPixel >::DisplacementFieldType::Pointer
+IdentityTransformRegistrationComponent< Dimensionality, TPixel >::GetItkDisplacementField()
 {
 
   return this->m_DisplacementField;

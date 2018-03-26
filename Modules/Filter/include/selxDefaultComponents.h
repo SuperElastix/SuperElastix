@@ -22,10 +22,12 @@
 
 //Component group ItkSmoothingRecursiveGaussianImageFilter
 #include "selxItkSmoothingRecursiveGaussianImageFilterComponent.h"
+
 //Component group SinksAndSources
-#include "selxDisplacementFieldItkImageFilterSinkComponent.h"
 #include "selxItkImageSourceComponent.h"
 #include "selxItkImageSinkComponent.h"
+#include "selxItkDisplacementFieldSourceComponent.h"
+#include "selxItkDisplacementFieldSinkComponent.h"
 
 //Component group Elastix
 #include "selxMonolithicElastixComponent.h"
@@ -59,8 +61,8 @@
 namespace selx
 {
 using DefaultComponents = selx::TypeList<
-  DisplacementFieldItkImageFilterSinkComponent< 2, float >,
-  DisplacementFieldItkImageFilterSinkComponent< 3, float >,
+  ItkDisplacementFieldSinkComponent< 2, float >,
+  ItkDisplacementFieldSinkComponent< 3, float >,
   ItkImageSinkComponent< 2, float >,
   ItkImageSinkComponent< 3, short >,
   ItkImageSourceComponent< 2, float >,

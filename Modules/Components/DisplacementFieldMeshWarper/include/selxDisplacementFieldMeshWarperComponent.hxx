@@ -18,8 +18,8 @@
  *
  *=========================================================================*/
 
-#ifndef selxDisplacementFieldWarperComponent_hxx
-#define selxDisplacementFieldWarperComponent_hxx
+#ifndef selxDisplacementFieldMeshWarperComponent_hxx
+#define selxDisplacementFieldMeshWarperComponent_hxx
 
 #include "selxDisplacementFieldMeshWarperComponent.h"
 #include "selxCheckTemplateProperties.h"
@@ -40,6 +40,7 @@ ItkDisplacementFieldMeshWarperComponent< Dimensionality, TPixel, CoordRepType >
 ::Accept( ItkDisplacementFieldInterfacePointer itkDisplacementFieldInterface )
 {
   auto displacementField = itkDisplacementFieldInterface->GetItkDisplacementField();
+  displacementField->SetBufferedRegion(displacementField->GetRequestedRegion());
   this->m_DisplacementFieldTransform->SetDisplacementField( displacementField );
 
   return 0;
@@ -85,4 +86,4 @@ ItkDisplacementFieldMeshWarperComponent< Dimensionality, TPixel, CoordRepType >
 
 } // namespace selx
 
-#endif // selxDisplacementFieldWarperComponent_hxx
+#endif // selxDisplacementFieldMeshWarperComponent_hxx

@@ -30,9 +30,11 @@ MonolithicElastixComponent< Dimensionality, TPixel >::MonolithicElastixComponent
 
   // TODO: Due to some issues with Criteria being propagated as elastix settings, I need to empty the selxparameterObject.
   elxParameterObjectPointer elxParameterObject = elxParameterObjectType::New();
-  typename elxParameterObjectType::ParameterMapType defaultParameters = elxParameterObject->GetDefaultParameterMap( "rigid" );
+  typename elxParameterObjectType::ParameterMapType rigidParameters = elxParameterObject->GetDefaultParameterMap( "rigid" );
+  typename elxParameterObjectType::ParameterMapType bsplineParameters = elxParameterObject->GetDefaultParameterMap( "bspline", 3, 64.0 );
 
-  elxParameterObject->SetParameterMap( defaultParameters );
+  elxParameterObject->SetParameterMap( rigidParameters );
+  elxParameterObject->AddParameterMap( bsplineParameters );
   m_elastixFilter->SetParameterObject( elxParameterObject );
   m_elastixFilter->LogToConsoleOn();
   m_elastixFilter->LogToFileOff();
