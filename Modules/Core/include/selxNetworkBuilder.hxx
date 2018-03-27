@@ -585,7 +585,6 @@ NetworkBuilder< ComponentList >::GetRealizedNetwork()
           connectionInfoUpdateInterface->SetProvidedTo("NetworkBuilder");
         }
       }
-
     }
 
     return NetworkContainer( components, updateOrder, outputObjectsMap );
@@ -598,5 +597,18 @@ NetworkBuilder< ComponentList >::GetRealizedNetwork()
     throw std::runtime_error( msg.str() );
     return NetworkContainer( components, updateOrder, outputObjectsMap );
   }
+
+
 }
+
+template< typename ComponentList >
+void
+NetworkBuilder< ComponentList >::Cite()
+{
+  const BlueprintImpl::ComponentNamesType componentNames = m_Blueprint.GetComponentNames();
+  for( auto const & componentName : componentNames ) {
+    this->m_ComponentSelectorContainer[componentName]->GetComponent()->Cite();
+  }
+}
+
 } // end namespace selx
