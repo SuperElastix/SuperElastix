@@ -105,6 +105,8 @@ protected:
   /** See which components need more configuration criteria */
   virtual ComponentNamesType GetNonUniqueComponentNames();
 
+  void Cite();
+
   //TODO make const correct
   //NetworkBuilder should be constructed with a blueprint.
   //BlueprintImpl::ConstPointer m_Blueprint;

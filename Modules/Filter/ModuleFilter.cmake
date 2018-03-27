@@ -19,12 +19,10 @@
 
 set( ${MODULE}_INCLUDE_DIRS
   ${${MODULE}_SOURCE_DIR}/include
-  ${${MODULE}_BINARY_DIR}/include/
 )
 
 # Module source files
 set( ${MODULE}_SOURCE_FILES
-  #${${MODULE}_BINARY_DIR}/include/selxCompiledLibraryComponents.h ## TODO
   ${${MODULE}_SOURCE_DIR}/src/selxSuperElastixFilterBase.cxx
   ${${MODULE}_SOURCE_DIR}/src/selxSuperElastixFilter.cxx
 )

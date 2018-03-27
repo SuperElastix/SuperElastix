@@ -39,6 +39,8 @@ MonolithicElastixComponent< Dimensionality, TPixel >::MonolithicElastixComponent
   m_elastixFilter->LogToConsoleOn();
   m_elastixFilter->LogToFileOff();
   m_elastixFilter->SetOutputDirectory( "." );
+
+  this->m_HowToCite = "Klein S, Staring M, Murphy K, Viergever MA, Pluim JP. Elastix: a toolbox for intensity-based medical image registration. IEEE transactions on medical imaging. 2010 Jan;29(1):196-205";
 }
 
 
