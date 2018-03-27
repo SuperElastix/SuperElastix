@@ -1,5 +1,5 @@
 {
-    "Datasets": ["POPI", "DIRLAB", "EMPIRE", "LPBA40", "ISBR18", "CUMC12", "MGH10"],
+    "Datasets": ["POPI", "DIRLAB", "EMPIRE", "LPBA40", "ISBR18", "CUMC12", "MGH10", "SPREAD"],
     "Component": {
         "Name": "Elastix",
         "NameOfClass": "MonolithicElastixComponent",
@@ -12,7 +12,7 @@
         "Resampler": "DefaultResampler",
         "ResampleInterpolator": "FinalBSplineInterpolator",
         "FinalBSplineInterpolationOrder": "3",
-        "NumberOfResolutions": "3",
+        "NumberOfResolutions": "4",
         "WriteIterationInfo": "false",
         "ImageSampler": "RandomCoordinate",
         "NumberOfSpatialSamples": "2048",
@@ -24,11 +24,14 @@
         "AutomaticParameterEstimation": "true",
         "WriteResultImage": "true",
         "Registration": "MultiResolutionRegistration",
-        "Transform": "AffineTransform",
-        "Metric": "AdvancedMattesMutualInformation",
+        "Metric": ["AdvancedMattesMutualInformation", "TransformBendingEnergyPenalty"],
         "MaximumNumberOfIterations": "256",
         "AutomaticTransformInitialization": "true",
-        "AutomaticTransformInitializationMethod": "GeometricalCenter"
+        "AutomaticTransformInitializationMethod": "GeometricalCenter",
+        "Transform": "BSplineTransform",
+        "BSplineTransformSplineOrder": 3,
+        "FinalGridSpacingInPhysicalUnits": 12.0,
+        "GridSpacingSchedule": [16.0, 4.0, 2.0, 1.0]
     },
     "Component": {
         "Name": "FixedImage",
@@ -81,10 +84,5 @@
         "Out": "Transformix",
         "In": "DisplacementField",
         "NameOfInterface": "itkDisplacementFieldInterface"
-    },
-    "Connection": {
-        "Out": "Transformix",
-        "In": "ResultImage",
-        "NameOfInterface": "itkImageInterface"
     }
 }
