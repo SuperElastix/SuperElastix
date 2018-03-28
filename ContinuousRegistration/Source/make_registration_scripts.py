@@ -48,12 +48,14 @@ def load_datasets(parameters):
 
     if parameters.cumc12_input_directory is not None:
         cumc12 = CUMC12(parameters.cumc12_input_directory,
+                        parameters.output_directory,
                         parameters.max_number_of_registrations_per_dataset)
         datasets[cumc12.name] = cumc12
         logging.info('Found ' + cumc12.name + ' ' + cumc12.category + ' dataset.')
 
     if parameters.dirlab_input_directory is not None:
         dirlab = DIRLAB(parameters.dirlab_input_directory,
+                        parameters.output_directory,
                         parameters.max_number_of_registrations_per_dataset)
         datasets[dirlab.name] = dirlab
         logging.info('Found ' + dirlab.name + ' ' + dirlab.category + ' dataset.')
@@ -73,6 +75,7 @@ def load_datasets(parameters):
 
     if parameters.lpba40_input_directory is not None:
         lpba40 = LPBA40(parameters.lpba40_input_directory,
+                        parameters.output_directory,
                         parameters.max_number_of_registrations_per_dataset)
         datasets[lpba40.name] = lpba40
         logging.info('Found ' + lpba40.name + ' ' + lpba40.category + ' dataset.')

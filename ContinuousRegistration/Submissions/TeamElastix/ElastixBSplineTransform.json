@@ -40,9 +40,21 @@
         "Dimensionality": "3"
     },
     "Component": {
+        "Name": "FixedMask",
+        "NameOfClass": "ItkImageSourceComponent",
+        "PixelType": "unsigned char",
+        "Dimensionality": "3"
+    },
+    "Component": {
         "Name": "MovingImage",
         "NameOfClass": "ItkImageSourceComponent",
         "PixelType": "float",
+        "Dimensionality": "3"
+    },
+    "Component": {
+        "Name": "MovingMask",
+        "NameOfClass": "ItkImageSourceComponent",
+        "PixelType": "unsigned char",
         "Dimensionality": "3"
     },
     "Component": {

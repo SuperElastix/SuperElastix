@@ -67,6 +67,7 @@ using DefaultComponents = selx::TypeList<
   ItkImageSinkComponent< 3, short >,
   ItkImageSourceComponent< 2, float >,
   ItkImageSourceComponent< 3, short >,
+  ItkImageSourceComponent< 3, unsigned char >,
   MonolithicElastixComponent< 2, float >,
   MonolithicElastixComponent< 3, short >,
   MonolithicTransformixComponent< 2, float >,
