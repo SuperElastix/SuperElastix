@@ -81,6 +81,8 @@ public:
 
   virtual SinkInterface::DataObjectPointer GetInitializedOutput( const NetworkBuilderBase::ComponentNameType & ) = 0;
 
+  virtual void Cite() = 0;
+
 private:
 };
 } // end namespace selx

@@ -43,3 +43,7 @@ cmake-build-*
 
 # Source
 Documentation/build
+
+# SuperBench output
+TransformParameters.*
+registration_driver.log

@@ -85,6 +85,7 @@ NetworkBuilder< ComponentList >::Configure()
 
   auto nonUniqueComponentNames = this->GetNonUniqueComponentNames();
 
+  // TODO: Print the available criteria
   if( nonUniqueComponentNames.size() > 0 )
   {
     this->m_Logger.Log( LogLevel::CRT, ( this->m_Logger << nonUniqueComponentNames ) + " need more criteria." );
@@ -150,7 +151,7 @@ NetworkBuilder< ComponentList >::ApplyComponentConfiguration()
       currentComponentSelector->AddCriterion( criterion );
       
       this->m_Logger.Log( LogLevel::DBG,
-        "Finding component for '{0}': {1} component(s) satisfies {{ '{2}' : '{3}' }}  and previous criteria.",
+                          "Finding component for '{0}': {1} component(s) satisfies {{ '{2}' : '{3}' }}  and previous criteria.",
                           componentName,
                           currentComponentSelector->NumberOfComponents(),
                           criterion.first,
@@ -171,7 +172,8 @@ NetworkBuilder< ComponentList >::ApplyComponentConfiguration()
 }
 
 
-template< typename ComponentList >
+template<
+  typename ComponentList >
 void
 NetworkBuilder< ComponentList >::ApplyConnectionConfiguration()
 {
@@ -403,6 +405,7 @@ NetworkBuilder< ComponentList >::CheckConnectionsSatisfied()
 {
   bool isAllSatisfied = true;
 
+  // TODO: Print the unsatisfied connections
   for( auto const & name : this->m_Blueprint.GetComponentNames() )
   {
     ComponentBase::Pointer component   = this->m_ComponentSelectorContainer[ name ]->GetComponent();
@@ -427,6 +430,12 @@ NetworkBuilder< ComponentList >::GetSourceInterfaces()
   for( const auto & componentSelector : this->m_ComponentSelectorContainer )
   {
     ComponentBase::Pointer component = componentSelector.second->GetComponent();
+
+    if(component == nullptr) {
+      std::string msg = "No component found for '" + componentSelector.first + "'.";
+      this->m_Logger.Log( LogLevel::CRT, msg );
+      throw std::runtime_error(msg);
+    }
 
     if( component->CountProvidingInterfaces( { { keys::NameOfInterface, keys::SourceInterface } } ) == 1 )
     {
@@ -453,6 +462,13 @@ NetworkBuilder< ComponentList >::GetSinkInterfaces()
   for( auto const & componentSelector : this->m_ComponentSelectorContainer )
   {
     ComponentBase::Pointer component = componentSelector.second->GetComponent();
+
+    if(component == nullptr) {
+      std::string msg = "No component found for '" + componentSelector.first + "'.";
+      this->m_Logger.Log( LogLevel::CRT, msg );
+      throw std::runtime_error(msg);
+    }
+
     if( component->CountProvidingInterfaces( { { keys::NameOfInterface, keys::SinkInterface } } ) == 1 )
     {
       SinkInterface::Pointer provingSinkInterface = std::dynamic_pointer_cast< SinkInterface >( component );
@@ -569,7 +585,6 @@ NetworkBuilder< ComponentList >::GetRealizedNetwork()
           connectionInfoUpdateInterface->SetProvidedTo("NetworkBuilder");
         }
       }
-
     }
 
     return NetworkContainer( components, updateOrder, outputObjectsMap );
@@ -582,5 +597,18 @@ NetworkBuilder< ComponentList >::GetRealizedNetwork()
     throw std::runtime_error( msg.str() );
     return NetworkContainer( components, updateOrder, outputObjectsMap );
   }
+
+
 }
+
+template< typename ComponentList >
+void
+NetworkBuilder< ComponentList >::Cite()
+{
+  const BlueprintImpl::ComponentNamesType componentNames = m_Blueprint.GetComponentNames();
+  for( auto const & componentName : componentNames ) {
+    this->m_ComponentSelectorContainer[componentName]->GetComponent()->Cite();
+  }
+}
+
 } // end namespace selx

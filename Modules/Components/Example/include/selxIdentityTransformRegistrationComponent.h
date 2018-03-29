@@ -38,7 +38,7 @@ class IdentityTransformRegistrationComponent :
   itkImageMovingInterface< Dimensionality, TPixel >
   >,
   Providing< UpdateInterface,
-  DisplacementFieldItkImageSourceInterface< Dimensionality, TPixel >
+  itkDisplacementFieldInterface< Dimensionality, TPixel >
   >
   >
 {
@@ -54,7 +54,7 @@ public:
     itkImageMovingInterface< Dimensionality, TPixel >
     >,
     Providing< UpdateInterface,
-    DisplacementFieldItkImageSourceInterface< Dimensionality, TPixel >
+    itkDisplacementFieldInterface< Dimensionality, TPixel >
     >
     > Superclass;
   typedef std::shared_ptr< Self >       Pointer;
@@ -69,7 +69,7 @@ public:
   // fixed and moving image types are all the same, these aliases can be used to be explicit. 
   using MovingImageType = typename itkImageMovingInterface< Dimensionality, TPixel >::ItkImageType;
   using ResultImageType = typename itkImageInterface< Dimensionality, TPixel >::ItkImageType;
-  using DisplacementFieldImageType = typename DisplacementFieldItkImageSourceInterface< Dimensionality, TPixel >::ItkImageType;
+  using DisplacementFieldType = typename itkDisplacementFieldInterface< Dimensionality, TPixel >::ItkDisplacementFieldType;
   
   // Accepting Interfaces:
   virtual int Accept( typename itkImageFixedInterface< Dimensionality, TPixel >::Pointer ) override;
@@ -77,7 +77,7 @@ public:
   virtual int Accept( typename itkImageMovingInterface< Dimensionality, TPixel >::Pointer ) override;
 
   // Providing Interfaces:
-  virtual typename DisplacementFieldImageType::Pointer GetDisplacementFieldItkImage() override;
+  virtual typename DisplacementFieldType::Pointer GetItkDisplacementField() override;
 
   virtual void Update() override;
 
@@ -87,7 +87,7 @@ public:
 
 private:
 
-  typename DisplacementFieldImageType::Pointer m_DisplacementField;
+  typename DisplacementFieldType::Pointer m_DisplacementField;
   typename itkImageFixedInterface< Dimensionality, TPixel >::Pointer m_ImageFixedInterface;
   typename itkImageMovingInterface< Dimensionality, TPixel >::Pointer m_ImageMovingInterface;
 

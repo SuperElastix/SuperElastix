@@ -146,7 +146,7 @@ TEST_F( SuperElastixFilterTest, ImageAndMesh )
 
   blueprint->SetComponent( "InputImage", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "double" } } } );
   blueprint->SetComponent( "ImageFilter", { { "NameOfClass", { "ItkSmoothingRecursiveGaussianImageFilterComponent" } } } );
-  blueprint->SetComponent( "OutputImage", { { "NameOfClass", { "ItkImageSinkComponent" } } } );
+  blueprint->SetComponent( "OutputImage", { { "NameOfClass", { "ItkImageSinkComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "double" } } } );
   blueprint->SetConnection( "InputImage", "ImageFilter", BlueprintImpl::ParameterMapType() ); //
   blueprint->SetConnection( "ImageFilter", "OutputImage", BlueprintImpl::ParameterMapType() );
 
