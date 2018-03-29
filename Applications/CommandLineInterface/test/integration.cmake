@@ -19,11 +19,36 @@
 
 # Integration tests are "short" tests that typically test a combination of components by using the SuperElastix commandline interface with a configuration file.
 
-add_test(NAME Integration_WarperItkTransform COMMAND SuperElastix
-  --logfile ${SUPERELASTIX_OUTPUT_DATA_DIR}/Integration_WarperItkTransform.log 
+add_test(NAME Integration_WarpByItkTransform COMMAND SuperElastix
+  --logfile ${SUPERELASTIX_OUTPUT_DATA_DIR}/Integration_WarpByItkTransform.log 
   --loglevel trace
   --conf ${SUPERELASTIX_CONFIGURATION_DATA_DIR}/itk_warper.json
-  --graphout ${SUPERELASTIX_OUTPUT_DATA_DIR}/Integration_WarperItkTransform.dot 
+  --graphout ${SUPERELASTIX_OUTPUT_DATA_DIR}/Integration_WarpByItkTransform.dot 
   --in FixedAndMovingImageSource=${SUPERELASTIX_INPUT_DATA_DIR}/coneA2d64.mhd 
        TransformSource=${SUPERELASTIX_INPUT_DATA_DIR}/ItkAffine2Dtransform.tfm 
-  --out ResultImageSink=${SUPERELASTIX_OUTPUT_DATA_DIR}/Integration_WarperItkTransform.mhd)
+  --out ResultImageSink=${SUPERELASTIX_OUTPUT_DATA_DIR}/Integration_WarpByItkTransform.mhd)
+
+  add_test(NAME Integration_ComposeBlueprintElastix COMMAND SuperElastix
+  --logfile ${SUPERELASTIX_OUTPUT_DATA_DIR}/Integration_ComposeBlueprintElastix.log 
+  --loglevel trace
+  --conf ${SUPERELASTIX_CONFIGURATION_DATA_DIR}/elastix_Base.json
+  --conf ${SUPERELASTIX_CONFIGURATION_DATA_DIR}/elastix_Blueprint_Bspline_MSD.json
+  --graphout ${SUPERELASTIX_OUTPUT_DATA_DIR}/Integration_ComposeBlueprintElastix.dot 
+  --in FixedImage=${SUPERELASTIX_INPUT_DATA_DIR}/coneA2d64.mhd 
+       MovingImage=${SUPERELASTIX_INPUT_DATA_DIR}/coneB2d64.mhd 
+  --out ResultImage=${SUPERELASTIX_OUTPUT_DATA_DIR}/Integration_ComposeBlueprintElastix.mhd)
+  
+  add_test(NAME Integration_ComposeBlueprintItk COMMAND SuperElastix
+  --logfile ${SUPERELASTIX_OUTPUT_DATA_DIR}/Integration_ComposeBlueprintElastix.log 
+  --loglevel trace
+  --conf ${SUPERELASTIX_CONFIGURATION_DATA_DIR}/itkv4_Base.json
+  --conf ${SUPERELASTIX_CONFIGURATION_DATA_DIR}/itkv4_Affine_MSD.json
+  --conf ${SUPERELASTIX_CONFIGURATION_DATA_DIR}/itk_TransformSink.json
+  --graphout ${SUPERELASTIX_OUTPUT_DATA_DIR}/Integration_ComposeBlueprintItk.dot 
+  --in FixedImage=${SUPERELASTIX_INPUT_DATA_DIR}/coneA2d64.mhd 
+       MovingImage=${SUPERELASTIX_INPUT_DATA_DIR}/coneB2d64.mhd 
+  --out ResultImage=${SUPERELASTIX_OUTPUT_DATA_DIR}/Integration_ComposeBlueprintItk.mhd
+        ResultDisplacementField=${SUPERELASTIX_OUTPUT_DATA_DIR}/Integration_ComposeBlueprintItk_def.mhd
+        ResultTransform=Integration_ComposeBlueprintItk.tfm)
+  
+  
