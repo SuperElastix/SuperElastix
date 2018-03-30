@@ -28,7 +28,13 @@ if(NOT DEFINED CTEST_GIT_COMMAND)
 endif()
 set(CTEST_GIT_UPDATE_CUSTOM "${CTEST_GIT_COMMAND}" pull origin)
 
-set(CTEST_BUILD_NAME "$ENV{BRANCH_NAME};$ENV{CHANGE_AUTHOR};Tests")
+if ("$ENV{CHANGE_AUTHOR}" STREQUAL "")
+  set(CTEST_BUILD_NAME "$ENV{BRANCH_NAME}")
+else()
+  set(CTEST_BUILD_NAME "$ENV{BRANCH_NAME};$ENV{CHANGE_AUTHOR}")
+endif()
+set(CTEST_BUILD_NAME "${CTEST_BUILD_NAME};Test")
+
 
 set(CTEST_CMAKE_GENERATOR "Unix Makefiles")
 set(CTEST_BUILD_CONFIGURATION Release)
@@ -42,6 +48,9 @@ set(CTEST_CONFIGURE_COMMAND "${CTEST_CONFIGURE_COMMAND} \"${CTEST_SOURCE_DIRECTO
 # Tells CTest to not do a git pull, but to still record what version of the software it's building and testing
 # As explained by mail, by Zack Galbreath
 set(CTEST_UPDATE_VERSION_ONLY 1)
+
+# For CDash integration with GitHub: https://blog.kitware.com/cdash-integration-with-github
+set(CTEST_CHANGE_ID $ENV{CHANGE_ID})
 
 ctest_start("Nightly")
 # Added ctest_update() to ensure that the commit SHA will be passed to CDash, and GitHub.
