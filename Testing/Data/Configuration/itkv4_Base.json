@@ -17,7 +17,7 @@
     },
     "Component": {
         "Name": "ResultDisplacementField",
-        "NameOfClass": "DisplacementFieldItkImageFilterSinkComponent"
+        "NameOfClass": "ItkDisplacementFieldSinkComponent"
     },
     "Component": {
         "Name": "Metric"
