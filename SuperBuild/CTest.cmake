@@ -51,7 +51,7 @@ set(CTEST_UPDATE_VERSION_ONLY 1)
 # For CDash integration with GitHub: https://blog.kitware.com/cdash-integration-with-github
 set(CTEST_CHANGE_ID $ENV{CHANGE_ID})
 
-ctest_start("Nightly")
+ctest_start("Continuous")
 # Added ctest_update() to ensure that the commit SHA will be passed to CDash, and GitHub.
 ctest_update()
 ctest_configure()
