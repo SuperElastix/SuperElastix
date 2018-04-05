@@ -812,7 +812,7 @@ TEST_F(RegistrationItkv4Test, TransformSource)
 
   blueprint->SetConnection("FixedImageDomainSource", "TransformDisplacementFilter", { {} });
 
-  blueprint->SetConnection("TransformDisplacementFilter", "ResultDisplacementFieldSink", { { "NameOfInterface", { "DisplacementFieldItkImageSourceInterface" } } });
+  blueprint->SetConnection("TransformDisplacementFilter", "ResultDisplacementFieldSink", { { "NameOfInterface", { "itkDisplacementFieldInterface" } } });
    
   blueprint->Write(dataManager->GetOutputFile("RegistrationItkv4Test_TransformSource_network.dot"));
 
