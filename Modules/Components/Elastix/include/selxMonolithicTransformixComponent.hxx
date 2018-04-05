@@ -56,8 +56,10 @@ template< int Dimensionality, class TPixel >
 int
 MonolithicTransformixComponent< Dimensionality, TPixel >::Accept( typename itkImageDomainFixedInterface< Dimensionality >::Pointer component )
 {
-  // TODO: this is not finished and tested.  Make this component use the provided domain
-  // Currently, the fixed image domain is part of the transformParameter map, which will be set by elastix.
+  // TODO: transformix needs to have a parametermap in order to define its output image sizes for a proper functioning of the (itk) pipeline it is in.
+  // Here we fill a parametermap with the sufficient info from the fixed image domain.
+  // Currently, the fixed image domain is also part of the transformParameter map that will be set by elastix. Not sure what happens if these domains are not equal.
+  
 
   auto fixedImageDomain = component->GetItkImageDomainFixed();
 
@@ -104,11 +106,6 @@ MonolithicTransformixComponent< Dimensionality, TPixel >::Accept( typename itkIm
   trxParameterObject->SetParameterMap( trxParameterMap );
   this->m_transformixFilter->SetTransformParameterObject( trxParameterObject );
 
-  auto warpedImage = this->m_transformixFilter->GetOutput();
-  warpedImage->CopyInformation(fixedImageDomain);
-  auto displacementField = this->m_transformixFilter->GetOutputDeformationField();
-  displacementField->CopyInformation(fixedImageDomain);
-
   return 0;
 }
 
@@ -132,7 +129,7 @@ MonolithicTransformixComponent< Dimensionality, TPixel >::Accept( typename elast
   // connect the itk pipeline
   // Due to the fact that elastixfilter returns a Null object we cannot use it as a pipeline
   //this->m_transformixFilter->SetTransformParameterObject(transformParameterObject);
-  // Therefore store the interface for the ReconnectTransform call
+  // Therefore store the interface for the Update call
   this->m_TransformParameterObjectInterface = component;
   return 0;
 }
