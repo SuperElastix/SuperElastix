@@ -165,7 +165,7 @@ BlueprintImpl
 {
   if( !this->ComponentExists( upstream ) || !this->ComponentExists( downstream ) )
   {
-    this->m_LoggerImpl->Log(LogLevel::WRN, "Setting a connection between components '{}' and '{}' failed: one or more components do not exist");
+    this->m_LoggerImpl->Log(LogLevel::WRN, "Setting a connection between components '{}' and '{}' failed: one or more components do not exist", upstream, downstream);
     return false;
   }
 

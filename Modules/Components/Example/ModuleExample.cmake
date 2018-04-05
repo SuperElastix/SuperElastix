@@ -19,26 +19,15 @@
 
 set( ${MODULE}_INCLUDE_DIRS
   ${${MODULE}_SOURCE_DIR}/include
+  ${${MODULE}_SOURCE_DIR}/interfaces
 )
 
-# Module source files
 set( ${MODULE}_SOURCE_FILES
-  ${${MODULE}_SOURCE_DIR}/src/selxSuperElastixFilterBase.cxx
-  ${${MODULE}_SOURCE_DIR}/src/selxSuperElastixFilter.cxx
-)
-
-# Export tests
-set( ${MODULE}_TEST_SOURCE_FILES
-  ${${MODULE}_SOURCE_DIR}/test/selxSuperElastixFilterTest.cxx
 )
 
 set( ${MODULE}_LIBRARIES 
-  ${Boost_LIBRARIES} # log filesystem system time_date thread
-  ${MODULE}
 )
 
-set( ${MODULE}_MODULE_DEPENDENCIES
+set( ${MODULE}_MODULE_DEPENDENCIES 
   ModuleCore
-  ModuleBlueprints
-  ModuleLogger
 )

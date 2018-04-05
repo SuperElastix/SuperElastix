@@ -43,6 +43,8 @@ MonolithicTransformixComponent< Dimensionality, TPixel >::MonolithicTransformixC
 
   //TODO: instantiating the filter in the constructor might be heavy for the use in component selector factory, since all components of the database are created during the selection process.
   // we could choose to keep the component light weighted (for checking criteria such as names and connections) until the settings are passed to the filter, but this requires an additional initialization step.
+
+  this->m_HowToCite = "Klein S, Staring M, Murphy K, Viergever MA, Pluim JP. Elastix: a toolbox for intensity-based medical image registration. IEEE transactions on medical imaging. 2010 Jan;29(1):196-205";
 }
 
 
