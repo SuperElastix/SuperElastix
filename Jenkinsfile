@@ -1,8 +1,8 @@
 node('lkeb-vm-test') {
   stage('Init') {
     cmake = tool 'CMake 3.5.1'
-    sh 'rm -rf build'
-    sh 'mkdir -p build'
+    //sh 'rm -rf build'
+    //sh 'mkdir -p build'
   }
 
   timeout(120) {
