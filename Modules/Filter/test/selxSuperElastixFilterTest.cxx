@@ -278,4 +278,21 @@ TEST_F( SuperElastixFilterTest, UnsatisfiedConnections )
 
   EXPECT_THROW( imageWriter3D->Update(), itk::ExceptionObject );
 }
+
+TEST_F(SuperElastixFilterTest, QueryComponentDataBase)
+{
+	BlueprintPointer blueprint = Blueprint::New();
+	blueprint->MergeFromFile( dataManager->GetConfigurationFile( "QueryComponents.json" ) );
+	// Instantiate SuperElastixFilter before each test and
+	// register the components we want to have available in SuperElastix
+	SuperElastixFilterCustomComponents< RegisterComponents >::Pointer superElastixFilter;
+	superElastixFilter = SuperElastixFilterCustomComponents< RegisterComponents >::New();
+
+	superElastixFilter->SetLogger(logger);
+	superElastixFilter->SetBlueprint(blueprint);
+
+	EXPECT_THROW(superElastixFilter->Update(), std::runtime_error);
+	
+	//TODO improve and check output messages.
+}
 }
