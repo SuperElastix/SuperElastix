@@ -286,15 +286,6 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
 
 
 template< int Dimensionality, class TPixel, class InternalComputationValueType >
-const typename std::string
-ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >
-::GetComponentName()
-{
-  return this->m_Name; //from ComponentBase
-}
-
-
-template< int Dimensionality, class TPixel, class InternalComputationValueType >
 bool
 ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >
 ::MeetsCriterion( const ComponentBase::CriterionType & criterion )
