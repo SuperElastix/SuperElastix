@@ -19,4 +19,4 @@ It is developed in conjunction with the [Continuous Registration Challenge](http
 ## Development ##
 - `SuperElastix v1.0` has been released! Please see the `master` branch
 - Users that want to build SuperElastix from sources are encouraged to use the `develop` branch
-- All branches and pull requests are build and unit tested by Continuous Integration: see our [CDash](https://my.cdash.org/index.php?project=SuperElastix) for the latest status
+- All branches and pull requests are build and unit tested by Continuous Integration: see our [CDash](http://trunk.cdash.org/index.php?project=SuperElastix) for the latest status
