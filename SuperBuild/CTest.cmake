@@ -44,9 +44,8 @@ string(CONCAT CTEST_CONFIGURE_COMMAND "${CMAKE_COMMAND}"
     " --build ${CTEST_BINARY_DIRECTORY}"
     " ${CTEST_BUILD_OPTIONS}"
     " \"-G${CTEST_CMAKE_GENERATOR}\""
-    " \"${CTEST_SOURCE_DIRECTORY}\""
-    " -DWITH_TESTING:BOOL=ON"
-    " -DBUILD_INTEGRATION_TESTS:BOOL=ON")
+    " -DBUILD_INTEGRATION_TESTS:BOOL=ON"
+    " \"${CTEST_SOURCE_DIRECTORY}/SuperBuild\"")
 
 # Tells CTest to not do a git pull, but to still record what version of the software it's building and testing
 # As explained by mail, by Zack Galbreath
