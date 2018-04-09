@@ -46,8 +46,6 @@ node('lkeb-vm-test') {
     }
     stage('SuperBuild') {
       dir('build') {
-	    sh 'echo CHANGE_ID = $CHANGE_ID'
-		sh 'echo BRANCH_NAME = $BRANCH_NAME'
         sh "`dirname ${ cmake }`/ctest -VV --script ../src/SuperBuild/CTest.cmake"
       }
     }

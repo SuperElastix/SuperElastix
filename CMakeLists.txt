@@ -142,6 +142,13 @@ enable_modules()
 message( STATUS "Enabling modules ... Done" )
 
 include( ${ModuleFilter_SOURCE_DIR}/CompiledLibraryComponents.cmake )
+mark_as_advanced( COMPILED_LIBRARY_CONFIG_DIR )
+set( COMPILED_LIBRARY_CONFIG_DIR ${PROJECT_BINARY_DIR} CACHE PATH "Path where a custom selxCompiledLibraryComponents.h can be found. Defaults to automatic generated file in ${PROJECT_BINARY_DIR}")
+include_directories(${COMPILED_LIBRARY_CONFIG_DIR})
+list( APPEND SUPERELASTIX_INCLUDE_DIRS ${COMPILED_LIBRARY_CONFIG_DIR} )
+    
+option( BUILD_UNIT_TESTS "Also build tests that take a long time to run." ON )
+
 
 # Build applications
 if( ${BUILD_APPLICATIONS} )

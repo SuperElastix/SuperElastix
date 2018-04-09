@@ -181,6 +181,8 @@ SuperElastixFilterBase
 ::GenerateData( void )
 {
   this->m_Logger->Log( LogLevel::INF, "Executing network ..." );
+  // Print citing information
+  this->m_NetworkBuilder->Cite();
 
   auto fullyConfiguredNetwork = this->m_NetworkBuilder->GetRealizedNetwork();
   // delete the networkbuilder

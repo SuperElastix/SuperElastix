@@ -1,5 +1,5 @@
 {
-    "Datasets": ["POPI", "DIRLAB", "EMPIRE", "LPBA40", "ISBR18", "CUMC12", "MGH10"],
+    "Datasets": ["POPI", "DIRLAB", "EMPIRE", "LPBA40", "ISBR18", "CUMC12", "MGH10", "SPREAD"],
     "Component": {
         "Name": "Elastix",
         "NameOfClass": "MonolithicElastixComponent",
@@ -81,10 +81,5 @@
         "Out": "Transformix",
         "In": "DisplacementField",
         "NameOfInterface": "itkDisplacementFieldInterface"
-    },
-    "Connection": {
-        "Out": "Transformix",
-        "In": "ResultImage",
-        "NameOfInterface": "itkImageInterface"
     }
 }

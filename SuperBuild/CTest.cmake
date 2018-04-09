@@ -39,10 +39,14 @@ set(CTEST_CMAKE_GENERATOR "Unix Makefiles")
 set(CTEST_BUILD_CONFIGURATION Release)
 set(CTEST_BUILD_FLAGS "-j4")
 
-set(CTEST_CONFIGURE_COMMAND "${CMAKE_COMMAND} -DCMAKE_BUILD_TYPE:STRING=${CTEST_BUILD_CONFIGURATION} --build ${CTEST_BINARY_DIRECTORY}")
-set(CTEST_CONFIGURE_COMMAND "${CTEST_CONFIGURE_COMMAND} -DWITH_TESTING:BOOL=ON ${CTEST_BUILD_OPTIONS}")
-set(CTEST_CONFIGURE_COMMAND "${CTEST_CONFIGURE_COMMAND} \"-G${CTEST_CMAKE_GENERATOR}\"")
-set(CTEST_CONFIGURE_COMMAND "${CTEST_CONFIGURE_COMMAND} \"${CTEST_SOURCE_DIRECTORY}/SuperBuild\"")
+string(CONCAT CTEST_CONFIGURE_COMMAND "${CMAKE_COMMAND}"
+    " -DCMAKE_BUILD_TYPE:STRING=${CTEST_BUILD_CONFIGURATION}"
+    " --build ${CTEST_BINARY_DIRECTORY}"
+    " ${CTEST_BUILD_OPTIONS}"
+    " \"-G${CTEST_CMAKE_GENERATOR}\""
+    " \"${CTEST_SOURCE_DIRECTORY}\""
+    " -DWITH_TESTING:BOOL=ON"
+    " -DBUILD_INTEGRATION_TESTS:BOOL=ON")
 
 # Tells CTest to not do a git pull, but to still record what version of the software it's building and testing
 # As explained by mail, by Zack Galbreath
@@ -51,10 +55,10 @@ set(CTEST_UPDATE_VERSION_ONLY 1)
 # For CDash integration with GitHub: https://blog.kitware.com/cdash-integration-with-github
 set(CTEST_CHANGE_ID $ENV{CHANGE_ID})
 
-ctest_start("Continuous")
 # Added ctest_update() to ensure that the commit SHA will be passed to CDash, and GitHub.
 ctest_update()
+    
+ctest_start("Continuous")
 ctest_configure()
 ctest_build()
 ctest_submit( PARTS Configure Build Update )
-
