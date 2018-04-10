@@ -81,7 +81,6 @@ public:
 
   virtual bool ConnectionsSatisfied() override;
 
-  //static const char * GetName() { return "ItkCompositeTransform"; } ;
   static const char * GetDescription() { return "ItkCompositeTransform Component"; }
 
 private:
@@ -89,7 +88,7 @@ private:
   typename CompositeTransformType::Pointer m_CompositeTransform;
   typename std::vector< typename MultiStageTransformInterface< InternalComputationValueType, Dimensionality >::Pointer > m_registrationStages;
 
-  std::set< UpdateInterface::Pointer > m_ReconnectTransformInterfaces;
+  std::set< UpdateInterface::Pointer > m_UpdateInterfaces;
   std::vector< std::string >                       m_ExecutionOrder;
 
 protected:

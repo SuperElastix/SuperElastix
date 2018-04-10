@@ -55,7 +55,7 @@ int
 ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >
 ::Accept( UpdateInterface::Pointer other )
 {
-  this->m_ReconnectTransformInterfaces.insert( other );
+  this->m_UpdateInterfaces.insert( other );
   return 0;
 }
 
@@ -73,33 +73,55 @@ void
 ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >::Update()
 {
   // Check if the names connected stages are compatible with the provided execution order
-  // TODO: should we handle such component sanity checks as separate NetworkBuilder check instead of as execution stage?
+  // TODO: This name checking part should move to ConnectionsSatisfied();
   std::vector< std::string > sortedExecutionNames( this->m_ExecutionOrder ); // copy container
   std::vector< std::string > sortedStageNames;                               // empty container
   sortedStageNames.resize( sortedExecutionNames.size() );                    // allocate space
+  std::vector< std::string > sortedUpdateNames;                              // empty container
+  sortedUpdateNames.resize( sortedExecutionNames.size() );                   // allocate space
 
   std::transform( this->m_registrationStages.begin(), this->m_registrationStages.end(), sortedStageNames.begin(),
     [ ]( typename MultiStageTransformInterface< InternalComputationValueType, Dimensionality >::Pointer stageIterator ) {
       return stageIterator->GetComponentName();
     } );
 
+  std::transform(this->m_UpdateInterfaces.begin(), this->m_UpdateInterfaces.end(), sortedUpdateNames.begin(),
+	  [](typename UpdateInterface::Pointer updateIterator) {
+	  return updateIterator->GetComponentName();
+  });
+
   sort( sortedExecutionNames.begin(), sortedExecutionNames.end() );
   sort( sortedStageNames.begin(), sortedStageNames.end() );
+  sort( sortedUpdateNames.begin(), sortedUpdateNames.end() );
 
-  std::vector< std::string > mismatchNames;
-  //mismatchNames.resize(sortedExecutionNames.size() + sortedStageNames.size()); // allocate space worst case, no overlap
+  std::vector< std::string > mismatchStageNames;
   std::set_symmetric_difference( sortedExecutionNames.begin(), sortedExecutionNames.end(), sortedStageNames.begin(),
-    sortedStageNames.end(), mismatchNames.begin() );
+    sortedStageNames.end(), mismatchStageNames.begin() );
 
-  if( mismatchNames.size() > 0 )
+  if( mismatchStageNames.size() > 0 )
   {
     this->Error( "The names of ExecutionOrder and the connected Stages do not match for %s ", this->m_Name );
     this->Error( "Mismatch is [ " );
-    for( auto const & name : mismatchNames )
+    for( auto const & name : mismatchStageNames )
     {
       this->Error( "  %s," );
     }
     this->Error( "]" );
+  }
+
+  std::vector< std::string > mismatchUpdateNames;
+  std::set_symmetric_difference(sortedExecutionNames.begin(), sortedExecutionNames.end(), sortedUpdateNames.begin(),
+	  sortedUpdateNames.end(), mismatchUpdateNames.begin());
+  
+  if (mismatchUpdateNames.size() > 0)
+  {
+	  this->Error("Each MultiStageTransformInterface connection must have an UpdateInterface connection in parallel. The connections do not match for %s ", this->m_Name);
+	  this->Error("Mismatch is [ ");
+	  for (auto const & name : mismatchUpdateNames)
+	  {
+		  this->Error("  %s,");
+	  }
+	  this->Error("]");
   }
 
   // Perform execution flow
@@ -111,13 +133,10 @@ ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >::
         return thisStage->GetComponentName() == stageName;
       } );
     ( *stageIterator )->SetMovingInitialTransform( this->m_CompositeTransform );
+	// TODO: Here we call Update() via the MultiStageTransformInterface, but this should be done via the proper UpdateInterdafe. And Update() should be removed from the MultiStageTransformInterface entirely.
     ( *stageIterator )->Update();
 
     this->m_CompositeTransform->AppendTransform( ( *stageIterator )->GetItkTransform() );
-  }
-  for( auto && reconnectTransformInterface : this->m_ReconnectTransformInterfaces )
-  {
-    reconnectTransformInterface->Update();
   }
   return;
 }
