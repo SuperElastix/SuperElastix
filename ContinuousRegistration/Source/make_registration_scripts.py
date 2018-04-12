@@ -15,11 +15,13 @@ parser.add_argument('--make-batch-scripts', '-mbs', type=bool, default=False, he
 
 parser.add_argument('--cumc12-input-directory', '-cid')
 parser.add_argument('--dirlab-input-directory', '-did')
+parser.add_argument('--dirlab-mask-directory', '-dmd', default=None)
 parser.add_argument('--empire-input-directory', '-eid')
 parser.add_argument('--isbr18-input-directory', '-iid')
 parser.add_argument('--lpba40-input-directory', '-lid')
 parser.add_argument('--spread-input-directory', '-sid')
 parser.add_argument('--popi-input-directory', '-pid')
+parser.add_argument('--popi-mask-directory', '-pmd', default=None)
 parser.add_argument('--mgh10-input-directory', '-mid')
 
 parser.add_argument('--team-name', '-tn', help="If specified, only generated shell scripts for this team.")
@@ -55,6 +57,7 @@ def load_datasets(parameters):
 
     if parameters.dirlab_input_directory is not None:
         dirlab = DIRLAB(parameters.dirlab_input_directory,
+                        parameters.dirlab_mask_directory,
                         parameters.output_directory,
                         parameters.max_number_of_registrations_per_dataset)
         datasets[dirlab.name] = dirlab
@@ -87,9 +90,10 @@ def load_datasets(parameters):
         datasets[mgh10.name] = mgh10
         logging.info('Found ' + mgh10.name + ' ' + mgh10.category + ' dataset.')
 
-
     if parameters.popi_input_directory is not None:
         popi = POPI(parameters.popi_input_directory,
+                    parameters.popi_mask_directory,
+                    parameters.output_directory,
                     parameters.max_number_of_registrations_per_dataset)
         datasets[popi.name] = popi
         logging.info('Found ' + popi.name + ' ' + popi.category + ' dataset.')
@@ -125,7 +129,7 @@ def run(parameters):
 
             if hasattr(parameters, 'blueprint_file_name') and not parameters.blueprint_file_name is None:
                 # User requested to have scripts generated only for this blueprint
-                if not parameters.blueprint_file_name == blueprint_file_name:
+                if not parameters.blueprint_file_name == os.path.basename(blueprint_file_name):
                     continue
 
             blueprint = json.load(open(blueprint_file_name))

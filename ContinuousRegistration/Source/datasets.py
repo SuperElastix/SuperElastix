@@ -79,6 +79,28 @@ def create_mask_by_thresholding(label_file_names, displacement_field_file_names,
 
     return tuple(mask_file_names)
 
+def create_mask_by_size(image_file_name, mask_file_name):
+    mask_directory = os.path.dirname(mask_file_name)
+
+    if not mask_file_name.endswith(mask_ext):
+        mask_file_name = os.path.splitext(mask_file_name)[0] + mask_ext
+
+    if mask_directory is not None:
+        os.makedirs(mask_directory, exist_ok=True)
+
+    if not os.path.exists(mask_file_name):
+        image = sitk.ReadImage(image_file_name)
+
+        siz = image.GetSize()
+        siz = siz[len(siz)-1:] + siz[:len(siz)-1]  # left-shift size
+        mask = sitk.GetImageFromArray(np.ones(siz))
+        mask.CopyInformation(image)
+
+        os.makedirs(os.path.dirname(mask_file_name), exist_ok=True)
+        sitk.WriteImage(sitk.Cast(mask, sitk.sitkUInt8), mask_file_name)
+
+    return mask_file_name
+
 
 # Base class for datasets. The derived classes need only to implement the file layout on disk
 # and how to evaluate the dataset.  Everything else is handled by this class. See metrics.py
@@ -217,7 +239,7 @@ class CUMC12(Dataset):
 
 # TODO: Write tmp files to tmp dir
 class DIRLAB(Dataset):
-    def __init__(self, input_directory, output_directory, max_number_of_registrations):
+    def __init__(self, input_directory, mask_directory, output_directory, max_number_of_registrations):
         self.name = 'DIRLAB'
         self.category = 'Lung'
 
@@ -269,10 +291,25 @@ class DIRLAB(Dataset):
             displacement_field_file_name_0 = os.path.join(self.name, dirlab_image_information[id]['sub_directory'], '50_to_00.nii.gz')
             displacement_field_file_name_1 = os.path.join(self.name, dirlab_image_information[id]['sub_directory'], '00_to_50.nii.gz')
 
+            image_file_names = (mhd_0_file_name, mhd_1_file_name)
+            point_set_file_names = (point_set_0, point_set_1)
+            displacement_field_file_names = (displacement_field_file_name_0, displacement_field_file_name_1)
+
+            if mask_directory is not None and os.path.exists(mask_directory):
+                mask_file_names = (os.path.join(mask_directory, dirlab_image_information[id]['sub_directory'], '00.nii.gz'),
+                                   os.path.join(mask_directory, dirlab_image_information[id]['sub_directory'], '50.nii.gz'))
+            else:
+                # If no mask was provided, just generate mask filled with ones
+                mask_file_names = (
+                    create_mask_by_size(image_file_names[0], os.path.join(output_directory, 'tmp', 'masks', displacement_field_file_names[0])),
+                    create_mask_by_size(image_file_names[1], os.path.join(output_directory, 'tmp', 'masks', displacement_field_file_names[1]))
+                )
+
             file_names.append({
-                'image_file_names': (mhd_0_file_name, mhd_1_file_name),
-                'ground_truth_file_names': (point_set_0, point_set_1),
-                'displacement_field_file_names': (displacement_field_file_name_0, displacement_field_file_name_1)
+                'image_file_names': image_file_names,
+                'mask_file_names': mask_file_names,
+                'ground_truth_file_names': point_set_file_names,
+                'displacement_field_file_names': displacement_field_file_names
             })
 
         self.file_names = take(sort_file_names(file_names), max_number_of_registrations // 2)
@@ -499,7 +536,7 @@ class MGH10(Dataset):
 
 
 class POPI(Dataset):
-    def __init__(self, input_directory, max_number_of_registrations):
+    def __init__(self, input_directory, mask_directory, output_directory, max_number_of_registrations):
         self.name = 'POPI'
         self.category = 'Lung'
 
@@ -511,15 +548,24 @@ class POPI(Dataset):
         for sub_directory in sub_directories:
             image_file_names = (os.path.join(input_directory, sub_directory, 'mhd', '00.mhd'),
                                 os.path.join(input_directory, sub_directory, 'mhd', '50.mhd'))
-            # self.mask_file_names.append((os.path.join(input_directory, sub_directory, 'mhd', '00.mhd'),
-            #                              os.path.join(input_directory, sub_directory, 'mhd', '50.mhd')))
             point_set_file_names = (os.path.join(input_directory, sub_directory, 'pts', '00.pts'),
                                     os.path.join(input_directory, sub_directory, 'pts', '50.pts'))
             displacement_field_file_names = (os.path.join(self.name, sub_directory, '50_to_00.nii.gz'),
                                              os.path.join(self.name, sub_directory, '00_to_50.nii.gz'))
 
+            if mask_directory is not None and os.path.exists(mask_directory):
+                mask_file_names = (os.path.join(mask_directory, sub_directory, 'mhd', '00.mhd'),
+                                   os.path.join(mask_directory, sub_directory, 'mhd', '50.mhd'))
+            else:
+                # If no mask was provided, just generate mask filled with ones
+                mask_file_names = (
+                    create_mask_by_size(image_file_names[0], os.path.join(output_directory, 'tmp', 'masks', displacement_field_file_names[0])),
+                    create_mask_by_size(image_file_names[1], os.path.join(output_directory, 'tmp', 'masks', displacement_field_file_names[1]))
+                )
+
             file_names.append({
                 "image_file_names": image_file_names,
+                "mask_file_names": mask_file_names,
                 "ground_truth_file_names": point_set_file_names,
                 "displacement_field_file_names": displacement_field_file_names
             })

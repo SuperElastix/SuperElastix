@@ -4,8 +4,8 @@
         "Name": "RegistrationMethod",
         "NameOfClass": "ItkImageRegistrationMethodv4Component",
 		"NumberOfLevels":  "3" ,
-		"ShrinkFactorsPerLevel": [ "4", "2", "1" ],
-        "SmoothingSigmasPerLevel": [ "4", "2", "1" ],
+		"ShrinkFactorsPerLevel": [ "16", "8", "4" ],
+        "SmoothingSigmasPerLevel": [ "16", "8", "4" ],
         "Dimensionality": "3"
     },
     "Component": {
@@ -17,6 +17,18 @@
         "Name": "MovingImage",
         "NameOfClass": "ItkImageSourceComponent",
         "Dimensionality": "3"
+    },
+    "Component": {
+        "Name": "FixedMask",
+        "NameOfClass": "ItkImageSourceComponent",
+        "Dimensionality": "3",
+        "PixelType": "float"
+    },
+    "Component": {
+        "Name": "MovingMask",
+        "NameOfClass": "ItkImageSourceComponent",
+        "Dimensionality": "3",
+        "PixelType": "float"
     },
     "Component": {
         "Name": "DisplacementField",
@@ -31,7 +43,7 @@
     "Component": {
         "Name": "Optimizer",
         "NameOfClass": "ItkGradientDescentOptimizerv4Component",
-        "NumberOfIterations": "100",
+        "NumberOfIterations": "32",
 		"LearningRate": "100"
     },
     "Component": {
@@ -43,7 +55,7 @@
 	"Component": {
         "Name": "TransformResolutionAdaptor",
         "NameOfClass": "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent",
-  		"ShrinkFactorsPerLevel": [ "4", "2", "1" ],
+  		"ShrinkFactorsPerLevel": [ "16", "8", "4" ],
         "Dimensionality": "3"
     },
     "Component": {
