@@ -23,11 +23,11 @@ def copy_information_from_images_to_labels(image_file_names, label_file_names, d
         new_label_file_names = []
         for image_file_name, label_file_name, displacement_field_file_name in zip(image_file_names, label_file_names, displacement_field_file_names):
             label_file_name_we, label_file_name_ext = os.path.splitext(label_file_name)
-            dataset_output_directory = os.path.join(output_directory, os.path.dirname(displacement_field_file_name))
-            output_file_name = os.path.join(dataset_output_directory, os.path.basename(label_file_name_we) + '_label_with_copied_info' + copy_information_from_images_to_labels_ext)
+            dataset_output_directory = os.path.join(output_directory, 'tmp', 'labels_with_world_info', os.path.dirname(displacement_field_file_name))
+            output_file_name = os.path.join(dataset_output_directory, os.path.basename(label_file_name_we) + '_label_with_world_info' + copy_information_from_images_to_labels_ext)
 
             if not os.path.isdir(dataset_output_directory):
-                os.mkdir(dataset_output_directory)
+                os.makedirs(dataset_output_directory)
 
             # File info is read from corresponding image file
             image = sitk.ReadImage(image_file_name)
@@ -44,9 +44,62 @@ def copy_information_from_images_to_labels(image_file_names, label_file_names, d
                     mhd.write('ElementType = %s\n' % mhd_pixel_type)
                     mhd.write('ElementDataFile = %s\n' % (label_file_name_we + '.img'))
 
+                print('Created label with world information %s.' % output_file_name)
+
             new_label_file_names.append(output_file_name)
 
+
         return tuple(new_label_file_names)
+
+mask_ext = '.nii.gz'
+def create_mask_by_thresholding(label_file_names, displacement_field_file_names, output_directory, threshold, dilate, erode):
+    mask_file_names = []
+    for label_file_name, displacement_field_file_name in zip(label_file_names, displacement_field_file_names):
+        label_file_name_we, label_file_name_ext = os.path.splitext(label_file_name)
+        dataset_output_directory = os.path.join(output_directory, 'tmp', 'masks', os.path.dirname(displacement_field_file_name))
+        output_file_name = os.path.join(dataset_output_directory, os.path.basename(
+            label_file_name_we) + '_mask' + mask_ext)
+
+        if not os.path.isdir(dataset_output_directory):
+            os.makedirs(dataset_output_directory)
+
+        if not os.path.isfile(output_file_name):
+            label = sitk.ReadImage(label_file_name)
+            mask = label > threshold
+            padding = (erode,)*mask.GetDimension()
+            padded_mask = sitk.ConstantPad(mask, padding, padding)
+            dilated_mask = sitk.BinaryDilate(padded_mask, dilate, sitk.sitkAnnulus, 0, 1, False) # pixels
+            filled_mask = sitk.BinaryErode(dilated_mask, erode, sitk.sitkAnnulus, 0, 1, False)
+            cropped_filled_mask = sitk.Crop(filled_mask, padding, padding)
+            sitk.WriteImage(cropped_filled_mask, output_file_name)
+            print('Created mask %s.' % output_file_name)
+
+        mask_file_names.append(output_file_name)
+
+
+    return tuple(mask_file_names)
+
+def create_mask_by_size(image_file_name, mask_file_name):
+    mask_directory = os.path.dirname(mask_file_name)
+
+    if not mask_file_name.endswith(mask_ext):
+        mask_file_name = os.path.splitext(mask_file_name)[0] + mask_ext
+
+    if mask_directory is not None:
+        os.makedirs(mask_directory, exist_ok=True)
+
+    if not os.path.exists(mask_file_name):
+        image = sitk.ReadImage(image_file_name)
+
+        siz = image.GetSize()
+        siz = siz[len(siz)-1:] + siz[:len(siz)-1]  # left-shift size
+        mask = sitk.GetImageFromArray(np.ones(siz))
+        mask.CopyInformation(image)
+
+        os.makedirs(os.path.dirname(mask_file_name), exist_ok=True)
+        sitk.WriteImage(sitk.Cast(mask, sitk.sitkUInt8), mask_file_name)
+
+    return mask_file_name
 
 
 # Base class for datasets. The derived classes need only to implement the file layout on disk
@@ -63,31 +116,32 @@ class Dataset(object):
         if not os.path.exists(os.path.join(output_directory, 'sh')):
             os.mkdir(os.path.join(output_directory, 'sh'))
 
-        # Moving to fixed
-        self.make_shell_script(superelastix,
-                               blueprint_file_name,
-                               file_names['image_file_names'],
-                               file_names['displacement_field_file_names'],
-                               output_directory)
-
         # Fixed to moving
-        self.make_shell_script(superelastix,
-                               blueprint_file_name,
-                               (file_names['image_file_names'][1], file_names['image_file_names'][0]),
-                               (file_names['displacement_field_file_names'][1], file_names['displacement_field_file_names'][0]),
-                               output_directory)
-
-    def make_shell_script(self, superelastix, blueprint_file_name, image_file_names, displacement_field_file_names, output_directory):
-        shell_script_file_name = os.path.join(output_directory, 'sh', os.path.splitext(displacement_field_file_names[0])[0] \
-            .replace('/', '_').replace('\\', '_').replace('.', '_') + '.sh')
+        shell_script_file_name = os.path.join(output_directory, 'sh',
+                                              os.path.splitext(file_names['displacement_field_file_names'][0])[0]
+                                                      .replace('/', '_').replace('\\', '_').replace('.', '_') + '.sh')
 
         with open(shell_script_file_name, 'w') as shell_script:
-            shell_script.write('%s --conf %s --in FixedImage=%s MovingImage=%s --out DisplacementField=%s --loglevel trace --logfile %s' % (
+            shell_script.write('%s --conf %s --in %s %s --out DisplacementField=%s --loglevel trace --logfile %s' % (
                 superelastix,
                 blueprint_file_name,
-                image_file_names[0],
-                image_file_names[1],
-                os.path.join(output_directory, displacement_field_file_names[0]),
+                'FixedImage=%s MovingImage=%s ' % file_names['image_file_names'],
+                'FixedMask=%s MovingMask=%s' % file_names['mask_file_names'] if 'mask_file_names' in file_names else ('', ''),
+                os.path.join(output_directory, file_names['displacement_field_file_names'][0]),
+                os.path.splitext(shell_script_file_name)[0] + '.log'))
+
+        # Moving to fixed
+        shell_script_file_name = os.path.join(output_directory, 'sh',
+                                              os.path.splitext(file_names['displacement_field_file_names'][1])[0]
+                                                      .replace('/', '_').replace('\\', '_').replace('.', '_') + '.sh')
+
+        with open(shell_script_file_name, 'w') as shell_script:
+            shell_script.write('%s --conf %s --in %s %s --out DisplacementField=%s --loglevel trace --logfile %s' % (
+                superelastix,
+                blueprint_file_name,
+                'FixedImage=%s MovingImage=%s ' % (file_names['image_file_names'][1], file_names['image_file_names'][0]),
+                'FixedMask=%s MovingMask=%s' % (file_names['mask_file_names'][1], file_names['mask_file_names'][0]) if 'mask_file_names' in file_names else ('', ''),
+                os.path.join(output_directory, file_names['displacement_field_file_names'][1]),
                 os.path.splitext(shell_script_file_name)[0] + '.log'))
 
     def make_batch_scripts(self):
@@ -145,7 +199,7 @@ class Dataset(object):
 
 
 class CUMC12(Dataset):
-    def __init__(self, input_directory, max_number_of_registrations):
+    def __init__(self, input_directory, output_directory, max_number_of_registrations):
         self.name = 'CUMC12'
         self.category = 'Brain'
 
@@ -167,9 +221,13 @@ class CUMC12(Dataset):
             displacement_field_file_names.append((os.path.join(self.name, image_file_name_we_1 + "_to_" + image_file_name_we_0 + ".nii.gz"),
                                                   os.path.join(self.name, image_file_name_we_0 + "_to_" + image_file_name_we_1 + ".nii.gz")))
 
-        for image_file_name, label_file_name, displacement_field_file_name in zip(image_file_names, label_file_names, displacement_field_file_names):
+        mask_file_names = [create_mask_by_thresholding(label_file_name_pair, displacement_field_file_name_pair, output_directory, 0., 32, 16)
+                           for label_file_name_pair, displacement_field_file_name_pair in zip(label_file_names, displacement_field_file_names)]
+
+        for image_file_name, mask_file_name, label_file_name, displacement_field_file_name in zip(image_file_names, mask_file_names, label_file_names, displacement_field_file_names):
             file_names.append({
                 'image_file_names': image_file_name,
+                'mask_file_names': mask_file_name,
                 'ground_truth_file_names': label_file_name,
                 'displacement_field_file_names': displacement_field_file_name
             })
@@ -179,9 +237,9 @@ class CUMC12(Dataset):
     def evaluate(self, superelastix, file_names, output_directory):
         return self.evaluate_label_image(superelastix, file_names, output_directory)
 
-
+# TODO: Write tmp files to tmp dir
 class DIRLAB(Dataset):
-    def __init__(self, input_directory, max_number_of_registrations):
+    def __init__(self, input_directory, mask_directory, output_directory, max_number_of_registrations):
         self.name = 'DIRLAB'
         self.category = 'Lung'
 
@@ -233,10 +291,25 @@ class DIRLAB(Dataset):
             displacement_field_file_name_0 = os.path.join(self.name, dirlab_image_information[id]['sub_directory'], '50_to_00.nii.gz')
             displacement_field_file_name_1 = os.path.join(self.name, dirlab_image_information[id]['sub_directory'], '00_to_50.nii.gz')
 
+            image_file_names = (mhd_0_file_name, mhd_1_file_name)
+            point_set_file_names = (point_set_0, point_set_1)
+            displacement_field_file_names = (displacement_field_file_name_0, displacement_field_file_name_1)
+
+            if mask_directory is not None and os.path.exists(mask_directory):
+                mask_file_names = (os.path.join(mask_directory, dirlab_image_information[id]['sub_directory'], '00.nii.gz'),
+                                   os.path.join(mask_directory, dirlab_image_information[id]['sub_directory'], '50.nii.gz'))
+            else:
+                # If no mask was provided, just generate mask filled with ones
+                mask_file_names = (
+                    create_mask_by_size(image_file_names[0], os.path.join(output_directory, 'tmp', 'masks', displacement_field_file_names[0])),
+                    create_mask_by_size(image_file_names[1], os.path.join(output_directory, 'tmp', 'masks', displacement_field_file_names[1]))
+                )
+
             file_names.append({
-                'image_file_names': (mhd_0_file_name, mhd_1_file_name),
-                'ground_truth_file_names': (point_set_0, point_set_1),
-                'displacement_field_file_names': (displacement_field_file_name_0, displacement_field_file_name_1)
+                'image_file_names': image_file_names,
+                'mask_file_names': mask_file_names,
+                'ground_truth_file_names': point_set_file_names,
+                'displacement_field_file_names': displacement_field_file_names
             })
 
         self.file_names = take(sort_file_names(file_names), max_number_of_registrations // 2)
@@ -257,14 +330,21 @@ class EMPIRE(Dataset):
             image_file_names = (os.path.join(input_directory, 'scans', "%02d" % i + '_Fixed.mhd'),
                                              os.path.join(input_directory, 'scans', "%02d" % i + '_Moving.mhd'))
 
+            mask_file_names = (os.path.join(input_directory, 'lungMasks', "%02d" % i + '_Fixed.mhd'),
+                                             os.path.join(input_directory, 'scans', "%02d" % i + '_Moving.mhd'))
+
             # TODO: Find out output format
             displacement_field_file_names = (os.path.join(self.name, "%02d" % i + '_Moving_to_Fixed.nii.gz'),
                                              os.path.join(self.name, "%02d" % i + '_Fixed_to_Moving.nii.gz'))
 
-            file_names.append({
-                "image_file_names": image_file_names,
-                "displacement_field_file_names": displacement_field_file_names
-            })
+            for image_file_name, mask_file_name, displacement_field_file_name in zip(image_file_names,
+                                                                                     mask_file_names,
+                                                                                     displacement_field_file_names):
+                file_names.append({
+                    'image_file_names': image_file_name,
+                    'mask_file_names': mask_file_name,
+                    'displacement_field_file_names': displacement_field_file_name
+                })
 
         self.file_names = take(sort_file_names(file_names), max_number_of_registrations // 2)
 
@@ -301,7 +381,7 @@ class ISBR18(Dataset):
             displacement_field_file_names.append((os.path.join(self.name, image_file_name_we_1 + "_to_" + image_file_name_we_0 + ".nii.gz"),
                                                   os.path.join(self.name, image_file_name_we_0 + "_to_" + image_file_name_we_1 + ".nii.gz")))
 
-        # Label images do not have any world coordinate information
+        # These label images do not have any world coordinate information
         label_file_names = [copy_information_from_images_to_labels(image_file_name_pair,
                                                                    label_file_name_pair,
                                                                    displacement_field_file_name_pair,
@@ -313,11 +393,13 @@ class ISBR18(Dataset):
                                                                          label_file_names,
                                                                          displacement_field_file_names)]
 
-        for image_file_name, label_file_name, displacement_field_file_name in zip(image_file_names,
-                                                                                  label_file_names,
-                                                                                  displacement_field_file_names):
+        mask_file_names = [create_mask_by_thresholding(label_file_name_pair, displacement_field_file_name_pair, output_directory, 0., 32, 16)
+                           for label_file_name_pair, displacement_field_file_name_pair in zip(label_file_names, displacement_field_file_names)]
+
+        for image_file_name, mask_file_name, label_file_name, displacement_field_file_name in zip(image_file_names, mask_file_names, label_file_names, displacement_field_file_names):
             file_names.append({
                 'image_file_names': image_file_name,
+                'mask_file_names': mask_file_name,
                 'ground_truth_file_names': label_file_name,
                 'displacement_field_file_names': displacement_field_file_name
             })
@@ -325,7 +407,8 @@ class ISBR18(Dataset):
         self.file_names = take(sort_file_names(file_names), max_number_of_registrations // 2)
 
     # TODO: Find out why inverse consistency does not work with this dataset
-    def evaluate_label_image(self, superelastix, file_names, output_directory):
+    def evaluate(self, superelastix, file_names, output_directory):
+
         displacement_field_paths = (
             os.path.join(output_directory, file_names['displacement_field_file_names'][0]),
             os.path.join(output_directory, file_names['displacement_field_file_names'][1]),
@@ -342,7 +425,7 @@ class ISBR18(Dataset):
 
 
 class LPBA40(Dataset):
-    def __init__(self, input_directory, max_number_of_registrations):
+    def __init__(self, input_directory, output_directory, max_number_of_registrations):
         self.name = 'LPBA40'
         self.category = 'Brain'
 
@@ -382,9 +465,13 @@ class LPBA40(Dataset):
             displacement_field_file_names.append((os.path.join(self.name, image_file_name_we_1 + "_to_" + image_file_name_we_0 + ".nii.gz"),
                                                   os.path.join(self.name, image_file_name_we_0 + "_to_" + image_file_name_we_1 + ".nii.gz")))
 
-        for image_file_name, label_file_name, displacement_field_file_name in zip(image_file_names, label_file_names, displacement_field_file_names):
+        mask_file_names = [create_mask_by_thresholding(label_file_name_pair, displacement_field_file_name_pair, output_directory, 0., 2, 2)
+                           for label_file_name_pair, displacement_field_file_name_pair in zip(label_file_names, displacement_field_file_names)]
+
+        for image_file_name, mask_file_name, label_file_name, displacement_field_file_name in zip(image_file_names, mask_file_names, label_file_names, displacement_field_file_names):
             file_names.append({
                 'image_file_names': image_file_name,
+                'mask_file_names': mask_file_name,
                 'ground_truth_file_names': label_file_name,
                 'displacement_field_file_names': displacement_field_file_name
             })
@@ -431,11 +518,13 @@ class MGH10(Dataset):
                             for image_file_name_pair, label_file_name_pair, displacement_field_file_name_pair
                             in zip(image_file_names, label_file_names, displacement_field_file_names)]
 
-        for image_file_name, label_file_name, displacement_field_file_name in zip(image_file_names,
-                                                                                  label_file_names,
-                                                                                  displacement_field_file_names):
+        mask_file_names = [create_mask_by_thresholding(label_file_name_pair, displacement_field_file_name_pair, output_directory, 0., 32, 16)
+                           for label_file_name_pair, displacement_field_file_name_pair in zip(label_file_names, displacement_field_file_names)]
+
+        for image_file_name, mask_file_name, label_file_name, displacement_field_file_name in zip(image_file_names, mask_file_names, label_file_names, displacement_field_file_names):
             file_names.append({
                 'image_file_names': image_file_name,
+                'mask_file_names': mask_file_name,
                 'ground_truth_file_names': label_file_name,
                 'displacement_field_file_names': displacement_field_file_name
             })
@@ -447,7 +536,7 @@ class MGH10(Dataset):
 
 
 class POPI(Dataset):
-    def __init__(self, input_directory, max_number_of_registrations):
+    def __init__(self, input_directory, mask_directory, output_directory, max_number_of_registrations):
         self.name = 'POPI'
         self.category = 'Lung'
 
@@ -459,15 +548,24 @@ class POPI(Dataset):
         for sub_directory in sub_directories:
             image_file_names = (os.path.join(input_directory, sub_directory, 'mhd', '00.mhd'),
                                 os.path.join(input_directory, sub_directory, 'mhd', '50.mhd'))
-            # self.mask_file_names.append((os.path.join(input_directory, sub_directory, 'mhd', '00.mhd'),
-            #                              os.path.join(input_directory, sub_directory, 'mhd', '50.mhd')))
             point_set_file_names = (os.path.join(input_directory, sub_directory, 'pts', '00.pts'),
                                     os.path.join(input_directory, sub_directory, 'pts', '50.pts'))
             displacement_field_file_names = (os.path.join(self.name, sub_directory, '50_to_00.nii.gz'),
                                              os.path.join(self.name, sub_directory, '00_to_50.nii.gz'))
 
+            if mask_directory is not None and os.path.exists(mask_directory):
+                mask_file_names = (os.path.join(mask_directory, sub_directory, 'mhd', '00.mhd'),
+                                   os.path.join(mask_directory, sub_directory, 'mhd', '50.mhd'))
+            else:
+                # If no mask was provided, just generate mask filled with ones
+                mask_file_names = (
+                    create_mask_by_size(image_file_names[0], os.path.join(output_directory, 'tmp', 'masks', displacement_field_file_names[0])),
+                    create_mask_by_size(image_file_names[1], os.path.join(output_directory, 'tmp', 'masks', displacement_field_file_names[1]))
+                )
+
             file_names.append({
                 "image_file_names": image_file_names,
+                "mask_file_names": mask_file_names,
                 "ground_truth_file_names": point_set_file_names,
                 "displacement_field_file_names": displacement_field_file_names
             })
@@ -494,17 +592,17 @@ class SPREAD(Dataset):
             image_file_names = (os.path.join(input_directory, 'mhd', sub_directory, 'baseline_1.mha'),
                                 os.path.join(input_directory, 'mhd', sub_directory, 'followup_1.mha'))
 
-            if not os.path.exists(os.path.join(output_directory, self.name)):
+            if not os.path.exists(os.path.join(output_directory, 'tmp', self.name)):
                 os.mkdir(os.path.join(output_directory, self.name))
 
             baseline_point_set_file_name_we = os.path.join(input_directory, 'groundtruth', 'distinctivePoints', sub_directory + '_baseline_1_Cropped_point')
             point_set = np.loadtxt(baseline_point_set_file_name_we + '.txt', skiprows=2)
-            baseline_point_set_file_name_we_without_header = os.path.join(output_directory, self.name, sub_directory + '_baseline_1_Cropped_point.txt')
+            baseline_point_set_file_name_we_without_header = os.path.join(output_directory, 'tmp', self.name, sub_directory + '_baseline_1_Cropped_point.txt')
             np.savetxt(baseline_point_set_file_name_we_without_header, point_set)
 
             follow_up_point_set_file_name_we = os.path.join(input_directory, 'groundtruth', 'annotate', 'Consensus', sub_directory + '_b1f1_point')
             point_set = np.loadtxt(follow_up_point_set_file_name_we + '.txt', skiprows=2)
-            follow_up_point_set_file_name_we_without_header = os.path.join(output_directory, self.name, sub_directory + '_baseline_1_Cropped_point.txt')
+            follow_up_point_set_file_name_we_without_header = os.path.join(output_directory, 'tmp', self.name, sub_directory + '_baseline_1_Cropped_point.txt')
             np.savetxt(follow_up_point_set_file_name_we_without_header, point_set)
 
 

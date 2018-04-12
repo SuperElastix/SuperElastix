@@ -15,16 +15,20 @@ def run(parameters):
 
     results = {}
     for team_name, blueprint_file_names in submissions.items():
-        if not team_name in results:
-            results[team_name] = {}
-
         for blueprint_file_name in blueprint_file_names:
-            blueprint_name, blueprint_ext = os.path.splitext(os.path.basename(blueprint_file_name))
-            blueprint = json.load(open(blueprint_file_name))
+            if hasattr(parameters, 'blueprint_file_name') and not parameters.blueprint_file_name is None:
+                # User requested to have scripts generated only for this blueprint
+                if not parameters.blueprint_file_name == os.path.basename(blueprint_file_name):
+                    continue
 
+            if not team_name in results:
+                results[team_name] = {}
+
+            blueprint_name, blueprint_ext = os.path.splitext(os.path.basename(blueprint_file_name))
             if not blueprint_name in results[team_name]:
                 results[team_name][blueprint_name] = {}
 
+            blueprint = json.load(open(blueprint_file_name))
             for dataset_name in blueprint['Datasets']:
                 if not dataset_name in datasets:
                     logging.error('Dataset ' + dataset_name + ' requested by blueprint ' + blueprint_file_name + ' but no data directory provided. See \'--help\' for usage.')
@@ -44,7 +48,8 @@ def run(parameters):
                                       % (team_name, blueprint_name, dataset.name, str(e)))
 
 
-    write_json(os.path.join(parameters.output_directory, 'results.json'), results)
+    write_json(os.path.join(parameters.output_directory,
+                            'results-{:%Y-%m-%d-%H-%M-%S-%f}'.format(datetime.datetime.now()) + '.json'), results)
 
 if __name__ == '__main__':
     run(parser.parse_args())

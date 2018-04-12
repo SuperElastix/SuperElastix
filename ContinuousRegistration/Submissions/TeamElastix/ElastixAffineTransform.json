@@ -37,9 +37,21 @@
         "Dimensionality": "3"
     },
     "Component": {
+        "Name": "FixedMask",
+        "NameOfClass": "ItkImageSourceComponent",
+        "PixelType": "unsigned char",
+        "Dimensionality": "3"
+    },
+    "Component": {
         "Name": "MovingImage",
         "NameOfClass": "ItkImageSourceComponent",
         "PixelType": "float",
+        "Dimensionality": "3"
+    },
+    "Component": {
+        "Name": "MovingMask",
+        "NameOfClass": "ItkImageSourceComponent",
+        "PixelType": "unsigned char",
         "Dimensionality": "3"
     },
     "Component": {
@@ -71,6 +83,16 @@
         "Out": "MovingImage",
         "In": "Transformix",
         "NameOfInterface": "itkImageMovingInterface"
+    },
+    "Connection": {
+        "Out": "FixedMask",
+        "In": "Elastix",
+        "NameOfInterface": "itkImageFixedMaskInterface"
+    },
+    "Connection": {
+        "Out": "MovingMask",
+        "In": "Elastix",
+        "NameOfInterface": "itkImageMovingMaskInterface"
     },
     "Connection": {
         "Out": "Elastix",

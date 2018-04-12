@@ -34,6 +34,7 @@ using ModuleSinksAndSourcesComponents = selx::TypeList<
   ItkImageSourceComponent< 2, short >,
   ItkImageSourceComponent< 3, float >,
   ItkImageSourceComponent< 3, short >,
+  ItkImageSourceComponent< 3, unsigned char >,
   ItkImageSinkComponent< 2, float >,
   ItkImageSinkComponent< 2, short >,
   ItkImageSinkComponent< 3, float >,

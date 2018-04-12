@@ -23,14 +23,14 @@
         "DefaultPixelValue": "0.0",
         "AutomaticParameterEstimation": "true",
         "WriteResultImage": "true",
-        "Registration": "MultiResolutionRegistration",
+        "Registration": "MultiMetricMultiResolutionRegistration",
         "Metric": ["AdvancedMattesMutualInformation", "TransformBendingEnergyPenalty"],
         "MaximumNumberOfIterations": "256",
         "AutomaticTransformInitialization": "true",
         "AutomaticTransformInitializationMethod": "GeometricalCenter",
         "Transform": "BSplineTransform",
         "BSplineTransformSplineOrder": 3,
-        "FinalGridSpacingInPhysicalUnits": 12.0,
+        "FinalGridSpacingInPhysicalUnits": 16.0,
         "GridSpacingSchedule": [16.0, 4.0, 2.0, 1.0]
     },
     "Component": {
@@ -40,9 +40,21 @@
         "Dimensionality": "3"
     },
     "Component": {
+        "Name": "FixedMask",
+        "NameOfClass": "ItkImageSourceComponent",
+        "PixelType": "unsigned char",
+        "Dimensionality": "3"
+    },
+    "Component": {
         "Name": "MovingImage",
         "NameOfClass": "ItkImageSourceComponent",
         "PixelType": "float",
+        "Dimensionality": "3"
+    },
+    "Component": {
+        "Name": "MovingMask",
+        "NameOfClass": "ItkImageSourceComponent",
+        "PixelType": "unsigned char",
         "Dimensionality": "3"
     },
     "Component": {
