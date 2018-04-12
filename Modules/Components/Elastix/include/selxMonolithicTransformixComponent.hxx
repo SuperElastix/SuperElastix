@@ -58,8 +58,10 @@ template< int Dimensionality, class TPixel >
 int
 MonolithicTransformixComponent< Dimensionality, TPixel >::Accept( typename itkImageDomainFixedInterface< Dimensionality >::Pointer component )
 {
-  // TODO: this is not finished and tested.  Make this component use the provided domain
-  // Currently, the fixed image domain is part of the transformParameter map, which will be set by elastix.
+  // TODO: transformix needs to have a parametermap in order to define its output image sizes for a proper functioning of the (itk) pipeline it is in.
+  // Here we fill a parametermap with the sufficient info from the fixed image domain.
+  // Currently, the fixed image domain is also part of the transformParameter map that will be set by elastix. Not sure what happens if these domains are not equal.
+  
 
   auto fixedImageDomain = component->GetItkImageDomainFixed();
 
@@ -75,15 +77,19 @@ MonolithicTransformixComponent< Dimensionality, TPixel >::Accept( typename itkIm
   auto origin = fixedImageDomain->GetOrigin();
   typename TransformixFilterType::ParameterValueVectorType originParameters;
 
-  //auto direction = fixedImageDomain->GetDirectionCosines();
-  //TransformixFilterType::ParameterValueVectorType DirectionParameters;
+  auto direction = fixedImageDomain->GetDirection();
+  typename TransformixFilterType::ParameterValueVectorType directionParameters;
 
-  for( int d = 0; d < Dimensionality; ++d )
+  for( unsigned int d = 0; d < Dimensionality; ++d )
   {
     sizeParameters.push_back( std::to_string( size[ d ] ) );
     spacingParameters.push_back( std::to_string( spacing[ d ] ) );
     indexParameters.push_back( std::to_string( index[ d ] ) );
     originParameters.push_back( std::to_string( origin[ d ] ) );
+    for( unsigned int j = 0; j < Dimensionality; ++j)
+    {
+      directionParameters.push_back( std::to_string( direction(j,d) ) );
+    }
   }
 
   elxParameterObjectPointer trxParameterObject = elxParameterObjectType::New();
@@ -96,7 +102,7 @@ MonolithicTransformixComponent< Dimensionality, TPixel >::Accept( typename itkIm
     { "Index", indexParameters },
     { "Spacing", spacingParameters },
     { "Origin", originParameters },
-    //{ "Direction", { "1", "0", "0", "1" } },
+    { "Direction", directionParameters },
     { "UseDirectionCosines", { "true" } }
   };
   trxParameterObject->SetParameterMap( trxParameterMap );
@@ -125,7 +131,7 @@ MonolithicTransformixComponent< Dimensionality, TPixel >::Accept( typename elast
   // connect the itk pipeline
   // Due to the fact that elastixfilter returns a Null object we cannot use it as a pipeline
   //this->m_transformixFilter->SetTransformParameterObject(transformParameterObject);
-  // Therefore store the interface for the ReconnectTransform call
+  // Therefore store the interface for the Update call
   this->m_TransformParameterObjectInterface = component;
   return 0;
 }

@@ -74,14 +74,6 @@ ItkGaussianExponentialDiffeomorphicTransformComponent< InternalComputationValueT
   return (TransformPointer)this->m_Transform;
 }
 
-
-template< class InternalComputationValueType, int Dimensionality >
-void
-ItkGaussianExponentialDiffeomorphicTransformComponent< InternalComputationValueType, Dimensionality >::Update()
-{
-}
-
-
 template< class InternalComputationValueType, int Dimensionality >
 bool
 ItkGaussianExponentialDiffeomorphicTransformComponent< InternalComputationValueType, Dimensionality >

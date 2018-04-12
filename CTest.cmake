@@ -23,30 +23,39 @@ set(CTEST_BINARY_DIRECTORY ".")
 
 set(CTEST_SITE "lkeb-selx01")
 
-find_package( Git REQUIRED )
+if(NOT DEFINED CTEST_GIT_COMMAND)
+  find_program(CTEST_GIT_COMMAND NAMES git git.cmd)
+endif()
+set(CTEST_GIT_UPDATE_CUSTOM "${CTEST_GIT_COMMAND}" pull origin)
 
-execute_process (
-    COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
-    WORKING_DIRECTORY ${CTEST_SOURCE_DIRECTORY}
-    OUTPUT_VARIABLE SELX_GIT_COMMIT_SHA 
-)
-execute_process (
-    COMMAND ${GIT_EXECUTABLE} name-rev --name-only HEAD
-    WORKING_DIRECTORY ${CTEST_SOURCE_DIRECTORY}
-    OUTPUT_VARIABLE SELX_GIT_BRANCH_NAME 
-)
+if ("$ENV{CHANGE_AUTHOR}" STREQUAL "")
+  set(CTEST_BUILD_NAME "$ENV{BRANCH_NAME}")
+else()
+  set(CTEST_BUILD_NAME "$ENV{BRANCH_NAME};$ENV{CHANGE_AUTHOR}")
+endif()
+set(CTEST_BUILD_NAME "${CTEST_BUILD_NAME};Test")
 
-set(CTEST_BUILD_NAME "${SELX_GIT_BRANCH_NAME};Tests;commit=SHA\\:${SELX_GIT_COMMIT_SHA}")
 
 set(CTEST_CMAKE_GENERATOR "Unix Makefiles")
 set(CTEST_BUILD_CONFIGURATION Release)
 set(CTEST_BUILD_FLAGS "-j4")
 
-set(CTEST_CONFIGURE_COMMAND "${CMAKE_COMMAND} -DCMAKE_BUILD_TYPE:STRING=${CTEST_BUILD_CONFIGURATION} --build ${CTEST_BINARY_DIRECTORY}")
-set(CTEST_CONFIGURE_COMMAND "${CTEST_CONFIGURE_COMMAND} -DWITH_TESTING:BOOL=ON ${CTEST_BUILD_OPTIONS}")
-set(CTEST_CONFIGURE_COMMAND "${CTEST_CONFIGURE_COMMAND} \"-G${CTEST_CMAKE_GENERATOR}\"")
-set(CTEST_CONFIGURE_COMMAND "${CTEST_CONFIGURE_COMMAND} \"${CTEST_SOURCE_DIRECTORY}\"")
+string(CONCAT CTEST_CONFIGURE_COMMAND "${CMAKE_COMMAND}"
+    " -DCMAKE_BUILD_TYPE:STRING=${CTEST_BUILD_CONFIGURATION}"
+    " --build ${CTEST_BINARY_DIRECTORY}"
+    " ${CTEST_BUILD_OPTIONS}"
+    " \"-G${CTEST_CMAKE_GENERATOR}\""
+    " \"${CTEST_SOURCE_DIRECTORY}\"")
 
-ctest_start("Nightly")
+# Tells CTest to not do a git pull, but to still record what version of the software it's building and testing
+# As explained by mail, by Zack Galbreath
+set(CTEST_UPDATE_VERSION_ONLY 1)
+
+# For CDash integration with GitHub: https://blog.kitware.com/cdash-integration-with-github
+set(CTEST_CHANGE_ID $ENV{CHANGE_ID})
+
+ctest_start("Continuous")
+# Added ctest_update() to ensure that the commit SHA will be passed to CDash, and GitHub.
+ctest_update()
 ctest_test()
-ctest_submit( PARTS Test )
+ctest_submit( PARTS Test Update )
