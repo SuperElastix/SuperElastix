@@ -296,8 +296,8 @@ class DIRLAB(Dataset):
             displacement_field_file_names = (displacement_field_file_name_0, displacement_field_file_name_1)
 
             if mask_directory is not None and os.path.exists(mask_directory):
-                mask_file_names = (os.path.join(mask_directory, dirlab_image_information[id]['sub_directory'], '00.nii.gz'),
-                                   os.path.join(mask_directory, dirlab_image_information[id]['sub_directory'], '50.nii.gz'))
+                mask_file_names = (os.path.join(mask_directory, dirlab_image_information[id]['sub_directory'], '00.mhd'),
+                                   os.path.join(mask_directory, dirlab_image_information[id]['sub_directory'], '50.mhd'))
             else:
                 # If no mask was provided, just generate mask filled with ones
                 mask_file_names = (
