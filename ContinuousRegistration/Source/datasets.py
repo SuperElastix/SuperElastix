@@ -328,23 +328,20 @@ class EMPIRE(Dataset):
 
         for i in range(1, 31):
             image_file_names = (os.path.join(input_directory, 'scans', "%02d" % i + '_Fixed.mhd'),
-                                             os.path.join(input_directory, 'scans', "%02d" % i + '_Moving.mhd'))
+                                os.path.join(input_directory, 'scans', "%02d" % i + '_Moving.mhd'))
 
             mask_file_names = (os.path.join(input_directory, 'lungMasks', "%02d" % i + '_Fixed.mhd'),
-                                             os.path.join(input_directory, 'scans', "%02d" % i + '_Moving.mhd'))
+                               os.path.join(input_directory, 'scans', "%02d" % i + '_Moving.mhd'))
 
             # TODO: Find out output format
             displacement_field_file_names = (os.path.join(self.name, "%02d" % i + '_Moving_to_Fixed.nii.gz'),
                                              os.path.join(self.name, "%02d" % i + '_Fixed_to_Moving.nii.gz'))
 
-            for image_file_name, mask_file_name, displacement_field_file_name in zip(image_file_names,
-                                                                                     mask_file_names,
-                                                                                     displacement_field_file_names):
-                file_names.append({
-                    'image_file_names': image_file_name,
-                    'mask_file_names': mask_file_name,
-                    'displacement_field_file_names': displacement_field_file_name
-                })
+            file_names.append({
+                'image_file_names': image_file_names,
+                'mask_file_names': mask_file_names,
+                'displacement_field_file_names': displacement_field_file_names
+            })
 
         self.file_names = take(sort_file_names(file_names), max_number_of_registrations // 2)
 
