@@ -154,8 +154,8 @@ def inverse_consistency_labels(registration_driver, label_file_names, deformatio
         raise(e)
 
     return (
-        {'InverseConsistencyDSC': dsc_0},
-        {'InverseConsistencyDSC': dsc_1}
+        { 'InverseConsistencyDSC': dsc_0 },
+        { 'InverseConsistencyDSC': dsc_1 }
     )
 
 
@@ -181,6 +181,6 @@ def dice(registration_driver, label_file_names, deformation_field_file_names):
         raise(e)
 
     return (
-        {'DSC': dsc_0},
-        {'DSC': dsc_1}
+        { 'DSC': dsc_0 },
+        { 'DSC': dsc_1 }
     )
