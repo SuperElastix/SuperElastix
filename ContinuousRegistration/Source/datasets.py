@@ -494,8 +494,7 @@ class SPREAD(Dataset):
             image_file_names = (os.path.join(input_directory, 'mhd', sub_directory, 'baseline_1.mha'),
                                 os.path.join(input_directory, 'mhd', sub_directory, 'followup_1.mha'))
 
-            if not os.path.exists(os.path.join(output_directory, 'tmp', self.name)):
-                os.mkdir(os.path.join(output_directory, self.name))
+            os.makedirs(os.path.join(output_directory, self.name), exist_ok=True)
 
             baseline_point_set_file_name_we = os.path.join(input_directory, 'groundtruth', 'distinctivePoints', sub_directory + '_baseline_1_Cropped_point')
             point_set = np.loadtxt(baseline_point_set_file_name_we + '.txt', skiprows=2)

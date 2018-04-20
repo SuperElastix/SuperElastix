@@ -148,18 +148,18 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
   // for the itkShrinkImageFilter for more detailed behavior.
   typename TheItkFilterType::ShrinkFactorsArrayType shrinkFactorsPerLevel;
   shrinkFactorsPerLevel.SetSize( 3 );
-  shrinkFactorsPerLevel[ 0 ] = 4;
-  shrinkFactorsPerLevel[ 1 ] = 2;
-  shrinkFactorsPerLevel[ 2 ] = 1;
+  shrinkFactorsPerLevel[ 0 ] = 16;
+  shrinkFactorsPerLevel[ 1 ] = 8;
+  shrinkFactorsPerLevel[ 2 ] = 4;
   this->m_theItkFilter->SetShrinkFactorsPerLevel( shrinkFactorsPerLevel );
 
   // Smooth by specified gaussian sigmas for each level.  These values are specified in
   // physical units.
   typename TheItkFilterType::SmoothingSigmasArrayType smoothingSigmasPerLevel;
   smoothingSigmasPerLevel.SetSize( 3 );
-  smoothingSigmasPerLevel[ 0 ] = 4;
-  smoothingSigmasPerLevel[ 1 ] = 2;
-  smoothingSigmasPerLevel[ 2 ] = 1;
+  smoothingSigmasPerLevel[ 0 ] = 8;
+  smoothingSigmasPerLevel[ 1 ] = 4;
+  smoothingSigmasPerLevel[ 2 ] = 2;
   this->m_theItkFilter->SetSmoothingSigmasPerLevel( smoothingSigmasPerLevel );
 
   // TODO for now we hard code the TransformAdaptors for DisplacementFieldTransform.
