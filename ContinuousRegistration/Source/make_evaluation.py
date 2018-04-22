@@ -17,7 +17,7 @@ def run(parameters):
     for team_name, blueprint_file_names in submissions.items():
         for blueprint_file_name in blueprint_file_names:
             if hasattr(parameters, 'blueprint_file_name') and not parameters.blueprint_file_name is None:
-                # User requested to have scripts generated only for this blueprint
+                # User requested evaluation for this blueprint only
                 if not parameters.blueprint_file_name == os.path.basename(blueprint_file_name):
                     continue
 
