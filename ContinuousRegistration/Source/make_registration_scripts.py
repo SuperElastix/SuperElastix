@@ -147,7 +147,7 @@ def run(parameters):
 
                 dataset = datasets[dataset_name]
 
-                logging.info('Generating registration scripts for dataset %s and blueprint %s.' % (dataset_name, blueprint_name))
+                logging.info('Generating registration scripts for the %s blueprint and %s dataset.' % (blueprint_name, dataset_name))
                 for file_names in dataset.generator():
                     logging.info('Generating registration script for image pair %s.', file_names['image_file_names'])
                     blueprint_output_directory = os.path.join(parameters.output_directory, team_name, blueprint_name, os.path.dirname(file_names['displacement_field_file_names'][0]))

@@ -31,20 +31,23 @@ def run(parameters):
             blueprint = json.load(open(blueprint_file_name))
             for dataset_name in blueprint['Datasets']:
                 if not dataset_name in datasets:
-                    logging.error('Dataset ' + dataset_name + ' requested by blueprint ' + blueprint_file_name + ' but no data directory provided. See \'--help\' for usage.')
+                    logging.error('Dataset ' + dataset_name + ' requested by blueprint ' + blueprint_file_name + ' but no data directory provided. Skipping dataset.')
                     continue
 
                 dataset = datasets[dataset_name]
                 results[team_name][blueprint_name][dataset_name] = []
 
+                logging.info('Evaluating registration scripts for %s blueprint and %s dataset.' % (
+                blueprint_name, dataset_name))
                 for file_names in dataset.generator():
                     output_directory = os.path.join(parameters.output_directory, team_name, blueprint_name)
 
+                    logging.info('Evaluating image pair %s.', file_names['image_file_names'])
                     try:
                         results[team_name][blueprint_name][dataset.name].append(dataset.evaluate(
                             parameters.superelastix, file_names, output_directory))
                     except Exception as e:
-                        logging.error('Error during evaluation of %s\'s blueprint %s on dataset %s: %s'
+                        logging.error('Error during evaluation of %s\'s blueprint %s and dataset %s: %s'
                                       % (team_name, blueprint_name, dataset.name, str(e)))
 
 

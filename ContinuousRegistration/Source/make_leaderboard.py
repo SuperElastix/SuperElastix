@@ -141,7 +141,6 @@ def run(parameters):
         table_file.close()
 
 
-
 if __name__ == '__main__':
     parameters = parser.parse_args()
 
