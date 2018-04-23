@@ -170,22 +170,17 @@ def warp_point_set(superelastix, point_set_file_name, displacement_field_file_na
 
 def warp_label_image(superelastix, label_file_name, displacement_field_file_name):
     output_label_file_name = os.path.splitext(displacement_field_file_name)[0] + '-' \
-                             + "{:%Y_%m_%d_%H_%M_%S_%f}".format(datetime.now()) + '.nii'
+                             + "{:%Y-%m-%d-%H-%M-%S-%f}".format(datetime.now()) + '.nii'
 
     try:
-        displacement_field = sitk.ReadImage(displacement_field_file_name, sitk.sitkVectorFloat64)
-        displacement_field_transform = sitk.DisplacementFieldTransform(displacement_field)
-
-        label_image = sitk.ReadImage(label_file_name)
-        output_label_image = sitk.Resample(label_image,
-                                     displacement_field_transform,
-                                     sitk.sitkNearestNeighbor,
-                                     0,
-                                     label_image.GetPixelID())
-
-        sitk.WriteImage(output_label_image, output_label_file_name)
+        stdout = subprocess.check_output([superelastix,
+                                          '--conf', os.path.join(get_script_path(), 'warp_label_image.json'),
+                                          '--in', 'LabelImage=%s' % label_file_name,
+                                          'DisplacementField=%s' % displacement_field_file_name,
+                                          '--out', 'WarpedLabelImage=%s' % output_label_file_name,
+                                          '--loglevel', 'trace',
+                                          '--logfile', os.path.splitext(output_label_file_name)[0] + '.log'])
     except:
         logging.error('Failed to warp %s.' % label_file_name)
-
 
     return output_label_file_name
