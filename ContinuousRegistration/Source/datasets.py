@@ -3,8 +3,8 @@ from abc import ABCMeta, abstractmethod
 import numpy as np
 from itertools import combinations
 
-from metrics import tre, hausdorff, inverse_consistency_labels, inverse_consistency_points, dice, merge_dicts
-from util import take, sort_file_names, copy_information_from_images_to_labels
+from metrics import tre, hausdorff, inverse_consistency_labels, inverse_consistency_points, dice
+from util import take, sort_file_names, copy_information_from_images_to_labels, merge_dicts
 from util import create_mask_by_thresholding, create_mask_by_size
 
 # Base class for datasets. The derived classes need only to implement the file layout on disk
