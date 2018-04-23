@@ -102,14 +102,14 @@ TEST_F( DisplacementFieldImageWarperComponentTest, SinkAndSource )
   displacementField->Allocate();
   
   displacementField->SetPixel(displacementFieldIndex00, displacement01);
-  displacementField->SetPixel(displacementFieldIndex01, displacement10);
-  displacementField->SetPixel(displacementFieldIndex02, displacement00);
-  displacementField->SetPixel(displacementFieldIndex10, displacement10);
-  displacementField->SetPixel(displacementFieldIndex11, displacement11);
-  displacementField->SetPixel(displacementFieldIndex12, displacement00);
-  displacementField->SetPixel(displacementFieldIndex20, displacement00);
-  displacementField->SetPixel(displacementFieldIndex21, displacement00);
-  displacementField->SetPixel(displacementFieldIndex22, displacementminus11);
+  displacementField->SetPixel(displacementFieldIndex01, displacement01);
+  displacementField->SetPixel(displacementFieldIndex02, displacement01);
+  displacementField->SetPixel(displacementFieldIndex10, displacement01);
+  displacementField->SetPixel(displacementFieldIndex11, displacement01);
+  displacementField->SetPixel(displacementFieldIndex12, displacement01);
+  displacementField->SetPixel(displacementFieldIndex20, displacement01);
+  displacementField->SetPixel(displacementFieldIndex21, displacement01);
+  displacementField->SetPixel(displacementFieldIndex22, displacement01);
 
   ImageType::IndexType imageIndex00, imageIndex01, imageIndex02,
       imageIndex10, imageIndex11, imageIndex12,
@@ -197,8 +197,14 @@ TEST_F( DisplacementFieldImageWarperComponentTest, SinkAndSource )
   ImageWriter->SetFileName( this->dataManager->GetOutputFile( "DisplacementFieldImageWarperComponentTest.SinkAndSource.WarpedImage.nii" ) );
   ImageWriter->SetInput( superElastixFilter->GetOutput< ImageType >( "ImageSink" ) );
   ImageWriter->Update();
+
+  ImageWriter->SetFileName( this->dataManager->GetOutputFile( "DisplacementFieldImageWarperComponentTest.SinkAndSource.OriginalImage.nii" ) );
+  ImageWriter->SetInput( image );
+  ImageWriter->Update();
   
   ImagePointer outputImage = superElastixFilter->GetOutput< ImageType >( "ImageSink" );
+
+  EXPECT_FLOAT_EQ(image->GetPixel(imageIndex01), outputImage->GetPixel(imageIndex00));
   
 }
 
