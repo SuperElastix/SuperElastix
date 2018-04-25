@@ -33,18 +33,6 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
           packages:
-            - g++-4.9
-      env:
-         - GCC="CC=gcc-4.9 && CXX=g++-4.9"
-    - os: linux
-      dist: trusty
-      sudo: required
-      compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
             - g++-5
       env:
          - GCC="CC=gcc-5 && CXX=g++-5"
