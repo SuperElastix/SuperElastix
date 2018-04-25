@@ -66,16 +66,15 @@ matrix:
       compiler: gcc
 
 before_install:
+  - root=$PWD
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then eval ${GCC}; fi;
-
-before_script:
   - mkdir -p ${SUPERELASTIX_BUILD_DIR}
   - mkdir -p ${ExternalData_OBJECT_STORES}
   - if [[ "$TRAVIS_OS_NAME" == "linux" && ! -e "${ExternalData_OBJECT_STORES}/${CMAKE_DOWNLOAD_FILE}" ]]; then (cd ${ExternalData_OBJECT_STORES} && curl -sSO https://cmake.org/files/v3.6/${CMAKE_DOWNLOAD_FILE}); fi; 
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo bash "${ExternalData_OBJECT_STORES}/${CMAKE_DOWNLOAD_FILE}" --prefix=/usr/local --exclude-subdir; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cmake --version; fi
 
-script:
+install:
   - if [[ ! -e ${ITK_BUILD_DIR}/ITKConfig.cmake ]]; then
       rm -rf ${ITK_SOURCE_DIR} {ITK_BUILD_DIR} &&
       git clone ${ITK_URL} ${ITK_SOURCE_DIR} &&
@@ -100,3 +99,11 @@ script:
   - if [[ ! -e ${HOME_DIR}/built_cache ]]; then
       cmake -DBUILD_APPLICATIONS_EXTERNAL_PROJECT:BOOL=ON -DBUILD_TESTING:BOOL=ON -DCMAKE_BUILD_TYPE=Release -DUSE_SYSTEM_ITK:BOOL=ON -DITK_DIR=${ITK_BUILD_DIR} -DUSE_SYSTEM_ELASTIX:BOOL=ON -DElastix_DIR=${ELASTIX_BUILD_DIR} ${SUPERELASTIX_SOURCE_DIR} && 
       make --jobs=2; fi
+
+before_script:
+  - cd $root && ls -l
+  - sudo pip install -r requirements.txt
+  - sudo pip install nose>=1.3.7 coverage codecov pytest>=3.0.5 codacy-coverage
+
+script:
+  - nosetests -v --exe --with-doctest --with-coverage
