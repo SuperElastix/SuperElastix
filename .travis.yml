@@ -1,4 +1,6 @@
 language: cpp
+python:
+  - "3.5"
 
 env:
   global:
@@ -34,6 +36,8 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-5
+            - python3
+            - python3-pip
       env:
          - GCC="CC=gcc-5 && CXX=g++-5"
     - os: linux
@@ -46,6 +50,8 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-6
+            - python3
+            - python3-pip
       env:
          - GCC="CC=gcc-6 && CXX=g++-6"
     - os: linux
@@ -58,12 +64,16 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-7
+            - python3
+            - python3-pip
       env:
          - GCC="CC=gcc-7 && CXX=g++-7"
     - os: osx
       compiler: clang
+      osx_image: xcode8.3
     - os: osx
       compiler: gcc
+      osx_image: xcode8.3
 
 before_install:
   - root=$PWD
@@ -74,10 +84,8 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo bash "${ExternalData_OBJECT_STORES}/${CMAKE_DOWNLOAD_FILE}" --prefix=/usr/local --exclude-subdir; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cmake --version; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then
-   curl -O http://python-distribute.org/distribute_setup.py &&
-   python distribute_setup.py &&
-   curl -O https://raw.github.com/pypa/pip/master/contrib/get-pip.py &&
-   python get-pip.py &&
+   brew upgrade python &&
+   curl https://bootstrap.pypa.io/get-pip.py | python3 &&
    brew list python | grep pip; fi
 
 install:
@@ -109,8 +117,9 @@ install:
 before_script:
   - cd $root && ls -l
 #  - python -m pip install -U pip
-  - sudo pip2 install -r requirements.txt
-  - sudo pip2 install nose>=1.3.7 coverage codecov pytest>=3.0.5 codacy-coverage
+  - sudo pip3 install scikit-build  # SimpleITK: required to build from source.
+  - sudo pip3 install -r requirements.txt
+  - sudo pip3 install nose>=1.3.7 coverage codecov pytest>=3.0.5 codacy-coverage
 
 script:
   - nosetests Tools -v --exe --with-doctest --with-xunit --with-coverage --cover-package=Tools
