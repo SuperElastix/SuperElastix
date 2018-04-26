@@ -53,7 +53,8 @@ class TestEvaulationMetrics(unittest.TestCase):
             point_set_1 = create_vtk_file(tmpdir, point_1)
             deformation_field_0 = create_deformation_field_file(tmpdir, deformation_0)
             deformation_field_1 = create_deformation_field_file(tmpdir, deformation_1)
-            tre_0, tre_1 = tre(self.registration_driver, (point_set_0, point_set_1), (deformation_field_0, deformation_field_1))
+            tre_0, tre_1 = tre(self.registration_driver, (point_set_0, point_set_1),
+                               (deformation_field_0, deformation_field_1))
 
         assert(tre_0['TRE'] == 0.0)
         assert(tre_1['TRE'] == 0.0)

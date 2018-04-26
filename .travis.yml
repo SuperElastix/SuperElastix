@@ -1,4 +1,6 @@
-language: cpp
+language:
+  - cpp
+  - python
 python:
   - "3.5"
 
@@ -89,7 +91,7 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" && ! -e "${ExternalData_OBJECT_STORES}/${CMAKE_DOWNLOAD_FILE}" ]]; then (cd ${ExternalData_OBJECT_STORES} && curl -sSO https://cmake.org/files/v3.6/${CMAKE_DOWNLOAD_FILE}); fi; 
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo bash "${ExternalData_OBJECT_STORES}/${CMAKE_DOWNLOAD_FILE}" --prefix=/usr/local --exclude-subdir; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cmake --version; fi
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
    brew upgrade python &&
    curl https://bootstrap.pypa.io/get-pip.py | python3 &&
    brew list python | grep pip; fi
@@ -122,14 +124,16 @@ install:
 
 before_script:
   - cd $root && ls -l
+  - mkdir temp
   - python3 --version && pip3 --version
-#  - python -m pip install -U pip
   - sudo pip3 install -U pip
-  - pip3 install --user scikit-build  # SimpleITK: required to build from source.
+#  - pip3 install scikit-build  # SimpleITK: required to build from source.
   - pip3 install --user -r requirements.txt
-  - pip3 install --user nose coverage codecov pytest codacy-coverage
+#  - pip3 install nose coverage codecov  codacy-coverage
+  - sudo pip3 install nose coverage codecov
 
 script:
   - nosetests Tools -v --exe --with-doctest --with-xunit --with-coverage --cover-package=Tools
-  - nosetests ContinuousRegistration -v --exe --with-doctest --with-xunit --with-coverage --cover-package=ContinuousRegistration
+  - nosetests ContinuousRegistration -v --exe --with-doctest --with-xunit --with-coverage --cover-package=ContinuousRegistration  --ignore-files=submit_jobs.py
   - coverage report
+  - codecov
