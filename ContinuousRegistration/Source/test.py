@@ -4,6 +4,7 @@ import SimpleITK as sitk
 
 from metrics import tre
 
+
 def create_vtk_file(output_directory, point):
     output_file_name = os.path.join(output_directory, "{:%Y-%m-%d-%H:%M:%S.%f}".format(datetime.now()) + ".vtk")
     with open(output_file_name, 'w+') as f:
@@ -35,6 +36,7 @@ def create_deformation_field_file(output_directory, deformation):
     sitk.WriteImage(deformation_field, output_file_name)
     return output_file_name
 
+
 class TestEvaulationMetrics(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         # TODO: Pass via command line
@@ -55,6 +57,7 @@ class TestEvaulationMetrics(unittest.TestCase):
 
         assert(tre_0['TRE'] == 0.0)
         assert(tre_1['TRE'] == 0.0)
+
 
 if __name__ == '__main__':
     unittest.main()
