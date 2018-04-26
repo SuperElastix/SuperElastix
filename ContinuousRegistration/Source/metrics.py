@@ -1,5 +1,6 @@
 import logging
-import SimpleITK as sitk, numpy as np
+import numpy as np
+import SimpleITK as sitk
 from ContinuousRegistration.Source.util import load_point_set, load_vtk
 from ContinuousRegistration.Source.util import warp_label_image, warp_point_set
 
