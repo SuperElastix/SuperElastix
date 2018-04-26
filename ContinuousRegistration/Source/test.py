@@ -2,7 +2,7 @@ import unittest, os, tempfile
 from datetime import datetime
 import SimpleITK as sitk
 
-from metrics import tre
+from ContinuousRegistration.Source.metrics import tre
 
 
 def create_vtk_file(output_directory, point):
