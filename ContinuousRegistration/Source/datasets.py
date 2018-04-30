@@ -561,7 +561,7 @@ class SPREAD(Dataset):
         self.evaluate_point_set(superelastix, file_names, output_directory)
 
 
-class HistoBIA(Dataset):
+class HBIA(Dataset):
     """
     a wrapper for dataset with stain Histology provided by CMP-BIA sections
     http://cmp.felk.cvut.cz/~borovji3/?page=dataset
@@ -576,7 +576,7 @@ class HistoBIA(Dataset):
 
     PATTERN_FOLDER_SCALE = 'scale_%ipc'
 
-    def __init__(self, input_directory, mask_directory, output_directory,
+    def __init__(self, input_directory, output_directory,
                  max_number_of_registrations, scale=None):
         self.name = 'HistoBIA'
         self.category = 'cancer'
