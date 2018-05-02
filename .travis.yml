@@ -34,61 +34,42 @@ matrix:
       compiler: gcc
       addons:
         apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-5
-            - python3
-            - python3-pip
-            - libinsighttoolkit4*
-            - python-drmaa
-      env:
-         - GCC="CC=gcc-5 && CXX=g++-5"
+          sources: ubuntu-toolchain-r-test
+          packages: [g++-5, python3, python3-pip, libinsighttoolkit4*]
+      env: GCC="CC=gcc-5 && CXX=g++-5"
     - os: linux
       dist: trusty
       sudo: required
       compiler: gcc
       addons:
         apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
-            - python3
-            - python3-pip
-            - libinsighttoolkit4*
-            - python-drmaa
-      env:
-         - GCC="CC=gcc-6 && CXX=g++-6"
+          sources: ubuntu-toolchain-r-test
+          packages: [g++-6, python3, python3-pip, libinsighttoolkit4*]
+      env: GCC="CC=gcc-6 && CXX=g++-6"
     - os: linux
       dist: trusty
       sudo: required
       compiler: gcc
       addons:
         apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-7
-            - python3
-            - python3-pip
-            - libinsighttoolkit4*
-            - python-drmaa
-      env:
-         - GCC="CC=gcc-7 && CXX=g++-7"
+          sources: ubuntu-toolchain-r-test
+          packages: [g++-7, python3, python3-pip, libinsighttoolkit4*]
+      env: GCC="CC=gcc-7 && CXX=g++-7"
     - os: osx
       compiler: clang
       osx_image: xcode8.3
+      env: PYTHON=3.5 CPP=14 CLANG
     - os: osx
       compiler: gcc
       osx_image: xcode8.3
+      env: PYTHON=3.5 CPP=14 CLANG
 
 before_install:
   - root=$PWD
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then eval ${GCC}; fi;
   - mkdir -p ${SUPERELASTIX_BUILD_DIR}
   - mkdir -p ${ExternalData_OBJECT_STORES}
-  - if [[ "$TRAVIS_OS_NAME" == "linux" && ! -e "${ExternalData_OBJECT_STORES}/${CMAKE_DOWNLOAD_FILE}" ]]; then (cd ${ExternalData_OBJECT_STORES} && curl -sSO https://cmake.org/files/v3.6/${CMAKE_DOWNLOAD_FILE}); fi; 
+  - if [[ "$TRAVIS_OS_NAME" == "linux" && ! -e "${ExternalData_OBJECT_STORES}/${CMAKE_DOWNLOAD_FILE}" ]]; then (cd ${ExternalData_OBJECT_STORES} && curl -sSO https://cmake.org/files/v3.6/${CMAKE_DOWNLOAD_FILE}); fi;
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo bash "${ExternalData_OBJECT_STORES}/${CMAKE_DOWNLOAD_FILE}" --prefix=/usr/local --exclude-subdir; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cmake --version; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
@@ -123,17 +104,19 @@ install:
       make --jobs=2; fi
 
 before_script:
-  - cd $root && ls -l
+  - cd $root
   - mkdir temp
   - python3 --version && pip3 --version
   - sudo pip3 install -U pip
-#  - pip3 install scikit-build  # SimpleITK: required to build from source.
   - pip3 install --user -r requirements.txt
-#  - pip3 install nose coverage codecov  codacy-coverage
-  - sudo pip3 install nose coverage codecov
+  - sudo pip3 install --ignore-installed nose pytest pytest-cov  # coverage codecov codacy-coverage
 
 script:
-  - nosetests Tools -v --exe --with-doctest --with-xunit --with-coverage --cover-package=Tools
-  - nosetests ContinuousRegistration -v --exe --with-doctest --with-xunit --with-coverage --cover-package=ContinuousRegistration  --ignore-files=submit_jobs.py
-  - coverage report
-  - codecov
+#  - nosetests Tools -v --exe --with-doctest --with-xunit --with-coverage --cover-package=Tools
+#  - nosetests ContinuousRegistration -v --exe --with-doctest --with-xunit --with-coverage --cover-package=ContinuousRegistration  --ignore-files=submit_jobs.py
+  - py.test Tools -v --doctest-modules
+  - py.test ContinuousRegistration -v --doctest-modules --ignore=ContinuousRegistration/Source/submit_jobs.py
+#  - coverage run --source Tools -m py.test Tools -v --doctest-modules
+#  - coverage run --source ContinuousRegistration -m py.test ContinuousRegistration -v --doctest-modules --ignore=ContinuousRegistration/Source/submit_jobs.py
+#  - coverage report
+#  - codecov
