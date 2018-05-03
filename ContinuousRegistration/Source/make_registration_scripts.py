@@ -116,7 +116,7 @@ def load_datasets(parameters):
                         parameters.max_number_of_registrations_per_dataset)
         datasets[spread.name] = spread
 
-    if parameters.spread_input_directory is not None:
+    if parameters.hbia_input_directory is not None:
         logging.info('Loading HistoBIA.')
         hbia = HBIA(parameters.hbia_input_directory,
                     parameters.output_directory,

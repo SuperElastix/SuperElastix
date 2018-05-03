@@ -37,18 +37,19 @@ class Dataset(object):
     def make_shell_scripts(self, superelastix, blueprint_file_name, file_names, output_directory):
         if not os.path.exists(os.path.join(output_directory, 'sh')):
             os.mkdir(os.path.join(output_directory, 'sh'))
+        COMMAND_TEMPLATE = '%s --conf %s --in %s %s --out DisplacementField=%s --loglevel trace --logfile %s'
 
         # Fixed to moving
         root = os.path.splitext(file_names['displacement_field_file_names'][0])[0]
         shell_script_file_name = os.path.join(output_directory, 'sh',
                                               root.replace('/', '_').replace('\\', '_').replace('.', '_') + '.sh')
 
+        if 'mask_file_names' not in file_names:
+            file_names['mask_file_names'] = ('', '')
         with open(shell_script_file_name, 'w') as shell_script:
-            shell_script.write('%s --conf %s --in %s %s --out DisplacementField=%s --loglevel trace --logfile %s' % (
-                superelastix,
-                blueprint_file_name,
-                'FixedImage=%s MovingImage=%s ' % file_names['image_file_names'],
-                'FixedMask=%s MovingMask=%s' % file_names['mask_file_names'] if 'mask_file_names' in file_names else ('', ''),
+            shell_script.write(COMMAND_TEMPLATE % (superelastix, blueprint_file_name,
+                'FixedImage=%s MovingImage=%s ' % tuple(file_names['image_file_names']),
+                'FixedMask=%s MovingMask=%s' % tuple(file_names['mask_file_names']),
                 os.path.join(output_directory, file_names['displacement_field_file_names'][0]),
                 os.path.splitext(shell_script_file_name)[0] + '.log'))
 
@@ -57,14 +58,12 @@ class Dataset(object):
         shell_script_file_name = os.path.join(output_directory, 'sh',
                                               root.replace('/', '_').replace('\\', '_').replace('.', '_') + '.sh')
 
+        if 'mask_file_names' not in file_names:
+            file_names['mask_file_names'] = ('', '')
         with open(shell_script_file_name, 'w') as shell_script:
-            shell_script.write('%s --conf %s --in %s %s --out DisplacementField=%s --loglevel trace --logfile %s' % (
-                superelastix,
-                blueprint_file_name,
-                'FixedImage=%s MovingImage=%s ' % (file_names['image_file_names'][1],
-                                                   file_names['image_file_names'][0]),
-                'FixedMask=%s MovingMask=%s' % (file_names['mask_file_names'][1],
-                                                file_names['mask_file_names'][0]) if 'mask_file_names' in file_names else ('', ''),
+            shell_script.write(COMMAND_TEMPLATE % (superelastix, blueprint_file_name,
+                'FixedImage=%s MovingImage=%s ' % tuple(file_names['image_file_names'][::-1]),
+                'FixedMask=%s MovingMask=%s' % tuple(file_names['mask_file_names'][::-1]),
                 os.path.join(output_directory, file_names['displacement_field_file_names'][1]),
                 os.path.splitext(shell_script_file_name)[0] + '.log'))
 
@@ -583,7 +582,7 @@ class HBIA(Dataset):
     generated one against all (we can skip symmetric pairs like A->B and B->A)
     """
 
-    PATTERN_FOLDER_SCALE = 'scale_%ipc'
+    PATTERN_FOLDER_SCALE = 'scale-%ipc'
 
     def __init__(self, input_directory, output_directory,
                  max_number_of_registrations, scale=None):
@@ -591,7 +590,6 @@ class HBIA(Dataset):
         self.category = 'cancer'
 
         self.input_directory = input_directory
-        file_names = []
         # set default scale 10%
         scale = 10 if scale is None else scale
 
@@ -602,22 +600,23 @@ class HBIA(Dataset):
         # read all available scales from the first set
         scales = [int(re.findall('\\d+', d)[0])
                   for d in os.listdir(os.path.join(self.input_directory, sub_folders[0]))
-                  if os.path.isdir(os.path.join(input_directory, d))]
-        assert scale is scales, 'not supported dataset scale (%i) from %s' \
+                  if os.path.isdir(os.path.join(input_directory, sub_folders[0], d))]
+        assert scale in scales, 'not supported dataset scale (%i) from %s' \
                                 % (scale, repr(scales))
 
-        for dir_set in sub_folders:
+        file_names = []
+        for dir_set in sorted(sub_folders):
             # create the path to the image/points destination
             path_images = os.path.join(self.input_directory, dir_set,
                                        self.PATTERN_FOLDER_SCALE % scale)
             # listing all images in the set with given scale
-            list_image_names = [n for n in os.listdir(path_images)
-                                if os.path.splitext(n)[-1] in ['.png', '.jpg', '.jpeg']]
+            list_image_names = sorted([n for n in os.listdir(path_images)
+                                       if os.path.splitext(n)[-1] in ['.png', '.jpg']])
 
             # creating pairs one-to-all with and skipp duplicit symetric pairs
-            for image_name_0 in list_image_names:
+            for i, image_name_0 in enumerate(list_image_names):
                 pints_name_0 = os.path.splitext(image_name_0)[0] + '.csv'
-                for image_name_1 in list_image_names[1:]:
+                for image_name_1 in list_image_names[i+1:]:
                     pints_name_1 = os.path.splitext(image_name_1)[0] + '.csv'
 
                     # compose the registration image pair
