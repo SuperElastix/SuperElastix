@@ -112,10 +112,10 @@ before_script:
   - sudo pip3 install --ignore-installed nose pytest pytest-cov  # coverage codecov codacy-coverage
 
 script:
-#  - nosetests Tools -v --exe --with-doctest --with-xunit --with-coverage --cover-package=Tools
-#  - nosetests ContinuousRegistration -v --exe --with-doctest --with-xunit --with-coverage --cover-package=ContinuousRegistration  --ignore-files=submit_jobs.py
-  - py.test Tools -v --doctest-modules
-  - py.test ContinuousRegistration -v --doctest-modules --ignore=ContinuousRegistration/Source/submit_jobs.py
+  - nosetests Tools -v --exe --with-doctest --with-xunit --with-coverage --cover-package=Tools
+  - nosetests ContinuousRegistration -v --exe --with-doctest --with-xunit --with-coverage --cover-package=ContinuousRegistration  --ignore-files=submit_jobs.py
+#  - py.test Tools -v --doctest-modules
+#  - py.test ContinuousRegistration -v --doctest-modules --ignore=ContinuousRegistration/Source/submit_jobs.py
 #  - coverage run --source Tools -m py.test Tools -v --doctest-modules
 #  - coverage run --source ContinuousRegistration -m py.test ContinuousRegistration -v --doctest-modules --ignore=ContinuousRegistration/Source/submit_jobs.py
 #  - coverage report
