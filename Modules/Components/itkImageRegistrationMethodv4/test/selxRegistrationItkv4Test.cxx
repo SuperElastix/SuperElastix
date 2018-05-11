@@ -71,7 +71,7 @@ public:
     GDOptimizer4thPartyComponent,
     SSDMetric3rdPartyComponent,
     SSDMetric4thPartyComponent,
-    ItkDisplacementFieldSinkComponent< 3, double >,
+    ItkDisplacementFieldSinkComponent< 3, float >,
     ItkDisplacementFieldSinkComponent< 2, float >,
     ItkImageSinkComponent< 3, double >,
     ItkImageSinkComponent< 2, float >,
@@ -123,7 +123,7 @@ public:
   typedef itk::ImageFileReader< Image3DType > ImageReader3DType;
   typedef itk::ImageFileWriter< Image3DType > ImageWriter3DType;
 
-  typedef itk::Image< itk::Vector< double, 3 >, 3 >       DisplacementImage3DType;
+  typedef itk::Image< itk::Vector< float, 3 >, 3 >       DisplacementImage3DType;
   typedef itk::ImageFileWriter< DisplacementImage3DType > DisplacementImageWriter3DType;
 
   typedef itk::Transform<double, 3, 3> Transform3DNakedType;
@@ -211,14 +211,14 @@ TEST_F( RegistrationItkv4Test, DISABLED_3DImagesOnly )
   superElastixFilter->SetInput( "MovingImageSource", movingImageReader->GetOutput() );
   resultImageWriter->SetInput( superElastixFilter->GetOutput< Image3DType >( "ResultImageSink" ) );
 
-  EXPECT_NO_THROW( superElastixFilter->SetBlueprint( blueprint ) );
-  EXPECT_NO_THROW( superElastixFilter->SetLogger( logger ) );
+  superElastixFilter->SetBlueprint( blueprint );
+  superElastixFilter->SetLogger( logger );
 
   //Optional Update call
   //superElastixFilter->Update();
 
   // Update call on the writers triggers SuperElastix to configure and execute
-  EXPECT_NO_THROW( resultImageWriter->Update() );
+  resultImageWriter->Update();
 }
 
 // These test are disabled, since may not want to check each component with this much boilerplate code.
@@ -294,14 +294,14 @@ TEST_F( RegistrationItkv4Test, DISABLED_3DANTSCCMetric )
   superElastixFilter->SetInput( "MovingImageSource", movingImageReader->GetOutput() );
   resultImageWriter->SetInput( superElastixFilter->GetOutput< Image3DType >( "ResultImageSink" ) );
 
-  EXPECT_NO_THROW( superElastixFilter->SetBlueprint( blueprint ) );
-  EXPECT_NO_THROW( superElastixFilter->SetLogger( logger ) );
+  superElastixFilter->SetBlueprint( blueprint );
+  superElastixFilter->SetLogger( logger );
 
   //Optional Update call
   //superElastixFilter->Update();
 
   // Update call on the writers triggers SuperElastix to configure and execute
-  EXPECT_NO_THROW( resultImageWriter->Update() );
+  resultImageWriter->Update();
 }
 
 // These test are disabled, since may not want to check each component with this much boilerplate code.
@@ -377,14 +377,14 @@ TEST_F( RegistrationItkv4Test, DISABLED_3DMeanSquaresMetric )
   superElastixFilter->SetInput( "MovingImageSource", movingImageReader->GetOutput() );
   resultImageWriter->SetInput( superElastixFilter->GetOutput< Image3DType >( "ResultImageSink" ) );
 
-  EXPECT_NO_THROW( superElastixFilter->SetBlueprint( blueprint ) );
-  EXPECT_NO_THROW( superElastixFilter->SetLogger( logger ) );
+  superElastixFilter->SetBlueprint( blueprint );
+  superElastixFilter->SetLogger( logger );
 
   //Optional Update call
   //superElastixFilter->Update();
 
   // Update call on the writers triggers SuperElastix to configure and execute
-  EXPECT_NO_THROW( resultImageWriter->Update() );
+  resultImageWriter->Update();
 }
 
 TEST_F(RegistrationItkv4Test, FullyConfigured3d)
@@ -466,15 +466,15 @@ TEST_F(RegistrationItkv4Test, FullyConfigured3d)
   resultImageWriter->SetInput( superElastixFilter->GetOutput< Image3DType >( "ResultImageSink" ) );
   resultDisplacementWriter->SetInput( superElastixFilter->GetOutput< DisplacementImage3DType >( "ResultDisplacementFieldSink" ) );
 
-  EXPECT_NO_THROW( superElastixFilter->SetBlueprint( blueprint ) );
-  EXPECT_NO_THROW( superElastixFilter->SetLogger( logger ) );
+  superElastixFilter->SetBlueprint( blueprint );
+  superElastixFilter->SetLogger( logger );
 
   //Optional Update call
   //superElastixFilter->Update();
 
   // Update call on the writers triggers SuperElastix to configure and execute
-  EXPECT_NO_THROW( resultImageWriter->Update() );
-  EXPECT_NO_THROW( resultDisplacementWriter->Update() );
+  resultImageWriter->Update();
+  resultDisplacementWriter->Update();
 }
 TEST_F( RegistrationItkv4Test, FullyConfigured3dAffine )
 {
@@ -576,15 +576,15 @@ TEST_F( RegistrationItkv4Test, FullyConfigured3dAffine )
   resultImageWriter->SetInput( superElastixFilter->GetOutput< Image3DType >( "ResultImageSink" ) );
   resultDisplacementWriter->SetInput( superElastixFilter->GetOutput< DisplacementImage3DType >( "ResultDisplacementFieldSink" ) );
 
-  EXPECT_NO_THROW( superElastixFilter->SetBlueprint( blueprint ) );
-  EXPECT_NO_THROW( superElastixFilter->SetLogger( logger ) );
+  superElastixFilter->SetBlueprint( blueprint );
+  superElastixFilter->SetLogger( logger );
 
   //Optional Update call
   //superElastixFilter->Update();
 
   // Update call on the writers triggers SuperElastix to configure and execute
-  EXPECT_NO_THROW( resultImageWriter->Update() );
-  EXPECT_NO_THROW( resultDisplacementWriter->Update() );
+  resultImageWriter->Update();
+  resultDisplacementWriter->Update();
 }
 
 TEST_F( RegistrationItkv4Test, CompositeTransform )
@@ -663,14 +663,14 @@ TEST_F( RegistrationItkv4Test, CompositeTransform )
 
   resultImageWriter->SetInput( superElastixFilter->GetOutput< Image2DType >( "ResultImageSink" ) );
 
-  EXPECT_NO_THROW( superElastixFilter->SetBlueprint( blueprint ) );
-  EXPECT_NO_THROW( superElastixFilter->SetLogger( logger ) );
+  superElastixFilter->SetBlueprint( blueprint );
+  superElastixFilter->SetLogger( logger );
 
   //Optional Update call
   //superElastixFilter->Update();
 
   // Update call on the writers triggers SuperElastix to configure and execute
-  EXPECT_NO_THROW( resultImageWriter->Update() );
+  resultImageWriter->Update();
 }
 
 TEST_F(RegistrationItkv4Test, TransformSink)
@@ -762,20 +762,20 @@ TEST_F(RegistrationItkv4Test, TransformSink)
   resultDisplacementWriter->SetInput(superElastixFilter->GetOutput< DisplacementImage3DType >("ResultDisplacementFieldSink"));
   //Itk lacks a support to use transform objects in a itk-pipeline. We need to store the output placeholder (=smartpointer to empty decortator) here...
   auto decoratedTransform = superElastixFilter->GetOutput< Transform3DType >("TransformSink");
-  EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
-  EXPECT_NO_THROW(superElastixFilter->SetLogger(logger));
+  superElastixFilter->SetBlueprint(blueprint);
+  superElastixFilter->SetLogger(logger);
 
   //Optional Update call
   //superElastixFilter->Update();
 
   // Update call on the writers triggers SuperElastix to configure and execute
-  EXPECT_NO_THROW(resultImageWriter->Update());
-  EXPECT_NO_THROW(resultDisplacementWriter->Update());
+  resultImageWriter->Update();
+  resultDisplacementWriter->Update();
 
   
   // ... We can only get the output from the placeholder after execution of the filter
   transformWriter->SetInput(decoratedTransform->Get());
-  EXPECT_NO_THROW(transformWriter->Update());
+  transformWriter->Update();
 }
 TEST_F(RegistrationItkv4Test, TransformSource)
 {
@@ -852,13 +852,13 @@ TEST_F(RegistrationItkv4Test, TransformSource)
   resultImageWriter->SetInput(superElastixFilter->GetOutput< Image3DType >("ResultImageSink"));
   resultDisplacementWriter->SetInput(superElastixFilter->GetOutput< DisplacementImage3DType >("ResultDisplacementFieldSink"));
  
-  EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
+  superElastixFilter->SetBlueprint(blueprint);
 
   //Optional Update call
   //superElastixFilter->Update();
 
   // Update call on the writers triggers SuperElastix to configure and execute
-  EXPECT_NO_THROW(resultImageWriter->Update());
-  EXPECT_NO_THROW(resultDisplacementWriter->Update());
+  resultImageWriter->Update();
+  resultDisplacementWriter->Update();
 }
 } // namespace selx
