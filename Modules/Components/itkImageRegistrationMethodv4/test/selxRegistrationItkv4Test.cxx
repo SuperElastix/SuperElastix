@@ -71,7 +71,7 @@ public:
     GDOptimizer4thPartyComponent,
     SSDMetric3rdPartyComponent,
     SSDMetric4thPartyComponent,
-    ItkDisplacementFieldSinkComponent< 3, double >,
+    ItkDisplacementFieldSinkComponent< 3, float >,
     ItkDisplacementFieldSinkComponent< 2, float >,
     ItkImageSinkComponent< 3, double >,
     ItkImageSinkComponent< 2, float >,
@@ -123,7 +123,7 @@ public:
   typedef itk::ImageFileReader< Image3DType > ImageReader3DType;
   typedef itk::ImageFileWriter< Image3DType > ImageWriter3DType;
 
-  typedef itk::Image< itk::Vector< double, 3 >, 3 >       DisplacementImage3DType;
+  typedef itk::Image< itk::Vector< float, 3 >, 3 >       DisplacementImage3DType;
   typedef itk::ImageFileWriter< DisplacementImage3DType > DisplacementImageWriter3DType;
 
   typedef itk::Transform<double, 3, 3> Transform3DNakedType;
