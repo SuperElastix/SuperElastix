@@ -635,10 +635,14 @@ class HBIA(Dataset):
                         for i in range(2)
                     ]
 
+                    displace_field_names = \
+                        create_list_displacement_field_names(image_names, self.name)
+
                     file_names.append({
                         "image_file_names": image_names,
                         "mask_file_names": mask_names,
                         "ground_truth_file_names": point_set_names,
+                        "displacement_field_file_names": displace_field_names,
                     })
 
         self.file_names = take(sort_file_names(file_names),

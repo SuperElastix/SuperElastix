@@ -121,9 +121,31 @@ def load_pts(file_name):
     return np.loadtxt(file_name)
 
 
+def load_csv(path_file):
+    """ loading points from a CSV file as ndarray of floats
+
+    :param str path_file:
+    :return ndarray:
+
+    >>> content = " ,X,Y\\n1,226.4,173.5\\n2,278,182\\n3,256.7,171.2"
+    >>> _= open('sample_points.csv', 'w').write(content)
+    >>> load_csv('sample_points.csv')
+    array([[ 226.4,  173.5],
+           [ 278. ,  182. ],
+           [ 256.7,  171.2]])
+    >>> os.remove('sample_points.csv')
+    """
+    with open(path_file, 'r') as fp:
+        lines = fp.readlines()
+    points = [list(map(float, l.rstrip().split(',')[1:])) for l in lines[1:]]
+    return np.array(points)
+
+
 def load_point_set(file_name):
     if file_name.endswith(".vtk"):
         return load_vtk(file_name)
+    elif file_name.endswith(".csv"):
+        return load_csv(file_name)
     else:
         return load_pts(file_name)
 
