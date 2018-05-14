@@ -3,7 +3,7 @@ import logging
 import os
 import json
 
-from datasets import CUMC12, DIRLAB, EMPIRE, ISBR18, LPBA40, MGH10, POPI, SPREAD
+from ContinuousRegistration.Source.datasets import CUMC12, DIRLAB, EMPIRE, ISBR18, LPBA40, MGH10, POPI, SPREAD
 
 parser = argparse.ArgumentParser(description='Continuous Registration Challenge command line interface.')
 

@@ -36,10 +36,13 @@
 .DS_Store
 
 # IDEs
-.idea
+.idea/
 cmake-build-*
 .kdev4
 .vscode
+
+# Temporary structure
+temporary*/
 
 # Source
 Documentation/build
