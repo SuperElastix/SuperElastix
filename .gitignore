@@ -50,3 +50,6 @@ Documentation/build
 # SuperBench output
 TransformParameters.*
 registration_driver.log
+
+# Dropbox sync
+.dropbox.attr
