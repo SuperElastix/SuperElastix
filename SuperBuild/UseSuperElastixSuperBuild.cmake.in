@@ -1,23 +1,6 @@
-if( NOT ${USE_SYSTEM_ITK} )
-  set( ITK_DIR @ITK_DIR@ )
-endif()
-
-if( NOT ${USE_SYSTEM_BOOST} )
-  set( BOOST_ROOT @BOOST_ROOT@ )
-endif()
-
-if( NOT ${USE_SYSTEM_GTEST} )
-  set( GTEST_ROOT @GTEST_ROOT@ )
-endif()
-
-if( NOT ${USE_SYSTEM_ELASTIX} )
-  set( Elastix_DIR @Elastix_DIR@ )
-endif()
-
-if( NOT ${USE_SYSTEM_NIFTYREG} )
-  set( NIFTYREG_DIR @NIFTYREG_DIR@ )
-endif()
-
-if( NOT ${USE_SYSTEM_ATEN} )
-  set( ATEN_DIR @ATEN_DIR@ )
-endif()
+set( ITK_DIR @ITK_DIR@ )
+set( BOOST_ROOT @BOOST_ROOT@ )
+set( GTEST_ROOT @GTEST_ROOT@ )
+set( Elastix_DIR @Elastix_DIR@ )
+set( NIFTYREG_DIR @NIFTYREG_DIR@ )
+set( ATEN_DIR @ATEN_DIR@ )

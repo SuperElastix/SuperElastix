@@ -68,6 +68,9 @@ public:
 
   using Pointer = std::shared_ptr< UpdateInterface >;
   virtual void Update() = 0;
+
+  // This method is implemented in the SuperElastixComponent class and does not need to be implemented by each component individually.
+  virtual const typename std::string GetComponentName() = 0; 
 };
 
 } // end namespace selx

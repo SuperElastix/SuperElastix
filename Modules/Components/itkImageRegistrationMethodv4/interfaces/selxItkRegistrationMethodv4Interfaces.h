@@ -149,6 +149,7 @@ public:
 
   virtual typename TransformBaseType::Pointer GetItkTransform() = 0;
 
+  // This method is implemented in the SuperElastixComponent class and does not need to be implemented by each component individually.
   virtual const typename std::string GetComponentName() = 0;
 };
 
