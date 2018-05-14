@@ -104,6 +104,10 @@ private:
 
   typename TheItkFilterType::Pointer m_theItkFilter;
 
+  // The settings SmoothingSigmas and ShrinkFactors imply NumberOfLevels, if the user
+  // provides inconsistent numbers we should detect that and report about it.
+  std::string m_NumberOfLevelsLastSetBy;
+
 protected:
 
   // return the class name and the template arguments to uniquely identify this component.
