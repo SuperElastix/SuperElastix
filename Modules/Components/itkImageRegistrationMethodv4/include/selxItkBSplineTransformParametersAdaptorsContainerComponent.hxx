@@ -17,13 +17,13 @@
  *
  *=========================================================================*/
 
-#include "selxItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent.h"
+#include "selxItkBSplineTransformParametersAdaptorsContainerComponent.h"
 
 namespace selx
 {
 template< int Dimensionality, class TransformInternalComputationValueType >
-ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent< Dimensionality,
-TransformInternalComputationValueType >::ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent( const std::string & name,
+ItkBSplineTransformParametersAdaptorsContainerComponent< Dimensionality,
+TransformInternalComputationValueType >::ItkBSplineTransformParametersAdaptorsContainerComponent( const std::string & name,
   LoggerImpl & logger )
   : Superclass( name, logger )
 {
@@ -31,15 +31,15 @@ TransformInternalComputationValueType >::ItkGaussianExponentialDiffeomorphicTran
 
 
 template< int Dimensionality, class TransformInternalComputationValueType >
-ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent< Dimensionality,
-TransformInternalComputationValueType >::~ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent()
+ItkBSplineTransformParametersAdaptorsContainerComponent< Dimensionality,
+TransformInternalComputationValueType >::~ItkBSplineTransformParametersAdaptorsContainerComponent()
 {
 }
 
 
 template< int Dimensionality, class TransformInternalComputationValueType >
 int
-ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent< Dimensionality, TransformInternalComputationValueType >
+ItkBSplineTransformParametersAdaptorsContainerComponent< Dimensionality, TransformInternalComputationValueType >
 ::Accept( typename itkImageDomainFixedInterface< Dimensionality >::Pointer component )
 {
   auto fixedImageDomain = component->GetItkImageDomainFixed();
@@ -76,9 +76,9 @@ ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent
 
 
 template< int Dimensionality, class TransformInternalComputationValueType >
-typename ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent< Dimensionality,
+typename ItkBSplineTransformParametersAdaptorsContainerComponent< Dimensionality,
 TransformInternalComputationValueType >::TransformParametersAdaptorsContainerType
-ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent< Dimensionality, TransformInternalComputationValueType >
+ItkBSplineTransformParametersAdaptorsContainerComponent< Dimensionality, TransformInternalComputationValueType >
 ::GetItkTransformParametersAdaptorsContainer()
 {
   return this->m_adaptors;
@@ -87,7 +87,7 @@ ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent
 
 template< int Dimensionality, class TransformInternalComputationValueType >
 bool
-ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent< Dimensionality, TransformInternalComputationValueType >
+ItkBSplineTransformParametersAdaptorsContainerComponent< Dimensionality, TransformInternalComputationValueType >
 ::MeetsCriterion( const ComponentBase::CriterionType & criterion )
 {
   bool hasUndefinedCriteria( false );

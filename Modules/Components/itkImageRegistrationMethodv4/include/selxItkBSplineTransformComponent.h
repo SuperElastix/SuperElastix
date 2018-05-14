@@ -17,20 +17,20 @@
  *
  *=========================================================================*/
 
-#ifndef selxItkGaussianExponentialDiffeomorphicTransformComponent_h
-#define selxItkGaussianExponentialDiffeomorphicTransformComponent_h
+#ifndef selxItkBSplineTransformComponent_h
+#define selxItkBSplineTransformComponent_h
 
 #include "selxSuperElastixComponent.h"
 
 #include "selxItkRegistrationMethodv4Interfaces.h"
 #include "selxSinksAndSourcesInterfaces.h"
 
-#include "itkGaussianExponentialDiffeomorphicTransform.h"
+#include "itkBSplineTransform.h"
 
 namespace selx
 {
 template< class InternalComputationValueType, int Dimensionality >
-class ItkGaussianExponentialDiffeomorphicTransformComponent :
+class ItkBSplineTransformComponent :
   public SuperElastixComponent<
   Accepting< itkImageDomainFixedInterface< Dimensionality >>,
   Providing< itkTransformInterface< InternalComputationValueType, Dimensionality >>
@@ -39,7 +39,7 @@ class ItkGaussianExponentialDiffeomorphicTransformComponent :
 public:
 
   /** Standard ITK typedefs. */
-  typedef ItkGaussianExponentialDiffeomorphicTransformComponent<
+  typedef ItkBSplineTransformComponent<
     InternalComputationValueType, Dimensionality
     >                                       Self;
   typedef SuperElastixComponent<
@@ -49,16 +49,16 @@ public:
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
 
-  ItkGaussianExponentialDiffeomorphicTransformComponent( const std::string & name, LoggerImpl & logger );
-  virtual ~ItkGaussianExponentialDiffeomorphicTransformComponent();
+  ItkBSplineTransformComponent( const std::string & name, LoggerImpl & logger );
+  virtual ~ItkBSplineTransformComponent();
 
   /** Get types from interfaces */
   using TransformType      = typename itkTransformInterface< InternalComputationValueType, Dimensionality >::TransformType;
   using TransformPointer   = typename itkTransformInterface< InternalComputationValueType, Dimensionality >::TransformPointer;
   using ItkImageDomainType = typename itkImageDomainFixedInterface< Dimensionality >::ItkImageDomainType;
 
-  using GaussianExponentialDiffeomorphicTransformType
-      = typename itk::GaussianExponentialDiffeomorphicTransform< InternalComputationValueType, Dimensionality >;
+  using BSplineTransformType
+      = typename itk::BSplineTransform< InternalComputationValueType, Dimensionality >;
 
   //Accepting Interfaces:
   virtual int Accept( typename itkImageDomainFixedInterface< Dimensionality >::Pointer ) override;
@@ -69,12 +69,12 @@ public:
   //BaseClass methods
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
 
-  //static const char * GetName() { return "ItkGaussianExponentialDiffeomorphicTransform"; } ;
-  static const char * GetDescription() { return "ItkGaussianExponentialDiffeomorphicTransform Component"; }
+  //static const char * GetName() { return "ItkBSplineTransform"; } ;
+  static const char * GetDescription() { return "ItkBSplineTransform Component"; }
 
 private:
 
-  typename GaussianExponentialDiffeomorphicTransformType::Pointer m_Transform;
+  typename BSplineTransformType::Pointer m_Transform;
   typename ItkImageDomainType::Pointer m_FixedImageDomain;
 
 protected:
@@ -82,11 +82,11 @@ protected:
   // return the class name and the template arguments to uniquely identify this component.
   static inline const std::map< std::string, std::string > TemplateProperties()
   {
-    return { { keys::NameOfClass, "ItkGaussianExponentialDiffeomorphicTransformComponent" }, { keys::InternalComputationValueType, PodString< InternalComputationValueType >::Get() }, { keys::Dimensionality, std::to_string( Dimensionality ) } };
+    return { { keys::NameOfClass, "ItkBSplineTransformComponent" }, { keys::InternalComputationValueType, PodString< InternalComputationValueType >::Get() }, { keys::Dimensionality, std::to_string( Dimensionality ) } };
   }
 };
 } //end namespace selx
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "selxItkGaussianExponentialDiffeomorphicTransformComponent.hxx"
+#include "selxItkBSplineTransformComponent.hxx"
 #endif
-#endif // #define selxItkGaussianExponentialDiffeomorphicTransformComponent_h
+#endif // #define selxItkBSplineTransformComponent_h

@@ -17,8 +17,8 @@
  *
  *=========================================================================*/
 
-#ifndef selxItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent_h
-#define selxItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent_h
+#ifndef selxItkBSplineTransformParametersAdaptorsContainerComponent_h
+#define selxItkBSplineTransformParametersAdaptorsContainerComponent_h
 
 #include "selxSuperElastixComponent.h"
 
@@ -30,14 +30,14 @@
 #include "itkImageSource.h"
 #include "itkTransformToDisplacementFieldFilter.h"
 #include "itkComposeDisplacementFieldsImageFilter.h"
-#include "itkGaussianExponentialDiffeomorphicTransform.h"
-#include "itkGaussianExponentialDiffeomorphicTransformParametersAdaptor.h"
+#include "itkBSplineTransform.h"
+#include "itkBSplineTransformParametersAdaptor.h"
 #include "itkArray.h"
 
 namespace selx
 {
 template< int Dimensionality, class TransformInternalComputationValueType >
-class ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent :
+class ItkBSplineTransformParametersAdaptorsContainerComponent :
   public SuperElastixComponent<
   Accepting< itkImageDomainFixedInterface< Dimensionality >>,
   Providing< itkTransformParametersAdaptorsContainerInterface< TransformInternalComputationValueType, Dimensionality >
@@ -47,7 +47,7 @@ class ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerCom
 public:
 
   /** Standard ITK typedefs. */
-  typedef ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent<
+  typedef ItkBSplineTransformParametersAdaptorsContainerComponent<
     Dimensionality, TransformInternalComputationValueType
     >                                       Self;
   typedef SuperElastixComponent<
@@ -58,8 +58,8 @@ public:
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
 
-  ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent( const std::string & name, LoggerImpl & logger );
-  virtual ~ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent();
+  ItkBSplineTransformParametersAdaptorsContainerComponent( const std::string & name, LoggerImpl & logger );
+  virtual ~ItkBSplineTransformParametersAdaptorsContainerComponent();
 
   // Get the type definitions from the interfaces
   typedef typename itkImageDomainFixedInterface< Dimensionality >::ItkImageDomainType FixedImageDomainType;
@@ -70,9 +70,9 @@ public:
       = typename itkTransformParametersAdaptorsContainerInterfaceType::TransformParametersAdaptorsContainerType;
 
   // Since the itkTransformParametersAdaptorsContainerInterface is only defined by BaseType Adaptors and Transforms, we cannot use the ItkTransformParametersAdaptorsContainerInterfaceType::TransformParametersAdaptorBaseType;
-  // Specific to this componenent is the full definition of TransformParametersAdaptorType being GaussianExponentialDiffeomorphic
+  // Specific to this componenent is the full definition of TransformParametersAdaptorType being BSpline
   using TransformParametersAdaptorType
-      = itk::GaussianExponentialDiffeomorphicTransformParametersAdaptor< itk::GaussianExponentialDiffeomorphicTransform<
+      = itk::BSplineTransformParametersAdaptor< itk::BSplineTransform<
     TransformInternalComputationValueType, Dimensionality >>;
 
   typedef itk::Array< itk::SizeValueType >                    ShrinkFactorsArrayType;
@@ -87,7 +87,7 @@ public:
   //BaseClass methods
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
 
-  static const char * GetDescription() { return "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainer Component"; }
+  static const char * GetDescription() { return "ItkBSplineTransformParametersAdaptorsContainer Component"; }
 
 private:
 
@@ -105,11 +105,11 @@ protected:
 
   static inline const std::map< std::string, std::string > TemplateProperties()
   {
-    return { { keys::NameOfClass, "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent" }, { keys::InternalComputationValueType, PodString< TransformInternalComputationValueType >::Get() }, { keys::Dimensionality, std::to_string( Dimensionality ) } };
+    return { { keys::NameOfClass, "ItkBSplineTransformParametersAdaptorsContainerComponent" }, { keys::InternalComputationValueType, PodString< TransformInternalComputationValueType >::Get() }, { keys::Dimensionality, std::to_string( Dimensionality ) } };
   }
 };
 } //end namespace selx
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "selxItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent.hxx"
+#include "selxItkBSplineTransformParametersAdaptorsContainerComponent.hxx"
 #endif
 #endif // #define GDOptimizer3rdPartyComponent_h

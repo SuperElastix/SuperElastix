@@ -17,17 +17,17 @@
  *
  *=========================================================================*/
 
-#include "selxItkGaussianExponentialDiffeomorphicTransformComponent.h"
+#include "selxItkBSplineTransformComponent.h"
 
 namespace selx
 {
 template< class InternalComputationValueType, int Dimensionality >
-ItkGaussianExponentialDiffeomorphicTransformComponent< InternalComputationValueType,
-Dimensionality >::ItkGaussianExponentialDiffeomorphicTransformComponent( const std::string & name, LoggerImpl & logger ) : Superclass(
+ItkBSplineTransformComponent< InternalComputationValueType,
+Dimensionality >::ItkBSplineTransformComponent( const std::string & name, LoggerImpl & logger ) : Superclass(
     name,
     logger )
 {
-  m_Transform = GaussianExponentialDiffeomorphicTransformType::New();
+  m_Transform = BSplineTransformType::New();
 
   //TODO: instantiating the filter in the constructor might be heavy for the use in component selector factory, since all components of the database are created during the selection process.
   // we could choose to keep the component light weighted (for checking criteria such as names and connections) until the settings are passed to the filter, but this requires an additional initialization step.
@@ -35,22 +35,22 @@ Dimensionality >::ItkGaussianExponentialDiffeomorphicTransformComponent( const s
 
 
 template< class InternalComputationValueType, int Dimensionality >
-ItkGaussianExponentialDiffeomorphicTransformComponent< InternalComputationValueType,
-Dimensionality >::~ItkGaussianExponentialDiffeomorphicTransformComponent()
+ItkBSplineTransformComponent< InternalComputationValueType,
+Dimensionality >::~ItkBSplineTransformComponent()
 {
 }
 
 
 template< class InternalComputationValueType, int Dimensionality >
 int
-ItkGaussianExponentialDiffeomorphicTransformComponent< InternalComputationValueType, Dimensionality >
+ItkBSplineTransformComponent< InternalComputationValueType, Dimensionality >
 ::Accept( typename itkImageDomainFixedInterface< Dimensionality >::Pointer component )
 {
   this->m_FixedImageDomain = component->GetItkImageDomainFixed();
 
-  auto displacementField = GaussianExponentialDiffeomorphicTransformType::DisplacementFieldType::New();
-  //auto zeroVector = itk::NumericTraits<GaussianExponentialDiffeomorphicTransformType::DisplacementFieldType::PixelType>::Zero();
-  auto zeroVector = typename GaussianExponentialDiffeomorphicTransformType::DisplacementFieldType::PixelType( 0.0 );
+  auto displacementField = BSplineTransformType::DisplacementFieldType::New();
+  //auto zeroVector = itk::NumericTraits<BSplineTransformType::DisplacementFieldType::PixelType>::Zero();
+  auto zeroVector = typename BSplineTransformType::DisplacementFieldType::PixelType( 0.0 );
 
   displacementField->CopyInformation( this->m_FixedImageDomain );
   displacementField->SetRegions( this->m_FixedImageDomain->GetBufferedRegion() );
@@ -68,15 +68,15 @@ ItkGaussianExponentialDiffeomorphicTransformComponent< InternalComputationValueT
 
 
 template< class InternalComputationValueType, int Dimensionality >
-typename ItkGaussianExponentialDiffeomorphicTransformComponent< InternalComputationValueType, Dimensionality >::TransformPointer
-ItkGaussianExponentialDiffeomorphicTransformComponent< InternalComputationValueType, Dimensionality >::GetItkTransform()
+typename ItkBSplineTransformComponent< InternalComputationValueType, Dimensionality >::TransformPointer
+ItkBSplineTransformComponent< InternalComputationValueType, Dimensionality >::GetItkTransform()
 {
   return (TransformPointer)this->m_Transform;
 }
 
 template< class InternalComputationValueType, int Dimensionality >
 bool
-ItkGaussianExponentialDiffeomorphicTransformComponent< InternalComputationValueType, Dimensionality >
+ItkBSplineTransformComponent< InternalComputationValueType, Dimensionality >
 ::MeetsCriterion( const ComponentBase::CriterionType & criterion )
 {
   bool hasUndefinedCriteria( false );
