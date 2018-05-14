@@ -63,10 +63,6 @@ ItkBSplineTransformParametersAdaptorsContainerComponent< Dimensionality, Transfo
     shrinkFilter->UpdateOutputInformation();
 
     typename TransformParametersAdaptorType::Pointer transformAdaptor = TransformParametersAdaptorType::New();
-    transformAdaptor->SetRequiredSpacing( shrinkFilter->GetOutput()->GetSpacing() );
-    transformAdaptor->SetRequiredSize( shrinkFilter->GetOutput()->GetLargestPossibleRegion().GetSize() );
-    transformAdaptor->SetRequiredDirection( shrinkFilter->GetOutput()->GetDirection() );
-    transformAdaptor->SetRequiredOrigin( shrinkFilter->GetOutput()->GetOrigin() );
 
     m_adaptors.push_back( transformAdaptor.GetPointer() ); // Implicit cast back to TransformParametersAdaptorBase<itk::Transform<...>>
   }

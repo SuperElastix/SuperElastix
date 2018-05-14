@@ -48,21 +48,6 @@ ItkBSplineTransformComponent< InternalComputationValueType, Dimensionality >
 {
   this->m_FixedImageDomain = component->GetItkImageDomainFixed();
 
-  auto displacementField = BSplineTransformType::DisplacementFieldType::New();
-  //auto zeroVector = itk::NumericTraits<BSplineTransformType::DisplacementFieldType::PixelType>::Zero();
-  auto zeroVector = typename BSplineTransformType::DisplacementFieldType::PixelType( 0.0 );
-
-  displacementField->CopyInformation( this->m_FixedImageDomain );
-  displacementField->SetRegions( this->m_FixedImageDomain->GetBufferedRegion() );
-  displacementField->Allocate();
-  displacementField->FillBuffer( zeroVector );
-
-  m_Transform->SetGaussianSmoothingVarianceForTheUpdateField( 3.0 );
-  m_Transform->SetGaussianSmoothingVarianceForTheConstantVelocityField( 6.0 );
-  m_Transform->SetConstantVelocityField( displacementField );
-  m_Transform->SetCalculateNumberOfIntegrationStepsAutomatically( true );
-  m_Transform->IntegrateVelocityField();
-
   return 0;
 }
 
