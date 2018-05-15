@@ -293,6 +293,7 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
   bool hasUndefinedCriteria( false );
   bool meetsCriteria( false );
 
+  // First check if user-provided properties are template properties and if this component was instantiated with those template properties.
   auto status = CheckTemplateProperties( this->TemplateProperties(), criterion );
   if( status == CriterionStatus::Satisfied )
   {
@@ -302,6 +303,8 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
   {
     return false;
   } // else: CriterionStatus::Unknown
+
+  // Next else-if blocks check if the name of setting is an existing property for this component, otherwise MeetsCriterion returns CriterionStatus::Failed.
   else if( criterion.first == "NumberOfLevels" ) //Supports this?
   {
     meetsCriteria = true;

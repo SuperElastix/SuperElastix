@@ -157,8 +157,9 @@ TEST_F(SyNRegistrationItkv4Test, FullyConfigured3d)
 
   // Components
   blueprint->SetComponent("RegistrationMethod", { { "NameOfClass", { "ItkSyNImageRegistrationMethodComponent" } },
-  { "Dimensionality", { "3" } } } );
- blueprint->SetComponent("FixedImageSource", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "Dimensionality", { "3" } } });
+  { "Dimensionality", { "3" } }, {"ShrinkFactorsPerLevel", { "4", "2", "1" }}, { "SmoothingSigmasPerLevel", { "4", "2", "1" } } });
+ 
+  blueprint->SetComponent("FixedImageSource", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "Dimensionality", { "3" } } });
 
   blueprint->SetComponent("MovingImageSource", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "Dimensionality", { "3" } } });
 
