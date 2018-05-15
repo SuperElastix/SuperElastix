@@ -160,6 +160,7 @@ def warp_point_set(superelastix, point_set_file_name, displacement_field_file_na
                                           '--loglevel', 'trace',
                                           '--logfile', os.path.splitext(output_point_set_file_name)[0] + '.log'])
     except:
+        # FIXME: no such file is created
         raise Exception('\nFailed to warp %s. See %s' %
                         (point_set_file_name, os.path.splitext(output_point_set_file_name)[0] + '.log'))
 

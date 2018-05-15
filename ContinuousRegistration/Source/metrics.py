@@ -1,7 +1,8 @@
 import logging
-import SimpleITK as sitk, numpy as np
-from util import load_point_set, load_vtk
-from util import warp_label_image, warp_point_set
+import numpy as np
+import SimpleITK as sitk
+from ContinuousRegistration.Source.util import load_point_set, load_vtk
+from ContinuousRegistration.Source.util import warp_label_image, warp_point_set
 
 labelOverlapMeasurer = sitk.LabelOverlapMeasuresImageFilter()
 labelOverlapMeasurer.SetGlobalDefaultCoordinateTolerance(1)

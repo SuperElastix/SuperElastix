@@ -33,14 +33,14 @@ def main() :
                     cppmatches.append(os.path.join( root, filename ))
                     found = True
                     break
-            if found==False:
+            if not found:
                 for pattern in cmakepatterns:
                     if fnmatch.fnmatch(filename,pattern):
                         print("[cmake] " + filename)
                         cmakematches.append(os.path.join( root, filename ))                  
                         found = True
                         break
-            if found==False:
+            if not found:
                 print("[skip] " + filename)
                 skipped.append(os.path.join( root, filename ))
 
@@ -65,7 +65,7 @@ def main() :
                     overwritefile.writelines(noticelines)
                     overwritefile.writelines(matchlines)
 
-    with  open( "CmakeCopyrightNotice_Apache.txt" ) as noticefile:
+    with open( "CmakeCopyrightNotice_Apache.txt" ) as noticefile:
         noticelines = noticefile.readlines()
 
         for filename in cmakematches:
@@ -80,7 +80,7 @@ def main() :
                     manualcheckfiles.append(filename)
                     skip = True                    
                     #print("[copyright] " + filename)
-            if skip==False:
+            if not skip:
                 with open( filename, 'w') as overwritefile:
                     overwritefile.writelines(noticelines)
                     overwritefile.writelines(matchlines)
@@ -90,5 +90,7 @@ def main() :
     return 0
 
 #-------------------------------------------------------------------------------
+
+
 if __name__ == '__main__':
     main()
