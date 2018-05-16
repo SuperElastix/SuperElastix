@@ -22,7 +22,7 @@
     },
     "Component": {
         "Name": "ResultDisplacementField",
-        "NameOfClass": "DisplacementFieldItkImageFilterSinkComponent",
+        "NameOfClass": "ItkDisplacementFieldSinkComponent",
         "PixelType": "float",
         "Dimensionality": "3"
     },

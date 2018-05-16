@@ -26,7 +26,7 @@
     },
     "Component": {
         "Name": "ResultDisplacementField",
-        "NameOfClass": "DisplacementFieldItkImageFilterSinkComponent",
+        "NameOfClass": "ItkDisplacementFieldSinkComponent",
         "Dimensionality": "2",
 		"PixelType": "float"
     },
@@ -86,7 +86,7 @@
     "Connection": {
         "Out": "TransformDisplacementFilter",
         "In": "ResultDisplacementField",
-        "NameOfInterface": "DisplacementFieldItkImageSourceInterface"
+        "NameOfInterface": "itkDisplacementFieldInterface"
     },
     "Connection": {
         "Out": "Metric",
