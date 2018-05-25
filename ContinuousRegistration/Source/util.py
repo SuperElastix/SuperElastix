@@ -4,6 +4,7 @@ from datetime import datetime
 import SimpleITK as sitk
 import numpy as np
 
+
 def take(iterable, n):
     "Return first n items of the iterable as a list"
     return list(islice(iterable, n))
@@ -17,12 +18,21 @@ def sort_file_names(file_names):
 # when measuring overlap. Here, we copy information from the image to the label. We write in mhd
 # format so we can inspect the header with a simple text editor
 copy_information_from_images_to_labels_ext = '.mhd'
-def copy_information_from_images_to_labels(image_file_names, label_file_names, displacement_field_file_names, output_directory, mhd_pixel_type):
+
+
+def copy_information_from_images_to_labels(image_file_names, label_file_names,
+                                           displacement_field_file_names,
+                                           output_directory, mhd_pixel_type):
         new_label_file_names = []
-        for image_file_name, label_file_name, displacement_field_file_name in zip(image_file_names, label_file_names, displacement_field_file_names):
+        for image_file_name, label_file_name, displacement_field_file_name \
+                in zip(image_file_names, label_file_names, displacement_field_file_names):
             label_file_name_we, label_file_name_ext = os.path.splitext(label_file_name)
-            dataset_output_directory = os.path.join(output_directory, 'tmp', 'labels_with_world_info', os.path.dirname(displacement_field_file_name))
-            output_file_name = os.path.join(dataset_output_directory, os.path.basename(label_file_name_we) + '_label_with_world_info' + copy_information_from_images_to_labels_ext)
+            dataset_output_directory = os.path.join(output_directory, 'tmp', 'labels_with_world_info',
+                                                    os.path.dirname(displacement_field_file_name))
+            output_file_name = os.path.join(dataset_output_directory,
+                                            os.path.basename(label_file_name_we)
+                                            + '_label_with_world_info'
+                                            + copy_information_from_images_to_labels_ext)
 
             if not os.path.isdir(dataset_output_directory):
                 os.makedirs(dataset_output_directory)
@@ -40,15 +50,20 @@ def copy_information_from_images_to_labels(image_file_names, label_file_names, d
 
             new_label_file_names.append(output_file_name)
 
-
         return tuple(new_label_file_names)
 
+
 mask_ext = '.nii.gz'
-def create_mask_by_thresholding(label_file_names, displacement_field_file_names, output_directory, threshold, dilate, erode):
+
+
+def create_mask_by_thresholding(label_file_names, displacement_field_file_names,
+                                output_directory, threshold, dilate, erode):
     mask_file_names = []
-    for label_file_name, displacement_field_file_name in zip(label_file_names, displacement_field_file_names):
+    for label_file_name, displacement_field_file_name \
+            in zip(label_file_names, displacement_field_file_names):
         label_file_name_we, label_file_name_ext = os.path.splitext(label_file_name)
-        dataset_output_directory = os.path.join(output_directory, 'tmp', 'masks', os.path.dirname(displacement_field_file_name))
+        dataset_output_directory = os.path.join(output_directory, 'tmp', 'masks',
+                                                os.path.dirname(displacement_field_file_name))
         output_file_name = os.path.join(dataset_output_directory, os.path.basename(
             label_file_name_we) + '_mask' + mask_ext)
 
@@ -68,8 +83,8 @@ def create_mask_by_thresholding(label_file_names, displacement_field_file_names,
 
         mask_file_names.append(output_file_name)
 
-
     return tuple(mask_file_names)
+
 
 def create_mask_by_size(image_file_name, mask_file_name):
     mask_directory = os.path.dirname(mask_file_name)
@@ -93,20 +108,47 @@ def create_mask_by_size(image_file_name, mask_file_name):
 
     return mask_file_name
 
+
 def merge_dicts(*dicts):
     return { key: value for dict in dicts for key, value in dict.items() }
+
 
 def load_vtk(file_name):
     return np.loadtxt(file_name, skiprows=5)
 
+
 def load_pts(file_name):
     return np.loadtxt(file_name)
+
+
+def load_csv(path_file):
+    """ loading points from a CSV file as ndarray of floats
+
+    :param str path_file:
+    :return ndarray:
+
+    >>> content = " ,X,Y\\n1,226.4,173.5\\n2,278,182\\n3,256.7,171.2"
+    >>> _= open('sample_points.csv', 'w').write(content)
+    >>> load_csv('sample_points.csv')
+    array([[ 226.4,  173.5],
+           [ 278. ,  182. ],
+           [ 256.7,  171.2]])
+    >>> os.remove('sample_points.csv')
+    """
+    with open(path_file, 'r') as fp:
+        lines = fp.readlines()
+    points = [list(map(float, l.rstrip().split(',')[1:])) for l in lines[1:]]
+    return np.array(points)
+
 
 def load_point_set(file_name):
     if file_name.endswith(".vtk"):
         return load_vtk(file_name)
+    elif file_name.endswith(".csv"):
+        return load_csv(file_name)
     else:
         return load_pts(file_name)
+
 
 def txt2vtk(point_set_file_name, displacement_field_file_name):
     # Avoid name clash by appending time in microseconds. This also makes the outputted files sortable
@@ -152,18 +194,18 @@ def warp_point_set(superelastix, point_set_file_name, displacement_field_file_na
         point_set_file_name = txt2vtk(point_set_file_name, displacement_field_file_name)
 
     try:
-        stdout = subprocess.check_output([superelastix,
-                                          '--conf', os.path.join(get_script_path(), 'warp_point_set.json'),
-                                          '--in', 'InputPointSet=%s' % point_set_file_name,
-                                          'DisplacementField=%s' % displacement_field_file_name,
-                                          '--out', 'OutputPointSet=%s' % output_point_set_file_name,
-                                          '--loglevel', 'trace',
-                                          '--logfile', os.path.splitext(output_point_set_file_name)[0] + '.log'])
+        stdout = subprocess.check_output([
+            superelastix,
+            '--conf', os.path.join(get_script_path(), 'warp_point_set.json'),
+            '--in', 'InputPointSet=%s' % point_set_file_name,
+            'DisplacementField=%s' % displacement_field_file_name,
+            '--out', 'OutputPointSet=%s' % output_point_set_file_name,
+            '--loglevel', 'trace',
+            '--logfile', os.path.splitext(output_point_set_file_name)[0] + '.log'])
     except:
         # FIXME: no such file is created
         raise Exception('\nFailed to warp %s. See %s' %
                         (point_set_file_name, os.path.splitext(output_point_set_file_name)[0] + '.log'))
-
 
     return output_point_set_file_name
 

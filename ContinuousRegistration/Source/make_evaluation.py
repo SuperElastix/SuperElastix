@@ -31,7 +31,9 @@ def run(parameters):
             blueprint = json.load(open(blueprint_file_name))
             for dataset_name in blueprint['Datasets']:
                 if not dataset_name in datasets:
-                    logging.error('Dataset ' + dataset_name + ' requested by blueprint ' + blueprint_file_name + ' but no data directory provided. Skipping dataset.')
+                    logging.error('Dataset "%s" requested by blueprint "%s" '
+                                  'but no data directory provided. Skipping dataset.',
+                                  dataset_name, blueprint_file_name)
                     continue
 
                 dataset = datasets[dataset_name]
