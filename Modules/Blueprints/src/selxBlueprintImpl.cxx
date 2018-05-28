@@ -402,7 +402,8 @@ BlueprintImpl
     }
   }
 
-  
+  // Something went wrong, we should not end up here
+  return false;
 }
 
 BlueprintImpl::ComponentNamesType
