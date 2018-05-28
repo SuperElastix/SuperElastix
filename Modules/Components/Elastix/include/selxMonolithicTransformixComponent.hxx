@@ -28,15 +28,13 @@ MonolithicTransformixComponent< Dimensionality, TPixel >::MonolithicTransformixC
   LoggerImpl & logger ) : Superclass( name, logger )
 {
   m_transformixFilter = TransformixFilterType::New();
-
-  m_transformixFilter->ComputeDeformationFieldOn();
   m_transformixFilter->LogToConsoleOn();
   m_transformixFilter->LogToFileOff();
   m_transformixFilter->SetOutputDirectory( "." );
 
   //TODO m_elastixFilter returns a nullptr GetTransformParameterObject instead of a valid object. However, we need this object to satisfy the input conditions of m_transformixFilter
   elxParameterObjectPointer trxParameterObject = elxParameterObjectType::New();
-  //typename elxParameterObjectType::ParameterMapType defaultParameters = elxParameterObject->Get ParameterMap("rigid");
+  //typename elxParameterObjectType::ParameterMapType defaultParameters = elxParameterObject->GetParameterMap("rigid");
   //elxParameterObject->SetParameterMap(defaultParameters);
   //m_transformixFilter->SetTransformParameterObject(m_elastixFilter->GetTransformParameterObject());
   m_transformixFilter->SetTransformParameterObject( trxParameterObject ); // supply a dummy object
@@ -140,6 +138,7 @@ template< int Dimensionality, class TPixel >
 typename MonolithicTransformixComponent< Dimensionality, TPixel >::ResultImageType::Pointer
 MonolithicTransformixComponent< Dimensionality, TPixel >::GetItkImage()
 {
+  this->m_transformixFilter->ComputeDeformationFieldOff();
   return this->m_transformixFilter->GetOutput();
 }
 
