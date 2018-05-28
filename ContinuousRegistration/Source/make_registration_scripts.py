@@ -3,15 +3,20 @@ import logging
 import os
 import json
 
-from ContinuousRegistration.Source.datasets import CUMC12, DIRLAB, EMPIRE, ISBR18, LPBA40, MGH10, POPI, SPREAD
+from ContinuousRegistration.Source.datasets import CUMC12, DIRLAB, EMPIRE, ISBR18, LPBA40, MGH10, POPI, SPREAD, HBIA
 
 parser = argparse.ArgumentParser(description='Continuous Registration Challenge command line interface.')
 
-parser.add_argument('--superelastix', '-selx', required=True, help="Path to SuperElastix executable.")
-parser.add_argument('--submissions-directory', '-sd', required=True, help='Directory with parameter files.')
-parser.add_argument('--output-directory', '-od', required=True, help="Directory where results will be saved.")
-parser.add_argument('--make-shell-scripts', '-mss', type=bool, default=True, help="Generate shell scripts (default: True).")
-parser.add_argument('--make-batch-scripts', '-mbs', type=bool, default=False, help="Generate shell scripts (default: False).")
+parser.add_argument('--superelastix', '-selx', required=True,
+                    help="Path to SuperElastix executable.")
+parser.add_argument('--submissions-directory', '-sd', required=True,
+                    help='Directory with parameter files.')
+parser.add_argument('--output-directory', '-od', required=True,
+                    help="Directory where results will be saved.")
+parser.add_argument('--make-shell-scripts', '-mss', type=bool, default=True,
+                    help="Generate shell scripts (default: True).")
+parser.add_argument('--make-batch-scripts', '-mbs', type=bool, default=False,
+                    help="Generate shell scripts (default: False).")
 
 parser.add_argument('--cumc12-input-directory', '-cid')
 parser.add_argument('--dirlab-input-directory', '-did')
@@ -23,23 +28,30 @@ parser.add_argument('--spread-input-directory', '-sid')
 parser.add_argument('--popi-input-directory', '-pid')
 parser.add_argument('--popi-mask-directory', '-pmd', default=None)
 parser.add_argument('--mgh10-input-directory', '-mid')
+parser.add_argument('--hbia-input-directory', '-hid')
 
-parser.add_argument('--team-name', '-tn', help="If specified, only generated shell scripts for this team.")
-parser.add_argument('--blueprint-file-name', '-bfn', help="If specified, only generated shell scripts for this blueprint.")
+parser.add_argument('--team-name', '-tn',
+                    help="If specified, only generated shell scripts for this team.")
+parser.add_argument('--blueprint-file-name', '-bfn',
+                    help="If specified, only generated shell scripts for this blueprint.")
 
 parser.add_argument('--max-number-of-registrations-per-dataset', '-mnorpd', type=int, default=64)
 
 logging.basicConfig(level=logging.INFO)
 
+
 def load_submissions(parameters):
     logging.info('Loading blueprints.')
 
     submissions = dict()
-    team_names = [team_name for team_name in os.listdir(parameters.submissions_directory) if os.path.isdir(os.path.join(parameters.submissions_directory, team_name))]
+    team_names = [team_name for team_name in os.listdir(parameters.submissions_directory)
+                  if os.path.isdir(os.path.join(parameters.submissions_directory, team_name))]
     for team_name in team_names:
-        submissions[team_name] = [os.path.join(parameters.submissions_directory, team_name, blueprint_file_name)
-                                  for blueprint_file_name in os.listdir(os.path.join(parameters.submissions_directory, team_name))
-                                  if blueprint_file_name.endswith('.json') or blueprint_file_name.endswith('.xml')]
+        submissions[team_name] = [
+            os.path.join(parameters.submissions_directory, team_name, blueprint_name)
+            for blueprint_name in os.listdir(os.path.join(parameters.submissions_directory, team_name))
+            if blueprint_name.endswith('.json') or blueprint_name.endswith('.xml')
+        ]
 
     return submissions
 
@@ -104,6 +116,14 @@ def load_datasets(parameters):
                         parameters.max_number_of_registrations_per_dataset)
         datasets[spread.name] = spread
 
+    if parameters.hbia_input_directory is not None:
+        logging.info('Loading HistoBIA.')
+        hbia = HBIA(parameters.hbia_input_directory,
+                    parameters.output_directory,
+                    parameters.max_number_of_registrations_per_dataset,
+                    scale=10)
+        datasets[hbia.name] = hbia
+
     return datasets
 
 
@@ -142,36 +162,50 @@ def run(parameters):
 
             for dataset_name in blueprint['Datasets']:
                 if not dataset_name in datasets:
-                    logging.error('Dataset ' + dataset_name + ' requested by ' + blueprint_name + ' but no directory provided. Skipping dataset for this blueprint. See \'--help\' for usage.')
+                    logging.error('Dataset "%s" requested by "%s" but no directory provided. '
+                                  'Skipping dataset for this blueprint. See \'--help\' for usage.',
+                                  dataset_name, blueprint_name)
                     continue
 
                 dataset = datasets[dataset_name]
 
-                logging.info('Generating registration scripts for the %s blueprint and %s dataset.' % (blueprint_name, dataset_name))
+                logging.info('Generating registration scripts for the %s blueprint and %s dataset.',
+                             blueprint_name, dataset_name)
                 for file_names in dataset.generator():
-                    logging.info('Generating registration script for image pair %s.', file_names['image_file_names'])
-                    blueprint_output_directory = os.path.join(parameters.output_directory, team_name, blueprint_name, os.path.dirname(file_names['displacement_field_file_names'][0]))
+                    logging.info('Generating registration script for image pair %s.',
+                                 file_names['image_file_names'])
+                    dir_name = os.path.dirname(file_names['displacement_field_file_names'][0])
+                    blueprint_output_directory = os.path.join(parameters.output_directory,
+                                                              team_name, blueprint_name,
+                                                              dir_name)
 
                     if not os.path.exists(blueprint_output_directory):
                         os.makedirs(blueprint_output_directory)
 
-                    output_directory = os.path.join(parameters.output_directory, team_name, blueprint_name)
+                    output_directory = os.path.join(parameters.output_directory,
+                                                    team_name, blueprint_name)
 
                     if parameters.make_shell_scripts:
-                        dataset.make_shell_scripts(parameters.superelastix, blueprint_file_name, file_names, output_directory)
+                        dataset.make_shell_scripts(parameters.superelastix,
+                                                   blueprint_file_name, file_names,
+                                                   output_directory)
 
                     if parameters.make_batch_scripts:
-                        dataset.make_batch_scripts(parameters.superelastix, blueprint_file_name, file_names, output_directory)
+                        dataset.make_batch_scripts(parameters.superelastix,
+                                                   blueprint_file_name,
+                                                   file_names, output_directory)
 
 
 if __name__ == '__main__':
     parameters = parser.parse_args()
 
     if not os.path.isfile(parameters.superelastix):
-        raise Exception('Could not find SuperElastix ' + parameters.superelastix + ".")
+        raise Exception('Could not find SuperElastix '
+                        + parameters.superelastix + ".")
 
     if not os.path.exists(parameters.submissions_directory):
-        raise Exception('Could not find submission directory ' + parameters.submissions_directory + ".")
+        raise Exception('Could not find submission directory '
+                        + parameters.submissions_directory + ".")
 
     if not os.path.exists(parameters.output_directory):
         os.mkdir(parameters.output_directory)

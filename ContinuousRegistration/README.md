@@ -6,20 +6,24 @@ Open a pull request that creates a directory under `Submissions` which contains 
 
 # How to run registrations
 `make_registration_scripts.py` in `Source` generate shell scripts or batch scripts for running the registrations. Each script will register one pair of images. The following command will generate shell scripts for all submissions for POPI, DIRLAB, and EMPIRE data sets:
-
-   $ python make_registration_scripts.py
-      --superelastix /path/to/superelastix/build/tree/SuperElastix-build/bin/superelastix
-      --submissions-directory /path/to/superelastix/source/tree/ContinuousRegistration/Submissions
-      --output-directory /tmp
-      --popi-input-directory /path/to/POPI
-      --dirlab-input-directory /path/to/DIRLAB
-      --empire-input-directory /path/to/EMPIRE
-      --lpba40-input-directory /path/to/LPBA40
-      --isbr18-input-directory /path/to/ISBR18
-      --cumc12-input-directory /path/to/CUMC12
+```bash
+python make_registration_scripts.py \
+      --superelastix /path/to/superelastix/build/tree/SuperElastix-build/bin/superelastix \
+      --submissions-directory /path/to/superelastix/source/tree/ContinuousRegistration \/Submissions
+      --output-directory /tmp \
+      --popi-input-directory /path/to/POPI \
+      --dirlab-input-directory /path/to/DIRLAB \
+      --empire-input-directory /path/to/EMPIRE \
+      --lpba40-input-directory /path/to/LPBA40 \
+      --isbr18-input-directory /path/to/ISBR18 \
+      --cumc12-input-directory /path/to/CUMC12 \
+      --hbia-input-directory /path/to/HistoBIA
+```
 
 This generates shell scripts to running the registrations, one for each registration. For example, on Linux you can navigate to the output directory and run
-    $ find . -name "*.sh" -exec chmod +x "{}" \;
-    $ find . -name "*.sh" -exec "{}" \;
+```bash
+find . -name "*.sh" -exec chmod +x "{}" \;
+find . -name "*.sh" -exec "{}" \;
+```
 
 to recursively find scripts, make them executable, and run them.
