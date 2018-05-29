@@ -24,7 +24,7 @@
 
 <Component>
     <Name>ResultDisplacementField</Name>
-	<NameOfClass>DisplacementFieldItkImageFilterSinkComponent</NameOfClass>
+	<NameOfClass>ItkDisplacementFieldSinkComponent</NameOfClass>
 	<Dimensionality>2</Dimensionality>
 </Component>
 

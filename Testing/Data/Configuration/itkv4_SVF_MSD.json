@@ -85,8 +85,7 @@
 	},
     "Connection": {
         "Out": "TransformDisplacementFilter",
-        "In": "ResultDisplacementField",
-        "NameOfInterface": "ItkDisplacementFieldInterface"
+        "In": "ResultDisplacementField"
     },
     "Connection": {
         "Out": "Metric",
