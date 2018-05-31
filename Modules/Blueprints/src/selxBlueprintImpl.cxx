@@ -389,7 +389,6 @@ BlueprintImpl
               auto ownProperties = this->GetConnection( incomingName, componentName, connectionName );
               ownProperties[ othersEntry.first ] = othersEntry.second;
               this->SetConnection( incomingName, componentName, ownProperties, connectionName );
-              return true;
             }
           } // end loop otherProperties
         }
@@ -402,7 +401,7 @@ BlueprintImpl
     }
   }
 
-  
+  return true;
 }
 
 BlueprintImpl::ComponentNamesType
