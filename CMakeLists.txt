@@ -81,6 +81,11 @@ if( ${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC )
   # Explicitly add INCREMENTAL linking option to command lines.
   # http://www.cmake.org/pipermail/cmake/2010-February/035174.html
   # set( MSVC_INCREMENTAL_DEFAULT ON )
+
+  # Suppress warnings like "C4996: Call to 'std::copy' with parameters that may
+  # be unsafe" (e.g., indirectly coming from "ITK-4.13\itkTransform.hxx").
+  add_definitions(-D_SCL_SECURE_NO_WARNINGS)
+
 endif()
 
 if( WIN32 )
