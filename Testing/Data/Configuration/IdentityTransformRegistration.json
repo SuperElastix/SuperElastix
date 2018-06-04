@@ -15,7 +15,7 @@
     },
     "Component": {
         "Name": "DisplacementField",
-        "NameOfClass": "DisplacementFieldItkImageFilterSinkComponent"
+        "NameOfClass": "ItkDisplacementFieldSinkComponent"
     },
     "Connection": {
         "Out": "FixedImage",
