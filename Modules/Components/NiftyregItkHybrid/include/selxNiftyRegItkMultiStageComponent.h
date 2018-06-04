@@ -90,9 +90,11 @@ public:
 private:
 
   typename CompositeTransformType::Pointer m_CompositeTransform;
-  typename std::vector< typename MultiStageTransformInterface< InternalComputationValueType, Dimensionality >::Pointer > m_registrationStages;
 
-  std::set< UpdateInterface::Pointer > m_UpdateInterfaces;
+  typename NiftyregAffineMatrixInterface< InternalComputationValueType >::Pointer m_NiftyregAffineMatrixInterface;
+
+  std::map< std::string, typename MultiStageTransformInterface< InternalComputationValueType, Dimensionality >::Pointer > m_RegistrationStages;
+  std::map< std::string, typename UpdateInterface::Pointer > m_UpdateInterfaces;
   std::vector< std::string >                       m_ExecutionOrder;
 
 protected:

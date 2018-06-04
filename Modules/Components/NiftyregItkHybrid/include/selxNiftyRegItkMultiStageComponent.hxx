@@ -17,7 +17,7 @@
  *
  *=========================================================================*/
 
-#include "selxItkCompositeTransformComponent.h"
+#include "selxNiftyRegItkMultiStageComponent.h"
 #include "selxCheckTemplateProperties.h"
 
 namespace selx
@@ -42,19 +42,19 @@ NiftyregItkMultiStageComponent< InternalComputationValueType, Dimensionality >::
 template< class InternalComputationValueType, int Dimensionality >
 int
 NiftyregItkMultiStageComponent< InternalComputationValueType, Dimensionality >
-::Accept( typename MultiStageTransformInterface< InternalComputationValueType, Dimensionality >::Pointer component )
+::Accept( typename MultiStageTransformInterface< InternalComputationValueType, Dimensionality >::Pointer other )
 {
   // todo how do we organize the fixedtransforms?
-  this->m_registrationStages.push_back( component );
+  this->m_RegistrationStages.insert( { other->GetComponentName(), other } );
   return 1;
 }
-
 
 template< class InternalComputationValueType, int Dimensionality >
 int
 NiftyregItkMultiStageComponent< InternalComputationValueType, Dimensionality >
-::Accept(typename NiftyregAffineMatrixInterface< InternalComputationValueType >::Pointer component)
+::Accept(typename NiftyregAffineMatrixInterface< InternalComputationValueType >::Pointer other)
 {
+	this->m_NiftyregAffineMatrixInterface = other;
 	return 1;
 }
 
@@ -63,7 +63,7 @@ int
 NiftyregItkMultiStageComponent< InternalComputationValueType, Dimensionality >
 ::Accept( UpdateInterface::Pointer other )
 {
-  this->m_UpdateInterfaces.insert( other );
+	this->m_UpdateInterfaces.insert({ other->GetComponentName(), other });
   return 0;
 }
 
@@ -80,74 +80,24 @@ template< class InternalComputationValueType, int Dimensionality >
 void
 NiftyregItkMultiStageComponent< InternalComputationValueType, Dimensionality >::Update()
 {
-  // Check if the names connected stages are compatible with the provided execution order
-  // TODO: This name checking part should move to ConnectionsSatisfied();
-  std::vector< std::string > sortedExecutionNames( this->m_ExecutionOrder ); // copy container
-  std::vector< std::string > sortedStageNames;                               // empty container
-  sortedStageNames.resize( sortedExecutionNames.size() );                    // allocate space
-  std::vector< std::string > sortedUpdateNames;                              // empty container
-  sortedUpdateNames.resize( sortedExecutionNames.size() );                   // allocate space
-
-  // fill vector with component names
-  std::transform( this->m_registrationStages.begin(), this->m_registrationStages.end(), sortedStageNames.begin(),
-    [ ]( typename MultiStageTransformInterface< InternalComputationValueType, Dimensionality >::Pointer stageIterator ) {
-      return stageIterator->GetComponentName();
-    } );
-
-  // fill vector with component names
-  std::transform(this->m_UpdateInterfaces.begin(), this->m_UpdateInterfaces.end(), sortedUpdateNames.begin(),
-	  [](typename UpdateInterface::Pointer updateIterator) {
-	  return updateIterator->GetComponentName();
-  });
-
-  // sorting of component names to be able to run set_symmetric_differences
-  sort( sortedExecutionNames.begin(), sortedExecutionNames.end() );
-  sort( sortedStageNames.begin(), sortedStageNames.end() );
-  sort( sortedUpdateNames.begin(), sortedUpdateNames.end() );
-
-  std::vector< std::string > mismatchStageNames;
-  std::set_symmetric_difference( sortedExecutionNames.begin(), sortedExecutionNames.end(), sortedStageNames.begin(),
-    sortedStageNames.end(), mismatchStageNames.begin() );
-
-  if( mismatchStageNames.size() > 0 )
-  {
-    this->Error( "The names of ExecutionOrder and the connected Stages do not match for %s ", this->m_Name );
-    this->Error( "Mismatch is [ " );
-    for( auto const & name : mismatchStageNames )
-    {
-      this->Error( "  %s," );
-    }
-    this->Error( "]" );
-  }
-
-  std::vector< std::string > mismatchUpdateNames;
-  std::set_symmetric_difference(sortedExecutionNames.begin(), sortedExecutionNames.end(), sortedUpdateNames.begin(),
-	  sortedUpdateNames.end(), mismatchUpdateNames.begin());
-  
-  if (mismatchUpdateNames.size() > 0)
-  {
-	  this->Error("Each MultiStageTransformInterface connection must have an UpdateInterface connection in parallel. The connections do not match for %s ", this->m_Name);
-	  this->Error("Mismatch is [ ");
-	  for (auto const & name : mismatchUpdateNames)
-	  {
-		  this->Error("  %s,");
-	  }
-	  this->Error("]");
-  }
+  bool first = true;
 
   // Perform execution flow
   for( auto const & stageName : this->m_ExecutionOrder )
   {
-    auto && stageIterator = std::find_if( this->m_registrationStages.begin(),
-      this->m_registrationStages.end(),
-      [ stageName ]( typename MultiStageTransformInterface< InternalComputationValueType, Dimensionality >::Pointer thisStage ) {
-        return thisStage->GetComponentName() == stageName;
-      } );
-    ( *stageIterator )->SetMovingInitialTransform( this->m_CompositeTransform );
-	// TODO: Here we call Update() via the MultiStageTransformInterface, but this should be done via the proper UpdateInterdafe. And Update() should be removed from the MultiStageTransformInterface entirely.
-    ( *stageIterator )->Update();
-
-    this->m_CompositeTransform->AppendTransform( ( *stageIterator )->GetItkTransform() );
+    if (first)
+    {
+      m_UpdateInterfaces[stageName]->Update();
+      auto matrix = m_NiftyregAffineMatrixInterface->GetAffineNiftiMatrix();
+      //this->m_CompositeTransform->AppendTransform( m_RegistrationStages[stageName]->GetItkTransform() );
+      first=false;    
+    }
+    else // continue with standard itk multistage
+    {
+	    m_RegistrationStages[stageName]->SetMovingInitialTransform( this->m_CompositeTransform );
+      m_UpdateInterfaces[stageName]->Update();
+      this->m_CompositeTransform->AppendTransform( m_RegistrationStages[stageName]->GetItkTransform() );
+    }
   }
   return;
 }
@@ -187,11 +137,51 @@ NiftyregItkMultiStageComponent< InternalComputationValueType, Dimensionality >
 {
   // This function overrides the default behavior, in which all accepting interfaces must be set, by allowing the some interfaces not being set.
   // TODO: see I we can reduce the amount of code with helper (meta-)functions
+  // A MultiStageTransformInterface connection is required
   if(! this->InterfaceAcceptor< MultiStageTransformInterface< InternalComputationValueType, Dimensionality >>::GetAccepted())
   {
     return false;
   }
-  // Allow unconnected ReconnectTransformInterface
+
+  // A NiftyregAffineMatrixInterface connection is required
+  if (!this->InterfaceAcceptor< NiftyregAffineMatrixInterface< InternalComputationValueType >>::GetAccepted())
+  {
+    return false;
+  }
+
+  // check if the component names in ExecutionOrder are connected both by MultiStageTransformInterface and UpdateInterface
+  bool first = true;
+  for( auto const & stageName : this->m_ExecutionOrder )
+  {
+    if (first)
+    {
+      if (m_NiftyregAffineMatrixInterface->GetComponentName()!=stageName)
+      {
+        this->Error("The first component '%s' as named in the ExecutionOrder of '%s' needs to be connected by  NiftyregAffineMatrixInterface. (Use named connections)", stageName, this->m_Name);
+        return false;
+      }
+      first = true;
+    }
+	  else if (m_RegistrationStages.count(stageName)==0)
+	  {
+      this->Error("The component '%s' as named in the ExecutionOrder of '%s' needs to be connected by MultiStageTransformInterface. (Use named connections)", stageName, this->m_Name);
+		  return false;
+	  }
+	  if (m_UpdateInterfaces.count(stageName) == 0)
+	  {
+      this->Error("The component '%s' as named in the ExecutionOrder of '%s' needs to be connected by UpdateInterface. (Use named connections)", stageName, this->m_Name);
+		  return false;
+	  }
+  }
+
+  if (m_RegistrationStages.size() > (m_ExecutionOrder.size()-1)) // assume 1 element in m_ExecutionOrder is from the NiftyregAffineMatrixInterface
+  {
+    this->Warning("'%s' has unused MultiStageTransformInterface connections", this->m_Name);
+  }
+  if (m_UpdateInterfaces.size() > (m_ExecutionOrder.size()))
+  {
+    this->Warning("'%s' has unused MultiStageTransformInterface connections", this->m_Name);
+  }
   return true;
 }
 } //end namespace selx

@@ -35,7 +35,7 @@
 
 namespace selx
 {
-class NiftyregItkComponentTest : public ::testing::Test
+class NiftyregItkHybridComponentTest : public ::testing::Test
 {
 public:
 
@@ -87,7 +87,7 @@ public:
 };
 
 
-TEST_F(NiftyregItkComponentTest, AladinAndItk)
+TEST_F(NiftyregItkHybridComponentTest, AladinAndItk)
 {
   /** make example blueprint configuration */
   BlueprintPointer blueprint = Blueprint::New();
