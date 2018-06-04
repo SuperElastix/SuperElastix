@@ -461,10 +461,10 @@ TEST_F(RegistrationItkv4Test, FullyConfigured3d_BSpline)
   movingImageReader->SetFileName( dataManager->GetInputFile( "sphereB3d.mhd" ) );
 
   ImageWriter3DType::Pointer resultImageWriter = ImageWriter3DType::New();
-  resultImageWriter->SetFileName( dataManager->GetOutputFile( "RegistrationItkv4Test_DisplacementField_image.mhd" ) );
+  resultImageWriter->SetFileName( dataManager->GetOutputFile( "BSpline_RegistrationItkv4Test_DisplacementField_image.mhd" ) );
 
   DisplacementImageWriter3DType::Pointer resultDisplacementWriter = DisplacementImageWriter3DType::New();
-  resultDisplacementWriter->SetFileName( dataManager->GetOutputFile( "RegistrationItkv4Test_DisplacementField_displacement.mhd" ) );
+  resultDisplacementWriter->SetFileName( dataManager->GetOutputFile( "BSpline_RegistrationItkv4Test_DisplacementField_displacement.mhd" ) );
 
   // Connect SuperElastix in an itk pipeline
   superElastixFilter->SetInput( "FixedImageSource", fixedImageReader->GetOutput() );
