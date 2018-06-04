@@ -85,7 +85,7 @@ ItkGradientDescentOptimizerv4Component< InternalComputationValueType >
       }
       catch( itk::ExceptionObject & err )
       {
-        //TODO log the error message?
+        this->m_Logger.Log(LogLevel::TRC, err.what());
         meetsCriteria = false;
       }
     }
@@ -108,7 +108,7 @@ ItkGradientDescentOptimizerv4Component< InternalComputationValueType >
       }
       catch( itk::ExceptionObject & err ) // TODO: should catch(const bad_lexical_cast &) too
       {
-        //TODO log the error message?
+        this->m_Logger.Log(LogLevel::TRC, err.what());
         meetsCriteria = false;
       }
     }

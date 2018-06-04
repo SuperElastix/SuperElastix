@@ -317,8 +317,7 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
       {
         if( this->m_theItkFilter->GetNumberOfLevels() != std::stoi( criterion.second[ 0 ] ) )
         {
-          // TODO log error?
-          std::cout << "A conflicting NumberOfLevels was set by " << this->m_NumberOfLevelsLastSetBy << std::endl;
+          this->m_Logger.Log(LogLevel::TRC, "A conflicting NumberOfLevels was set by " + this->m_NumberOfLevelsLastSetBy);
           meetsCriteria = false;
           return meetsCriteria;
         }
@@ -326,8 +325,7 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
     }
     else
     {
-      // TODO log error?
-      std::cout << "NumberOfLevels accepts one number only" << std::endl;
+      this->m_Logger.Log(LogLevel::TRC, "NumberOfLevels accepts one number only");
       meetsCriteria = false;
       return meetsCriteria;
     }
@@ -348,8 +346,7 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
     {
       if( this->m_theItkFilter->GetNumberOfLevels() != impliedNumberOfResolutions )
       {
-        // TODO log error?
-        std::cout << "A conflicting NumberOfLevels was set by " << this->m_NumberOfLevelsLastSetBy << std::endl;
+        this->m_Logger.Log(LogLevel::TRC, "A conflicting NumberOfLevels was set by " + this->m_NumberOfLevelsLastSetBy);
         meetsCriteria = false;
         return meetsCriteria;
       }
@@ -383,8 +380,7 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
     {
       if( this->m_theItkFilter->GetNumberOfLevels() != impliedNumberOfResolutions )
       {
-        // TODO log error?
-        std::cout << "A conflicting NumberOfLevels was set by " << this->m_NumberOfLevelsLastSetBy << std::endl;
+        this->m_Logger.Log(LogLevel::TRC, "A conflicting NumberOfLevels was set by " + this->m_NumberOfLevelsLastSetBy);
         meetsCriteria = false;
         return meetsCriteria;
       }

@@ -122,8 +122,7 @@ NiftyregAladinComponent<  TPixel >
     }
     else
     {
-      // TODO log error?
-      std::cout << "NumberOfIterations accepts one number only" << std::endl;
+      this->m_Logger.Log(LogLevel::TRC, "NumberOfIterations accepts one number only");
       return false;
     }
   }
@@ -137,8 +136,7 @@ NiftyregAladinComponent<  TPixel >
     }
     else
     {
-      // TODO log error?
-      std::cout << criterion.first << " accepts one number only" << std::endl;
+      this->m_Logger.Log(LogLevel::TRC, criterion.first + " accepts one number only");
       return false;
     }
   }

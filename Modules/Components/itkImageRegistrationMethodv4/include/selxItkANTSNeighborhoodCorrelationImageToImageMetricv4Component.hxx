@@ -107,7 +107,7 @@ ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< Dimensionality, TPi
       }
       catch( itk::ExceptionObject & err )
       {
-        //TODO log the error message?
+        this->m_Logger.Log(LogLevel::TRC, err.what());
         return false;
       }
     }

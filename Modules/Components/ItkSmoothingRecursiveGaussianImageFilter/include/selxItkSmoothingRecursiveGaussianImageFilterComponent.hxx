@@ -92,7 +92,7 @@ ItkSmoothingRecursiveGaussianImageFilterComponent< Dimensionality, TPixel >
       }
       catch( itk::ExceptionObject & err )
       {
-        //TODO log the error message?
+        this->m_Logger.Log(LogLevel::TRC, err.what());
         meetsCriteria = false;
       }
     }
