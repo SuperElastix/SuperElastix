@@ -3,10 +3,12 @@
     "Component": {
         "Name": "RegistrationMethod",
         "Dimensionality": "2",
-        "Transform": "BSplineTransform",
-        "Metric": "AdvancedMeanSquares",
         "PixelType": "float",
-        "ResultImagePixelType": "float"
+        "ParameterMap0Transform": "BSplineTransform",
+        "ParameterMap0Metric": "AdvancedMeanSquares",
+        "ParameterMap0ImageSampler": "RandomCoordinate",
+        "ParameterMap0Optimizer": "AdaptiveStochasticGradientDescent",
+        "ParameterMap0ResultImagePixelType": "float"
     },
     "Component": {
         "Name": "ResultImage",
