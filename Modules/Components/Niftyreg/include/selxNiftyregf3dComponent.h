@@ -33,7 +33,7 @@ namespace selx
 template< class TPixel >
 class Niftyregf3dComponent :
   public SuperElastixComponent<
-  Accepting< NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >, NiftyregAffineMatrixInterface< TPixel >>,
+  Accepting< NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >, NiftyregAffineMatrixInterface >,
   Providing< NiftyregWarpedImageInterface< TPixel >, NiftyregControlPointPositionImageInterface< TPixel >, UpdateInterface >
   >
 {
@@ -42,7 +42,7 @@ public:
   /** Standard ITK typedefs. */
   typedef Niftyregf3dComponent< TPixel > Self;
   typedef SuperElastixComponent<
-    Accepting< NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >, NiftyregAffineMatrixInterface< TPixel >>,
+    Accepting< NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >, NiftyregAffineMatrixInterface >,
     Providing< NiftyregWarpedImageInterface< TPixel >, NiftyregControlPointPositionImageInterface< TPixel >, UpdateInterface >
     >                                      Superclass;
   typedef std::shared_ptr< Self >       Pointer;
@@ -58,7 +58,7 @@ public:
   virtual int Accept( typename NiftyregFloatingImageInterface< TPixel >::Pointer ) override;
 
   // Accepting NiftyregAffineMatrixInterface
-  virtual int Accept( typename NiftyregAffineMatrixInterface< TPixel >::Pointer ) override;
+  virtual int Accept( typename NiftyregAffineMatrixInterface::Pointer ) override;
 
   // Providing NiftyregWarpedImageInterface
   virtual std::shared_ptr< nifti_image > GetWarpedNiftiImage() override;
@@ -83,7 +83,7 @@ private:
   // m_warped_images is an array of 2 nifti images. Depending on the use case, typically only [0] is a valid image
   std::unique_ptr< std::array< std::shared_ptr< nifti_image >, 2 >> m_warped_images;
   std::shared_ptr< nifti_image > m_cpp_image;
-  typename NiftyregAffineMatrixInterface< TPixel>::Pointer m_NiftyregAffineMatrixInterface;
+  typename NiftyregAffineMatrixInterface::Pointer m_NiftyregAffineMatrixInterface;
 
 protected:
 

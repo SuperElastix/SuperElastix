@@ -95,12 +95,11 @@ public:
   virtual const typename std::string GetComponentName() = 0;
 };
 
-template< class TPixel >
 class NiftyregAffineMatrixInterface
 {
 public:
 
-  using Type = NiftyregAffineMatrixInterface< TPixel >;
+  using Type = NiftyregAffineMatrixInterface;
   using Pointer = std::shared_ptr< Type >;
   virtual mat44 * GetAffineNiftiMatrix() = 0;
 
@@ -153,12 +152,12 @@ struct Properties< NiftyregDisplacementFieldImageInterface< TPixel >>
   }
 };
 
-template< class TPixel >
-struct Properties< NiftyregAffineMatrixInterface< TPixel >>
+template<>
+struct Properties< NiftyregAffineMatrixInterface>
 {
   static const std::map< std::string, std::string > Get()
   {
-    return { { keys::NameOfInterface, "NiftyregAffineMatrixInterface" }, { keys::PixelType, PodString< TPixel >::Get() }  };
+    return { { keys::NameOfInterface, "NiftyregAffineMatrixInterface" } };
   }
 };
 

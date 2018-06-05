@@ -19,6 +19,7 @@
 
 #include "selxNiftyRegItkMultiStageComponent.h"
 #include "selxCheckTemplateProperties.h"
+#include "itkAffineTransform.h"
 
 namespace selx
 {
@@ -52,7 +53,7 @@ NiftyregItkMultiStageComponent< InternalComputationValueType, Dimensionality >
 template< class InternalComputationValueType, int Dimensionality >
 int
 NiftyregItkMultiStageComponent< InternalComputationValueType, Dimensionality >
-::Accept(typename NiftyregAffineMatrixInterface< InternalComputationValueType >::Pointer other)
+::Accept(typename NiftyregAffineMatrixInterface::Pointer other)
 {
 	this->m_NiftyregAffineMatrixInterface = other;
 	return 1;
@@ -88,8 +89,25 @@ NiftyregItkMultiStageComponent< InternalComputationValueType, Dimensionality >::
     if (first)
     {
       m_UpdateInterfaces[stageName]->Update();
-      auto matrix = m_NiftyregAffineMatrixInterface->GetAffineNiftiMatrix();
-      //this->m_CompositeTransform->AppendTransform( m_RegistrationStages[stageName]->GetItkTransform() );
+      // TODO check == null ?
+      auto const & niftiMatrix = m_NiftyregAffineMatrixInterface->GetAffineNiftiMatrix()->m;
+      
+      using itkAffineTransformType = itk::AffineTransform<InternalComputationValueType, Dimensionality>;
+      auto itkMatrix = itkAffineTransformType::MatrixType();
+      auto itkTranslation = itkAffineTransformType::OffsetType();
+      
+      for ( unsigned int d1 = 0; d1 < Dimensionality; ++d1 )
+      {
+        for ( unsigned int d2 = 0; d2 < Dimensionality; ++d2 )
+        {
+          itkMatrix(d1,d2)=niftiMatrix[d1][d2];
+        }
+        itkTranslation[d1] = niftiMatrix[d1][3];
+      }
+      auto itkAffineTf = itkAffineTransformType::New();
+      itkAffineTf->SetMatrix(itkMatrix);
+      itkAffineTf->SetOffset(itkTranslation);
+      this->m_CompositeTransform->AppendTransform( itkAffineTf );
       first=false;    
     }
     else // continue with standard itk multistage
@@ -140,15 +158,22 @@ NiftyregItkMultiStageComponent< InternalComputationValueType, Dimensionality >
   // A MultiStageTransformInterface connection is required
   if(! this->InterfaceAcceptor< MultiStageTransformInterface< InternalComputationValueType, Dimensionality >>::GetAccepted())
   {
+    this->Error("Needs to have a MultiStageTransformInterface connected to it.",  this->m_Name);
     return false;
   }
 
   // A NiftyregAffineMatrixInterface connection is required
-  if (!this->InterfaceAcceptor< NiftyregAffineMatrixInterface< InternalComputationValueType >>::GetAccepted())
+  if (!this->InterfaceAcceptor< NiftyregAffineMatrixInterface>::GetAccepted())
   {
+    this->Error("Needs to have a NiftyregAffineMatrixInterface connected to it.",  this->m_Name);
     return false;
   }
 
+  if ( 0 == this->m_ExecutionOrder.size())
+  {
+    this->Error("ExecutionOrder of {0} needs to be set with the names of the registration components. E.g. 'ExecutionOrder' : [ 'RegistrationMethod1', 'RegistrationMethod2' ] ", this->m_Name);
+    return false;
+  }
   // check if the component names in ExecutionOrder are connected both by MultiStageTransformInterface and UpdateInterface
   bool first = true;
   for( auto const & stageName : this->m_ExecutionOrder )
@@ -157,30 +182,30 @@ NiftyregItkMultiStageComponent< InternalComputationValueType, Dimensionality >
     {
       if (m_NiftyregAffineMatrixInterface->GetComponentName()!=stageName)
       {
-        this->Error("The first component '%s' as named in the ExecutionOrder of '%s' needs to be connected by  NiftyregAffineMatrixInterface. (Use named connections)", stageName, this->m_Name);
+        this->Error("The first component '{0}' as named in the ExecutionOrder of '{1}' needs to be connected by  NiftyregAffineMatrixInterface. (Use named connections)", stageName, this->m_Name);
         return false;
       }
-      first = true;
+      first = false;
     }
 	  else if (m_RegistrationStages.count(stageName)==0)
 	  {
-      this->Error("The component '%s' as named in the ExecutionOrder of '%s' needs to be connected by MultiStageTransformInterface. (Use named connections)", stageName, this->m_Name);
+      this->Error("The component '{0}' as named in the ExecutionOrder of '{1}' needs to be connected by MultiStageTransformInterface. (Use named connections)", stageName, this->m_Name);
 		  return false;
 	  }
 	  if (m_UpdateInterfaces.count(stageName) == 0)
 	  {
-      this->Error("The component '%s' as named in the ExecutionOrder of '%s' needs to be connected by UpdateInterface. (Use named connections)", stageName, this->m_Name);
+      this->Error("The component '{0}' as named in the ExecutionOrder of '{1}' needs to be connected by UpdateInterface. (Use named connections)", stageName, this->m_Name);
 		  return false;
 	  }
   }
 
   if (m_RegistrationStages.size() > (m_ExecutionOrder.size()-1)) // assume 1 element in m_ExecutionOrder is from the NiftyregAffineMatrixInterface
   {
-    this->Warning("'%s' has unused MultiStageTransformInterface connections", this->m_Name);
+    this->Warning("'{0}' has unused MultiStageTransformInterface connections", this->m_Name);
   }
   if (m_UpdateInterfaces.size() > (m_ExecutionOrder.size()))
   {
-    this->Warning("'%s' has unused MultiStageTransformInterface connections", this->m_Name);
+    this->Warning("'{0}' has unused MultiStageTransformInterface connections", this->m_Name);
   }
   return true;
 }

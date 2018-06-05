@@ -34,7 +34,7 @@ namespace selx
 template< class InternalComputationValueType, int Dimensionality >
 class NiftyregItkMultiStageComponent :
   public SuperElastixComponent<
-    Accepting< NiftyregAffineMatrixInterface< InternalComputationValueType >, 
+    Accepting< NiftyregAffineMatrixInterface, 
 	  MultiStageTransformInterface< InternalComputationValueType, Dimensionality >,
       UpdateInterface
     >,
@@ -51,7 +51,7 @@ public:
     InternalComputationValueType, Dimensionality
     >                                       Self;
   typedef SuperElastixComponent<
-    Accepting< NiftyregAffineMatrixInterface< InternalComputationValueType >,
+    Accepting< NiftyregAffineMatrixInterface,
 	  MultiStageTransformInterface< InternalComputationValueType, Dimensionality >,
       UpdateInterface
       >,
@@ -73,7 +73,7 @@ public:
 
   virtual int Accept( typename MultiStageTransformInterface< InternalComputationValueType, Dimensionality >::Pointer ) override;
 
-  virtual int Accept( typename NiftyregAffineMatrixInterface< InternalComputationValueType >::Pointer ) override;
+  virtual int Accept( typename NiftyregAffineMatrixInterface::Pointer ) override;
 
   virtual int Accept( UpdateInterface::Pointer ) override;
 
@@ -91,7 +91,7 @@ private:
 
   typename CompositeTransformType::Pointer m_CompositeTransform;
 
-  typename NiftyregAffineMatrixInterface< InternalComputationValueType >::Pointer m_NiftyregAffineMatrixInterface;
+  typename NiftyregAffineMatrixInterface::Pointer m_NiftyregAffineMatrixInterface;
 
   std::map< std::string, typename MultiStageTransformInterface< InternalComputationValueType, Dimensionality >::Pointer > m_RegistrationStages;
   std::map< std::string, typename UpdateInterface::Pointer > m_UpdateInterfaces;
