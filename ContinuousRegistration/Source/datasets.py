@@ -7,7 +7,8 @@ import SimpleITK as sitk
 from ContinuousRegistration.Source.metrics import tre, hausdorff, inverse_consistency_labels, inverse_consistency_points, dice
 from ContinuousRegistration.Source.util import take, sort_file_names, copy_information_from_images_to_labels, merge_dicts
 from ContinuousRegistration.Source.util import create_mask_by_thresholding, create_mask_by_size, create_identity_world_information
-from ContinuousRegistration.Source.util import create_disp_field_names
+from ContinuousRegistration.Source.util import create_disp_field_names, warp_image
+from ContinuousRegistration.Source.util import logging
 
 
 class Dataset(object):
@@ -95,7 +96,7 @@ class Dataset(object):
                 merge_dicts(tre_1, hausdorff_1, inverse_consistency_points_1)
         }
 
-    def evaluate_label_image(self, superelastix, file_names, output_directory):
+    def evaluate_label(self, file_names, output_directory):
         """ Default evaluation method for label ground truths
 
         :param superelastix:
@@ -109,10 +110,9 @@ class Dataset(object):
         )
 
         inverse_consistency_atlas_0, inverse_consistency_atlas_1 = inverse_consistency_labels(
-            superelastix, file_names['ground_truth_file_names'], disp_field_paths)
+            file_names['ground_truth_file_names'], disp_field_paths)
 
-        dice_0, dice_1 = dice(superelastix, file_names['ground_truth_file_names'],
-                              disp_field_paths)
+        dice_0, dice_1 = dice(file_names['ground_truth_file_names'], disp_field_paths)
 
         return {
             file_names['disp_field_file_names'][0]:
@@ -120,6 +120,34 @@ class Dataset(object):
             file_names['disp_field_file_names'][1]:
                 merge_dicts(inverse_consistency_atlas_1, dice_1)
         }
+
+    def warp_images(self, file_names, output_directory):
+        disp_field_0_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][0])
+        disp_field_1_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][1])
+
+        warp_image(file_names['image_file_names'][0], disp_field_0_file_name, sitk.sitkLinear, 'image')
+        warp_image(file_names['image_file_names'][1], disp_field_1_file_name, sitk.sitkLinear, 'image')
+
+    def warp_checkerboards(self, file_names, output_directory):
+        disp_field_0_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][0])
+        disp_field_1_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][1])
+
+        disp_field_0_path, disp_field_0_ext = os.path.splitext(disp_field_0_file_name)
+        disp_field_1_path, disp_field_1_ext = os.path.splitext(disp_field_1_file_name)
+
+        checkerboard_0_file_name = disp_field_0_path + '_checkerboard' + disp_field_0_ext
+        checkerboard_1_file_name = disp_field_1_path + '_checkerboard' + disp_field_1_ext
+
+        image_0 = sitk.ReadImage(file_names['image_file_names'][0])
+        image_1 = sitk.ReadImage(file_names['image_file_names'][1])
+
+        # TODO: Better way of creating checkerboard pattern
+        big_number = 1e9
+        sitk.WriteImage(sitk.CheckerBoard(image_0 < -big_number, image_0 > -big_number), checkerboard_0_file_name)
+        sitk.WriteImage(sitk.CheckerBoard(image_1 < -big_number, image_1 > -big_number), checkerboard_1_file_name)
+
+        warp_image(checkerboard_0_file_name, disp_field_0_file_name, sitk.sitkNearestNeighbor, 'checkerboard')
+        warp_image(checkerboard_1_file_name, disp_field_1_file_name, sitk.sitkNearestNeighbor, 'checkerboard')
 
 
 class CUMC12(Dataset):
@@ -158,7 +186,7 @@ class CUMC12(Dataset):
                                max_number_of_registrations // 2)
 
     def evaluate(self, superelastix, file_names, output_directory):
-        return self.evaluate_label_image(superelastix, file_names, output_directory)
+        return self.evaluate_label(file_names, output_directory)
 
 
 class DIRLAB(Dataset):
@@ -347,20 +375,7 @@ class ISBR18(Dataset):
 
     # TODO: Find out why inverse consistency does not work with this dataset
     def evaluate(self, superelastix, file_names, output_directory):
-
-        disp_field_paths = (
-            os.path.join(output_directory, file_names['disp_field_file_names'][0]),
-            os.path.join(output_directory, file_names['disp_field_file_names'][1]),
-        )
-
-        dice_0, dice_1 = dice(superelastix,
-                              file_names['ground_truth_file_names'],
-                              disp_field_paths)
-
-        return {
-            file_names['disp_field_file_names'][0]: dice_0,
-            file_names['disp_field_file_names'][1]: dice_1
-        }
+        return self.evaluate_label(file_names, output_directory)
 
 
 class LPBA40(Dataset):
@@ -415,7 +430,7 @@ class LPBA40(Dataset):
                                max_number_of_registrations // 2)
 
     def evaluate(self, superelastix, file_names, output_directory):
-        return self.evaluate_label_image(superelastix, file_names, output_directory)
+        return self.evaluate_label(file_names, output_directory)
 
 
 class MGH10(Dataset):
@@ -463,7 +478,7 @@ class MGH10(Dataset):
                                max_number_of_registrations // 2)
 
     def evaluate(self, superelastix, file_names, output_directory):
-        return self.evaluate_label_image(superelastix, file_names, output_directory)
+        return self.evaluate_label(file_names, output_directory)
 
 
 class POPI(Dataset):

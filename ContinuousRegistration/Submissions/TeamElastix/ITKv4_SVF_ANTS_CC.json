@@ -3,9 +3,9 @@
     "Component": {
         "Name": "RegistrationMethod",
         "NameOfClass": "ItkImageRegistrationMethodv4Component",
-		"NumberOfLevels":  "3" ,
-		"ShrinkFactorsPerLevel": [ "16", "8", "4" ],
-        "SmoothingSigmasPerLevel": [ "16", "8", "4" ],
+		"NumberOfLevels":  "5" ,
+		"ShrinkFactorsPerLevel": [ "16", "8", "4", "2", "1" ],
+        "SmoothingSigmasPerLevel": [ "8", "4", "2", "1", "1" ],
         "Dimensionality": "3"
     },
     "Component": {
