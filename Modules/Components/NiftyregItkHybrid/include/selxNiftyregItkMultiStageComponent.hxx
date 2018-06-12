@@ -17,7 +17,7 @@
  *
  *=========================================================================*/
 
-#include "selxNiftyRegItkMultiStageComponent.h"
+#include "selxNiftyregItkMultiStageComponent.h"
 #include "selxCheckTemplateProperties.h"
 #include "itkAffineTransform.h"
 
