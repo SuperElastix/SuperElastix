@@ -93,8 +93,8 @@ NiftyregItkMultiStageComponent< InternalComputationValueType, Dimensionality >::
       auto const & niftiMatrix = m_NiftyregAffineMatrixInterface->GetAffineNiftiMatrix()->m;
       
       using itkAffineTransformType = itk::AffineTransform<InternalComputationValueType, Dimensionality>;
-      auto itkMatrix = itkAffineTransformType::MatrixType();
-      auto itkTranslation = itkAffineTransformType::OffsetType();
+      auto itkMatrix = typename itkAffineTransformType::MatrixType();
+      auto itkTranslation = typename itkAffineTransformType::OffsetType();
       
       for ( unsigned int d1 = 0; d1 < Dimensionality; ++d1 )
       {
