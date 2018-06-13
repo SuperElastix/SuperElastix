@@ -13,7 +13,7 @@
         "Name": "RegistrationMethod",
         "NameOfClass": "ItkSyNImageRegistrationMethodComponent",
         "Dimensionality": "3",
-        "NumberOfLevels":  "4",
+        "NumberOfLevels":  "5",
         "ShrinkFactorsPerLevel": [ "16", "8", "4", "2", "1" ],
         "SmoothingSigmasPerLevel": [ "8", "4", "2", "1", "1" ],
         "PixelType": "float"

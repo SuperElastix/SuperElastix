@@ -40,11 +40,11 @@ def inverse_consistency_points(registration_driver, point_set_file_names, deform
     )
 
 
-def inverse_consistency_labels(label_file_names, deformation_field_file_names):
-    label_image_0_to_1_file_name = warp_image(label_file_names[0], deformation_field_file_names[1], sitk.sitkNearestNeighbor, 'label')
-    label_image_0_to_1_to_0_file_name = warp_image(label_image_0_to_1_file_name, deformation_field_file_names[0], sitk.sitkNearestNeighbor, 'label')
-    label_image_1_to_0_file_name = warp_image(label_file_names[1], deformation_field_file_names[0], sitk.sitkNearestNeighbor, 'label')
-    label_image_1_to_0_to_0_file_name = warp_image(label_image_1_to_0_file_name, deformation_field_file_names[1], sitk.sitkNearestNeighbor, 'label')
+def inverse_consistency_labels(superelastix, label_file_names, deformation_field_file_names):
+    label_image_0_to_1_file_name = warp_image(superelastix, label_file_names[0], deformation_field_file_names[1], sitk.sitkNearestNeighbor, 'label')
+    label_image_0_to_1_to_0_file_name = warp_image(superelastix, label_image_0_to_1_file_name, deformation_field_file_names[0], sitk.sitkNearestNeighbor, 'label')
+    label_image_1_to_0_file_name = warp_image(superelastix, label_file_names[1], deformation_field_file_names[0], sitk.sitkNearestNeighbor, 'label')
+    label_image_1_to_0_to_0_file_name = warp_image(superelastix, label_image_1_to_0_file_name, deformation_field_file_names[1], sitk.sitkNearestNeighbor, 'label')
 
     try:
         label_image_0 = sitk.ReadImage(label_file_names[0])
@@ -68,8 +68,8 @@ def inverse_consistency_labels(label_file_names, deformation_field_file_names):
     )
 
 
-def dice(label_file_names, deformation_field_file_names):
-    label_image_0_to_1_file_name = warp_image(label_file_names[0], deformation_field_file_names[1], sitk.sitkNearestNeighbor, 'label')
+def dice(superelastix, label_file_names, deformation_field_file_names):
+    label_image_0_to_1_file_name = warp_image(superelastix, label_file_names[0], deformation_field_file_names[1], sitk.sitkNearestNeighbor, 'label')
 
     try:
         label_image_1 = sitk.ReadImage(label_file_names[1])
@@ -79,7 +79,7 @@ def dice(label_file_names, deformation_field_file_names):
         logging.error('Failed to compute DSC for %s' % label_file_names[0])
         raise(e)
 
-    label_image_1_to_0_file_name = warp_image(label_file_names[1], deformation_field_file_names[0], sitk.sitkNearestNeighbor, 'label')
+    label_image_1_to_0_file_name = warp_image(superelastix, label_file_names[1], deformation_field_file_names[0], sitk.sitkNearestNeighbor, 'label')
 
     try:
         label_image_0 = sitk.ReadImage(label_file_names[0])

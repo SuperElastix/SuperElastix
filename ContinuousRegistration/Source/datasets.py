@@ -96,7 +96,7 @@ class Dataset(object):
                 merge_dicts(tre_1, hausdorff_1, inverse_consistency_points_1)
         }
 
-    def evaluate_label(self, file_names, output_directory):
+    def evaluate_label(self, superelastix, file_names, output_directory):
         """ Default evaluation method for label ground truths
 
         :param superelastix:
@@ -110,9 +110,9 @@ class Dataset(object):
         )
 
         inverse_consistency_atlas_0, inverse_consistency_atlas_1 = inverse_consistency_labels(
-            file_names['ground_truth_file_names'], disp_field_paths)
+            superelastix, file_names['ground_truth_file_names'], disp_field_paths)
 
-        dice_0, dice_1 = dice(file_names['ground_truth_file_names'], disp_field_paths)
+        dice_0, dice_1 = dice(superelastix, file_names['ground_truth_file_names'], disp_field_paths)
 
         return {
             file_names['disp_field_file_names'][0]:
@@ -121,14 +121,14 @@ class Dataset(object):
                 merge_dicts(inverse_consistency_atlas_1, dice_1)
         }
 
-    def warp_images(self, file_names, output_directory):
+    def warp_images(self, superelastix, file_names, output_directory):
         disp_field_0_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][0])
         disp_field_1_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][1])
 
-        warp_image(file_names['image_file_names'][0], disp_field_0_file_name, sitk.sitkLinear, 'image')
-        warp_image(file_names['image_file_names'][1], disp_field_1_file_name, sitk.sitkLinear, 'image')
+        warp_image(superelastix, file_names['image_file_names'][0], disp_field_0_file_name, sitk.sitkLinear, 'image')
+        warp_image(superelastix, file_names['image_file_names'][1], disp_field_1_file_name, sitk.sitkLinear, 'image')
 
-    def warp_checkerboards(self, file_names, output_directory):
+    def warp_checkerboards(self, superelastix, file_names, output_directory):
         disp_field_0_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][0])
         disp_field_1_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][1])
 
@@ -143,11 +143,37 @@ class Dataset(object):
 
         # TODO: Better way of creating checkerboard pattern
         big_number = 1e9
-        sitk.WriteImage(sitk.CheckerBoard(image_0 < -big_number, image_0 > -big_number), checkerboard_0_file_name)
-        sitk.WriteImage(sitk.CheckerBoard(image_1 < -big_number, image_1 > -big_number), checkerboard_1_file_name)
+        sitk.WriteImage(sitk.CheckerBoard(image_0 < -big_number, image_0 > -big_number, (6,)*image_0.GetDimension()), checkerboard_0_file_name)
+        sitk.WriteImage(sitk.CheckerBoard(image_1 < -big_number, image_1 > -big_number, (6,)*image_0.GetDimension()), checkerboard_1_file_name)
 
-        warp_image(checkerboard_0_file_name, disp_field_0_file_name, sitk.sitkNearestNeighbor, 'checkerboard')
-        warp_image(checkerboard_1_file_name, disp_field_1_file_name, sitk.sitkNearestNeighbor, 'checkerboard')
+        warp_image(superelastix, checkerboard_0_file_name, disp_field_0_file_name, sitk.sitkNearestNeighbor, 'checkerboard')
+        warp_image(superelastix, checkerboard_1_file_name, disp_field_1_file_name, sitk.sitkNearestNeighbor, 'checkerboard')
+
+    def warp_image_checkerboards(self, superelastix, file_names, output_directory):
+        disp_field_0_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][0])
+        disp_field_1_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][1])
+
+        disp_field_0_path, disp_field_0_ext = os.path.splitext(disp_field_0_file_name)
+        disp_field_1_path, disp_field_1_ext = os.path.splitext(disp_field_1_file_name)
+
+        image_checkerboard_0_file_name = disp_field_0_path + '_image_checkerboard' + disp_field_0_ext
+        image_checkerboard_1_file_name = disp_field_1_path + '_image_checkerboard' + disp_field_1_ext
+
+        warped_image_0_file_name = warp_image(superelastix, file_names['image_file_names'][0],
+                                              disp_field_0_file_name, sitk.sitkLinear, 'image')
+        warped_image_1_file_name = warp_image(superelastix,
+                                              file_names['image_file_names'][1],
+                                              disp_field_1_file_name, sitk.sitkLinear, 'image')
+
+        image_0 = sitk.ReadImage(file_names['image_file_names'][0])
+        image_1 = sitk.ReadImage(file_names['image_file_names'][1])
+
+        sitk.WriteImage(sitk.CheckerBoard(image_0, sitk.ReadImage(warped_image_1_file_name, image_1.GetPixelID()),
+                                          (6,)*image_0.GetDimension()),
+                        image_checkerboard_0_file_name)
+        sitk.WriteImage(sitk.CheckerBoard(image_1, sitk.ReadImage(warped_image_0_file_name, image_1.GetPixelID()),
+                                          (6,)*image_0.GetDimension()),
+                        image_checkerboard_1_file_name)
 
 
 class CUMC12(Dataset):
@@ -186,7 +212,7 @@ class CUMC12(Dataset):
                                max_number_of_registrations // 2)
 
     def evaluate(self, superelastix, file_names, output_directory):
-        return self.evaluate_label(file_names, output_directory)
+        return self.evaluate_label(superelastix, file_names, output_directory)
 
 
 class DIRLAB(Dataset):
@@ -375,7 +401,7 @@ class ISBR18(Dataset):
 
     # TODO: Find out why inverse consistency does not work with this dataset
     def evaluate(self, superelastix, file_names, output_directory):
-        return self.evaluate_label(file_names, output_directory)
+        return self.evaluate_label(superelastix, file_names, output_directory)
 
 
 class LPBA40(Dataset):
@@ -396,18 +422,18 @@ class LPBA40(Dataset):
         label_file_names = []
         for sub_directory in os.listdir(os.path.join(input_directory, 'delineation_space')):
             if os.path.isdir(os.path.join(input_directory, 'delineation_space', sub_directory)):
-                for label_file_name in os.listdir(os.path.join(input_directory, 'delineation_space', sub_directory)):
-                    if label_file_name.endswith('delineation.structure.label.hdr'):
-                        input_label_file_name = os.path.join(input_directory, 'delineation_space', sub_directory, label_file_name)
-                        output_label_file_name = os.path.join(output_directory, 'tmp', 'removed_labels', label_file_name)
+                for label_file_name in glob.glob(os.path.join(input_directory, 'delineation_space', sub_directory, 'S*delineation.structure.label.hdr')):
 
-                        # Remove labels outside skullstripped image
-                        if not os.path.exists(output_label_file_name):
-                            os.makedirs(os.path.dirname(output_label_file_name), exist_ok=True)
-                            label = sitk.ChangeLabel(sitk.ReadImage(input_label_file_name), {181: 0, 182: 0})
-                            sitk.WriteImage(label, output_label_file_name)
+                    input_label_file_name = os.path.join(input_directory, 'delineation_space', sub_directory, label_file_name)
+                    output_label_file_name = os.path.join(output_directory, 'tmp', 'removed_labels', label_file_name)
 
-                        label_file_names.append(output_label_file_name)
+                    # Remove labels outside skullstripped image
+                    if not os.path.exists(output_label_file_name):
+                        os.makedirs(os.path.dirname(output_label_file_name), exist_ok=True)
+                        label = sitk.ChangeLabel(sitk.ReadImage(input_label_file_name), {181: 0, 182: 0})
+                        sitk.WriteImage(label, output_label_file_name)
+
+                    label_file_names.append(output_label_file_name)
 
         image_file_names = [create_identity_world_information(pair, self.name, input_directory, output_directory) for pair in combinations(image_file_names, 2)]
         label_file_names = [pair for pair in combinations(label_file_names, 2)]
@@ -430,7 +456,7 @@ class LPBA40(Dataset):
                                max_number_of_registrations // 2)
 
     def evaluate(self, superelastix, file_names, output_directory):
-        return self.evaluate_label(file_names, output_directory)
+        return self.evaluate_label(superelastix, file_names, output_directory)
 
 
 class MGH10(Dataset):
@@ -478,7 +504,7 @@ class MGH10(Dataset):
                                max_number_of_registrations // 2)
 
     def evaluate(self, superelastix, file_names, output_directory):
-        return self.evaluate_label(file_names, output_directory)
+        return self.evaluate_label(superelastix, file_names, output_directory)
 
 
 class POPI(Dataset):

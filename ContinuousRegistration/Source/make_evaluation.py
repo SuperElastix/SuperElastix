@@ -51,10 +51,13 @@ def run(parameters):
                             parameters.superelastix, file_names, output_directory))
 
                         if parameters.warp_images:
-                            dataset.warp_images(file_names, output_directory)
+                            dataset.warp_images(parameters.superelastix, file_names, output_directory)
 
                         if parameters.warp_checkerboards:
-                            dataset.warp_checkerboards(file_names, output_directory)
+                            dataset.warp_checkerboards(parameters.superelastix, file_names, output_directory)
+
+                        if parameters.warp_image_checkerboards:
+                            dataset.warp_image_checkerboards(parameters.superelastix, file_names, output_directory)
                     except Exception as e:
                         logging.error('Error during evaluation of %s\'s blueprint %s and dataset %s: %s'
                                       % (team_name, blueprint_name, dataset.name, str(e)))
@@ -66,4 +69,5 @@ def run(parameters):
 if __name__ == '__main__':
     parser.add_argument('--warp-images', '-wi', type=bool, default=False)
     parser.add_argument('--warp-checkerboards', '-wc', type=bool, default=False)
+    parser.add_argument('--warp-image-checkerboards', '-wic', type=bool, default=False)
     run(parser.parse_args())
