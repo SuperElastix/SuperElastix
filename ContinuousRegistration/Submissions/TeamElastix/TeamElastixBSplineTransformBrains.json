@@ -1,5 +1,5 @@
 {
-    "Datasets": ["POPI", "DIRLAB", "EMPIRE", "LPBA40", "ISBR18", "CUMC12", "MGH10", "SPREAD"],
+    "Datasets": ["ISBR18", "LPBA40", "MGH10", "CUMC12"],
     "Component": {
         "Name": "Elastix",
         "NameOfClass": "MonolithicElastixComponent",
@@ -39,7 +39,7 @@
         "ParameterMap1Resampler": "DefaultResampler",
         "ParameterMap1ResampleInterpolator": "FinalBSplineInterpolator",
         "ParameterMap1FinalBSplineInterpolationOrder": "3",
-        "ParameterMap1NumberOfResolutions": "4",
+        "ParameterMap1NumberOfResolutions": "5",
         "ParameterMap1WriteIterationInfo": "false",
         "ParameterMap1ImageSampler": "RandomSparseMask",
         "ParameterMap1NumberOfSpatialSamples": "2048",
@@ -52,13 +52,15 @@
         "ParameterMap1WriteResultImage": "true",
         "ParameterMap1Registration": "MultiMetricMultiResolutionRegistration",
         "ParameterMap1Metric": ["AdvancedMattesMutualInformation", "TransformBendingEnergyPenalty"],
-        "ParameterMap1MaximumNumberOfIterations": "256",
+        "ParameterMap1Metric0Weight": "1.0",
+        "ParameterMap1Metric1Weight": "50.0",
+        "ParameterMap1MaximumNumberOfIterations": "512",
         "ParameterMap1AutomaticTransformInitialization": "true",
         "ParameterMap1AutomaticTransformInitializationMethod": "GeometricalCenter",
         "ParameterMap1Transform": "BSplineTransform",
         "ParameterMap1BSplineTransformSplineOrder": 3,
         "ParameterMap1FinalGridSpacingInPhysicalUnits": 16.0,
-        "ParameterMap1GridSpacingSchedule": [16.0, 4.0, 2.0, 1.0],
+        "ParameterMap1GridSpacingSchedule": [4.24, 2.82, 2.0, 1.41, 1.0],
         "ParameterMap1RequiredRatioOfValidSamples": "0.01"
     },
     "Component": {

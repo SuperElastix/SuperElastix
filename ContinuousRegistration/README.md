@@ -24,6 +24,7 @@ This generates shell scripts to running the registrations, one for each registra
 ```bash
 find . -name "*.sh" -exec chmod +x "{}" \;
 find . -name "*.sh" -exec "{}" \;
+find . -name "*.sh" -exec echo "nohup {} &" \; > parallel.sh;
 ```
 
 to recursively find scripts, make them executable, and run them.

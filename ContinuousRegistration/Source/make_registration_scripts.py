@@ -1,9 +1,9 @@
 import argparse
-import logging
 import os
 import json
 
 from ContinuousRegistration.Source.datasets import CUMC12, DIRLAB, EMPIRE, ISBR18, LPBA40, MGH10, POPI, SPREAD, HBIA
+from ContinuousRegistration.Source.util import logging
 
 parser = argparse.ArgumentParser(description='Continuous Registration Challenge command line interface.')
 
