@@ -27,7 +27,7 @@ set( GTEST_source_dir ${CMAKE_CURRENT_BINARY_DIR}/${proj}-prefix/src/${proj} )
 set( GTEST_install_dir ${CMAKE_CURRENT_BINARY_DIR}/${proj} )
 
 set( ${proj}_ARCHIVE_OUTPUT_DIRECTORY "<BINARY_DIR>/lib" )
-if( MSVC )
+if( "${CMAKE_GENERATOR}" MATCHES "Visual Studio" )
   set( ${proj}_ARCHIVE_OUTPUT_DIRECTORY "<BINARY_DIR>/lib/$<CONFIGURATION>" )
 endif()
 
