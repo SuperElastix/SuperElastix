@@ -85,6 +85,7 @@ class itkImageDomainFixedInterface
 {
   // An interface that provides the smart pointer to the base class of an itk image
   // that holds the origin/spacing/ etc domain information.
+  // Intended for the "fixed image" in a moving-image-to-fixed-image registration.
 
 public:
 
@@ -98,6 +99,7 @@ template< int Dimensionality, class TPixel >
 class itkImageMovingInterface
 {
   // An interface that provides the smart pointer to an itk image
+  // Intended for the "moving image" in a moving-image-to-fixed-image registration.
 
 public:
 
