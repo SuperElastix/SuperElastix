@@ -1,21 +1,86 @@
-import os, glob, csv, re
+import glob, csv, re
 from abc import ABCMeta, abstractmethod
-import numpy as np
 from itertools import combinations
-import SimpleITK as sitk
 
 from ContinuousRegistration.Source.metrics import tre, hausdorff, inverse_consistency_labels, inverse_consistency_points, dice
-from ContinuousRegistration.Source.util import take, sort_file_names, copy_information_from_images_to_labels, merge_dicts
-from ContinuousRegistration.Source.util import create_mask_by_thresholding, create_mask_by_size, create_identity_world_information
-from ContinuousRegistration.Source.util import create_disp_field_names, warp_image
-from ContinuousRegistration.Source.util import logging
+from ContinuousRegistration.Source.util import *
 
 
-class Dataset(object):
+def load_datasets(parameters):
+    datasets = dict()
+
+    if parameters.cumc12_input_directory is not None:
+        logging.info('Loading CUMC12.')
+        cumc12 = CUMC12(parameters.cumc12_input_directory,
+                        parameters.output_directory,
+                        parameters.max_number_of_registrations_per_dataset)
+        datasets[cumc12.name] = cumc12
+
+    if parameters.dirlab_input_directory is not None:
+        logging.info('Loading DIRLAB.')
+        dirlab = DIRLAB(parameters.dirlab_input_directory,
+                        parameters.dirlab_mask_directory,
+                        parameters.output_directory,
+                        parameters.max_number_of_registrations_per_dataset)
+        datasets[dirlab.name] = dirlab
+
+    if parameters.empire_input_directory is not None:
+        logging.info('Loading EMPIRE.')
+        empire = EMPIRE(parameters.empire_input_directory,
+                        parameters.max_number_of_registrations_per_dataset)
+        datasets[empire.name] = empire
+
+    if parameters.isbr18_input_directory is not None:
+        logging.info('Loading ISBR18.')
+        isbr18 = ISBR18(parameters.isbr18_input_directory,
+                        parameters.output_directory,
+                        parameters.max_number_of_registrations_per_dataset)
+        datasets[isbr18.name] = isbr18
+
+    if parameters.lpba40_input_directory is not None:
+        logging.info('Loading LPBA40.')
+        lpba40 = LPBA40(parameters.lpba40_input_directory,
+                        parameters.output_directory,
+                        parameters.max_number_of_registrations_per_dataset)
+        datasets[lpba40.name] = lpba40
+
+    if parameters.mgh10_input_directory is not None:
+        logging.info('Loading MGH10.')
+        mgh10 = MGH10(parameters.mgh10_input_directory,
+                      parameters.output_directory,
+                      parameters.max_number_of_registrations_per_dataset)
+        datasets[mgh10.name] = mgh10
+
+    if parameters.popi_input_directory is not None:
+        logging.info('Loading POPI.')
+        popi = POPI(parameters.popi_input_directory,
+                    parameters.popi_mask_directory,
+                    parameters.output_directory,
+                    parameters.max_number_of_registrations_per_dataset)
+        datasets[popi.name] = popi
+
+    if parameters.spread_input_directory is not None:
+        logging.info('Loading SPREAD.')
+        spread = SPREAD(parameters.spread_input_directory,
+                        parameters.output_directory,
+                        parameters.max_number_of_registrations_per_dataset)
+        datasets[spread.name] = spread
+
+    if parameters.hbia_input_directory is not None:
+        logging.info('Loading HistoBIA.')
+        hbia = HBIA(parameters.hbia_input_directory,
+                    parameters.output_directory,
+                    parameters.max_number_of_registrations_per_dataset,
+                    scale=10)
+        datasets[hbia.name] = hbia
+
+    return datasets
+
+
+class Dataset:
     """
-    Base class for datasets. The derived classes need only to implement the file
-    layout on disk and how to evaluate the dataset.  Everything else is handled
-    by this class. See metrics.py for available metrics.
+    Base class for datasets. The derived classes need only to implement disk access  and how to evaluate the dataset.
+    Everything else is handled by this class. See metrics.py for available evaluation metrics.
     """
     __metaclass__ = ABCMeta
 
@@ -23,7 +88,8 @@ class Dataset(object):
         for file_name in self.file_names:
             yield file_name
 
-    def make_shell_scripts(self, superelastix, blueprint_file_name, file_names, output_directory):
+    @staticmethod
+    def make_shell_scripts(superelastix, blueprint_file_name, file_names, output_directory):
         if not os.path.exists(os.path.join(output_directory, 'sh')):
             os.mkdir(os.path.join(output_directory, 'sh'))
         COMMAND_TEMPLATE = '%s --conf %s --in %s %s --out DisplacementField=%s --loglevel trace --logfile %s'
@@ -59,9 +125,8 @@ class Dataset(object):
     def make_batch_scripts(self):
         pass
 
-    #
-    @abstractmethod
-    def evaluate(self):
+    @staticmethod
+    def evaluate():
         """
         The derived class should either call evaluate_point_set,
         `evaluate_label_image` implement its own metrics, or combinations here
@@ -81,13 +146,13 @@ class Dataset(object):
             os.path.join(output_directory, file_names['disp_field_file_names'][1]),
         )
 
-        tre_0, tre_1 = tre(superelastix, file_names['ground_truth_file_names'],
-                           disp_field_paths)
-        hausdorff_0, hausdorff_1 = hausdorff(superelastix,
-                                             file_names['ground_truth_file_names'],
-                                             disp_field_paths)
+        point_sets = (self.read_point_set(file_names['ground_truth_file_names'][0]),
+                      self.read_point_set(file_names['ground_truth_file_names'][0]))
+
+        tre_0, tre_1 = tre(superelastix, point_sets,disp_field_paths)
+        hausdorff_0, hausdorff_1 = hausdorff(superelastix, point_sets, disp_field_paths)
         inverse_consistency_points_0, inverse_consistency_points_1 = inverse_consistency_points(
-            superelastix, file_names['ground_truth_file_names'], disp_field_paths)
+            superelastix, point_sets, disp_field_paths)
 
         return {
             file_names['disp_field_file_names'][0]:
@@ -96,7 +161,8 @@ class Dataset(object):
                 merge_dicts(tre_1, hausdorff_1, inverse_consistency_points_1)
         }
 
-    def evaluate_label(self, superelastix, file_names, output_directory):
+    @staticmethod
+    def evaluate_label(superelastix, file_names, output_directory):
         """ Default evaluation method for label ground truths
 
         :param superelastix:
@@ -121,14 +187,16 @@ class Dataset(object):
                 merge_dicts(inverse_consistency_atlas_1, dice_1)
         }
 
-    def warp_images(self, superelastix, file_names, output_directory):
+    @staticmethod
+    def warp_images(superelastix, file_names, output_directory):
         disp_field_0_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][0])
         disp_field_1_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][1])
 
         warp_image(superelastix, file_names['image_file_names'][0], disp_field_0_file_name, sitk.sitkLinear, 'image')
         warp_image(superelastix, file_names['image_file_names'][1], disp_field_1_file_name, sitk.sitkLinear, 'image')
 
-    def warp_checkerboards(self, superelastix, file_names, output_directory):
+    @staticmethod
+    def warp_checkerboards(superelastix, file_names, output_directory):
         disp_field_0_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][0])
         disp_field_1_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][1])
 
@@ -149,7 +217,8 @@ class Dataset(object):
         warp_image(superelastix, checkerboard_0_file_name, disp_field_0_file_name, sitk.sitkNearestNeighbor, 'checkerboard')
         warp_image(superelastix, checkerboard_1_file_name, disp_field_1_file_name, sitk.sitkNearestNeighbor, 'checkerboard')
 
-    def warp_image_checkerboards(self, superelastix, file_names, output_directory):
+    @staticmethod
+    def warp_image_checkerboards(superelastix, file_names, output_directory):
         disp_field_0_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][0])
         disp_field_1_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][1])
 
@@ -174,6 +243,10 @@ class Dataset(object):
         sitk.WriteImage(sitk.CheckerBoard(image_1, sitk.ReadImage(warped_image_0_file_name, image_1.GetPixelID()),
                                           (6,)*image_0.GetDimension()),
                         image_checkerboard_1_file_name)
+
+    @abstractmethod
+    def read_point_set(self, file_name):
+        pass
 
 
 class CUMC12(Dataset):
@@ -317,6 +390,10 @@ class DIRLAB(Dataset):
     def evaluate(self, superelastix, file_names, output_directory):
         return self.evaluate_point_set(superelastix, file_names, output_directory)
 
+    @abstractmethod
+    def read_point_set(file_name):
+        return read_pts(file_name)
+
 
 class EMPIRE(Dataset):
     def __init__(self, input_directory, max_number_of_registrations):
@@ -354,6 +431,9 @@ class EMPIRE(Dataset):
     def evaluate(self, superelastix, file_names, output_directory):
         # TODO: Submit to EMPIRE
         pass
+
+    def read_point_set(self, file_name):
+        return self.read_pts(file_name)
 
 
 class ISBR18(Dataset):
@@ -552,6 +632,10 @@ class POPI(Dataset):
     def evaluate(self, superelastix, file_names, output_directory):
         return self.evaluate_point_set(superelastix, file_names, output_directory)
 
+    @abstractmethod
+    def read_point_set(file_name):
+        return read_pts(file_name)
+
 
 class SPREAD(Dataset):
 
@@ -607,6 +691,9 @@ class SPREAD(Dataset):
 
     def evaluate(self, superelastix, file_names, output_directory):
         self.evaluate_point_set(superelastix, file_names, output_directory)
+
+    def read_point_set(self, file_name):
+        return self.read_pts(file_name)
 
 
 class HBIA(Dataset):
@@ -690,3 +777,6 @@ class HBIA(Dataset):
 
     def evaluate(self, superelastix, file_names, output_directory):
         return self.evaluate_point_set(superelastix, file_names, output_directory)
+
+    def read_point_set(self, file_name):
+        return self.read_csv(file_name)

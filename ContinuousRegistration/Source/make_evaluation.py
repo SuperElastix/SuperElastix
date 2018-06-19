@@ -1,6 +1,6 @@
 import os, json, datetime
-from ContinuousRegistration.Source.make_registration_scripts import parser, load_submissions, load_datasets
-from ContinuousRegistration.Source.util import logging
+from ContinuousRegistration.Source.make_registration_scripts import parser
+from ContinuousRegistration.Source.util import logging, load_submissions, load_datasets
 
 def write_json(output_file_name, results):
     output_directory = os.path.dirname(output_file_name)
