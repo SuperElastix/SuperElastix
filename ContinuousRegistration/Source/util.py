@@ -145,18 +145,15 @@ def create_identity_world_information(file_names, dataset_name, input_directory,
     return tuple(new_file_names)
 
 
-def create_disp_field_names(image_file_names, name):
-    disp_field_file_names = []
-    for name_0, name_1 in image_file_names:
-        name_0 = os.path.basename(name_0)
-        name_1 = os.path.basename(name_1)
-        name_we_0, image_extension_we_0 = os.path.splitext(name_0)
-        name_we_1, image_extension_we_1 = os.path.splitext(name_1)
-        name_pair_1 = name_we_1 + "_to_" + name_we_0 + ".mha"
-        name_pair_0 = name_we_0 + "_to_" + name_we_1 + ".mha"
-        disp_field_file_names.append((os.path.join(name, name_pair_1),
-                                         os.path.join(name, name_pair_0)))
-    return disp_field_file_names
+def create_disp_field_names(image_file_names, dataset_name):
+    name_0, name_1 = image_file_names
+    name_0 = os.path.basename(name_0)
+    name_1 = os.path.basename(name_1)
+    name_we_0, image_extension_we_0 = os.path.splitext(name_0)
+    name_we_1, image_extension_we_1 = os.path.splitext(name_1)
+    name_pair_1 = name_we_1 + "_to_" + name_we_0 + ".mha"
+    name_pair_0 = name_we_0 + "_to_" + name_we_1 + ".mha"
+    return (os.path.join(dataset_name, name_pair_1), os.path.join(dataset_name, name_pair_0))
 
 
 def merge_dicts(*dicts):
