@@ -183,7 +183,7 @@ TEST_F(NiftyregItkHybridComponentTest, AladinAndItk)
   fixedImageReader->SetFileName(dataManager->GetInputFile("coneA2d64.mhd"));
 
   ImageReader2DType::Pointer movingImageReader = ImageReader2DType::New();
-  movingImageReader->SetFileName(dataManager->GetInputFile("coneB2d64.mhd"));
+  movingImageReader->SetFileName(dataManager->GetInputFile("coneA2d64_shift.mhd"));
 
   ImageWriter2DType::Pointer resultImageWriter = ImageWriter2DType::New();
   resultImageWriter->SetFileName(dataManager->GetOutputFile("NiftyregItkHybrid_AladinAndItk_Image.mhd"));
