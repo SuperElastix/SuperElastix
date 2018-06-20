@@ -109,7 +109,7 @@ install:
 #  - pip3 install --user -r requirements.txt
 #  - sudo pip3 install --ignore-installed nose pytest pytest-cov coverage codecov codacy-coverage
 
-script:
+script: sleep 1 # disable default call ./configure && make && make test
 #  - nosetests Tools -v --exe --with-doctest --with-xunit --with-coverage --cover-package=Tools
 #  - nosetests ContinuousRegistration -v --exe --with-doctest --with-xunit --with-coverage --cover-package=ContinuousRegistration  --ignore-files=submit_jobs.py
 #  - py.test Tools -v --doctest-modules
