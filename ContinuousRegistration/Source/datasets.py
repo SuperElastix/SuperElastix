@@ -191,8 +191,8 @@ class Dataset:
         disp_field_0_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][0])
         disp_field_1_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][1])
 
-        warp_image(superelastix, file_names['image_file_names'][0], disp_field_0_file_name, sitk.sitkLinear, 'image')
-        warp_image(superelastix, file_names['image_file_names'][1], disp_field_1_file_name, sitk.sitkLinear, 'image')
+        warp_image(superelastix, file_names['image_file_names'][0], disp_field_0_file_name, 'image')
+        warp_image(superelastix, file_names['image_file_names'][1], disp_field_1_file_name, 'image')
 
     @staticmethod
     def warp_checkerboards(superelastix, file_names, output_directory):
@@ -210,11 +210,11 @@ class Dataset:
 
         # TODO: Better way of creating checkerboard pattern
         big_number = 1e9
-        sitk.WriteImage(sitk.CheckerBoard(image_0 < -big_number, image_0 > -big_number, (6,)*image_0.GetDimension()), checkerboard_0_file_name)
-        sitk.WriteImage(sitk.CheckerBoard(image_1 < -big_number, image_1 > -big_number, (6,)*image_0.GetDimension()), checkerboard_1_file_name)
+        sitk.WriteImage(sitk.CheckerBoard(image_0 < -big_number, image_0 > -big_number, (5,)*image_0.GetDimension()), checkerboard_0_file_name)
+        sitk.WriteImage(sitk.CheckerBoard(image_1 < -big_number, image_1 > -big_number, (5,)*image_0.GetDimension()), checkerboard_1_file_name)
 
-        warp_image(superelastix, checkerboard_0_file_name, disp_field_0_file_name, sitk.sitkNearestNeighbor, 'checkerboard')
-        warp_image(superelastix, checkerboard_1_file_name, disp_field_1_file_name, sitk.sitkNearestNeighbor, 'checkerboard')
+        warp_image(superelastix, checkerboard_0_file_name, disp_field_0_file_name, 'checkerboard')
+        warp_image(superelastix, checkerboard_1_file_name, disp_field_1_file_name, 'checkerboard')
 
     @staticmethod
     def warp_image_checkerboards(superelastix, file_names, output_directory):
@@ -228,19 +228,45 @@ class Dataset:
         image_checkerboard_1_file_name = disp_field_1_path + '_image_checkerboard' + disp_field_1_ext
 
         warped_image_0_file_name = warp_image(superelastix, file_names['image_file_names'][0],
-                                              disp_field_0_file_name, sitk.sitkLinear, 'image')
+                                              disp_field_0_file_name, 'image')
         warped_image_1_file_name = warp_image(superelastix,
                                               file_names['image_file_names'][1],
-                                              disp_field_1_file_name, sitk.sitkLinear, 'image')
+                                              disp_field_1_file_name, 'image')
 
         image_0 = sitk.ReadImage(file_names['image_file_names'][0])
         image_1 = sitk.ReadImage(file_names['image_file_names'][1])
 
         sitk.WriteImage(sitk.CheckerBoard(image_0, sitk.ReadImage(warped_image_1_file_name, image_1.GetPixelID()),
-                                          (6,)*image_0.GetDimension()),
+                                          (5,)*image_0.GetDimension()),
                         image_checkerboard_0_file_name)
         sitk.WriteImage(sitk.CheckerBoard(image_1, sitk.ReadImage(warped_image_0_file_name, image_1.GetPixelID()),
-                                          (6,)*image_0.GetDimension()),
+                                          (5,)*image_1.GetDimension()),
+                        image_checkerboard_1_file_name)
+
+    @staticmethod
+    def warp_label_checkerboards(superelastix, file_names, output_directory):
+        disp_field_0_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][0])
+        disp_field_1_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][1])
+
+        disp_field_0_path, disp_field_0_ext = os.path.splitext(disp_field_0_file_name)
+        disp_field_1_path, disp_field_1_ext = os.path.splitext(disp_field_1_file_name)
+
+        image_checkerboard_0_file_name = disp_field_0_path + '_label_checkerboard' + disp_field_0_ext
+        image_checkerboard_1_file_name = disp_field_1_path + '_label_checkerboard' + disp_field_1_ext
+
+        warped_image_0_file_name = warp_image(superelastix, file_names['ground_truth_file_names'][0],
+                                              disp_field_0_file_name, 'label_checkerboard')
+        warped_image_1_file_name = warp_image(superelastix, file_names['ground_truth_file_names'][1],
+                                              disp_field_1_file_name, 'label_checkerboard')
+
+        label_0 = sitk.ReadImage(file_names['ground_truth_file_names'][0])
+        label_1 = sitk.ReadImage(file_names['ground_truth_file_names'][1])
+
+        sitk.WriteImage(sitk.CheckerBoard(label_0, sitk.ReadImage(warped_image_1_file_name, label_0.GetPixelID()),
+                                          (5,) * label_0.GetDimension()),
+                        image_checkerboard_0_file_name)
+        sitk.WriteImage(sitk.CheckerBoard(label_1, sitk.ReadImage(warped_image_0_file_name, label_1.GetPixelID()),
+                                          (5,) * label_1.GetDimension()),
                         image_checkerboard_1_file_name)
 
     @staticmethod

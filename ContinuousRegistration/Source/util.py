@@ -234,7 +234,7 @@ def warp_point_set(superelastix, point_set, disp_field_file_name):
     return read_vtk(output_point_set_file_name)
 
 
-def warp_image(superelastix, input_image_file_name, disp_field_file_name, interpolator, type_name):
+def warp_image(superelastix, input_image_file_name, disp_field_file_name, type_name):
     output_image_base_name, output_image_ext = os.path.splitext(disp_field_file_name)
     output_image_file_name = output_image_base_name + '_' + type_name + output_image_ext
 
