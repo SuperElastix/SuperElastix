@@ -1,6 +1,7 @@
 import os, json, datetime
-from ContinuousRegistration.Source.make_registration_scripts import parser, load_submissions, load_datasets
-from ContinuousRegistration.Source.util import logging
+from ContinuousRegistration.Source.make_registration_scripts import parser
+from ContinuousRegistration.Source.util import logging, load_submissions
+from ContinuousRegistration.Source.datasets import load_datasets
 
 def write_json(output_file_name, results):
     output_directory = os.path.dirname(output_file_name)
@@ -58,6 +59,9 @@ def run(parameters):
 
                         if parameters.warp_image_checkerboards:
                             dataset.warp_image_checkerboards(parameters.superelastix, file_names, output_directory)
+
+                        if parameters.warp_label_checkerboards:
+                            dataset.warp_label_checkerboards(parameters.superelastix, file_names, output_directory)
                     except Exception as e:
                         logging.error('Error during evaluation of %s\'s blueprint %s and dataset %s: %s'
                                       % (team_name, blueprint_name, dataset.name, str(e)))
@@ -70,4 +74,5 @@ if __name__ == '__main__':
     parser.add_argument('--warp-images', '-wi', type=bool, default=False)
     parser.add_argument('--warp-checkerboards', '-wc', type=bool, default=False)
     parser.add_argument('--warp-image-checkerboards', '-wic', type=bool, default=False)
+    parser.add_argument('--warp-label-checkerboards', '-wlc', type=bool, default=False)
     run(parser.parse_args())
