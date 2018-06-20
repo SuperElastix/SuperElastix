@@ -1,6 +1,8 @@
 import json, glob, os, subprocess
 import numpy as np
 from ContinuousRegistration.Source.make_registration_scripts import parser, load_datasets
+from ContinuousRegistration.Source.util import get_script_path
+from datetime import datetime
 
 def load_results_from_json(filename, datasets):
     results = json.load(open(filename))
@@ -20,7 +22,7 @@ def load_results_from_json(filename, datasets):
                 dataset_result_array = []
                 for dataset_result in dataset_results:
                     for dataset_result_key, dataset_result_values in dataset_result.items():
-                        dataset_metric_names.add(tuple(dataset_result_values.keys().sort()))
+                        dataset_metric_names.add(tuple(dataset_result_values.keys()))
                         dataset_result_array.append(list(dataset_result_values.values()))
 
                 # All registrations should have been evaluated with the same metrics
@@ -33,12 +35,16 @@ def load_results_from_json(filename, datasets):
                 dataset_result_means = np.mean(dataset_result_array, axis=0)
                 dataset_result_stds = np.std(dataset_result_array, axis=0)
 
+                blueprint_commit = subprocess.check_output(['git', 'log', '-n', '1', '--pretty=format:%h',
+                                                            '--', '%s/../Submissions/%s/%s.json' %
+                                                            (get_script_path(), team_name, blueprint_name)])
+                repo_commit = subprocess.check_output(['git', 'describe', '--always'])
 
                 # Save stats in-place
                 results[team_name][blueprint_name][dataset_name] = {
-                    'blueprint_commit': subprocess.check_output(['git', 'log', '-n', '1', '--pretty=format:%h', '--', 'ContinuousRegistration/Submissions/%s/%s' % (team_name, blueprint_name)]),
-                    'repo_commit': subprocess.check_output(['git', 'describe', '--always']),
-                    'number_of_registrations': '%s/%s' (dataset_result_array.shape[0], len(datasets[dataset_name].file_names))
+                    'blueprint_commit': blueprint_commit.decode("utf-8"),
+                    'repo_commit': repo_commit.decode("utf-8"),
+                    'number_of_registrations': '%s/%s' % (len(dataset_result_array), 2*len(datasets[dataset_name].file_names)),
                     'means': dataset_result_means,
                     'stds': dataset_result_stds
                 }
@@ -48,6 +54,7 @@ def load_results_from_json(filename, datasets):
 
 def run(parameters):
     result_file_names = glob.glob(os.path.join(parameters.output_directory, 'results*'))
+    date = datetime.now().strftime('%d-%m-%Y')
 
     # Most recent first
     result_file_names.sort(reverse=True)
@@ -95,6 +102,7 @@ def run(parameters):
         table += '<tr>'
         table += '<th role="columnheader">Team</th>'
         table += '<th role="columnheader">Blueprint</th>'
+        table += '<th role="columnheader">Date</th>'
         table += '<th role="columnheader">Blueprint Commit</th>'
         table += '<th role="columnheader">Repo Commit</th>'
         table += '<th role="columnheader">Number of Registrations</th>'
@@ -112,8 +120,10 @@ def run(parameters):
                     table += '<tr>'
                     table += '<th>%s</th>' % team_name
                     table += '<th>%s</th>' % blueprint_name
-                    table += '<th>%s</th>' % blueprint_results[dataset_name]['commit']
-                    table += '<td>%d/%d<tr>' % blueprint_results[dataset_name]['number_of_registrations']
+                    table += '<th>%s</th>' % date
+                    table += '<th>%s</th>' % blueprint_results[dataset_name]['blueprint_commit']
+                    table += '<th>%s</th>' % blueprint_results[dataset_name]['repo_commit']
+                    table += '<td>%s</th>' % blueprint_results[dataset_name]['number_of_registrations']
 
                     means, stds = blueprint_results[dataset_name]['means'], blueprint_results[dataset_name]['stds']
                     for mean, std in zip(means, stds):
@@ -140,6 +150,7 @@ def run(parameters):
 
 
 if __name__ == '__main__':
+
     parameters = parser.parse_args()
 
     if not os.path.exists(parameters.output_directory):
