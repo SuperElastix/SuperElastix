@@ -20,7 +20,7 @@ def load_results_from_json(filename, datasets):
                 dataset_result_array = []
                 for dataset_result in dataset_results:
                     for dataset_result_key, dataset_result_values in dataset_result.items():
-                        dataset_metric_names.add(tuple(dataset_result_values.keys()))
+                        dataset_metric_names.add(tuple(dataset_result_values.keys().sort()))
                         dataset_result_array.append(list(dataset_result_values.values()))
 
                 # All registrations should have been evaluated with the same metrics
@@ -36,9 +36,9 @@ def load_results_from_json(filename, datasets):
 
                 # Save stats in-place
                 results[team_name][blueprint_name][dataset_name] = {
-                    'commit': subprocess.check_output(['git', 'describe', '--always']),
-                    'n': dataset_result_array.shape[0],
-                    'N': len(datasets[dataset_name].file_names),
+                    'blueprint_commit': subprocess.check_output(['git', 'log', '-n', '1', '--pretty=format:%h', '--', 'ContinuousRegistration/Submissions/%s/%s' % (team_name, blueprint_name)]),
+                    'repo_commit': subprocess.check_output(['git', 'describe', '--always']),
+                    'number_of_registrations': '%s/%s' (dataset_result_array.shape[0], len(datasets[dataset_name].file_names))
                     'means': dataset_result_means,
                     'stds': dataset_result_stds
                 }
@@ -95,7 +95,8 @@ def run(parameters):
         table += '<tr>'
         table += '<th role="columnheader">Team</th>'
         table += '<th role="columnheader">Blueprint</th>'
-        table += '<th role="columnheader">Commit</th>'
+        table += '<th role="columnheader">Blueprint Commit</th>'
+        table += '<th role="columnheader">Repo Commit</th>'
         table += '<th role="columnheader">Number of Registrations</th>'
 
         for column_name in latest_column_names[dataset_name]:
@@ -112,8 +113,7 @@ def run(parameters):
                     table += '<th>%s</th>' % team_name
                     table += '<th>%s</th>' % blueprint_name
                     table += '<th>%s</th>' % blueprint_results[dataset_name]['commit']
-                    table += '<td>%d/%d<tr>' % (blueprint_results[dataset_name]['n'],
-                                                blueprint_results[dataset_name]['N'])
+                    table += '<td>%d/%d<tr>' % blueprint_results[dataset_name]['number_of_registrations']
 
                     means, stds = blueprint_results[dataset_name]['means'], blueprint_results[dataset_name]['stds']
                     for mean, std in zip(means, stds):

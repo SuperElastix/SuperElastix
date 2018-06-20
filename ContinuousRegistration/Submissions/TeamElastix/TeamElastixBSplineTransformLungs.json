@@ -28,7 +28,7 @@
         "ParameterMap0Metric": "AdvancedMattesMutualInformation",
         "ParameterMap0MaximumNumberOfIterations": "256",
         "ParameterMap0AutomaticTransformInitialization": "true",
-        "ParameterMap0AutomaticTransformInitializationMethod": "GeometricalCenter",
+        "ParameterMap0AutomaticTransformInitializationMethod": "CenterOfGravity",
         "ParameterMap0RequiredRatioOfValidSamples": "0.01",
         "ParameterMap1Dimensionality": "3",
         "ParameterMap1PixelType": "float",
@@ -58,7 +58,7 @@
         "ParameterMap1Transform": "BSplineTransform",
         "ParameterMap1BSplineTransformSplineOrder": 3,
         "ParameterMap1FinalGridSpacingInPhysicalUnits": 16.0,
-        "ParameterMap1GridSpacingSchedule": [16.0, 4.0, 2.0, 1.0],
+        "ParameterMap1GridSpacingSchedule": [8.0, 4.0, 2.0, 1.0],
         "ParameterMap1RequiredRatioOfValidSamples": "0.01"
     },
     "Component": {
@@ -129,10 +129,5 @@
         "Out": "FixedMask",
         "In": "Elastix",
         "NameOfInterface": "itkImageFixedMaskInterface"
-    },
-    "Connection": {
-        "Out": "MovingMask",
-        "In": "Elastix",
-        "NameOfInterface": "itkImageMovingMaskInterface"
     }
 }
