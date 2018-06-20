@@ -53,12 +53,11 @@
         "ParameterMap1Registration": "MultiMetricMultiResolutionRegistration",
         "ParameterMap1Metric": ["AdvancedMattesMutualInformation", "TransformBendingEnergyPenalty"],
         "ParameterMap1MaximumNumberOfIterations": "256",
-        "ParameterMap1AutomaticTransformInitialization": "true",
-        "ParameterMap1AutomaticTransformInitializationMethod": "GeometricalCenter",
+        "ParameterMap1AutomaticTransformInitialization": "false",
         "ParameterMap1Transform": "BSplineTransform",
-        "ParameterMap1BSplineTransformSplineOrder": 3,
-        "ParameterMap1FinalGridSpacingInPhysicalUnits": 16.0,
-        "ParameterMap1GridSpacingSchedule": [8.0, 4.0, 2.0, 1.0],
+        "ParameterMap1BSplineTransformSplineOrder": "3",
+        "ParameterMap1FinalGridSpacingInPhysicalUnits": "16.0",
+        "ParameterMap1GridSpacingSchedule": ["8.0", "4.0", "2.0", "1.0"],
         "ParameterMap1RequiredRatioOfValidSamples": "0.01"
     },
     "Component": {
