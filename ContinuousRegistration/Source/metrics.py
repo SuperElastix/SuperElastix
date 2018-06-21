@@ -2,7 +2,7 @@ import numpy as np
 import SimpleITK as sitk
 from ContinuousRegistration.Source.util import warp_image, warp_point_set
 from ContinuousRegistration.Source.util import logging
-from util import read_vtk, write_vtk
+from ContinuousRegistration.Source.util import read_vtk, write_vtk
 
 labelOverlapMeasurer = sitk.LabelOverlapMeasuresImageFilter()
 labelOverlapMeasurer.SetGlobalDefaultCoordinateTolerance(1)
