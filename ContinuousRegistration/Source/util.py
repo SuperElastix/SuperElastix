@@ -213,8 +213,8 @@ def read_csv(path_file):
 
 def warp_point_set(superelastix, point_set, disp_field_file_name):
 
-    input_point_set_file_name = os.path.splitext(disp_field_file_name)[0] + '-input-point-set.vtk'
-    output_point_set_file_name = os.path.splitext(disp_field_file_name)[0] + '-output-point-set.vtk'
+    input_point_set_file_name = os.path.splitext(disp_field_file_name)[0] + '_input_point_set.vtk'
+    output_point_set_file_name = os.path.splitext(disp_field_file_name)[0] + '_output_point_set.vtk'
 
     write_vtk(point_set, input_point_set_file_name)
 

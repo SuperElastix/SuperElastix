@@ -25,7 +25,9 @@
 namespace selx
 {
 using ModuleNiftyregItkHybridComponents = selx::TypeList<
+    NiftyregItkMultiStageComponent<float, 2>,
 	NiftyregItkMultiStageComponent<double, 2>,
-	NiftyregItkMultiStageComponent<double, 3>
+	NiftyregItkMultiStageComponent<double, 3>,
+	NiftyregItkMultiStageComponent<float, 3>
   >;
 }
