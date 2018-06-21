@@ -1,21 +1,86 @@
-import os, glob, csv, re
+import glob, csv, re
 from abc import ABCMeta, abstractmethod
-import numpy as np
 from itertools import combinations
-import SimpleITK as sitk
 
 from ContinuousRegistration.Source.metrics import tre, hausdorff, inverse_consistency_labels, inverse_consistency_points, dice
-from ContinuousRegistration.Source.util import take, sort_file_names, copy_information_from_images_to_labels, merge_dicts
-from ContinuousRegistration.Source.util import create_mask_by_thresholding, create_mask_by_size, create_identity_world_information
-from ContinuousRegistration.Source.util import create_disp_field_names, warp_image
-from ContinuousRegistration.Source.util import logging
+from ContinuousRegistration.Source.util import *
 
 
-class Dataset(object):
+def load_datasets(parameters):
+    datasets = dict()
+
+    if parameters.cumc12_input_directory is not None:
+        logging.info('Loading CUMC12.')
+        cumc12 = CUMC12(parameters.cumc12_input_directory,
+                        parameters.output_directory,
+                        parameters.max_number_of_registrations_per_dataset)
+        datasets[cumc12.name] = cumc12
+
+    if parameters.dirlab_input_directory is not None:
+        logging.info('Loading DIRLAB.')
+        dirlab = DIRLAB(parameters.dirlab_input_directory,
+                        parameters.dirlab_mask_directory,
+                        parameters.output_directory,
+                        parameters.max_number_of_registrations_per_dataset)
+        datasets[dirlab.name] = dirlab
+
+    if parameters.empire_input_directory is not None:
+        logging.info('Loading EMPIRE.')
+        empire = EMPIRE(parameters.empire_input_directory,
+                        parameters.max_number_of_registrations_per_dataset)
+        datasets[empire.name] = empire
+
+    if parameters.isbr18_input_directory is not None:
+        logging.info('Loading ISBR18.')
+        isbr18 = ISBR18(parameters.isbr18_input_directory,
+                        parameters.output_directory,
+                        parameters.max_number_of_registrations_per_dataset)
+        datasets[isbr18.name] = isbr18
+
+    if parameters.lpba40_input_directory is not None:
+        logging.info('Loading LPBA40.')
+        lpba40 = LPBA40(parameters.lpba40_input_directory,
+                        parameters.output_directory,
+                        parameters.max_number_of_registrations_per_dataset)
+        datasets[lpba40.name] = lpba40
+
+    if parameters.mgh10_input_directory is not None:
+        logging.info('Loading MGH10.')
+        mgh10 = MGH10(parameters.mgh10_input_directory,
+                      parameters.output_directory,
+                      parameters.max_number_of_registrations_per_dataset)
+        datasets[mgh10.name] = mgh10
+
+    if parameters.popi_input_directory is not None:
+        logging.info('Loading POPI.')
+        popi = POPI(parameters.popi_input_directory,
+                    parameters.popi_mask_directory,
+                    parameters.output_directory,
+                    parameters.max_number_of_registrations_per_dataset)
+        datasets[popi.name] = popi
+
+    if parameters.spread_input_directory is not None:
+        logging.info('Loading SPREAD.')
+        spread = SPREAD(parameters.spread_input_directory,
+                        parameters.output_directory,
+                        parameters.max_number_of_registrations_per_dataset)
+        datasets[spread.name] = spread
+
+    if parameters.hbia_input_directory is not None:
+        logging.info('Loading HistoBIA.')
+        hbia = HBIA(parameters.hbia_input_directory,
+                    parameters.output_directory,
+                    parameters.max_number_of_registrations_per_dataset,
+                    scale=10)
+        datasets[hbia.name] = hbia
+
+    return datasets
+
+
+class Dataset:
     """
-    Base class for datasets. The derived classes need only to implement the file
-    layout on disk and how to evaluate the dataset.  Everything else is handled
-    by this class. See metrics.py for available metrics.
+    Base class for datasets. The derived classes need only to implement disk access  and how to evaluate the dataset.
+    Everything else is handled by this class. See metrics.py for available evaluation metrics.
     """
     __metaclass__ = ABCMeta
 
@@ -23,7 +88,8 @@ class Dataset(object):
         for file_name in self.file_names:
             yield file_name
 
-    def make_shell_scripts(self, superelastix, blueprint_file_name, file_names, output_directory):
+    @staticmethod
+    def make_shell_scripts(superelastix, blueprint_file_name, file_names, output_directory):
         if not os.path.exists(os.path.join(output_directory, 'sh')):
             os.mkdir(os.path.join(output_directory, 'sh'))
         COMMAND_TEMPLATE = '%s --conf %s --in %s %s --out DisplacementField=%s --loglevel trace --logfile %s'
@@ -59,9 +125,8 @@ class Dataset(object):
     def make_batch_scripts(self):
         pass
 
-    #
-    @abstractmethod
-    def evaluate(self):
+    @staticmethod
+    def evaluate():
         """
         The derived class should either call evaluate_point_set,
         `evaluate_label_image` implement its own metrics, or combinations here
@@ -78,16 +143,15 @@ class Dataset(object):
         """
         disp_field_paths = (
             os.path.join(output_directory, file_names['disp_field_file_names'][0]),
-            os.path.join(output_directory, file_names['disp_field_file_names'][1]),
-        )
+            os.path.join(output_directory, file_names['disp_field_file_names'][1]))
 
-        tre_0, tre_1 = tre(superelastix, file_names['ground_truth_file_names'],
-                           disp_field_paths)
-        hausdorff_0, hausdorff_1 = hausdorff(superelastix,
-                                             file_names['ground_truth_file_names'],
-                                             disp_field_paths)
+        point_sets = (self.read_point_set(file_names['ground_truth_file_names'][0]),
+                      self.read_point_set(file_names['ground_truth_file_names'][0]))
+
+        tre_0, tre_1 = tre(superelastix, point_sets, disp_field_paths)
+        hausdorff_0, hausdorff_1 = hausdorff(superelastix, point_sets, disp_field_paths)
         inverse_consistency_points_0, inverse_consistency_points_1 = inverse_consistency_points(
-            superelastix, file_names['ground_truth_file_names'], disp_field_paths)
+            superelastix, point_sets, disp_field_paths)
 
         return {
             file_names['disp_field_file_names'][0]:
@@ -96,7 +160,8 @@ class Dataset(object):
                 merge_dicts(tre_1, hausdorff_1, inverse_consistency_points_1)
         }
 
-    def evaluate_label(self, superelastix, file_names, output_directory):
+    @staticmethod
+    def evaluate_label(superelastix, file_names, output_directory):
         """ Default evaluation method for label ground truths
 
         :param superelastix:
@@ -121,14 +186,16 @@ class Dataset(object):
                 merge_dicts(inverse_consistency_atlas_1, dice_1)
         }
 
-    def warp_images(self, superelastix, file_names, output_directory):
+    @staticmethod
+    def warp_images(superelastix, file_names, output_directory):
         disp_field_0_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][0])
         disp_field_1_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][1])
 
-        warp_image(superelastix, file_names['image_file_names'][0], disp_field_0_file_name, sitk.sitkLinear, 'image')
-        warp_image(superelastix, file_names['image_file_names'][1], disp_field_1_file_name, sitk.sitkLinear, 'image')
+        warp_image(superelastix, file_names['image_file_names'][0], disp_field_0_file_name, 'image')
+        warp_image(superelastix, file_names['image_file_names'][1], disp_field_1_file_name, 'image')
 
-    def warp_checkerboards(self, superelastix, file_names, output_directory):
+    @staticmethod
+    def warp_checkerboards(superelastix, file_names, output_directory):
         disp_field_0_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][0])
         disp_field_1_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][1])
 
@@ -143,13 +210,14 @@ class Dataset(object):
 
         # TODO: Better way of creating checkerboard pattern
         big_number = 1e9
-        sitk.WriteImage(sitk.CheckerBoard(image_0 < -big_number, image_0 > -big_number, (6,)*image_0.GetDimension()), checkerboard_0_file_name)
-        sitk.WriteImage(sitk.CheckerBoard(image_1 < -big_number, image_1 > -big_number, (6,)*image_0.GetDimension()), checkerboard_1_file_name)
+        sitk.WriteImage(sitk.CheckerBoard(image_0 < -big_number, image_0 > -big_number, (5,)*image_0.GetDimension()), checkerboard_0_file_name)
+        sitk.WriteImage(sitk.CheckerBoard(image_1 < -big_number, image_1 > -big_number, (5,)*image_0.GetDimension()), checkerboard_1_file_name)
 
-        warp_image(superelastix, checkerboard_0_file_name, disp_field_0_file_name, sitk.sitkNearestNeighbor, 'checkerboard')
-        warp_image(superelastix, checkerboard_1_file_name, disp_field_1_file_name, sitk.sitkNearestNeighbor, 'checkerboard')
+        warp_image(superelastix, checkerboard_0_file_name, disp_field_0_file_name, 'checkerboard')
+        warp_image(superelastix, checkerboard_1_file_name, disp_field_1_file_name, 'checkerboard')
 
-    def warp_image_checkerboards(self, superelastix, file_names, output_directory):
+    @staticmethod
+    def warp_image_checkerboards(superelastix, file_names, output_directory):
         disp_field_0_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][0])
         disp_field_1_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][1])
 
@@ -160,20 +228,50 @@ class Dataset(object):
         image_checkerboard_1_file_name = disp_field_1_path + '_image_checkerboard' + disp_field_1_ext
 
         warped_image_0_file_name = warp_image(superelastix, file_names['image_file_names'][0],
-                                              disp_field_0_file_name, sitk.sitkLinear, 'image')
+                                              disp_field_0_file_name, 'image')
         warped_image_1_file_name = warp_image(superelastix,
                                               file_names['image_file_names'][1],
-                                              disp_field_1_file_name, sitk.sitkLinear, 'image')
+                                              disp_field_1_file_name, 'image')
 
         image_0 = sitk.ReadImage(file_names['image_file_names'][0])
         image_1 = sitk.ReadImage(file_names['image_file_names'][1])
 
         sitk.WriteImage(sitk.CheckerBoard(image_0, sitk.ReadImage(warped_image_1_file_name, image_1.GetPixelID()),
-                                          (6,)*image_0.GetDimension()),
+                                          (5,)*image_0.GetDimension()),
                         image_checkerboard_0_file_name)
         sitk.WriteImage(sitk.CheckerBoard(image_1, sitk.ReadImage(warped_image_0_file_name, image_1.GetPixelID()),
-                                          (6,)*image_0.GetDimension()),
+                                          (5,)*image_1.GetDimension()),
                         image_checkerboard_1_file_name)
+
+    @staticmethod
+    def warp_label_checkerboards(superelastix, file_names, output_directory):
+        disp_field_0_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][0])
+        disp_field_1_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][1])
+
+        disp_field_0_path, disp_field_0_ext = os.path.splitext(disp_field_0_file_name)
+        disp_field_1_path, disp_field_1_ext = os.path.splitext(disp_field_1_file_name)
+
+        image_checkerboard_0_file_name = disp_field_0_path + '_label_checkerboard' + disp_field_0_ext
+        image_checkerboard_1_file_name = disp_field_1_path + '_label_checkerboard' + disp_field_1_ext
+
+        warped_image_0_file_name = warp_image(superelastix, file_names['ground_truth_file_names'][0],
+                                              disp_field_0_file_name, 'label_checkerboard')
+        warped_image_1_file_name = warp_image(superelastix, file_names['ground_truth_file_names'][1],
+                                              disp_field_1_file_name, 'label_checkerboard')
+
+        label_0 = sitk.ReadImage(file_names['ground_truth_file_names'][0])
+        label_1 = sitk.ReadImage(file_names['ground_truth_file_names'][1])
+
+        sitk.WriteImage(sitk.CheckerBoard(label_0, sitk.ReadImage(warped_image_1_file_name, label_0.GetPixelID()),
+                                          (5,) * label_0.GetDimension()),
+                        image_checkerboard_0_file_name)
+        sitk.WriteImage(sitk.CheckerBoard(label_1, sitk.ReadImage(warped_image_0_file_name, label_1.GetPixelID()),
+                                          (5,) * label_1.GetDimension()),
+                        image_checkerboard_1_file_name)
+
+    @staticmethod
+    def read_point_set(file_name):
+        return read_pts(file_name)
 
 
 class CUMC12(Dataset):
@@ -184,23 +282,24 @@ class CUMC12(Dataset):
         self.input_directory = input_directory
         file_names = []
 
-        image_names = [os.path.join(input_directory, 'Heads', image)
+        image_file_names = [os.path.join(input_directory, 'Heads', image)
                        for image in os.listdir(os.path.join(input_directory, 'Heads'))
                        if image.endswith('.hdr')]
-        image_names = [pair for pair in combinations(image_names, 2)]
+        image_file_names = [pair for pair in combinations(image_file_names, 2)]
 
-        label_names = [os.path.join(input_directory, 'Atlases', atlas)
+        label_file_names = [os.path.join(input_directory, 'Atlases', atlas)
                        for atlas in os.listdir(os.path.join(input_directory, 'Atlases'))
                        if atlas.endswith('.hdr')]
-        label_names = [pair for pair in combinations(label_names, 2)]
+        label_file_names = [pair for pair in combinations(label_file_names, 2)]
 
-        disp_field_file_names = create_disp_field_names(image_names, self.name)
+        disp_field_file_names = [create_disp_field_names(image_file_name_pair, self.name)
+                                 for image_file_name_pair in image_file_names]
 
-        mask_names = [create_mask_by_thresholding(label, disp_field, output_directory, 0., 32, 16)
-                      for label, disp_field in zip(label_names, disp_field_file_names)]
+        mask_file_names = [create_mask_by_thresholding(label_file_name, disp_field_file_name, output_directory, 0., 32, 16)
+                      for label_file_name, disp_field_file_name in zip(label_file_names, disp_field_file_names)]
 
         for image_file_name, mask_file_name, label_file_name, disp_field_file_name \
-                in zip(image_names, mask_names, label_names, disp_field_file_names):
+                in zip(image_file_names, mask_file_names, label_file_names, disp_field_file_names):
             file_names.append({
                 'image_file_names': image_file_name,
                 'mask_file_names': mask_file_name,
@@ -284,8 +383,8 @@ class DIRLAB(Dataset):
             image_file_names = (mhd_0_file_name, mhd_1_file_name)
             point_set_file_names = (point_set_0, point_set_1)
             disp_field_file_names = (
-                os.path.join(self.name, dirlab_image_information[id]['sub_directory'], '50_to_00.nii.gz'),
-                os.path.join(self.name, dirlab_image_information[id]['sub_directory'], '00_to_50.nii.gz')
+                os.path.join(self.name, dirlab_image_information[id]['sub_directory'], '50_to_00.mha'),
+                os.path.join(self.name, dirlab_image_information[id]['sub_directory'], '00_to_50.mha')
             )
 
             if mask_directory is not None and os.path.exists(mask_directory):
@@ -316,6 +415,10 @@ class DIRLAB(Dataset):
 
     def evaluate(self, superelastix, file_names, output_directory):
         return self.evaluate_point_set(superelastix, file_names, output_directory)
+
+    @staticmethod
+    def read_point_set(file_name):
+        return read_pts(file_name)
 
 
 class EMPIRE(Dataset):
@@ -355,6 +458,10 @@ class EMPIRE(Dataset):
         # TODO: Submit to EMPIRE
         pass
 
+    @staticmethod
+    def read_point_set(file_name):
+        return read_pts(file_name)
+
 
 class ISBR18(Dataset):
     def __init__(self, input_directory, output_directory, max_number_of_registrations):
@@ -364,36 +471,35 @@ class ISBR18(Dataset):
         self.input_directory = input_directory
         file_names = []
 
-        image_names = [os.path.join(input_directory, 'Heads', image)
+        image_file_names = [os.path.join(input_directory, 'Heads', image)
                        for image in os.listdir(os.path.join(input_directory, 'Heads'))
                        if image.endswith('.hdr') and not 'c1.hdr' in image] # TODO: Fix world info for c1
-        image_names = [pair for pair in combinations(image_names, 2)]
+        image_file_names = [pair for pair in combinations(image_file_names, 2)]
 
-        label_names = [os.path.join(input_directory, 'Atlases', atlas)
+        label_file_names = [os.path.join(input_directory, 'Atlases', atlas)
                        for atlas in os.listdir(os.path.join(input_directory, 'Atlases'))
                        if atlas.endswith('.hdr') and not 'c1.hdr' in atlas]
-        label_names = [pair for pair in combinations(label_names, 2)]
+        label_file_names = [pair for pair in combinations(label_file_names, 2)]
 
-        disp_field_file_names = create_disp_field_names(image_names, self.name)
+        disp_field_file_names = [create_disp_field_names(image_file_name_pair, self.name)
+                                 for image_file_name_pair in image_file_names]
 
         # These label images do not have any world coordinate information
-        label_names = [copy_information_from_images_to_labels(image, label,
-                                                              disp_field,
-                                                              output_directory,
-                                                              'MET_USHORT')
-                       for image, label, disp_field
-                       in zip(image_names, label_names, disp_field_file_names)]
+        label_file_names = [copy_information_from_images_to_labels(image_file_name, label_file_name,
+                                    disp_field_file_name, output_directory, 'MET_USHORT')
+                            for image_file_name, label_file_name, disp_field_file_name
+                            in zip(image_file_names, label_file_names, disp_field_file_names)]
 
-        mask_names = [create_mask_by_thresholding(label, disp_field, output_directory, 0., 32, 16)
-                      for label, disp_field in zip(label_names, disp_field_file_names)]
+        mask_file_names = [create_mask_by_thresholding(label_file_name, disp_field_file_name, output_directory, 0., 32, 16)
+                      for label_file_name, disp_field_file_name in zip(label_file_names, disp_field_file_names)]
 
-        for image_name, mask_name, label_name, disp_field_name \
-                in zip(image_names, mask_names, label_names, disp_field_file_names):
+        for image_file_name, mask_file_name, label_file_name, disp_field_file_name \
+                in zip(image_file_names, mask_file_names, label_file_names, disp_field_file_names):
             file_names.append({
-                'image_file_names': image_name,
-                'mask_file_names': mask_name,
-                'ground_truth_file_names': label_name,
-                'disp_field_file_names': disp_field_name
+                'image_file_names': image_file_name,
+                'mask_file_names': mask_file_name,
+                'ground_truth_file_names': label_file_name,
+                'disp_field_file_names': disp_field_file_name
             })
 
         self.file_names = take(sort_file_names(file_names),
@@ -438,7 +544,8 @@ class LPBA40(Dataset):
         image_file_names = [create_identity_world_information(pair, self.name, input_directory, output_directory) for pair in combinations(image_file_names, 2)]
         label_file_names = [pair for pair in combinations(label_file_names, 2)]
 
-        disp_field_file_names = create_disp_field_names(image_file_names, self.name)
+        disp_field_file_names = [create_disp_field_names(image_file_name_pair, self.name)
+                                 for image_file_name_pair in image_file_names]
 
         mask_file_names = [create_mask_by_thresholding(label, disp_field, output_directory, 0., 32, 30)
                            for label, disp_field in zip(label_file_names, disp_field_file_names)]
@@ -467,37 +574,38 @@ class MGH10(Dataset):
         self.input_directory = input_directory
         file_names = []
 
-        image_names = [os.path.join(input_directory, 'Heads', image)
+        image_file_names = [os.path.join(input_directory, 'Heads', image)
                        for image in os.listdir(os.path.join(input_directory, 'Heads'))
                        if image.endswith('.hdr')]
-        image_names = [pair for pair in combinations(image_names, 2)]
+        image_file_names = [pair for pair in combinations(image_file_names, 2)]
 
-        label_names = [os.path.join(input_directory, 'Atlases', atlas)
+        label_file_names = [os.path.join(input_directory, 'Atlases', atlas)
                        for atlas in os.listdir(os.path.join(input_directory, 'Atlases'))
                        if atlas.endswith('.hdr')]
-        label_names = [pair for pair in combinations(label_names, 2)]
+        label_file_names = [pair for pair in combinations(label_file_names, 2)]
 
-        disp_field_file_names = create_disp_field_names(image_names, self.name)
+        disp_field_file_names = [create_disp_field_names(image_file_name_pair, self.name)
+                                 for image_file_name_pair in image_file_names]
 
         # Label images do not have any world coordinate information
-        label_names = [copy_information_from_images_to_labels(image_pair,
-                                                              label_pair,
-                                                              disp_field_pair,
-                                                              output_directory,
-                                                              'MET_USHORT')
-                       for image_pair, label_pair, disp_field_pair
-                       in zip(image_names, label_names, disp_field_file_names)]
+        label_file_names = [copy_information_from_images_to_labels(image_file_name_pair,
+                                                                   label_file_name_pair,
+                                                                   disp_field_file_name_pair,
+                                                                   output_directory,
+                                                                   'MET_USHORT')
+                       for image_file_name_pair, label_file_name_pair, disp_field_file_name_pair
+                       in zip(image_file_names, label_file_names, disp_field_file_names)]
 
-        mask_file_names = [create_mask_by_thresholding(label, disp_field, output_directory, 0., 32, 16)
-                           for label, disp_field in zip(label_names, disp_field_file_names)]
+        mask_file_names = [create_mask_by_thresholding(label_file_name, disp_field, output_directory, 0., 32, 16)
+                           for label_file_name, disp_field in zip(label_file_names, disp_field_file_names)]
 
-        for image_name, mask_name, label_name, displ_field_name \
-                in zip(image_names, mask_file_names, label_names, disp_field_file_names):
+        for image_file_name, mask_file_name, label_file_name, disp_field_file_name \
+                in zip(image_file_names, mask_file_names, label_file_names, disp_field_file_names):
             file_names.append({
-                'image_file_names': image_name,
-                'mask_file_names': mask_name,
-                'ground_truth_file_names': label_name,
-                'disp_field_file_names': displ_field_name
+                'image_file_names': image_file_name,
+                'mask_file_names': mask_file_name,
+                'ground_truth_file_names': label_file_name,
+                'disp_field_file_names': disp_field_file_name
             })
 
         self.file_names = take(sort_file_names(file_names),
@@ -524,8 +632,8 @@ class POPI(Dataset):
                                 os.path.join(input_directory, sub_directory, 'mhd', '50.mhd'))
             point_set_file_names = (os.path.join(input_directory, sub_directory, 'pts', '00.pts'),
                                     os.path.join(input_directory, sub_directory, 'pts', '50.pts'))
-            disp_field_file_names = (os.path.join(self.name, sub_directory, '50_to_00.nii.gz'),
-                                             os.path.join(self.name, sub_directory, '00_to_50.nii.gz'))
+            disp_field_file_names = (os.path.join(self.name, sub_directory, '50_to_00.mha'),
+                                     os.path.join(self.name, sub_directory, '00_to_50.mha'))
 
             if mask_directory is not None and os.path.exists(mask_directory):
                 mask_file_names = (os.path.join(mask_directory, sub_directory, 'mhd', '00.mhd'),
@@ -551,6 +659,10 @@ class POPI(Dataset):
 
     def evaluate(self, superelastix, file_names, output_directory):
         return self.evaluate_point_set(superelastix, file_names, output_directory)
+
+    @staticmethod
+    def read_point_set(file_name):
+        return read_pts(file_name)
 
 
 class SPREAD(Dataset):
@@ -607,6 +719,9 @@ class SPREAD(Dataset):
 
     def evaluate(self, superelastix, file_names, output_directory):
         self.evaluate_point_set(superelastix, file_names, output_directory)
+
+    def read_point_set(file_name):
+        return read_pts(file_name)
 
 
 class HBIA(Dataset):
@@ -690,3 +805,6 @@ class HBIA(Dataset):
 
     def evaluate(self, superelastix, file_names, output_directory):
         return self.evaluate_point_set(superelastix, file_names, output_directory)
+
+    def read_point_set(self, file_name):
+        return self.read_csv(file_name)

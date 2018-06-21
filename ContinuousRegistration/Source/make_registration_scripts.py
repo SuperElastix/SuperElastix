@@ -1,12 +1,8 @@
-import argparse
-import os
-import json
-
-from ContinuousRegistration.Source.datasets import CUMC12, DIRLAB, EMPIRE, ISBR18, LPBA40, MGH10, POPI, SPREAD, HBIA
-from ContinuousRegistration.Source.util import logging
+import os, json, argparse
+from ContinuousRegistration.Source.datasets import logging, load_datasets
+from ContinuousRegistration.Source.util import load_submissions
 
 parser = argparse.ArgumentParser(description='Continuous Registration Challenge command line interface.')
-
 parser.add_argument('--superelastix', '-selx', required=True,
                     help="Path to SuperElastix executable.")
 parser.add_argument('--submissions-directory', '-sd', required=True,
@@ -17,7 +13,6 @@ parser.add_argument('--make-shell-scripts', '-mss', type=bool, default=True,
                     help="Generate shell scripts (default: True).")
 parser.add_argument('--make-batch-scripts', '-mbs', type=bool, default=False,
                     help="Generate shell scripts (default: False).")
-
 parser.add_argument('--cumc12-input-directory', '-cid')
 parser.add_argument('--dirlab-input-directory', '-did')
 parser.add_argument('--dirlab-mask-directory', '-dmd', default=None)
@@ -29,102 +24,11 @@ parser.add_argument('--popi-input-directory', '-pid')
 parser.add_argument('--popi-mask-directory', '-pmd', default=None)
 parser.add_argument('--mgh10-input-directory', '-mid')
 parser.add_argument('--hbia-input-directory', '-hid')
-
 parser.add_argument('--team-name', '-tn',
                     help="If specified, only generated shell scripts for this team.")
 parser.add_argument('--blueprint-file-name', '-bfn',
                     help="If specified, only generated shell scripts for this blueprint.")
-
 parser.add_argument('--max-number-of-registrations-per-dataset', '-mnorpd', type=int, default=64)
-
-logging.basicConfig(level=logging.INFO)
-
-
-def load_submissions(parameters):
-    logging.info('Loading blueprints.')
-
-    submissions = dict()
-    team_names = [team_name for team_name in os.listdir(parameters.submissions_directory)
-                  if os.path.isdir(os.path.join(parameters.submissions_directory, team_name))]
-    for team_name in team_names:
-        submissions[team_name] = [
-            os.path.join(parameters.submissions_directory, team_name, blueprint_name)
-            for blueprint_name in os.listdir(os.path.join(parameters.submissions_directory, team_name))
-            if blueprint_name.endswith('.json') or blueprint_name.endswith('.xml')
-        ]
-
-    return submissions
-
-
-def load_datasets(parameters):
-    datasets = dict()
-
-    if parameters.cumc12_input_directory is not None:
-        logging.info('Loading CUMC12.')
-        cumc12 = CUMC12(parameters.cumc12_input_directory,
-                        parameters.output_directory,
-                        parameters.max_number_of_registrations_per_dataset)
-        datasets[cumc12.name] = cumc12
-
-    if parameters.dirlab_input_directory is not None:
-        logging.info('Loading DIRLAB.')
-        dirlab = DIRLAB(parameters.dirlab_input_directory,
-                        parameters.dirlab_mask_directory,
-                        parameters.output_directory,
-                        parameters.max_number_of_registrations_per_dataset)
-        datasets[dirlab.name] = dirlab
-
-    if parameters.empire_input_directory is not None:
-        logging.info('Loading EMPIRE.')
-        empire = EMPIRE(parameters.empire_input_directory,
-                        parameters.max_number_of_registrations_per_dataset)
-        datasets[empire.name] = empire
-
-    if parameters.isbr18_input_directory is not None:
-        logging.info('Loading ISBR18.')
-        isbr18 = ISBR18(parameters.isbr18_input_directory,
-                        parameters.output_directory,
-                        parameters.max_number_of_registrations_per_dataset)
-        datasets[isbr18.name] = isbr18
-
-    if parameters.lpba40_input_directory is not None:
-        logging.info('Loading LPBA40.')
-        lpba40 = LPBA40(parameters.lpba40_input_directory,
-                        parameters.output_directory,
-                        parameters.max_number_of_registrations_per_dataset)
-        datasets[lpba40.name] = lpba40
-
-    if parameters.mgh10_input_directory is not None:
-        logging.info('Loading MGH10.')
-        mgh10 = MGH10(parameters.mgh10_input_directory,
-                      parameters.output_directory,
-                      parameters.max_number_of_registrations_per_dataset)
-        datasets[mgh10.name] = mgh10
-
-    if parameters.popi_input_directory is not None:
-        logging.info('Loading POPI.')
-        popi = POPI(parameters.popi_input_directory,
-                    parameters.popi_mask_directory,
-                    parameters.output_directory,
-                    parameters.max_number_of_registrations_per_dataset)
-        datasets[popi.name] = popi
-
-    if parameters.spread_input_directory is not None:
-        logging.info('Loading SPREAD.')
-        spread = SPREAD(parameters.spread_input_directory,
-                        parameters.output_directory,
-                        parameters.max_number_of_registrations_per_dataset)
-        datasets[spread.name] = spread
-
-    if parameters.hbia_input_directory is not None:
-        logging.info('Loading HistoBIA.')
-        hbia = HBIA(parameters.hbia_input_directory,
-                    parameters.output_directory,
-                    parameters.max_number_of_registrations_per_dataset,
-                    scale=10)
-        datasets[hbia.name] = hbia
-
-    return datasets
 
 
 def run(parameters):

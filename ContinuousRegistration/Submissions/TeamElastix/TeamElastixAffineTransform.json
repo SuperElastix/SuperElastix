@@ -91,11 +91,6 @@
         "NameOfInterface": "itkImageFixedMaskInterface"
     },
     "Connection": {
-        "Out": "MovingMask",
-        "In": "Elastix",
-        "NameOfInterface": "itkImageMovingMaskInterface"
-    },
-    "Connection": {
         "Out": "Elastix",
         "In": "Transformix",
         "NameOfInterface": "elastixTransformParameterObjectInterface"
