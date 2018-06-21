@@ -27,7 +27,6 @@ class Dataset(object):
         if not os.path.exists(os.path.join(output_directory, 'sh')):
             os.mkdir(os.path.join(output_directory, 'sh'))
         COMMAND_TEMPLATE = '%s --conf \'%s\' --in %s %s --out DisplacementField=\'%s\' --loglevel trace --logfile \'%s\''
-        #COMMAND_TEMPLATE = '%s --conf %s --in %s %s --out DisplacementField=%s --loglevel trace --logfile %s'
 
         # Fixed to moving
         root = os.path.splitext(file_names['disp_field_file_names'][0])[0]
