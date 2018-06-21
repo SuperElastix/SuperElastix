@@ -26,7 +26,8 @@ class Dataset(object):
     def make_shell_scripts(self, superelastix, blueprint_file_name, file_names, output_directory):
         if not os.path.exists(os.path.join(output_directory, 'sh')):
             os.mkdir(os.path.join(output_directory, 'sh'))
-        COMMAND_TEMPLATE = '%s --conf %s --in %s %s --out DisplacementField=%s --loglevel trace --logfile %s'
+        COMMAND_TEMPLATE = '%s --conf \'%s\' --in %s %s --out DisplacementField=\'%s\' --loglevel trace --logfile \'%s\''
+        #COMMAND_TEMPLATE = '%s --conf %s --in %s %s --out DisplacementField=%s --loglevel trace --logfile %s'
 
         # Fixed to moving
         root = os.path.splitext(file_names['disp_field_file_names'][0])[0]
@@ -37,8 +38,8 @@ class Dataset(object):
             file_names['mask_file_names'] = ('', '')
         with open(shell_script_file_name, 'w') as shell_script:
             shell_script.write(COMMAND_TEMPLATE % (superelastix, blueprint_file_name,
-                'FixedImage=%s MovingImage=%s ' % tuple(file_names['image_file_names']),
-                'FixedMask=%s MovingMask=%s' % tuple(file_names['mask_file_names']),
+                'FixedImage=\'%s\' MovingImage=\'%s\' ' % tuple(file_names['image_file_names']),
+                'FixedMask=\'%s\' MovingMask=\'%s\'' % tuple(file_names['mask_file_names']),
                 os.path.join(output_directory, file_names['disp_field_file_names'][0]),
                 os.path.splitext(shell_script_file_name)[0] + '.log'))
 
@@ -51,8 +52,8 @@ class Dataset(object):
             file_names['mask_file_names'] = ('', '')
         with open(shell_script_file_name, 'w') as shell_script:
             shell_script.write(COMMAND_TEMPLATE % (superelastix, blueprint_file_name,
-                'FixedImage=%s MovingImage=%s ' % tuple(file_names['image_file_names'][::-1]),
-                'FixedMask=%s MovingMask=%s' % tuple(file_names['mask_file_names'][::-1]),
+                'FixedImage=\'%s\' MovingImage=\'%s\' ' % tuple(file_names['image_file_names'][::-1]),
+                'FixedMask=\'%s\' MovingMask=\'%s\'' % tuple(file_names['mask_file_names'][::-1]),
                 os.path.join(output_directory, file_names['disp_field_file_names'][1]),
                 os.path.splitext(shell_script_file_name)[0] + '.log'))
 
