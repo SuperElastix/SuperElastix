@@ -3,9 +3,9 @@
     "Component": {
         "Name": "RegistrationMethod",
         "NameOfClass": "ItkImageRegistrationMethodv4Component",
-		"NumberOfLevels":  "3" ,
-		"ShrinkFactorsPerLevel": [ "16", "8", "4" ],
-        "SmoothingSigmasPerLevel": [ "16", "8", "4" ],
+		"NumberOfLevels":  "4" ,
+		"ShrinkFactorsPerLevel": [ "16", "8", "4", "2" ],
+        "SmoothingSigmasPerLevel": [ "8", "4", "2", "1" ],
         "Dimensionality": "3"
     },
     "Component": {
@@ -55,7 +55,7 @@
 	"Component": {
         "Name": "TransformResolutionAdaptor",
         "NameOfClass": "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent",
-  		"ShrinkFactorsPerLevel": [ "16", "8", "4" ],
+  		"ShrinkFactorsPerLevel": [ "16", "8", "4", "2" ],
         "Dimensionality": "3"
     },
     "Component": {

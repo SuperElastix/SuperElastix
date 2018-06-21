@@ -251,6 +251,12 @@ NiftiToItkImage< ItkImageType, NiftiPixelType >
       case IOComponentType::ULONG:
         CastCopy< unsigned long >( _data, data, imageSizeInComponents );
         break;
+      case IOComponentType::LONGLONG:
+        CastCopy< long long >( _data, data, imageSizeInComponents );
+        break;
+      case IOComponentType::ULONGLONG:
+        CastCopy< unsigned long long >( _data, data, imageSizeInComponents );
+        break;
       case IOComponentType::FLOAT:
         itkGenericExceptionMacro( << "FLOAT pixels do not need Casting to float" );
       case IOComponentType::DOUBLE:

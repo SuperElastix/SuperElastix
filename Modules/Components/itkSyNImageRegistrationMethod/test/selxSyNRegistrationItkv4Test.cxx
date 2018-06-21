@@ -79,6 +79,7 @@ public:
     ItkSmoothingRecursiveGaussianImageFilterComponent< 2, double >,
     ItkSmoothingRecursiveGaussianImageFilterComponent< 3, float >,
     ItkSmoothingRecursiveGaussianImageFilterComponent< 2, float >,
+    ItkSyNImageRegistrationMethodComponent< 3, float, double >,
     ItkSyNImageRegistrationMethodComponent< 3, double, double >,
     ItkSyNImageRegistrationMethodComponent< 2, float, double >,
     ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< 3, double >,
@@ -87,6 +88,7 @@ public:
     ItkMeanSquaresImageToImageMetricv4Component< 2, float, double >,
     ItkAffineTransformComponent< double, 3 >,
     ItkGaussianExponentialDiffeomorphicTransformComponent< double, 3 >,
+    ItkTransformDisplacementFilterComponent< 3, float, double >,
     ItkTransformDisplacementFilterComponent< 2, float, double >,
     ItkTransformDisplacementFilterComponent< 3, double, double >,
     ItkResampleFilterComponent< 2, float, double >,
@@ -155,8 +157,9 @@ TEST_F(SyNRegistrationItkv4Test, FullyConfigured3d)
 
   // Components
   blueprint->SetComponent("RegistrationMethod", { { "NameOfClass", { "ItkSyNImageRegistrationMethodComponent" } },
-  { "Dimensionality", { "3" } } } );
- blueprint->SetComponent("FixedImageSource", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "Dimensionality", { "3" } } });
+  { "Dimensionality", { "3" } }, {"ShrinkFactorsPerLevel", { "4", "2", "1" }}, { "SmoothingSigmasPerLevel", { "4", "2", "1" } } });
+ 
+  blueprint->SetComponent("FixedImageSource", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "Dimensionality", { "3" } } });
 
   blueprint->SetComponent("MovingImageSource", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "Dimensionality", { "3" } } });
 

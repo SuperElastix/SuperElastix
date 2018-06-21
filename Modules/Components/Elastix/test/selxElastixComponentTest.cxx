@@ -101,10 +101,27 @@ TEST_F( ElastixComponentTest, MonolithicElastixTransformix )
   BlueprintPointer blueprint = Blueprint::New();
 
   blueprint->SetComponent( "RegistrationMethod", { { "NameOfClass", { "MonolithicElastixComponent" } },
-                                                   { "RegistrationSettings", { "rigid" } }, { "MaximumNumberOfIterations", { "2" } },
                                                    { "Dimensionality", { "2" } },
                                                    { "PixelType", { "float" } },
-                                                   { "ResultImagePixelType", { "float" } } } );
+                                                   { "ParameterMap0Preset", { "translation" } },
+                                                   { "ParameterMap1ResultImagePixelType", { "float" } },
+                                                   { "ParameterMap1FixedImagePyramid", { "FixedSmoothingImagePyramid" } },
+                                                   { "ParameterMap1MovingImagePyramid", { "MovingSmoothingImagePyramid" } },
+                                                   { "ParameterMap1Transform", { "AffineTransform" } },
+                                                   { "ParameterMap1NumberOfResolutions", { "3" } },
+                                                   { "ParameterMap1ImageSampler", { "RandomSparseMask" } },
+                                                   { "ParameterMap1Registration", { "MultiResolutionRegistration" } },
+                                                   { "ParameterMap1Metric", { "AdvancedMattesMutualInformation" } },
+                                                   { "ParameterMap1Optimizer", { "AdaptiveStochasticGradientDescent" } },
+                                                   { "ParameterMap2ResultImagePixelType", { "float" } },
+                                                   { "ParameterMap2FixedImagePyramid", { "FixedSmoothingImagePyramid" } },
+                                                   { "ParameterMap2MovingImagePyramid", { "MovingSmoothingImagePyramid" } },
+                                                   { "ParameterMap2Transform", { "BSplineTransform" } },
+                                                   { "ParameterMap2NumberOfResolutions", { "3" } },
+                                                   { "ParameterMap2ImageSampler", { "RandomSparseMask" } },
+                                                   { "ParameterMap2Registration", { "MultiResolutionRegistration" } },
+                                                   { "ParameterMap2Metric", { "AdvancedMattesMutualInformation" } },
+                                                   { "ParameterMap2Optimizer", { "AdaptiveStochasticGradientDescent" } }} );
   blueprint->SetComponent( "TransformDisplacementField", { { "NameOfClass", { "MonolithicTransformixComponent" } } } );
 
   blueprint->SetComponent( "FixedImageSource", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "Dimensionality", { "2" } } } );
@@ -167,7 +184,6 @@ TEST_F( ElastixComponentTest, MonolithicElastixTransformix )
   resultDisplacementWriter->SetInput(superElastixFilter->GetOutput< DisplacementImage2DType >("ResultDisplacementFieldSink"));
 
   EXPECT_NO_THROW( superElastixFilter->SetBlueprint( blueprint ) );
-
   // Update call on the writers triggers SuperElastix to configure and execute
   EXPECT_NO_THROW( resultImageWriter->Update() );
   EXPECT_NO_THROW( resultDisplacementWriter->Update() );

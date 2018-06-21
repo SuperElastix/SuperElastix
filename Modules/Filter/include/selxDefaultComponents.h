@@ -84,9 +84,12 @@ using DefaultComponents = selx::TypeList<
   ItkTransformSourceComponent< 2, double >,
   ItkTransformSinkComponent< 2, double >,
   ItkToNiftiImageSourceComponent< 2, float >,
+  ItkToNiftiImageSourceComponent< 3, float >,
   NiftiToItkImageSinkComponent< 2, float >,
+  NiftiToItkImageSinkComponent< 3, float >,
   NiftyregSplineToDisplacementFieldComponent< float>,
   DisplacementFieldNiftiToItkImageSinkComponent< 2, float>,
+  DisplacementFieldNiftiToItkImageSinkComponent< 3, float>,
   NiftyregAladinComponent< float >,
   IdentityTransformRegistrationComponent< 2, float>
   >;

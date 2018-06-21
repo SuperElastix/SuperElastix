@@ -1,23 +1,10 @@
-import json, glob, os, argparse, datetime
+import json, glob, os, subprocess
 import numpy as np
+from ContinuousRegistration.Source.make_registration_scripts import parser, load_datasets
+from ContinuousRegistration.Source.util import get_script_path
+from datetime import datetime
 
-parser = argparse.ArgumentParser(description='Continuous Registration Challenge command line interface.')
-
-parser.add_argument('--output-directory', '-od', required=True, help="Directory where results will be saved.")
-
-parser.add_argument('--cumc12-input-directory', '-cid')
-parser.add_argument('--dirlab-input-directory', '-did')
-parser.add_argument('--empire-input-directory', '-eid')
-parser.add_argument('--isbr18-input-directory', '-iid')
-parser.add_argument('--lpba40-input-directory', '-lid')
-parser.add_argument('--spread-input-directory', '-sid')
-parser.add_argument('--popi-input-directory', '-pid')
-parser.add_argument('--mgh10-input-directory', '-mid')
-
-parser.add_argument('--max-number-of-registrations-per-dataset', '-mnorpd', type=int, default=64)
-
-
-def load_results_from_json(filename):
+def load_results_from_json(filename, datasets):
     results = json.load(open(filename))
     column_names = dict()
 
@@ -48,15 +35,26 @@ def load_results_from_json(filename):
                 dataset_result_means = np.mean(dataset_result_array, axis=0)
                 dataset_result_stds = np.std(dataset_result_array, axis=0)
 
+                blueprint_commit = subprocess.check_output(['git', 'log', '-n', '1', '--pretty=format:%h',
+                                                            '--', '%s/../Submissions/%s/%s.json' %
+                                                            (get_script_path(), team_name, blueprint_name)])
+                repo_commit = subprocess.check_output(['git', 'describe', '--always'])
+
                 # Save stats in-place
-                results[team_name][blueprint_name][dataset_name] = (dataset_result_means,
-                                                                    dataset_result_stds)
+                results[team_name][blueprint_name][dataset_name] = {
+                    'blueprint_commit': blueprint_commit.decode("utf-8"),
+                    'repo_commit': repo_commit.decode("utf-8"),
+                    'number_of_registrations': '%s/%s' % (len(dataset_result_array), 2*len(datasets[dataset_name].file_names)),
+                    'means': dataset_result_means,
+                    'stds': dataset_result_stds
+                }
 
     return results, column_names
 
 
 def run(parameters):
     result_file_names = glob.glob(os.path.join(parameters.output_directory, 'results*'))
+    date = datetime.now().strftime('%d-%m-%Y')
 
     # Most recent first
     result_file_names.sort(reverse=True)
@@ -64,7 +62,7 @@ def run(parameters):
     if not result_file_names:
         raise Exception('No result JSON files found in %s.' % parameters.output_directory)
 
-    latest_results, latest_column_names = load_results_from_json(result_file_names[0])
+    latest_results, latest_column_names = load_results_from_json(result_file_names[0], load_datasets(parameters))
 
     # Fill tables with team data
     tables = {}
@@ -104,6 +102,10 @@ def run(parameters):
         table += '<tr>'
         table += '<th role="columnheader">Team</th>'
         table += '<th role="columnheader">Blueprint</th>'
+        table += '<th role="columnheader">Date</th>'
+        table += '<th role="columnheader">Blueprint Commit</th>'
+        table += '<th role="columnheader">Repo Commit</th>'
+        table += '<th role="columnheader">Number of Registrations</th>'
 
         for column_name in latest_column_names[dataset_name]:
             table += '<th role="columnheader">%s</th>' % column_name
@@ -118,10 +120,16 @@ def run(parameters):
                     table += '<tr>'
                     table += '<th>%s</th>' % team_name
                     table += '<th>%s</th>' % blueprint_name
+                    table += '<th>%s</th>' % date
+                    table += '<th>%s</th>' % blueprint_results[dataset_name]['blueprint_commit']
+                    table += '<th>%s</th>' % blueprint_results[dataset_name]['repo_commit']
+                    table += '<td>%s</th>' % blueprint_results[dataset_name]['number_of_registrations']
 
-                    means, stds = blueprint_results[dataset_name]
+                    means, stds = blueprint_results[dataset_name]['means'], blueprint_results[dataset_name]['stds']
                     for mean, std in zip(means, stds):
                         table+= '<td>%.2f \pm %.2f</td>' % (mean, std)
+
+
 
                     table += '</tr>'
 
@@ -141,8 +149,8 @@ def run(parameters):
         table_file.close()
 
 
-
 if __name__ == '__main__':
+
     parameters = parser.parse_args()
 
     if not os.path.exists(parameters.output_directory):

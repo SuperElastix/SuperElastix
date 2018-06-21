@@ -2,11 +2,14 @@
     "Component": {
         "Name": "RegistrationMethod",
         "NameOfClass": "MonolithicElastixComponent",
-        "Dimensionality": "2",
-        "Transform": "BSplineTransform",
-        "Metric": "AdvancedNormalizedCorrelation",
         "PixelType": "float",
-        "ResultImagePixelType": "float"
+        "Dimensionality": "2",
+        "ParameterMap0Registration": "MultiResolutionRegistration",
+        "ParameterMap0ImageSampler": "RandomCoordinate",
+        "ParameterMap0Optimizer": "AdaptiveStochasticGradientDescent",
+        "ParameterMap0Transform": "BSplineTransform",
+        "ParameterMap0Metric": "AdvancedNormalizedCorrelation",
+        "ParameterMap0ResultImagePixelType": "float"
     },
     "Component": {
         "Name": "FixedImage",
@@ -20,7 +23,7 @@
     },
     "Component": {
         "Name": "ResultImage",
-        "NameOfClass": "ItkImageSinkComponent"
+        "NameOfClass": "ItkDisplacementFieldSinkComponent"
     },
     "Component": {
         "Name": "TransformDisplacementField",
@@ -53,7 +56,6 @@
     },
     "Connection": {
         "Out": "TransformDisplacementField",
-        "In": "ResultImage",
-		"NameOfInterface": "itkImageInterface"
+        "In": "ResultImage"
     }
 }

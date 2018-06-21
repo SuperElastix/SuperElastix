@@ -1,5 +1,9 @@
 # SuperElastix image registration toolbox #
 
+[![Build Status](https://travis-ci.org/SuperElastix/SuperElastix.svg?branch=develop)](https://travis-ci.org/SuperElastix/SuperElastix)
+[![codecov](https://codecov.io/gh/SuperElastix/SuperElastix/branch/develop/graph/badge.svg)](https://codecov.io/gh/SuperElastix/SuperElastix)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/69121db1fa9a4a53968361a6ccc7e890)](https://www.codacy.com/app/kaspermarstal/SuperElastix?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=SuperElastix/SuperElastix&amp;utm_campaign=Badge_Grade)
+
 The objective of image registration is to find the spatial relationship between two or more images. 
 In the last decades numerous image registration methods and tools have emerged from the research community. 
 Implementation of these methods, however, are scattered over a plethora of toolboxes each with their own interface, limitations and modus operandi. 
