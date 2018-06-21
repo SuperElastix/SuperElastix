@@ -55,7 +55,7 @@
 	"Component": {
         "Name": "TransformResolutionAdaptor",
         "NameOfClass": "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent",
-  		"ShrinkFactorsPerLevel": [ "16", "8", "4" ],
+  		"ShrinkFactorsPerLevel": [ "16", "8", "4", "2" ],
         "Dimensionality": "3"
     },
     "Component": {

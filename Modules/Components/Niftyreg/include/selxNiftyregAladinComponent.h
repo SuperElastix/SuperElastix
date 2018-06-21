@@ -34,7 +34,7 @@ template< class TPixel >
 class NiftyregAladinComponent :
   public SuperElastixComponent<
   Accepting< NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >>,
-  Providing< NiftyregWarpedImageInterface< TPixel >, NiftyregAffineMatrixInterface< TPixel >, UpdateInterface >
+  Providing< NiftyregWarpedImageInterface< TPixel >, NiftyregAffineMatrixInterface , UpdateInterface >
   >
 {
 public:
@@ -43,7 +43,7 @@ public:
   typedef NiftyregAladinComponent< TPixel > Self;
   typedef SuperElastixComponent<
     Accepting< NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >>,
-    Providing< NiftyregWarpedImageInterface< TPixel >, NiftyregAffineMatrixInterface< TPixel >, UpdateInterface >
+    Providing< NiftyregWarpedImageInterface< TPixel >, NiftyregAffineMatrixInterface, UpdateInterface >
     >                                      Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;

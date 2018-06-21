@@ -391,6 +391,7 @@ NetworkBuilder< ComponentList >::ConnectComponents()
         {
           isAllSuccess = false;
           this->m_Logger.Log( LogLevel::CRT, "Connection from '{0}' to '{1}' was specified but no compatible interfaces were found.", providingComponentName, acceptingComponentName);
+          throw std::runtime_error("See critical log message");
         }
       }
     }

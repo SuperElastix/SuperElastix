@@ -357,7 +357,7 @@ TEST_F(NiftyregComponentTest, AffineAndBSpline)
   movingImageReader->SetFileName(dataManager->GetInputFile("coneB2d64.mhd"));
 
   ImageWriter2DType::Pointer resultImageWriter = ImageWriter2DType::New();
-  resultImageWriter->SetFileName(dataManager->GetOutputFile("NiftyregAladin_WBIR_Image.mhd"));
+  resultImageWriter->SetFileName(dataManager->GetOutputFile("NiftyregAffineAndBspline_Image.mhd"));
 
   //DisplacementImageWriter2DType::Pointer resultDisplacementWriter = DisplacementImageWriter2DType::New();
   //resultDisplacementWriter->SetFileName(dataManager->GetOutputFile("Niftyreg_WBIR_Displacement.mhd"));

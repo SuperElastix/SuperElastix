@@ -70,10 +70,6 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" && ! -e "${ExternalData_OBJECT_STORES}/${CMAKE_DOWNLOAD_FILE}" ]]; then (cd ${ExternalData_OBJECT_STORES} && curl -sSO https://cmake.org/files/v3.6/${CMAKE_DOWNLOAD_FILE}); fi;
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo bash "${ExternalData_OBJECT_STORES}/${CMAKE_DOWNLOAD_FILE}" --prefix=/usr/local --exclude-subdir; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cmake --version; fi
-#  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-#   sudo apt-get update &&
-#   sudo apt-get install python3.5 &&
-#   python3 -m ensurepip; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
    brew upgrade python &&
    curl https://bootstrap.pypa.io/get-pip.py | python3 &&
@@ -94,7 +90,7 @@ install:
       rm -rf ${ELASTIX_SOURCE_DIR} ${ELASTIX_BUILD_DIR} &&
       git clone ${ELASTIX_URL} ${ELASTIX_SOURCE_DIR} &&
       cd ${ELASTIX_SOURCE_DIR} &&
-      git checkout e8354222396c6bd78e9fe6d5a39e4ecac4bb0d52 &&
+      git checkout 0ce6c24a2b74c0132f1a53848321f1c7a92162ea &&
       mkdir -p ${ELASTIX_BUILD_DIR} &&
       cd ${ELASTIX_BUILD_DIR} &&
       cmake -DBUILD_TESTING:BOOL=OFF -DELASTIX_BUILD_EXECUTABLE:BOOL=OFF -DITK_DIR=${ITK_BUILD_DIR} -DCMAKE_BUILD_TYPE=Release ${ELASTIX_SOURCE_DIR} &&
@@ -105,20 +101,20 @@ install:
       cmake -DBUILD_APPLICATIONS_EXTERNAL_PROJECT:BOOL=ON -DBUILD_TESTING:BOOL=ON -DCMAKE_BUILD_TYPE=Release -DUSE_SYSTEM_ITK:BOOL=ON -DITK_DIR=${ITK_BUILD_DIR} -DUSE_SYSTEM_ELASTIX:BOOL=ON -DElastix_DIR=${ELASTIX_BUILD_DIR} ${SUPERELASTIX_SOURCE_DIR} && 
       make --jobs=2; fi
 
-before_script:
-  - cd $root
-  - mkdir temp
-  - python3 --version && pip3 --version
-  - sudo pip3 install -U pip
-  - pip3 install --user -r requirements.txt
-  - sudo pip3 install --ignore-installed nose pytest pytest-cov coverage codecov codacy-coverage
+#before_script:
+#  - cd $root
+#  - mkdir temp
+#  - python3 --version && pip3 --version
+#  - sudo pip3 install -U pip
+#  - pip3 install --user -r requirements.txt
+#  - sudo pip3 install --ignore-installed nose pytest pytest-cov coverage codecov codacy-coverage
 
-script:
-  - nosetests Tools -v --exe --with-doctest --with-xunit --with-coverage --cover-package=Tools
-  - nosetests ContinuousRegistration -v --exe --with-doctest --with-xunit --with-coverage --cover-package=ContinuousRegistration  --ignore-files=submit_jobs.py
+script: sleep 1 # disable default call ./configure && make && make test
+#  - nosetests Tools -v --exe --with-doctest --with-xunit --with-coverage --cover-package=Tools
+#  - nosetests ContinuousRegistration -v --exe --with-doctest --with-xunit --with-coverage --cover-package=ContinuousRegistration  --ignore-files=submit_jobs.py
 #  - py.test Tools -v --doctest-modules
 #  - py.test ContinuousRegistration -v --doctest-modules --ignore=ContinuousRegistration/Source/submit_jobs.py
 #  - coverage run --source Tools -m py.test Tools -v --doctest-modules
 #  - coverage run --source ContinuousRegistration -m py.test ContinuousRegistration -v --doctest-modules --ignore=ContinuousRegistration/Source/submit_jobs.py
-  - coverage report
-  - codecov
+#  - coverage report
+#  - codecov
