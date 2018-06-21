@@ -38,6 +38,9 @@ public:
   using Type    = NiftyregReferenceImageInterface< TPixel >;
   using Pointer = std::shared_ptr< Type >;
   virtual std::shared_ptr< nifti_image > GetReferenceNiftiImage() = 0;
+
+  // GetComponentName is implemented in the SuperElastixComponent class and does not need to be implemented by each component individually.
+  virtual const typename std::string GetComponentName() = 0;
 };
 
 template< class TPixel >
@@ -48,6 +51,9 @@ public:
   using Type    = NiftyregFloatingImageInterface< TPixel >;
   using Pointer = std::shared_ptr< Type >;
   virtual std::shared_ptr< nifti_image > GetFloatingNiftiImage() = 0;
+
+  // GetComponentName is implemented in the SuperElastixComponent class and does not need to be implemented by each component individually.
+  virtual const typename std::string GetComponentName() = 0;
 };
 
 template< class TPixel >
@@ -58,6 +64,9 @@ public:
   using Type    = NiftyregWarpedImageInterface< TPixel >;
   using Pointer = std::shared_ptr< Type >;
   virtual std::shared_ptr< nifti_image > GetWarpedNiftiImage() = 0;
+
+  // GetComponentName is implemented in the SuperElastixComponent class and does not need to be implemented by each component individually.
+  virtual const typename std::string GetComponentName() = 0;
 };
 
 template< class TPixel >
@@ -68,6 +77,9 @@ public:
   using Type = NiftyregControlPointPositionImageInterface< TPixel >;
   using Pointer = std::shared_ptr< Type >;
   virtual std::shared_ptr< nifti_image > GetControlPointPositionImage() = 0;
+
+  // GetComponentName is implemented in the SuperElastixComponent class and does not need to be implemented by each component individually.
+  virtual const typename std::string GetComponentName() = 0;
 };
 
 template< class TPixel >
@@ -78,16 +90,21 @@ public:
   using Type = NiftyregDisplacementFieldImageInterface< TPixel >;
   using Pointer = std::shared_ptr< Type >;
   virtual std::shared_ptr< nifti_image > GetDisplacementFieldNiftiImage() = 0;
+
+  // GetComponentName is implemented in the SuperElastixComponent class and does not need to be implemented by each component individually.
+  virtual const typename std::string GetComponentName() = 0;
 };
 
-template< class TPixel >
 class NiftyregAffineMatrixInterface
 {
 public:
 
-  using Type = NiftyregAffineMatrixInterface< TPixel >;
+  using Type = NiftyregAffineMatrixInterface;
   using Pointer = std::shared_ptr< Type >;
   virtual mat44 * GetAffineNiftiMatrix() = 0;
+
+  // GetComponentName is implemented in the SuperElastixComponent class and does not need to be implemented by each component individually.
+  virtual const typename std::string GetComponentName() = 0;
 };
 
 template< class TPixel >
@@ -135,12 +152,12 @@ struct Properties< NiftyregDisplacementFieldImageInterface< TPixel >>
   }
 };
 
-template< class TPixel >
-struct Properties< NiftyregAffineMatrixInterface< TPixel >>
+template<>
+struct Properties< NiftyregAffineMatrixInterface>
 {
   static const std::map< std::string, std::string > Get()
   {
-    return { { keys::NameOfInterface, "NiftyregAffineMatrixInterface" }, { keys::PixelType, PodString< TPixel >::Get() }  };
+    return { { keys::NameOfInterface, "NiftyregAffineMatrixInterface" } };
   }
 };
 
