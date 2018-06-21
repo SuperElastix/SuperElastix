@@ -1,5 +1,5 @@
 {
-    "Datasets": ["POPI", "DIRLAB", "EMPIRE", "SPREAD"],
+    "Datasets": ["POPI", "EMPIRE", "SPREAD"],
     "Component": {
         "Name": "Elastix",
         "NameOfClass": "MonolithicElastixComponent",
@@ -14,25 +14,25 @@
         "ParameterMap0FinalBSplineInterpolationOrder": "3",
         "ParameterMap0NumberOfResolutions": "4",
         "ParameterMap0WriteIterationInfo": "false",
-        "ParameterMap0ImageSampler": "RandomSparseMask",
-        "ParameterMap0NumberOfSpatialSamples": "2048",
+        "ParameterMap0ImageSampler": "RandomCoordinate",
+        "ParameterMap0NumberOfSpatialSamples": "8192",
         "ParameterMap0CheckNumberOfSamples": "true",
         "ParameterMap0MaximumNumberOfSamplingAttempts": "8",
         "ParameterMap0NewSamplesEveryIteration": "true",
-        "ParameterMap0NumberOfSamplesForExactGradient": "4096",
+        "ParameterMap0NumberOfSamplesForExactGradient": "40000",
         "ParameterMap0DefaultPixelValue": "0.0",
         "ParameterMap0AutomaticParameterEstimation": "true",
         "ParameterMap0WriteResultImage": "true",
         "ParameterMap0Registration": "MultiMetricMultiResolutionRegistration",
         "ParameterMap0Metric": "AdvancedMattesMutualInformation",
-        "ParameterMap0MaximumNumberOfIterations": "256",
+        "ParameterMap0MaximumNumberOfIterations": "512",
         "ParameterMap0AutomaticTransformInitialization": "false",
         "ParameterMap0Transform": "BSplineTransform",
         "ParameterMap0BSplineTransformSplineOrder": "3",
-        "ParameterMap0FinalGridSpacingInPhysicalUnits": "16.0",
+        "ParameterMap0FinalGridSpacingInPhysicalUnits": "8.0",
         "ParameterMap0GridSpacingSchedule": ["8.0", "4.0", "2.0", "1.0"],
         "ParameterMap0RequiredRatioOfValidSamples": "0.01",
-        "ParameterMap0ErodeMask": "False"
+        "ParameterMap0ErodeMask": "false"
     },
     "Component": {
         "Name": "FixedImage",
@@ -97,10 +97,5 @@
         "Out": "Transformix",
         "In": "DisplacementField",
         "NameOfInterface": "itkDisplacementFieldInterface"
-    },
-    "Connection": {
-        "Out": "FixedMask",
-        "In": "Elastix",
-        "NameOfInterface": "itkImageFixedMaskInterface"
     }
 }

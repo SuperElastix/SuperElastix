@@ -33,9 +33,10 @@ def run(parameters):
             blueprint = json.load(open(blueprint_file_name))
             for dataset_name in blueprint['Datasets']:
                 if not dataset_name in datasets:
-                    logging.error('Dataset "%s" requested by blueprint "%s" '
-                                  'but no data directory provided. Skipping dataset.',
-                                  dataset_name, blueprint_file_name)
+                    logging.info('Blueprint "%s" can also be used for dataset "%s". '
+                                 'Supply data directory to evaluate blueprint on this dataset. '
+                                 '(registrations must be run first).',
+                                  blueprint_file_name, dataset_name)
                     continue
 
                 dataset = datasets[dataset_name]
@@ -60,7 +61,7 @@ def run(parameters):
                         if parameters.warp_image_checkerboards:
                             dataset.warp_image_checkerboards(parameters.superelastix, file_names, output_directory)
 
-                        if parameters.warp_label_checkerboards:
+                        if parameters.warp_label_checkerboards and dataset.name in ["CUMC12", "ISBR18", "LPBA40", "MGH10"]:
                             dataset.warp_label_checkerboards(parameters.superelastix, file_names, output_directory)
                     except Exception as e:
                         logging.error('Error during evaluation of %s\'s blueprint %s and dataset %s: %s'
