@@ -66,9 +66,9 @@ def run(parameters):
 
             for dataset_name in blueprint['Datasets']:
                 if not dataset_name in datasets:
-                    logging.error('Dataset "%s" requested by "%s" but no directory provided. '
-                                  'Skipping dataset for this blueprint. See \'--help\' for usage.',
-                                  dataset_name, blueprint_name)
+                    logging.info('Blueprint "%s" can also be used for dataset "%s". '
+                                 'Supply "%s" input directory to also register "%s" with this blueprint.',
+                                  blueprint_file_name, dataset_name, dataset_name, dataset_name)
                     continue
 
                 dataset = datasets[dataset_name]

@@ -227,21 +227,18 @@ class Dataset:
         image_checkerboard_0_file_name = disp_field_0_path + '_image_checkerboard' + disp_field_0_ext
         image_checkerboard_1_file_name = disp_field_1_path + '_image_checkerboard' + disp_field_1_ext
 
-        warped_image_0_file_name = warp_image(superelastix, file_names['image_file_names'][0],
-                                              disp_field_0_file_name, 'image')
-        warped_image_1_file_name = warp_image(superelastix,
-                                              file_names['image_file_names'][1],
-                                              disp_field_1_file_name, 'image')
+        warped_image_0_to_1_file_name = warp_image(superelastix, file_names['image_file_names'][0],
+                                                   disp_field_1_file_name, 'image')
+        warped_image_1_to_0_file_name = warp_image(superelastix, file_names['image_file_names'][1],
+                                                   disp_field_0_file_name, 'image')
 
         image_0 = sitk.ReadImage(file_names['image_file_names'][0])
         image_1 = sitk.ReadImage(file_names['image_file_names'][1])
 
-        sitk.WriteImage(sitk.CheckerBoard(image_0, sitk.ReadImage(warped_image_1_file_name, image_1.GetPixelID()),
-                                          (5,)*image_0.GetDimension()),
-                        image_checkerboard_0_file_name)
-        sitk.WriteImage(sitk.CheckerBoard(image_1, sitk.ReadImage(warped_image_0_file_name, image_1.GetPixelID()),
-                                          (5,)*image_1.GetDimension()),
-                        image_checkerboard_1_file_name)
+        sitk.WriteImage(sitk.CheckerBoard(image_0, sitk.ReadImage(warped_image_1_to_0_file_name, image_1.GetPixelID()),
+                                          (5,)*image_0.GetDimension()), image_checkerboard_0_file_name)
+        sitk.WriteImage(sitk.CheckerBoard(image_1, sitk.ReadImage(warped_image_0_to_1_file_name, image_1.GetPixelID()),
+                                          (5,)*image_1.GetDimension()), image_checkerboard_1_file_name)
 
     @staticmethod
     def warp_label_checkerboards(superelastix, file_names, output_directory):
