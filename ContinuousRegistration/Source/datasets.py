@@ -92,7 +92,7 @@ class Dataset:
     def make_shell_scripts(superelastix, blueprint_file_name, file_names, output_directory):
         if not os.path.exists(os.path.join(output_directory, 'sh')):
             os.mkdir(os.path.join(output_directory, 'sh'))
-        COMMAND_TEMPLATE = '%s --conf %s --in %s %s --out DisplacementField=%s --loglevel trace --logfile %s'
+        COMMAND_TEMPLATE = '%s --conf \'%s\' --in %s %s --out DisplacementField=\'%s\' --loglevel trace --logfile \'%s\''
 
         # Fixed to moving
         root = os.path.splitext(file_names['disp_field_file_names'][0])[0]
@@ -103,8 +103,8 @@ class Dataset:
             file_names['mask_file_names'] = ('', '')
         with open(shell_script_file_name, 'w') as shell_script:
             shell_script.write(COMMAND_TEMPLATE % (superelastix, blueprint_file_name,
-                'FixedImage=%s MovingImage=%s ' % tuple(file_names['image_file_names']),
-                'FixedMask=%s MovingMask=%s' % tuple(file_names['mask_file_names']),
+                'FixedImage=\'%s\' MovingImage=\'%s\' ' % tuple(file_names['image_file_names']),
+                'FixedMask=\'%s\' MovingMask=\'%s\'' % tuple(file_names['mask_file_names']),
                 os.path.join(output_directory, file_names['disp_field_file_names'][0]),
                 os.path.splitext(shell_script_file_name)[0] + '.log'))
 
@@ -117,8 +117,8 @@ class Dataset:
             file_names['mask_file_names'] = ('', '')
         with open(shell_script_file_name, 'w') as shell_script:
             shell_script.write(COMMAND_TEMPLATE % (superelastix, blueprint_file_name,
-                'FixedImage=%s MovingImage=%s ' % tuple(file_names['image_file_names'][::-1]),
-                'FixedMask=%s MovingMask=%s' % tuple(file_names['mask_file_names'][::-1]),
+                'FixedImage=\'%s\' MovingImage=\'%s\' ' % tuple(file_names['image_file_names'][::-1]),
+                'FixedMask=\'%s\' MovingMask=\'%s\'' % tuple(file_names['mask_file_names'][::-1]),
                 os.path.join(output_directory, file_names['disp_field_file_names'][1]),
                 os.path.splitext(shell_script_file_name)[0] + '.log'))
 
@@ -227,21 +227,18 @@ class Dataset:
         image_checkerboard_0_file_name = disp_field_0_path + '_image_checkerboard' + disp_field_0_ext
         image_checkerboard_1_file_name = disp_field_1_path + '_image_checkerboard' + disp_field_1_ext
 
-        warped_image_0_file_name = warp_image(superelastix, file_names['image_file_names'][0],
-                                              disp_field_0_file_name, 'image')
-        warped_image_1_file_name = warp_image(superelastix,
-                                              file_names['image_file_names'][1],
-                                              disp_field_1_file_name, 'image')
+        warped_image_0_to_1_file_name = warp_image(superelastix, file_names['image_file_names'][0],
+                                                   disp_field_1_file_name, 'image')
+        warped_image_1_to_0_file_name = warp_image(superelastix, file_names['image_file_names'][1],
+                                                   disp_field_0_file_name, 'image')
 
         image_0 = sitk.ReadImage(file_names['image_file_names'][0])
         image_1 = sitk.ReadImage(file_names['image_file_names'][1])
 
-        sitk.WriteImage(sitk.CheckerBoard(image_0, sitk.ReadImage(warped_image_1_file_name, image_1.GetPixelID()),
-                                          (5,)*image_0.GetDimension()),
-                        image_checkerboard_0_file_name)
-        sitk.WriteImage(sitk.CheckerBoard(image_1, sitk.ReadImage(warped_image_0_file_name, image_1.GetPixelID()),
-                                          (5,)*image_1.GetDimension()),
-                        image_checkerboard_1_file_name)
+        sitk.WriteImage(sitk.CheckerBoard(image_0, sitk.ReadImage(warped_image_1_to_0_file_name, image_1.GetPixelID()),
+                                          (5,)*image_0.GetDimension()), image_checkerboard_0_file_name)
+        sitk.WriteImage(sitk.CheckerBoard(image_1, sitk.ReadImage(warped_image_0_to_1_file_name, image_1.GetPixelID()),
+                                          (5,)*image_1.GetDimension()), image_checkerboard_1_file_name)
 
     @staticmethod
     def warp_label_checkerboards(superelastix, file_names, output_directory):
