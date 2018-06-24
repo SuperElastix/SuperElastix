@@ -150,7 +150,6 @@ def run(parameters):
 
 
 if __name__ == '__main__':
-
     parameters = parser.parse_args()
 
     if not os.path.exists(parameters.output_directory):

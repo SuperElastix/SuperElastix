@@ -10,14 +10,14 @@ def load_datasets(parameters):
     datasets = dict()
 
     if parameters.cumc12_input_directory is not None:
-        logging.info('Loading CUMC12.')
+        logging.info('Loading dataset CUMC12.')
         cumc12 = CUMC12(parameters.cumc12_input_directory,
                         parameters.output_directory,
                         parameters.max_number_of_registrations_per_dataset)
         datasets[cumc12.name] = cumc12
 
     if parameters.dirlab_input_directory is not None:
-        logging.info('Loading DIRLAB.')
+        logging.info('Loading dataset DIRLAB.')
         dirlab = DIRLAB(parameters.dirlab_input_directory,
                         parameters.dirlab_mask_directory,
                         parameters.output_directory,
@@ -25,34 +25,34 @@ def load_datasets(parameters):
         datasets[dirlab.name] = dirlab
 
     if parameters.empire_input_directory is not None:
-        logging.info('Loading EMPIRE.')
+        logging.info('Loading dataset EMPIRE.')
         empire = EMPIRE(parameters.empire_input_directory,
                         parameters.max_number_of_registrations_per_dataset)
         datasets[empire.name] = empire
 
     if parameters.isbr18_input_directory is not None:
-        logging.info('Loading ISBR18.')
+        logging.info('Loading dataset ISBR18.')
         isbr18 = ISBR18(parameters.isbr18_input_directory,
                         parameters.output_directory,
                         parameters.max_number_of_registrations_per_dataset)
         datasets[isbr18.name] = isbr18
 
     if parameters.lpba40_input_directory is not None:
-        logging.info('Loading LPBA40.')
+        logging.info('Loading dataset LPBA40.')
         lpba40 = LPBA40(parameters.lpba40_input_directory,
                         parameters.output_directory,
                         parameters.max_number_of_registrations_per_dataset)
         datasets[lpba40.name] = lpba40
 
     if parameters.mgh10_input_directory is not None:
-        logging.info('Loading MGH10.')
+        logging.info('Loading dataset MGH10.')
         mgh10 = MGH10(parameters.mgh10_input_directory,
                       parameters.output_directory,
                       parameters.max_number_of_registrations_per_dataset)
         datasets[mgh10.name] = mgh10
 
     if parameters.popi_input_directory is not None:
-        logging.info('Loading POPI.')
+        logging.info('Loading dataset POPI.')
         popi = POPI(parameters.popi_input_directory,
                     parameters.popi_mask_directory,
                     parameters.output_directory,
@@ -60,14 +60,14 @@ def load_datasets(parameters):
         datasets[popi.name] = popi
 
     if parameters.spread_input_directory is not None:
-        logging.info('Loading SPREAD.')
+        logging.info('Loading dataset SPREAD.')
         spread = SPREAD(parameters.spread_input_directory,
                         parameters.output_directory,
                         parameters.max_number_of_registrations_per_dataset)
         datasets[spread.name] = spread
 
     if parameters.hbia_input_directory is not None:
-        logging.info('Loading HistoBIA.')
+        logging.info('Loading dataset HistoBIA.')
         hbia = HBIA(parameters.hbia_input_directory,
                     parameters.output_directory,
                     parameters.max_number_of_registrations_per_dataset,
@@ -187,7 +187,7 @@ class Dataset:
         }
 
     @staticmethod
-    def warp_images(superelastix, file_names, output_directory):
+    def make_images(superelastix, file_names, output_directory):
         disp_field_0_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][0])
         disp_field_1_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][1])
 
@@ -195,7 +195,7 @@ class Dataset:
         warp_image(superelastix, file_names['image_file_names'][1], disp_field_1_file_name, 'image')
 
     @staticmethod
-    def warp_checkerboards(superelastix, file_names, output_directory):
+    def make_checkerboards(superelastix, file_names, output_directory):
         disp_field_0_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][0])
         disp_field_1_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][1])
 
@@ -217,7 +217,7 @@ class Dataset:
         warp_image(superelastix, checkerboard_1_file_name, disp_field_1_file_name, 'checkerboard')
 
     @staticmethod
-    def warp_image_checkerboards(superelastix, file_names, output_directory):
+    def make_image_checkerboards(superelastix, file_names, output_directory):
         disp_field_0_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][0])
         disp_field_1_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][1])
 
@@ -241,7 +241,7 @@ class Dataset:
                                           (5,)*image_1.GetDimension()), image_checkerboard_1_file_name)
 
     @staticmethod
-    def warp_label_checkerboards(superelastix, file_names, output_directory):
+    def make_label_checkerboards(superelastix, file_names, output_directory):
         disp_field_0_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][0])
         disp_field_1_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][1])
 

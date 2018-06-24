@@ -9,7 +9,7 @@ Open a pull request that creates a directory under `Submissions` which contains 
 ```bash
 python make_registration_scripts.py \
       --superelastix /path/to/superelastix/build/tree/SuperElastix-build/bin/superelastix \
-      --submissions-directory /path/to/superelastix/source/tree/ContinuousRegistration \/Submissions
+      --submissions-directory /path/to/superelastix/source/tree/ContinuousRegistration/Submissions \
       --output-directory /tmp \
       --popi-input-directory /path/to/POPI \
       --dirlab-input-directory /path/to/DIRLAB \
