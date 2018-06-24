@@ -14,10 +14,13 @@ def load_submissions(parameters):
     team_names = [team_name for team_name in os.listdir(parameters.submissions_directory)
                   if os.path.isdir(os.path.join(parameters.submissions_directory, team_name))]
     for team_name in team_names:
-        submissions[team_name] = [
-            os.path.join(parameters.submissions_directory, team_name, blueprint_name)
-            for blueprint_name in os.listdir(os.path.join(parameters.submissions_directory, team_name))
-            if blueprint_name.endswith('.json') or blueprint_name.endswith('.xml')]
+        blueprints = []
+        for blueprint_name in os.listdir(os.path.join(parameters.submissions_directory, team_name)):
+            if blueprint_name.endswith('.json') or blueprint_name.endswith('.xml'):
+                logging.info('Loading blueprint %s/%s.' % (team_name, os.path.basename(blueprint_name)))
+                blueprints.append(os.path.join(parameters.submissions_directory, team_name, blueprint_name))
+
+        submissions[team_name] = blueprints
 
     return submissions
 

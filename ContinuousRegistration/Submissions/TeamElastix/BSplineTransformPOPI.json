@@ -29,7 +29,7 @@
         "ParameterMap0AutomaticTransformInitialization": "false",
         "ParameterMap0Transform": "BSplineTransform",
         "ParameterMap0BSplineTransformSplineOrder": "3",
-        "ParameterMap0FinalGridSpacingInPhysicalUnits": "8.0",
+        "ParameterMap0FinalGridSpacingInPhysicalUnits": "16.0",
         "ParameterMap0GridSpacingSchedule": ["8.0", "4.0", "2.0", "1.0"],
         "ParameterMap0RequiredRatioOfValidSamples": "0.01",
         "ParameterMap0ErodeMask": "false"

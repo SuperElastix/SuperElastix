@@ -34,7 +34,7 @@ def run(parameters):
             for dataset_name in blueprint['Datasets']:
                 if not dataset_name in datasets:
                     logging.info('Blueprint "%s" can also be used for dataset "%s". '
-                                 'Supply data directory to evaluate blueprint on this dataset. '
+                                 'Supply data directory to evaluate blueprint on this dataset '
                                  '(registrations must be run first).',
                                   blueprint_file_name, dataset_name)
                     continue
@@ -52,17 +52,20 @@ def run(parameters):
                         results[team_name][blueprint_name][dataset.name].append(dataset.evaluate(
                             parameters.superelastix, file_names, output_directory))
 
-                        if parameters.warp_images:
-                            dataset.warp_images(parameters.superelastix, file_names, output_directory)
+                        if parameters.make_images:
+                            dataset.make_images(parameters.superelastix, file_names, output_directory)
 
-                        if parameters.warp_checkerboards:
-                            dataset.warp_checkerboards(parameters.superelastix, file_names, output_directory)
+                        if parameters.make_labels:
+                            dataset.make_labels(parameters.superelastix, file_names, output_directory)
 
-                        if parameters.warp_image_checkerboards:
-                            dataset.warp_image_checkerboards(parameters.superelastix, file_names, output_directory)
+                        if parameters.make_checkerboards:
+                            dataset.make_checkerboards(parameters.superelastix, file_names, output_directory)
 
-                        if parameters.warp_label_checkerboards and dataset.name in ["CUMC12", "ISBR18", "LPBA40", "MGH10"]:
-                            dataset.warp_label_checkerboards(parameters.superelastix, file_names, output_directory)
+                        if parameters.make_image_checkerboards:
+                            dataset.make_image_checkerboards(parameters.superelastix, file_names, output_directory)
+
+                        if parameters.make_label_checkerboards and dataset.name in ["CUMC12", "ISBR18", "LPBA40", "MGH10"]:
+                            dataset.make_label_checkerboards(parameters.superelastix, file_names, output_directory)
                     except Exception as e:
                         logging.error('Error during evaluation of %s\'s blueprint %s and dataset %s: %s'
                                       % (team_name, blueprint_name, dataset.name, str(e)))
@@ -72,8 +75,11 @@ def run(parameters):
                             'results-{:%Y-%m-%d-%H-%M-%S-%f}'.format(datetime.datetime.now()) + '.json'), results)
 
 if __name__ == '__main__':
-    parser.add_argument('--warp-images', '-wi', type=bool, default=False)
-    parser.add_argument('--warp-checkerboards', '-wc', type=bool, default=False)
-    parser.add_argument('--warp-image-checkerboards', '-wic', type=bool, default=False)
-    parser.add_argument('--warp-label-checkerboards', '-wlc', type=bool, default=False)
+    parser.add_argument('--make-images', '-mi', type=bool, default=False, help="Warp moving images.")
+    parser.add_argument('--make-labels', '-ml', type=bool, default=False, help="Warp moving labels.")
+    parser.add_argument('--make-checkerboards', '-mc', type=bool, default=False, help="Warp checkerboard pattern.")
+    parser.add_argument('--make-image-checkerboards', '-mic', type=bool, default=False,
+                        help="Warp moving images and make checkerboard with fixed and warped moving image.")
+    parser.add_argument('--make-label-checkerboards', '-mlc', type=bool, default=False,
+                        help="Warp moving labels and make checkerboard with fixed and warped moving label.")
     run(parser.parse_args())
