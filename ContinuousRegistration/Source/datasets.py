@@ -195,6 +195,14 @@ class Dataset:
         warp_image(superelastix, file_names['image_file_names'][1], disp_field_1_file_name, 'image')
 
     @staticmethod
+    def make_labels(superelastix, file_names, output_directory):
+        disp_field_0_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][0])
+        disp_field_1_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][1])
+
+        warp_image(superelastix, file_names['ground_truth_file_names'][0], disp_field_0_file_name, 'image')
+        warp_image(superelastix, file_names['ground_truth_file_names'][1], disp_field_1_file_name, 'image')
+
+    @staticmethod
     def make_checkerboards(superelastix, file_names, output_directory):
         disp_field_0_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][0])
         disp_field_1_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][1])

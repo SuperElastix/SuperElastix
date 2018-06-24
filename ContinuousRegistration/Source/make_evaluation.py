@@ -55,6 +55,9 @@ def run(parameters):
                         if parameters.make_images:
                             dataset.make_images(parameters.superelastix, file_names, output_directory)
 
+                        if parameters.make_labels:
+                            dataset.make_labels(parameters.superelastix, file_names, output_directory)
+
                         if parameters.make_checkerboards:
                             dataset.make_checkerboards(parameters.superelastix, file_names, output_directory)
 
@@ -72,8 +75,11 @@ def run(parameters):
                             'results-{:%Y-%m-%d-%H-%M-%S-%f}'.format(datetime.datetime.now()) + '.json'), results)
 
 if __name__ == '__main__':
-    parser.add_argument('--make-images', '-wi', type=bool, default=False)
-    parser.add_argument('--make-checkerboards', '-wc', type=bool, default=False)
-    parser.add_argument('--make-image-checkerboards', '-wic', type=bool, default=False)
-    parser.add_argument('--make-label-checkerboards', '-wlc', type=bool, default=False)
+    parser.add_argument('--make-images', '-mi', type=bool, default=False, help="Warp moving images.")
+    parser.add_argument('--make-labels', '-ml', type=bool, default=False, help="Warp moving labels.")
+    parser.add_argument('--make-checkerboards', '-mc', type=bool, default=False, help="Warp checkerboard pattern.")
+    parser.add_argument('--make-image-checkerboards', '-mic', type=bool, default=False,
+                        help="Warp moving images and make checkerboard with fixed and warped moving image.")
+    parser.add_argument('--make-label-checkerboards', '-mlc', type=bool, default=False,
+                        help="Warp moving labels and make checkerboard with fixed and warped moving label.")
     run(parser.parse_args())
