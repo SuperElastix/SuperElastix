@@ -1,11 +1,13 @@
 import subprocess, sys, logging, os
 from itertools import islice
-from datetime import datetime
 import SimpleITK as sitk
 import numpy as np
+import random
 
 logging.basicConfig(level=logging.DEBUG, datefmt='%d-%m-%Y:%H:%M:%S',
                     format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s')
+
+random.seed(os.getenv('PYTHON_RANDOM_SEED', 0))
 
 def load_submissions(parameters):
     logging.info('Loading blueprints.')
@@ -17,7 +19,7 @@ def load_submissions(parameters):
         blueprints = []
         for blueprint_name in os.listdir(os.path.join(parameters.submissions_directory, team_name)):
             if blueprint_name.endswith('.json') or blueprint_name.endswith('.xml'):
-                logging.info('Loading blueprint %s/%s.' % (team_name, os.path.basename(blueprint_name)))
+                logging.info('Found blueprint %s/%s.' % (team_name, os.path.basename(blueprint_name)))
                 blueprints.append(os.path.join(parameters.submissions_directory, team_name, blueprint_name))
 
         submissions[team_name] = blueprints
@@ -26,7 +28,7 @@ def load_submissions(parameters):
 
 
 def take(iterable, n):
-    "Return first n items of the iterable as a list"
+    "Return n random items in list"
     return list(islice(iterable, n))
 
 
@@ -190,8 +192,8 @@ def read_vtk(file_name):
     return np.loadtxt(file_name, skiprows=5)
 
 
-def read_pts(file_name):
-    return np.loadtxt(file_name)
+def read_pts(file_name, skiprows=0):
+    return np.loadtxt(file_name, skiprows=skiprows)
 
 
 def read_csv(path_file):

@@ -3,6 +3,7 @@ import numpy as np
 from ContinuousRegistration.Source.make_registration_scripts import parser, load_datasets
 from ContinuousRegistration.Source.util import get_script_path
 from datetime import datetime
+from util import logging
 
 def load_results_from_json(filename, datasets):
     results = json.load(open(filename))
@@ -62,6 +63,7 @@ def run(parameters):
     if not result_file_names:
         raise Exception('No result JSON files found in %s.' % parameters.output_directory)
 
+    logging.info('Loading results from %s.' % result_file_names[0])
     latest_results, latest_column_names = load_results_from_json(result_file_names[0], load_datasets(parameters))
 
     # Fill tables with team data
