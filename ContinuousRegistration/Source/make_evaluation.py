@@ -30,6 +30,7 @@ def run(parameters):
             if not blueprint_name in results[team_name]:
                 results[team_name][blueprint_name] = {}
 
+            logging.info('Loading blueprint %s/%s.' % (team_name, os.path.basename(blueprint_name)))
             blueprint = json.load(open(blueprint_file_name))
             for dataset_name in blueprint['Datasets']:
                 if not dataset_name in datasets:

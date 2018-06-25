@@ -1,5 +1,5 @@
 {
-    "Datasets": ["ISBR18", "LPBA40", "MGH10", "CUMC12"],
+    "Datasets": ["ISBR18", "LPBA40", "MGH10", "CUMC12", "HAMMERS"],
     "Component": {
         "Name": "Elastix",
         "NameOfClass": "MonolithicElastixComponent",

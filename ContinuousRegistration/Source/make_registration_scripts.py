@@ -17,13 +17,14 @@ parser.add_argument('--cumc12-input-directory', '-cid')
 parser.add_argument('--dirlab-input-directory', '-did')
 parser.add_argument('--dirlab-mask-directory', '-dmd', default=None)
 parser.add_argument('--empire-input-directory', '-eid')
+parser.add_argument('--hammers-input-directory', '-hid')
 parser.add_argument('--isbr18-input-directory', '-iid')
 parser.add_argument('--lpba40-input-directory', '-lid')
 parser.add_argument('--spread-input-directory', '-sid')
 parser.add_argument('--popi-input-directory', '-pid')
 parser.add_argument('--popi-mask-directory', '-pmd', default=None)
 parser.add_argument('--mgh10-input-directory', '-mid')
-parser.add_argument('--hbia-input-directory', '-hid')
+parser.add_argument('--hbia-input-directory', '-hbiaid')
 parser.add_argument('--team-name', '-tn',
                     help="If specified, only generated shell scripts for this team.")
 parser.add_argument('--blueprint-file-name', '-bfn',
@@ -55,6 +56,7 @@ def run(parameters):
                 if not parameters.blueprint_file_name == os.path.basename(blueprint_file_name):
                     continue
 
+            logging.info('Loading blueprint %s/%s.' % (team_name, os.path.basename(blueprint_name)))
             blueprint = json.load(open(blueprint_file_name))
 
             if not 'Datasets' in blueprint:

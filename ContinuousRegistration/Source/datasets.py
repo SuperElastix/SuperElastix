@@ -5,78 +5,6 @@ from itertools import combinations
 from ContinuousRegistration.Source.metrics import tre, hausdorff, inverse_consistency_labels, inverse_consistency_points, dice
 from ContinuousRegistration.Source.util import *
 
-
-def load_datasets(parameters):
-    datasets = dict()
-
-    if parameters.cumc12_input_directory is not None:
-        logging.info('Loading dataset CUMC12.')
-        cumc12 = CUMC12(parameters.cumc12_input_directory,
-                        parameters.output_directory,
-                        parameters.max_number_of_registrations_per_dataset)
-        datasets[cumc12.name] = cumc12
-
-    if parameters.dirlab_input_directory is not None:
-        logging.info('Loading dataset DIRLAB.')
-        dirlab = DIRLAB(parameters.dirlab_input_directory,
-                        parameters.dirlab_mask_directory,
-                        parameters.output_directory,
-                        parameters.max_number_of_registrations_per_dataset)
-        datasets[dirlab.name] = dirlab
-
-    if parameters.empire_input_directory is not None:
-        logging.info('Loading dataset EMPIRE.')
-        empire = EMPIRE(parameters.empire_input_directory,
-                        parameters.max_number_of_registrations_per_dataset)
-        datasets[empire.name] = empire
-
-    if parameters.isbr18_input_directory is not None:
-        logging.info('Loading dataset ISBR18.')
-        isbr18 = ISBR18(parameters.isbr18_input_directory,
-                        parameters.output_directory,
-                        parameters.max_number_of_registrations_per_dataset)
-        datasets[isbr18.name] = isbr18
-
-    if parameters.lpba40_input_directory is not None:
-        logging.info('Loading dataset LPBA40.')
-        lpba40 = LPBA40(parameters.lpba40_input_directory,
-                        parameters.output_directory,
-                        parameters.max_number_of_registrations_per_dataset)
-        datasets[lpba40.name] = lpba40
-
-    if parameters.mgh10_input_directory is not None:
-        logging.info('Loading dataset MGH10.')
-        mgh10 = MGH10(parameters.mgh10_input_directory,
-                      parameters.output_directory,
-                      parameters.max_number_of_registrations_per_dataset)
-        datasets[mgh10.name] = mgh10
-
-    if parameters.popi_input_directory is not None:
-        logging.info('Loading dataset POPI.')
-        popi = POPI(parameters.popi_input_directory,
-                    parameters.popi_mask_directory,
-                    parameters.output_directory,
-                    parameters.max_number_of_registrations_per_dataset)
-        datasets[popi.name] = popi
-
-    if parameters.spread_input_directory is not None:
-        logging.info('Loading dataset SPREAD.')
-        spread = SPREAD(parameters.spread_input_directory,
-                        parameters.output_directory,
-                        parameters.max_number_of_registrations_per_dataset)
-        datasets[spread.name] = spread
-
-    if parameters.hbia_input_directory is not None:
-        logging.info('Loading dataset HistoBIA.')
-        hbia = HBIA(parameters.hbia_input_directory,
-                    parameters.output_directory,
-                    parameters.max_number_of_registrations_per_dataset,
-                    scale=10)
-        datasets[hbia.name] = hbia
-
-    return datasets
-
-
 class Dataset:
     """
     Base class for datasets. The derived classes need only to implement disk access  and how to evaluate the dataset.
@@ -467,6 +395,52 @@ class EMPIRE(Dataset):
     def read_point_set(file_name):
         return read_pts(file_name)
 
+# Download from http://brain-development.org/brain-atlases/individual-adult-brain-atlases-new/.
+# Fill in info and click on "Adult individual atlases (30 MR images and manual segmentations;
+# A Hammers, R Allom et al. 2003, IS Gousias et al. 2008, I. Faillenot et al. 2017)". It should
+# point to this link:
+# http://biomedic.doc.ic.ac.uk/brain-development/downloads/hammers/Hammers_mith-n30r95.tar.gz
+# Do not download directly. Fill in information.
+class HAMMERS(Dataset):
+    def __init__(self, input_directory, output_directory, max_number_of_registrations):
+        self.name = 'HAMMERS'
+        self.category = 'Brain'
+
+        self.input_directory = input_directory
+        file_names = []
+
+        image_file_names = [os.path.join(input_directory, image)
+                       for image in os.listdir(input_directory)
+                       if image.endswith('.nii.gz') and not 'seg' in image]
+        image_file_names = [pair for pair in combinations(image_file_names, 2)]
+
+        label_file_names = [os.path.join(input_directory, image)
+                       for image in os.listdir(input_directory)
+                       if image.endswith('seg.nii.gz')]
+        label_file_names = [pair for pair in combinations(label_file_names, 2)]
+
+        disp_field_file_names = [create_disp_field_names(image_file_name_pair, self.name)
+                                 for image_file_name_pair in image_file_names]
+
+        mask_file_names = [create_mask_by_thresholding(label_file_name, disp_field_file_name, output_directory, 0., 32, 16)
+                      for label_file_name, disp_field_file_name in zip(label_file_names, disp_field_file_names)]
+
+        for image_file_name, mask_file_name, label_file_name, disp_field_file_name \
+                in zip(image_file_names, mask_file_names, label_file_names, disp_field_file_names):
+            file_names.append({
+                'image_file_names': image_file_name,
+                'mask_file_names': mask_file_name,
+                'ground_truth_file_names': label_file_name,
+                'disp_field_file_names': disp_field_file_name
+            })
+
+        self.file_names = take(sort_file_names(file_names),
+                               max_number_of_registrations // 2)
+
+    # TODO: Find out why inverse consistency does not work with this dataset
+    def evaluate(self, superelastix, file_names, output_directory):
+        return self.evaluate_label(superelastix, file_names, output_directory)
+
 
 class ISBR18(Dataset):
     def __init__(self, input_directory, output_directory, max_number_of_registrations):
@@ -510,7 +484,6 @@ class ISBR18(Dataset):
         self.file_names = take(sort_file_names(file_names),
                                max_number_of_registrations // 2)
 
-    # TODO: Find out why inverse consistency does not work with this dataset
     def evaluate(self, superelastix, file_names, output_directory):
         return self.evaluate_label(superelastix, file_names, output_directory)
 
@@ -687,34 +660,20 @@ class SPREAD(Dataset):
             image_file_names = (os.path.join(input_directory, 'mhd', sub_directory, 'baseline_1.mha'),
                                 os.path.join(input_directory, 'mhd', sub_directory, 'followup_1.mha'))
 
-            os.makedirs(os.path.join(output_directory, self.name), exist_ok=True)
+            mask_file_names = (os.path.join(input_directory, 'mhd', sub_directory, 'baseline_1_mask_vi_semiauto.mha'),
+                                os.path.join(input_directory, 'mhd', sub_directory, 'followup_1_mask_vi_semiauto.mha'))
 
-            name = sub_directory + '_baseline_1_Cropped_point'
-            baseline_point_set_file_name_we = os.path.join(input_directory, 'groundtruth',
-                                                           'distinctivePoints', name)
-            point_set = np.loadtxt(baseline_point_set_file_name_we + '.txt', skiprows=2)
-            baseline_point_set_file_name_we_without_header = \
-                os.path.join(output_directory, 'tmp', self.name, sub_directory + '_baseline_1_Cropped_point.txt')
-            np.savetxt(baseline_point_set_file_name_we_without_header, point_set)
+            name = sub_directory + '_baseline_1_Cropped_point' '.txt'
+            point_set_0_file_name = os.path.join(input_directory, 'groundtruth', 'distinctivePoints', name)
+            point_set_1_file_name = os.path.join(input_directory, 'groundtruth', 'annotate', 'Consensus', name)
+            point_set_file_names = (point_set_0_file_name, point_set_1_file_name)
 
-            follow_up_point_set_file_name_we = os.path.join(input_directory, 'groundtruth', 'annotate', 'Consensus',
-                                                            sub_directory + '_b1f1_point')
-            point_set = np.loadtxt(follow_up_point_set_file_name_we + '.txt', skiprows=2)
-            follow_up_point_set_file_name_we_without_header = os.path.join(output_directory, 'tmp',
-                                                                           self.name, name + '.txt')
-            np.savetxt(follow_up_point_set_file_name_we_without_header, point_set)
-
-
-            point_set_file_names = (baseline_point_set_file_name_we_without_header,
-                                    follow_up_point_set_file_name_we_without_header)
-
-            disp_field_file_names = (os.path.join(self.name, sub_directory,
-                                                          'followup_to_baseline.nii.gz'),
-                                             os.path.join(self.name, sub_directory,
-                                                          'baseline_to_followup.nii.gz'))
+            disp_field_file_names = (os.path.join(self.name, sub_directory, 'followup_to_baseline.mha'),
+                                     os.path.join(self.name, sub_directory, 'baseline_to_followup.mha'))
 
             file_names.append({
                 "image_file_names": image_file_names,
+                "mask_file_names": mask_file_names,
                 "ground_truth_file_names": point_set_file_names,
                 "disp_field_file_names": disp_field_file_names
             })
@@ -723,10 +682,11 @@ class SPREAD(Dataset):
                                max_number_of_registrations // 2)
 
     def evaluate(self, superelastix, file_names, output_directory):
-        self.evaluate_point_set(superelastix, file_names, output_directory)
+        return self.evaluate_point_set(superelastix, file_names, output_directory)
 
+    @staticmethod
     def read_point_set(file_name):
-        return read_pts(file_name)
+        return read_pts(file_name, skiprows=2)
 
 
 class HBIA(Dataset):
@@ -813,3 +773,81 @@ class HBIA(Dataset):
 
     def read_point_set(self, file_name):
         return self.read_csv(file_name)
+
+
+def load_datasets(parameters):
+    datasets = dict()
+
+    if parameters.cumc12_input_directory is not None:
+        logging.info('Loading dataset CUMC12.')
+        cumc12 = CUMC12(parameters.cumc12_input_directory,
+                        parameters.output_directory,
+                        parameters.max_number_of_registrations_per_dataset)
+        datasets[cumc12.name] = cumc12
+
+    if parameters.dirlab_input_directory is not None:
+        logging.info('Loading dataset DIRLAB.')
+        dirlab = DIRLAB(parameters.dirlab_input_directory,
+                        parameters.dirlab_mask_directory,
+                        parameters.output_directory,
+                        parameters.max_number_of_registrations_per_dataset)
+        datasets[dirlab.name] = dirlab
+
+    if parameters.empire_input_directory is not None:
+        logging.info('Loading dataset EMPIRE.')
+        empire = EMPIRE(parameters.empire_input_directory,
+                        parameters.max_number_of_registrations_per_dataset)
+        datasets[empire.name] = empire
+
+    if parameters.hammers_input_directory is not None:
+        logging.info('Loading dataset HAMMERS.')
+        hammers = HAMMERS(parameters.hammers_input_directory,
+                        parameters.output_directory,
+                        parameters.max_number_of_registrations_per_dataset)
+        datasets[hammers.name] = hammers
+
+    if parameters.isbr18_input_directory is not None:
+        logging.info('Loading dataset ISBR18.')
+        isbr18 = ISBR18(parameters.isbr18_input_directory,
+                        parameters.output_directory,
+                        parameters.max_number_of_registrations_per_dataset)
+        datasets[isbr18.name] = isbr18
+
+    if parameters.lpba40_input_directory is not None:
+        logging.info('Loading dataset LPBA40.')
+        lpba40 = LPBA40(parameters.lpba40_input_directory,
+                        parameters.output_directory,
+                        parameters.max_number_of_registrations_per_dataset)
+        datasets[lpba40.name] = lpba40
+
+    if parameters.mgh10_input_directory is not None:
+        logging.info('Loading dataset MGH10.')
+        mgh10 = MGH10(parameters.mgh10_input_directory,
+                      parameters.output_directory,
+                      parameters.max_number_of_registrations_per_dataset)
+        datasets[mgh10.name] = mgh10
+
+    if parameters.popi_input_directory is not None:
+        logging.info('Loading dataset POPI.')
+        popi = POPI(parameters.popi_input_directory,
+                    parameters.popi_mask_directory,
+                    parameters.output_directory,
+                    parameters.max_number_of_registrations_per_dataset)
+        datasets[popi.name] = popi
+
+    if parameters.spread_input_directory is not None:
+        logging.info('Loading dataset SPREAD.')
+        spread = SPREAD(parameters.spread_input_directory,
+                        parameters.output_directory,
+                        parameters.max_number_of_registrations_per_dataset)
+        datasets[spread.name] = spread
+
+    if parameters.hbia_input_directory is not None:
+        logging.info('Loading dataset HistoBIA.')
+        hbia = HBIA(parameters.hbia_input_directory,
+                    parameters.output_directory,
+                    parameters.max_number_of_registrations_per_dataset,
+                    scale=10)
+        datasets[hbia.name] = hbia
+
+    return datasets
