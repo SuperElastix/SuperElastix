@@ -1,8 +1,7 @@
-import subprocess, sys, logging, os
+import subprocess, sys, logging, os, random, json
 from itertools import islice
 import SimpleITK as sitk
 import numpy as np
-import random
 
 logging.basicConfig(level=logging.DEBUG, datefmt='%d-%m-%Y:%H:%M:%S',
                     format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s')
@@ -25,6 +24,74 @@ def load_submissions(parameters):
         submissions[team_name] = blueprints
 
     return submissions
+
+def load_results_from_json(filename, datasets):
+    results = json.load(open(filename))
+    column_names = dict()
+
+    for team_name, team_results in results.items():
+        for blueprint_name, blueprint_results in team_results.items():
+            for dataset_name, dataset_results in blueprint_results.items():
+
+                # If no registration or evaluations completed
+                if all(dataset_result is None for dataset_result in dataset_results):
+                    results[team_name][blueprint_name][dataset_name] = None
+                    continue
+
+                # TODO: Rewrite to list comprehension
+                dataset_metric_names = set()
+                dataset_result_array = []
+                for dataset_result in dataset_results:
+                    for dataset_result_key, dataset_result_values in dataset_result.items():
+                        dataset_metric_names.add(tuple(dataset_result_values.keys()))
+                        dataset_result_array.append(list(dataset_result_values.values()))
+
+                # All registrations should have been evaluated with the same metrics
+                assert(len(dataset_metric_names) == 1)
+
+                # Save column names
+                if not dataset_name in column_names:
+                    column_names[dataset_name] = dataset_metric_names.pop()
+
+                dataset_result_means = np.nanmean(dataset_result_array, axis=0)
+                dataset_result_stds = np.nanstd(dataset_result_array, axis=0)
+
+                if all(np.isnan(dataset_result_means)):
+                    dataset_result_means = []
+                    dataset_result_stds = []
+
+                blueprint_commit = subprocess.check_output(['git', 'log', '-n', '1', '--pretty=format:%h',
+                                                            '--', '%s/../Submissions/%s/%s.json' %
+                                                            (get_script_path(), team_name, blueprint_name)])
+                repo_commit = subprocess.check_output(['git', 'describe', '--always'])
+
+                # Save stats in-place
+                results[team_name][blueprint_name][dataset_name] = {
+                    'blueprint_commit': blueprint_commit.decode("utf-8"),
+                    'repo_commit': repo_commit.decode("utf-8"),
+                    'number_of_registrations': '%s/%s' % (2*len(~np.isnan(dataset_result_means)), 2*len(datasets[dataset_name].file_names)),
+                    'means': dataset_result_means,
+                    'stds': dataset_result_stds
+                }
+
+    return results, column_names
+
+def results_to_dict(results):
+    # Reverse order of dims
+    tables = {}
+    for team_name, team_results in results.items():
+        for blueprint_name, blueprint_results in team_results.items():
+            for dataset_name, dataset_results in blueprint_results.items():
+
+                if not dataset_name in tables:
+                    tables[dataset_name] = {}
+
+                if not team_name in tables[dataset_name]:
+                    tables[dataset_name][team_name] = {}
+
+                tables[dataset_name][team_name][blueprint_name] = results[team_name][blueprint_name][dataset_name]
+
+    return tables
 
 
 def take(iterable, n):
@@ -57,14 +124,15 @@ def copy_information_from_images_to_labels(image_file_names, label_file_names,
             if not os.path.isdir(dataset_output_directory):
                 os.makedirs(dataset_output_directory)
 
-            # File info is read from corresponding image file
-            image = sitk.ReadImage(image_file_name)
-
-            # Write raw file with this info
-            label = sitk.ReadImage(label_file_name)
-            label.CopyInformation(image)
-
             if not os.path.isfile(output_file_name):
+
+                # File info is read from corresponding image file
+                image = sitk.ReadImage(image_file_name)
+
+                # Write raw file with this info
+                label = sitk.ReadImage(label_file_name)
+                label.CopyInformation(image)
+
                 sitk.WriteImage(sitk.Cast(label, sitk.sitkUInt8), output_file_name)
                 print('Created label with world information %s.' % output_file_name)
 
