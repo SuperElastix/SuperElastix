@@ -25,23 +25,24 @@ def load_submissions(parameters):
 
     return submissions
 
-def load_results_from_json(filename, datasets):
+def load_results_from_json(filename, datasets, make_means=True):
     results = json.load(open(filename))
     column_names = dict()
 
     for team_name, team_results in results.items():
         for blueprint_name, blueprint_results in team_results.items():
             for dataset_name, dataset_results in blueprint_results.items():
-                blueprint_commit = subprocess.check_output(['git', 'log', '-n', '1', '--pretty=format:%h',
-                                                            '--', '%s/../Submissions/%s/%s.json' %
-                                                            (get_script_path(), team_name, blueprint_name)])
-                repo_commit = subprocess.check_output(['git', 'describe', '--always'])
+                # Enable once cluster environment gets access to git
+                # blueprint_commit = subprocess.check_output(['git', 'log', '-n', '1', '--pretty=format:%h',
+                #                                             '--', '%s/../Submissions/%s/%s.json' %
+                #                                             (get_script_path(), team_name, blueprint_name)])
+                # repo_commit = subprocess.check_output(['git', 'describe', '--always'])
 
                 # If no registration or evaluations completed
                 if all(dataset_result is None for dataset_result in dataset_results):
                     results[team_name][blueprint_name][dataset_name] = {
-                      'blueprint_commit': blueprint_commit.decode("utf-8"),
-                      'repo_commit': repo_commit.decode("utf-8"),
+                      # 'blueprint_commit': blueprint_commit.decode("utf-8"),
+                      # 'repo_commit': repo_commit.decode("utf-8"),
                       'completed': 'None',
                       'means': [np.NaN],
                       'stds': [np.NaN]
@@ -56,6 +57,8 @@ def load_results_from_json(filename, datasets):
                         dataset_metric_names.add(tuple(dataset_result_values.keys()))
                         dataset_result_array.append(list(dataset_result_values.values()))
 
+
+
                 # All registrations should have been evaluated with the same metrics
                 assert(len(dataset_metric_names) == 1)
 
@@ -63,21 +66,30 @@ def load_results_from_json(filename, datasets):
                 if not dataset_name in column_names:
                     column_names[dataset_name] = dataset_metric_names.pop()
 
-                dataset_result_means = np.nanmean(dataset_result_array, axis=0)
-                dataset_result_stds = np.nanstd(dataset_result_array, axis=0)
+                if make_means:
+                    dataset_result_means = np.nanmean(dataset_result_array, axis=0)
+                    dataset_result_stds = np.nanstd(dataset_result_array, axis=0)
 
-                if all(np.isnan(dataset_result_means)):
-                    dataset_result_means = []
-                    dataset_result_stds = []
+                    if all(np.isnan(dataset_result_means)):
+                        dataset_result_means = []
+                        dataset_result_stds = []
 
-                # Save stats in-place
-                results[team_name][blueprint_name][dataset_name] = {
-                    'blueprint_commit': blueprint_commit.decode("utf-8"),
-                    'repo_commit': repo_commit.decode("utf-8"),
-                    'completed': '%s/%s' % (len(~np.isnan(dataset_result_array)), 2*len(datasets[dataset_name].file_names)),
-                    'means': dataset_result_means,
-                    'stds': dataset_result_stds
-                }
+                    # Save stats in-place
+                    results[team_name][blueprint_name][dataset_name] = {
+                        # 'blueprint_commit': blueprint_commit.decode("utf-8"),
+                        # 'repo_commit': repo_commit.decode("utf-8"),
+                        'completed': '%s/%s' % (len(~np.isnan(dataset_result_array)), 2*len(datasets[dataset_name].file_names)),
+                        'means': dataset_result_means,
+                        'stds': dataset_result_stds
+                    }
+                else:
+                    results[team_name][blueprint_name][dataset_name] = {
+                        # 'blueprint_commit': blueprint_commit.decode("utf-8"),
+                        # 'repo_commit': repo_commit.decode("utf-8"),
+                        'completed': '%s/%s' % (
+                        len(~np.isnan(dataset_result_array)), 2 * len(datasets[dataset_name].file_names)),
+                        'dataset_result_array': [x for x in dataset_result_array if ~np.isnan(x)]
+                    }
 
     return results, column_names
 
@@ -101,7 +113,7 @@ def results_to_dict(results):
 
 def take(iterable, n):
     "Return n random items in list"
-    return list(islice(iterable, n))
+    return list(islice(random.shuffle(iterable), n))
 
 
 def sort_file_names(file_names):
