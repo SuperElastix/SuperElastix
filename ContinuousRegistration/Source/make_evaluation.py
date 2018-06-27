@@ -74,7 +74,7 @@ def run(parameters):
 
 
     write_json(os.path.join(parameters.output_directory,
-                            'results-{:%Y-%m-%d-%H-%M-%S-%f}'.format(datetime.datetime.now()) + '.json'), results)
+                            'results.json'), results)
 
 if __name__ == '__main__':
     parser.add_argument('--make-images', '-mi', type=bool, default=False, help="Warp moving images.")
