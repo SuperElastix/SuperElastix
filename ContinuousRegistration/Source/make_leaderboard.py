@@ -42,8 +42,8 @@ def run(parameters):
         table += '<th role="columnheader">Team</th>'
         table += '<th role="columnheader">Blueprint</th>'
         table += '<th role="columnheader">Date</th>'
-        table += '<th role="columnheader">Blueprint Commit</th>'
-        table += '<th role="columnheader">Repo Commit</th>'
+        # table += '<th role="columnheader">Blueprint Commit</th>'
+        # table += '<th role="columnheader">Repo Commit</th>'
         table += '<th role="columnheader">Completed</th>'
 
         for column_name in latest_column_names[dataset_name]:
@@ -63,8 +63,8 @@ def run(parameters):
                 table += '<th>%s</th>' % team_name
                 table += '<th>%s</th>' % blueprint_name
                 table += '<th>%s</th>' % date
-                table += '<th>%s</th>' % blueprint_results['blueprint_commit']
-                table += '<th>%s</th>' % blueprint_results['repo_commit']
+                # table += '<th>%s</th>' % blueprint_results['blueprint_commit']
+                # table += '<th>%s</th>' % blueprint_results['repo_commit']
                 table += '<td>%s</th>' % blueprint_results['completed']
 
                 means, stds = blueprint_results['means'], blueprint_results['stds']
@@ -83,7 +83,6 @@ def run(parameters):
         table += '</body>'
         table += '</html>'
 
-        # + '-{:%Y-%m-%d-%H-%M-%S-%f}'.format(datetime.datetime.now())
         table_file = open(os.path.join(parameters.output_directory,
                                        'leaderboard-' + dataset_name + '.html'), "w")
 
