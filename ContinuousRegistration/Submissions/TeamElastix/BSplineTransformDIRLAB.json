@@ -26,12 +26,13 @@
         "ParameterMap0Registration": "MultiMetricMultiResolutionRegistration",
         "ParameterMap0Metric": "AdvancedMattesMutualInformation",
         "ParameterMap0MaximumNumberOfIterations": "512",
-        "ParameterMap0AutomaticTransformInitialization": "false",
         "ParameterMap0Transform": "RecursiveBSplineTransform",
         "ParameterMap0BSplineTransformSplineOrder": "3",
         "ParameterMap0FinalGridSpacingInPhysicalUnits": "16.0",
         "ParameterMap0GridSpacingSchedule": ["8.0", "4.0", "2.0", "1.0"],
         "ParameterMap0RequiredRatioOfValidSamples": "0.01",
+        "ParameterMap0AutomaticTransformInitialization": "true",
+        "ParameterMap0AutomaticTransformInitializationMethod": "GeometricalCenter",
         "ParameterMap0ErodeMask": "false"
     },
     "Component": {

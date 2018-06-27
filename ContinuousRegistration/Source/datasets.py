@@ -1,5 +1,5 @@
 import glob, csv, re
-from abc import ABCMeta, abstractmethod
+from abc import ABCMeta
 from itertools import combinations
 
 from ContinuousRegistration.Source.metrics import tre, hausdorff, inverse_consistency_labels, inverse_consistency_points, dice

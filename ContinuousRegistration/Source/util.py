@@ -32,10 +32,20 @@ def load_results_from_json(filename, datasets):
     for team_name, team_results in results.items():
         for blueprint_name, blueprint_results in team_results.items():
             for dataset_name, dataset_results in blueprint_results.items():
+                blueprint_commit = subprocess.check_output(['git', 'log', '-n', '1', '--pretty=format:%h',
+                                                            '--', '%s/../Submissions/%s/%s.json' %
+                                                            (get_script_path(), team_name, blueprint_name)])
+                repo_commit = subprocess.check_output(['git', 'describe', '--always'])
 
                 # If no registration or evaluations completed
                 if all(dataset_result is None for dataset_result in dataset_results):
-                    results[team_name][blueprint_name][dataset_name] = None
+                    results[team_name][blueprint_name][dataset_name] = {
+                      'blueprint_commit': blueprint_commit.decode("utf-8"),
+                      'repo_commit': repo_commit.decode("utf-8"),
+                      'completed': 'None',
+                      'means': [np.NaN],
+                      'stds': [np.NaN]
+                    }
                     continue
 
                 # TODO: Rewrite to list comprehension
@@ -60,16 +70,11 @@ def load_results_from_json(filename, datasets):
                     dataset_result_means = []
                     dataset_result_stds = []
 
-                blueprint_commit = subprocess.check_output(['git', 'log', '-n', '1', '--pretty=format:%h',
-                                                            '--', '%s/../Submissions/%s/%s.json' %
-                                                            (get_script_path(), team_name, blueprint_name)])
-                repo_commit = subprocess.check_output(['git', 'describe', '--always'])
-
                 # Save stats in-place
                 results[team_name][blueprint_name][dataset_name] = {
                     'blueprint_commit': blueprint_commit.decode("utf-8"),
                     'repo_commit': repo_commit.decode("utf-8"),
-                    'number_of_registrations': '%s/%s' % (2*len(~np.isnan(dataset_result_means)), 2*len(datasets[dataset_name].file_names)),
+                    'completed': '%s/%s' % (len(~np.isnan(dataset_result_array)), 2*len(datasets[dataset_name].file_names)),
                     'means': dataset_result_means,
                     'stds': dataset_result_stds
                 }

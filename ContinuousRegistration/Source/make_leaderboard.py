@@ -2,6 +2,7 @@ import glob, os
 from ContinuousRegistration.Source.make_registration_scripts import parser, load_datasets
 from ContinuousRegistration.Source.util import logging, load_results_from_json, results_to_dict
 from datetime import datetime
+import numpy as np
 
 def run(parameters):
     result_file_names = glob.glob(os.path.join(parameters.output_directory, 'results*'))
@@ -43,7 +44,7 @@ def run(parameters):
         table += '<th role="columnheader">Date</th>'
         table += '<th role="columnheader">Blueprint Commit</th>'
         table += '<th role="columnheader">Repo Commit</th>'
-        table += '<th role="columnheader">Number of Registrations</th>'
+        table += '<th role="columnheader">Completed</th>'
 
         for column_name in latest_column_names[dataset_name]:
             table += '<th role="columnheader">%s</th>' % column_name
@@ -64,7 +65,7 @@ def run(parameters):
                 table += '<th>%s</th>' % date
                 table += '<th>%s</th>' % blueprint_results['blueprint_commit']
                 table += '<th>%s</th>' % blueprint_results['repo_commit']
-                table += '<td>%s</th>' % blueprint_results['number_of_registrations']
+                table += '<td>%s</th>' % blueprint_results['completed']
 
                 means, stds = blueprint_results['means'], blueprint_results['stds']
                 for mean, std in zip(means, stds):
