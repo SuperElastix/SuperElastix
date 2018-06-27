@@ -437,7 +437,6 @@ class HAMMERS(Dataset):
         self.file_names = take(sort_file_names(file_names),
                                max_number_of_registrations // 2)
 
-    # TODO: Find out why inverse consistency does not work with this dataset
     def evaluate(self, superelastix, file_names, output_directory):
         return self.evaluate_label(superelastix, file_names, output_directory)
 
