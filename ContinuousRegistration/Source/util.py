@@ -6,7 +6,7 @@ import numpy as np
 logging.basicConfig(level=logging.DEBUG, datefmt='%d-%m-%Y:%H:%M:%S',
                     format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s')
 
-random.seed(os.getenv('PYTHON_RANDOM_SEED', 0))
+np.random.seed(os.getenv('PYTHON_RANDOM_SEED', 0))
 
 def load_submissions(parameters):
     logging.info('Loading blueprints.')
@@ -113,7 +113,8 @@ def results_to_dict(results):
 
 def take(iterable, n):
     "Return n random items in list"
-    return list(islice(random.shuffle(iterable), n))
+    np.random.shuffle(iterable)
+    return list(islice(iterable, n))
 
 
 def sort_file_names(file_names):
