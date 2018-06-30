@@ -27,9 +27,9 @@ parser.add_argument('--mgh10-input-directory', '-mid')
 parser.add_argument('--hbia-input-directory', '-hbiaid')
 parser.add_argument('--team-name', '-tn',
                     help="If specified, only generated shell scripts for this team.")
-parser.add_argument('--blueprint-file-name', '-bfn',
+parser.add_argument('--blueprint-file-name', '-bfn', action='append',
                     help="If specified, only generated shell scripts for this blueprint.")
-parser.add_argument('--max-number-of-registrations-per-dataset', '-mnorpd', type=int, default=64)
+parser.add_argument('--max-number-of-registrations-per-dataset', '-mnorpd', type=int, default=8)
 
 
 def run(parameters):
@@ -51,9 +51,9 @@ def run(parameters):
         for blueprint_file_name in blueprint_file_names:
             blueprint_name, blueprint_ext = os.path.splitext(os.path.basename(blueprint_file_name))
 
-            if hasattr(parameters, 'blueprint_file_name') and not parameters.blueprint_file_name is None:
-                # User requested to have scripts generated only for this blueprint
-                if not parameters.blueprint_file_name == os.path.basename(blueprint_file_name):
+            if not parameters.blueprint_file_name is None:
+                # User requested to have scripts generated for specific blueprints
+                if not os.path.basename(blueprint_file_name) in parameters.blueprint_file_name:
                     continue
 
             logging.info('Loading blueprint %s/%s.' % (team_name, os.path.basename(blueprint_name)))
