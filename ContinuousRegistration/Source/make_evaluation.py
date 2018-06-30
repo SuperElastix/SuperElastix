@@ -18,10 +18,10 @@ def run(parameters):
     results = {}
     for team_name, blueprint_file_names in submissions.items():
         for blueprint_file_name in blueprint_file_names:
-            if parameters.blueprint_file_name is None:
+            #if parameters.blueprint_file_name is None:
                 # User requested evaluation for these blueprints only
-                if parameters.blueprint_file_name is not None and \
-                   os.path.basename(blueprint_file_name) in parameters.blueprint_file_name:
+            if parameters.blueprint_file_name is not None and \
+                   os.path.basename(blueprint_file_name) not in parameters.blueprint_file_name:
                     continue
 
             if not team_name in results:
