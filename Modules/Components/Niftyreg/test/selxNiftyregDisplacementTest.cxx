@@ -31,6 +31,12 @@
 #include "selxNiftyregSplineToDisplacementFieldComponent.h"
 #include "selxDisplacementFieldNiftiToItkImageSinkComponent.h"
 #include "selxNiftyregAladinComponent.h"
+
+#include "itkDisplacementFieldTransform.h"
+#include "itkResampleImageFilter.h"
+#include "itkNearestNeighborInterpolateImageFunction.h"
+#include <itkTestingComparisonImageFilter.h>
+
 #include "selxDataManager.h"
 #include "gtest/gtest.h"
 
@@ -58,6 +64,8 @@ public:
     DisplacementFieldNiftiToItkImageSinkComponent< 2, float>> RegisterComponents;
 
   typedef SuperElastixFilterCustomComponents< RegisterComponents > SuperElastixFilterType;
+
+
 
   virtual void SetUp()
   {
@@ -94,16 +102,18 @@ TEST_F( NiftyregDisplacementTest, displacement_conversion )
   int size = 64;
   int dim[8] = {3, size, size, size, 1, 1, 1, 1};
   nifti_image *floating_image = nifti_make_new_nim(dim, NIFTI_TYPE_FLOAT32, true);
-  float *imgPtr = static_cast<float>(floating_image->data);
+  floating_image->qform_code = 1;
+  float *imgPtr = static_cast<float*>(floating_image->data);
   for(int i=0; i<floating_image->nvox; ++i){
     imgPtr[i] = i;
   }
   // Create a deformation field that embeds an affine transformation
   mat44 affine;
-  affine.m[0][0]=0.8.f;affine.m[0][1]=0.1f;affine.m[0][2]=0.1f;affine.m[0][3]=-5.f;
-  affine.m[0][0]=0.1f;affine.m[0][1]=1.1f;affine.m[0][2]=0.1f;affine.m[0][3]=1.f;
-  affine.m[0][0]=0.1f;affine.m[0][1]=0.1f;affine.m[0][2]=1.f;affine.m[0][3]=5.f;
-  affine.m[0][0]=0.f;affine.m[0][1]=0.f;affine.m[0][2]=0.f;affine.m[3][3]=1.f;
+  affine.m[0][0]=0.8f;affine.m[0][1]=0.1f;affine.m[0][2]=0.1f;affine.m[0][3]=-5.f;
+  affine.m[1][0]=0.1f;affine.m[1][1]=1.1f;affine.m[1][2]=0.1f;affine.m[1][3]=1.f;
+  affine.m[2][0]=0.1f;affine.m[2][1]=0.1f;affine.m[1][2]=1.f;affine.m[2][3]=5.f;
+  affine.m[3][0]=0.f;affine.m[3][1]=0.f;affine.m[1][2]=0.f;affine.m[3][3]=1.f;
+  reg_mat44_eye(&affine);
   nifti_image *transFieldImage = nifti_copy_nim_info(floating_image);
   transFieldImage->dim[0]=transFieldImage->ndim=5;
   transFieldImage->dim[1]=transFieldImage->nx=floating_image->nx;
@@ -137,13 +147,74 @@ TEST_F( NiftyregDisplacementTest, displacement_conversion )
 
   // Convert the deformation field into a displacement field
   reg_getDisplacementFromDeformation(transFieldImage);
+  float *dispPtrX = static_cast<float *>(transFieldImage->data);
+  float *dispPtrY = static_cast<float *>(&dispPtrX[warped_image->nvox]);
+  float *dispPtrZ = static_cast<float *>(&dispPtrY[warped_image->nvox]);
+  for (int v = 0; v<warped_image->nvox; v++) {
+	  dispPtrX[v] *= -1.f;
+	  dispPtrY[v] *= -1.f;
+  }
+
+  reg_io_WriteImageFile(warped_image,"NiftyregDisplacementTest_displacement_conversion_nifty.nii");
 
   // NEED TO ADD THE SELX PART HERE
+  
+  using itkImageType = itk::Image<float, 3>;
+  std::shared_ptr< nifti_image > nifti_floating_image(floating_image, nifti_image_free);
+  auto itkImage = selx::NiftiToItkImage<itkImageType, float>::Convert(nifti_floating_image);
+  using CoordRepType = float;
+
+  using itkDisplacementType = itk::Image<itk::Vector<CoordRepType,3>, 3>;
+  std::shared_ptr< nifti_image > nifti_transFieldImage(transFieldImage, nifti_image_free);
+  auto itkDisplacementImage = selx::NiftiToItkImage<itkDisplacementType, float>::Convert(nifti_transFieldImage);
+
+
+  using DisplacementFieldTransformType = itk::DisplacementFieldTransform< CoordRepType, 3 >;
+  using DisplacementFieldTransformPointer = typename DisplacementFieldTransformType::Pointer;
+
+  using ResampleImageFilterType = itk::ResampleImageFilter< itkImageType, itkImageType, CoordRepType >;
+  using ResampleImageFilterPointer = typename ResampleImageFilterType::Pointer;
+
+  using NearestNeighborInterpolatorType = itk::NearestNeighborInterpolateImageFunction<
+	  itkImageType, typename itkImageType::PixelType>;
+  using NearestNeighborInterpolatorTypePointer = typename NearestNeighborInterpolatorType::Pointer;
+
+  auto displacementFieldTransform = DisplacementFieldTransformType::New();
+  auto resampleImageFilter = ResampleImageFilterType::New();
+  resampleImageFilter->SetInput(itkImage);
+  resampleImageFilter->SetTransform(displacementFieldTransform.GetPointer());
+  auto nearestNeighborInterpolator = NearestNeighborInterpolatorType::New();
+  resampleImageFilter->SetInterpolator(nearestNeighborInterpolator);
+
+  itkDisplacementImage->Update();
+  displacementFieldTransform->SetDisplacementField(itkDisplacementImage);
+  resampleImageFilter->SetOutputParametersFromImage(itkDisplacementImage);
+  //resampleImageFilter->Update();
+  auto itkwarped = resampleImageFilter->GetOutput();
+
+  auto itkwriter = itk::ImageFileWriter<itkImageType>::New();
+  itkwriter->SetInput(itkwarped);
+  itkwriter->SetFileName("NiftyregDisplacementTest_displacement_conversion_itk.nii");
+  itkwriter->Update();
 
   // NEED TO ADD THE COMPARISON HERE
+  std::shared_ptr< nifti_image > nifti_warped_image(warped_image, nifti_image_free);
+  auto itk_nifti_warped_image = selx::NiftiToItkImage<itkImageType, float>::Convert(nifti_warped_image);
 
-  nifti_image_free(floating_image);
-  nifti_image_free(warped_image);
-  nifti_image_free(transFieldImage);
+  auto diff = itk::Testing::ComparisonImageFilter<itkImageType,itkImageType>::New();
+  diff->SetValidInput(itk_nifti_warped_image);
+  //diff->SetTestInput(itk_nifti_warped_image);
+  //diff->SetValidInput(resampleImageFilter->GetOutput());
+  diff->SetTestInput(resampleImageFilter->GetOutput());
+  diff->SetDifferenceThreshold(0.0);
+  //diff->SetToleranceRadius(radiusTolerance);
+  diff->UpdateLargestPossibleRegion();
+  bool differenceFailed = false;
+  const double averageIntensityDifference = diff->GetTotalDifference();
+
+
+  //nifti_image_free(floating_image);
+  //nifti_image_free(warped_image);
+  //nifti_image_free(transFieldImage);
 }
 }
