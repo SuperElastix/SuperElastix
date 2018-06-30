@@ -51,10 +51,10 @@ public:
   ItkDisplacementFieldSinkComponent( const std::string & name, LoggerImpl & logger );
   virtual ~ItkDisplacementFieldSinkComponent();
 
-  using ItkDisplacementFieldInterfaceType = typename itkDisplacementFieldInterface< Dimensionality, TPixel >::Type;
-  using ItkDisplacementFieldInterfacePointer = typename ItkDisplacementFieldInterfaceType::Pointer;
+  using itkDisplacementFieldInterfaceType = typename itkDisplacementFieldInterface< Dimensionality, TPixel >::Type;
+  using itkDisplacementFieldInterfacePointer = typename itkDisplacementFieldInterfaceType::Pointer;
 
-  using ItkDisplacementFieldType = typename ItkDisplacementFieldInterfaceType::ItkDisplacementFieldType;
+  using ItkDisplacementFieldType = typename itkDisplacementFieldInterfaceType::ItkDisplacementFieldType;
   using ItkDisplacementFieldPointer = typename ItkDisplacementFieldType::Pointer;
 
   using ItkDisplacementFieldWriterType = itk::ImageFileWriter< ItkDisplacementFieldType >;
@@ -70,7 +70,7 @@ public:
   virtual itk::DataObject::Pointer GetInitializedOutput( void ) override;
 
   // Accept interfaces
-  virtual int Accept( ItkDisplacementFieldInterfacePointer ) override;
+  virtual int Accept( itkDisplacementFieldInterfacePointer ) override;
 
   // Base class interfaces
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;

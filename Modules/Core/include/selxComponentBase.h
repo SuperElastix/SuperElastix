@@ -72,6 +72,13 @@ public:
   // SuperElastixComponent provides a default implementation which may be overridden by the component developer
   virtual bool ConnectionsSatisfied() = 0;
 
+  void Cite()
+  {
+    if(!this->m_HowToCite.empty()) {
+      this->m_Logger.Log(LogLevel::INF, "How to cite {0}: {1}", this->m_Name, this->m_HowToCite);
+    }
+  }
+
   template <typename ... Args> void Trace(const std::string& fmt, const Args& ... args)
   {
     this->m_Logger.Log( LogLevel::TRC, fmt, args ... );
@@ -108,6 +115,7 @@ public:
   }
 
   const std::string m_Name;
+  std::string m_HowToCite;
   LoggerImpl & m_Logger;
 
 };

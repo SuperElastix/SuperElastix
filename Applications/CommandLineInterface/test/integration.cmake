@@ -17,22 +17,80 @@
 #
 #=========================================================================
 
-add_integration_test(
-  NAME SuperElastixIntegrationTest
-  DRIVER SuperElastix
-  ARGUMENTS --conf ${CMAKE_SOURCE_DIR}/Testing/Data/Configuration/itkv4_SVF_ANTsCC.json --in FixedImage=${CMAKE_BINARY_DIR}/Testing/Data/Input/coneA2d64.mhd MovingImage=${CMAKE_BINARY_DIR}/Testing/Data/Input/coneB2d64.mhd --out ResultImage=2A_image_itkv4_NC.mhd ResultDisplacementField=2A_deformation_itkv4_NC.mhd
-)
+# Integration tests are "short" tests that typically test a combination of components by using the SuperElastix commandline interface with a configuration file.
 
-# Possible grand challenge CMake interface:
-# 
-# add_grand_challenge_submission( 
-#   NAME username
-#   DRIVER GrandChallengeDriver
-#   ARGUMENTS ...
-# )
-#  
-# The CMake mechanism would be similar to that of integration tests, except
-# we would allow users to write their own driver and/or use an executable that 
-# contains additional functionality for saving results. The macro would also
-# invoke a script that uploads results and configurition files to website.
+#Application Demo 1A: should match <source>/Applications/CommandLineInterface/Demo/Scripts_[Linux|Windows]/
+add_test(NAME Integration_Demo_1A COMMAND SuperElastix
+  --logfile ${SUPERELASTIX_OUTPUT_DATA_DIR}/Integration_Demo_1A.log 
+  --loglevel trace
+  --conf ${SUPERELASTIX_CONFIGURATION_DATA_DIR}/elastix_Bspline_NC.json
+  --graphout ${SUPERELASTIX_OUTPUT_DATA_DIR}/Integration_Demo_1A.dot 
+  --in FixedImage=${SUPERELASTIX_INPUT_DATA_DIR}/coneA2d64.mhd 
+       MovingImage=${SUPERELASTIX_INPUT_DATA_DIR}/coneB2d64.mhd
+  --out ResultImage=${SUPERELASTIX_OUTPUT_DATA_DIR}/Integration_Demo_1A_image_elastix_NC.mhd)
 
+#Application Demo 1B: should match <source>/Applications/CommandLineInterface/Demo/Scripts_[Linux|Windows]/
+add_test(NAME Integration_Demo_1B COMMAND SuperElastix
+  --logfile ${SUPERELASTIX_OUTPUT_DATA_DIR}/Integration_Demo_1B.log 
+  --loglevel trace
+  --conf ${SUPERELASTIX_CONFIGURATION_DATA_DIR}/elastix_Bspline_MSD.json
+  --graphout ${SUPERELASTIX_OUTPUT_DATA_DIR}/Integration_Demo_1B.dot 
+  --in FixedImage=${SUPERELASTIX_INPUT_DATA_DIR}/coneA2d64.mhd 
+       MovingImage=${SUPERELASTIX_INPUT_DATA_DIR}/coneB2d64.mhd
+  --out ResultImage=${SUPERELASTIX_OUTPUT_DATA_DIR}/Integration_Demo_1B_image_elastix_MSD.mhd)
+
+#Application Demo 2A: should match <source>/Applications/CommandLineInterface/Demo/Scripts_[Linux|Windows]/
+add_test(NAME Integration_Demo_2A COMMAND SuperElastix
+  --logfile ${SUPERELASTIX_OUTPUT_DATA_DIR}/Integration_Demo_2A.log 
+  --loglevel trace
+  --conf ${SUPERELASTIX_CONFIGURATION_DATA_DIR}/itkv4_SVF_ANTsCC.json
+  --graphout ${SUPERELASTIX_OUTPUT_DATA_DIR}/Integration_Demo_2A.dot 
+  --in FixedImage=${SUPERELASTIX_INPUT_DATA_DIR}/coneA2d64.mhd 
+       MovingImage=${SUPERELASTIX_INPUT_DATA_DIR}/coneB2d64.mhd
+  --out ResultImage=${SUPERELASTIX_OUTPUT_DATA_DIR}/Integration_Demo_2A_image_itkv4_NC.mhd
+        ResultDisplacementField=${SUPERELASTIX_OUTPUT_DATA_DIR}/Integration_Demo_2A_deformation_itkv4_NC.mhd)
+
+#Application Demo 2B: should match <source>/Applications/CommandLineInterface/Demo/Scripts_[Linux|Windows]/
+add_test(NAME Integration_Demo_2B COMMAND SuperElastix
+  --logfile ${SUPERELASTIX_OUTPUT_DATA_DIR}/Integration_Demo_2B.log 
+  --loglevel trace
+  --conf ${SUPERELASTIX_CONFIGURATION_DATA_DIR}/itkv4_SVF_MSD.json
+  --graphout ${SUPERELASTIX_OUTPUT_DATA_DIR}/Integration_Demo_2B.dot 
+  --in FixedImage=${SUPERELASTIX_INPUT_DATA_DIR}/coneA2d64.mhd 
+       MovingImage=${SUPERELASTIX_INPUT_DATA_DIR}/coneB2d64.mhd
+  --out ResultImage=${SUPERELASTIX_OUTPUT_DATA_DIR}/Integration_Demo_2B_image_itkv4_MSD.mhd
+        ResultDisplacementField=${SUPERELASTIX_OUTPUT_DATA_DIR}/Integration_Demo_2B_deformation_itkv4_MSD.mhd)
+
+add_test(NAME Integration_WarpByItkTransform COMMAND SuperElastix
+  --logfile ${SUPERELASTIX_OUTPUT_DATA_DIR}/Integration_WarpByItkTransform.log 
+  --loglevel trace
+  --conf ${SUPERELASTIX_CONFIGURATION_DATA_DIR}/itk_warper.json
+  --graphout ${SUPERELASTIX_OUTPUT_DATA_DIR}/Integration_WarpByItkTransform.dot 
+  --in FixedAndMovingImageSource=${SUPERELASTIX_INPUT_DATA_DIR}/coneA2d64.mhd 
+       TransformSource=${SUPERELASTIX_INPUT_DATA_DIR}/ItkAffine2Dtransform.tfm 
+  --out ResultImageSink=${SUPERELASTIX_OUTPUT_DATA_DIR}/Integration_WarpByItkTransform.mhd)
+
+add_test(NAME Integration_ComposeBlueprintElastix COMMAND SuperElastix
+  --logfile ${SUPERELASTIX_OUTPUT_DATA_DIR}/Integration_ComposeBlueprintElastix.log 
+  --loglevel trace
+  --conf ${SUPERELASTIX_CONFIGURATION_DATA_DIR}/elastix_Base.json
+  --conf ${SUPERELASTIX_CONFIGURATION_DATA_DIR}/elastix_Blueprint_Bspline_MSD.json
+  --graphout ${SUPERELASTIX_OUTPUT_DATA_DIR}/Integration_ComposeBlueprintElastix.dot 
+  --in FixedImage=${SUPERELASTIX_INPUT_DATA_DIR}/coneA2d64.mhd 
+       MovingImage=${SUPERELASTIX_INPUT_DATA_DIR}/coneB2d64.mhd 
+  --out ResultImage=${SUPERELASTIX_OUTPUT_DATA_DIR}/Integration_ComposeBlueprintElastix.mhd)
+  
+add_test(NAME Integration_ComposeBlueprintItk COMMAND SuperElastix
+  --logfile ${SUPERELASTIX_OUTPUT_DATA_DIR}/Integration_ComposeBlueprintElastix.log 
+  --loglevel trace
+  --conf ${SUPERELASTIX_CONFIGURATION_DATA_DIR}/itkv4_Base.json
+  --conf ${SUPERELASTIX_CONFIGURATION_DATA_DIR}/itkv4_Affine_MSD.json
+  --conf ${SUPERELASTIX_CONFIGURATION_DATA_DIR}/itk_TransformSink.json
+  --graphout ${SUPERELASTIX_OUTPUT_DATA_DIR}/Integration_ComposeBlueprintItk.dot 
+  --in FixedImage=${SUPERELASTIX_INPUT_DATA_DIR}/coneA2d64.mhd 
+       MovingImage=${SUPERELASTIX_INPUT_DATA_DIR}/coneB2d64.mhd 
+  --out ResultImage=${SUPERELASTIX_OUTPUT_DATA_DIR}/Integration_ComposeBlueprintItk.mhd
+        ResultDisplacementField=${SUPERELASTIX_OUTPUT_DATA_DIR}/Integration_ComposeBlueprintItk_def.mhd
+        ResultTransform=Integration_ComposeBlueprintItk.tfm)
+  
+  

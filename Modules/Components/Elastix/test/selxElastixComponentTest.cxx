@@ -24,7 +24,7 @@
 #include "selxMonolithicTransformixComponent.h"
 #include "selxItkImageSinkComponent.h"
 #include "selxItkImageSourceComponent.h"
-#include "selxDisplacementFieldItkImageFilterSinkComponent.h"
+#include "selxItkDisplacementFieldSinkComponent.h"
 
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
@@ -49,7 +49,7 @@ public:
     MonolithicElastixComponent< 2, float >,
     MonolithicTransformixComponent< 2, float >,
     ItkImageSinkComponent< 2, float >,
-    DisplacementFieldItkImageFilterSinkComponent< 2, float >,
+    ItkDisplacementFieldSinkComponent< 2, float >,
     ItkImageSourceComponent< 2, float >,
     ItkImageSourceComponent< 2, unsigned char >, //for masks
     ItkImageSourceComponent< 3, double >> RegisterComponents;
@@ -66,9 +66,14 @@ public:
 
   virtual void SetUp()
   {
+    Logger::Pointer logger = Logger::New();
+    logger->AddStream( "cout", std::cout );
+    logger->SetLogLevel( LogLevel::TRC );
+
     // Instantiate SuperElastixFilter before each test
     // Register the components we want to have available in SuperElastix
     superElastixFilter = SuperElastixFilterCustomComponents< RegisterComponents >::New();
+    superElastixFilter->SetLogger(logger);
 
     dataManager = DataManagerType::New();
   }
@@ -91,14 +96,32 @@ public:
 
 TEST_F( ElastixComponentTest, MonolithicElastixTransformix )
 {
+
   /** make example blueprint configuration */
   BlueprintPointer blueprint = Blueprint::New();
 
   blueprint->SetComponent( "RegistrationMethod", { { "NameOfClass", { "MonolithicElastixComponent" } },
-                                                   { "RegistrationSettings", { "rigid" } }, { "MaximumNumberOfIterations", { "2" } },
                                                    { "Dimensionality", { "2" } },
                                                    { "PixelType", { "float" } },
-                                                   { "ResultImagePixelType", { "float" } } } );
+                                                   { "ParameterMap0Preset", { "translation" } },
+                                                   { "ParameterMap1ResultImagePixelType", { "float" } },
+                                                   { "ParameterMap1FixedImagePyramid", { "FixedSmoothingImagePyramid" } },
+                                                   { "ParameterMap1MovingImagePyramid", { "MovingSmoothingImagePyramid" } },
+                                                   { "ParameterMap1Transform", { "AffineTransform" } },
+                                                   { "ParameterMap1NumberOfResolutions", { "3" } },
+                                                   { "ParameterMap1ImageSampler", { "RandomSparseMask" } },
+                                                   { "ParameterMap1Registration", { "MultiResolutionRegistration" } },
+                                                   { "ParameterMap1Metric", { "AdvancedMattesMutualInformation" } },
+                                                   { "ParameterMap1Optimizer", { "AdaptiveStochasticGradientDescent" } },
+                                                   { "ParameterMap2ResultImagePixelType", { "float" } },
+                                                   { "ParameterMap2FixedImagePyramid", { "FixedSmoothingImagePyramid" } },
+                                                   { "ParameterMap2MovingImagePyramid", { "MovingSmoothingImagePyramid" } },
+                                                   { "ParameterMap2Transform", { "BSplineTransform" } },
+                                                   { "ParameterMap2NumberOfResolutions", { "3" } },
+                                                   { "ParameterMap2ImageSampler", { "RandomSparseMask" } },
+                                                   { "ParameterMap2Registration", { "MultiResolutionRegistration" } },
+                                                   { "ParameterMap2Metric", { "AdvancedMattesMutualInformation" } },
+                                                   { "ParameterMap2Optimizer", { "AdaptiveStochasticGradientDescent" } }} );
   blueprint->SetComponent( "TransformDisplacementField", { { "NameOfClass", { "MonolithicTransformixComponent" } } } );
 
   blueprint->SetComponent( "FixedImageSource", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "Dimensionality", { "2" } } } );
@@ -111,7 +134,7 @@ TEST_F( ElastixComponentTest, MonolithicElastixTransformix )
 
   blueprint->SetComponent( "ResultImageSink", { { "NameOfClass", { "ItkImageSinkComponent" } }, { "Dimensionality", { "2" } } } );
 
-  blueprint->SetComponent( "ResultDisplacementFieldSink", { { "NameOfClass", { "DisplacementFieldItkImageFilterSinkComponent" } }, { "Dimensionality", { "2" } } });
+  blueprint->SetComponent( "ResultDisplacementFieldSink", { { "NameOfClass", { "ItkDisplacementFieldSinkComponent" } }, { "Dimensionality", { "2" } } });
 
   blueprint->SetConnection( "FixedImageSource", "RegistrationMethod", { { "NameOfInterface", { "itkImageFixedInterface" } } } ); // ;
 
@@ -129,7 +152,7 @@ TEST_F( ElastixComponentTest, MonolithicElastixTransformix )
 
   blueprint->SetConnection( "TransformDisplacementField", "ResultImageSink", { { "NameOfInterface", { "itkImageInterface" } } } ); // ;
 
-  blueprint->SetConnection( "TransformDisplacementField", "ResultDisplacementFieldSink", { { "NameOfInterface", { "DisplacementFieldItkImageSourceInterface" } } }); // ;
+  blueprint->SetConnection( "TransformDisplacementField", "ResultDisplacementFieldSink", { { "NameOfInterface", { "itkDisplacementFieldInterface" } } }); // ;
 
 
   // Set up the readers and writers
@@ -161,7 +184,6 @@ TEST_F( ElastixComponentTest, MonolithicElastixTransformix )
   resultDisplacementWriter->SetInput(superElastixFilter->GetOutput< DisplacementImage2DType >("ResultDisplacementFieldSink"));
 
   EXPECT_NO_THROW( superElastixFilter->SetBlueprint( blueprint ) );
-
   // Update call on the writers triggers SuperElastix to configure and execute
   EXPECT_NO_THROW( resultImageWriter->Update() );
   EXPECT_NO_THROW( resultDisplacementWriter->Update() );

@@ -1,0 +1,3 @@
+numpy>=1.9.3
+SimpleITK
+drmaa

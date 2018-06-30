@@ -27,9 +27,9 @@
 #include "selxSSDMetric4thPartyComponent.h"
 
 #include "selxItkSmoothingRecursiveGaussianImageFilterComponent.h"
-#include "selxDisplacementFieldItkImageFilterSinkComponent.h"
 #include "selxItkImageSourceComponent.h"
 #include "selxItkImageSinkComponent.h"
+#include "selxItkDisplacementFieldSinkComponent.h"
 
 #include "selxItkImageRegistrationMethodv4Component.h"
 #include "selxItkANTSNeighborhoodCorrelationImageToImageMetricv4Component.h"
@@ -71,8 +71,8 @@ public:
     GDOptimizer4thPartyComponent,
     SSDMetric3rdPartyComponent,
     SSDMetric4thPartyComponent,
-    DisplacementFieldItkImageFilterSinkComponent< 3, double >,
-    DisplacementFieldItkImageFilterSinkComponent< 2, float >,
+    ItkDisplacementFieldSinkComponent< 3, float >,
+    ItkDisplacementFieldSinkComponent< 2, float >,
     ItkImageSinkComponent< 3, double >,
     ItkImageSinkComponent< 2, float >,
     ItkImageSourceComponent< 2, float >,
@@ -83,8 +83,9 @@ public:
     ItkSmoothingRecursiveGaussianImageFilterComponent< 2, float >,
     ItkImageRegistrationMethodv4Component< 3, double, double >,
     ItkImageRegistrationMethodv4Component< 2, float, double >,
-    ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< 3, double >,
     ItkMeanSquaresImageToImageMetricv4Component< 3, double, double >,
+    ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< 3, float >,
+    ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< 3, double >,
     ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< 2, float >,
     ItkMeanSquaresImageToImageMetricv4Component< 2, float, double  >,
     ItkGradientDescentOptimizerv4Component< double >,
@@ -95,7 +96,7 @@ public:
     ItkGaussianExponentialDiffeomorphicTransformComponent< double, 2 >,
     ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent< 2, double >,
     ItkTransformDisplacementFilterComponent< 2, float, double >,
-    ItkTransformDisplacementFilterComponent< 3, double, double >,
+    ItkTransformDisplacementFilterComponent< 3, float, double >,
     ItkResampleFilterComponent< 2, float, double >,
     ItkResampleFilterComponent< 3, double, double >,
     ItkCompositeTransformComponent< double, 3 >,
@@ -122,7 +123,7 @@ public:
   typedef itk::ImageFileReader< Image3DType > ImageReader3DType;
   typedef itk::ImageFileWriter< Image3DType > ImageWriter3DType;
 
-  typedef itk::Image< itk::Vector< double, 3 >, 3 >       DisplacementImage3DType;
+  typedef itk::Image< itk::Vector< float, 3 >, 3 >       DisplacementImage3DType;
   typedef itk::ImageFileWriter< DisplacementImage3DType > DisplacementImageWriter3DType;
 
   typedef itk::Transform<double, 3, 3> Transform3DNakedType;
@@ -210,14 +211,14 @@ TEST_F( RegistrationItkv4Test, DISABLED_3DImagesOnly )
   superElastixFilter->SetInput( "MovingImageSource", movingImageReader->GetOutput() );
   resultImageWriter->SetInput( superElastixFilter->GetOutput< Image3DType >( "ResultImageSink" ) );
 
-  EXPECT_NO_THROW( superElastixFilter->SetBlueprint( blueprint ) );
-  EXPECT_NO_THROW( superElastixFilter->SetLogger( logger ) );
+  superElastixFilter->SetBlueprint( blueprint );
+  superElastixFilter->SetLogger( logger );
 
   //Optional Update call
   //superElastixFilter->Update();
 
   // Update call on the writers triggers SuperElastix to configure and execute
-  EXPECT_NO_THROW( resultImageWriter->Update() );
+  resultImageWriter->Update();
 }
 
 // These test are disabled, since may not want to check each component with this much boilerplate code.
@@ -293,14 +294,14 @@ TEST_F( RegistrationItkv4Test, DISABLED_3DANTSCCMetric )
   superElastixFilter->SetInput( "MovingImageSource", movingImageReader->GetOutput() );
   resultImageWriter->SetInput( superElastixFilter->GetOutput< Image3DType >( "ResultImageSink" ) );
 
-  EXPECT_NO_THROW( superElastixFilter->SetBlueprint( blueprint ) );
-  EXPECT_NO_THROW( superElastixFilter->SetLogger( logger ) );
+  superElastixFilter->SetBlueprint( blueprint );
+  superElastixFilter->SetLogger( logger );
 
   //Optional Update call
   //superElastixFilter->Update();
 
   // Update call on the writers triggers SuperElastix to configure and execute
-  EXPECT_NO_THROW( resultImageWriter->Update() );
+  resultImageWriter->Update();
 }
 
 // These test are disabled, since may not want to check each component with this much boilerplate code.
@@ -376,14 +377,14 @@ TEST_F( RegistrationItkv4Test, DISABLED_3DMeanSquaresMetric )
   superElastixFilter->SetInput( "MovingImageSource", movingImageReader->GetOutput() );
   resultImageWriter->SetInput( superElastixFilter->GetOutput< Image3DType >( "ResultImageSink" ) );
 
-  EXPECT_NO_THROW( superElastixFilter->SetBlueprint( blueprint ) );
-  EXPECT_NO_THROW( superElastixFilter->SetLogger( logger ) );
+  superElastixFilter->SetBlueprint( blueprint );
+  superElastixFilter->SetLogger( logger );
 
   //Optional Update call
   //superElastixFilter->Update();
 
   // Update call on the writers triggers SuperElastix to configure and execute
-  EXPECT_NO_THROW( resultImageWriter->Update() );
+  resultImageWriter->Update();
 }
 
 TEST_F(RegistrationItkv4Test, FullyConfigured3d)
@@ -403,7 +404,7 @@ TEST_F(RegistrationItkv4Test, FullyConfigured3d)
 
   blueprint->SetComponent("ResultImageSink", { { "NameOfClass", { "ItkImageSinkComponent" } }, { "Dimensionality", { "3" } } });
 
-  blueprint->SetComponent("ResultDisplacementFieldSink", { { "NameOfClass", { "DisplacementFieldItkImageFilterSinkComponent" } }, { "Dimensionality", { "3" } } });
+  blueprint->SetComponent("ResultDisplacementFieldSink", { { "NameOfClass", { "ItkDisplacementFieldSinkComponent" } }, { "Dimensionality", { "3" } } });
 
   blueprint->SetComponent("Metric", { { "NameOfClass", { "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component" } }, { "Dimensionality", { "3" } } });
 
@@ -428,7 +429,7 @@ TEST_F(RegistrationItkv4Test, FullyConfigured3d)
 
   blueprint->SetConnection("ResampleFilter", "ResultImageSink", { { "NameOfInterface", { "itkImageInterface" } } });
 
-  blueprint->SetConnection("TransformDisplacementFilter", "ResultDisplacementFieldSink", { { "NameOfInterface", { "DisplacementFieldItkImageSourceInterface" } } });
+  blueprint->SetConnection("TransformDisplacementFilter", "ResultDisplacementFieldSink", { { "NameOfInterface", { "itkDisplacementFieldInterface" } } });
 
   blueprint->SetConnection("Metric", "RegistrationMethod", { { "NameOfInterface", { "itkMetricv4Interface" } } });
 
@@ -465,15 +466,15 @@ TEST_F(RegistrationItkv4Test, FullyConfigured3d)
   resultImageWriter->SetInput( superElastixFilter->GetOutput< Image3DType >( "ResultImageSink" ) );
   resultDisplacementWriter->SetInput( superElastixFilter->GetOutput< DisplacementImage3DType >( "ResultDisplacementFieldSink" ) );
 
-  EXPECT_NO_THROW( superElastixFilter->SetBlueprint( blueprint ) );
-  EXPECT_NO_THROW( superElastixFilter->SetLogger( logger ) );
+  superElastixFilter->SetBlueprint( blueprint );
+  superElastixFilter->SetLogger( logger );
 
   //Optional Update call
   //superElastixFilter->Update();
 
   // Update call on the writers triggers SuperElastix to configure and execute
-  EXPECT_NO_THROW( resultImageWriter->Update() );
-  EXPECT_NO_THROW( resultDisplacementWriter->Update() );
+  resultImageWriter->Update();
+  resultDisplacementWriter->Update();
 }
 TEST_F( RegistrationItkv4Test, FullyConfigured3dAffine )
 {
@@ -500,7 +501,7 @@ TEST_F( RegistrationItkv4Test, FullyConfigured3dAffine )
   blueprint->SetComponent( "ResultImageSink", component3Parameters );
 
   ParameterMapType component4Parameters;
-  component4Parameters[ "NameOfClass" ]    = { "DisplacementFieldItkImageFilterSinkComponent" };
+  component4Parameters[ "NameOfClass" ]    = { "ItkDisplacementFieldSinkComponent" };
   component4Parameters[ "Dimensionality" ] = { "3" }; // should be derived from the outputs
   blueprint->SetComponent( "ResultDisplacementFieldSink", component4Parameters );
 
@@ -538,7 +539,7 @@ TEST_F( RegistrationItkv4Test, FullyConfigured3dAffine )
   blueprint->SetConnection( "ResampleFilter", "ResultImageSink", connection3Parameters );
 
   ParameterMapType connection4Parameters;
-  connection4Parameters[ "NameOfInterface" ] = { "DisplacementFieldItkImageSourceInterface" };
+  connection4Parameters[ "NameOfInterface" ] = { "itkDisplacementFieldInterface" };
   blueprint->SetConnection( "TransformDisplacementFilter", "ResultDisplacementFieldSink", connection4Parameters );
 
   ParameterMapType connection5Parameters;
@@ -575,15 +576,15 @@ TEST_F( RegistrationItkv4Test, FullyConfigured3dAffine )
   resultImageWriter->SetInput( superElastixFilter->GetOutput< Image3DType >( "ResultImageSink" ) );
   resultDisplacementWriter->SetInput( superElastixFilter->GetOutput< DisplacementImage3DType >( "ResultDisplacementFieldSink" ) );
 
-  EXPECT_NO_THROW( superElastixFilter->SetBlueprint( blueprint ) );
-  EXPECT_NO_THROW( superElastixFilter->SetLogger( logger ) );
+  superElastixFilter->SetBlueprint( blueprint );
+  superElastixFilter->SetLogger( logger );
 
   //Optional Update call
   //superElastixFilter->Update();
 
   // Update call on the writers triggers SuperElastix to configure and execute
-  EXPECT_NO_THROW( resultImageWriter->Update() );
-  EXPECT_NO_THROW( resultDisplacementWriter->Update() );
+  resultImageWriter->Update();
+  resultDisplacementWriter->Update();
 }
 
 TEST_F( RegistrationItkv4Test, CompositeTransform )
@@ -595,7 +596,7 @@ TEST_F( RegistrationItkv4Test, CompositeTransform )
 
   blueprint->SetComponent( "FixedImageSource", { { "NameOfClass", { "ItkImageSourceComponent" } } } );
   blueprint->SetComponent( "MovingImageSource", { { "NameOfClass", { "ItkImageSourceComponent" } } } );
-  blueprint->SetComponent( "ResultImageSink", { { "NameOfClass", { "ItkImageSinkComponent" } } } );
+  blueprint->SetComponent( "ResultImageSink", { { "NameOfClass", { "ItkImageSinkComponent" } }, { "Dimensionality", { "2" } } } );
 
   blueprint->SetComponent( "ResampleFilter", { { "NameOfClass", { "ItkResampleFilterComponent" } } } );
   blueprint->SetConnection( "FixedImageSource", "ResampleFilter", { {} } );
@@ -662,14 +663,14 @@ TEST_F( RegistrationItkv4Test, CompositeTransform )
 
   resultImageWriter->SetInput( superElastixFilter->GetOutput< Image2DType >( "ResultImageSink" ) );
 
-  EXPECT_NO_THROW( superElastixFilter->SetBlueprint( blueprint ) );
-  EXPECT_NO_THROW( superElastixFilter->SetLogger( logger ) );
+  superElastixFilter->SetBlueprint( blueprint );
+  superElastixFilter->SetLogger( logger );
 
   //Optional Update call
   //superElastixFilter->Update();
 
   // Update call on the writers triggers SuperElastix to configure and execute
-  EXPECT_NO_THROW( resultImageWriter->Update() );
+  resultImageWriter->Update();
 }
 
 TEST_F(RegistrationItkv4Test, TransformSink)
@@ -692,7 +693,7 @@ TEST_F(RegistrationItkv4Test, TransformSink)
 
   blueprint->SetComponent("ResultImageSink", { { "NameOfClass", { "ItkImageSinkComponent" } }, { "Dimensionality", { "3" } } });
 
-  blueprint->SetComponent("ResultDisplacementFieldSink", { { "NameOfClass", { "DisplacementFieldItkImageFilterSinkComponent" } }, { "Dimensionality", { "3" } } });
+  blueprint->SetComponent("ResultDisplacementFieldSink", { { "NameOfClass", { "ItkDisplacementFieldSinkComponent" } }, { "Dimensionality", { "3" } } });
 
   blueprint->SetComponent("Metric", { { "NameOfClass", { "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component" } }, { "Dimensionality", { "3" } } });
 
@@ -720,7 +721,7 @@ TEST_F(RegistrationItkv4Test, TransformSink)
 
   blueprint->SetConnection("ResampleFilter", "ResultImageSink", { { "NameOfInterface", { "itkImageInterface" } } });
 
-  blueprint->SetConnection("TransformDisplacementFilter", "ResultDisplacementFieldSink", { { "NameOfInterface", { "DisplacementFieldItkImageSourceInterface" } } });
+  blueprint->SetConnection("TransformDisplacementFilter", "ResultDisplacementFieldSink", { { "NameOfInterface", { "itkDisplacementFieldInterface" } } });
 
   blueprint->SetConnection("Metric", "RegistrationMethod", { { "NameOfInterface", { "itkMetricv4Interface" } } });
 
@@ -761,19 +762,20 @@ TEST_F(RegistrationItkv4Test, TransformSink)
   resultDisplacementWriter->SetInput(superElastixFilter->GetOutput< DisplacementImage3DType >("ResultDisplacementFieldSink"));
   //Itk lacks a support to use transform objects in a itk-pipeline. We need to store the output placeholder (=smartpointer to empty decortator) here...
   auto decoratedTransform = superElastixFilter->GetOutput< Transform3DType >("TransformSink");
-  EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
+  superElastixFilter->SetBlueprint(blueprint);
+  superElastixFilter->SetLogger(logger);
 
   //Optional Update call
   //superElastixFilter->Update();
 
   // Update call on the writers triggers SuperElastix to configure and execute
-  EXPECT_NO_THROW(resultImageWriter->Update());
-  EXPECT_NO_THROW(resultDisplacementWriter->Update());
+  resultImageWriter->Update();
+  resultDisplacementWriter->Update();
 
   
   // ... We can only get the output from the placeholder after execution of the filter
   transformWriter->SetInput(decoratedTransform->Get());
-  EXPECT_NO_THROW(transformWriter->Update());
+  transformWriter->Update();
 }
 TEST_F(RegistrationItkv4Test, TransformSource)
 {
@@ -790,7 +792,7 @@ TEST_F(RegistrationItkv4Test, TransformSource)
 
   blueprint->SetComponent("ResultImageSink", { { "NameOfClass", { "ItkImageSinkComponent" } }, { "Dimensionality", { "3" } } });
 
-  blueprint->SetComponent("ResultDisplacementFieldSink", { { "NameOfClass", { "DisplacementFieldItkImageFilterSinkComponent" } }, { "Dimensionality", { "3" } } });
+  blueprint->SetComponent("ResultDisplacementFieldSink", { { "NameOfClass", { "ItkDisplacementFieldSinkComponent" } }, { "Dimensionality", { "3" } } });
 
   blueprint->SetComponent("TransformDisplacementFilter", { { "NameOfClass", { "ItkTransformDisplacementFilterComponent" } }, { "Dimensionality", { "3" } } });
 
@@ -811,7 +813,7 @@ TEST_F(RegistrationItkv4Test, TransformSource)
 
   blueprint->SetConnection("FixedImageDomainSource", "TransformDisplacementFilter", { {} });
 
-  blueprint->SetConnection("TransformDisplacementFilter", "ResultDisplacementFieldSink", { { "NameOfInterface", { "DisplacementFieldItkImageSourceInterface" } } });
+  blueprint->SetConnection("TransformDisplacementFilter", "ResultDisplacementFieldSink", { { "NameOfInterface", { "itkDisplacementFieldInterface" } } });
    
   blueprint->Write(dataManager->GetOutputFile("RegistrationItkv4Test_TransformSource_network.dot"));
 
@@ -850,13 +852,13 @@ TEST_F(RegistrationItkv4Test, TransformSource)
   resultImageWriter->SetInput(superElastixFilter->GetOutput< Image3DType >("ResultImageSink"));
   resultDisplacementWriter->SetInput(superElastixFilter->GetOutput< DisplacementImage3DType >("ResultDisplacementFieldSink"));
  
-  EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
+  superElastixFilter->SetBlueprint(blueprint);
 
   //Optional Update call
   //superElastixFilter->Update();
 
   // Update call on the writers triggers SuperElastix to configure and execute
-  EXPECT_NO_THROW(resultImageWriter->Update());
-  EXPECT_NO_THROW(resultDisplacementWriter->Update());
+  resultImageWriter->Update();
+  resultDisplacementWriter->Update();
 }
 } // namespace selx
