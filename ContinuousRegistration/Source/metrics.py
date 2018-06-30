@@ -53,7 +53,7 @@ def inverse_consistency_labels(superelastix, label_file_names, deformation_field
     label_image_0_to_1_file_name = warp_image(superelastix, label_file_names[0], deformation_field_file_names[1], 'label')
     label_image_0_to_1_to_0_file_name = warp_image(superelastix, label_image_0_to_1_file_name, deformation_field_file_names[0], 'label')
     label_image_1_to_0_file_name = warp_image(superelastix, label_file_names[1], deformation_field_file_names[0], 'label')
-    label_image_1_to_0_to_0_file_name = warp_image(superelastix, label_image_1_to_0_file_name, deformation_field_file_names[1], 'label')
+    label_image_1_to_0_to_1_file_name = warp_image(superelastix, label_image_1_to_0_file_name, deformation_field_file_names[1], 'label')
 
     try:
         label_image_0 = sitk.ReadImage(label_file_names[0])
@@ -65,7 +65,7 @@ def inverse_consistency_labels(superelastix, label_file_names, deformation_field
 
     try:
         label_image_1 = sitk.ReadImage(label_file_names[1])
-        labelOverlapMeasurer.Execute(label_image_1, sitk.Cast(sitk.ReadImage(label_image_1_to_0_to_0_file_name), label_image_1.GetPixelID()))
+        labelOverlapMeasurer.Execute(label_image_1, sitk.Cast(sitk.ReadImage(label_image_1_to_0_to_1_file_name), label_image_1.GetPixelID()))
         dsc_1 = labelOverlapMeasurer.GetDiceCoefficient()
     except Exception as e:
         logging.error('Failed to compute inverse consistency DSC for %s' % label_file_names[1])
