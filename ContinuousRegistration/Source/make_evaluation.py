@@ -18,9 +18,10 @@ def run(parameters):
     results = {}
     for team_name, blueprint_file_names in submissions.items():
         for blueprint_file_name in blueprint_file_names:
-            if hasattr(parameters, 'blueprint_file_name') and not parameters.blueprint_file_name is None:
-                # User requested evaluation for this blueprint only
-                if not parameters.blueprint_file_name == os.path.basename(blueprint_file_name):
+            if parameters.blueprint_file_name is None:
+                # User requested evaluation for these blueprints only
+                if parameters.blueprint_file_name is not None and \
+                   os.path.basename(blueprint_file_name) in parameters.blueprint_file_name:
                     continue
 
             if not team_name in results:
@@ -30,6 +31,7 @@ def run(parameters):
             if not blueprint_name in results[team_name]:
                 results[team_name][blueprint_name] = {}
 
+            logging.info('Loading blueprint %s/%s.' % (team_name, os.path.basename(blueprint_name)))
             blueprint = json.load(open(blueprint_file_name))
             for dataset_name in blueprint['Datasets']:
                 if not dataset_name in datasets:
@@ -72,7 +74,7 @@ def run(parameters):
 
 
     write_json(os.path.join(parameters.output_directory,
-                            'results-{:%Y-%m-%d-%H-%M-%S-%f}'.format(datetime.datetime.now()) + '.json'), results)
+                            'results.json'), results)
 
 if __name__ == '__main__':
     parser.add_argument('--make-images', '-mi', type=bool, default=False, help="Warp moving images.")

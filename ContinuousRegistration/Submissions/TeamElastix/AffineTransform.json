@@ -1,5 +1,5 @@
 {
-    "Datasets": ["POPI", "DIRLAB", "EMPIRE", "LPBA40", "ISBR18", "CUMC12", "MGH10", "SPREAD"],
+    "Datasets": ["POPI", "DIRLAB", "EMPIRE", "LPBA40", "ISBR18", "CUMC12", "MGH10", "SPREAD", "HAMMERS"],
     "Component": {
         "Name": "Elastix",
         "NameOfClass": "MonolithicElastixComponent",
@@ -29,7 +29,7 @@
         "ParameterMap0MaximumNumberOfIterations": "512",
         "ParameterMap0AutomaticTransformInitialization": "true",
         "ParameterMap0AutomaticTransformInitializationMethod": "GeometricalCenter",
-        "ParameterMap0RequiredRatioOfValidSamples": "0.01"
+        "ParameterMap0RequiredRatioOfValidSamples": "0.01",
         "ParameterMap0ErodeMask": "false"
     },
     "Component": {

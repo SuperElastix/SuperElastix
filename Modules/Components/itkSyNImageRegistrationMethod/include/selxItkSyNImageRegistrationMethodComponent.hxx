@@ -308,6 +308,8 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
 		// Smooth by specified gaussian sigmas for each level.  These values are specified in
 		// physical units.
 		this->m_theItkFilter->SetSmoothingSigmasPerLevel(smoothingSigmasPerLevel);
+	} else if( criterion.first == "LearningRate" ) {
+		this->m_theItkFilter->SetLearningRate(std::stof(criterion.second[0]));
 	}
 
 	return meetsCriteria;
