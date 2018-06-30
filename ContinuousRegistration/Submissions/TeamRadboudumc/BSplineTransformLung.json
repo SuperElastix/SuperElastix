@@ -25,7 +25,7 @@
         "ParameterMap0WriteResultImage": "true",
         "ParameterMap0Registration": "MultiMetricMultiResolutionRegistration",
         "ParameterMap0Metric": "AdvancedMattesMutualInformation",
-        "ParameterMap0MaximumNumberOfIterations": "512",
+        "ParameterMap0MaximumNumberOfIterations": "1000",
         "ParameterMap0Transform": "RecursiveBSplineTransform",
         "ParameterMap0BSplineTransformSplineOrder": "3",
         "ParameterMap0FinalGridSpacingInPhysicalUnits": "16.0",
