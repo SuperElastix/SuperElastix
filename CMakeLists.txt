@@ -97,7 +97,7 @@ endif()
 # Suppress warning on Travis about inconsistent missing 'override'
 # in method GetComponentName in SuperElastixComponent; 
 # \todo: fix it in the code.
-if( ${CMAKE_CXX_COMPILER_ID} STREQUAL AppleClang ) )
+if( ${CMAKE_CXX_COMPILER_ID} STREQUAL AppleClang )
   add_compile_options("-Wno-inconsistent-missing-override")
 endif()
 
