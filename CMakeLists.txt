@@ -77,7 +77,12 @@ if( ${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC )
       "Please move the build directory to a directory with a shorter path."
     )
   endif()
-
+  
+  # Avoid many warnings, originating mainly from NiftyReg
+  add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+  # Avoid many warnings, originating mainly from GoogleTest
+  add_definitions(-D_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
+  
   # Explicitly add INCREMENTAL linking option to command lines.
   # http://www.cmake.org/pipermail/cmake/2010-February/035174.html
   # set( MSVC_INCREMENTAL_DEFAULT ON )
@@ -87,6 +92,13 @@ if( WIN32 )
   # If building on Windows: The target machine should be Windows 7 or higher.
   # Note that the Windows version should match with BOOST_USE_WINAPI_VERSION. 
   add_definitions(-D_WIN32_WINNT=0x0601)
+endif()
+
+if( ${CMAKE_GENERATOR} STREQUAL Xcode )
+  # Suppress warning about inconsistent missing 'override' in method GetComponentName in SuperElastixComponent; \todo: fix it in the code.
+  if( ( ${CMAKE_CXX_COMPILER_ID} STREQUAL GNU) OR ( ${CMAKE_CXX_COMPILER_ID} STREQUAL Clang ) )
+    add_compile_options("-Wno-inconsistent-missing-override")
+  endif()
 endif()
 
 # ---------------------------------------------------------------------
