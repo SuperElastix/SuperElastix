@@ -94,15 +94,12 @@ if( WIN32 )
   add_definitions(-D_WIN32_WINNT=0x0601)
 endif()
 
-#if( ${CMAKE_GENERATOR} STREQUAL Xcode )
-  # Suppress warning about inconsistent missing 'override' in method GetComponentName in SuperElastixComponent; \todo: fix it in the code.
-#	  if( ( ${CMAKE_CXX_COMPILER_ID} STREQUAL GNU) OR ( ${CMAKE_CXX_COMPILER_ID} STREQUAL Clang ) )
-    add_compile_options("-Wno-inconsistent-missing-override")
-    MESSAGE(WARNING "${CMAKE_GENERATOR}" )
-    MESSAGE(WARNING "${CMAKE_CXX_COMPILER_ID}" )
-    MESSAGE(WARNING "${CMAKE_CXX_FLAGS}" )
-    #  endif()
-#endif()
+# Suppress warning on Travis about inconsistent missing 'override'
+# in method GetComponentName in SuperElastixComponent; 
+# \todo: fix it in the code.
+if( ${CMAKE_CXX_COMPILER_ID} STREQUAL AppleClang ) )
+  add_compile_options("-Wno-inconsistent-missing-override")
+endif()
 
 # ---------------------------------------------------------------------
 # Use SuperBuild. 
