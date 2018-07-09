@@ -67,12 +67,26 @@ def load_results_from_json(filename, datasets, make_means=True):
                     column_names[dataset_name] = dataset_metric_names.pop()
 
                 if make_means:
+                    # If no registration or evaluations completed
+                    if all(dataset_result is None for dataset_result in dataset_results):
+                        results[team_name][blueprint_name][dataset_name] = {
+                            # 'blueprint_commit': blueprint_commit.decode("utf-8"),
+                            # 'repo_commit': repo_commit.decode("utf-8"),
+                            'completed': 'None',
+                            'means': [np.NaN],
+                            'stds': [np.NaN]
+                        }
+                        continue
+
+                    if not dataset_name in column_names:
+                        column_names[dataset_name] = dataset_metric_names.pop()
+
                     dataset_result_means = np.nanmean(dataset_result_array, axis=0)
                     dataset_result_stds = np.nanstd(dataset_result_array, axis=0)
 
                     if all(np.isnan(dataset_result_means)):
-                        dataset_result_means = []
-                        dataset_result_stds = []
+                        dataset_result_means = [np.NaN]
+                        dataset_result_stds = [np.NaN]
 
                     # Save stats in-place
                     results[team_name][blueprint_name][dataset_name] = {
@@ -83,12 +97,14 @@ def load_results_from_json(filename, datasets, make_means=True):
                         'stds': dataset_result_stds
                     }
                 else:
+                    if not dataset_name in column_names:
+                        column_names[dataset_name] = dataset_metric_names.pop()
                     results[team_name][blueprint_name][dataset_name] = {
                         # 'blueprint_commit': blueprint_commit.decode("utf-8"),
                         # 'repo_commit': repo_commit.decode("utf-8"),
                         'completed': '%s/%s' % (
                         len(~np.isnan(dataset_result_array)), 2 * len(datasets[dataset_name].file_names)),
-                        'dataset_result_array': [x for x in dataset_result_array if ~np.isnan(x)]
+                        'means': dataset_result_array
                     }
 
     return results, column_names
@@ -242,9 +258,9 @@ def create_disp_field_names(image_file_names, dataset_name):
     name_1 = os.path.basename(name_1)
     name_we_0, image_extension_we_0 = os.path.splitext(name_0)
     name_we_1, image_extension_we_1 = os.path.splitext(name_1)
-    name_pair_1 = name_we_1 + "_to_" + name_we_0 + ".mha"
-    name_pair_0 = name_we_0 + "_to_" + name_we_1 + ".mha"
-    return (os.path.join(dataset_name, name_pair_1), os.path.join(dataset_name, name_pair_0))
+    name_pair_0 = name_we_1 + "_to_" + name_we_0 + ".mha"
+    name_pair_1 = name_we_0 + "_to_" + name_we_1 + ".mha"
+    return (os.path.join(dataset_name, name_pair_0), os.path.join(dataset_name, name_pair_1))
 
 
 def merge_dicts(*dicts):
