@@ -137,7 +137,7 @@ TEST_F( NiftyregDisplacementTest, displacement_conversion )
 
   // Apply the deformation to the floating image
   nifti_image* warped_image = nifti_copy_nim_info(floating_image);
-  warped_image->data = (void *)calloc(warped_image->nvox,warped_image->nbyper);
+  warped_image->data = (void *)calloc(warped_image->nvox, warped_image->nbyper);
   reg_resampleImage(floating_image,
                     warped_image,
                     transFieldImage,
@@ -211,6 +211,7 @@ TEST_F( NiftyregDisplacementTest, displacement_conversion )
   diff->UpdateLargestPossibleRegion();
   bool differenceFailed = false;
   const double averageIntensityDifference = diff->GetTotalDifference();
+  EXPECT_FLOAT_EQ(0.0, averageIntensityDifference);
 
 
   //nifti_image_free(floating_image);
