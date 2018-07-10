@@ -61,4 +61,4 @@ ctest_update()
 
 ctest_configure()
 ctest_build()
-# ctest_submit( PARTS Configure Build Update )
+ctest_submit( PARTS Configure Build Update )
