@@ -79,10 +79,11 @@ def dice(superelastix, label_file_names, deformation_field_file_names):
 
     try:
         label_image_1 = sitk.ReadImage(label_file_names[1])
-        labelOverlapMeasurer.Execute(label_image_1, sitk.Cast(sitk.ReadImage(label_image_0_to_1_file_name), label_image_1.GetPixelID()))
+        label_image_0_to_1 = sitk.Cast(sitk.ReadImage(label_image_0_to_1_file_name), label_image_1.GetPixelID())
+        labelOverlapMeasurer.Execute(label_image_1, label_image_0_to_1)
         dsc_0 = labelOverlapMeasurer.GetDiceCoefficient()
     except Exception as e:
-        logging.error('Failed to compute DSC for %s' % label_file_names[0])
+        logging.error('Failed to compute DSC for %s: %s' % (label_file_names[0], e))
         return ({'DSC': np.NaN}, {'DSC': np.NaN})
 
     label_image_1_to_0_file_name = warp_image(superelastix, label_file_names[1], deformation_field_file_names[0], 'dicelabel')

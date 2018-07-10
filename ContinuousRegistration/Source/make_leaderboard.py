@@ -1,8 +1,10 @@
 import glob, os
 from ContinuousRegistration.Source.make_registration_scripts import parser, load_datasets
-from ContinuousRegistration.Source.util import logging, load_results_from_json, results_to_dict
+from ContinuousRegistration.Source.util import logging, load_results_from_json, get_script_path
 from datetime import datetime
 import numpy as np
+import json
+import subprocess
 
 def run(parameters):
     result_file_names = glob.glob(os.path.join(parameters.output_directory, 'results*'))
@@ -15,10 +17,12 @@ def run(parameters):
         raise Exception('No result JSON files found in %s.' % parameters.output_directory)
 
     logging.info('Loading results from %s.' % result_file_names[0])
-    latest_results, latest_column_names = load_results_from_json(result_file_names[0], load_datasets(parameters))
-    tables = results_to_dict(latest_results)
-    for dataset_name, dataset_results in tables.items():
-        if not dataset_name in latest_column_names:
+    results, result_names = load_results_from_json(result_file_names[0])
+    datasets = load_datasets(parameters)
+
+    for dataset_name, dataset in datasets.items():
+        if not dataset_name in result_names:
+            # This dataset was not evaluated
             continue
 
         table = '<!DOCTYPE html>'
@@ -42,36 +46,48 @@ def run(parameters):
         table += '<th role="columnheader">Team</th>'
         table += '<th role="columnheader">Blueprint</th>'
         table += '<th role="columnheader">Date</th>'
-        # table += '<th role="columnheader">Blueprint Commit</th>'
-        # table += '<th role="columnheader">Repo Commit</th>'
+        table += '<th role="columnheader">Blueprint Commit</th>'
+        table += '<th role="columnheader">Repo Commit</th>'
         table += '<th role="columnheader">Completed</th>'
 
-        for column_name in latest_column_names[dataset_name]:
-            table += '<th role="columnheader">%s</th>' % column_name
+        for result_name in result_names[dataset_name]:
+            table += '<th role="columnheader">%s</th>' % result_name
 
         table += '</tr>'
         table += '</thead>'
         table += '<tbody>'
 
-        for team_name, team_results in dataset_results.items():
+        for team_name, team_results in results.items():
             for blueprint_name, blueprint_results in team_results.items():
                 if parameters.blueprint_file_name is not None and not blueprint_name \
                         in [os.path.splitext(blueprint_file_name)[0] for blueprint_file_name in parameters.blueprint_file_name]:
+                    # User requested specific blueprints and this blueprint is not one of them
                     continue
 
                 table += '<tr>'
-                table += '<th>%s</th>' % team_name
-                table += '<th>%s</th>' % blueprint_name
-                table += '<th>%s</th>' % date
-                # table += '<th>%s</th>' % blueprint_results['blueprint_commit']
-                # table += '<th>%s</th>' % blueprint_results['repo_commit']
-                table += '<td>%s</th>' % blueprint_results['completed']
-
-                means, stds = blueprint_results['means'], blueprint_results['stds']
-                for mean, std in zip(means, stds):
-                    table+= '<td>%.2f \pm %.2f</td>' % (mean, std)
+                table += '<td>%s</td>' % team_name
+                table += '<td>%s</td>' % blueprint_name
+                table += '<td>%s</td>' % date
+                table += '<td>%s</td>' % subprocess.check_output(['git', 'log', '-n', '1', '--pretty=format:%h',
+                                                            '--', '%s/../Submissions/%s/%s.json' %
+                                                            (get_script_path(), team_name, blueprint_name)],
+                                                             cwd=parameters.source_directory)
+                table += '<td>%s</td>' % subprocess.check_output(['git', 'describe', '--always'], cwd=parameters.source_directory)
 
 
+                if dataset_name in blueprint_results \
+                    and 'result' in blueprint_results[dataset_name] \
+                    and not np.isnan(blueprint_results[dataset_name]['result']).all():
+                        result = blueprint_results[dataset_name]['result']
+                        table += '<td>%s/%s</td>' % (len(~np.isnan(result)), len(result))
+                        means = np.nanmean(result, axis=0)
+                        stds = np.nanstd(result, axis=0)
+                        for mean, std in zip(means, stds):
+                            table += '<td>%.2f \pm %.2f</td>' % (mean, std)
+                else:
+                    table += '<td>0</td>'
+                    for result_name in result_names[dataset_name]:
+                        table += '<td>N/A</td>'
 
                 table += '</tr>'
 
