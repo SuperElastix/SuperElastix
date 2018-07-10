@@ -14,12 +14,12 @@ node('lkeb-vm-test') {
     }
     stage('SuperBuild') {
       dir('build') {
-        sh "`dirname ${ cmake }`/ctest -VV --script ../src/SuperBuild/CTest.cmake"
+        sh "`dirname ${ cmake }`/bin/ctest -VV --script ../src/SuperBuild/CTest.cmake"
       }
     }
     stage('Test') {
       dir('build/SuperElastix-build') {
-        sh "`dirname ${ cmake }`/ctest -VV --script ../../src/CTest.cmake"
+        sh "`dirname ${ cmake }`/bin/ctest -VV --script ../../src/CTest.cmake"
       }
     }
     stage('Deploy') {

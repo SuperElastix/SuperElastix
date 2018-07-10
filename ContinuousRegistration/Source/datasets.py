@@ -22,7 +22,7 @@ class Dataset:
             os.mkdir(os.path.join(output_directory, 'sh'))
         COMMAND_TEMPLATE = '%s --conf \'%s\' --in %s %s --out DisplacementField=\'%s\' --loglevel trace --logfile \'%s\''
 
-        # Fixed to moving
+        # Fixed=image0, Moving=image1, Output: image1_to_image0
         root = os.path.splitext(file_names['disp_field_file_names'][0])[0]
         shell_script_file_name = os.path.join(output_directory, 'sh',
                                               root.replace('/', '_').replace('\\', '_').replace('.', '_') + '.sh')
@@ -36,7 +36,7 @@ class Dataset:
                 os.path.join(output_directory, file_names['disp_field_file_names'][0]),
                 os.path.splitext(shell_script_file_name)[0] + '.log'))
 
-        # Moving to fixed
+        # Fixed=image1, Moving=image0, Output: image0_to_image1
         root = os.path.splitext(file_names['disp_field_file_names'][1])[0]
         shell_script_file_name = os.path.join(output_directory, 'sh',
                                               root.replace('/', '_').replace('\\', '_').replace('.', '_') + '.sh')
@@ -119,16 +119,16 @@ class Dataset:
         disp_field_0_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][0])
         disp_field_1_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][1])
 
-        warp_image(superelastix, file_names['image_file_names'][0], disp_field_0_file_name, 'image')
-        warp_image(superelastix, file_names['image_file_names'][1], disp_field_1_file_name, 'image')
+        warp_image(superelastix, file_names['image_file_names'][1], disp_field_0_file_name, 'image')
+        warp_image(superelastix, file_names['image_file_names'][0], disp_field_1_file_name, 'image')
 
     @staticmethod
     def make_labels(superelastix, file_names, output_directory):
         disp_field_0_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][0])
         disp_field_1_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][1])
 
-        warp_image(superelastix, file_names['ground_truth_file_names'][0], disp_field_0_file_name, 'image')
-        warp_image(superelastix, file_names['ground_truth_file_names'][1], disp_field_1_file_name, 'image')
+        warp_image(superelastix, file_names['ground_truth_file_names'][1], disp_field_0_file_name, 'label')
+        warp_image(superelastix, file_names['ground_truth_file_names'][0], disp_field_1_file_name, 'label')
 
     @staticmethod
     def make_checkerboards(superelastix, file_names, output_directory):
@@ -149,8 +149,8 @@ class Dataset:
         sitk.WriteImage(sitk.CheckerBoard(image_0 < -big_number, image_0 > -big_number, (5,)*image_0.GetDimension()), checkerboard_0_file_name)
         sitk.WriteImage(sitk.CheckerBoard(image_1 < -big_number, image_1 > -big_number, (5,)*image_0.GetDimension()), checkerboard_1_file_name)
 
-        warp_image(superelastix, checkerboard_0_file_name, disp_field_0_file_name, 'checkerboard')
-        warp_image(superelastix, checkerboard_1_file_name, disp_field_1_file_name, 'checkerboard')
+        warp_image(superelastix, checkerboard_1_file_name, disp_field_0_file_name, 'checkerboard')
+        warp_image(superelastix, checkerboard_0_file_name, disp_field_1_file_name, 'checkerboard')
 
     @staticmethod
     def make_image_checkerboards(superelastix, file_names, output_directory):
@@ -188,9 +188,9 @@ class Dataset:
         image_checkerboard_1_file_name = disp_field_1_path + '_label_checkerboard' + disp_field_1_ext
 
         warped_image_0_file_name = warp_image(superelastix, file_names['ground_truth_file_names'][0],
-                                              disp_field_0_file_name, 'label_checkerboard')
-        warped_image_1_file_name = warp_image(superelastix, file_names['ground_truth_file_names'][1],
                                               disp_field_1_file_name, 'label_checkerboard')
+        warped_image_1_file_name = warp_image(superelastix, file_names['ground_truth_file_names'][1],
+                                              disp_field_0_file_name, 'label_checkerboard')
 
         label_0 = sitk.ReadImage(file_names['ground_truth_file_names'][0])
         label_1 = sitk.ReadImage(file_names['ground_truth_file_names'][1])

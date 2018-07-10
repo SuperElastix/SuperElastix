@@ -8,8 +8,8 @@ labelOverlapMeasurer.SetGlobalDefaultCoordinateTolerance(1)
 
 def tre(superelastix, point_sets, deformation_field_file_names):
     try:
-        point_set_0_to_1 = warp_point_set(superelastix, point_sets[1], deformation_field_file_names[0])
-        point_set_1_to_0 = warp_point_set(superelastix, point_sets[0], deformation_field_file_names[1])
+        point_set_0_to_1 = warp_point_set(superelastix, point_sets[0], deformation_field_file_names[0])
+        point_set_1_to_0 = warp_point_set(superelastix, point_sets[1], deformation_field_file_names[1])
     except Exception as e:
         logging.error('Failed to compute tre for image pair (%s, %s).' % deformation_field_file_names)
         return { 'TRE': np.NaN, 'TRE': np.NaN }
@@ -29,8 +29,8 @@ def hausdorff(superelastix, point_sets, deformation_field_file_names):
         return { 'Hausdorff': np.NaN, 'Hausdorff': np.NaN }
 
     return (
-        {'Hausdorff': np.nanmax(np.sqrt(np.nansum((point_set_0_to_1 - point_sets[0]) ** 2, -1)))},
-        {'Hausdorff': np.nanmax(np.sqrt(np.nansum((point_set_1_to_0 - point_sets[1]) ** 2, -1)))}
+        {'Hausdorff': np.nanmax(np.sqrt(np.nansum((point_set_0_to_1 - point_sets[1]) ** 2, -1)))},
+        {'Hausdorff': np.nanmax(np.sqrt(np.nansum((point_set_1_to_0 - point_sets[0]) ** 2, -1)))}
     )
 
 def inverse_consistency_points(superelastix, point_sets, deformation_field_file_names):
@@ -50,10 +50,10 @@ def inverse_consistency_points(superelastix, point_sets, deformation_field_file_
 
 
 def inverse_consistency_labels(superelastix, label_file_names, deformation_field_file_names):
-    label_image_0_to_1_file_name = warp_image(superelastix, label_file_names[0], deformation_field_file_names[1], 'label')
-    label_image_0_to_1_to_0_file_name = warp_image(superelastix, label_image_0_to_1_file_name, deformation_field_file_names[0], 'label')
-    label_image_1_to_0_file_name = warp_image(superelastix, label_file_names[1], deformation_field_file_names[0], 'label')
-    label_image_1_to_0_to_0_file_name = warp_image(superelastix, label_image_1_to_0_file_name, deformation_field_file_names[1], 'label')
+    label_image_0_to_1_file_name = warp_image(superelastix, label_file_names[0], deformation_field_file_names[1], 'label_0_to_1')
+    label_image_0_to_1_to_0_file_name = warp_image(superelastix, label_image_0_to_1_file_name, deformation_field_file_names[0], 'label_0_to_1_to_0')
+    label_image_1_to_0_file_name = warp_image(superelastix, label_file_names[1], deformation_field_file_names[0], 'label_1_to_0')
+    label_image_1_to_0_to_1_file_name = warp_image(superelastix, label_image_1_to_0_file_name, deformation_field_file_names[1], 'label_1_to_0_to_1')
 
     try:
         label_image_0 = sitk.ReadImage(label_file_names[0])
@@ -65,7 +65,7 @@ def inverse_consistency_labels(superelastix, label_file_names, deformation_field
 
     try:
         label_image_1 = sitk.ReadImage(label_file_names[1])
-        labelOverlapMeasurer.Execute(label_image_1, sitk.Cast(sitk.ReadImage(label_image_1_to_0_to_0_file_name), label_image_1.GetPixelID()))
+        labelOverlapMeasurer.Execute(label_image_1, sitk.Cast(sitk.ReadImage(label_image_1_to_0_to_1_file_name), label_image_1.GetPixelID()))
         dsc_1 = labelOverlapMeasurer.GetDiceCoefficient()
     except Exception as e:
         logging.error('Failed to compute inverse consistency DSC for %s' % label_file_names[1])
@@ -75,7 +75,7 @@ def inverse_consistency_labels(superelastix, label_file_names, deformation_field
 
 
 def dice(superelastix, label_file_names, deformation_field_file_names):
-    label_image_0_to_1_file_name = warp_image(superelastix, label_file_names[0], deformation_field_file_names[1], 'label')
+    label_image_0_to_1_file_name = warp_image(superelastix, label_file_names[0], deformation_field_file_names[1], 'dicelabel')
 
     try:
         label_image_1 = sitk.ReadImage(label_file_names[1])
@@ -86,7 +86,7 @@ def dice(superelastix, label_file_names, deformation_field_file_names):
         logging.error('Failed to compute DSC for %s: %s' % (label_file_names[0], e))
         return ({'DSC': np.NaN}, {'DSC': np.NaN})
 
-    label_image_1_to_0_file_name = warp_image(superelastix, label_file_names[1], deformation_field_file_names[0], 'label')
+    label_image_1_to_0_file_name = warp_image(superelastix, label_file_names[1], deformation_field_file_names[0], 'dicelabel')
 
     try:
         label_image_0 = sitk.ReadImage(label_file_names[0])
