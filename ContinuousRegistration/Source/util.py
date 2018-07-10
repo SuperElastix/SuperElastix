@@ -25,89 +25,40 @@ def load_submissions(parameters):
 
     return submissions
 
-def load_results_from_json(filename, datasets, make_means=True):
+def load_results_from_json(filename):
     results = json.load(open(filename))
-    column_names = dict()
+    result_names = dict()
 
     for team_name, team_results in results.items():
         for blueprint_name, blueprint_results in team_results.items():
             for dataset_name, dataset_results in blueprint_results.items():
-                # Enable once cluster environment gets access to git
-                # blueprint_commit = subprocess.check_output(['git', 'log', '-n', '1', '--pretty=format:%h',
-                #                                             '--', '%s/../Submissions/%s/%s.json' %
-                #                                             (get_script_path(), team_name, blueprint_name)])
-                # repo_commit = subprocess.check_output(['git', 'describe', '--always'])
 
-                # If no registration or evaluations completed
-                if all(dataset_result is None for dataset_result in dataset_results):
-                    results[team_name][blueprint_name][dataset_name] = {
-                      # 'blueprint_commit': blueprint_commit.decode("utf-8"),
-                      # 'repo_commit': repo_commit.decode("utf-8"),
-                      'completed': 'None',
-                      'means': [np.NaN],
-                      'stds': [np.NaN]
-                    }
+                metric_names = set()
+                disp_field_file_names = []
+                metric_results = []
+                for dataset_result in dataset_results:
+                    for disp_field_file_name, disp_field_results in dataset_result.items():
+                        disp_field_file_names.append(disp_field_file_name)
+                        metric_names.add(tuple(disp_field_results.keys()))
+                        metric_results.append(list(disp_field_results.values()))
+
+                # No results for this dataset
+                if len(metric_names) == 0:
+                    results[team_name][blueprint_name][dataset_name] = {}
                     continue
 
-                # TODO: Rewrite to list comprehension
-                dataset_metric_names = set()
-                dataset_result_array = []
-                for dataset_result in dataset_results:
-                    for dataset_result_key, dataset_result_values in dataset_result.items():
-                        dataset_metric_names.add(tuple(dataset_result_values.keys()))
-                        dataset_result_array.append(list(dataset_result_values.values()))
+                # Conflicting results
+                if len(metric_names) > 1:
+                    raise Exception('Error in evaluation: Different set of metrics found for dataset %s.' % dataset_name)
 
+                # Save metric_names names separately for constructing html table headers
+                if not dataset_name in metric_names:
+                    result_names[dataset_name] = metric_names.pop()
 
+                results[team_name][blueprint_name][dataset_name] = { 'name': disp_field_file_names, 'result': metric_results }
 
-                # All registrations should have been evaluated with the same metrics
-                assert(len(dataset_metric_names) == 1)
+    return results, result_names
 
-                # Save column names
-                if not dataset_name in column_names:
-                    column_names[dataset_name] = dataset_metric_names.pop()
-
-                if make_means:
-                    # If no registration or evaluations completed
-                    if all(dataset_result is None for dataset_result in dataset_results):
-                        results[team_name][blueprint_name][dataset_name] = {
-                            # 'blueprint_commit': blueprint_commit.decode("utf-8"),
-                            # 'repo_commit': repo_commit.decode("utf-8"),
-                            'completed': 'None',
-                            'means': [np.NaN],
-                            'stds': [np.NaN]
-                        }
-                        continue
-
-                    if not dataset_name in column_names:
-                        column_names[dataset_name] = dataset_metric_names.pop()
-
-                    dataset_result_means = np.nanmean(dataset_result_array, axis=0)
-                    dataset_result_stds = np.nanstd(dataset_result_array, axis=0)
-
-                    if all(np.isnan(dataset_result_means)):
-                        dataset_result_means = [np.NaN]
-                        dataset_result_stds = [np.NaN]
-
-                    # Save stats in-place
-                    results[team_name][blueprint_name][dataset_name] = {
-                        # 'blueprint_commit': blueprint_commit.decode("utf-8"),
-                        # 'repo_commit': repo_commit.decode("utf-8"),
-                        'completed': '%s/%s' % (len(~np.isnan(dataset_result_array)), 2*len(datasets[dataset_name].file_names)),
-                        'means': dataset_result_means,
-                        'stds': dataset_result_stds
-                    }
-                else:
-                    if not dataset_name in column_names:
-                        column_names[dataset_name] = dataset_metric_names.pop()
-                    results[team_name][blueprint_name][dataset_name] = {
-                        # 'blueprint_commit': blueprint_commit.decode("utf-8"),
-                        # 'repo_commit': repo_commit.decode("utf-8"),
-                        'completed': '%s/%s' % (
-                        len(~np.isnan(dataset_result_array)), 2 * len(datasets[dataset_name].file_names)),
-                        'means': dataset_result_array
-                    }
-
-    return results, column_names
 
 def results_to_dict(results):
     # Reverse order of dims
