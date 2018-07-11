@@ -5,6 +5,9 @@ pipeline {
   triggers {
       pollSCM('H/5 * * * *')
   }
+  tools {
+      cmake 'CMake 3.5.1'
+  }
   stages {
     stage('Checkout') {
       steps {
@@ -26,8 +29,10 @@ pipeline {
     }
     stage('Test') {
       steps {
-        dir('build/SuperElastix-build') {
-          sh "`dirname ${ cmake }`/bin/ctest -VV --script ../../src/CTest.cmake"
+        timeout(time: 30, unit: 'MINUTES') {
+          dir('build/SuperElastix-build') {
+            sh "`dirname ${ cmake }`/bin/ctest -VV --script ../../src/CTest.cmake"
+          }
         }
       }
     }
@@ -36,16 +41,18 @@ pipeline {
          branch 'develop'
       }
       steps {
-        dir('src') {
-          sh '''
-            echo "Deploy this source directory of develop on shark cluster"
-            rsync -vr --delete ContinuousRegistration sa_lkeb@shark:/exports/lkeb-hpc/sa_lkeb/SuperElastix-source/
-            scp -pr . sa_lkeb@shark:/exports/lkeb-hpc/sa_lkeb/SuperElastix-source/
+        timeout(time: 10, unit: 'MINUTES') {
+          dir('src') {
+            sh '''
+              echo "Deploy this source directory of develop on shark cluster"
+              rsync -vr --delete ContinuousRegistration sa_lkeb@shark:/exports/lkeb-hpc/sa_lkeb/SuperElastix-source/
+              scp -pr . sa_lkeb@shark:/exports/lkeb-hpc/sa_lkeb/SuperElastix-source/
 
-            echo "Deploy this build of develop on shark cluster"
-            rsync -vr --delete ContinuousRegistration sa_lkeb@shark:/exports/lkeb-hpc/sa_lkeb/SuperElastix-deployed/
-            scp -p ../build/Applications-build/CommandLineInterface/SuperElastix sa_lkeb@shark:/exports/lkeb-hpc/sa_lkeb/SuperElastix-deployed/
-            '''
+              echo "Deploy this build of develop on shark cluster"
+              rsync -vr --delete ContinuousRegistration sa_lkeb@shark:/exports/lkeb-hpc/sa_lkeb/SuperElastix-deployed/
+              scp -p ../build/Applications-build/CommandLineInterface/SuperElastix sa_lkeb@shark:/exports/lkeb-hpc/sa_lkeb/SuperElastix-deployed/
+              '''
+          }
         }
       }
     }
