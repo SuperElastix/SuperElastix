@@ -5,9 +5,6 @@ pipeline {
   triggers {
       pollSCM('H/5 * * * *')
   }
-  tools {
-      cmake 'CMake 3.5.1'
-  }
   stages {
     stage('Checkout') {
       steps {
@@ -21,7 +18,7 @@ pipeline {
       steps {
         timeout(time: 120, unit: 'MINUTES') {
           dir('build') {
-            sh "`dirname ${ cmake }`/bin/ctest -VV --script ../src/SuperBuild/CTest.cmake"
+            sh "ctest -VV --script ../src/SuperBuild/CTest.cmake"
           }
         }
       }
@@ -31,7 +28,7 @@ pipeline {
       steps {
         timeout(time: 30, unit: 'MINUTES') {
           dir('build/SuperElastix-build') {
-            sh "`dirname ${ cmake }`/bin/ctest -VV --script ../../src/CTest.cmake"
+            sh "ctest -VV --script ../../src/CTest.cmake"
           }
         }
       }
