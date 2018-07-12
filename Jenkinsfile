@@ -2,6 +2,9 @@ pipeline {
   agent {
       label 'local'
   }
+  tools {
+    cmake = tool 'CMake 3.5.1'
+  }
   triggers {
       pollSCM('H/5 * * * *')
   }
@@ -18,7 +21,7 @@ pipeline {
       steps {
         timeout(time: 60, unit: 'MINUTES') {
           dir('build') {
-            sh "/usr/bin/ctest -VV --script ../src/SuperBuild/CTest.cmake"
+            sh "`dirname ${ cmake }`/bin/ctest -VV --script ../src/SuperBuild/CTest.cmake"
           }
         }
       }
@@ -27,7 +30,7 @@ pipeline {
       steps {
         timeout(time: 30, unit: 'MINUTES') {
           dir('build/SuperElastix-build') {
-            sh "/usr/bin/ctest -VV --script ../../src/CTest.cmake"
+            sh "`dirname ${ cmake }`/bin/ctest -VV --script ../../src/CTest.cmake"
           }
         }
       }
