@@ -79,8 +79,6 @@ def results_to_dict(results):
 
 
 def take(iterable, n):
-    "Return n random items in list"
-    np.random.shuffle(iterable)
     return list(islice(iterable, n))
 
 
