@@ -16,19 +16,18 @@ pipeline {
     }
     stage('SuperBuild') {
       steps {
-        timeout(time: 120, unit: 'MINUTES') {
+        timeout(time: 60, unit: 'MINUTES') {
           dir('build') {
-            sh "ctest -VV --script ../src/SuperBuild/CTest.cmake"
+            sh "/usr/bin/ctest -VV --script ../src/SuperBuild/CTest.cmake"
           }
         }
       }
-
     }
     stage('Test') {
       steps {
         timeout(time: 30, unit: 'MINUTES') {
           dir('build/SuperElastix-build') {
-            sh "ctest -VV --script ../../src/CTest.cmake"
+            sh "/usr/bin/ctest -VV --script ../../src/CTest.cmake"
           }
         }
       }
