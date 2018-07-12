@@ -3,7 +3,7 @@ pipeline {
       label 'local'
   }
   tools {
-    cmake = tool 'CMake 3.5.1'
+    cmake 'CMake 3.5.1'
   }
   triggers {
       pollSCM('H/5 * * * *')
