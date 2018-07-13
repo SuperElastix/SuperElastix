@@ -74,7 +74,7 @@ class Dataset:
             os.path.join(output_directory, file_names['disp_field_file_names'][1]))
 
         point_sets = (self.read_point_set(file_names['ground_truth_file_names'][0]),
-                      self.read_point_set(file_names['ground_truth_file_names'][0]))
+                      self.read_point_set(file_names['ground_truth_file_names'][1]))
 
         tre_0, tre_1 = tre(superelastix, point_sets, disp_field_paths)
         hausdorff_0, hausdorff_1 = hausdorff(superelastix, point_sets, disp_field_paths)
@@ -662,9 +662,10 @@ class SPREAD(Dataset):
             mask_file_names = (os.path.join(input_directory, 'mhd', sub_directory, 'baseline_1_mask_vi_semiauto.mha'),
                                 os.path.join(input_directory, 'mhd', sub_directory, 'followup_1_mask_vi_semiauto.mha'))
 
-            name = sub_directory + '_baseline_1_Cropped_point' '.txt'
-            point_set_0_file_name = os.path.join(input_directory, 'groundtruth', 'distinctivePoints', name)
-            point_set_1_file_name = os.path.join(input_directory, 'groundtruth', 'annotate', 'Consensus', name)
+            point_set_0_file_name = os.path.join(input_directory, 'groundtruth', 'distinctivePoints',
+                                                 sub_directory + '_baseline_1_Cropped_point.txt')
+            point_set_1_file_name = os.path.join(input_directory, 'groundtruth', 'annotate', 'Consensus',
+                                                 sub_directory + '_b1f1_point.txt')
             point_set_file_names = (point_set_0_file_name, point_set_1_file_name)
 
             disp_field_file_names = (os.path.join(self.name, sub_directory, 'followup_to_baseline.mha'),
