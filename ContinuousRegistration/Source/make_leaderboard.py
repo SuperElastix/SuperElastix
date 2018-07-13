@@ -1,5 +1,5 @@
 import glob, os
-from ContinuousRegistration.Source.make_registration_scripts import parser, load_datasets
+from ContinuousRegistration.Source.make_registration_scripts import parser, load_datasets, load_submissions
 from ContinuousRegistration.Source.util import logging, load_results_from_json, get_script_path
 from datetime import datetime
 import numpy as np
@@ -19,6 +19,7 @@ def run(parameters):
     logging.info('Loading results from %s.' % result_file_names[0])
     results, result_names = load_results_from_json(result_file_names[0])
     datasets = load_datasets(parameters)
+    submissions = load_submissions(parameters)
 
     for dataset_name, dataset in datasets.items():
         if not dataset_name in result_names:
@@ -62,6 +63,18 @@ def run(parameters):
                 if parameters.blueprint_file_name is not None and not blueprint_name \
                         in [os.path.splitext(blueprint_file_name)[0] for blueprint_file_name in parameters.blueprint_file_name]:
                     # User requested specific blueprints and this blueprint is not one of them
+                    continue
+
+                blueprint_file_name_json = os.path.join(parameters.submissions_directory, team_name, blueprint_name + '.json')
+                blueprint_file_name_xml = os.path.join(parameters.submissions_directory, team_name,blueprint_name + '.xml')
+                if os.path.isfile(blueprint_file_name_json):
+                    blueprint = json.load(open(blueprint_file_name_json))
+                elif os.path.isfile(blueprint_file_name_xml):
+                    pass
+                else:
+                    raise Exception('Could not load blueprint.')
+
+                if dataset_name not in blueprint['Datasets']:
                     continue
 
                 table += '<tr>'
