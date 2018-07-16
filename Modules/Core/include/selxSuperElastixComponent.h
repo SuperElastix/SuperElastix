@@ -53,7 +53,7 @@ public:
   virtual bool ConnectionsSatisfied() override;
 
   // GetComponentName get the name from ComponentBase, but is implemented here so that any interface can add a GetComponentName method without the need to implement that in each component individually.
-  virtual const std::string GetComponentName();
+  virtual const std::string GetComponentName() const;
 
 protected:
 
