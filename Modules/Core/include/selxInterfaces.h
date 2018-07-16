@@ -41,7 +41,7 @@ public:
   virtual AnyFileReader::Pointer GetInputFileReader( void ) = 0;
 
   // GetComponentName is implemented in the SuperElastixComponent class and does not need to be implemented by each component individually.
-  virtual const std::string GetComponentName() const = 0;
+  virtual std::string GetComponentName() const = 0;
 };
 
 class SinkInterface
@@ -62,7 +62,7 @@ public:
   virtual DataObjectPointer GetInitializedOutput( void ) = 0;
 
   // GetComponentName is implemented in the SuperElastixComponent class and does not need to be implemented by each component individually.
-  virtual const std::string GetComponentName() const = 0;
+  virtual std::string GetComponentName() const = 0;
 };
 
 class UpdateInterface
@@ -76,7 +76,7 @@ public:
   virtual void Update() = 0;
 
   // GetComponentName is implemented in the SuperElastixComponent class and does not need to be implemented by each component individually.
-  virtual const std::string GetComponentName() const = 0; 
+  virtual std::string GetComponentName() const = 0; 
 };
 
 } // end namespace selx

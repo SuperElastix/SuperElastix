@@ -59,7 +59,7 @@ SuperElastixComponent< AcceptingInterfaces, ProvidingInterfaces >
 }
 
 template< typename AcceptingInterfaces, typename ProvidingInterfaces >
-const std::string
+std::string
 SuperElastixComponent< AcceptingInterfaces, ProvidingInterfaces >
 ::GetComponentName() const
 {

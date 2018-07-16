@@ -55,7 +55,7 @@ public:
   typedef std::map< std::string, std::string > InterfaceCriteriaType;
 
   // Will be implemented in SuperElastixComponent so that any interface can add a GetComponentName method without the need to implement that in each component individually.
-  //virtual const std::string GetComponentName() const = 0;
+  //virtual std::string GetComponentName() const = 0;
 
   virtual int AcceptConnectionFrom( Pointer, const InterfaceCriteriaType ) = 0;
 

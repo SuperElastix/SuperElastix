@@ -40,7 +40,7 @@ public:
   virtual std::shared_ptr< nifti_image > GetReferenceNiftiImage() = 0;
 
   // GetComponentName is implemented in the SuperElastixComponent class and does not need to be implemented by each component individually.
-  virtual const std::string GetComponentName() const = 0;
+  virtual std::string GetComponentName() const = 0;
 };
 
 template< class TPixel >
@@ -53,7 +53,7 @@ public:
   virtual std::shared_ptr< nifti_image > GetFloatingNiftiImage() = 0;
 
   // GetComponentName is implemented in the SuperElastixComponent class and does not need to be implemented by each component individually.
-  virtual const std::string GetComponentName() const = 0;
+  virtual std::string GetComponentName() const = 0;
 };
 
 template< class TPixel >
@@ -66,7 +66,7 @@ public:
   virtual std::shared_ptr< nifti_image > GetWarpedNiftiImage() = 0;
 
   // GetComponentName is implemented in the SuperElastixComponent class and does not need to be implemented by each component individually.
-  virtual const std::string GetComponentName() const = 0;
+  virtual std::string GetComponentName() const = 0;
 };
 
 template< class TPixel >
@@ -79,7 +79,7 @@ public:
   virtual std::shared_ptr< nifti_image > GetControlPointPositionImage() = 0;
 
   // GetComponentName is implemented in the SuperElastixComponent class and does not need to be implemented by each component individually.
-  virtual const std::string GetComponentName() const = 0;
+  virtual std::string GetComponentName() const = 0;
 };
 
 template< class TPixel >
@@ -92,7 +92,7 @@ public:
   virtual std::shared_ptr< nifti_image > GetDisplacementFieldNiftiImage() = 0;
 
   // GetComponentName is implemented in the SuperElastixComponent class and does not need to be implemented by each component individually.
-  virtual const std::string GetComponentName() const = 0;
+  virtual std::string GetComponentName() const = 0;
 };
 
 class NiftyregAffineMatrixInterface
@@ -104,7 +104,7 @@ public:
   virtual mat44 * GetAffineNiftiMatrix() = 0;
 
   // GetComponentName is implemented in the SuperElastixComponent class and does not need to be implemented by each component individually.
-  virtual const std::string GetComponentName() const = 0;
+  virtual std::string GetComponentName() const = 0;
 };
 
 template< class TPixel >
