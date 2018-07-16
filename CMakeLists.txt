@@ -94,13 +94,6 @@ if( WIN32 )
   add_definitions(-D_WIN32_WINNT=0x0601)
 endif()
 
-# Suppress warning on Travis about inconsistent missing 'override'
-# in method GetComponentName in SuperElastixComponent; 
-# \todo: fix it in the code.
-if( ${CMAKE_CXX_COMPILER_ID} STREQUAL AppleClang )
-  add_compile_options("-Wno-inconsistent-missing-override")
-endif()
-
 # ---------------------------------------------------------------------
 # Use SuperBuild. 
 
