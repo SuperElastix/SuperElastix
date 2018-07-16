@@ -1,11 +1,11 @@
 {
-    "Datasets": ["POPI", "DIRLAB", "EMPIRE", "LPBA40", "ISBR18", "CUMC12", "MGH10", "SPREAD"],
+    "Datasets": ["POPI", "DIRLAB", "EMPIRE", "LPBA40", "ISBR18", "CUMC12", "MGH10", "SPREAD", "HAMMERS"],
     "Component": {
         "Name": "RegistrationMethod",
         "NameOfClass": "ItkImageRegistrationMethodv4Component",
-		"NumberOfLevels":  "3" ,
-		"ShrinkFactorsPerLevel": [ "16", "8", "4" ],
-        "SmoothingSigmasPerLevel": [ "16", "8", "4" ],
+		"NumberOfLevels":  "4" ,
+		"ShrinkFactorsPerLevel": [ "16", "8", "4", "2" ],
+        "SmoothingSigmasPerLevel": [ "8", "4", "2", "1" ],
         "Dimensionality": "3"
     },
     "Component": {
@@ -44,7 +44,7 @@
         "Name": "Optimizer",
         "NameOfClass": "ItkGradientDescentOptimizerv4Component",
         "NumberOfIterations": "32",
-		"LearningRate": "100"
+		"LearningRate": "0.25"
     },
     "Component": {
         "Name": "Transform",
@@ -55,7 +55,7 @@
 	"Component": {
         "Name": "TransformResolutionAdaptor",
         "NameOfClass": "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent",
-  		"ShrinkFactorsPerLevel": [ "16", "8", "4" ],
+  		"ShrinkFactorsPerLevel": [ "16", "8", "4", "2" ],
         "Dimensionality": "3"
     },
     "Component": {

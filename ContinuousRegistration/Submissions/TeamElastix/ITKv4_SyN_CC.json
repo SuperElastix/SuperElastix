@@ -7,12 +7,16 @@
         "ISBR18",
         "CUMC12",
         "MGH10",
-        "SPREAD"
+        "SPREAD",
+        "HAMMERS"
     ],
     "Component": {
         "Name": "RegistrationMethod",
         "NameOfClass": "ItkSyNImageRegistrationMethodComponent",
         "Dimensionality": "3",
+        "NumberOfLevels":  "4",
+        "ShrinkFactorsPerLevel": [ "16", "8", "4", "2" ],
+        "SmoothingSigmasPerLevel": [ "8", "4", "2", "1" ],
         "PixelType": "float"
     },
     "Component": {

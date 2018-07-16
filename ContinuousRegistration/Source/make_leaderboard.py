@@ -1,62 +1,14 @@
-import json, glob, os, argparse, datetime
+import glob, os
+from ContinuousRegistration.Source.make_registration_scripts import parser, load_datasets, load_submissions
+from ContinuousRegistration.Source.util import logging, load_results_from_json, get_script_path
+from datetime import datetime
 import numpy as np
-
-parser = argparse.ArgumentParser(description='Continuous Registration Challenge command line interface.')
-
-parser.add_argument('--output-directory', '-od', required=True, help="Directory where results will be saved.")
-
-parser.add_argument('--cumc12-input-directory', '-cid')
-parser.add_argument('--dirlab-input-directory', '-did')
-parser.add_argument('--empire-input-directory', '-eid')
-parser.add_argument('--isbr18-input-directory', '-iid')
-parser.add_argument('--lpba40-input-directory', '-lid')
-parser.add_argument('--spread-input-directory', '-sid')
-parser.add_argument('--popi-input-directory', '-pid')
-parser.add_argument('--mgh10-input-directory', '-mid')
-
-parser.add_argument('--max-number-of-registrations-per-dataset', '-mnorpd', type=int, default=64)
-
-
-def load_results_from_json(filename):
-    results = json.load(open(filename))
-    column_names = dict()
-
-    for team_name, team_results in results.items():
-        for blueprint_name, blueprint_results in team_results.items():
-            for dataset_name, dataset_results in blueprint_results.items():
-
-                # If no registration or evaluations completed
-                if all(dataset_result is None for dataset_result in dataset_results):
-                    results[team_name][blueprint_name][dataset_name] = None
-                    continue
-
-                # TODO: Rewrite to list comprehension
-                dataset_metric_names = set()
-                dataset_result_array = []
-                for dataset_result in dataset_results:
-                    for dataset_result_key, dataset_result_values in dataset_result.items():
-                        dataset_metric_names.add(tuple(dataset_result_values.keys()))
-                        dataset_result_array.append(list(dataset_result_values.values()))
-
-                # All registrations should have been evaluated with the same metrics
-                assert(len(dataset_metric_names) == 1)
-
-                # Save column names
-                if not dataset_name in column_names:
-                    column_names[dataset_name] = dataset_metric_names.pop()
-
-                dataset_result_means = np.mean(dataset_result_array, axis=0)
-                dataset_result_stds = np.std(dataset_result_array, axis=0)
-
-                # Save stats in-place
-                results[team_name][blueprint_name][dataset_name] = (dataset_result_means,
-                                                                    dataset_result_stds)
-
-    return results, column_names
-
+import json
+import subprocess
 
 def run(parameters):
     result_file_names = glob.glob(os.path.join(parameters.output_directory, 'results*'))
+    date = datetime.now().strftime('%d-%m-%Y')
 
     # Most recent first
     result_file_names.sort(reverse=True)
@@ -64,24 +16,14 @@ def run(parameters):
     if not result_file_names:
         raise Exception('No result JSON files found in %s.' % parameters.output_directory)
 
-    latest_results, latest_column_names = load_results_from_json(result_file_names[0])
+    logging.info('Loading results from %s.' % result_file_names[0])
+    results, result_names = load_results_from_json(result_file_names[0])
+    datasets = load_datasets(parameters)
+    submissions = load_submissions(parameters)
 
-    # Fill tables with team data
-    tables = {}
-    for team_name, team_results in latest_results.items():
-        for blueprint_name, blueprint_results in team_results.items():
-            for dataset_name, dataset_results in blueprint_results.items():
-
-                if not dataset_name in tables:
-                    tables[dataset_name] = {}
-
-                if not team_name in tables[dataset_name]:
-                    tables[dataset_name][team_name] = {}
-
-                tables[dataset_name][team_name][blueprint_name] = latest_results[team_name][blueprint_name][dataset_name]
-
-    for dataset_name, dataset_results in tables.items():
-        if not dataset_name in latest_column_names:
+    for dataset_name, dataset in datasets.items():
+        if not dataset_name in result_names:
+            # This dataset was not evaluated
             continue
 
         table = '<!DOCTYPE html>'
@@ -104,26 +46,63 @@ def run(parameters):
         table += '<tr>'
         table += '<th role="columnheader">Team</th>'
         table += '<th role="columnheader">Blueprint</th>'
+        table += '<th role="columnheader">Date</th>'
+        table += '<th role="columnheader">Blueprint Commit</th>'
+        table += '<th role="columnheader">Repo Commit</th>'
+        table += '<th role="columnheader">Completed</th>'
 
-        for column_name in latest_column_names[dataset_name]:
-            table += '<th role="columnheader">%s</th>' % column_name
+        for result_name in result_names[dataset_name]:
+            table += '<th role="columnheader">%s</th>' % result_name
 
         table += '</tr>'
         table += '</thead>'
         table += '<tbody>'
 
-        for team_name, team_result in dataset_results.items():
+        for team_name, team_results in results.items():
             for blueprint_name, blueprint_results in team_results.items():
-                if dataset_name in blueprint_results and not blueprint_results[dataset_name] is None:
-                    table += '<tr>'
-                    table += '<th>%s</th>' % team_name
-                    table += '<th>%s</th>' % blueprint_name
+                if parameters.blueprint_file_name is not None and not blueprint_name \
+                        in [os.path.splitext(blueprint_file_name)[0] for blueprint_file_name in parameters.blueprint_file_name]:
+                    # User requested specific blueprints and this blueprint is not one of them
+                    continue
 
-                    means, stds = blueprint_results[dataset_name]
-                    for mean, std in zip(means, stds):
-                        table+= '<td>%.2f \pm %.2f</td>' % (mean, std)
+                blueprint_file_name_json = os.path.join(parameters.submissions_directory, team_name, blueprint_name + '.json')
+                blueprint_file_name_xml = os.path.join(parameters.submissions_directory, team_name,blueprint_name + '.xml')
+                if os.path.isfile(blueprint_file_name_json):
+                    blueprint = json.load(open(blueprint_file_name_json))
+                elif os.path.isfile(blueprint_file_name_xml):
+                    pass
+                else:
+                    raise Exception('Could not load blueprint.')
 
-                    table += '</tr>'
+                if dataset_name not in blueprint['Datasets']:
+                    continue
+
+                table += '<tr>'
+                table += '<td>%s</td>' % team_name
+                table += '<td>%s</td>' % blueprint_name
+                table += '<td>%s</td>' % date
+                table += '<td>%s</td>' % subprocess.check_output(['git', 'log', '-n', '1', '--pretty=format:%h',
+                                                            '--', '%s/../Submissions/%s/%s.json' %
+                                                            (get_script_path(), team_name, blueprint_name)],
+                                                             cwd=parameters.source_directory)
+                table += '<td>%s</td>' % subprocess.check_output(['git', 'describe', '--always'], cwd=parameters.source_directory)
+
+
+                if dataset_name in blueprint_results \
+                    and 'result' in blueprint_results[dataset_name] \
+                    and not np.isnan(blueprint_results[dataset_name]['result']).all():
+                        result = blueprint_results[dataset_name]['result']
+                        table += '<td>%s/%s</td>' % (len(~np.isnan(result)), len(result))
+                        means = np.nanmean(result, axis=0)
+                        stds = np.nanstd(result, axis=0)
+                        for mean, std in zip(means, stds):
+                            table += '<td>%.2f \pm %.2f</td>' % (mean, std)
+                else:
+                    table += '<td>0</td>'
+                    for result_name in result_names[dataset_name]:
+                        table += '<td>N/A</td>'
+
+                table += '</tr>'
 
         table += '</tbody>'
         table += '</table>'
@@ -133,7 +112,6 @@ def run(parameters):
         table += '</body>'
         table += '</html>'
 
-        # + '-{:%Y-%m-%d-%H-%M-%S-%f}'.format(datetime.datetime.now())
         table_file = open(os.path.join(parameters.output_directory,
                                        'leaderboard-' + dataset_name + '.html'), "w")
 

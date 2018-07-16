@@ -57,5 +57,11 @@ set(CTEST_CHANGE_ID $ENV{CHANGE_ID})
 ctest_start("Continuous")
 # Added ctest_update() to ensure that the commit SHA will be passed to CDash, and GitHub.
 ctest_update()
-ctest_test()
-ctest_submit( PARTS Test Update )
+ctest_test(RETURN_VALUE RES)
+# ctest_submit( PARTS Test Update )
+
+if (RES)
+  message(FATAL_ERROR "Unit tests have return code != 0")
+else (RES)
+  message(STATUS "Unit tests have return code ${RES}")
+endif(RES)

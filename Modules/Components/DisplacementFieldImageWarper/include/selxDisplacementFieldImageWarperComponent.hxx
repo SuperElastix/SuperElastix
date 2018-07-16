@@ -41,6 +41,7 @@ ItkDisplacementFieldImageWarperComponent< Dimensionality, TPixel, CoordRepType >
 ::Accept( DisplacementFieldInterfacePointer itkDisplacementFieldInterface )
 {
   auto displacementField = itkDisplacementFieldInterface->GetItkDisplacementField();
+  displacementField->Update();
   this->m_DisplacementFieldTransform->SetDisplacementField( displacementField );
   this->m_ResampleImageFilter->SetOutputParametersFromImage( displacementField );
 

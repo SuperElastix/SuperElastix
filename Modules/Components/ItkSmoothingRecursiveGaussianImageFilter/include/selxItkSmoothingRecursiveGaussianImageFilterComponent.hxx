@@ -90,7 +90,7 @@ ItkSmoothingRecursiveGaussianImageFilterComponent< Dimensionality, TPixel >
         this->m_theItkFilter->SetSigma( std::stod( criterionValue ) );
         meetsCriteria = true;
       }
-      catch( itk::ExceptionObject & err )
+      catch( itk::ExceptionObject & itkNotUsed(err) )
       {
         this->m_Logger.Log(LogLevel::TRC, err.what());
         meetsCriteria = false;
