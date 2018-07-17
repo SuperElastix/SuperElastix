@@ -105,7 +105,7 @@ ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< Dimensionality, TPi
         this->m_theItkFilter->SetRadius( radius );
         return true;
       }
-      catch( itk::ExceptionObject & itkNotUsed(err) )
+      catch( itk::ExceptionObject err )
       {
         this->m_Logger.Log(LogLevel::TRC, err.what());
         return false;
