@@ -14,12 +14,12 @@ node('lkeb-vm-test') {
     }
     stage('SuperBuild') {
       dir('build') {
-        sh "`dirname ${ cmake }`/bin/ctest -VV --script ../src/SuperBuild/CTest.cmake"
+        sh "`dirname ${ cmake }`/ctest -VV --script ../src/SuperBuild/CTest.cmake"
       }
     }
     stage('Test') {
       dir('build/SuperElastix-build') {
-        sh "`dirname ${ cmake }`/bin/ctest -VV --script ../../src/CTest.cmake"
+        sh "`dirname ${ cmake }`/ctest -VV --script ../../src/CTest.cmake"
       }
     }
     stage('Deploy') {
@@ -30,7 +30,7 @@ node('lkeb-vm-test') {
             if [ "$GIT_BRANCH" = "remotes/origin/develop" ]
             then
               echo "Deploy this build of develop on shark cluster"
-              rsync -vr --delete . sa_lkeb@shark:/exports/lkeb-hpc/sa_lkeb/SuperElastix-deployed/
+              rsync -vr --delete ContinuousRegistration sa_lkeb@shark:/exports/lkeb-hpc/sa_lkeb/SuperElastix-deployed/
               scp -p ../build/Applications-build/CommandLineInterface/SuperElastix sa_lkeb@shark:/exports/lkeb-hpc/sa_lkeb/SuperElastix-deployed/
             else
               echo "This is not the develop branch, thus do not deploy"
