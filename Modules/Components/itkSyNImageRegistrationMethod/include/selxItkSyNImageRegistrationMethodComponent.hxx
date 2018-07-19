@@ -309,6 +309,7 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
 		// physical units.
 		this->m_theItkFilter->SetSmoothingSigmasPerLevel(smoothingSigmasPerLevel);
 	} else if( criterion.first == "LearningRate" ) {
+		meetsCriteria = true;
 		this->m_theItkFilter->SetLearningRate(std::stof(criterion.second[0]));
 	}
 

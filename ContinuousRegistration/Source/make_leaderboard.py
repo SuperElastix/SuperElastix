@@ -81,12 +81,22 @@ def run(parameters):
                 table += '<td>%s</td>' % team_name
                 table += '<td>%s</td>' % blueprint_name
                 table += '<td>%s</td>' % date
-                table += '<td>%s</td>' % subprocess.check_output(['git', 'log', '-n', '1', '--pretty=format:%h',
-                                                            '--', '%s/../Submissions/%s/%s.json' %
-                                                            (get_script_path(), team_name, blueprint_name)],
-                                                             cwd=parameters.source_directory)
-                table += '<td>%s</td>' % subprocess.check_output(['git', 'describe', '--always'], cwd=parameters.source_directory)
 
+                # Get blueprint commit hash
+                try:
+                    table += '<td>%s</td>' % subprocess.check_output(['git', 'log', '-n', '1', '--pretty=format:%h',
+                                                                      '--', '%s/../Submissions/%s/%s.json' %
+                                                                      (get_script_path(), team_name, blueprint_name)],
+                                                                     cwd=parameters.source_directory)
+                except subprocess.CalledProcessError as e:
+                    logging.error('Error (exit code {0}): {1}'.format(e.returncode, e.output))
+
+                # Get repo commit hash
+                try:
+                    table += '<td>%s</td>' % subprocess.check_output(['git', 'describe', '--always'],
+                                                                     cwd=parameters.source_directory)
+                except subprocess.CalledProcessError as e:
+                    logging.error('Error (exit code {0}): {1}'.format(e.returncode, e.output))
 
                 if dataset_name in blueprint_results \
                     and 'result' in blueprint_results[dataset_name] \
