@@ -81,12 +81,28 @@ def run(parameters):
                 table += '<td>%s</td>' % team_name
                 table += '<td>%s</td>' % blueprint_name
                 table += '<td>%s</td>' % date
-                table += '<td>%s</td>' % subprocess.check_output(['git', 'log', '-n', '1', '--pretty=format:%h',
-                                                            '--', '%s/../Submissions/%s/%s.json' %
-                                                            (get_script_path(), team_name, blueprint_name)],
-                                                             cwd=parameters.source_directory)
-                table += '<td>%s</td>' % subprocess.check_output(['git', 'describe', '--always'], cwd=parameters.source_directory)
 
+                # Get blueprint commit hash
+                try:
+                    table += '<td>%s</td>' % subprocess.check_output(['git', 'log', '-n', '1', '--pretty=format:%h',
+                                                                      '--', '%s/../Submissions/%s/%s.json' %
+                                                                      (get_script_path(), team_name, blueprint_name)],
+                                                                     cwd=parameters.source_directory,
+                                                                     stderr=subprocess.STDOUT, shell=True, timeout=3,
+                                                                     universal_newlines=True)
+                except subprocess.CalledProcessError as e:
+                    raise Exception('Error ({0}): {1}'.format(e.returncode, e.output))
+                else:
+                    table += '<td>N/A</td>'
+
+                # Get repo commit hash
+                try:
+                    table += '<td>%s</td>' % subprocess.check_output(['git', 'describe', '--always'],
+                                                                     cwd=parameters.source_directory)
+                except subprocess.CalledProcessError as e:
+                    raise Exception('Error ({0}): {1}'.format(e.returncode, e.output))
+                else:
+                    table += '<td>N/A</td>'
 
                 if dataset_name in blueprint_results \
                     and 'result' in blueprint_results[dataset_name] \
