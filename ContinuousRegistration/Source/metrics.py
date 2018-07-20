@@ -12,7 +12,7 @@ def tre(superelastix, point_sets, deformation_field_file_names):
         point_set_1_to_0 = warp_point_set(superelastix, point_sets[1], deformation_field_file_names[1])
     except Exception as e:
         logging.error('Failed to compute tre for image pair (%s, %s).' % deformation_field_file_names)
-        return { 'TRE': np.NaN, 'TRE': np.NaN }
+        return ({ 'TRE': np.NaN }, { 'TRE': np.NaN })
 
 
     return (
@@ -26,7 +26,7 @@ def hausdorff(superelastix, point_sets, deformation_field_file_names):
         point_set_1_to_0 = warp_point_set(superelastix, point_sets[1], deformation_field_file_names[1])
     except Exception as e:
         logging.error('Failed to compute hausdorff for image pair (%s, %s).' % deformation_field_file_names)
-        return { 'Hausdorff': np.NaN, 'Hausdorff': np.NaN }
+        return ({ 'Hausdorff': np.NaN }, { 'Hausdorff': np.NaN })
 
     return (
         {'Hausdorff': np.nanmax(np.sqrt(np.nansum((point_set_0_to_1 - point_sets[1]) ** 2, -1)))},
@@ -41,7 +41,7 @@ def inverse_consistency_points(superelastix, point_sets, deformation_field_file_
         point_set_1_to_0_to_1 = warp_point_set(superelastix, point_set_1_to_0, deformation_field_file_names[0])
     except Exception as e:
         logging.error('Failed to compute inverse consistency points for image pair (%s, %s).' % deformation_field_file_names)
-        return ({'InverseConsistencyTRE': np.NaN, 'InverseConsistencyTRE': np.NaN})
+        return ({'InverseConsistencyTRE': np.NaN }, { 'InverseConsistencyTRE': np.NaN })
 
     return (
         {'InverseConsistencyTRE': np.nanmean(np.sqrt(np.nansum((point_set_0_to_1_to_0 - point_sets[0]) ** 2, -1)))},

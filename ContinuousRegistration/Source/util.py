@@ -280,7 +280,7 @@ def warp_point_set(superelastix, point_set, disp_field_file_name):
     write_vtk(point_set, input_point_set_file_name)
 
     try:
-        stdout = subprocess.check_output([
+        subprocess.check_output([
             superelastix,
             '--conf', os.path.join(get_script_path(), 'warp_point_set.json'),
             '--in', 'InputPointSet=%s' % input_point_set_file_name,
@@ -288,9 +288,10 @@ def warp_point_set(superelastix, point_set, disp_field_file_name):
             '--out', 'OutputPointSet=%s' % output_point_set_file_name,
             '--loglevel', 'trace',
             '--logfile', os.path.splitext(output_point_set_file_name)[0] + '.log'])
-    except:
-        raise Exception('\nFailed to warp %s. See %s' %
-                        (input_point_set_file_name, os.path.splitext(output_point_set_file_name)[0] + '.log'))
+    except Exception as e:
+        logging.error('\nFailed to warp %s: %s\n See %s.' %
+                        (input_point_set_file_name, e, os.path.splitext(output_point_set_file_name)[0] + '.log'))
+        raise Exception
 
     return read_vtk(output_point_set_file_name)
 
