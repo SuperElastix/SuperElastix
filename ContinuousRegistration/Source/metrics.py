@@ -50,10 +50,10 @@ def inverse_consistency_points(superelastix, point_sets, deformation_field_file_
 
 
 def inverse_consistency_labels(superelastix, label_file_names, deformation_field_file_names):
-    label_image_0_to_1_file_name = warp_image(superelastix, label_file_names[0], deformation_field_file_names[1], 'label_0_to_1')
-    label_image_0_to_1_to_0_file_name = warp_image(superelastix, label_image_0_to_1_file_name, deformation_field_file_names[0], 'label_0_to_1_to_0')
-    label_image_1_to_0_file_name = warp_image(superelastix, label_file_names[1], deformation_field_file_names[0], 'label_1_to_0')
-    label_image_1_to_0_to_1_file_name = warp_image(superelastix, label_image_1_to_0_file_name, deformation_field_file_names[1], 'label_1_to_0_to_1')
+    label_image_0_to_1_file_name = warp_image(superelastix, label_file_names[0], deformation_field_file_names[1], 'inverse_consistency_label_0_to_1')
+    label_image_0_to_1_to_0_file_name = warp_image(superelastix, label_image_0_to_1_file_name, deformation_field_file_names[0], 'inverse_consistency_label_0_to_1_to_0')
+    label_image_1_to_0_file_name = warp_image(superelastix, label_file_names[1], deformation_field_file_names[0], 'inverse_consistency_label_1_to_0')
+    label_image_1_to_0_to_1_file_name = warp_image(superelastix, label_image_1_to_0_file_name, deformation_field_file_names[1], 'inverse_consistency_label_1_to_0_to_1')
 
     try:
         label_image_0 = sitk.ReadImage(label_file_names[0])
@@ -75,7 +75,7 @@ def inverse_consistency_labels(superelastix, label_file_names, deformation_field
 
 
 def dice(superelastix, label_file_names, deformation_field_file_names):
-    label_image_0_to_1_file_name = warp_image(superelastix, label_file_names[0], deformation_field_file_names[1], 'dicelabel')
+    label_image_0_to_1_file_name = warp_image(superelastix, label_file_names[0], deformation_field_file_names[1], 'dsc_label_0_to_1')
 
     try:
         label_image_1 = sitk.ReadImage(label_file_names[1])
@@ -86,7 +86,7 @@ def dice(superelastix, label_file_names, deformation_field_file_names):
         logging.error('Failed to compute DSC for %s: %s' % (label_file_names[0], e))
         return ({'DSC': np.NaN}, {'DSC': np.NaN})
 
-    label_image_1_to_0_file_name = warp_image(superelastix, label_file_names[1], deformation_field_file_names[0], 'dicelabel')
+    label_image_1_to_0_file_name = warp_image(superelastix, label_file_names[1], deformation_field_file_names[0], 'dsc_label_1_to_0')
 
     try:
         label_image_0 = sitk.ReadImage(label_file_names[0])

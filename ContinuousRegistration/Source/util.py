@@ -36,7 +36,12 @@ def load_results_from_json(filename):
                 metric_names = set()
                 disp_field_file_names = []
                 metric_results = []
+
                 for dataset_result in dataset_results:
+                    if dataset_result is None:
+                        results[team_name][blueprint_name][dataset_name] =  {'name': [], 'result': []}
+                        continue
+
                     for disp_field_file_name, disp_field_results in dataset_result.items():
                         disp_field_file_names.append(disp_field_file_name)
                         metric_names.add(tuple(disp_field_results.keys()))
