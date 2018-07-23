@@ -19,7 +19,6 @@ def run(parameters):
     logging.info('Loading results from %s.' % result_file_names[0])
     results, result_names = load_results_from_json(result_file_names[0])
     datasets = load_datasets(parameters)
-    submissions = load_submissions(parameters)
 
     for dataset_name, dataset in datasets.items():
         if not dataset_name in result_names:
@@ -47,8 +46,22 @@ def run(parameters):
         table += '<th role="columnheader">Team</th>'
         table += '<th role="columnheader">Blueprint</th>'
         table += '<th role="columnheader">Date</th>'
-        table += '<th role="columnheader">Blueprint Commit</th>'
-        table += '<th role="columnheader">Repo Commit</th>'
+
+        # Try to get blueprint commit hash
+        try:
+            repo_commit = subprocess.check_output(['git', 'describe', '--always'],
+                                                  cwd=parameters.source_directory)
+        except subprocess.CalledProcessError as e:
+            repo_commit = None
+            logging.error('Error (exit code {0}): {1}'.format(e.returncode, e.output))
+        except Exception as e:
+            repo_commit = None
+            logging.error('Error reading commit hash from source directory "%s".' % parameters.source_directory)
+
+        if repo_commit:
+            table += '<th role="columnheader">Blueprint Commit</th>'
+            table += '<th role="columnheader">Repo Commit</th>'
+
         table += '<th role="columnheader">Completed</th>'
 
         for result_name in result_names[dataset_name]:
@@ -70,7 +83,7 @@ def run(parameters):
                 if os.path.isfile(blueprint_file_name_json):
                     blueprint = json.load(open(blueprint_file_name_json))
                 elif os.path.isfile(blueprint_file_name_xml):
-                    pass
+                    raise NotImplementedError('Cannot read xml blueprints yet.')
                 else:
                     raise Exception('Could not load blueprint.')
 
@@ -82,21 +95,16 @@ def run(parameters):
                 table += '<td>%s</td>' % blueprint_name
                 table += '<td>%s</td>' % date
 
-                # Get blueprint commit hash
-                try:
-                    table += '<td>%s</td>' % subprocess.check_output(['git', 'log', '-n', '1', '--pretty=format:%h',
-                                                                      '--', '%s/../Submissions/%s/%s.json' %
-                                                                      (get_script_path(), team_name, blueprint_name)],
-                                                                     cwd=parameters.source_directory)
-                except subprocess.CalledProcessError as e:
-                    logging.error('Error (exit code {0}): {1}'.format(e.returncode, e.output))
+                if repo_commit:
+                    table += '<td>%s</td>' % repo_commit
 
-                # Get repo commit hash
-                try:
-                    table += '<td>%s</td>' % subprocess.check_output(['git', 'describe', '--always'],
-                                                                     cwd=parameters.source_directory)
-                except subprocess.CalledProcessError as e:
-                    logging.error('Error (exit code {0}): {1}'.format(e.returncode, e.output))
+                    # Try to get blueprint commit hash
+                    try:
+                        table += '<td>%s</td>' % subprocess.check_output(['git', 'describe', '--always'],
+                                                                         cwd=parameters.source_directory)
+                    except subprocess.CalledProcessError as e:
+                        table += '<td></td>'
+                        logging.error('Error (exit code {0}): {1}'.format(e.returncode, e.output))
 
                 if dataset_name in blueprint_results \
                     and 'result' in blueprint_results[dataset_name] \
