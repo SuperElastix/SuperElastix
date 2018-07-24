@@ -311,6 +311,21 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
 	} else if( criterion.first == "LearningRate" ) {
 		meetsCriteria = true;
 		this->m_theItkFilter->SetLearningRate(std::stof(criterion.second[0]));
+	} else if( criterion.first == "NumberOfIterations" ) {
+		meetsCriteria = true;
+
+      if(this->m_NumberOfLevelsLastSetBy != "" &&
+         this->m_theItkFilter->GetNumberOfLevels() != criterion.second.size()) {
+         std::cout << "A conflicting NumberOfLevels was set by " << this->m_NumberOfLevelsLastSetBy << std::endl;
+         return false;
+      }
+
+      typename TheItkFilterType::NumberOfIterationsArrayType numberOfIterations(criterion.second.size());
+      for(int i = 0; i < criterion.second.size(); i++) {
+        numberOfIterations[i] = stoull(criterion.second[i]);
+        std::cout << "numberOfIterations[" << i << "]:" << numberOfIterations[i] << std::endl;
+      }
+      this->m_theItkFilter->SetNumberOfIterationsPerLevel(numberOfIterations);
 	}
 
 	return meetsCriteria;
