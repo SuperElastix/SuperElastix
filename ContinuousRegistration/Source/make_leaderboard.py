@@ -6,9 +6,10 @@ import numpy as np
 import json
 import subprocess
 
+date = datetime.now().strftime('%d-%m-%Y')
+
 def run(parameters):
     result_file_names = glob.glob(os.path.join(parameters.output_directory, 'results*'))
-    date = datetime.now().strftime('%d-%m-%Y')
 
     # Most recent first
     result_file_names.sort(reverse=True)
@@ -90,9 +91,11 @@ def run(parameters):
                 if dataset_name not in blueprint['Datasets']:
                     continue
 
+                make_blueprint_results(dataset_name, team_name, blueprint_name, blueprint_results, result_names)
+
                 table += '<tr>'
                 table += '<td>%s</td>' % team_name
-                table += '<td>%s</td>' % blueprint_name
+                table += '<td><a href="%s">%s</a></td>' % (dataset_name + '_' + team_name + '_' + blueprint_name + '.html', blueprint_name)
                 table += '<td>%s</td>' % date
 
                 if repo_commit:
@@ -136,6 +139,61 @@ def run(parameters):
         table_file.write(table)
         table_file.close()
 
+def make_blueprint_results(dataset_name, team_name, blueprint_name, blueprint_results, result_names):
+    blueprint_table = '<!DOCTYPE html>'
+    blueprint_table += '<html>'
+
+    blueprint_table += '<head>'
+    blueprint_table += '<link href="https://rawgit.com/tristen/tablesort/gh-pages/tablesort.css" rel="stylesheet">'
+    blueprint_table += '<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">'
+    blueprint_table += '<script src="https://rawgit.com/tristen/tablesort/gh-pages/dist/tablesort.min.js"></script>'
+    blueprint_table += '<style>'
+    blueprint_table += 'table { width: 100%; } th, td { padding: 5px; text-align: left; }'
+    blueprint_table += '</style>'
+    blueprint_table += '</head>'
+
+    blueprint_table += '<body>'
+    blueprint_table += '<table id="leaderboard-%s" class="sort">' % dataset_name
+
+    # Add table header
+    blueprint_table += '<thead>'
+    blueprint_table += '<tr>'
+    blueprint_table += '<th role="columnheader">Team</th>'
+    blueprint_table += '<th role="columnheader">Blueprint</th>'
+    blueprint_table += '<th role="columnheader">Date</th>'
+
+    for result_name in result_names[dataset_name]:
+        blueprint_table += '<th role="columnheader">%s</th>' % result_name
+    blueprint_table += '</tr>'
+
+    if dataset_name in blueprint_results \
+            and 'result' in blueprint_results[dataset_name]:
+
+        results = blueprint_results[dataset_name]['result']
+        for result in results:
+            blueprint_table += '<tr>'
+            blueprint_table += '<td>%s</td>' % team_name
+            blueprint_table += '<td>%s</td>' % blueprint_name
+            blueprint_table += '<td>%s</td>' % date
+
+            for metric in result:
+                blueprint_table += '<td>%.2f</td>' % metric
+            blueprint_table += '</tr>'
+
+    # Add table footer
+    blueprint_table += '</tbody>'
+    blueprint_table += '</table>'
+
+    blueprint_table += '<script>new Tablesort(document.getElementById("leaderboard-%s"));</script>' % dataset_name
+
+    blueprint_table += '</body>'
+    blueprint_table += '</html>'
+
+    f = open(os.path.join(parameters.output_directory,
+                                        dataset_name + '_' + team_name + '_' + blueprint_name + '.html'), "w")
+
+    f.write(blueprint_table)
+    f.close()
 
 if __name__ == '__main__':
     parameters = parser.parse_args()
