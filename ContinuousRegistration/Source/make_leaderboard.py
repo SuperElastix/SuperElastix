@@ -95,7 +95,7 @@ def run(parameters):
 
                 table += '<tr>'
                 table += '<td>%s</td>' % team_name
-                table += '<td><a href="%s">%s</a></td>' % (dataset_name + '_' + team_name + '_' + blueprint_name + '.html', blueprint_name)
+                table += '<td><a href="%s">%s</a></td>' % ('leaderboard-' + dataset_name + '-' + team_name + '-' + blueprint_name + '.html', blueprint_name)
                 table += '<td>%s</td>' % date
 
                 if repo_commit:
@@ -191,7 +191,7 @@ def make_blueprint_results(dataset_name, team_name, blueprint_name, blueprint_re
     blueprint_table += '</html>'
 
     f = open(os.path.join(parameters.output_directory,
-                                        dataset_name + '_' + team_name + '_' + blueprint_name + '.html'), "w")
+                                        'leaderboard-' + dataset_name + '-' + team_name + '-' + blueprint_name + '.html'), "w")
 
     f.write(blueprint_table)
     f.close()
