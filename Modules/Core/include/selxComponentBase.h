@@ -68,15 +68,15 @@ public:
   blueprint serves as an exclusion criterion whether a certain component 
   of the component database is eligible for the specific node in the graph.
   One-by-one and in arbitrary order, MeetsCriterion handles each property 
-  key-value pair, which may be ordinary properties such as 
-  "NumberOfIterations" : ["100"] or temple properties such 
+  key-value pair, which may be regular properties such as 
+  "NumberOfIterations" : ["100"] or template properties such 
   as "Dimensionality": "3".
 
   Typically, MeetsCriterion is implemented by:
     - checking if the component recognizes the key;
 	  - if key is a template property it must match the value of that of the component, otherwise false is returned
-	  - if the key is a regular property, the value is saved (or assigned to underlying class variables), true is returned
-	- if the key is not recognized, false is returned
+	  - if the key is a regular property, the value is saved (or assigned to underlying class variables). True is returned
+	- if the key is not recognized, false is returned.
   */
   virtual bool MeetsCriterion( const CriterionType & criterion ) = 0;
 
