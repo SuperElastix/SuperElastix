@@ -95,7 +95,7 @@ def run(parameters):
 
                 table += '<tr>'
                 table += '<td>%s</td>' % team_name
-                table += '<td><a href="%s">%s</a></td>' % (dataset_name + '_' + team_name + '_' + blueprint_name + '.html', blueprint_name)
+                table += '<td><a href="%s">%s</a></td>' % ('leaderboard-' + dataset_name + '-' + team_name + '-' + blueprint_name + '.html', blueprint_name)
                 table += '<td>%s</td>' % date
 
                 if repo_commit:
@@ -160,6 +160,7 @@ def make_blueprint_results(dataset_name, team_name, blueprint_name, blueprint_re
     blueprint_table += '<tr>'
     blueprint_table += '<th role="columnheader">Team</th>'
     blueprint_table += '<th role="columnheader">Blueprint</th>'
+    blueprint_table += '<th role="columnheader">DisplacementField</th>'
     blueprint_table += '<th role="columnheader">Date</th>'
 
     for result_name in result_names[dataset_name]:
@@ -169,15 +170,15 @@ def make_blueprint_results(dataset_name, team_name, blueprint_name, blueprint_re
     if dataset_name in blueprint_results \
             and 'result' in blueprint_results[dataset_name]:
 
-        results = blueprint_results[dataset_name]['result']
-        for result in results:
+        for result_name, results in zip(blueprint_results[dataset_name]['name'], blueprint_results[dataset_name]['result']):
             blueprint_table += '<tr>'
             blueprint_table += '<td>%s</td>' % team_name
             blueprint_table += '<td>%s</td>' % blueprint_name
+            blueprint_table += '<td>%s</td>' % result_name
             blueprint_table += '<td>%s</td>' % date
 
-            for metric in result:
-                blueprint_table += '<td>%.2f</td>' % metric
+            for result in results:
+                blueprint_table += '<td>%.2f</td>' % result
             blueprint_table += '</tr>'
 
     # Add table footer
@@ -190,7 +191,7 @@ def make_blueprint_results(dataset_name, team_name, blueprint_name, blueprint_re
     blueprint_table += '</html>'
 
     f = open(os.path.join(parameters.output_directory,
-                                        dataset_name + '_' + team_name + '_' + blueprint_name + '.html'), "w")
+                                        'leaderboard-' + dataset_name + '-' + team_name + '-' + blueprint_name + '.html'), "w")
 
     f.write(blueprint_table)
     f.close()
