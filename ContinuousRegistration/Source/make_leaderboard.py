@@ -153,6 +153,7 @@ def make_blueprint_results(dataset_name, team_name, blueprint_name, blueprint_re
     blueprint_table += '</head>'
 
     blueprint_table += '<body>'
+    blueprint_table += '<a href="leaderboard-' + dataset_name + '.html">Back</a>'
     blueprint_table += '<table id="leaderboard-%s" class="sort">' % dataset_name
 
     # Add table header
@@ -184,6 +185,7 @@ def make_blueprint_results(dataset_name, team_name, blueprint_name, blueprint_re
     # Add table footer
     blueprint_table += '</tbody>'
     blueprint_table += '</table>'
+    blueprint_table += '<a href="leaderboard-' + dataset_name + '.html">Back</a>'
 
     blueprint_table += '<script>new Tablesort(document.getElementById("leaderboard-%s"));</script>' % dataset_name
 
@@ -191,7 +193,7 @@ def make_blueprint_results(dataset_name, team_name, blueprint_name, blueprint_re
     blueprint_table += '</html>'
 
     f = open(os.path.join(parameters.output_directory,
-                                        'leaderboard-' + dataset_name + '-' + team_name + '-' + blueprint_name + '.html'), "w")
+                          'leaderboard-' + dataset_name + '-' + team_name + '-' + blueprint_name + '.html'), "w")
 
     f.write(blueprint_table)
     f.close()
