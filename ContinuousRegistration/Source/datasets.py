@@ -24,31 +24,35 @@ class Dataset:
 
         # Fixed=image0, Moving=image1, Output: image1_to_image0
         root = os.path.splitext(file_names['disp_field_file_names'][0])[0]
-        shell_script_file_name = os.path.join(output_directory, 'sh',
+        shell_script_file_name_0 = os.path.join(output_directory, 'sh',
                                               root.replace('/', '_').replace('\\', '_').replace('.', '_') + '.sh')
 
         if 'mask_file_names' not in file_names:
             file_names['mask_file_names'] = ('', '')
-        with open(shell_script_file_name, 'w') as shell_script:
+        with open(shell_script_file_name_0, 'w') as shell_script:
             shell_script.write(COMMAND_TEMPLATE % (superelastix, blueprint_file_name,
                 'FixedImage=\'%s\' MovingImage=\'%s\' ' % tuple(file_names['image_file_names']),
                 'FixedMask=\'%s\' MovingMask=\'%s\'' % tuple(file_names['mask_file_names']),
                 os.path.join(output_directory, file_names['disp_field_file_names'][0]),
-                os.path.splitext(shell_script_file_name)[0] + '.log'))
+                os.path.splitext(shell_script_file_name_0)[0] + '.log'))
+
+        logging.info('Write %s' % shell_script_file_name_0)
 
         # Fixed=image1, Moving=image0, Output: image0_to_image1
         root = os.path.splitext(file_names['disp_field_file_names'][1])[0]
-        shell_script_file_name = os.path.join(output_directory, 'sh',
+        shell_script_file_name_1 = os.path.join(output_directory, 'sh',
                                               root.replace('/', '_').replace('\\', '_').replace('.', '_') + '.sh')
 
         if 'mask_file_names' not in file_names:
             file_names['mask_file_names'] = ('', '')
-        with open(shell_script_file_name, 'w') as shell_script:
+        with open(shell_script_file_name_1, 'w') as shell_script:
             shell_script.write(COMMAND_TEMPLATE % (superelastix, blueprint_file_name,
                 'FixedImage=\'%s\' MovingImage=\'%s\' ' % tuple(file_names['image_file_names'][::-1]),
                 'FixedMask=\'%s\' MovingMask=\'%s\'' % tuple(file_names['mask_file_names'][::-1]),
                 os.path.join(output_directory, file_names['disp_field_file_names'][1]),
-                os.path.splitext(shell_script_file_name)[0] + '.log'))
+                os.path.splitext(shell_script_file_name_1)[0] + '.log'))
+
+        logging.info('Write %s' % shell_script_file_name_1)
 
     def make_batch_scripts(self):
         pass
