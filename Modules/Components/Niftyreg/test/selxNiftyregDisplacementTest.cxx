@@ -113,7 +113,7 @@ TEST_F( NiftyregDisplacementTest, displacement_conversion )
   affine.m[1][0]=0.1f;affine.m[1][1]=1.1f;affine.m[1][2]=0.1f;affine.m[1][3]=1.f;
   affine.m[2][0]=0.1f;affine.m[2][1]=0.1f;affine.m[1][2]=1.f;affine.m[2][3]=5.f;
   affine.m[3][0]=0.f;affine.m[3][1]=0.f;affine.m[1][2]=0.f;affine.m[3][3]=1.f;
-  reg_mat44_eye(&affine);
+  //reg_mat44_eye(&affine);
   nifti_image *transFieldImage = nifti_copy_nim_info(floating_image);
   transFieldImage->dim[0]=transFieldImage->ndim=5;
   transFieldImage->dim[1]=transFieldImage->nx=floating_image->nx;
@@ -145,7 +145,13 @@ TEST_F( NiftyregDisplacementTest, displacement_conversion )
                     0, // nearest neighbour interpolation
                     0); // 0 padding
 
-  // Convert the deformation field into a displacement field
+  // write warped to disk 
+  reg_io_WriteImageFile(warped_image,dataManager->GetOutputFile("NiftyregDisplacementTest_displacement_conversion_NiftyReg_warped.nii").c_str());
+
+  // write deformation field to disk 
+  reg_io_WriteImageFile(transFieldImage, dataManager->GetOutputFile("NiftyregDisplacementTest_displacement_conversion_NiftyReg_deformation.nii").c_str());
+
+  // Convert the deformation field into a displacement field for itk
   reg_getDisplacementFromDeformation(transFieldImage);
   float *dispPtrX = static_cast<float *>(transFieldImage->data);
   float *dispPtrY = static_cast<float *>(&dispPtrX[warped_image->nvox]);
@@ -155,9 +161,10 @@ TEST_F( NiftyregDisplacementTest, displacement_conversion )
 	  dispPtrY[v] *= -1.f;
   }
 
-  reg_io_WriteImageFile(warped_image,"NiftyregDisplacementTest_displacement_conversion_nifty.nii");
+  // write displacement field to disk 
+  reg_io_WriteImageFile(transFieldImage, dataManager->GetOutputFile("NiftyregDisplacementTest_displacement_conversion_NiftyReg_displacement.nii").c_str());
 
-  // NEED TO ADD THE SELX PART HERE
+  // NEED TO ADD THE ITK PART HERE
   
   using itkImageType = itk::Image<float, 3>;
   std::shared_ptr< nifti_image > nifti_floating_image(floating_image, nifti_image_free);
@@ -167,7 +174,12 @@ TEST_F( NiftyregDisplacementTest, displacement_conversion )
   using itkDisplacementType = itk::Image<itk::Vector<CoordRepType,3>, 3>;
   std::shared_ptr< nifti_image > nifti_transFieldImage(transFieldImage, nifti_image_free);
   auto itkDisplacementImage = selx::NiftiToItkImage<itkDisplacementType, float>::Convert(nifti_transFieldImage);
-
+  
+  // write displacement field to disk 
+  auto itkDisplacementWriter = itk::ImageFileWriter<itkDisplacementType>::New();
+  itkDisplacementWriter->SetFileName(dataManager->GetOutputFile("NiftyregDisplacementTest_displacement_conversion_itk_displacement.nii"));
+  itkDisplacementWriter->SetInput(itkDisplacementImage);
+  itkDisplacementWriter->Update();
 
   using DisplacementFieldTransformType = itk::DisplacementFieldTransform< CoordRepType, 3 >;
   using DisplacementFieldTransformPointer = typename DisplacementFieldTransformType::Pointer;
@@ -194,7 +206,7 @@ TEST_F( NiftyregDisplacementTest, displacement_conversion )
 
   auto itkwriter = itk::ImageFileWriter<itkImageType>::New();
   itkwriter->SetInput(itkwarped);
-  itkwriter->SetFileName("NiftyregDisplacementTest_displacement_conversion_itk.nii");
+  itkwriter->SetFileName(dataManager->GetOutputFile("NiftyregDisplacementTest_displacement_conversion_itk_warped.nii"));
   itkwriter->Update();
 
   // NEED TO ADD THE COMPARISON HERE
