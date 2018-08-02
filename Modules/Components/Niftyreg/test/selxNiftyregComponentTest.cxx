@@ -21,7 +21,6 @@
 
 #include "selxNiftyregReadImageComponent.h"
 #include "selxNiftyregWriteImageComponent.h"
-#include "selxNiftyregWriteImageComponent.h"
 #include "selxItkToNiftiImageSourceComponent.h"
 #include "selxNiftiToItkImageSinkComponent.h"
 #include "selxItkImageSourceComponent.h"
@@ -30,6 +29,9 @@
 #include "selxNiftyregf3dComponent.h"
 #include "selxNiftyregSplineToDisplacementFieldComponent.h"
 #include "selxDisplacementFieldNiftiToItkImageSinkComponent.h"
+#include "selxItkDisplacementFieldSourceComponent.h"
+#include "selxDisplacementFieldImageWarperComponent.h"
+#include "selxItkImageSinkComponent.h"
 #include "selxNiftyregAladinComponent.h"
 #include "selxDataManager.h"
 #include "gtest/gtest.h"
@@ -57,7 +59,10 @@ public:
     ItkImageSourceComponent< 3, float >,
     NiftyregSplineToDisplacementFieldComponent< float>,
     DisplacementFieldNiftiToItkImageSinkComponent< 2, float>,
-    NiftyregAladinComponent< float >> RegisterComponents;
+    NiftyregAladinComponent< float >,
+    ItkDisplacementFieldImageWarperComponent<2, float, float>,
+	ItkDisplacementFieldSourceComponent<2, float>,
+	ItkImageSinkComponent<2, float > > RegisterComponents;
 
   typedef SuperElastixFilterCustomComponents< RegisterComponents > SuperElastixFilterType;
 
@@ -90,12 +95,13 @@ public:
 
 TEST_F( NiftyregComponentTest, Register2d_nifti )
 {
+  // Test Niftyreg using Niftyreg's own file readers and writers (NiftyregReadImageComponent, NiftyregWriteImageComponent are for testing purposes only since they do not implement proper SuperElastix Sinks and Sources). 
   /** make example blueprint configuration */
   BlueprintPointer blueprint = Blueprint::New();
   blueprint->SetComponent( "FixedImage", { { "NameOfClass", { "NiftyregReadImageComponent" } }, { "FileName", { this->dataManager->GetInputFile( "r16slice.nii.gz" ) } } } );
   blueprint->SetComponent( "MovingImage", { { "NameOfClass", { "NiftyregReadImageComponent" } }, { "FileName", { this->dataManager->GetInputFile( "r64slice.nii.gz" ) } } } );
   blueprint->SetComponent( "RegistrationMethod", { { "NameOfClass", { "Niftyregf3dComponent" } } } );
-  blueprint->SetComponent( "ResultImage", { { "NameOfClass", { "NiftyregWriteImageComponent" } }, { "FileName", { this->dataManager->GetOutputFile( "Nifty_warped_r64to16.nii.gz" ) } } } );
+  blueprint->SetComponent( "ResultImage", { { "NameOfClass", { "NiftyregWriteImageComponent" } }, { "FileName", { this->dataManager->GetOutputFile( "Niftireg_warped_r64to16.nii.gz" ) } } } );
 
   blueprint->SetConnection( "FixedImage", "RegistrationMethod", { { "NameOfInterface", { "NiftyregReferenceImageInterface" } } } );
   blueprint->SetConnection( "MovingImage", "RegistrationMethod", { { "NameOfInterface", { "NiftyregFloatingImageInterface" } } } );
@@ -107,6 +113,7 @@ TEST_F( NiftyregComponentTest, Register2d_nifti )
 }
 TEST_F( NiftyregComponentTest, ItkToNiftiImage )
 {
+  // Test for Source component ItkToNiftiImage
   /** make example blueprint configuration */
   BlueprintPointer blueprint = Blueprint::New();
   blueprint->SetComponent( "FixedImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } } );
@@ -130,6 +137,7 @@ TEST_F( NiftyregComponentTest, ItkToNiftiImage )
 
 TEST_F( NiftyregComponentTest, NiftiToItkImage )
 {
+  // Test for Sink component NiftiToItkImage
   /** make example blueprint configuration */
   BlueprintPointer blueprint = Blueprint::New();
   // TODO proper 3d nii.gz input data
@@ -161,6 +169,7 @@ TEST_F( NiftyregComponentTest, NiftiToItkImage )
 
 TEST_F( NiftyregComponentTest, Register2d_itkImages )
 {
+  // Test Niftyreg component with proper sink and source.
   /** make example blueprint configuration */
   // Set max iterations to 1 for speedy tests.
   BlueprintPointer blueprint = Blueprint::New();
@@ -181,7 +190,7 @@ TEST_F( NiftyregComponentTest, Register2d_itkImages )
   blueprint->SetConnection( "FixedImage", "ResultImage", { { "NameOfInterface", { "itkImageDomainFixedInterface" } } } );
   blueprint->SetConnection( "RegistrationMethod", "ResultImage", { { "NameOfInterface", { "NiftyregWarpedImageInterface" } } } );
 
-  blueprint->Write( dataManager->GetOutputFile( "Niftyreg_WBIR.dot" ) );
+  blueprint->Write( dataManager->GetOutputFile( "Register2d_itkImages.dot" ) );
 
   // Set up the readers and writers
   typedef itk::Image< float, 2 >              Image2DType;
@@ -189,13 +198,13 @@ TEST_F( NiftyregComponentTest, Register2d_itkImages )
   typedef itk::ImageFileWriter< Image2DType > ImageWriter2DType;
 
   ImageReader2DType::Pointer fixedImageReader = ImageReader2DType::New();
-  fixedImageReader->SetFileName( dataManager->GetInputFile( "coneA2d64.mhd" ) );
+  fixedImageReader->SetFileName( dataManager->GetInputFile( "r16slice.nii.gz") );
 
   ImageReader2DType::Pointer movingImageReader = ImageReader2DType::New();
-  movingImageReader->SetFileName( dataManager->GetInputFile( "coneB2d64.mhd" ) );
+  movingImageReader->SetFileName( dataManager->GetInputFile( "r64slice.nii.gz" ) );
 
   ImageWriter2DType::Pointer resultImageWriter = ImageWriter2DType::New();
-  resultImageWriter->SetFileName( dataManager->GetOutputFile( "Niftyreg_WBIR_Image.mhd" ) );
+  resultImageWriter->SetFileName( dataManager->GetOutputFile( "Niftireg_warped_r64to16_itkconverted.nii.gz" ) );
 
   //DisplacementImageWriter2DType::Pointer resultDisplacementWriter = DisplacementImageWriter2DType::New();
   //resultDisplacementWriter->SetFileName(dataManager->GetOutputFile("Niftyreg_WBIR_Displacement.mhd"));
@@ -272,6 +281,32 @@ TEST_F( NiftyregComponentTest, WBIRDemo )
   // Update call on the writers triggers SuperElastix to configure and execute
   EXPECT_NO_THROW(resultImageWriter->Update());
   EXPECT_NO_THROW(resultDisplacementWriter->Update());
+}
+TEST_F(NiftyregComponentTest, WarpByDisplacement)
+{
+	//Compare niftyreg warped image with image warped by itk. 
+	//Warped image and displacement field are created by WBIRDemo, which is required to have run.
+	BlueprintPointer blueprint = Blueprint::New();
+	blueprint->MergeFromFile(dataManager->GetConfigurationFile("warp_by_displacement.json"));
+	BlueprintPointer blueprint_dim = Blueprint::New();
+	blueprint_dim->SetComponent("DisplacementFieldImageWarper", { { "Dimensionality", { "2" } }, { "PixelType", { "float" } } });
+	blueprint->ComposeWith(blueprint_dim);
+
+	superElastixFilter->SetLogger(logger);
+	superElastixFilter->SetBlueprint(blueprint);
+
+	auto movingImageReader = superElastixFilter->GetInputFileReader("MovingImage");
+	superElastixFilter->SetInput("MovingImage",movingImageReader->GetOutput());
+	movingImageReader->SetFileName(dataManager->GetInputFile("coneB2d64.mhd"));
+
+	auto displacementReader = superElastixFilter->GetInputFileReader("DisplacementField");
+	superElastixFilter->SetInput("DisplacementField", displacementReader->GetOutput());
+	displacementReader->SetFileName(dataManager->GetOutputFile("Niftyreg_WBIR_Displacement.mhd")); //displacement was output of WBIRDemo
+
+	auto warpedImageWriter = superElastixFilter->GetOutputFileWriter("WarpedImage");
+	warpedImageWriter->SetInput(superElastixFilter->GetOutput("WarpedImage"));
+	warpedImageWriter->SetFileName(this->dataManager->GetOutputFile("Niftyreg_WBIR_Image_warpedbyitk.mhd"));
+	warpedImageWriter->Update();
 }
 
 TEST_F( NiftyregComponentTest, AladinWBIRDemo )
@@ -374,6 +409,33 @@ TEST_F(NiftyregComponentTest, AffineAndBSpline)
   // Update call on the writers triggers SuperElastix to configure and execute
   EXPECT_NO_THROW(resultImageWriter->Update());
 }
+TEST_F(NiftyregComponentTest, niftyreg_vs_itk_warped)
+{
+	// Compare 3 warped images: ResultImageNifti ResultImageITKConverted and ResultImageITKWarped
+	/** make example blueprint configuration */
+	BlueprintPointer blueprint = Blueprint::New();
+	blueprint->SetComponent("FixedImage", { { "NameOfClass", { "NiftyregReadImageComponent" } }, { "FileName", { this->dataManager->GetInputFile("r16slice.nii.gz") } } });
+	blueprint->SetComponent("MovingImage", { { "NameOfClass", { "NiftyregReadImageComponent" } }, { "FileName", { this->dataManager->GetInputFile("r64slice.nii.gz") } } });
+	blueprint->SetComponent("RegistrationMethod", { { "NameOfClass", { "Niftyregf3dComponent" } } });
+	// Test: compare warped
+	blueprint->SetComponent("ResultImageNifti", { { "NameOfClass", { "NiftyregWriteImageComponent" } }, { "FileName", { this->dataManager->GetOutputFile("niftyreg_vs_itk_warped_ResultImageNifti.nii.gz") } } });
+	blueprint->SetComponent("ResultImageITKConverted", { { "NameOfClass", { "NiftiToItkImageSinkComponent" } }, { "Dimensionality", { "2" } }, { "PixelType", { "float" } } });
+	//blueprint->SetComponent("TransformToDisplacementField", { { "NameOfClass", { "NiftyregSplineToDisplacementFieldComponent" } }, { "PixelType", { "float" } } });
 
+	blueprint->SetConnection("FixedImage", "RegistrationMethod", { { "NameOfInterface", { "NiftyregReferenceImageInterface" } } });
+	blueprint->SetConnection("MovingImage", "RegistrationMethod", { { "NameOfInterface", { "NiftyregFloatingImageInterface" } } });
+	blueprint->SetConnection("RegistrationMethod", "ResultImageNifti", { {} }); //{ { "NameOfInterface", { "NiftyregWarpedImageInterface" } } });
+	blueprint->SetConnection("RegistrationMethod", "ResultImageITKConverted", { {} }); //{ { "NameOfInterface", { "NiftyregWarpedImageInterface" } } });
+	//blueprint->SetConnection("RegistrationMethod", "TransformToDisplacementField", { {} });
+
+	EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
+	EXPECT_NO_THROW(superElastixFilter->SetLogger(logger));
+	auto ResultImageITKWriter = superElastixFilter->GetOutputFileWriter("ResultImageITKConverted");
+	ResultImageITKWriter->SetInput(superElastixFilter->GetOutput("ResultImageITKConverted"));
+	ResultImageITKWriter->SetFileName(this->dataManager->GetOutputFile("niftyreg_vs_itk_warped_ResultImageITKConverted.nii.gz"));
+	ResultImageITKWriter->Update();
+
+	//EXPECT_NO_THROW(superElastixFilter->Update());
+}
 
 }

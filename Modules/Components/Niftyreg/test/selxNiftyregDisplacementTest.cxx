@@ -21,7 +21,6 @@
 
 #include "selxNiftyregReadImageComponent.h"
 #include "selxNiftyregWriteImageComponent.h"
-#include "selxNiftyregWriteImageComponent.h"
 #include "selxItkToNiftiImageSourceComponent.h"
 #include "selxNiftiToItkImageSinkComponent.h"
 #include "selxItkImageSourceComponent.h"
@@ -230,4 +229,6 @@ TEST_F( NiftyregDisplacementTest, displacement_conversion )
   //nifti_image_free(warped_image);
   //nifti_image_free(transFieldImage);
 }
+
+
 }
