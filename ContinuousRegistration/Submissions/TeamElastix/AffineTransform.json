@@ -19,7 +19,7 @@
         "ParameterMap0CheckNumberOfSamples": "true",
         "ParameterMap0MaximumNumberOfSamplingAttempts": "8",
         "ParameterMap0NewSamplesEveryIteration": "true",
-        "ParameterMap0NumberOfSamplesForExactGradient": "40000",
+        "ParameterMap0NumberOfSamplesForExactGradient": "8000",
         "ParameterMap0DefaultPixelValue": "0.0",
         "ParameterMap0AutomaticParameterEstimation": "true",
         "ParameterMap0WriteResultImage": "true",
