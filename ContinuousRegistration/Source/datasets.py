@@ -36,7 +36,7 @@ class Dataset:
                 os.path.join(output_directory, file_names['disp_field_file_names'][0]),
                 os.path.splitext(shell_script_file_name_0)[0] + '.log'))
 
-        logging.info('Write %s' % shell_script_file_name_0)
+        logging.info('Wrote %s' % shell_script_file_name_0)
 
         # Fixed=image1, Moving=image0, Output: image0_to_image1
         root = os.path.splitext(file_names['disp_field_file_names'][1])[0]
@@ -52,7 +52,7 @@ class Dataset:
                 os.path.join(output_directory, file_names['disp_field_file_names'][1]),
                 os.path.splitext(shell_script_file_name_1)[0] + '.log'))
 
-        logging.info('Write %s' % shell_script_file_name_1)
+        logging.info('Wrote %s' % shell_script_file_name_1)
 
     def make_batch_scripts(self):
         pass
