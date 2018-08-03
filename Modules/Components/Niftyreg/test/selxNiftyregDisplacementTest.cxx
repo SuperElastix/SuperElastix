@@ -34,7 +34,7 @@
 #include "itkDisplacementFieldTransform.h"
 #include "itkResampleImageFilter.h"
 #include "itkNearestNeighborInterpolateImageFunction.h"
-#include <itkTestingComparisonImageFilter.h>
+#include "itkTestingComparisonImageFilter.h"
 
 #include "selxDataManager.h"
 #include "gtest/gtest.h"
@@ -93,7 +93,7 @@ public:
   DataManagerType::Pointer dataManager;
 };
 
-TEST_F( NiftyregDisplacementTest, displacement_conversion )
+TEST_F( NiftyregDisplacementTest, DISABLED_displacement_conversion )
 {
   /** make example blueprint configuration */
 

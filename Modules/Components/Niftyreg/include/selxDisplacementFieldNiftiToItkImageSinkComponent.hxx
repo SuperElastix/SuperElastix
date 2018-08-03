@@ -109,6 +109,17 @@ void
 DisplacementFieldNiftiToItkImageSinkComponent< Dimensionality, TPixel >::Update()
 {
   auto displacementFieldNiftiImage = this->m_DisplacementFieldInterface->GetDisplacementFieldNiftiImage();
+  displacementFieldNiftiImage->scl_slope = -1;
+  //auto region = m_MiniPipelineOutputImage->GetOutput()->GetRegion();
+  // auto  other->GetItkImageDomainFixed()->GetLargestPossibleRegion()
+  /*float *dispPtrX = static_cast<float *>(displacementFieldNiftiImage->data);
+  float *dispPtrY = static_cast<float *>(&dispPtrX[displacementFieldNiftiImage->nvox]);
+  float *dispPtrZ = static_cast<float *>(&dispPtrY[displacementFieldNiftiImage->nvox]);
+  for (int v = 0; v < displacementFieldNiftiImage->nvox; v++) {
+	  dispPtrX[v] *= -1.f;
+	  dispPtrY[v] *= -1.f;
+  }
+  */
   auto displacementFieldItkImage   = NiftiToItkImage< ItkDisplacementFieldType, TPixel >::Convert( displacementFieldNiftiImage );
   //auto displacementFieldItkImage = NiftiToItkImage< itk::Image< TPixel, Dimensionality >, TPixel >::Convert(displacementFieldNiftiImage);
   this->m_MiniPipelineOutputImage->Graft( displacementFieldItkImage );

@@ -26,6 +26,7 @@
 #include "selxItkImageSourceComponent.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
+#include "itkTestingComparisonImageFilter.h"
 #include "selxNiftyregf3dComponent.h"
 #include "selxNiftyregSplineToDisplacementFieldComponent.h"
 #include "selxDisplacementFieldNiftiToItkImageSinkComponent.h"
@@ -282,10 +283,11 @@ TEST_F( NiftyregComponentTest, WBIRDemo )
   EXPECT_NO_THROW(resultImageWriter->Update());
   EXPECT_NO_THROW(resultDisplacementWriter->Update());
 }
-TEST_F(NiftyregComponentTest, WarpByDisplacement)
+TEST_F(NiftyregComponentTest, WarpByItkDisplacement)
 {
 	//Compare niftyreg warped image with image warped by itk. 
 	//Warped image and displacement field are created by WBIRDemo, which is required to have run.
+	//TODO: make this an independent test. To run everything in one blueprint, currently an extra component is needed that can convert niftyreg bspline image to itk displacement field (and not pass as sink). Or, if passed to sink this test should have two chained superelastices.
 	BlueprintPointer blueprint = Blueprint::New();
 	blueprint->MergeFromFile(dataManager->GetConfigurationFile("warp_by_displacement.json"));
 	BlueprintPointer blueprint_dim = Blueprint::New();
@@ -307,6 +309,19 @@ TEST_F(NiftyregComponentTest, WarpByDisplacement)
 	warpedImageWriter->SetInput(superElastixFilter->GetOutput("WarpedImage"));
 	warpedImageWriter->SetFileName(this->dataManager->GetOutputFile("Niftyreg_WBIR_Image_warpedbyitk.mhd"));
 	warpedImageWriter->Update();
+	using itkWarpedImageType = itk::Image<float,2>;
+	auto diff = itk::Testing::ComparisonImageFilter<itkWarpedImageType, itkWarpedImageType>::New();
+	diff->SetTestInput(superElastixFilter->GetOutput<itkWarpedImageType>("WarpedImage"));
+	auto niftyreg_warped_image_reader = itk::ImageFileReader<itkWarpedImageType>::New();
+	niftyreg_warped_image_reader->SetFileName(dataManager->GetOutputFile("Niftyreg_WBIR_Image.mhd")); // read Output of WBIRDemo
+	diff->SetValidInput(niftyreg_warped_image_reader->GetOutput());
+	diff->SetDifferenceThreshold(0.0);
+	//diff->SetToleranceRadius(radiusTolerance);
+	diff->UpdateLargestPossibleRegion();
+	bool differenceFailed = false;
+	const double averageIntensityDifference = diff->GetTotalDifference();
+	EXPECT_FLOAT_EQ(0.0, averageIntensityDifference);
+
 }
 
 TEST_F( NiftyregComponentTest, AladinWBIRDemo )
@@ -409,7 +424,7 @@ TEST_F(NiftyregComponentTest, AffineAndBSpline)
   // Update call on the writers triggers SuperElastix to configure and execute
   EXPECT_NO_THROW(resultImageWriter->Update());
 }
-TEST_F(NiftyregComponentTest, niftyreg_vs_itk_warped)
+TEST_F(NiftyregComponentTest, DISABLED_niftyreg_vs_itk_warped)
 {
 	// Compare 3 warped images: ResultImageNifti ResultImageITKConverted and ResultImageITKWarped
 	/** make example blueprint configuration */
