@@ -455,33 +455,4 @@ TEST_F(NiftyregComponentTest, AffineAndBSpline)
   // Update call on the writers triggers SuperElastix to configure and execute
   EXPECT_NO_THROW(resultImageWriter->Update());
 }
-TEST_F(NiftyregComponentTest, DISABLED_niftyreg_vs_itk_warped)
-{
-	// Compare 3 warped images: ResultImageNifti ResultImageITKConverted and ResultImageITKWarped
-	/** make example blueprint configuration */
-	BlueprintPointer blueprint = Blueprint::New();
-	blueprint->SetComponent("FixedImage", { { "NameOfClass", { "NiftyregReadImageComponent" } }, { "FileName", { this->dataManager->GetInputFile("r16slice.nii.gz") } } });
-	blueprint->SetComponent("MovingImage", { { "NameOfClass", { "NiftyregReadImageComponent" } }, { "FileName", { this->dataManager->GetInputFile("r64slice.nii.gz") } } });
-	blueprint->SetComponent("RegistrationMethod", { { "NameOfClass", { "Niftyregf3dComponent" } } });
-	// Test: compare warped
-	blueprint->SetComponent("ResultImageNifti", { { "NameOfClass", { "NiftyregWriteImageComponent" } }, { "FileName", { this->dataManager->GetOutputFile("niftyreg_vs_itk_warped_ResultImageNifti.nii.gz") } } });
-	blueprint->SetComponent("ResultImageITKConverted", { { "NameOfClass", { "NiftiToItkImageSinkComponent" } }, { "Dimensionality", { "2" } }, { "PixelType", { "float" } } });
-	//blueprint->SetComponent("TransformToDisplacementField", { { "NameOfClass", { "NiftyregSplineToDisplacementFieldComponent" } }, { "PixelType", { "float" } } });
-
-	blueprint->SetConnection("FixedImage", "RegistrationMethod", { { "NameOfInterface", { "NiftyregReferenceImageInterface" } } });
-	blueprint->SetConnection("MovingImage", "RegistrationMethod", { { "NameOfInterface", { "NiftyregFloatingImageInterface" } } });
-	blueprint->SetConnection("RegistrationMethod", "ResultImageNifti", { {} }); //{ { "NameOfInterface", { "NiftyregWarpedImageInterface" } } });
-	blueprint->SetConnection("RegistrationMethod", "ResultImageITKConverted", { {} }); //{ { "NameOfInterface", { "NiftyregWarpedImageInterface" } } });
-	//blueprint->SetConnection("RegistrationMethod", "TransformToDisplacementField", { {} });
-
-	EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
-	EXPECT_NO_THROW(superElastixFilter->SetLogger(logger));
-	auto ResultImageITKWriter = superElastixFilter->GetOutputFileWriter("ResultImageITKConverted");
-	ResultImageITKWriter->SetInput(superElastixFilter->GetOutput("ResultImageITKConverted"));
-	ResultImageITKWriter->SetFileName(this->dataManager->GetOutputFile("niftyreg_vs_itk_warped_ResultImageITKConverted.nii.gz"));
-	ResultImageITKWriter->Update();
-
-	//EXPECT_NO_THROW(superElastixFilter->Update());
-}
-
 }
