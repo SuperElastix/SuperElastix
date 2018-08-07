@@ -24,31 +24,35 @@ class Dataset:
 
         # Fixed=image0, Moving=image1, Output: image1_to_image0
         root = os.path.splitext(file_names['disp_field_file_names'][0])[0]
-        shell_script_file_name = os.path.join(output_directory, 'sh',
+        shell_script_file_name_0 = os.path.join(output_directory, 'sh',
                                               root.replace('/', '_').replace('\\', '_').replace('.', '_') + '.sh')
 
         if 'mask_file_names' not in file_names:
             file_names['mask_file_names'] = ('', '')
-        with open(shell_script_file_name, 'w') as shell_script:
+        with open(shell_script_file_name_0, 'w') as shell_script:
             shell_script.write(COMMAND_TEMPLATE % (superelastix, blueprint_file_name,
                 'FixedImage=\'%s\' MovingImage=\'%s\' ' % tuple(file_names['image_file_names']),
                 'FixedMask=\'%s\' MovingMask=\'%s\'' % tuple(file_names['mask_file_names']),
                 os.path.join(output_directory, file_names['disp_field_file_names'][0]),
-                os.path.splitext(shell_script_file_name)[0] + '.log'))
+                os.path.splitext(shell_script_file_name_0)[0] + '.log'))
+
+        logging.info('Wrote %s' % shell_script_file_name_0)
 
         # Fixed=image1, Moving=image0, Output: image0_to_image1
         root = os.path.splitext(file_names['disp_field_file_names'][1])[0]
-        shell_script_file_name = os.path.join(output_directory, 'sh',
+        shell_script_file_name_1 = os.path.join(output_directory, 'sh',
                                               root.replace('/', '_').replace('\\', '_').replace('.', '_') + '.sh')
 
         if 'mask_file_names' not in file_names:
             file_names['mask_file_names'] = ('', '')
-        with open(shell_script_file_name, 'w') as shell_script:
+        with open(shell_script_file_name_1, 'w') as shell_script:
             shell_script.write(COMMAND_TEMPLATE % (superelastix, blueprint_file_name,
                 'FixedImage=\'%s\' MovingImage=\'%s\' ' % tuple(file_names['image_file_names'][::-1]),
                 'FixedMask=\'%s\' MovingMask=\'%s\'' % tuple(file_names['mask_file_names'][::-1]),
                 os.path.join(output_directory, file_names['disp_field_file_names'][1]),
-                os.path.splitext(shell_script_file_name)[0] + '.log'))
+                os.path.splitext(shell_script_file_name_1)[0] + '.log'))
+
+        logging.info('Wrote %s' % shell_script_file_name_1)
 
     def make_batch_scripts(self):
         pass
@@ -74,7 +78,7 @@ class Dataset:
             os.path.join(output_directory, file_names['disp_field_file_names'][1]))
 
         point_sets = (self.read_point_set(file_names['ground_truth_file_names'][0]),
-                      self.read_point_set(file_names['ground_truth_file_names'][0]))
+                      self.read_point_set(file_names['ground_truth_file_names'][1]))
 
         tre_0, tre_1 = tre(superelastix, point_sets, disp_field_paths)
         hausdorff_0, hausdorff_1 = hausdorff(superelastix, point_sets, disp_field_paths)
@@ -413,11 +417,15 @@ class HAMMERS(Dataset):
                        for image in os.listdir(input_directory)
                        if image.endswith('.nii.gz') and not 'seg' in image]
         image_file_names = [pair for pair in combinations(image_file_names, 2)]
+        image_file_names = sorted(image_file_names,
+                                  key=lambda f: f[0] + f[1])
 
         label_file_names = [os.path.join(input_directory, image)
                        for image in os.listdir(input_directory)
                        if image.endswith('seg.nii.gz')]
         label_file_names = [pair for pair in combinations(label_file_names, 2)]
+        image_file_names = sorted(image_file_names,
+                                  key=lambda f: f[0] + f[1])
 
         disp_field_file_names = [create_disp_field_names(image_file_name_pair, self.name)
                                  for image_file_name_pair in image_file_names]
@@ -662,9 +670,10 @@ class SPREAD(Dataset):
             mask_file_names = (os.path.join(input_directory, 'mhd', sub_directory, 'baseline_1_mask_vi_semiauto.mha'),
                                 os.path.join(input_directory, 'mhd', sub_directory, 'followup_1_mask_vi_semiauto.mha'))
 
-            name = sub_directory + '_baseline_1_Cropped_point' '.txt'
-            point_set_0_file_name = os.path.join(input_directory, 'groundtruth', 'distinctivePoints', name)
-            point_set_1_file_name = os.path.join(input_directory, 'groundtruth', 'annotate', 'Consensus', name)
+            point_set_0_file_name = os.path.join(input_directory, 'groundtruth', 'distinctivePoints',
+                                                 sub_directory + '_baseline_1_Cropped_point.txt')
+            point_set_1_file_name = os.path.join(input_directory, 'groundtruth', 'annotate', 'Consensus',
+                                                 sub_directory + '_b1f1_point.txt')
             point_set_file_names = (point_set_0_file_name, point_set_1_file_name)
 
             disp_field_file_names = (os.path.join(self.name, sub_directory, 'followup_to_baseline.mha'),
@@ -783,6 +792,8 @@ def load_datasets(parameters):
                         parameters.output_directory,
                         parameters.max_number_of_registrations_per_dataset)
         datasets[cumc12.name] = cumc12
+        logging.debug('Using these files for registration:\n{0}'.format(json.dumps(cumc12.file_names, indent=2)))
+
 
     if parameters.dirlab_input_directory is not None:
         logging.info('Loading dataset DIRLAB.')
@@ -791,12 +802,14 @@ def load_datasets(parameters):
                         parameters.output_directory,
                         parameters.max_number_of_registrations_per_dataset)
         datasets[dirlab.name] = dirlab
+        logging.debug('Using these files for registration:\n{0}'.format(json.dumps(dirlab.file_names, indent=2)))
 
     if parameters.empire_input_directory is not None:
         logging.info('Loading dataset EMPIRE.')
         empire = EMPIRE(parameters.empire_input_directory,
                         parameters.max_number_of_registrations_per_dataset)
         datasets[empire.name] = empire
+        logging.debug('Using these files for registration:\n{0}'.format(json.dumps(empire.file_names, indent=2)))
 
     if parameters.hammers_input_directory is not None:
         logging.info('Loading dataset HAMMERS.')
@@ -804,6 +817,7 @@ def load_datasets(parameters):
                         parameters.output_directory,
                         parameters.max_number_of_registrations_per_dataset)
         datasets[hammers.name] = hammers
+        logging.debug('Using these files for registration:\n{0}'.format(json.dumps(hammers.file_names, indent=2)))
 
     if parameters.isbr18_input_directory is not None:
         logging.info('Loading dataset ISBR18.')
@@ -811,6 +825,7 @@ def load_datasets(parameters):
                         parameters.output_directory,
                         parameters.max_number_of_registrations_per_dataset)
         datasets[isbr18.name] = isbr18
+        logging.debug('Using these files for registration:\n{0}'.format(json.dumps(isbr18.file_names, indent=2)))
 
     if parameters.lpba40_input_directory is not None:
         logging.info('Loading dataset LPBA40.')
@@ -818,6 +833,7 @@ def load_datasets(parameters):
                         parameters.output_directory,
                         parameters.max_number_of_registrations_per_dataset)
         datasets[lpba40.name] = lpba40
+        logging.debug('Using these files for registration:\n{0}'.format(json.dumps(lpba40.file_names, indent=2)))
 
     if parameters.mgh10_input_directory is not None:
         logging.info('Loading dataset MGH10.')
@@ -825,6 +841,7 @@ def load_datasets(parameters):
                       parameters.output_directory,
                       parameters.max_number_of_registrations_per_dataset)
         datasets[mgh10.name] = mgh10
+        logging.debug('Using these files for registration:\n{0}'.format(json.dumps(mgh10.file_names, indent=2)))
 
     if parameters.popi_input_directory is not None:
         logging.info('Loading dataset POPI.')
@@ -833,6 +850,7 @@ def load_datasets(parameters):
                     parameters.output_directory,
                     parameters.max_number_of_registrations_per_dataset)
         datasets[popi.name] = popi
+        logging.debug('Using these files for registration:\n{0}'.format(json.dumps(popi.file_names, indent=2)))
 
     if parameters.spread_input_directory is not None:
         logging.info('Loading dataset SPREAD.')
@@ -840,6 +858,7 @@ def load_datasets(parameters):
                         parameters.output_directory,
                         parameters.max_number_of_registrations_per_dataset)
         datasets[spread.name] = spread
+        logging.debug('Using these files for registration:\n{0}'.format(json.dumps(spread.file_names, indent=2)))
 
     if parameters.hbia_input_directory is not None:
         logging.info('Loading dataset HistoBIA.')
@@ -848,5 +867,6 @@ def load_datasets(parameters):
                     parameters.max_number_of_registrations_per_dataset,
                     scale=10)
         datasets[hbia.name] = hbia
+        logging.debug('Using these files for registration:\n{0}'.format(json.dumps(hbia.file_names, indent=2)))
 
     return datasets

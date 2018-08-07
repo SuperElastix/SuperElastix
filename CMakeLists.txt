@@ -77,7 +77,12 @@ if( ${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC )
       "Please move the build directory to a directory with a shorter path."
     )
   endif()
-
+  
+  # Avoid many warnings, originating mainly from NiftyReg
+  add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+  # Avoid many warnings, originating mainly from GoogleTest
+  add_definitions(-D_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
+  
   # Explicitly add INCREMENTAL linking option to command lines.
   # http://www.cmake.org/pipermail/cmake/2010-February/035174.html
   # set( MSVC_INCREMENTAL_DEFAULT ON )

@@ -32,7 +32,6 @@ node('lkeb-vm-test') {
               echo "Deploy this build of develop on shark cluster"
               rsync -vr --delete ContinuousRegistration sa_lkeb@shark:/exports/lkeb-hpc/sa_lkeb/SuperElastix-deployed/
               scp -p ../build/Applications-build/CommandLineInterface/SuperElastix sa_lkeb@shark:/exports/lkeb-hpc/sa_lkeb/SuperElastix-deployed/
-
             else
               echo "This is not the develop branch, thus do not deploy"
             fi

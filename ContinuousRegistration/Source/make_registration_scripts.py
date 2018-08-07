@@ -30,6 +30,7 @@ parser.add_argument('--team-name', '-tn',
 parser.add_argument('--blueprint-file-name', '-bfn', action='append',
                     help="If specified, only generated shell scripts for this blueprint.")
 parser.add_argument('--max-number-of-registrations-per-dataset', '-mnorpd', type=int, default=8)
+parser.add_argument('--source-directory', '-srcd', default='.')
 
 
 def run(parameters):
