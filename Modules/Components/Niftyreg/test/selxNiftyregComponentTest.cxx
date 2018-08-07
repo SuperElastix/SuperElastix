@@ -29,7 +29,7 @@
 #include "itkTestingComparisonImageFilter.h"
 #include "itkUnaryFunctorImageFilter.h"
 #include "selxFunctor.h"
-#include "itkMaskNegatedImageFilter.h"
+#include "itkMaskImageFilter.h"
 #include "itkStatisticsImageFilter.h"
 #include "selxNiftyregf3dComponent.h"
 #include "selxNiftyregSplineToDisplacementFieldComponent.h"
@@ -334,17 +334,18 @@ TEST_F(NiftyregComponentTest, WarpByItkDisplacement)
 	EXPECT_LT(numberOfNans,100);
 
 	// set values of both image to zero at the nan positions
-    auto maskNegatedImageFilter1 = itk::MaskNegatedImageFilter<itkWarpedImageType, Mask2DType, itkWarpedImageType>::New();
-	maskNegatedImageFilter1->SetMaskImage(nanMask);
-	maskNegatedImageFilter1->SetInput(niftyreg_warped_image_reader->GetOutput());
+    auto maskImageFilter1 = itk::MaskImageFilter<itkWarpedImageType, Mask2DType, itkWarpedImageType>::New();
+	maskImageFilter1->SetMaskImage(nanMask);
+	maskImageFilter1->SetInput(niftyreg_warped_image_reader->GetOutput());
 
-	auto maskNegatedImageFilter2 = itk::MaskNegatedImageFilter<itkWarpedImageType, Mask2DType, itkWarpedImageType>::New();
-	maskNegatedImageFilter2->SetMaskImage(nanMask);
-	maskNegatedImageFilter2->SetInput(superElastixFilter->GetOutput<itkWarpedImageType>("WarpedImage"));
+
+	auto maskImageFilter2 = itk::MaskImageFilter<itkWarpedImageType, Mask2DType, itkWarpedImageType>::New();
+	maskImageFilter2->SetMaskImage(nanMask);
+	maskImageFilter2->SetInput(superElastixFilter->GetOutput<itkWarpedImageType>("WarpedImage"));
 
 	auto diff = itk::Testing::ComparisonImageFilter<itkWarpedImageType, itkWarpedImageType>::New();
-	diff->SetTestInput(maskNegatedImageFilter1->GetOutput());
-	diff->SetValidInput(maskNegatedImageFilter2->GetOutput());
+	diff->SetTestInput(maskImageFilter1->GetOutput());
+	diff->SetValidInput(maskImageFilter2->GetOutput());
 	diff->SetDifferenceThreshold(0.0);
 	//diff->SetToleranceRadius(radiusTolerance);
 	diff->UpdateLargestPossibleRegion();
