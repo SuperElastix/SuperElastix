@@ -26,17 +26,13 @@ template< int Dimensionality, class TPixel >
 MonolithicElastixComponent< Dimensionality, TPixel >::MonolithicElastixComponent( const std::string & name,
   LoggerImpl & logger ) : Superclass( name, logger )
 {
-  m_elastixFilter = ElastixFilterType::New();
+  m_ParameterObject = ParameterObjectType::New();
+  m_ElastixFilter = ElastixFilterType::New();
+  m_ElastixFilter->LogToConsoleOn();
+  m_ElastixFilter->LogToFileOff();
+  m_ElastixFilter->SetOutputDirectory( "." );
 
-  // TODO: Due to some issues with Criteria being propagated as elastix settings, I need to empty the selxparameterObject.
-  elxParameterObjectPointer elxParameterObject = elxParameterObjectType::New();
-  typename elxParameterObjectType::ParameterMapType defaultParameters = elxParameterObject->GetDefaultParameterMap( "rigid" );
-
-  elxParameterObject->SetParameterMap( defaultParameters );
-  m_elastixFilter->SetParameterObject( elxParameterObject );
-  m_elastixFilter->LogToConsoleOn();
-  m_elastixFilter->LogToFileOff();
-  m_elastixFilter->SetOutputDirectory( "." );
+  this->m_HowToCite = "Klein S, Staring M, Murphy K, Viergever MA, Pluim JP. Elastix: a toolbox for intensity-based medical image registration. IEEE transactions on medical imaging. 2010 Jan;29(1):196-205";
 }
 
 
@@ -52,7 +48,7 @@ MonolithicElastixComponent< Dimensionality, TPixel >::Accept( typename itkImageF
 {
   auto fixedImage = component->GetItkImageFixed();
   // connect the itk pipeline
-  this->m_elastixFilter->SetFixedImage( fixedImage );
+  this->m_ElastixFilter->SetFixedImage( fixedImage );
   return 0;
 }
 
@@ -63,7 +59,7 @@ MonolithicElastixComponent< Dimensionality, TPixel >::Accept( typename itkImageM
 {
   auto movingImage = component->GetItkImageMoving();
   // connect the itk pipeline
-  this->m_elastixFilter->SetMovingImage( movingImage );
+  this->m_ElastixFilter->SetMovingImage( movingImage );
   return 0;
 }
 
@@ -73,7 +69,7 @@ MonolithicElastixComponent< Dimensionality, TPixel >::Accept(typename itkImageFi
 {
   auto fixedMaskImage = component->GetItkImageFixedMask();
   // connect the itk pipeline
-  this->m_elastixFilter->SetFixedMask(fixedMaskImage);
+  this->m_ElastixFilter->SetFixedMask(fixedMaskImage);
   return 0;
 }
 
@@ -84,7 +80,7 @@ MonolithicElastixComponent< Dimensionality, TPixel >::Accept(typename itkImageMo
 {
   auto movingMaskImage = component->GetItkImageMovingMask();
   // connect the itk pipeline
-  this->m_elastixFilter->SetMovingMask(movingMaskImage);
+  this->m_ElastixFilter->SetMovingMask(movingMaskImage);
   return 0;
 }
 
@@ -92,7 +88,8 @@ template< int Dimensionality, class TPixel >
 typename MonolithicElastixComponent< Dimensionality, TPixel >::ItkImagePointer
 MonolithicElastixComponent< Dimensionality, TPixel >::GetItkImage()
 {
-  return this->m_elastixFilter->GetOutput();
+  this->m_ElastixFilter->SetParameterObject(this->m_ParameterObject);
+  return this->m_ElastixFilter->GetOutput();
 }
 
 
@@ -100,14 +97,15 @@ template< int Dimensionality, class TPixel >
 typename MonolithicElastixComponent< Dimensionality,
 TPixel >::elastixTransformParameterObject * MonolithicElastixComponent< Dimensionality, TPixel >::GetTransformParameterObject()
 {
-  return this->m_elastixFilter->GetTransformParameterObject();
+  return this->m_ElastixFilter->GetTransformParameterObject();
 }
 
 template< int Dimensionality, class TPixel >
 void
 MonolithicElastixComponent< Dimensionality, TPixel >::Update( void )
 {
-  this->m_elastixFilter->Update();
+  this->m_ElastixFilter->SetParameterObject(this->m_ParameterObject);
+  this->m_ElastixFilter->Update();
 }
 
 
@@ -128,42 +126,36 @@ MonolithicElastixComponent< Dimensionality, TPixel >
     return false;
   } // else: CriterionStatus::Unknown
 
-  else if( criterion.first == "RegistrationPreset" )  //Supports this?
-  {
-    // Temporary solution: RegistrationPreset: rigid, nonrigid, etc overwrite the current selxparameterObject.
-    // Warning: the order of Criteria matters, since selxparameterObject may be overwritten
-    // Warning: this probably fails because the Criteria map entries are processed in arbitrary order.
+  // Check if this is a parameter map setting
+  if(strncmp(criterion.first.c_str(), "ParameterMap", 12) == 0) {
+    // Add to parameter map
+    std::stringstream ss;
+    ss << criterion.first.substr(12, 13);
+    unsigned int parameterMapIndex = 0;
+    ss >> parameterMapIndex;
 
-    elxParameterObjectPointer elxParameterObject = elxParameterObjectType::New();
-
-    meetsCriteria = true;
-    for( auto const & presetName : criterion.second )  // auto&& preferred?
-    {
-      typename elxParameterObjectType::ParameterMapType presetParameters = elxParameterObject->GetDefaultParameterMap( presetName );
-      elxParameterObject->SetParameterMap( presetParameters );
-
-      try
-      {
-        this->m_elastixFilter->SetParameterObject( elxParameterObject );
-      }
-      catch( itk::ExceptionObject & err )
-      {
-        this->Error( err.what() );
-        meetsCriteria = false;
-      }
+    if(!ss.good()) {
+      this->m_Logger.Log(LogLevel::ERR, "Expected parameter map number, got {}.", parameterMapIndex);
+      return false;
     }
+
+    // Create new parameter map
+    while(this->m_ParameterObject->GetParameterMap().size() <= parameterMapIndex) {
+      this->m_ParameterObject->AddParameterMap(ParameterObjectType::ParameterMapType());
+    }
+
+    std::string parameterKey = criterion.first.substr(13);
+
+    if(parameterKey == "Preset") {
+      this->m_ParameterObject->SetParameterMap(parameterMapIndex,
+                                               this->m_ParameterObject->GetDefaultParameterMap(criterion.second[0]));
+    }
+
+    this->m_ParameterObject->SetParameter(parameterMapIndex, parameterKey, criterion.second);
+
+    return true;
   }
-  else
-  {
-    // temporary solution: pass all SuperMonolithicElastixComponent parameters as is to elastix. This should be defined in deeper hierarchy of the criteria, but for now we have a flat mapping only.
-    elxParameterObjectPointer elxParameterObject = this->m_elastixFilter->GetParameterObject();
-    typename elxParameterObjectType::ParameterMapType newParameterMap = elxParameterObject->GetParameterMap( 0 ); //copy const paramtermap to a non const map
-    newParameterMap[ criterion.first ]                                = criterion.second;                         //overwrite element
-    elxParameterObjectPointer newParameterObject = elxParameterObjectType::New();
-    newParameterObject->SetParameterMap( newParameterMap );
-    this->m_elastixFilter->SetParameterObject( newParameterObject );
-    meetsCriteria = true;
-  }
+
   return meetsCriteria;
 }
 

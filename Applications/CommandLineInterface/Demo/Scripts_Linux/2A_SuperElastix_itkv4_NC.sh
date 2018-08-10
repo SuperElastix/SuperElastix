@@ -1,1 +1,1 @@
-../SuperElastix --conf ../Configuration/itkv4_SVF_ANTsCC.json --graphout 2A_graph_itkv4_NC.dot --in FixedImage=../Data/coneA2d64.mhd MovingImage=../Data/coneB2d64.mhd --out ResultImage=2A_image_itkv4_NC.mhd ResultDisplacementField=2A_deformation_itkv4_NC.mhd
+../SuperElastix --conf ../Configuration/itkv4_SVF_ANTsCC.json --graphout 2A_graph_itkv4_NC.dot --in FixedImage=../Data/coneA2d64.mhd MovingImage=../Data/coneB2d64.mhd --out ResultImage=2A_image_itkv4_NC.mhd ResultDisplacementField=2A_deformation_itkv4_NC.mhd  --loglevel trace

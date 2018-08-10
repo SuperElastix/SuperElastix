@@ -23,7 +23,7 @@
 namespace selx
 {
 using ModuleItkSyNImageRegistrationMethodComponents = selx::TypeList<
-  ItkSyNImageRegistrationMethodComponent< 3, double, double >,
+  ItkSyNImageRegistrationMethodComponent< 3, float, double >,
   ItkSyNImageRegistrationMethodComponent< 2, float, double >
   >;
 }

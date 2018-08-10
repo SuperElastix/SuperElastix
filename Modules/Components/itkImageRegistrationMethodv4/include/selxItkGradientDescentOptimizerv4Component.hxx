@@ -83,7 +83,7 @@ ItkGradientDescentOptimizerv4Component< InternalComputationValueType >
         this->m_Optimizer->SetNumberOfIterations( std::stoi( criterionValue ) );
         meetsCriteria = true;
       }
-      catch( itk::ExceptionObject & err )
+      catch( itk::ExceptionObject & itkNotUsed(err) )
       {
         //TODO log the error message?
         meetsCriteria = false;
@@ -106,7 +106,7 @@ ItkGradientDescentOptimizerv4Component< InternalComputationValueType >
         //this->m_Optimizer->SetLearningRate(std::stod(criterionValue));
         meetsCriteria = true;
       }
-      catch( itk::ExceptionObject & err ) // TODO: should catch(const bad_lexical_cast &) too
+      catch( itk::ExceptionObject & itkNotUsed(err) ) // TODO: should catch(const bad_lexical_cast &) too
       {
         //TODO log the error message?
         meetsCriteria = false;

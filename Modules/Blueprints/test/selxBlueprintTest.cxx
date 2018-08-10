@@ -155,6 +155,7 @@ TEST_F( BlueprintTest, Compose )
 
   EXPECT_TRUE( baseBlueprint->ComposeWith( nonConflictingBlueprint0 ) );
   EXPECT_STREQ( "Sink", baseBlueprint->GetComponent( "Component2" )[ "OperationType" ][ 0 ].c_str() );
+  std::cout << baseBlueprint->GetComponent( "Component2" )[ "OperationType" ][ 0 ] << std::endl;
 
   // compose-in additional properties of Component0 and Component1
   auto nonConflictingBlueprint1 = Blueprint::New();

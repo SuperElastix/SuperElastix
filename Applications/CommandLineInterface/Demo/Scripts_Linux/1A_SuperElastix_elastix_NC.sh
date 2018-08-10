@@ -1,1 +1,1 @@
-../SuperElastix --conf ../Configuration/elastix_Bspline_NC.json --graphout 1B_graph_elastix_NC.dot --in FixedImage=../Data/coneA2d64.mhd MovingImage=../Data/coneB2d64.mhd --out ResultImage=1A_image_elastix_NC.mhd
+../SuperElastix --conf ../Configuration/elastix_Bspline_NC.json --graphout 1B_graph_elastix_NC.dot --in FixedImage=../Data/coneA2d64.mhd MovingImage=../Data/coneB2d64.mhd --out ResultImage=1A_image_elastix_NC.mhd --loglevel trace

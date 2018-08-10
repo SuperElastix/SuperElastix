@@ -57,6 +57,17 @@ SuperElastixComponent< AcceptingInterfaces, ProvidingInterfaces >
   // Default implementation. Components that allow unused connections should override this function.
   return AcceptingInterfaces::AreAllAccepted();
 }
+
+template< typename AcceptingInterfaces, typename ProvidingInterfaces >
+std::string
+SuperElastixComponent< AcceptingInterfaces, ProvidingInterfaces >
+::GetComponentName() const
+{
+	return this->m_Name;
+}
+
 } // end namespace selx
+
+
 
 #endif // #define selxSuperElastixComponent_hxx

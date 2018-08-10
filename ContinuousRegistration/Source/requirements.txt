@@ -1,0 +1,4 @@
+SimpleITK==1.0.1
+scipy==1.0.0
+numpy
+seaborn

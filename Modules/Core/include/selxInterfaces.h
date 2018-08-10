@@ -39,6 +39,9 @@ public:
   using Pointer = std::shared_ptr< SourceInterface >;
   virtual void SetMiniPipelineInput( itk::DataObject::Pointer ) = 0;
   virtual AnyFileReader::Pointer GetInputFileReader( void ) = 0;
+
+  // GetComponentName is implemented in the SuperElastixComponent class and does not need to be implemented by each component individually.
+  virtual std::string GetComponentName() const = 0;
 };
 
 class SinkInterface
@@ -57,6 +60,9 @@ public:
   virtual AnyFileWriter::Pointer GetOutputFileWriter( void ) = 0;
 
   virtual DataObjectPointer GetInitializedOutput( void ) = 0;
+
+  // GetComponentName is implemented in the SuperElastixComponent class and does not need to be implemented by each component individually.
+  virtual std::string GetComponentName() const = 0;
 };
 
 class UpdateInterface
@@ -68,6 +74,9 @@ public:
 
   using Pointer = std::shared_ptr< UpdateInterface >;
   virtual void Update() = 0;
+
+  // GetComponentName is implemented in the SuperElastixComponent class and does not need to be implemented by each component individually.
+  virtual std::string GetComponentName() const = 0; 
 };
 
 } // end namespace selx

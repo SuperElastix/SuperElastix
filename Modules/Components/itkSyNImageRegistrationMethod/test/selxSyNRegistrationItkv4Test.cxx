@@ -27,7 +27,7 @@
 #include "selxSSDMetric4thPartyComponent.h"
 
 #include "selxItkSmoothingRecursiveGaussianImageFilterComponent.h"
-#include "selxDisplacementFieldItkImageFilterSinkComponent.h"
+#include "selxItkDisplacementFieldSinkComponent.h"
 #include "selxItkImageSourceComponent.h"
 #include "selxItkImageSinkComponent.h"
 
@@ -69,8 +69,8 @@ public:
     GDOptimizer4thPartyComponent,
     SSDMetric3rdPartyComponent,
     SSDMetric4thPartyComponent,
-    DisplacementFieldItkImageFilterSinkComponent< 3, double >,
-    DisplacementFieldItkImageFilterSinkComponent< 2, float >,
+    ItkDisplacementFieldSinkComponent< 3, double >,
+    ItkDisplacementFieldSinkComponent< 2, float >,
     ItkImageSinkComponent< 3, double >,
     ItkImageSinkComponent< 2, float >,
     ItkImageSourceComponent< 2, float >,
@@ -79,6 +79,7 @@ public:
     ItkSmoothingRecursiveGaussianImageFilterComponent< 2, double >,
     ItkSmoothingRecursiveGaussianImageFilterComponent< 3, float >,
     ItkSmoothingRecursiveGaussianImageFilterComponent< 2, float >,
+    ItkSyNImageRegistrationMethodComponent< 3, float, double >,
     ItkSyNImageRegistrationMethodComponent< 3, double, double >,
     ItkSyNImageRegistrationMethodComponent< 2, float, double >,
     ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< 3, double >,
@@ -87,6 +88,7 @@ public:
     ItkMeanSquaresImageToImageMetricv4Component< 2, float, double >,
     ItkAffineTransformComponent< double, 3 >,
     ItkGaussianExponentialDiffeomorphicTransformComponent< double, 3 >,
+    ItkTransformDisplacementFilterComponent< 3, float, double >,
     ItkTransformDisplacementFilterComponent< 2, float, double >,
     ItkTransformDisplacementFilterComponent< 3, double, double >,
     ItkResampleFilterComponent< 2, float, double >,
@@ -155,14 +157,15 @@ TEST_F(SyNRegistrationItkv4Test, FullyConfigured3d)
 
   // Components
   blueprint->SetComponent("RegistrationMethod", { { "NameOfClass", { "ItkSyNImageRegistrationMethodComponent" } },
-  { "Dimensionality", { "3" } } } );
- blueprint->SetComponent("FixedImageSource", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "Dimensionality", { "3" } } });
+  { "Dimensionality", { "3" } }, {"ShrinkFactorsPerLevel", { "4", "2", "1" }}, { "SmoothingSigmasPerLevel", { "4", "2", "1" } } });
+ 
+  blueprint->SetComponent("FixedImageSource", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "Dimensionality", { "3" } } });
 
   blueprint->SetComponent("MovingImageSource", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "Dimensionality", { "3" } } });
 
   blueprint->SetComponent("ResultImageSink", { { "NameOfClass", { "ItkImageSinkComponent" } }, { "Dimensionality", { "3" } } });
 
-  blueprint->SetComponent("ResultDisplacementFieldSink", { { "NameOfClass", { "DisplacementFieldItkImageFilterSinkComponent" } }, { "Dimensionality", { "3" } } });
+  blueprint->SetComponent("ResultDisplacementFieldSink", { { "NameOfClass", { "ItkDisplacementFieldSinkComponent" } }, { "Dimensionality", { "3" } } });
 
   blueprint->SetComponent("Metric", { { "NameOfClass", { "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component" } }, { "Dimensionality", { "3" } } });
 
@@ -177,7 +180,7 @@ TEST_F(SyNRegistrationItkv4Test, FullyConfigured3d)
 
   blueprint->SetConnection("ResampleFilter", "ResultImageSink", { { "NameOfInterface", { "itkImageInterface" } } });
 
-  blueprint->SetConnection("TransformDisplacementFilter", "ResultDisplacementFieldSink", { { "NameOfInterface", { "DisplacementFieldItkImageSourceInterface" } } });
+  blueprint->SetConnection("TransformDisplacementFilter", "ResultDisplacementFieldSink", { { "NameOfInterface", { "itkDisplacementFieldInterface" } } });
   blueprint->SetConnection("Metric", "RegistrationMethod", { { "NameOfInterface", { "itkMetricv4Interface" } } });
 
   blueprint->SetConnection( "RegistrationMethod", "TransformDisplacementFilter", { {} } );
@@ -229,7 +232,7 @@ TEST_F( SyNRegistrationItkv4Test, WBIRDemo )
   blueprint->SetComponent("ResampleFilter", { { "NameOfClass", { "ItkResampleFilterComponent" } }, { "Dimensionality", { "2" } } } );
   blueprint->SetComponent("ResultImage", { { "NameOfClass", { "ItkImageSinkComponent" } }, { "Dimensionality", { "2" } }, { "PixelType", { "float" } } });
   blueprint->SetComponent("TransformToDisplacementField", { { "NameOfClass", { "ItkTransformDisplacementFilterComponent" } }, { "PixelType", { "float" } } });
-  blueprint->SetComponent("ResultDisplacementField", { { "NameOfClass", { "DisplacementFieldItkImageFilterSinkComponent" } }, { "Dimensionality", { "2" } }, { "PixelType", { "float" } } });
+  blueprint->SetComponent("ResultDisplacementField", { { "NameOfClass", { "ItkDisplacementFieldSinkComponent" } }, { "Dimensionality", { "2" } }, { "PixelType", { "float" } } });
 
   blueprint->SetConnection("FixedImage", "RegistrationMethod", { { "NameOfInterface", { "itkImageFixedInterface" } } });
   blueprint->SetConnection("MovingImage", "RegistrationMethod", { { "NameOfInterface", { "itkImageMovingInterface" } } });

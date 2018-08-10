@@ -27,8 +27,8 @@ namespace selx
 {
 using ModuleElastixComponents = selx::TypeList<
   MonolithicElastixComponent< 2, float >,
-  MonolithicElastixComponent< 3, float >,
   MonolithicElastixComponent< 3, short >,
+  MonolithicElastixComponent< 3, float >,
   MonolithicTransformixComponent< 2, float >,
   MonolithicTransformixComponent< 3, float >
   >;

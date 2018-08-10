@@ -51,6 +51,6 @@ unset( MODULE_COMPONENT_TYPELISTS_ )
 
 configure_file(
   ${ModuleFilter_SOURCE_DIR}/include/selxCompiledLibraryComponents.h.in
-  ${ModuleFilter_BINARY_DIR}/include/selxCompiledLibraryComponents.h
+  ${PROJECT_BINARY_DIR}/selxCompiledLibraryComponents.h
   @ONLY
 )

@@ -75,7 +75,7 @@ public:
   virtual ~MonolithicElastixComponent();
 
   typedef typename ComponentBase::CriterionType CriterionType;
-  typedef TPixel                                PixelType;
+  typedef TPixel PixelType;
 
   // the in and output image type of the component are chosen to be the same
   typedef itk::Image< PixelType, Dimensionality > ConnectionImageType;
@@ -87,8 +87,9 @@ public:
   typedef typename ConnectionImageType::Pointer ItkImagePointer;
 
   typedef elastix::ElastixFilter< FixedImageType, MovingImageType > ElastixFilterType;
-  typedef elastix::ParameterObject                                  elxParameterObjectType;
-  typedef elxParameterObjectType::Pointer                           elxParameterObjectPointer;
+  typedef typename ElastixFilterType::Pointer ElastixFilterPointer;
+  typedef elastix::ParameterObject ParameterObjectType;
+  typedef typename ParameterObjectType::Pointer ParameterObjectPointer;
 
   typedef typename elastixTransformParameterObjectInterface< itk::Image< TPixel, Dimensionality >,
     itk::Image< TPixel, Dimensionality >>::elastixTransformParameterObject elastixTransformParameterObject;
@@ -118,7 +119,8 @@ public:
 
 private:
 
-  typename ElastixFilterType::Pointer m_elastixFilter;
+  ElastixFilterPointer m_ElastixFilter;
+  ParameterObjectPointer m_ParameterObject;
 
 protected:
 

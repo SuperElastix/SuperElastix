@@ -22,10 +22,12 @@
 
 //Component group ItkSmoothingRecursiveGaussianImageFilter
 #include "selxItkSmoothingRecursiveGaussianImageFilterComponent.h"
+
 //Component group SinksAndSources
-#include "selxDisplacementFieldItkImageFilterSinkComponent.h"
 #include "selxItkImageSourceComponent.h"
 #include "selxItkImageSinkComponent.h"
+#include "selxItkDisplacementFieldSourceComponent.h"
+#include "selxItkDisplacementFieldSinkComponent.h"
 
 //Component group Elastix
 #include "selxMonolithicElastixComponent.h"
@@ -59,12 +61,13 @@
 namespace selx
 {
 using DefaultComponents = selx::TypeList<
-  DisplacementFieldItkImageFilterSinkComponent< 2, float >,
-  DisplacementFieldItkImageFilterSinkComponent< 3, float >,
+  ItkDisplacementFieldSinkComponent< 2, float >,
+  ItkDisplacementFieldSinkComponent< 3, float >,
   ItkImageSinkComponent< 2, float >,
   ItkImageSinkComponent< 3, short >,
   ItkImageSourceComponent< 2, float >,
   ItkImageSourceComponent< 3, short >,
+  ItkImageSourceComponent< 3, unsigned char >,
   MonolithicElastixComponent< 2, float >,
   MonolithicElastixComponent< 3, short >,
   MonolithicTransformixComponent< 2, float >,
@@ -81,9 +84,12 @@ using DefaultComponents = selx::TypeList<
   ItkTransformSourceComponent< 2, double >,
   ItkTransformSinkComponent< 2, double >,
   ItkToNiftiImageSourceComponent< 2, float >,
+  ItkToNiftiImageSourceComponent< 3, float >,
   NiftiToItkImageSinkComponent< 2, float >,
+  NiftiToItkImageSinkComponent< 3, float >,
   NiftyregSplineToDisplacementFieldComponent< float>,
   DisplacementFieldNiftiToItkImageSinkComponent< 2, float>,
+  DisplacementFieldNiftiToItkImageSinkComponent< 3, float>,
   NiftyregAladinComponent< float >,
   IdentityTransformRegistrationComponent< 2, float>
   >;
