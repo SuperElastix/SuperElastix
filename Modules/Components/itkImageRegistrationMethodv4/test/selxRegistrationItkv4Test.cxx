@@ -36,10 +36,9 @@
 #include "selxItkMeanSquaresImageToImageMetricv4Component.h"
 #include "selxItkGradientDescentOptimizerv4Component.h"
 #include "selxItkAffineTransformComponent.h"
-#include "selxItkBSplineTransformComponent.h"
-#include "selxItkBSplineTransformParametersAdaptorsContainerComponent.h"
 #include "selxItkGaussianExponentialDiffeomorphicTransformComponent.h"
 #include "selxItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent.h"
+#include "selxItkMultiResolutionBSplineTransformComponent.h"
 
 #include "selxItkTransformDisplacementFilterComponent.h"
 #include "selxItkResampleFilterComponent.h"
@@ -93,10 +92,8 @@ public:
     ItkGradientDescentOptimizerv4Component< double >,
     ItkAffineTransformComponent< double, 3 >,
     ItkAffineTransformComponent< double, 2 >,
-    ItkBSplineTransformComponent< double, 3 >,
-    ItkBSplineTransformParametersAdaptorsContainerComponent< 3, double >,
-    ItkBSplineTransformComponent< double, 2 >,
-    ItkBSplineTransformParametersAdaptorsContainerComponent< 2, double >,
+    ItkMultiResolutionBSplineTransformComponent< double, 3 >,
+    ItkMultiResolutionBSplineTransformComponent< double, 2 >,
     ItkGaussianExponentialDiffeomorphicTransformComponent< double, 3 >,
     ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent< 3, double >,
     ItkGaussianExponentialDiffeomorphicTransformComponent< double, 2 >,
@@ -421,10 +418,7 @@ TEST_F(RegistrationItkv4Test, FullyConfigured3d_BSpline)
   blueprint->SetComponent("ResampleFilter", { { "NameOfClass", { "ItkResampleFilterComponent" } },
   { "Dimensionality", { "3" } } });
 
-  blueprint->SetComponent("Transform", { { "NameOfClass", { "ItkBSplineTransformComponent" } },
-  { "Dimensionality", { "3" } } });
-
-  blueprint->SetComponent("TransformResolutionAdaptor", { { "NameOfClass", { "ItkBSplineTransformParametersAdaptorsContainerComponent" } },
+  blueprint->SetComponent("Transform", { { "NameOfClass", { "ItkMultiResolutionBSplineTransformComponent" } },
   { "Dimensionality", { "3" } },
   { "ShrinkFactorsPerLevel", { "2", "1" } } });
 

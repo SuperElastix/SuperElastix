@@ -1,0 +1,141 @@
+{
+    "Component": {
+        "Name": "RegistrationMethod",
+        "NameOfClass": "ItkImageRegistrationMethodv4Component",
+		"NumberOfLevels":  "4" ,
+		"ShrinkFactorsPerLevel": [ "4", "2", "1", "1" ],
+        "SmoothingSigmasPerLevel": [ "4", "2", "1", "1" ] 
+    },
+    "Component": {
+        "Name": "FixedImage",
+        "NameOfClass": "ItkImageSourceComponent",
+        "Dimensionality": "2",
+		"PixelType": "float"
+    },
+    "Component": {
+        "Name": "MovingImage",
+        "NameOfClass": "ItkImageSourceComponent",
+        "Dimensionality": "2",
+		"PixelType": "float"
+    },
+    "Component": {
+        "Name": "ResultImage",
+        "NameOfClass": "ItkImageSinkComponent",
+        "Dimensionality": "2",
+		"PixelType": "float"
+    },
+    "Component": {
+        "Name": "ResultTransform",
+        "NameOfClass": "ItkTransformSinkComponent"
+    },
+    "Component": {
+        "Name": "Metric",
+        "NameOfClass": "ItkMeanSquaresImageToImageMetricv4Component"
+    },
+    "Component": {
+        "Name": "Optimizer",
+        "NameOfClass": "ItkGradientDescentOptimizerv4Component",
+        "NumberOfIterations": "100",
+		"LearningRate": "1E23"
+    },	
+    "Component": {
+        "Name": "Transform",
+        "NameOfClass": "ItkMultiResolutionBSplineTransformComponent",
+  		"InternalComputationValueType": "double",
+        "Dimensionality": "2",
+		"NumberOfLevels": "4",
+		"Resolution0MeshSize" : [ "1", "2" ],
+		"Resolution1MeshSize" : [ "3", "4" ],
+		"Resolution2MeshSize" : [ "5", "6" ],
+		"Resolution3MeshSize" : [ "7", "8" ]
+    },
+    "Component": {
+        "Name": "ResampleFilter",
+        "NameOfClass": "ItkResampleFilterComponent"
+    },
+    "Component": {
+        "Name": "TransformDisplacementFilter",
+        "NameOfClass": "ItkTransformDisplacementFilterComponent"
+    },
+    "Connection": {
+        "Out": "FixedImage",
+        "In": "RegistrationMethod",
+        "NameOfInterface": "itkImageFixedInterface"
+    },
+    "Connection": {
+        "Out": "MovingImage",
+        "In": "RegistrationMethod",
+        "NameOfInterface": "itkImageMovingInterface"
+    },
+    "Connection": {
+        "Out": "RegistrationMethod",
+        "In": "ResampleFilter",
+        "NameOfInterface": "itkTransformInterface"
+    },
+    "Connection": {
+        "Out": "RegistrationMethod",
+        "In": "TransformDisplacementFilter",
+        "NameOfInterface": "itkTransformInterface"
+    },
+    "Connection": {
+        "Out": "RegistrationMethod",
+        "In": "ResultTransform"
+    },
+    "Connection": {
+        "Out": "ResampleFilter",
+        "In": "ResultImage",
+        "NameOfInterface": "itkImageInterface"
+	},
+    "Connection": {
+        "Out": "Metric",
+        "In": "RegistrationMethod",
+        "NameOfInterface": "itkMetricv4Interface"
+    },
+    "Connection": {
+        "Out": "FixedImage",
+        "In": "Transform",
+        "NameOfInterface": "itkImageDomainFixedInterface"
+    },
+    "Connection": {
+        "Name" : "123454t647657356r7", 
+        "Out": "Transform",
+        "In": "RegistrationMethod",
+        "NameOfInterface": "itkTransformInterface" 
+    },
+    "Connection": {
+        "Name" : "123454t647657356r7111", 
+        "Out": "Transform",
+        "In": "RegistrationMethod",
+        "NameOfInterface": "itkTransformParametersAdaptorsContainerInterface"
+    },
+
+	"Connection": {
+        "Out": "FixedImage",
+        "In": "ItkMultiResolutionBSplineTransformComponent",
+        "NameOfInterface": "itkImageDomainFixedInterface"
+    },
+	"Connection": {
+        "Out": "TransformResolutionAdaptor",
+        "In": "RegistrationMethod"
+    },
+    "Connection": {
+        "Out": "Optimizer",
+        "In": "RegistrationMethod",
+        "NameOfInterface": "itkOptimizerv4Interface"
+    },
+	"Connection": {
+        "Out": "FixedImage",
+        "In": "TransformDisplacementFilter",
+        "NameOfInterface": "itkImageDomainFixedInterface"
+    },
+	"Connection": {
+        "Out": "FixedImage",
+        "In": "ResampleFilter",
+        "NameOfInterface": "itkImageDomainFixedInterface"
+    },
+	"Connection": {
+        "Out": "MovingImage",
+        "In": "ResampleFilter",
+        "NameOfInterface": "itkImageMovingInterface"
+    }
+}

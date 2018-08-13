@@ -31,10 +31,12 @@
 #include "selxItkResampleFilterComponent.h"
 #include "selxItkTransformSourceComponent.h"
 #include "selxItkTransformSinkComponent.h"
+#include "selxItkMultiResolutionBSplineTransformComponent.h"
 
 namespace selx
 {
 using ModuleItkImageRegistrationMethodv4Components = selx::TypeList<
+  ItkMultiResolutionBSplineTransformComponent< double, 2 >, 
   ItkImageRegistrationMethodv4Component< 2, float, double >,
   ItkImageRegistrationMethodv4Component< 3, float, double >,
   ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< 2, float >,
