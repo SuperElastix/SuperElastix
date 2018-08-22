@@ -1,9 +1,10 @@
 import unittest, os, shutil
 from datetime import datetime
 import numpy as np
+import SimpleITK as sitk
 
 from ContinuousRegistration.Source.metrics import tre, dice
-from ContinuousRegistration.Source.util import warp_point_set
+from ContinuousRegistration.Source.util import warp_point_set, warp_image_simpleitk
 
 def tmp_file_name(output_directory, ext=".nii"):
     os.makedirs(output_directory, exist_ok=True)
@@ -69,6 +70,27 @@ class TestEvaulationMetrics(unittest.TestCase):
 
         assert(tre_0['TRE'] == 0.0)
         assert(tre_1['TRE'] == 0.0)
+
+    def test_dsc(self):
+        os.makedirs(os.environ['TMP_DIR'], exist_ok=True)
+
+        image_0 = sitk.Image(16, 17, 18, sitk.sitkUInt8)
+        image_0.SetPixel((5, 5, 5), 1)
+        image_1 = sitk.Image(16, 17, 18, sitk.sitkUInt8)
+        image_1.SetPixel((5, 5, 8), 1)
+        deformation_field_file_name_0 = create_deformation_field_file(os.environ['TMP_DIR'], (0., 0., 3.))
+        deformation_field_file_name_1 = create_deformation_field_file(os.environ['TMP_DIR'], (0., 0., -3.))
+
+        image_file_name_0 = os.path.join(os.environ['TMP_DIR'], "image_0.nii")
+        image_file_name_1 = os.path.join(os.environ['TMP_DIR'], "image_1.nii")
+
+        sitk.WriteImage(image_0, image_file_name_0)
+        sitk.WriteImage(image_1, image_file_name_1)
+
+        dice_0, dice_1 = dice(os.environ['SUPERELASTIX'], (image_file_name_0, image_file_name_1), (deformation_field_file_name_0, deformation_field_file_name_1))
+        assert(dice_0['DSC'] == 1.0)
+        assert(dice_1['DSC'] == 1.0)
+
 
     def __del__(self):
         shutil.rmtree(os.environ['TMP_DIR'], ignore_errors=True)
