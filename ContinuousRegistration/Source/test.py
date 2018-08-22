@@ -1,13 +1,16 @@
 import unittest, os, shutil
 from datetime import datetime
-import SimpleITK as sitk
+import numpy as np
 
 from ContinuousRegistration.Source.metrics import tre, dice
+from ContinuousRegistration.Source.util import warp_point_set
 
 def tmp_file_name(output_directory, ext=".nii"):
+    os.makedirs(output_directory, exist_ok=True)
     return os.path.join(output_directory, "{:%Y-%m-%d-%H:%M:%S.%f}".format(datetime.now()) + ".nii")
 
 def create_vtk_file(output_directory, point):
+    os.makedirs(output_directory, exist_ok=True)
     output_name = "{:%Y-%m-%d-%H:%M:%S.%f}".format(datetime.now()) + ".vtk"
     output_path = os.path.join(output_directory, output_name)
     with open(output_path, 'w+') as f:
@@ -26,6 +29,7 @@ def create_vtk_file(output_directory, point):
 
 
 def create_deformation_field_file(output_directory, deformation):
+    os.makedirs(output_directory, exist_ok=True)
     size = (16, 17, 18)
     deformation_field = sitk.Image(size, sitk.sitkVectorFloat32, 3)
 
@@ -41,65 +45,33 @@ def create_deformation_field_file(output_directory, deformation):
 
 
 class TestEvaulationMetrics(unittest.TestCase):
-
-
-
     def __init__(self, *args, **kwargs):
-        # TODO: Pass via command line
-        self.registration_driver = ""
         super(TestEvaulationMetrics, self).__init__(*args, **kwargs)
 
-        self.TEMP_DIR = os.path.abspath('/tmp/temporary-test-folder')
+    def test_warp_point_set(self):
+        deformation = np.array([1., 0., -5.])
+        point_set = np.array([[1., 2., 3.]])
 
-        os.makedirs(self.TEMP_DIR, exist_ok=True)
+        deformation_field_file_name = create_deformation_field_file(os.environ['TMP_DIR'], deformation)
+        warped_point_set = warp_point_set(os.environ['SUPERELASTIX'], point_set, deformation_field_file_name)
+        assert(all(warped_point_set == [2., 2., -2.]))
 
     def test_tre(self):
-        os.makedirs(self.TEMP_DIR, exist_ok=True)
 
-        point_0 = (10.0, 7.0, 6.0)
-        point_1 = (9.0, 6.0, 8.0)
-        deformation_0 = (-1., -1., 2.)
-        deformation_1 = (1., 1., -2.)
+        point_set_0 = np.array([[10.0, 7.0, 6.0]])
+        point_set_1 = np.array([[9.0, 6.0, 8.0]])
+        deformation_0 = np.array([-1., -1., 2.])
+        deformation_1 = np.array([1., 1., -2.])
 
-        point_set_file_name_0 = create_vtk_file(self.TEMP_DIR, point_0)
-        point_set_file_name_1 = create_vtk_file(self.TEMP_DIR, point_1)
-        deformation_field_file_name_0 = create_deformation_field_file(self.TEMP_DIR, deformation_0)
-        deformation_field_file_name_1 = create_deformation_field_file(self.TEMP_DIR, deformation_1)
-        tre_0, tre_1 = tre("", (point_set_file_name_0, point_set_file_name_1),
-                           (deformation_field_file_name_0, deformation_field_file_name_1))
+        deformation_field_file_name_0 = create_deformation_field_file(os.environ['TMP_DIR'], deformation_0)
+        deformation_field_file_name_1 = create_deformation_field_file(os.environ['TMP_DIR'], deformation_1)
+        tre_0, tre_1 = tre(os.environ['SUPERELASTIX'], (point_set_0, point_set_1), (deformation_field_file_name_0, deformation_field_file_name_1))
 
         assert(tre_0['TRE'] == 0.0)
         assert(tre_1['TRE'] == 0.0)
 
-    def test_tre(self):
-        os.makedirs(self.TEMP_DIR, exist_ok=True)
-
-        image_0 = sitk.Image(10, 10, sitk.sitkFloat32)
-        image_0.SetPixel((0, 0), 1)
-        image_1 = sitk.Image(10, 10, sitk.sitkFloat32)
-        image_1.SetPixel((0, 0), 1)
-        deformation_field_0 = sitk.Image(10, 10, sitk.sitkVectorFloat32)
-        deformation_field_0.SetPixel((0, 0), (2, 3))
-        deformation_field_1 = sitk.Image((10, 10), sitk.sitkVectorFloat32)
-        deformation_field_1.SetPixel((2, 3), (-2, -3))
-
-        image_file_name_0 = os.path.join(self.TEMP_DIR, "image_0.nii")
-        image_file_name_1 = os.path.join(self.TEMP_DIR, "image_1.nii")
-        deformation_field_file_name_0 = os.path.join(self.TEMP_DIR, "def_field_0.nii")
-        deformation_field_file_name_1 = os.path.join(self.TEMP_DIR, "def_field_0.nii")
-        sitk.WriteImage(image_0, image_file_name_0)
-        sitk.WriteImage(image_1, image_file_name_1)
-        sitk.WriteImage(deformation_field_0, deformation_field_file_name_0)
-        sitk.WriteImage(deformation_field_1, deformation_field_file_name_1)
-
-        dice_0, dice_1 = dice("", (image_file_name_0, image_file_name_1), (deformation_field_file_name_0, deformation_field_file_name_1))
-
-    def test_create_vtk_file(self):
-        path_file = create_vtk_file(self.TEMP_DIR, [7, 42])
-        assert(os.path.isfile(path_file))
-
     def __del__(self):
-        shutil.rmtree(self.TEMP_DIR, ignore_errors=True)
+        shutil.rmtree(os.environ['TMP_DIR'], ignore_errors=True)
 
 
 if __name__ == '__main__':

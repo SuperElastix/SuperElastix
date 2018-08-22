@@ -282,7 +282,7 @@ def warp_point_set(superelastix, point_set, disp_field_file_name):
     try:
         subprocess.check_output([
             superelastix,
-            '--conf', os.path.join(get_script_path(), 'warp_point_set.json'),
+            '--conf', os.path.join(os.path.dirname(os.path.realpath(__file__)), 'warp_point_set.json'),
             '--in', 'InputPointSet=%s' % input_point_set_file_name,
             'DisplacementField=%s' % disp_field_file_name,
             '--out', 'OutputPointSet=%s' % output_point_set_file_name,
@@ -302,14 +302,14 @@ def warp_image(superelastix, input_image_file_name, disp_field_file_name, type_n
 
     try:
         stdout = subprocess.check_output([superelastix,
-                                          '--conf', os.path.join(get_script_path(), 'warp_label_image.json'),
+                                          '--conf', os.path.join(os.path.dirname(os.path.realpath(__file__)), 'warp_label_image.json'),
                                           '--in', 'LabelImage=%s' % input_image_file_name,
                                           'DisplacementField=%s' % disp_field_file_name,
                                           '--out', 'WarpedLabelImage=%s' % output_image_file_name,
                                           '--loglevel', 'trace',
                                           '--logfile', os.path.splitext(output_image_file_name)[0] + '.log'])
     except:
-        logging.error('Failed to warp %s.' % input_image_file_name)
+        logging.error('Failed to warp %s.' % (input_image_file_name))
 
 
     return output_image_file_name
