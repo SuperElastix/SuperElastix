@@ -29,10 +29,14 @@ def create_vtk_file(output_directory, point):
     return output_path
 
 
-def create_deformation_field_file(output_directory, deformation):
+def create_deformation_field_file(output_directory, deformation, origin=(0., 0., 0.), spacing=(1., 1., 1.),
+                                  direction=(1.0, 0., 0., 0., 1., 0., 0., 0., 1.)):
     os.makedirs(output_directory, exist_ok=True)
     size = (16, 17, 18)
     deformation_field = sitk.Image(size, sitk.sitkVectorFloat32, 3)
+    deformation_field.SetOrigin(origin)
+    deformation_field.SetSpacing(spacing)
+    deformation_field.SetDirection(direction)
 
     # TODO: Handle nD
     for i in range(size[0]):
@@ -56,6 +60,31 @@ class TestEvaulationMetrics(unittest.TestCase):
         deformation_field_file_name = create_deformation_field_file(os.environ['TMP_DIR'], deformation)
         warped_point_set = warp_point_set(os.environ['SUPERELASTIX'], point_set, deformation_field_file_name)
         assert(all(warped_point_set == [2., 2., -2.]))
+
+    def test_warp_point_set_spacing(self):
+        deformation = np.array([1., 0., -5.])
+        point_set = np.array([[1., 2., 3.]])
+
+        deformation_field_file_name = create_deformation_field_file(os.environ['TMP_DIR'], deformation, spacing=(2., 2., 2))
+        warped_point_set = warp_point_set(os.environ['SUPERELASTIX'], point_set, deformation_field_file_name)
+        assert(all(warped_point_set == [2., 2., -2.]))
+
+    def test_warp_point_set_origin(self):
+        deformation = np.array([1., 0., -5.])
+        point_set = np.array([[1., 2., 3.]])
+
+        deformation_field_file_name = create_deformation_field_file(os.environ['TMP_DIR'], deformation, origin=(-5., 2., 1.))
+        warped_point_set = warp_point_set(os.environ['SUPERELASTIX'], point_set, deformation_field_file_name)
+        assert(all(warped_point_set == [2., 2., -2.]))
+
+    def test_warp_point_set_direction(self):
+        deformation = np.array([1., 0., -5.])
+        point_set = np.array([[-1., 2., 3.]])
+
+        deformation_field_file_name = create_deformation_field_file(os.environ['TMP_DIR'], deformation,
+                                                                    direction=(-1., 0., 0., 0., 1., 0., 0., 0., 1.))
+        warped_point_set = warp_point_set(os.environ['SUPERELASTIX'], point_set, deformation_field_file_name)
+        assert(all(warped_point_set == [0., 2., -2.]))
 
     def test_tre(self):
 
