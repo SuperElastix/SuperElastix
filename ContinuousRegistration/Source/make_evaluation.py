@@ -58,6 +58,9 @@ def run(parameters):
                         if parameters.make_labels:
                             dataset.make_labels(parameters.superelastix, file_names, output_directory)
 
+                        if parameters.make_difference_images:
+                            dataset.make_difference_images(parameters.superelastix, file_names, output_directory)
+
                         if parameters.make_checkerboards:
                             dataset.make_checkerboards(parameters.superelastix, file_names, output_directory)
 
@@ -77,6 +80,7 @@ def run(parameters):
 if __name__ == '__main__':
     parser.add_argument('--make-images', '-mi', type=bool, default=False, help="Warp moving images.")
     parser.add_argument('--make-labels', '-ml', type=bool, default=False, help="Warp moving labels.")
+    parser.add_argument('--make-difference-images', '-mdi', type=bool, default=False, help="Warp moving images and subtract from fixed images.")
     parser.add_argument('--make-checkerboards', '-mc', type=bool, default=False, help="Warp checkerboard pattern.")
     parser.add_argument('--make-image-checkerboards', '-mic', type=bool, default=False,
                         help="Warp moving images and make checkerboard with fixed and warped moving image.")

@@ -135,6 +135,28 @@ class Dataset:
         warp_image(superelastix, file_names['ground_truth_file_names'][0], disp_field_1_file_name, 'label')
 
     @staticmethod
+    def make_difference_images(superelastix, file_names, output_directory):
+        disp_field_0_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][0])
+        disp_field_1_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][1])
+
+        image_1_to_0 = sitk.ReadImage(warp_image(superelastix, file_names['image_file_names'][1], disp_field_0_file_name, 'result_image'))
+        image_0_to_1 = sitk.ReadImage(warp_image(superelastix, file_names['image_file_names'][0], disp_field_1_file_name, 'result_image'))
+
+        difference_image_1_to_0_base_name, difference_image_1_to_0_file_name_ext = os.path.splitext(disp_field_0_file_name)
+        difference_image_1_to_0_file_name = difference_image_1_to_0_base_name + '_difference_image' + difference_image_1_to_0_file_name_ext
+        difference_image_0_to_1_base_name, difference_image_0_to_1_file_name_ext = os.path.splitext(disp_field_0_file_name)
+        difference_image_0_to_1_file_name = difference_image_0_to_1_base_name + '_difference_image' + difference_image_0_to_1_file_name_ext
+
+        image_0 = sitk.ReadImage(file_names['image_file_names'][0])
+        image_1 = sitk.ReadImage(file_names['image_file_names'][1])
+
+        difference_image_1_to_0 = sitk.Cast(image_0, sitk.sitkFloat32) - sitk.Cast(image_1_to_0, sitk.sitkFloat32)
+        difference_image_0_to_1 = sitk.Cast(image_1, sitk.sitkFloat32) - sitk.Cast(image_0_to_1, sitk.sitkFloat32)
+
+        sitk.WriteImage(difference_image_1_to_0, difference_image_1_to_0_file_name)
+        sitk.WriteImage(difference_image_0_to_1, difference_image_0_to_1_file_name)
+
+    @staticmethod
     def make_checkerboards(superelastix, file_names, output_directory):
         disp_field_0_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][0])
         disp_field_1_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][1])
@@ -168,9 +190,9 @@ class Dataset:
         image_checkerboard_1_file_name = disp_field_1_path + '_image_checkerboard' + disp_field_1_ext
 
         warped_image_0_to_1_file_name = warp_image(superelastix, file_names['image_file_names'][0],
-                                                   disp_field_1_file_name, 'image')
+                                                   disp_field_1_file_name, 'result_image')
         warped_image_1_to_0_file_name = warp_image(superelastix, file_names['image_file_names'][1],
-                                                   disp_field_0_file_name, 'image')
+                                                   disp_field_0_file_name, 'result_image')
 
         image_0 = sitk.ReadImage(file_names['image_file_names'][0])
         image_1 = sitk.ReadImage(file_names['image_file_names'][1])
