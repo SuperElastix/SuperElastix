@@ -212,8 +212,17 @@ def create_disp_field_names(image_file_names, dataset_name):
     name_1 = os.path.basename(name_1)
     name_we_0, image_extension_we_0 = os.path.splitext(name_0)
     name_we_1, image_extension_we_1 = os.path.splitext(name_1)
+
+    # Handle .nii.gz
+    if name_we_0.endswith('.nii'):
+        name_we_0, image_extension_we_0 = os.path.splitext(name_we_0)
+
+    if name_we_1.endswith('.nii'):
+        name_we_1, image_extension_we_1 = os.path.splitext(name_we_1)
+
     name_pair_0 = name_we_1 + "_to_" + name_we_0 + ".mha"
     name_pair_1 = name_we_0 + "_to_" + name_we_1 + ".mha"
+
     return (os.path.join(dataset_name, name_pair_0), os.path.join(dataset_name, name_pair_1))
 
 
