@@ -220,8 +220,8 @@ def create_disp_field_names(image_file_names, dataset_name):
     if name_we_1.endswith('.nii'):
         name_we_1, image_extension_we_1 = os.path.splitext(name_we_1)
 
-    name_pair_0 = name_we_1 + "_to_" + name_we_0 + ".mha"
-    name_pair_1 = name_we_0 + "_to_" + name_we_1 + ".mha"
+    name_pair_0 = "moving" + name_we_1 + "_to_fixed" + name_we_0 + ".mha"
+    name_pair_1 = "moving" + name_we_0 + "_to_fixed" + name_we_1 + ".mha"
 
     return (os.path.join(dataset_name, name_pair_0), os.path.join(dataset_name, name_pair_1))
 
@@ -260,6 +260,8 @@ def read_vtk(file_name):
 def read_pts(file_name, skiprows=0):
     return np.loadtxt(file_name, skiprows=skiprows)
 
+def write_pts(point_set, point_set_file_name):
+    np.savetxt(point_set_file_name, point_set)
 
 def read_csv(path_file):
     """ loading points from a CSV file as ndarray of floats
@@ -322,3 +324,16 @@ def warp_image(superelastix, input_image_file_name, disp_field_file_name, type_n
 
 
     return output_image_file_name
+
+def index2point(image, index_set):
+    dim = image.GetDimension()
+    direction = np.array(image.GetDirection()).reshape((dim, dim))
+    spacing = np.array(image.GetSpacing()).reshape((dim, 1))
+    origin = np.array(image.GetOrigin()).reshape((dim, 1))
+
+    # Point should be d-by-n, but are typically stored on disk in n-by-d. At least this function assumes so.
+    index_set = np.array(index_set).transpose()
+
+    point_set = np.dot(direction, (index_set - origin)) * spacing
+
+    return point_set.transpose()

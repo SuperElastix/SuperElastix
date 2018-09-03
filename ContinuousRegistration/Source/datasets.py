@@ -2,7 +2,8 @@ import glob, csv, re
 from abc import ABCMeta
 from itertools import combinations
 
-from ContinuousRegistration.Source.metrics import tre, hausdorff, inverse_consistency_labels, inverse_consistency_points, dice
+from ContinuousRegistration.Source.metrics import tre, hausdorff, inverse_consistency_labels, \
+    inverse_consistency_points, label_overlap
 from ContinuousRegistration.Source.util import *
 
 class Dataset:
@@ -109,7 +110,7 @@ class Dataset:
         inverse_consistency_atlas_0, inverse_consistency_atlas_1 = inverse_consistency_labels(
             superelastix, file_names['ground_truth_file_names'], disp_field_paths)
 
-        dice_0, dice_1 = dice(superelastix, file_names['ground_truth_file_names'], disp_field_paths)
+        dice_0, dice_1 = label_overlap(superelastix, file_names['ground_truth_file_names'], disp_field_paths)
 
         return {
             file_names['disp_field_file_names'][0]:
@@ -167,8 +168,8 @@ class Dataset:
         checkerboard_0_file_name = disp_field_0_path + '_checkerboard' + disp_field_0_ext
         checkerboard_1_file_name = disp_field_1_path + '_checkerboard' + disp_field_1_ext
 
-        image_0 = sitk.ReadImage(file_names['image_file_names'][0])
-        image_1 = sitk.ReadImage(file_names['image_file_names'][1])
+        image_0 = sitk.RescaleIntensity(sitk.ReadImage(file_names['image_file_names'][0]))
+        image_1 = sitk.RescaleIntensity(sitk.ReadImage(file_names['image_file_names'][1]))
 
         # TODO: Better way of creating checkerboard pattern
         big_number = 1e9
@@ -194,12 +195,12 @@ class Dataset:
         warped_image_1_to_0_file_name = warp_image(superelastix, file_names['image_file_names'][1],
                                                    disp_field_0_file_name, 'result_image')
 
-        image_0 = sitk.ReadImage(file_names['image_file_names'][0])
-        image_1 = sitk.ReadImage(file_names['image_file_names'][1])
+        image_0 = sitk.RescaleIntensity(sitk.ReadImage(file_names['image_file_names'][0]))
+        image_1 = sitk.RescaleIntensity(sitk.ReadImage(file_names['image_file_names'][1]))
 
-        sitk.WriteImage(sitk.CheckerBoard(image_0, sitk.ReadImage(warped_image_1_to_0_file_name, image_1.GetPixelID()),
+        sitk.WriteImage(sitk.CheckerBoard(image_0, sitk.RescaleIntensity(sitk.ReadImage(warped_image_1_to_0_file_name, image_1.GetPixelID())),
                                           (5,)*image_0.GetDimension()), image_checkerboard_0_file_name)
-        sitk.WriteImage(sitk.CheckerBoard(image_1, sitk.ReadImage(warped_image_0_to_1_file_name, image_1.GetPixelID()),
+        sitk.WriteImage(sitk.CheckerBoard(image_1, sitk.RescaleIntensity(sitk.ReadImage(warped_image_0_to_1_file_name, image_1.GetPixelID())),
                                           (5,)*image_1.GetDimension()), image_checkerboard_1_file_name)
 
     @staticmethod
@@ -317,7 +318,9 @@ class DIRLAB(Dataset):
                 mhd.write('ElementDataFile = %s\n' % img_file_name)
             return mhd_file_name
 
-        # Now we have all the information necessary so generate the header files
+        os.makedirs(os.path.join(output_directory, 'tmp', 'point_sets', self.name), exist_ok=True)
+
+        # Now we have all the information necessary and can generate the header files
         for id in dirlab_image_information:
             img_0_file_name = glob.glob(os.path.join(input_directory,
                                                      dirlab_image_information[id]['sub_directory'],
@@ -332,18 +335,25 @@ class DIRLAB(Dataset):
             mhd_0_file_name = _write_mhd_file(img_0_file_name)
             mhd_1_file_name = _write_mhd_file(img_1_file_name)
 
-            point_set_0 = glob.glob(os.path.join(input_directory,
+            index_set_0_file_name = glob.glob(os.path.join(input_directory,
                                                  dirlab_image_information[id]['sub_directory'],
                                                  'ExtremePhases', '*T00_xyz.txt'))[0]
-            point_set_1 = glob.glob(os.path.join(input_directory,
+            index_set_1_file_name = glob.glob(os.path.join(input_directory,
                                                  dirlab_image_information[id]['sub_directory'],
                                                  'ExtremePhases', '*T50_xyz.txt'))[0]
 
+            point_set_0 = index2point(sitk.ReadImage(mhd_0_file_name), self.read_point_set(index_set_0_file_name))
+            point_set_1 = index2point(sitk.ReadImage(mhd_1_file_name), self.read_point_set(index_set_1_file_name))
+            point_set_0_file_name = os.path.join(output_directory, 'tmp', 'point_sets', self.name, os.path.basename(index_set_0_file_name))
+            point_set_1_file_name = os.path.join(output_directory, 'tmp', 'point_sets', self.name, os.path.basename(index_set_1_file_name))
+            write_pts(point_set_0, point_set_0_file_name)
+            write_pts(point_set_1, point_set_1_file_name)
+
             image_file_names = (mhd_0_file_name, mhd_1_file_name)
-            point_set_file_names = (point_set_0, point_set_1)
+            point_set_file_names = (point_set_0_file_name, point_set_1_file_name)
             disp_field_file_names = (
-                os.path.join(self.name, dirlab_image_information[id]['sub_directory'], '50_to_00.mha'),
-                os.path.join(self.name, dirlab_image_information[id]['sub_directory'], '00_to_50.mha')
+                os.path.join(self.name, dirlab_image_information[id]['sub_directory'], 'moving50_to_fixed00.mha'),
+                os.path.join(self.name, dirlab_image_information[id]['sub_directory'], 'moving00_to_fixed50.mha')
             )
 
             if mask_directory is not None and os.path.exists(mask_directory):
@@ -400,8 +410,8 @@ class EMPIRE(Dataset):
 
             # TODO: Find out output format
             disp_field_file_names = (
-                os.path.join(self.name, "%02d" % i + '_Moving_to_Fixed.nii.gz'),
-                os.path.join(self.name, "%02d" % i + '_Fixed_to_Moving.nii.gz')
+                os.path.join(self.name, "%02d" % i + '_moving1_to_fixed0.nii.gz'),
+                os.path.join(self.name, "%02d" % i + '_moving0_to_fixed1.nii.gz')
             )
 
             file_names.append({
@@ -639,8 +649,8 @@ class POPI(Dataset):
                                 os.path.join(input_directory, sub_directory, 'mhd', '50.mhd'))
             point_set_file_names = (os.path.join(input_directory, sub_directory, 'pts', '00.pts'),
                                     os.path.join(input_directory, sub_directory, 'pts', '50.pts'))
-            disp_field_file_names = (os.path.join(self.name, sub_directory, '50_to_00.mha'),
-                                     os.path.join(self.name, sub_directory, '00_to_50.mha'))
+            disp_field_file_names = (os.path.join(self.name, sub_directory, 'moving50_to_fixed00.mha'),
+                                     os.path.join(self.name, sub_directory, 'moving00_to_fixed50.mha'))
 
             if mask_directory is not None and os.path.exists(mask_directory):
                 mask_file_names = (os.path.join(mask_directory, sub_directory, 'mhd', '00.mhd'),
@@ -698,8 +708,8 @@ class SPREAD(Dataset):
                                                  sub_directory + '_b1f1_point.txt')
             point_set_file_names = (point_set_0_file_name, point_set_1_file_name)
 
-            disp_field_file_names = (os.path.join(self.name, sub_directory, 'followup_to_baseline.mha'),
-                                     os.path.join(self.name, sub_directory, 'baseline_to_followup.mha'))
+            disp_field_file_names = (os.path.join(self.name, sub_directory, 'movingfollowup_to_fixedbaseline.mha'),
+                                     os.path.join(self.name, sub_directory, 'movingbaseline_to_fixedfollowup.mha'))
 
             file_names.append({
                 "image_file_names": image_file_names,

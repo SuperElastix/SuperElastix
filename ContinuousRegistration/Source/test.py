@@ -3,7 +3,7 @@ from datetime import datetime
 import numpy as np
 import SimpleITK as sitk
 
-from ContinuousRegistration.Source.metrics import tre, dice
+from ContinuousRegistration.Source.metrics import tre, label_overlap
 from ContinuousRegistration.Source.util import warp_point_set, warp_image_simpleitk
 
 def tmp_file_name(output_directory, ext=".nii"):
@@ -116,7 +116,7 @@ class TestEvaulationMetrics(unittest.TestCase):
         sitk.WriteImage(image_0, image_file_name_0)
         sitk.WriteImage(image_1, image_file_name_1)
 
-        dice_0, dice_1 = dice(os.environ['SUPERELASTIX'], (image_file_name_0, image_file_name_1), (deformation_field_file_name_0, deformation_field_file_name_1))
+        dice_0, dice_1 = label_overlap(os.environ['SUPERELASTIX'], (image_file_name_0, image_file_name_1), (deformation_field_file_name_0, deformation_field_file_name_1))
         assert(dice_0['DSC'] == 1.0)
         assert(dice_1['DSC'] == 1.0)
 
