@@ -3,9 +3,6 @@ import SimpleITK as sitk
 from ContinuousRegistration.Source.util import warp_image, warp_point_set
 from ContinuousRegistration.Source.util import logging
 
-labelOverlapMeasurer = sitk.LabelOverlapMeasuresImageFilter()
-labelOverlapMeasurer.SetGlobalDefaultCoordinateTolerance(1)
-
 def tre(superelastix, point_sets, deformation_field_file_names):
     try:
         point_set_fixed0_to_moving1 = warp_point_set(superelastix, point_sets[0], deformation_field_file_names[0])
@@ -49,6 +46,9 @@ def inverse_consistency_points(superelastix, point_sets, deformation_field_file_
 
 
 def inverse_consistency_labels(superelastix, label_file_names, deformation_field_file_names):
+    labelOverlapMeasurer = sitk.LabelOverlapMeasuresImageFilter()
+    labelOverlapMeasurer.SetGlobalDefaultCoordinateTolerance(1)
+
     label_image_moving0_to_fixed1_file_name = warp_image(superelastix, label_file_names[0], deformation_field_file_names[1], 'inverse_consistency_label_0_to_1')
     label_image_moving0_to_fixed1_to_moving0_file_name = warp_image(superelastix, label_image_moving0_to_fixed1_file_name, deformation_field_file_names[0], 'inverse_consistency_label_0_to_1_to_0')
     label_image_moving1_to_fixed0_file_name = warp_image(superelastix, label_file_names[1], deformation_field_file_names[0], 'inverse_consistency_label_1_to_0')
@@ -74,6 +74,9 @@ def inverse_consistency_labels(superelastix, label_file_names, deformation_field
 
 
 def label_overlap(superelastix, label_file_names, deformation_field_file_names):
+    labelOverlapMeasurer = sitk.LabelOverlapMeasuresImageFilter()
+    labelOverlapMeasurer.SetGlobalDefaultCoordinateTolerance(1)
+    
     label_image_0_to_1_file_name = warp_image(superelastix, label_file_names[0], deformation_field_file_names[1], 'dsc_label_0_to_1')
 
     try:
