@@ -26,118 +26,121 @@ def run(parameters):
             # This dataset was not evaluated
             continue
 
-        table = '<!DOCTYPE html>'
-        table += '<html>'
+        make_dataset_results(dataset_name, result_names, results)
 
-        table += '<head>'
-        table += '<link href="https://rawgit.com/tristen/tablesort/gh-pages/tablesort.css" rel="stylesheet">'
-        table += '<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">'
-        table += '<script src="https://rawgit.com/tristen/tablesort/gh-pages/dist/tablesort.min.js"></script>'
-        table += '<style>'
-        table += 'table { width: 100%; } th, td { padding: 5px; text-align: left; }'
-        table += '</style>'
-        table += '</head>'
+def make_dataset_results(dataset_name, result_names, results):
+    table = '<!DOCTYPE html>'
+    table += '<html>'
 
-        table += '<body>'
-        table += '<table id="leaderboard-%s" class="sort">' % dataset_name
+    table += '<head>'
+    table += '<link href="https://rawgit.com/tristen/tablesort/gh-pages/tablesort.css" rel="stylesheet">'
+    table += '<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">'
+    table += '<script src="https://rawgit.com/tristen/tablesort/gh-pages/dist/tablesort.min.js"></script>'
+    table += '<style>'
+    table += 'table { width: 100%; } th, td { padding: 5px; text-align: left; }'
+    table += '</style>'
+    table += '</head>'
 
-        # Add table header
-        table += '<thead>'
-        table += '<tr>'
-        table += '<th role="columnheader">Team</th>'
-        table += '<th role="columnheader">Blueprint</th>'
-        table += '<th role="columnheader">Date</th>'
+    table += '<body>'
+    table += '<table id="leaderboard-%s" class="sort">' % dataset_name
 
-        # Try to get blueprint commit hash
-        try:
-            repo_commit = subprocess.check_output(['git', 'describe', '--always'],
-                                                  cwd=parameters.source_directory)
-        except subprocess.CalledProcessError as e:
-            repo_commit = None
-            logging.error('Error (exit code {0}): {1}'.format(e.returncode, e.output))
-        except Exception as e:
-            repo_commit = None
-            logging.error('Error reading commit hash from source directory "%s".' % parameters.source_directory)
+    # Add table header
+    table += '<thead>'
+    table += '<tr>'
+    table += '<th role="columnheader">Team</th>'
+    table += '<th role="columnheader">Blueprint</th>'
+    table += '<th role="columnheader">Date</th>'
 
-        if repo_commit:
-            table += '<th role="columnheader">Blueprint Commit</th>'
-            table += '<th role="columnheader">Repo Commit</th>'
+    # Try to get blueprint commit hash
+    try:
+        repo_commit = subprocess.check_output(['git', 'describe', '--always'],
+                                              cwd=parameters.source_directory)
+    except subprocess.CalledProcessError as e:
+        repo_commit = None
+        logging.error('Error (exit code {0}): {1}'.format(e.returncode, e.output))
+    except Exception as e:
+        repo_commit = None
+        logging.error('Error reading commit hash from source directory "%s".' % parameters.source_directory)
 
-        table += '<th role="columnheader">Completed</th>'
+    if repo_commit:
+        table += '<th role="columnheader">Blueprint Commit</th>'
+        table += '<th role="columnheader">Repo Commit</th>'
 
-        for result_name in result_names[dataset_name]:
-            table += '<th role="columnheader">%s</th>' % result_name
+    table += '<th role="columnheader">Completed</th>'
 
-        table += '</tr>'
-        table += '</thead>'
-        table += '<tbody>'
+    for result_name in result_names[dataset_name]:
+        table += '<th role="columnheader">%s</th>' % result_name
 
-        for team_name, team_results in results.items():
-            for blueprint_name, blueprint_results in team_results.items():
-                if parameters.blueprint_file_name is not None and not blueprint_name \
-                        in [os.path.splitext(blueprint_file_name)[0] for blueprint_file_name in parameters.blueprint_file_name]:
-                    # User requested specific blueprints and this blueprint is not one of them
-                    continue
+    table += '</tr>'
+    table += '</thead>'
+    table += '<tbody>'
 
-                blueprint_file_name_json = os.path.join(parameters.submissions_directory, team_name, blueprint_name + '.json')
-                blueprint_file_name_xml = os.path.join(parameters.submissions_directory, team_name,blueprint_name + '.xml')
-                if os.path.isfile(blueprint_file_name_json):
-                    blueprint = json.load(open(blueprint_file_name_json))
-                elif os.path.isfile(blueprint_file_name_xml):
-                    raise NotImplementedError('Cannot read xml blueprints yet.')
-                else:
-                    raise Exception('Could not load blueprint.')
+    for team_name, team_results in results.items():
+        for blueprint_name, blueprint_results in team_results.items():
+            if parameters.blueprint_file_name is not None and not blueprint_name \
+                    in [os.path.splitext(blueprint_file_name)[0] for blueprint_file_name in parameters.blueprint_file_name]:
+                # User requested specific blueprints and this blueprint is not one of them
+                continue
 
-                if dataset_name not in blueprint['Datasets']:
-                    continue
+            blueprint_file_name_json = os.path.join(parameters.submissions_directory, team_name, blueprint_name + '.json')
+            blueprint_file_name_xml = os.path.join(parameters.submissions_directory, team_name,blueprint_name + '.xml')
+            if os.path.isfile(blueprint_file_name_json):
+                blueprint = json.load(open(blueprint_file_name_json))
+            elif os.path.isfile(blueprint_file_name_xml):
+                raise NotImplementedError('Cannot read xml blueprints yet.')
+            else:
+                raise Exception('Could not load blueprint.')
 
-                make_blueprint_results(dataset_name, team_name, blueprint_name, blueprint_results, result_names)
+            if dataset_name not in blueprint['Datasets']:
+                continue
 
-                table += '<tr>'
-                table += '<td>%s</td>' % team_name
-                table += '<td><a href="%s">%s</a></td>' % ('leaderboard-' + dataset_name + '-' + team_name + '-' + blueprint_name + '.html', blueprint_name)
-                table += '<td>%s</td>' % date
+            make_blueprint_results(dataset_name, team_name, blueprint_name, blueprint_results, result_names)
 
-                if repo_commit:
-                    table += '<td>%s</td>' % repo_commit
+            table += '<tr>'
+            table += '<td>%s</td>' % team_name
+            table += '<td><a href="%s">%s</a></td>' % ('leaderboard-' + dataset_name + '-' + team_name + '-' + blueprint_name + '.html', blueprint_name)
+            table += '<td>%s</td>' % date
 
-                    # Try to get blueprint commit hash
-                    try:
-                        table += '<td>%s</td>' % subprocess.check_output(['git', 'describe', '--always'],
-                                                                         cwd=parameters.source_directory)
-                    except subprocess.CalledProcessError as e:
-                        table += '<td></td>'
-                        logging.error('Error (exit code {0}): {1}'.format(e.returncode, e.output))
+            if repo_commit:
+                table += '<td>%s</td>' % repo_commit
 
-                if dataset_name in blueprint_results \
-                    and 'result' in blueprint_results[dataset_name] \
-                    and not np.isnan(blueprint_results[dataset_name]['result']).all():
-                        result = blueprint_results[dataset_name]['result']
-                        table += '<td>%s/%s</td>' % (len(~np.isnan(result)), len(result))
-                        means = np.nanmean(result, axis=0)
-                        stds = np.nanstd(result, axis=0)
-                        for mean, std in zip(means, stds):
-                            table += '<td>%.2f \pm %.2f</td>' % (mean, std)
-                else:
-                    table += '<td>0</td>'
-                    for result_name in result_names[dataset_name]:
-                        table += '<td>N/A</td>'
+                # Try to get blueprint commit hash
+                try:
+                    table += '<td>%s</td>' % subprocess.check_output(['git', 'describe', '--always'],
+                                                                     cwd=parameters.source_directory)
+                except subprocess.CalledProcessError as e:
+                    table += '<td></td>'
+                    logging.error('Error (exit code {0}): {1}'.format(e.returncode, e.output))
 
-                table += '</tr>'
+            if dataset_name in blueprint_results \
+                and 'result' in blueprint_results[dataset_name] \
+                and not np.isnan(blueprint_results[dataset_name]['result']).all():
+                    result = blueprint_results[dataset_name]['result']
+                    table += '<td>%s/%s</td>' % (len(~np.isnan(result)), len(result))
+                    means = np.nanmean(result, axis=0)
+                    stds = np.nanstd(result, axis=0)
+                    for mean, std in zip(means, stds):
+                        table += '<td>%.2f \pm %.2f</td>' % (mean, std)
+            else:
+                table += '<td>0</td>'
+                for result_name in result_names[dataset_name]:
+                    table += '<td>N/A</td>'
 
-        table += '</tbody>'
-        table += '</table>'
+            table += '</tr>'
 
-        table += '<script>new Tablesort(document.getElementById("leaderboard-%s"));</script>' % dataset_name
+    table += '</tbody>'
+    table += '</table>'
 
-        table += '</body>'
-        table += '</html>'
+    table += '<script>new Tablesort(document.getElementById("leaderboard-%s"));</script>' % dataset_name
 
-        table_file = open(os.path.join(parameters.output_directory,
-                                       'leaderboard-' + dataset_name + '.html'), "w")
+    table += '</body>'
+    table += '</html>'
 
-        table_file.write(table)
-        table_file.close()
+    table_file = open(os.path.join(parameters.output_directory,
+                                   'leaderboard-' + dataset_name + '.html'), "w")
+
+    table_file.write(table)
+    table_file.close()
 
 def make_blueprint_results(dataset_name, team_name, blueprint_name, blueprint_results, result_names):
     blueprint_table = '<!DOCTYPE html>'
