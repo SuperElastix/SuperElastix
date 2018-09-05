@@ -41,8 +41,8 @@
         "ParameterMap1FinalBSplineInterpolationOrder": "3",
         "ParameterMap1NumberOfResolutions": "5",
         "ParameterMap1WriteIterationInfo": "false",
-        "ParameterMap1ImageSampler": "RandomCoordinate",
-        "ParameterMap1NumberOfSpatialSamples": "4192",
+        "ParameterMap1ImageSampler": "RandomSparseMask",
+        "ParameterMap1NumberOfSpatialSamples": "8192",
         "ParameterMap1CheckNumberOfSamples": "true",
         "ParameterMap1MaximumNumberOfSamplingAttempts": "8",
         "ParameterMap1NewSamplesEveryIteration": "true",
@@ -51,14 +51,12 @@
         "ParameterMap1AutomaticParameterEstimation": "true",
         "ParameterMap1WriteResultImage": "true",
         "ParameterMap1Registration": "MultiMetricMultiResolutionRegistration",
-        "ParameterMap1Metric": ["AdvancedMattesMutualInformation", "TransformBendingEnergyPenalty"],
-        "ParameterMap1Metric0Weight": "1.0",
-        "ParameterMap1Metric1Weight": "50.0",
-        "ParameterMap1MaximumNumberOfIterations": "512",
+        "ParameterMap1Metric": ["AdvancedMattesMutualInformation"],
+        "ParameterMap1MaximumNumberOfIterations": "1024",
         "ParameterMap1AutomaticTransformInitialization": "false",
-        "ParameterMap1Transform": "BSplineTransform",
+        "ParameterMap1Transform": "RecursiveBSplineTransform",
         "ParameterMap1BSplineTransformSplineOrder": "3",
-        "ParameterMap1FinalGridSpacingInPhysicalUnits": "8.0",
+        "ParameterMap1FinalGridSpacingInPhysicalUnits": "4.0",
         "ParameterMap1GridSpacingSchedule": ["4.24", "2.82", "2.0", "1.41", "1.0"],
         "ParameterMap1RequiredRatioOfValidSamples": "0.01"
     },
@@ -115,6 +113,16 @@
         "Out": "MovingImage",
         "In": "Transformix",
         "NameOfInterface": "itkImageMovingInterface"
+    },
+    "Connection": {
+        "Out": "FixedMask",
+        "In": "Elastix",
+        "NameOfInterface": "itkImageFixedMaskInterface"
+    },
+    "Connection": {
+        "Out": "MovingMask",
+        "In": "Elastix",
+        "NameOfInterface": "itkImageMovingMaskInterface"
     },
     "Connection": {
         "Out": "Elastix",
