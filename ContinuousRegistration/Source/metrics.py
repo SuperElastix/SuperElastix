@@ -76,7 +76,7 @@ def inverse_consistency_labels(superelastix, label_file_names, deformation_field
 def label_overlap(superelastix, label_file_names, deformation_field_file_names):
     labelOverlapMeasurer = sitk.LabelOverlapMeasuresImageFilter()
     labelOverlapMeasurer.SetGlobalDefaultCoordinateTolerance(1)
-    
+
     label_image_0_to_1_file_name = warp_image(superelastix, label_file_names[0], deformation_field_file_names[1], 'dsc_label_0_to_1')
 
     try:
@@ -92,8 +92,8 @@ def label_overlap(superelastix, label_file_names, deformation_field_file_names):
     except Exception as e:
         logging.error('Failed to compute DSC for %s: %s' % (label_file_names[0], e))
         return (
-            {'Dice': np.NaN, 'FalseNegativeError': np.NaN, 'FalsePositiveError': np.NaN, 'Jaccard': np.NaN, 'Union': np.NaN, 'VolumeSimilarity': np.NaN,},
-            {'Dice': np.NaN, 'FalseNegativeError': np.NaN, 'FalsePositiveError': np.NaN, 'Jaccard': np.NaN, 'Union': np.NaN, 'VolumeSimilarity': np.NaN,}
+            {'Dice Similarity Coefficient': np.NaN, 'FalseNegativeError': np.NaN, 'FalsePositiveError': np.NaN, 'Jaccard Coefficient': np.NaN, 'Union Coefficient': np.NaN, 'VolumeSimilarity': np.NaN,},
+            {'Dice Similarity Coefficient': np.NaN, 'FalseNegativeError': np.NaN, 'FalsePositiveError': np.NaN, 'Jaccard Coefficient': np.NaN, 'Union Coefficient': np.NaN, 'VolumeSimilarity': np.NaN,}
         )
 
     label_image_1_to_0_file_name = warp_image(superelastix, label_file_names[1], deformation_field_file_names[0], 'dsc_label_1_to_0')
