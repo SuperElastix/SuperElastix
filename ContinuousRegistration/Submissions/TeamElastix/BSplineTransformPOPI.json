@@ -57,7 +57,7 @@
         "ParameterMap1MaximumNumberOfIterations": "512",
         "ParameterMap1Transform": "RecursiveBSplineTransform",
         "ParameterMap1BSplineTransformSplineOrder": "3",
-        "ParameterMap1FinalGridSpacingInPhysicalUnits": "8.0",
+        "ParameterMap1FinalGridSpacingInPhysicalUnits": "12.0",
         "ParameterMap1GridSpacingSchedule": ["4.0", "2.8", "1.41", "1.0"],
         "ParameterMap1RequiredRatioOfValidSamples": "0.01",
         "ParameterMap1ErodeMask": "false"
