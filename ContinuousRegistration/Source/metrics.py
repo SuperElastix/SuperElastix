@@ -47,7 +47,7 @@ def inverse_consistency_points(superelastix, point_sets, deformation_field_file_
 
 def inverse_consistency_labels(superelastix, label_file_names, deformation_field_file_names):
     labelOverlapMeasurer = sitk.LabelOverlapMeasuresImageFilter()
-    labelOverlapMeasurer.SetGlobalDefaultCoordinateTolerance(1)
+    labelOverlapMeasurer.SetGlobalDefaultCoordinateTolerance(1.0)
 
     label_image_moving0_to_fixed1_file_name = warp_image(superelastix, label_file_names[0], deformation_field_file_names[1], 'inverse_consistency_label_0_to_1')
     label_image_moving0_to_fixed1_to_moving0_file_name = warp_image(superelastix, label_image_moving0_to_fixed1_file_name, deformation_field_file_names[0], 'inverse_consistency_label_0_to_1_to_0')
@@ -75,7 +75,7 @@ def inverse_consistency_labels(superelastix, label_file_names, deformation_field
 
 def label_overlap(superelastix, label_file_names, deformation_field_file_names):
     labelOverlapMeasurer = sitk.LabelOverlapMeasuresImageFilter()
-    labelOverlapMeasurer.SetGlobalDefaultCoordinateTolerance(1)
+    labelOverlapMeasurer.SetGlobalDefaultCoordinateTolerance(1.0)
 
     label_image_0_to_1_file_name = warp_image(superelastix, label_file_names[0], deformation_field_file_names[1], 'dsc_label_0_to_1')
 
@@ -111,10 +111,10 @@ def label_overlap(superelastix, label_file_names, deformation_field_file_names):
     except Exception as e:
         logging.error('Failed to compute DSC for %s' % label_file_names[1])
         return (
-            {'Dice': np.NaN, 'FalseNegativeError': np.NaN, 'FalsePositiveError': np.NaN, 'Jaccard': np.NaN, 'Union': np.NaN, 'VolumeSimilarity': np.NaN,},
-            {'Dice': np.NaN, 'FalseNegativeError': np.NaN, 'FalsePositiveError': np.NaN, 'Jaccard': np.NaN, 'Union': np.NaN, 'VolumeSimilarity': np.NaN,}
+            {'Dice Similarity Coefficient': np.NaN, 'FalseNegativeError': np.NaN, 'FalsePositiveError': np.NaN, 'Jaccard Coefficient': np.NaN, 'Union Coefficient': np.NaN, 'VolumeSimilarity': np.NaN,},
+            {'Dice Similarity Coefficient': np.NaN, 'FalseNegativeError': np.NaN, 'FalsePositiveError': np.NaN, 'Jaccard Coefficient': np.NaN, 'Union Coefficient': np.NaN, 'VolumeSimilarity': np.NaN,}
         )
 
     return (
-        {'Dice': dsc_0, 'FalseNegativeError': fne_0, 'FalsePositiveError': fpe_0, 'Jaccard': jaccard_0, 'Union': union_0, 'VolumeSimilarity': vol_0,},
-        {'Dice': dsc_1, 'FalseNegativeError': fne_1, 'FalsePositiveError': fpe_1, 'Jaccard': jaccard_1, 'Union': union_1, 'VolumeSimilarity': vol_1,})
+        {'Dice Similarity Coefficient': dsc_0, 'FalseNegativeError': fne_0, 'FalsePositiveError': fpe_0, 'Jaccard Coefficient': jaccard_0, 'Union Coefficient': union_0, 'VolumeSimilarity': vol_0,},
+        {'Dice Similarity Coefficient': dsc_1, 'FalseNegativeError': fne_1, 'FalsePositiveError': fpe_1, 'Jaccard Coefficient': jaccard_1, 'Union Coefficient': union_1, 'VolumeSimilarity': vol_1,})
