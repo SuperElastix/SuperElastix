@@ -21,13 +21,18 @@
 
 //Component group NiftyregItkHybrid
 #include "selxNiftyregItkMultiStageComponent.h"
+#include "selxItkToNiftiImageHybridSourceComponent.h"
 
 namespace selx
 {
 using ModuleNiftyregItkHybridComponents = selx::TypeList<
+    ItkToNiftiImageHybridSourceComponent<2, float>,
+    ItkToNiftiImageHybridSourceComponent<2, double>,
+    ItkToNiftiImageHybridSourceComponent<3, float>,
+    ItkToNiftiImageHybridSourceComponent<3, double>,
     NiftyregItkMultiStageComponent<float, 2>,
-	NiftyregItkMultiStageComponent<double, 2>,
-	NiftyregItkMultiStageComponent<double, 3>,
-	NiftyregItkMultiStageComponent<float, 3>
+	  NiftyregItkMultiStageComponent<double, 2>,
+	  NiftyregItkMultiStageComponent<double, 3>,
+	  NiftyregItkMultiStageComponent<float, 3>
   >;
 }

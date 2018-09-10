@@ -62,8 +62,7 @@
   "Component": {
     "Name": "TransformResolutionAdaptor2",
     "NameOfClass": "NiftyregItkMultiStageComponent",
-    "PixelType": "float",
-    "ShrinkFactorsPerLevel": ["2", "1"]
+    "PixelType": "float"
   },
   "Component": {
     "Name": "Optimizer2",
