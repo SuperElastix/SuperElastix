@@ -74,7 +74,7 @@ protected:
   // return the class name and the template arguments to uniquely identify this component.
   static inline const std::map< std::string, std::string > TemplateProperties()
   {
-    return { { keys::NameOfClass, "ItkGradientDescentOptimizerv4Component" }, { keys::InternalComputationValueType, PodString< InternalComputationValueType >::Get() } };
+    return { { keys::NameOfClass, "ItkGradientDescentOptimizerv4Component" }, { keys::PixelType, PodString< InternalComputationValueType >::Get() }, { keys::InternalComputationValueType, PodString< InternalComputationValueType >::Get() } };
   }
 };
 } //end namespace selx

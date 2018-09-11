@@ -456,7 +456,7 @@ class HAMMERS(Dataset):
                        for image in os.listdir(input_directory)
                        if image.endswith('seg.nii.gz')]
         label_file_names = [pair for pair in combinations(label_file_names, 2)]
-        image_file_names = sorted(image_file_names,
+        label_file_names = sorted(label_file_names,
                                   key=lambda f: f[0] + f[1])
 
         disp_field_file_names = [create_disp_field_names(image_file_name_pair, self.name)

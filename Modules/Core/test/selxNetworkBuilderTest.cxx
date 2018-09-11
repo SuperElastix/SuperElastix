@@ -71,10 +71,11 @@ public:
 
   virtual void TearDown()
   {
+    logger->RemoveStream( "cout" );
   }
 
   BlueprintPointer blueprint;
-  LoggerImpl * logger = new LoggerImpl();
+  LoggerImpl* logger = new LoggerImpl();
 };
 
 TEST_F( NetworkBuilderTest, Create )
