@@ -11,7 +11,7 @@ def main():
         #jt.jobEnvironment = os.environ
         #jt.email = ""
         #jt.workingDirectory = os.path.abspath(os.curdir)
-        jt.nativeSpecification = "-pe BWA 4 -l h_vmem=1g -cwd -j Y -V"
+        jt.nativeSpecification = "-pe BWA 4 -l h_vmem=5g -cwd -j Y -V"
 
         for dirpath, dirnames, filenames in os.walk('.'):
             for filename in filenames:
