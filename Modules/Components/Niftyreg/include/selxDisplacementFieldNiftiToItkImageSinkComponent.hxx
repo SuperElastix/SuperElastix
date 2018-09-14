@@ -54,7 +54,8 @@ DisplacementFieldNiftiToItkImageSinkComponent< Dimensionality, TPixel >::Accept(
 {
   // Store pointer to the m_ImageDomainInterface for getting the result image after in has been generated (registration).
   // TODO: sanity check that m_ImageDomainInterface was Null to detect if Set was called more than once erroneously.
-  m_MiniPipelineOutputImage->SetRegions( other->GetItkImageDomainFixed()->GetLargestPossibleRegion() );
+  this->m_MiniPipelineOutputImage->SetRegions( other->GetItkImageDomainFixed()->GetLargestPossibleRegion() );
+  this->m_MiniPipelineOutputImage->CopyInformation( other->GetItkImageDomainFixed());
   //this->m_ImageDomainInterface = other;
   return 0;
 }
