@@ -33,3 +33,21 @@ set( ${APPLICATION}_MODULE_DEPENDENCIES
 set( ${APPLICATION}_INTEGRATION_TEST_SOURCE_FILES 
   ${${APPLICATION}_SOURCE_DIR}/test/integration.cmake
 )
+
+
+# Originally based on the answer by Naszta at
+# https://stackoverflow.com/questions/6526451/how-to-include-git-commit-number-into-a-c-executable
+find_package(Git)
+if(GIT_FOUND)
+  execute_process(
+    COMMAND ${GIT_EXECUTABLE} rev-parse HEAD
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+    OUTPUT_VARIABLE SELX_GIT_REVISION_SHA
+    ERROR_QUIET
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+  else()
+    set(SELX_GIT_REVISION_SHA 0)
+endif()
+
+
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Applications/selxGitRevisionSha.h.in ${CMAKE_CURRENT_BINARY_DIR}/Applications/selxGitRevisionSha.h @ONLY)
