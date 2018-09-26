@@ -146,6 +146,22 @@ _selxmodules_initialize()
 enable_modules()
 message( STATUS "Enabling modules ... Done" )
 
+# Originally based on the answer by Naszta at
+# https://stackoverflow.com/questions/6526451/how-to-include-git-commit-number-into-a-c-executable
+find_package(Git)
+if(GIT_FOUND)
+  execute_process(
+    COMMAND ${GIT_EXECUTABLE} rev-parse HEAD
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+    OUTPUT_VARIABLE SELX_GIT_REVISION_SHA
+    ERROR_QUIET
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+  else()
+    set(SELX_GIT_REVISION_SHA 0)
+endif()
+
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Modules/Core/selxGitRevisionSha.h.in ${CMAKE_CURRENT_BINARY_DIR}/ModuleCore/selxGitRevisionSha.h @ONLY)
+
 include( ${ModuleFilter_SOURCE_DIR}/CompiledLibraryComponents.cmake )
 mark_as_advanced( COMPILED_LIBRARY_CONFIG_DIR )
 set( COMPILED_LIBRARY_CONFIG_DIR ${PROJECT_BINARY_DIR} CACHE PATH "Path where a custom selxCompiledLibraryComponents.h can be found. Defaults to automatic generated file in ${PROJECT_BINARY_DIR}")

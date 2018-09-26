@@ -25,6 +25,7 @@ set( ${MODULE}_INCLUDE_DIRS
 set( ${MODULE}_SOURCE_FILES
   ${${MODULE}_SOURCE_DIR}/src/selxComponentBase.cxx
   ${${MODULE}_SOURCE_DIR}/src/selxCheckTemplateProperties.cxx
+  ${${MODULE}_SOURCE_DIR}/src/selxGitInfo.cxx
   ${${MODULE}_SOURCE_DIR}/src/selxNetworkContainer.cxx
 )
 
