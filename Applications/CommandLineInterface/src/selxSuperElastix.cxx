@@ -91,11 +91,10 @@ main( int ac, char * av[] )
 
   try
   {
-    std::cout << "SuperElastix GIT Revision SHA-1: " << selx::GitInfo::GetRevisionSha() << std::endl;
-
     boost::program_options::options_description desc("Allowed options");
     desc.add_options()
       ( "help", "produce help message" )
+      ( "revision-sha", "produce git revision SHA-1 hash of SuperElastix source" )
       ("conf", boost::program_options::value< VectorOfPathsType >(&configurationPaths)->required()->multitoken(), "Configuration file: single or multiple Blueprints [.xml|.json]")
       ("in", boost::program_options::value< VectorOfStringsType >(&inputPairs)->multitoken(), "Input data: images, labels, meshes, etc. Usage arg: <name>=<path> (or multiple pairs)")
       ("out", boost::program_options::value< VectorOfStringsType >(&outputPairs)->multitoken(), "Output data: images, labels, meshes, etc. Usage arg: <name>=<path> (or multiple pairs)")
@@ -108,7 +107,14 @@ main( int ac, char * av[] )
 
     if( vm.count( "help" ) )
     {
-      std::cout << desc << "\n";
+      std::cout
+        << "SuperElastix GIT Revision SHA-1: " << selx::GitInfo::GetRevisionSha() << '\n'
+        << desc << std::endl;
+      return 0;
+    }
+    if (vm.count("revision-sha"))
+    {
+      std::cout << selx::GitInfo::GetRevisionSha() << std::endl;
       return 0;
     }
     boost::program_options::notify(vm);
