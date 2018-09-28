@@ -35,7 +35,10 @@ find_package(Boost COMPONENTS program_options filesystem system regex REQUIRED Q
 include_directories( ${Boost_INCLUDE_DIR} )
 
 # Compile executable
-include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/include" )
+include_directories(  
+  "${CMAKE_CURRENT_SOURCE_DIR}/include"
+  "${CMAKE_CURRENT_BINARY_DIR}/Applications"  # For selxGitRevisionSha.h
+)
 add_executable( SuperElastix ${COMMANDLINE_SOURCE_FILES} ${COMMANDLINE_HEADER_FILES} )
 target_link_libraries( SuperElastix ${SUPERELASTIX_LIBRARIES} ${Boost_LIBRARIES} ${ITK_LIBRARIES} ${ELASTIX_LIBRARIES} )
 
