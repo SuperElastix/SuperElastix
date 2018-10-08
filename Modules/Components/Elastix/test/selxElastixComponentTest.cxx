@@ -47,22 +47,38 @@ public:
   /** Make a list of components to be registered for this test*/
   typedef TypeList< 
     MonolithicElastixComponent< 2, float >,
+    MonolithicElastixComponent< 3, float >,
     MonolithicTransformixComponent< 2, float >,
+    MonolithicTransformixComponent< 3, float >,
     ItkImageSinkComponent< 2, float >,
+    ItkImageSinkComponent< 3, float >,
     ItkDisplacementFieldSinkComponent< 2, float >,
+    ItkDisplacementFieldSinkComponent< 3, float >,
     ItkImageSourceComponent< 2, float >,
-    ItkImageSourceComponent< 2, unsigned char >, //for masks
-    ItkImageSourceComponent< 3, double >> RegisterComponents;
+    ItkImageSourceComponent< 2, unsigned char >,
+    ItkImageSourceComponent< 3, float >,
+    ItkImageSourceComponent< 3, unsigned char >
+  > RegisterComponents;
 
   typedef itk::Image< float, 2 >              Image2DType;
   typedef itk::ImageFileReader< Image2DType > ImageReader2DType;
   typedef itk::ImageFileWriter< Image2DType > ImageWriter2DType;
 
+  typedef itk::Image< float, 3 >              Image3DType;
+  typedef itk::ImageFileReader< Image3DType > ImageReader3DType;
+  typedef itk::ImageFileWriter< Image3DType > ImageWriter3DType;
+
   typedef itk::Image< unsigned char, 2 >      Mask2DType;
   typedef itk::ImageFileReader< Mask2DType >  MaskReader2DType;
 
+  typedef itk::Image< unsigned char, 3 >      Mask3DType;
+  typedef itk::ImageFileReader< Mask3DType >  MaskReader3DType;
+
   typedef itk::Image< itk::Vector< float, 2 >, 2 >       DisplacementImage2DType;
   typedef itk::ImageFileWriter< DisplacementImage2DType > DisplacementImageWriter2DType;
+
+  typedef itk::Image< itk::Vector< float, 3 >, 3 >       DisplacementImage3DType;
+  typedef itk::ImageFileWriter< DisplacementImage3DType > DisplacementImageWriter3DType;
 
   virtual void SetUp()
   {
@@ -189,4 +205,389 @@ TEST_F( ElastixComponentTest, MonolithicElastixTransformix )
   EXPECT_NO_THROW( resultDisplacementWriter->Update() );
 
 }
+
+TEST_F( ElastixComponentTest, Affine_anisotropic ) {
+  /** make example blueprint configuration */
+  BlueprintPointer blueprint = Blueprint::New();
+
+  blueprint->SetComponent( "RegistrationMethod", { { "NameOfClass", { "MonolithicElastixComponent" } },
+                                                   { "Dimensionality", { "3" } },
+                                                   { "PixelType", { "float" } },
+                                                   { "ParameterMap0FixedImagePyramid", { "FixedSmoothingImagePyramid" } },
+                                                   { "ParameterMap0MovingImagePyramid", { "MovingSmoothingImagePyramid" } },
+                                                   { "ParameterMap0Transform", { "AffineTransform" } },
+                                                   { "ParameterMap0ImageSampler", { "RandomCoordinate" } },
+                                                   { "ParameterMap0NumberOfResolutions", { "8" } },
+                                                   { "ParameterMap0NumberOfIterations", { "512" } },
+                                                   { "ParameterMap0Registration", { "MultiResolutionRegistration" } },
+                                                   { "ParameterMap0Metric", { "AdvancedMattesMutualInformation" } },
+                                                   { "ParameterMap0NumberOfIterations", { "32" } },
+                                                   { "ParameterMap0Optimizer", { "AdaptiveStochasticGradientDescent" } } } );
+
+  blueprint->SetComponent( "TransformDisplacementField", { { "NameOfClass", { "MonolithicTransformixComponent" } }, { "Dimensionality", { "3" } } } );
+
+  blueprint->SetComponent( "FixedImageSource", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } } );
+
+  blueprint->SetComponent( "MovingImageSource", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } } );
+
+  blueprint->SetComponent( "ResultImageSink", { { "NameOfClass", { "ItkImageSinkComponent" } }, { "Dimensionality", { "3" } } } );
+
+  blueprint->SetComponent( "ResultDisplacementFieldSink", { { "NameOfClass", { "ItkDisplacementFieldSinkComponent" } }, { "Dimensionality", { "3" } } });
+
+  blueprint->SetConnection( "FixedImageSource", "RegistrationMethod", { { "NameOfInterface", { "itkImageFixedInterface" } } } ); // ;
+
+  blueprint->SetConnection( "MovingImageSource", "RegistrationMethod", { { "NameOfInterface", { "itkImageMovingInterface" } } } ); // ;
+
+  blueprint->SetConnection( "RegistrationMethod", "TransformDisplacementField", { { "NameOfInterface", { "elastixTransformParameterObjectInterface" } } } ); // ;
+
+  blueprint->SetConnection( "FixedImageSource", "TransformDisplacementField", { { "NameOfInterface", { "itkImageDomainFixedInterface" } } } ); // ;
+
+  blueprint->SetConnection( "MovingImageSource", "TransformDisplacementField", { { "NameOfInterface", { "itkImageMovingInterface" } } } ); //;
+
+  blueprint->SetConnection( "TransformDisplacementField", "ResultImageSink", { { "NameOfInterface", { "itkImageInterface" } } } ); // ;
+
+  blueprint->SetConnection( "TransformDisplacementField", "ResultDisplacementFieldSink", { { "NameOfInterface", { "itkDisplacementFieldInterface" } } }); // ;
+
+
+  // Set up the readers and writers
+  auto fixedImageReader = ImageReader3DType::New();
+  fixedImageReader->SetFileName( dataManager->GetInputFile( "square3dIsotropic.nii.gz" ) );
+
+  auto movingImageReader = ImageReader3DType::New();
+  movingImageReader->SetFileName( dataManager->GetInputFile( "square3dAnisotropic.nii.gz" ) );
+
+  auto resultImageWriter = ImageWriter3DType::New();
+  resultImageWriter->SetFileName( dataManager->GetOutputFile( "ElastixAffineSquare3dAnisotropic.nii.gz" ) );
+
+  DisplacementImageWriter3DType::Pointer resultDisplacementWriter = DisplacementImageWriter3DType::New();
+  resultDisplacementWriter->SetFileName(dataManager->GetOutputFile("ElastixAffineSquare3dAnisotropicDeformationField.nii"));
+
+  // Connect SuperElastix in an itk pipeline
+  superElastixFilter->SetInput( "FixedImageSource", fixedImageReader->GetOutput() );
+  superElastixFilter->SetInput( "MovingImageSource", movingImageReader->GetOutput() );
+
+  resultImageWriter->SetInput( superElastixFilter->GetOutput< Image3DType >( "ResultImageSink" ) );
+  resultDisplacementWriter->SetInput(superElastixFilter->GetOutput< DisplacementImage3DType >("ResultDisplacementFieldSink"));
+
+  EXPECT_NO_THROW( superElastixFilter->SetBlueprint( blueprint ) );
+  // Update call on the writers triggers SuperElastix to configure and execute
+  EXPECT_NO_THROW( resultImageWriter->Update() );
+  EXPECT_NO_THROW( resultDisplacementWriter->Update() );
+}
+
+TEST_F( ElastixComponentTest, Translation_origin ) {
+  /** make example blueprint configuration */
+  BlueprintPointer blueprint = Blueprint::New();
+
+  blueprint->SetComponent( "RegistrationMethod", { { "NameOfClass", { "MonolithicElastixComponent" } },
+                                                   { "Dimensionality", { "3" } },
+                                                   { "PixelType", { "float" } },
+                                                   { "ParameterMap0FixedImagePyramid", { "FixedSmoothingImagePyramid" } },
+                                                   { "ParameterMap0MovingImagePyramid", { "MovingSmoothingImagePyramid" } },
+                                                   { "ParameterMap0Transform", { "TranslationTransform" } },
+                                                   { "ParameterMap0ImageSampler", { "RandomCoordinate" } },
+                                                   { "ParameterMap0NumberOfResolutions", { "8" } },
+                                                   { "ParameterMap0Registration", { "MultiResolutionRegistration" } },
+                                                   { "ParameterMap0Metric", { "AdvancedMattesMutualInformation" } },
+                                                   { "ParameterMap0NumberOfIterations", { "128" } },
+                                                   { "ParameterMap0Optimizer", { "AdaptiveStochasticGradientDescent" } } } );
+
+  blueprint->SetComponent( "TransformDisplacementField", { { "NameOfClass", { "MonolithicTransformixComponent" } }, { "Dimensionality", { "3" } } } );
+
+  blueprint->SetComponent( "FixedImageSource", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } } );
+
+  blueprint->SetComponent( "MovingImageSource", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } } );
+
+  blueprint->SetComponent( "ResultImageSink", { { "NameOfClass", { "ItkImageSinkComponent" } }, { "Dimensionality", { "3" } } } );
+
+  blueprint->SetComponent( "ResultDisplacementFieldSink", { { "NameOfClass", { "ItkDisplacementFieldSinkComponent" } }, { "Dimensionality", { "3" } } });
+
+  blueprint->SetConnection( "FixedImageSource", "RegistrationMethod", { { "NameOfInterface", { "itkImageFixedInterface" } } } ); // ;
+
+  blueprint->SetConnection( "MovingImageSource", "RegistrationMethod", { { "NameOfInterface", { "itkImageMovingInterface" } } } ); // ;
+
+  blueprint->SetConnection( "RegistrationMethod", "TransformDisplacementField", { { "NameOfInterface", { "elastixTransformParameterObjectInterface" } } } ); // ;
+
+  blueprint->SetConnection( "FixedImageSource", "TransformDisplacementField", { { "NameOfInterface", { "itkImageDomainFixedInterface" } } } ); // ;
+
+  blueprint->SetConnection( "MovingImageSource", "TransformDisplacementField", { { "NameOfInterface", { "itkImageMovingInterface" } } } ); //;
+
+  blueprint->SetConnection( "TransformDisplacementField", "ResultImageSink", { { "NameOfInterface", { "itkImageInterface" } } } ); // ;
+
+  blueprint->SetConnection( "TransformDisplacementField", "ResultDisplacementFieldSink", { { "NameOfInterface", { "itkDisplacementFieldInterface" } } }); // ;
+
+
+  // Set up the readers and writers
+  auto fixedImageReader = ImageReader3DType::New();
+  fixedImageReader->SetFileName( dataManager->GetInputFile( "square3dIsotropic.nii.gz" ) );
+
+  auto movingImageReader = ImageReader3DType::New();
+  movingImageReader->SetFileName( dataManager->GetInputFile( "square3dIsotropicOriginX8OriginY12OriginZ16.nii.gz" ) );
+
+  auto resultImageWriter = ImageWriter3DType::New();
+  resultImageWriter->SetFileName( dataManager->GetOutputFile( "ElastixAffineSquare3dIsotropicOriginX8OriginY12OriginZ16.nii.gz" ) );
+
+  DisplacementImageWriter3DType::Pointer resultDisplacementWriter = DisplacementImageWriter3DType::New();
+  resultDisplacementWriter->SetFileName(dataManager->GetOutputFile("ElastixAffineSquare3dIsotropicOriginX8OriginY12OriginZ16DeformationField.nii"));
+
+  // Connect SuperElastix in an itk pipeline
+  superElastixFilter->SetInput( "FixedImageSource", fixedImageReader->GetOutput() );
+  superElastixFilter->SetInput( "MovingImageSource", movingImageReader->GetOutput() );
+
+  resultImageWriter->SetInput( superElastixFilter->GetOutput< Image3DType >( "ResultImageSink" ) );
+  resultDisplacementWriter->SetInput(superElastixFilter->GetOutput< DisplacementImage3DType >("ResultDisplacementFieldSink"));
+
+  EXPECT_NO_THROW( superElastixFilter->SetBlueprint( blueprint ) );
+  // Update call on the writers triggers SuperElastix to configure and execute
+  EXPECT_NO_THROW( resultImageWriter->Update() );
+  EXPECT_NO_THROW( resultDisplacementWriter->Update() );
+}
+
+TEST_F( ElastixComponentTest, Affine_anisotropic_origin ) {
+  /** make example blueprint configuration */
+  BlueprintPointer blueprint = Blueprint::New();
+
+  blueprint->SetComponent( "RegistrationMethod", { { "NameOfClass", { "MonolithicElastixComponent" } },
+                                                   { "Dimensionality", { "3" } },
+                                                   { "PixelType", { "float" } },
+                                                   { "ParameterMap0FixedImagePyramid", { "FixedSmoothingImagePyramid" } },
+                                                   { "ParameterMap0MovingImagePyramid", { "MovingSmoothingImagePyramid" } },
+                                                   { "ParameterMap0Transform", { "AffineTransform" } },
+                                                   { "ParameterMap0ImageSampler", { "RandomCoordinate" } },
+                                                   { "ParameterMap0NumberOfResolutions", { "8" } },
+                                                   { "ParameterMap0NumberOfIterations", { "512" } },
+                                                   { "ParameterMap0Registration", { "MultiResolutionRegistration" } },
+                                                   { "ParameterMap0Metric", { "AdvancedMattesMutualInformation" } },
+                                                   { "ParameterMap0NumberOfIterations", { "32" } },
+                                                   { "ParameterMap0Optimizer", { "AdaptiveStochasticGradientDescent" } } } );
+
+  blueprint->SetComponent( "TransformDisplacementField", { { "NameOfClass", { "MonolithicTransformixComponent" } }, { "Dimensionality", { "3" } } } );
+
+  blueprint->SetComponent( "FixedImageSource", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } } );
+
+  blueprint->SetComponent( "MovingImageSource", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } } );
+
+  blueprint->SetComponent( "ResultImageSink", { { "NameOfClass", { "ItkImageSinkComponent" } }, { "Dimensionality", { "3" } } } );
+
+  blueprint->SetComponent( "ResultDisplacementFieldSink", { { "NameOfClass", { "ItkDisplacementFieldSinkComponent" } }, { "Dimensionality", { "3" } } });
+
+  blueprint->SetConnection( "FixedImageSource", "RegistrationMethod", { { "NameOfInterface", { "itkImageFixedInterface" } } } ); // ;
+
+  blueprint->SetConnection( "MovingImageSource", "RegistrationMethod", { { "NameOfInterface", { "itkImageMovingInterface" } } } ); // ;
+
+  blueprint->SetConnection( "RegistrationMethod", "TransformDisplacementField", { { "NameOfInterface", { "elastixTransformParameterObjectInterface" } } } ); // ;
+
+  blueprint->SetConnection( "FixedImageSource", "TransformDisplacementField", { { "NameOfInterface", { "itkImageDomainFixedInterface" } } } ); // ;
+
+  blueprint->SetConnection( "MovingImageSource", "TransformDisplacementField", { { "NameOfInterface", { "itkImageMovingInterface" } } } ); //;
+
+  blueprint->SetConnection( "TransformDisplacementField", "ResultImageSink", { { "NameOfInterface", { "itkImageInterface" } } } ); // ;
+
+  blueprint->SetConnection( "TransformDisplacementField", "ResultDisplacementFieldSink", { { "NameOfInterface", { "itkDisplacementFieldInterface" } } }); // ;
+
+
+  // Set up the readers and writers
+  auto fixedImageReader = ImageReader3DType::New();
+  fixedImageReader->SetFileName( dataManager->GetInputFile( "square3dIsotropic.nii.gz" ) );
+
+  auto movingImageReader = ImageReader3DType::New();
+  movingImageReader->SetFileName( dataManager->GetInputFile( "square3dAnisotropicOriginX8OriginY12OriginZ16.nii.gz" ) );
+
+  auto resultImageWriter = ImageWriter3DType::New();
+  resultImageWriter->SetFileName( dataManager->GetOutputFile( "ElastixAffineSquare3dAnisotropicOriginX8OriginY12OriginZ16.nii.gz" ) );
+
+  DisplacementImageWriter3DType::Pointer resultDisplacementWriter = DisplacementImageWriter3DType::New();
+  resultDisplacementWriter->SetFileName(dataManager->GetOutputFile("ElastixAffineSquare3dAnisotropicOriginX8OriginY12OriginZ16DeformationField.nii"));
+
+  // Connect SuperElastix in an itk pipeline
+  superElastixFilter->SetInput( "FixedImageSource", fixedImageReader->GetOutput() );
+  superElastixFilter->SetInput( "MovingImageSource", movingImageReader->GetOutput() );
+
+  resultImageWriter->SetInput( superElastixFilter->GetOutput< Image3DType >( "ResultImageSink" ) );
+  resultDisplacementWriter->SetInput(superElastixFilter->GetOutput< DisplacementImage3DType >("ResultDisplacementFieldSink"));
+
+  EXPECT_NO_THROW( superElastixFilter->SetBlueprint( blueprint ) );
+  // Update call on the writers triggers SuperElastix to configure and execute
+  EXPECT_NO_THROW( resultImageWriter->Update() );
+  EXPECT_NO_THROW( resultDisplacementWriter->Update() );
+}
+
+TEST_F( ElastixComponentTest, Affine_spacing_moving ) {
+  /** make example blueprint configuration */
+  BlueprintPointer blueprint = Blueprint::New();
+
+  blueprint->SetComponent( "RegistrationMethod", { { "NameOfClass", { "MonolithicElastixComponent" } },
+                                                   { "Dimensionality", { "3" } },
+                                                   { "PixelType", { "float" } },
+                                                   { "ParameterMap0FixedImagePyramid", { "FixedSmoothingImagePyramid" } },
+                                                   { "ParameterMap0MovingImagePyramid", { "MovingSmoothingImagePyramid" } },
+                                                   { "ParameterMap0Transform", { "AffineTransform" } },
+                                                   { "ParameterMap0ImageSampler", { "RandomCoordinate" } },
+                                                   { "ParameterMap0NumberOfResolutions", { "8" } },
+                                                   { "ParameterMap0NumberOfIterations", { "512" } },
+                                                   { "ParameterMap0Registration", { "MultiResolutionRegistration" } },
+                                                   { "ParameterMap0Metric", { "AdvancedMattesMutualInformation" } },
+                                                   { "ParameterMap0NumberOfIterations", { "32" } },
+                                                   { "ParameterMap0Optimizer", { "AdaptiveStochasticGradientDescent" } } } );
+
+  blueprint->SetComponent( "TransformDisplacementField", { { "NameOfClass", { "MonolithicTransformixComponent" } }, { "Dimensionality", { "3" } } } );
+
+  blueprint->SetComponent( "FixedImageSource", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } } );
+
+  blueprint->SetComponent( "MovingImageSource", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } } );
+
+  blueprint->SetComponent( "ResultImageSink", { { "NameOfClass", { "ItkImageSinkComponent" } }, { "Dimensionality", { "3" } } } );
+
+  blueprint->SetComponent( "ResultDisplacementFieldSink", { { "NameOfClass", { "ItkDisplacementFieldSinkComponent" } }, { "Dimensionality", { "3" } } });
+
+  blueprint->SetConnection( "FixedImageSource", "RegistrationMethod", { { "NameOfInterface", { "itkImageFixedInterface" } } } ); // ;
+
+  blueprint->SetConnection( "MovingImageSource", "RegistrationMethod", { { "NameOfInterface", { "itkImageMovingInterface" } } } ); // ;
+
+  blueprint->SetConnection( "RegistrationMethod", "TransformDisplacementField", { { "NameOfInterface", { "elastixTransformParameterObjectInterface" } } } ); // ;
+
+  blueprint->SetConnection( "FixedImageSource", "TransformDisplacementField", { { "NameOfInterface", { "itkImageDomainFixedInterface" } } } ); // ;
+
+  blueprint->SetConnection( "MovingImageSource", "TransformDisplacementField", { { "NameOfInterface", { "itkImageMovingInterface" } } } ); //;
+
+  blueprint->SetConnection( "TransformDisplacementField", "ResultImageSink", { { "NameOfInterface", { "itkImageInterface" } } } ); // ;
+
+  blueprint->SetConnection( "TransformDisplacementField", "ResultDisplacementFieldSink", { { "NameOfInterface", { "itkDisplacementFieldInterface" } } }); // ;
+
+
+  // Set up the readers and writers
+  auto fixedImageReader = ImageReader3DType::New();
+  fixedImageReader->SetFileName( dataManager->GetInputFile( "square3dIsotropic.nii.gz" ) );
+
+  auto movingImageReader = ImageReader3DType::New();
+  movingImageReader->SetFileName( dataManager->GetInputFile( "square3dIsotropicSpacingX1.1SpacingY1.1SpacingZ1.1.nii.gz" ) );
+
+  auto resultImageWriter = ImageWriter3DType::New();
+  resultImageWriter->SetFileName( dataManager->GetOutputFile( "ElastixAffineSquare3dIsotropicSpacingX1.1SpacingY1.1SpacingZ1.1.nii.gz" ) );
+
+  DisplacementImageWriter3DType::Pointer resultDisplacementWriter = DisplacementImageWriter3DType::New();
+  resultDisplacementWriter->SetFileName(dataManager->GetOutputFile("ElastixAffineSquare3dIsotropicSpacingX1.1SpacingY1.1SpacingZ1.1DeformationField.nii"));
+
+  // Connect SuperElastix in an itk pipeline
+  superElastixFilter->SetInput( "FixedImageSource", fixedImageReader->GetOutput() );
+  superElastixFilter->SetInput( "MovingImageSource", movingImageReader->GetOutput() );
+
+  resultImageWriter->SetInput( superElastixFilter->GetOutput< Image3DType >( "ResultImageSink" ) );
+  resultDisplacementWriter->SetInput(superElastixFilter->GetOutput< DisplacementImage3DType >("ResultDisplacementFieldSink"));
+
+  EXPECT_NO_THROW( superElastixFilter->SetBlueprint( blueprint ) );
+  // Update call on the writers triggers SuperElastix to configure and execute
+  EXPECT_NO_THROW( resultImageWriter->Update() );
+  EXPECT_NO_THROW( resultDisplacementWriter->Update() );
+}
+
+
+TEST_F( ElastixComponentTest, Affine_anisotropic_translation_origin ) {
+  /** make example blueprint configuration */
+  BlueprintPointer blueprint = Blueprint::New();
+
+  blueprint->SetComponent( "RegistrationMethod", { { "NameOfClass", { "MonolithicElastixComponent" } },
+                                                   { "Dimensionality", { "3" } },
+                                                   { "PixelType", { "float" } },
+                                                   { "ParameterMap0FixedImagePyramid", { "FixedSmoothingImagePyramid" } },
+                                                   { "ParameterMap0MovingImagePyramid", { "MovingSmoothingImagePyramid" } },
+                                                   { "ParameterMap0Transform", { "AffineTransform" } },
+                                                   { "ParameterMap0ImageSampler", { "RandomCoordinate" } },
+                                                   { "ParameterMap0NumberOfResolutions", { "8" } },
+                                                   { "ParameterMap0NumberOfIterations", { "512" } },
+                                                   { "ParameterMap0Registration", { "MultiResolutionRegistration" } },
+                                                   { "ParameterMap0Metric", { "AdvancedMattesMutualInformation" } },
+                                                   { "ParameterMap0NumberOfIterations", { "32" } },
+                                                   { "ParameterMap0Optimizer", { "AdaptiveStochasticGradientDescent" } } } );
+
+  blueprint->SetComponent( "TransformDisplacementField", { { "NameOfClass", { "MonolithicTransformixComponent" } }, { "Dimensionality", { "3" } } } );
+
+  blueprint->SetComponent( "FixedImageSource", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } } );
+
+  blueprint->SetComponent( "MovingImageSource", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } } );
+
+  blueprint->SetComponent( "ResultImageSink", { { "NameOfClass", { "ItkImageSinkComponent" } }, { "Dimensionality", { "3" } } } );
+
+  blueprint->SetComponent( "ResultDisplacementFieldSink", { { "NameOfClass", { "ItkDisplacementFieldSinkComponent" } }, { "Dimensionality", { "3" } } });
+
+  blueprint->SetConnection( "FixedImageSource", "RegistrationMethod", { { "NameOfInterface", { "itkImageFixedInterface" } } } ); // ;
+
+  blueprint->SetConnection( "MovingImageSource", "RegistrationMethod", { { "NameOfInterface", { "itkImageMovingInterface" } } } ); // ;
+
+  blueprint->SetConnection( "RegistrationMethod", "TransformDisplacementField", { { "NameOfInterface", { "elastixTransformParameterObjectInterface" } } } ); // ;
+
+  blueprint->SetConnection( "FixedImageSource", "TransformDisplacementField", { { "NameOfInterface", { "itkImageDomainFixedInterface" } } } ); // ;
+
+  blueprint->SetConnection( "MovingImageSource", "TransformDisplacementField", { { "NameOfInterface", { "itkImageMovingInterface" } } } ); //;
+
+  blueprint->SetConnection( "TransformDisplacementField", "ResultImageSink", { { "NameOfInterface", { "itkImageInterface" } } } ); // ;
+
+  blueprint->SetConnection( "TransformDisplacementField", "ResultDisplacementFieldSink", { { "NameOfInterface", { "itkDisplacementFieldInterface" } } }); // ;
+
+
+  // Set up the readers and writers
+  auto fixedImageReader = ImageReader3DType::New();
+  fixedImageReader->SetFileName( dataManager->GetInputFile( "square3dIsotropic.nii.gz" ) );
+
+  auto movingImageReader = ImageReader3DType::New();
+  movingImageReader->SetFileName( dataManager->GetInputFile( "square3dAnisotropicX8Y16Z24OriginX8OriginY12OriginZ16.nii.gz" ) );
+
+  auto resultImageWriter = ImageWriter3DType::New();
+  resultImageWriter->SetFileName( dataManager->GetOutputFile( "ElastixAffineSquare3dAnisotropicX8Y16Z24OriginX8OriginY12OriginZ16.nii.gz" ) );
+
+  DisplacementImageWriter3DType::Pointer resultDisplacementWriter = DisplacementImageWriter3DType::New();
+  resultDisplacementWriter->SetFileName(dataManager->GetOutputFile("ElastixAffineSquare3dAnisotropicX8Y16Z24OriginX8OriginY12OriginZ16DeformationField.nii"));
+
+  // Connect SuperElastix in an itk pipeline
+  superElastixFilter->SetInput( "FixedImageSource", fixedImageReader->GetOutput() );
+  superElastixFilter->SetInput( "MovingImageSource", movingImageReader->GetOutput() );
+
+  resultImageWriter->SetInput( superElastixFilter->GetOutput< Image3DType >( "ResultImageSink" ) );
+  resultDisplacementWriter->SetInput(superElastixFilter->GetOutput< DisplacementImage3DType >("ResultDisplacementFieldSink"));
+
+  EXPECT_NO_THROW( superElastixFilter->SetBlueprint( blueprint ) );
+  // Update call on the writers triggers SuperElastix to configure and execute
+  EXPECT_NO_THROW( resultImageWriter->Update() );
+  EXPECT_NO_THROW( resultDisplacementWriter->Update() );
+}
+
+
+//TEST_F( NiftyregComponentTest, Affine ) {
+//  // Make an affine elastix registration and compare transform parameters
+//  /** make example blueprint configuration */
+//  BlueprintPointer blueprint = Blueprint::New();
+//
+//  blueprint->SetComponent( "Elastix", { { "NameOfClass", { "MonolithicElastixComponent" } },
+//                                        { "ParameterMap0FixedImagePyramid", { "FixedSmoothingImagePyramid" } },
+//                                        { "ParameterMap0MovingImagePyramid", { "MovingSmoothingImagePyramid" } },
+//                                        { "ParameterMap0Transform", { "AffineTransform" } },
+//                                        { "ParameterMap0ImageSampler", { "RandomCoordinate" } },
+//                                        { "ParameterMap0NumberOfResolutions", { "8" } },
+//                                        { "ParameterMap0NumberOfIterations", { "512" } },
+//                                        { "ParameterMap0Registration", { "MultiResolutionRegistration" } },
+//                                        { "ParameterMap0Metric", { "AdvancedMattesMutualInformation" } },
+//                                        { "ParameterMap0Optimizer", { "AdaptiveStochasticGradientDescent" } } } );
+//
+//  blueprint->SetComponent( "FixedImage", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "Dimensionality", { "2" } } } );
+//  blueprint->SetComponent( "MovingImage", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "Dimensionality", { "2" } } } );
+//  blueprint->SetComponent( "ResultImage", { { "NameOfClass", { "ItkImageSinkComponent" } }, { "Dimensionality", { "2" } } } );
+//  blueprint->SetConnection( "FixedImage", "Elastix", { { "NameOfInterface", { "itkImageFixedInterface" } } } );
+//  blueprint->SetConnection( "MovingImage", "Elastix", { { "NameOfInterface", { "itkImageMovingInterface" } } } );
+//  blueprint->SetConnection( "Elastix", "ResultImage", { { } } );
+//
+//  auto imageFileReader0 = itk::ImageFileReader<itk::Image<float, 2>>::New();
+//  imageFileReader0->SetFileName(this->dataManager->GetInputFile("sphere2dIsotropic.nii.gz"));
+//  auto imageFileReader1 = itk::ImageFileReader<itk::Image<float, 2>>::New();
+//  imageFileReader1->SetFileName(this->dataManager->GetInputFile("sphere2dAnisotropic.nii.gz"));
+//  superElastixFilter->SetBlueprint( blueprint );
+//  superElastixFilter->SetInput( "FixedImage", imageFileReader0->GetOutput() );
+//  superElastixFilter->SetInput( "MovingImage", imageFileReader1->GetOutput() );
+//
+//  selx::AnyFileWriter::Pointer writer = superElastixFilter->GetOutputFileWriter( "ResultImage" );
+//  writer->SetFileName( this->dataManager->GetOutputFile( "Register2d_aladin_elastix_anisotropic_sphere_to_isotropic_sphere.nii.gz" ) );
+//  writer->SetInput( superElastixFilter->GetOutput<itk::Image<float, 2>>( "ResultImage" ) );
+//  writer->Update();
+//
+//}
+
 } // namespace selx

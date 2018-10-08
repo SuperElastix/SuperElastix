@@ -90,6 +90,7 @@ NiftiToItkImage< ItkImageType, NiftiPixelType >
   importImageFilter->SetImportPointer( dataFromNifti.buffer, dataFromNifti.numberOfElements, true );
 
   importImageFilter->UpdateOutputInformation();
+
   auto resultImage = importImageFilter->GetOutput();
   resultImage->Update();
   return importImageFilter->GetOutput();

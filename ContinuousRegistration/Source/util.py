@@ -308,7 +308,7 @@ def warp_point_set(superelastix, point_set, disp_field_file_name):
 
 
 def warp_image(superelastix, input_image_file_name, disp_field_file_name, type_name):
-    output_image_base_name, output_image_ext = os.path.splitext(disp_field_file_name)
+    output_image_base_name, output_image_ext = disp_field_file_name.split(os.extsep, 1)
     output_image_file_name = output_image_base_name + '_' + type_name + output_image_ext
 
     try:

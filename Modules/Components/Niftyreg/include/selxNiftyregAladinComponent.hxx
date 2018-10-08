@@ -26,6 +26,7 @@ template< class TPixel >
 NiftyregAladinComponent< TPixel >::NiftyregAladinComponent( const std::string & name, LoggerImpl & logger ) : Superclass( name, logger )
 {
   m_reg_aladin = new reg_aladin< TPixel >();
+  m_reg_aladin->SetAlignCentre(true);
 }
 
 

@@ -645,8 +645,8 @@ class POPI(Dataset):
                                 os.path.join(input_directory, sub_directory, 'mhd', '50.mhd'))
             point_set_file_names = (os.path.join(input_directory, sub_directory, 'pts', '00.pts'),
                                     os.path.join(input_directory, sub_directory, 'pts', '50.pts'))
-            disp_field_file_names = (os.path.join(self.name, sub_directory, 'moving50_to_fixed00.mha'),
-                                     os.path.join(self.name, sub_directory, 'moving00_to_fixed50.mha'))
+            disp_field_file_names = (os.path.join(self.name, sub_directory, 'moving50_to_fixed00.nii.gz'),
+                                     os.path.join(self.name, sub_directory, 'moving00_to_fixed50.nii.gz'))
 
             if mask_directory is not None and os.path.exists(mask_directory):
                 mask_file_names = (os.path.join(mask_directory, sub_directory, 'mhd', '00.mhd'),
@@ -820,7 +820,7 @@ def load_datasets(parameters):
                         parameters.output_directory,
                         parameters.max_number_of_registrations_per_dataset)
         datasets[cumc12.name] = cumc12
-        logging.debug('Using these files for registration:\n{0}'.format(json.dumps(cumc12.file_names, indent=2)))
+        logging.debug('Found the following files:\n{0}'.format(json.dumps(cumc12.file_names, indent=2)))
 
 
     if parameters.dirlab_input_directory is not None:
@@ -830,14 +830,14 @@ def load_datasets(parameters):
                         parameters.output_directory,
                         parameters.max_number_of_registrations_per_dataset)
         datasets[dirlab.name] = dirlab
-        logging.debug('Using these files for registration:\n{0}'.format(json.dumps(dirlab.file_names, indent=2)))
+        logging.debug('Found the following files:\n{0}'.format(json.dumps(dirlab.file_names, indent=2)))
 
     if parameters.empire_input_directory is not None:
         logging.info('Loading dataset EMPIRE.')
         empire = EMPIRE(parameters.empire_input_directory,
                         parameters.max_number_of_registrations_per_dataset)
         datasets[empire.name] = empire
-        logging.debug('Using these files for registration:\n{0}'.format(json.dumps(empire.file_names, indent=2)))
+        logging.debug('Found the following files:\n{0}'.format(json.dumps(empire.file_names, indent=2)))
 
     if parameters.hammers_input_directory is not None:
         logging.info('Loading dataset HAMMERS.')
@@ -845,7 +845,7 @@ def load_datasets(parameters):
                         parameters.output_directory,
                         parameters.max_number_of_registrations_per_dataset)
         datasets[hammers.name] = hammers
-        logging.debug('Using these files for registration:\n{0}'.format(json.dumps(hammers.file_names, indent=2)))
+        logging.debug('Found the following files:\n{0}'.format(json.dumps(hammers.file_names, indent=2)))
 
     if parameters.isbr18_input_directory is not None:
         logging.info('Loading dataset ISBR18.')
@@ -853,7 +853,7 @@ def load_datasets(parameters):
                         parameters.output_directory,
                         parameters.max_number_of_registrations_per_dataset)
         datasets[isbr18.name] = isbr18
-        logging.debug('Using these files for registration:\n{0}'.format(json.dumps(isbr18.file_names, indent=2)))
+        logging.debug('Found the following files:\n{0}'.format(json.dumps(isbr18.file_names, indent=2)))
 
     if parameters.lpba40_input_directory is not None:
         logging.info('Loading dataset LPBA40.')
@@ -861,7 +861,7 @@ def load_datasets(parameters):
                         parameters.output_directory,
                         parameters.max_number_of_registrations_per_dataset)
         datasets[lpba40.name] = lpba40
-        logging.debug('Using these files for registration:\n{0}'.format(json.dumps(lpba40.file_names, indent=2)))
+        logging.debug('Found the following files:\n{0}'.format(json.dumps(lpba40.file_names, indent=2)))
 
     if parameters.mgh10_input_directory is not None:
         logging.info('Loading dataset MGH10.')
@@ -869,7 +869,7 @@ def load_datasets(parameters):
                       parameters.output_directory,
                       parameters.max_number_of_registrations_per_dataset)
         datasets[mgh10.name] = mgh10
-        logging.debug('Using these files for registration:\n{0}'.format(json.dumps(mgh10.file_names, indent=2)))
+        logging.debug('Found the following files:\n{0}'.format(json.dumps(mgh10.file_names, indent=2)))
 
     if parameters.popi_input_directory is not None:
         logging.info('Loading dataset POPI.')
@@ -878,7 +878,7 @@ def load_datasets(parameters):
                     parameters.output_directory,
                     parameters.max_number_of_registrations_per_dataset)
         datasets[popi.name] = popi
-        logging.debug('Using these files for registration:\n{0}'.format(json.dumps(popi.file_names, indent=2)))
+        logging.debug('Found the following files:\n{0}'.format(json.dumps(popi.file_names, indent=2)))
 
     if parameters.spread_input_directory is not None:
         logging.info('Loading dataset SPREAD.')
@@ -886,7 +886,7 @@ def load_datasets(parameters):
                         parameters.output_directory,
                         parameters.max_number_of_registrations_per_dataset)
         datasets[spread.name] = spread
-        logging.debug('Using these files for registration:\n{0}'.format(json.dumps(spread.file_names, indent=2)))
+        logging.debug('Found the following files:\n{0}'.format(json.dumps(spread.file_names, indent=2)))
 
     if parameters.hbia_input_directory is not None:
         logging.info('Loading dataset HistoBIA.')
@@ -895,6 +895,6 @@ def load_datasets(parameters):
                     parameters.max_number_of_registrations_per_dataset,
                     scale=10)
         datasets[hbia.name] = hbia
-        logging.debug('Using these files for registration:\n{0}'.format(json.dumps(hbia.file_names, indent=2)))
+        logging.debug('Found the following files:\n{0}'.format(json.dumps(hbia.file_names, indent=2)))
 
     return datasets

@@ -398,7 +398,8 @@ ItkToNiftiImage< ItkImageType, NiftiPixelType >::SetNIfTIOrientationFromImageIO(
   unsigned int                                i;
   for( i = 0; i < ItkImageProperties< ItkImageType >::GetDirection( input, 0 ).size(); i++ )
   {
-    dirx[ i ] = static_cast< DirectionMatrixComponentType >( -ItkImageProperties< ItkImageType >::GetDirection( input, 0 )[ i ] );
+    // KM dirx[ i ] = static_cast< DirectionMatrixComponentType >( -ItkImageProperties< ItkImageType >::GetDirection( input, 0 )[ i ] );
+    dirx[ i ] = static_cast< DirectionMatrixComponentType >( ItkImageProperties< ItkImageType >::GetDirection( input, 0 )[ i ] );
   }
   if( i < 3 )
   {
@@ -409,7 +410,8 @@ ItkToNiftiImage< ItkImageType, NiftiPixelType >::SetNIfTIOrientationFromImageIO(
   {
     for( i = 0; i < ItkImageProperties< ItkImageType >::GetDirection( input, 1 ).size(); i++ )
     {
-      diry[ i ] = static_cast< DirectionMatrixComponentType >( -ItkImageProperties< ItkImageType >::GetDirection( input, 1 )[ i ] );
+      // KM diry[ i ] = static_cast< DirectionMatrixComponentType >( -ItkImageProperties< ItkImageType >::GetDirection( input, 1 )[ i ] );
+      diry[ i ] = static_cast< DirectionMatrixComponentType >( ItkImageProperties< ItkImageType >::GetDirection( input, 1 )[ i ] );
     }
     if( i < 3 )
     {
@@ -421,13 +423,15 @@ ItkToNiftiImage< ItkImageType, NiftiPixelType >::SetNIfTIOrientationFromImageIO(
   {
     for( unsigned int ii = 0; ii < ItkImageProperties< ItkImageType >::GetDirection( input, 2 ).size(); ii++ )
     {
-      dirz[ ii ] = static_cast< DirectionMatrixComponentType >( -ItkImageProperties< ItkImageType >::GetDirection( input, 2 )[ ii ] );
+      // KM dirz[ ii ] = static_cast< DirectionMatrixComponentType >( -ItkImageProperties< ItkImageType >::GetDirection( input, 2 )[ ii ] );
+      dirz[ ii ] = static_cast< DirectionMatrixComponentType >( ItkImageProperties< ItkImageType >::GetDirection( input, 2 )[ ii ] );
     }
     //  Read comments in nifti1.h about interpreting
     //  "DICOM Image Orientation (Patient)"
-    dirx[ 2 ] = -dirx[ 2 ];
-    diry[ 2 ] = -diry[ 2 ];
-    dirz[ 2 ] = -dirz[ 2 ];
+    // KM
+    // dirx[ 2 ] = -dirx[ 2 ];
+    // diry[ 2 ] = -diry[ 2 ];
+    // dirz[ 2 ] = -dirz[ 2 ];
   }
   else
   {
@@ -440,8 +444,10 @@ ItkToNiftiImage< ItkImageType, NiftiPixelType >::SetNIfTIOrientationFromImageIO(
     dirz[ 0 ], dirz[ 1 ], dirz[ 2 ] );
   matrix = mat44_transpose( matrix );
   // Fill in origin.
-  matrix.m[ 0 ][ 3 ] = static_cast< float >( -ItkImageProperties< ItkImageType >::GetOrigin( input, 0 ) );
-  matrix.m[ 1 ][ 3 ] = ( origdims > 1 ) ? static_cast< float >( -ItkImageProperties< ItkImageType >::GetOrigin( input, 1 ) ) : 0.0f;
+  // KM matrix.m[ 0 ][ 3 ] = static_cast< float >( -ItkImageProperties< ItkImageType >::GetOrigin( input, 0 ) );
+  // KM matrix.m[ 1 ][ 3 ] = ( origdims > 1 ) ? static_cast< float >( -ItkImageProperties< ItkImageType >::GetOrigin( input, 1 ) ) : 0.0f;
+  matrix.m[ 0 ][ 3 ] = static_cast< float >( ItkImageProperties< ItkImageType >::GetOrigin( input, 0 ) );
+  matrix.m[ 1 ][ 3 ] = ( origdims > 1 ) ? static_cast< float >( ItkImageProperties< ItkImageType >::GetOrigin( input, 1 ) ) : 0.0f;
   //NOTE:  The final dimension is not negated!
   matrix.m[ 2 ][ 3 ] = ( origdims > 2 ) ? static_cast< float >( ItkImageProperties< ItkImageType >::GetOrigin( input, 2 ) ) : 0.0f;
 

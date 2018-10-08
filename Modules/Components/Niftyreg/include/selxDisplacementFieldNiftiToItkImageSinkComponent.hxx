@@ -110,9 +110,6 @@ void
 DisplacementFieldNiftiToItkImageSinkComponent< Dimensionality, TPixel >::Update()
 {
   auto displacementFieldNiftiImage = this->m_DisplacementFieldInterface->GetDisplacementFieldNiftiImage();
-  // For some reason the displacement vectors in niftyreg have opposite sign than in itk. A quick fix is to set the slope from 1 to -1.
-  // TODO: 1) NiftiToItkImage should handle this generically for displacement fields. 2) nifti images can have an intent_code = DISPVECT, which seem applicable here. However, the intent_code = VECTOR, currently.
-  displacementFieldNiftiImage->scl_slope = -1;
   auto displacementFieldItkImage   = NiftiToItkImage< ItkDisplacementFieldType, TPixel >::Convert( displacementFieldNiftiImage );
   this->m_MiniPipelineOutputImage->Graft( displacementFieldItkImage );
 }

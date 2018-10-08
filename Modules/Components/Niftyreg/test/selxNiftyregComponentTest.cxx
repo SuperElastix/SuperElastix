@@ -38,6 +38,8 @@
 #include "selxDisplacementFieldImageWarperComponent.h"
 #include "selxItkImageSinkComponent.h"
 #include "selxNiftyregAladinComponent.h"
+#include "selxNiftyregf3dComponent.h"
+#include "selxMonolithicElastixComponent.h"
 #include "selxDataManager.h"
 #include "gtest/gtest.h"
 
@@ -53,21 +55,25 @@ public:
   typedef DataManager DataManagerType;
 
   /** register all example components */
-  typedef TypeList< Niftyregf3dComponent< float >,
+  typedef TypeList<
+    Niftyregf3dComponent< float >,
     NiftyregReadImageComponent< float >,
     NiftyregWriteImageComponent< float >,
     ItkToNiftiImageSourceComponent< 2, float >,
-    NiftiToItkImageSinkComponent< 2, float >,
-    ItkImageSourceComponent< 2, float >,
     ItkToNiftiImageSourceComponent< 3, float >,
+    NiftiToItkImageSinkComponent< 2, float >,
     NiftiToItkImageSinkComponent< 3, float >,
+    ItkImageSourceComponent< 2, float >,
     ItkImageSourceComponent< 3, float >,
     NiftyregSplineToDisplacementFieldComponent< float>,
     DisplacementFieldNiftiToItkImageSinkComponent< 2, float>,
+    DisplacementFieldNiftiToItkImageSinkComponent< 3, float>,
     NiftyregAladinComponent< float >,
     ItkDisplacementFieldImageWarperComponent<2, float, float>,
-	ItkDisplacementFieldSourceComponent<2, float>,
-	ItkImageSinkComponent<2, float > > RegisterComponents;
+	  ItkDisplacementFieldSourceComponent<2, float>,
+	  ItkImageSinkComponent<2, float >,
+    ItkImageSinkComponent<3, float >
+  > RegisterComponents;
 
   typedef SuperElastixFilterCustomComponents< RegisterComponents > SuperElastixFilterType;
 
@@ -75,11 +81,11 @@ public:
   {
     // Instantiate SuperElastixFilter before each test and
     // register the components we want to have available in SuperElastix
-    superElastixFilter = SuperElastixFilterCustomComponents< RegisterComponents >::New();
+    superElastixFilter = SuperElastixFilterType::New();
     dataManager = DataManagerType::New();
     logger = Logger::New();
     logger->AddStream("cout", std::cout);
-    logger->SetLogLevel(LogLevel::TRC);
+    logger->SetLogLevel(LogLevel::DBG);
   }
 
 
@@ -113,9 +119,446 @@ TEST_F( NiftyregComponentTest, Register2d_nifti )
   blueprint->SetConnection( "RegistrationMethod", "ResultImage", { {} } ); //{ { "NameOfInterface", { "NiftyregWarpedImageInterface" } } });
 
   EXPECT_NO_THROW( superElastixFilter->SetBlueprint( blueprint ) );
-  EXPECT_NO_THROW(superElastixFilter->SetLogger(logger));
+  EXPECT_NO_THROW( superElastixFilter->SetLogger(logger) );
   EXPECT_NO_THROW( superElastixFilter->Update() );
 }
+
+TEST_F( NiftyregComponentTest, Register2d_aladin_anisotropic) {
+  BlueprintPointer blueprint = Blueprint::New();
+  blueprint->SetComponent("FixedImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "PixelType", {"float"} }, { "Dimensionality", { "2" } } });
+  blueprint->SetComponent("MovingImage", { { "NameOfClass",    { "ItkToNiftiImageSourceComponent" }}, {"PixelType", {"float" } }, { "Dimensionality", { "2" } } });
+  blueprint->SetComponent("RegistrationMethod", {{"NameOfClass", {"NiftyregAladinComponent"} } });
+  blueprint->SetComponent("ResultImage", { { "NameOfClass", { "NiftyregWriteImageComponent" } }, { "FileName", { this->dataManager->GetOutputFile("Register2d_aladin_scaling_image.nii.gz") } } });
+  blueprint->SetComponent("DisplacementField", { { { "NameOfClass"}, {"DisplacementFieldNiftiToItkImageSinkComponent"} },
+                                                 { { "Dimensionality" }, { "2" } } });
+
+  blueprint->SetConnection("FixedImage", "RegistrationMethod", { {"NameOfInterface", {"NiftyregReferenceImageInterface"} } });
+  blueprint->SetConnection("MovingImage", "RegistrationMethod", { {"NameOfInterface", {"NiftyregFloatingImageInterface"} } });
+  blueprint->SetConnection( "RegistrationMethod", "ResultImage", { { } } );
+
+  // The aladin component cannot produce a displacement field by itself, so we pass it through the niftyreg
+  // bspline component with 0 iterations.
+  blueprint->SetComponent( "RegistrationMethod2", { { "NameOfClass", { "Niftyregf3dComponent" } }, { "NumberOfIterations", { "0" } } } );
+  blueprint->SetComponent( "TransformToDisplacementField", { { "NameOfClass", { "NiftyregSplineToDisplacementFieldComponent" } }, { "PixelType", { "float" } } });
+  blueprint->SetComponent( "DisplacementField", { { "NameOfClass", { "DisplacementFieldNiftiToItkImageSinkComponent" } }, { "Dimensionality", { "2" } }, { "PixelType", { "float" } } });
+
+  blueprint->SetConnection( "RegistrationMethod", "RegistrationMethod2", { { "NameOfInterface", { "NiftyregAffineMatrixInterface" } } } );
+  blueprint->SetConnection( "FixedImage", "RegistrationMethod2", { { "NameOfInterface", { "NiftyregReferenceImageInterface" } } } );
+  blueprint->SetConnection( "MovingImage", "RegistrationMethod2", { { "NameOfInterface", { "NiftyregFloatingImageInterface" } } } );
+
+  blueprint->SetConnection( "RegistrationMethod2", "TransformToDisplacementField", { {} });
+  blueprint->SetConnection( "FixedImage", "TransformToDisplacementField", { {} });
+  blueprint->SetConnection( "TransformToDisplacementField", "DisplacementField", { {} });
+  blueprint->SetConnection("FixedImage", "DisplacementField", { { "NameOfInterface", {"itkImageDomainFixedInterface"} } } );
+
+  auto imageFileReader0 = itk::ImageFileReader<itk::Image<float, 2>>::New();
+  imageFileReader0->SetFileName(this->dataManager->GetInputFile("square2dIsotropic.nii.gz"));
+  auto imageFileReader1 = itk::ImageFileReader<itk::Image<float, 2>>::New();
+  imageFileReader1->SetFileName(this->dataManager->GetInputFile("square2dAnisotropic.nii.gz"));
+  superElastixFilter->SetInput("FixedImage", imageFileReader0->GetOutput());
+  superElastixFilter->SetInput("MovingImage", imageFileReader1->GetOutput());
+
+  EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
+  EXPECT_NO_THROW(superElastixFilter->SetLogger(logger));
+
+  selx::AnyFileWriter::Pointer writer = superElastixFilter->GetOutputFileWriter( "DisplacementField" );
+  writer->SetFileName( this->dataManager->GetOutputFile( "NiftyRegAladinSquare2dAnisotropicDeformationField.nii.gz" ) );
+  writer->SetInput( superElastixFilter->GetOutput( "DisplacementField" ) );
+  writer->Update();
+
+  // EXPECT_NO_THROW(superElastixFilter->Update());
+  superElastixFilter->Update();
+}
+
+TEST_F( NiftyregComponentTest, Register2d_aladin_anisotropic_origin) {
+  BlueprintPointer blueprint = Blueprint::New();
+  blueprint->SetComponent("FixedImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "PixelType", {"float"} }, { "Dimensionality", { "2" } } });
+  blueprint->SetComponent("MovingImage", { { "NameOfClass",    { "ItkToNiftiImageSourceComponent" }}, {"PixelType", {"float" } }, { "Dimensionality", { "2" } } });
+  blueprint->SetComponent("RegistrationMethod", { { "NameOfClass", { "NiftyregAladinComponent" } }, { "NumberOfResolutions", { "8" } } });
+  blueprint->SetComponent("ResultImage", { { "NameOfClass", { "NiftyregWriteImageComponent" } }, { "FileName", { this->dataManager->GetOutputFile("Register2d_aladin_scaling_image.nii.gz") } } });
+  blueprint->SetComponent("DisplacementField", { { { "NameOfClass"}, {"DisplacementFieldNiftiToItkImageSinkComponent"} },
+                                                 { { "Dimensionality" }, { "2" } } });
+
+  blueprint->SetConnection("FixedImage", "RegistrationMethod", { {"NameOfInterface", {"NiftyregReferenceImageInterface"} } });
+  blueprint->SetConnection("MovingImage", "RegistrationMethod", { {"NameOfInterface", {"NiftyregFloatingImageInterface"} } });
+  blueprint->SetConnection( "RegistrationMethod", "ResultImage", { { } } );
+
+  // The aladin component cannot produce a displacement field by itself, so we pass it through the niftyreg
+  // bspline component with 0 iterations.
+  blueprint->SetComponent( "RegistrationMethod2", { { "NameOfClass", { "Niftyregf3dComponent" } }, { "NumberOfIterations", { "0" } } } );
+  blueprint->SetComponent( "TransformToDisplacementField", { { "NameOfClass", { "NiftyregSplineToDisplacementFieldComponent" } }, { "PixelType", { "float" } } });
+  blueprint->SetComponent( "DisplacementField", { { "NameOfClass", { "DisplacementFieldNiftiToItkImageSinkComponent" } }, { "Dimensionality", { "2" } }, { "PixelType", { "float" } } });
+
+  blueprint->SetConnection( "RegistrationMethod", "RegistrationMethod2", { { "NameOfInterface", { "NiftyregAffineMatrixInterface" } } } );
+  blueprint->SetConnection( "FixedImage", "RegistrationMethod2", { { "NameOfInterface", { "NiftyregReferenceImageInterface" } } } );
+  blueprint->SetConnection( "MovingImage", "RegistrationMethod2", { { "NameOfInterface", { "NiftyregFloatingImageInterface" } } } );
+
+  blueprint->SetConnection( "RegistrationMethod2", "TransformToDisplacementField", { {} });
+  blueprint->SetConnection( "FixedImage", "TransformToDisplacementField", { {} });
+  blueprint->SetConnection( "TransformToDisplacementField", "DisplacementField", { {} });
+  blueprint->SetConnection("FixedImage", "DisplacementField", { { "NameOfInterface", {"itkImageDomainFixedInterface"} } } );
+
+  auto imageFileReader0 = itk::ImageFileReader<itk::Image<float, 2>>::New();
+  imageFileReader0->SetFileName(this->dataManager->GetInputFile("square2dIsotropic.nii.gz"));
+  auto imageFileReader1 = itk::ImageFileReader<itk::Image<float, 2>>::New();
+  imageFileReader1->SetFileName(this->dataManager->GetInputFile("square2dAnisotropicOriginX8OriginY12.nii.gz"));
+  superElastixFilter->SetInput("FixedImage", imageFileReader0->GetOutput());
+  superElastixFilter->SetInput("MovingImage", imageFileReader1->GetOutput());
+
+  EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
+  EXPECT_NO_THROW(superElastixFilter->SetLogger(logger));
+
+  selx::AnyFileWriter::Pointer writer = superElastixFilter->GetOutputFileWriter( "DisplacementField" );
+  writer->SetFileName( this->dataManager->GetOutputFile( "NiftyRegAladinSquare2dAnisotropicOriginX8OriginY12DeformationField.nii.gz" ) );
+  writer->SetInput( superElastixFilter->GetOutput( "DisplacementField" ) );
+  writer->Update();
+
+  // EXPECT_NO_THROW(superElastixFilter->Update());
+  superElastixFilter->Update();
+}
+
+TEST_F( NiftyregComponentTest, Register2d_aladin_anisotropoic_translation_origin) {
+  BlueprintPointer blueprint = Blueprint::New();
+  blueprint->SetComponent("FixedImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "PixelType", {"float"} }, { "Dimensionality", { "2" } } });
+  blueprint->SetComponent("MovingImage", { { "NameOfClass",    { "ItkToNiftiImageSourceComponent" }}, {"PixelType", {"float" } }, { "Dimensionality", { "2" } } });
+  blueprint->SetComponent("RegistrationMethod", {{"NameOfClass", {"NiftyregAladinComponent"} } });
+  blueprint->SetComponent("ResultImage", { { "NameOfClass", { "NiftyregWriteImageComponent" } }, { "FileName", { this->dataManager->GetOutputFile("Register2d_aladin_scaling_image.nii.gz") } } });
+  blueprint->SetComponent("DisplacementField", { { { "NameOfClass"}, {"DisplacementFieldNiftiToItkImageSinkComponent"} },
+                                                 { { "Dimensionality" }, { "2" } } });
+
+  blueprint->SetConnection("FixedImage", "RegistrationMethod", { {"NameOfInterface", {"NiftyregReferenceImageInterface"} } });
+  blueprint->SetConnection("MovingImage", "RegistrationMethod", { {"NameOfInterface", {"NiftyregFloatingImageInterface"} } });
+  blueprint->SetConnection( "RegistrationMethod", "ResultImage", { { } } );
+
+  // The aladin component cannot produce a displacement field by itself, so we pass it through the niftyreg
+  // bspline component with 0 iterations.
+  blueprint->SetComponent( "RegistrationMethod2", { { "NameOfClass", { "Niftyregf3dComponent" } }, { "NumberOfIterations", { "0" } } } );
+  blueprint->SetComponent( "TransformToDisplacementField", { { "NameOfClass", { "NiftyregSplineToDisplacementFieldComponent" } }, { "PixelType", { "float" } } });
+  blueprint->SetComponent( "DisplacementField", { { "NameOfClass", { "DisplacementFieldNiftiToItkImageSinkComponent" } }, { "Dimensionality", { "2" } }, { "PixelType", { "float" } } });
+
+  blueprint->SetConnection( "RegistrationMethod", "RegistrationMethod2", { { "NameOfInterface", { "NiftyregAffineMatrixInterface" } } } );
+  blueprint->SetConnection( "FixedImage", "RegistrationMethod2", { { "NameOfInterface", { "NiftyregReferenceImageInterface" } } } );
+  blueprint->SetConnection( "MovingImage", "RegistrationMethod2", { { "NameOfInterface", { "NiftyregFloatingImageInterface" } } } );
+
+  blueprint->SetConnection( "RegistrationMethod2", "TransformToDisplacementField", { {} });
+  blueprint->SetConnection( "FixedImage", "TransformToDisplacementField", { {} });
+  blueprint->SetConnection( "TransformToDisplacementField", "DisplacementField", { {} });
+  blueprint->SetConnection("FixedImage", "DisplacementField", { { "NameOfInterface", {"itkImageDomainFixedInterface"} } } );
+
+  auto imageFileReader0 = itk::ImageFileReader<itk::Image<float, 2>>::New();
+  imageFileReader0->SetFileName(this->dataManager->GetInputFile("square2dIsotropic.nii.gz"));
+  auto imageFileReader1 = itk::ImageFileReader<itk::Image<float, 2>>::New();
+  imageFileReader1->SetFileName(this->dataManager->GetInputFile("square2dAnisotropicX8Y16OriginX8OriginY12.nii.gz"));
+  superElastixFilter->SetInput("FixedImage", imageFileReader0->GetOutput());
+  superElastixFilter->SetInput("MovingImage", imageFileReader1->GetOutput());
+
+  EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
+  EXPECT_NO_THROW(superElastixFilter->SetLogger(logger));
+
+  selx::AnyFileWriter::Pointer writer = superElastixFilter->GetOutputFileWriter( "DisplacementField" );
+  writer->SetFileName( this->dataManager->GetOutputFile( "NiftyRegAladinSquare2dAnisotropicX8Y16OriginX8OriginY12DeformationField.nii.gz" ) );
+  writer->SetInput( superElastixFilter->GetOutput( "DisplacementField" ) );
+  writer->Update();
+
+  // EXPECT_NO_THROW(superElastixFilter->Update());
+  superElastixFilter->Update();
+}
+
+TEST_F( NiftyregComponentTest, Register3d_aladin_origin) {
+  BlueprintPointer blueprint = Blueprint::New();
+  blueprint->SetComponent("FixedImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "PixelType", {"float"} }, { "Dimensionality", { "3" } } });
+  blueprint->SetComponent("MovingImage", { { "NameOfClass",    { "ItkToNiftiImageSourceComponent" }}, {"PixelType", {"float" } }, { "Dimensionality", { "3" } } });
+  blueprint->SetComponent("RegistrationMethod", { {"NameOfClass", {"NiftyregAladinComponent"} }, {"NumberOfResolutions", {"1"} } });
+  blueprint->SetComponent("AladinResultImage", { { "NameOfClass", { "NiftyregWriteImageComponent" } }, { "FileName", { this->dataManager->GetOutputFile("NiftyRegAladinSquare3dOrigin.nii.gz") } } });
+  blueprint->SetComponent("DisplacementField", { { { "NameOfClass"}, {"DisplacementFieldNiftiToItkImageSinkComponent"} },
+                                                 { { "Dimensionality" }, { "3" } } });
+
+  blueprint->SetConnection("FixedImage", "RegistrationMethod", { {"NameOfInterface", {"NiftyregReferenceImageInterface"} } });
+  blueprint->SetConnection("MovingImage", "RegistrationMethod", { {"NameOfInterface", {"NiftyregFloatingImageInterface"} } });
+  blueprint->SetConnection( "RegistrationMethod", "AladinResultImage", { { } } );
+
+  // The aladin component cannot produce a displacement field by itself, so we pass it through the niftyreg
+  // bspline component with 0 iterations.
+  blueprint->SetComponent( "RegistrationMethod2", { { "NameOfClass", { "Niftyregf3dComponent" } }, { "NumberOfIterations", { "0" } } } );
+  blueprint->SetComponent( "TransformToDisplacementField", { { "NameOfClass", { "NiftyregSplineToDisplacementFieldComponent" } }, { "PixelType", { "float" } } });
+  blueprint->SetComponent( "DisplacementField", { { "NameOfClass", { "DisplacementFieldNiftiToItkImageSinkComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } });
+  blueprint->SetComponent("f3dResultImage", { { "NameOfClass", { "NiftyregWriteImageComponent" } }, { "FileName", { this->dataManager->GetOutputFile("NiftyRegf3dSquare3dOrigin.nii.gz") } } });
+
+  blueprint->SetConnection( "RegistrationMethod", "RegistrationMethod2", { { "NameOfInterface", { "NiftyregAffineMatrixInterface" } } } );
+  blueprint->SetConnection( "FixedImage", "RegistrationMethod2", { { "NameOfInterface", { "NiftyregReferenceImageInterface" } } } );
+  blueprint->SetConnection( "MovingImage", "RegistrationMethod2", { { "NameOfInterface", { "NiftyregFloatingImageInterface" } } } );
+
+  blueprint->SetConnection( "RegistrationMethod2", "TransformToDisplacementField", { {} });
+  blueprint->SetConnection( "RegistrationMethod2", "f3dResultImage", { {} });
+  blueprint->SetConnection( "FixedImage", "TransformToDisplacementField", { {} });
+  blueprint->SetConnection( "TransformToDisplacementField", "DisplacementField", { {} });
+  blueprint->SetConnection("FixedImage", "DisplacementField", { { "NameOfInterface", {"itkImageDomainFixedInterface"} } } );
+
+
+  auto imageFileReader0 = itk::ImageFileReader<itk::Image<float, 3>>::New();
+  imageFileReader0->SetFileName(this->dataManager->GetInputFile("square3dIsotropic.nii.gz"));
+  auto imageFileReader1 = itk::ImageFileReader<itk::Image<float, 3>>::New();
+  imageFileReader1->SetFileName(this->dataManager->GetInputFile("square3dIsotropicOriginX8OriginY12OriginZ16.nii.gz"));
+  superElastixFilter->SetInput("FixedImage", imageFileReader0->GetOutput());
+  superElastixFilter->SetInput("MovingImage", imageFileReader1->GetOutput());
+
+  EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
+  EXPECT_NO_THROW(superElastixFilter->SetLogger(logger));
+
+  selx::AnyFileWriter::Pointer writer = superElastixFilter->GetOutputFileWriter( "DisplacementField" );
+  writer->SetFileName( this->dataManager->GetOutputFile( "NiftyRegAladinSquare3dIsotropicOriginX8OriginY12OriginZ16DeformationField.nii.gz" ) );
+  writer->SetInput( superElastixFilter->GetOutput( "DisplacementField" ) );
+  writer->Update();
+
+  // EXPECT_NO_THROW(superElastixFilter->Update());
+  superElastixFilter->Update();
+}
+
+TEST_F( NiftyregComponentTest, Register3d_aladin_spacing_both) {
+  BlueprintPointer blueprint = Blueprint::New();
+  blueprint->SetComponent("FixedImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "PixelType", {"float"} }, { "Dimensionality", { "3" } } });
+  blueprint->SetComponent("MovingImage", { { "NameOfClass",    { "ItkToNiftiImageSourceComponent" }}, {"PixelType", {"float" } }, { "Dimensionality", { "3" } } });
+  blueprint->SetComponent("RegistrationMethod", { {"NameOfClass", {"NiftyregAladinComponent"} }, {"NumberOfResolutions", {"3"} } });
+  blueprint->SetComponent("AladinResultImage", { { "NameOfClass", { "NiftyregWriteImageComponent" } }, { "FileName", { this->dataManager->GetOutputFile("NiftyRegAladinSquare3dBothSpacingX2SpacingY2SpacingZ2.nii.gz") } } });
+  blueprint->SetComponent("DisplacementField", { { { "NameOfClass"}, {"DisplacementFieldNiftiToItkImageSinkComponent"} },
+                                                 { { "Dimensionality" }, { "3" } } });
+
+  blueprint->SetConnection("FixedImage", "RegistrationMethod", { {"NameOfInterface", {"NiftyregReferenceImageInterface"} } });
+  blueprint->SetConnection("MovingImage", "RegistrationMethod", { {"NameOfInterface", {"NiftyregFloatingImageInterface"} } });
+  blueprint->SetConnection( "RegistrationMethod", "AladinResultImage", { { } } );
+
+  // The aladin component cannot produce a displacement field by itself, so we pass it through the niftyreg
+  // bspline component with 0 iterations.
+  blueprint->SetComponent( "RegistrationMethod2", { { "NameOfClass", { "Niftyregf3dComponent" } }, { "NumberOfIterations", { "0" } } } );
+  blueprint->SetComponent( "TransformToDisplacementField", { { "NameOfClass", { "NiftyregSplineToDisplacementFieldComponent" } }, { "PixelType", { "float" } } });
+  blueprint->SetComponent( "DisplacementField", { { "NameOfClass", { "DisplacementFieldNiftiToItkImageSinkComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } });
+  blueprint->SetComponent("f3dResultImage", { { "NameOfClass", { "NiftyregWriteImageComponent" } }, { "FileName", { this->dataManager->GetOutputFile("NiftyRegf3dSquare3dBothSpacingX2SpacingY2SpacingZ2.nii.gz") } } });
+
+  blueprint->SetConnection( "RegistrationMethod", "RegistrationMethod2", { { "NameOfInterface", { "NiftyregAffineMatrixInterface" } } } );
+  blueprint->SetConnection( "FixedImage", "RegistrationMethod2", { { "NameOfInterface", { "NiftyregReferenceImageInterface" } } } );
+  blueprint->SetConnection( "MovingImage", "RegistrationMethod2", { { "NameOfInterface", { "NiftyregFloatingImageInterface" } } } );
+
+  blueprint->SetConnection( "RegistrationMethod2", "TransformToDisplacementField", { {} });
+  blueprint->SetConnection( "RegistrationMethod2", "f3dResultImage", { {} });
+  blueprint->SetConnection( "FixedImage", "TransformToDisplacementField", { {} });
+  blueprint->SetConnection( "TransformToDisplacementField", "DisplacementField", { {} });
+  blueprint->SetConnection("FixedImage", "DisplacementField", { { "NameOfInterface", {"itkImageDomainFixedInterface"} } } );
+
+
+  auto imageFileReader0 = itk::ImageFileReader<itk::Image<float, 3>>::New();
+  imageFileReader0->SetFileName(this->dataManager->GetInputFile("square3dIsotropicSpacingX2SpacingY2SpacingZ2.nii.gz"));
+  auto imageFileReader1 = itk::ImageFileReader<itk::Image<float, 3>>::New();
+  imageFileReader1->SetFileName(this->dataManager->GetInputFile("square3dIsotropicSpacingX2SpacingY2SpacingZ2.nii.gz"));
+  superElastixFilter->SetInput("FixedImage", imageFileReader0->GetOutput());
+  superElastixFilter->SetInput("MovingImage", imageFileReader1->GetOutput());
+
+  EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
+  EXPECT_NO_THROW(superElastixFilter->SetLogger(logger));
+
+  selx::AnyFileWriter::Pointer writer = superElastixFilter->GetOutputFileWriter( "DisplacementField" );
+  writer->SetFileName( this->dataManager->GetOutputFile( "NiftyRegAladinSquare3dIsotropicBothSpacingX2SpacingY2SpacingZ2DeformationField.nii.gz" ) );
+  writer->SetInput( superElastixFilter->GetOutput( "DisplacementField" ) );
+  writer->Update();
+
+  // EXPECT_NO_THROW(superElastixFilter->Update());
+  superElastixFilter->Update();
+}
+
+TEST_F( NiftyregComponentTest, Register3d_aladin_spacing_moving) {
+  BlueprintPointer blueprint = Blueprint::New();
+  blueprint->SetComponent("FixedImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "PixelType", {"float"} }, { "Dimensionality", { "3" } } });
+  blueprint->SetComponent("MovingImage", { { "NameOfClass",    { "ItkToNiftiImageSourceComponent" }}, {"PixelType", {"float" } }, { "Dimensionality", { "3" } } });
+  blueprint->SetComponent("RegistrationMethod", { {"NameOfClass", {"NiftyregAladinComponent"} }, {"NumberOfResolutions", {"3"} } });
+  blueprint->SetComponent("AladinResultImage", { { "NameOfClass", { "NiftyregWriteImageComponent" } }, { "FileName", { this->dataManager->GetOutputFile("NiftyRegAladinSquare3dMovingSpacingX1.1SpacingY1.1SpacingZ1.1.nii.gz") } } });
+  blueprint->SetComponent("DisplacementField", { { { "NameOfClass"}, {"DisplacementFieldNiftiToItkImageSinkComponent"} },
+                                                 { { "Dimensionality" }, { "3" } } });
+
+  blueprint->SetConnection("FixedImage", "RegistrationMethod", { {"NameOfInterface", {"NiftyregReferenceImageInterface"} } });
+  blueprint->SetConnection("MovingImage", "RegistrationMethod", { {"NameOfInterface", {"NiftyregFloatingImageInterface"} } });
+  blueprint->SetConnection( "RegistrationMethod", "AladinResultImage", { { } } );
+
+  // The aladin component cannot produce a displacement field by itself, so we pass it through the niftyreg
+  // bspline component with 0 iterations.
+  blueprint->SetComponent( "RegistrationMethod2", { { "NameOfClass", { "Niftyregf3dComponent" } }, { "NumberOfIterations", { "0" } } } );
+  blueprint->SetComponent( "TransformToDisplacementField", { { "NameOfClass", { "NiftyregSplineToDisplacementFieldComponent" } }, { "PixelType", { "float" } } });
+  blueprint->SetComponent( "DisplacementField", { { "NameOfClass", { "DisplacementFieldNiftiToItkImageSinkComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } });
+  blueprint->SetComponent("f3dResultImage", { { "NameOfClass", { "NiftyregWriteImageComponent" } }, { "FileName", { this->dataManager->GetOutputFile("NiftyRegf3dSquare3dMovingSpacingX1.1SpacingY1.1SpacingZ1.1.nii.gz") } } });
+
+  blueprint->SetConnection( "RegistrationMethod", "RegistrationMethod2", { { "NameOfInterface", { "NiftyregAffineMatrixInterface" } } } );
+  blueprint->SetConnection( "FixedImage", "RegistrationMethod2", { { "NameOfInterface", { "NiftyregReferenceImageInterface" } } } );
+  blueprint->SetConnection( "MovingImage", "RegistrationMethod2", { { "NameOfInterface", { "NiftyregFloatingImageInterface" } } } );
+
+  blueprint->SetConnection( "RegistrationMethod2", "TransformToDisplacementField", { {} });
+  blueprint->SetConnection( "RegistrationMethod2", "f3dResultImage", { {} });
+  blueprint->SetConnection( "FixedImage", "TransformToDisplacementField", { {} });
+  blueprint->SetConnection( "TransformToDisplacementField", "DisplacementField", { {} });
+  blueprint->SetConnection("FixedImage", "DisplacementField", { { "NameOfInterface", {"itkImageDomainFixedInterface"} } } );
+
+
+  auto imageFileReader0 = itk::ImageFileReader<itk::Image<float, 3>>::New();
+  imageFileReader0->SetFileName(this->dataManager->GetInputFile("square3dIsotropic.nii.gz"));
+  auto imageFileReader1 = itk::ImageFileReader<itk::Image<float, 3>>::New();
+  imageFileReader1->SetFileName(this->dataManager->GetInputFile("square3dIsotropicSpacingX1.1SpacingY1.1SpacingZ1.1.nii.gz"));
+  superElastixFilter->SetInput("FixedImage", imageFileReader0->GetOutput());
+  superElastixFilter->SetInput("MovingImage", imageFileReader1->GetOutput());
+
+  EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
+  EXPECT_NO_THROW(superElastixFilter->SetLogger(logger));
+
+  selx::AnyFileWriter::Pointer writer = superElastixFilter->GetOutputFileWriter( "DisplacementField" );
+  writer->SetFileName( this->dataManager->GetOutputFile( "NiftyRegAladinSquare3dIsotropicMovingSpacingX1.1SpacingY1.1SpacingZ1.1DeformationField.nii.gz" ) );
+  writer->SetInput( superElastixFilter->GetOutput( "DisplacementField" ) );
+  writer->Update();
+
+  // EXPECT_NO_THROW(superElastixFilter->Update());
+  superElastixFilter->Update();
+
+  // Use transformix to warp moving image
+  // Look at NifrtyReg warping code, see e.g. if some minuses are hidden somewhere
+  // See if test affine matrices makes sense
+}
+
+TEST_F( NiftyregComponentTest, Register3d_aladin_anisotropic) {
+  BlueprintPointer blueprint = Blueprint::New();
+  blueprint->SetComponent("FixedImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "PixelType", {"float"} }, { "Dimensionality", { "3" } } });
+  blueprint->SetComponent("MovingImage", { { "NameOfClass",    { "ItkToNiftiImageSourceComponent" }}, {"PixelType", {"float" } }, { "Dimensionality", { "3" } } });
+  blueprint->SetComponent("RegistrationMethod", {{"NameOfClass", {"NiftyregAladinComponent"} } });
+  blueprint->SetComponent("ResultImage", { { "NameOfClass", { "NiftyregWriteImageComponent" } }, { "FileName", { this->dataManager->GetOutputFile("square3dAnisotropic.nii.gz") } } });
+  blueprint->SetComponent("DisplacementField", { { { "NameOfClass"}, {"DisplacementFieldNiftiToItkImageSinkComponent"} },
+                                                 { { "Dimensionality" }, { "3" } } });
+
+  blueprint->SetConnection("FixedImage", "RegistrationMethod", { {"NameOfInterface", {"NiftyregReferenceImageInterface"} } });
+  blueprint->SetConnection("MovingImage", "RegistrationMethod", { {"NameOfInterface", {"NiftyregFloatingImageInterface"} } });
+  blueprint->SetConnection( "RegistrationMethod", "ResultImage", { { } } );
+
+  // The aladin component cannot produce a displacement field by itself, so we pass it through the niftyreg
+  // bspline component with 0 iterations.
+  blueprint->SetComponent( "RegistrationMethod2", { { "NameOfClass", { "Niftyregf3dComponent" } }, { "NumberOfIterations", { "0" } } } );
+  blueprint->SetComponent( "TransformToDisplacementField", { { "NameOfClass", { "NiftyregSplineToDisplacementFieldComponent" } }, { "PixelType", { "float" } } });
+  blueprint->SetComponent( "DisplacementField", { { "NameOfClass", { "DisplacementFieldNiftiToItkImageSinkComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } });
+
+  blueprint->SetConnection( "RegistrationMethod", "RegistrationMethod2", { { "NameOfInterface", { "NiftyregAffineMatrixInterface" } } } );
+  blueprint->SetConnection( "FixedImage", "RegistrationMethod2", { { "NameOfInterface", { "NiftyregReferenceImageInterface" } } } );
+  blueprint->SetConnection( "MovingImage", "RegistrationMethod2", { { "NameOfInterface", { "NiftyregFloatingImageInterface" } } } );
+
+  blueprint->SetConnection( "RegistrationMethod2", "TransformToDisplacementField", { {} });
+  blueprint->SetConnection( "FixedImage", "TransformToDisplacementField", { {} });
+  blueprint->SetConnection( "TransformToDisplacementField", "DisplacementField", { {} });
+  blueprint->SetConnection("FixedImage", "DisplacementField", { { "NameOfInterface", {"itkImageDomainFixedInterface"} } } );
+
+  auto imageFileReader0 = itk::ImageFileReader<itk::Image<float, 3>>::New();
+  imageFileReader0->SetFileName(this->dataManager->GetInputFile("square3dIsotropic.nii.gz"));
+  auto imageFileReader1 = itk::ImageFileReader<itk::Image<float, 3>>::New();
+  imageFileReader1->SetFileName(this->dataManager->GetInputFile("square3dAnisotropic.nii.gz"));
+  superElastixFilter->SetInput("FixedImage", imageFileReader0->GetOutput());
+  superElastixFilter->SetInput("MovingImage", imageFileReader1->GetOutput());
+
+  EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
+  EXPECT_NO_THROW(superElastixFilter->SetLogger(logger));
+
+  selx::AnyFileWriter::Pointer writer = superElastixFilter->GetOutputFileWriter( "DisplacementField" );
+  writer->SetFileName( this->dataManager->GetOutputFile( "NiftyRegAladinSquare3dAnisotropicDeformationField.nii.gz" ) );
+  writer->SetInput( superElastixFilter->GetOutput( "DisplacementField" ) );
+  writer->Update();
+
+  // EXPECT_NO_THROW(superElastixFilter->Update());
+  superElastixFilter->Update();
+}
+
+TEST_F( NiftyregComponentTest, Register3d_aladin_anisotropic_origin) {
+  BlueprintPointer blueprint = Blueprint::New();
+  blueprint->SetComponent("FixedImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "PixelType", {"float"} }, { "Dimensionality", { "3" } } });
+  blueprint->SetComponent("MovingImage", { { "NameOfClass",    { "ItkToNiftiImageSourceComponent" }}, {"PixelType", {"float" } }, { "Dimensionality", { "3" } } });
+  blueprint->SetComponent("RegistrationMethod", { { "NameOfClass", { "NiftyregAladinComponent" } }, { "NumberOfResolutions", { "8" } } });
+  blueprint->SetComponent("ResultImage", { { "NameOfClass", { "NiftyregWriteImageComponent" } }, { "FileName", { this->dataManager->GetOutputFile("NiftyRegAladinSquare3dAnisotropicOriginX8OriginY12.nii.gz") } } });
+  blueprint->SetComponent("DisplacementField", { { { "NameOfClass"}, {"DisplacementFieldNiftiToItkImageSinkComponent"} },
+                                                 { { "Dimensionality" }, { "3" } } });
+
+  blueprint->SetConnection("FixedImage", "RegistrationMethod", { {"NameOfInterface", {"NiftyregReferenceImageInterface"} } });
+  blueprint->SetConnection("MovingImage", "RegistrationMethod", { {"NameOfInterface", {"NiftyregFloatingImageInterface"} } });
+  blueprint->SetConnection( "RegistrationMethod", "ResultImage", { { } } );
+
+  // The aladin component cannot produce a displacement field by itself, so we pass it through the niftyreg
+  // bspline component with 0 iterations.
+  blueprint->SetComponent( "RegistrationMethod2", { { "NameOfClass", { "Niftyregf3dComponent" } }, { "NumberOfIterations", { "0" } } } );
+  blueprint->SetComponent( "TransformToDisplacementField", { { "NameOfClass", { "NiftyregSplineToDisplacementFieldComponent" } }, { "PixelType", { "float" } } });
+  blueprint->SetComponent( "DisplacementField", { { "NameOfClass", { "DisplacementFieldNiftiToItkImageSinkComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } });
+
+  blueprint->SetConnection( "RegistrationMethod", "RegistrationMethod2", { { "NameOfInterface", { "NiftyregAffineMatrixInterface" } } } );
+  blueprint->SetConnection( "FixedImage", "RegistrationMethod2", { { "NameOfInterface", { "NiftyregReferenceImageInterface" } } } );
+  blueprint->SetConnection( "MovingImage", "RegistrationMethod2", { { "NameOfInterface", { "NiftyregFloatingImageInterface" } } } );
+
+  blueprint->SetConnection( "RegistrationMethod2", "TransformToDisplacementField", { {} });
+  blueprint->SetConnection( "FixedImage", "TransformToDisplacementField", { {} });
+  blueprint->SetConnection( "TransformToDisplacementField", "DisplacementField", { {} });
+  blueprint->SetConnection("FixedImage", "DisplacementField", { { "NameOfInterface", {"itkImageDomainFixedInterface"} } } );
+
+  auto imageFileReader0 = itk::ImageFileReader<itk::Image<float, 3>>::New();
+  imageFileReader0->SetFileName(this->dataManager->GetInputFile("square3dIsotropic.nii.gz"));
+  auto imageFileReader1 = itk::ImageFileReader<itk::Image<float, 3>>::New();
+  imageFileReader1->SetFileName(this->dataManager->GetInputFile("square3dAnisotropicOriginX8OriginY12OriginZ16.nii.gz"));
+  superElastixFilter->SetInput("FixedImage", imageFileReader0->GetOutput());
+  superElastixFilter->SetInput("MovingImage", imageFileReader1->GetOutput());
+
+  EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
+  EXPECT_NO_THROW(superElastixFilter->SetLogger(logger));
+
+  selx::AnyFileWriter::Pointer writer = superElastixFilter->GetOutputFileWriter( "DisplacementField" );
+  writer->SetFileName( this->dataManager->GetOutputFile( "NiftyRegAladinSquare3dAnisotropicOriginX8OriginY12OriginZ16DeformationField.nii.gz" ) );
+  writer->SetInput( superElastixFilter->GetOutput( "DisplacementField" ) );
+  writer->Update();
+
+  // EXPECT_NO_THROW(superElastixFilter->Update());
+  superElastixFilter->Update();
+}
+
+TEST_F( NiftyregComponentTest, Register3d_aladin_anisotropoic_translation_origin) {
+  BlueprintPointer blueprint = Blueprint::New();
+  blueprint->SetComponent("FixedImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "PixelType", {"float"} }, { "Dimensionality", { "3" } } });
+  blueprint->SetComponent("MovingImage", { { "NameOfClass",    { "ItkToNiftiImageSourceComponent" }}, {"PixelType", {"float" } }, { "Dimensionality", { "3" } } });
+  blueprint->SetComponent("RegistrationMethod", {{"NameOfClass", {"NiftyregAladinComponent"} } });
+  blueprint->SetComponent("ResultImage", { { "NameOfClass", { "NiftyregWriteImageComponent" } }, { "FileName", { this->dataManager->GetOutputFile("square3dAnisotropicX8Y16OriginX8OriginY12.nii.gz") } } });
+  blueprint->SetComponent("DisplacementField", { { { "NameOfClass"}, {"DisplacementFieldNiftiToItkImageSinkComponent"} },
+                                                 { { "Dimensionality" }, { "3" } } });
+
+  blueprint->SetConnection("FixedImage", "RegistrationMethod", { {"NameOfInterface", {"NiftyregReferenceImageInterface"} } });
+  blueprint->SetConnection("MovingImage", "RegistrationMethod", { {"NameOfInterface", {"NiftyregFloatingImageInterface"} } });
+  blueprint->SetConnection( "RegistrationMethod", "ResultImage", { { } } );
+
+  // The aladin component cannot produce a displacement field by itself, so we pass it through the niftyreg
+  // bspline component with 0 iterations.
+  blueprint->SetComponent( "RegistrationMethod2", { { "NameOfClass", { "Niftyregf3dComponent" } }, { "NumberOfIterations", { "0" } } } );
+  blueprint->SetComponent( "TransformToDisplacementField", { { "NameOfClass", { "NiftyregSplineToDisplacementFieldComponent" } }, { "PixelType", { "float" } } });
+  blueprint->SetComponent( "DisplacementField", { { "NameOfClass", { "DisplacementFieldNiftiToItkImageSinkComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } });
+
+  blueprint->SetConnection( "RegistrationMethod", "RegistrationMethod2", { { "NameOfInterface", { "NiftyregAffineMatrixInterface" } } } );
+  blueprint->SetConnection( "FixedImage", "RegistrationMethod2", { { "NameOfInterface", { "NiftyregReferenceImageInterface" } } } );
+  blueprint->SetConnection( "MovingImage", "RegistrationMethod2", { { "NameOfInterface", { "NiftyregFloatingImageInterface" } } } );
+
+  blueprint->SetConnection( "RegistrationMethod2", "TransformToDisplacementField", { {} });
+  blueprint->SetConnection( "FixedImage", "TransformToDisplacementField", { {} });
+  blueprint->SetConnection( "TransformToDisplacementField", "DisplacementField", { {} });
+  blueprint->SetConnection("FixedImage", "DisplacementField", { { "NameOfInterface", {"itkImageDomainFixedInterface"} } } );
+
+  auto imageFileReader0 = itk::ImageFileReader<itk::Image<float, 3>>::New();
+  imageFileReader0->SetFileName(this->dataManager->GetInputFile("square3dIsotropic.nii.gz"));
+  auto imageFileReader1 = itk::ImageFileReader<itk::Image<float, 3>>::New();
+  imageFileReader1->SetFileName(this->dataManager->GetInputFile("square3dAnisotropicX8Y16Z24OriginX8OriginY12OriginZ16.nii.gz"));
+  superElastixFilter->SetInput("FixedImage", imageFileReader0->GetOutput());
+  superElastixFilter->SetInput("MovingImage", imageFileReader1->GetOutput());
+
+  EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
+  EXPECT_NO_THROW(superElastixFilter->SetLogger(logger));
+
+  selx::AnyFileWriter::Pointer writer = superElastixFilter->GetOutputFileWriter( "DisplacementField" );
+  writer->SetFileName( this->dataManager->GetOutputFile( "NiftyRegAladinSquare3dAnisotropicX8Y16OriginX8OriginY12DeformationField.nii.gz" ) );
+  writer->SetInput( superElastixFilter->GetOutput( "DisplacementField" ) );
+  writer->Update();
+
+  // EXPECT_NO_THROW(superElastixFilter->Update());
+  superElastixFilter->Update();
+}
+
 TEST_F( NiftyregComponentTest, ItkToNiftiImage )
 {
   // Test for Source component ItkToNiftiImage
