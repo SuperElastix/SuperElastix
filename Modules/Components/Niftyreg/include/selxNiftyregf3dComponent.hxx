@@ -26,6 +26,13 @@ template< class TPixel >
 Niftyregf3dComponent< TPixel >::Niftyregf3dComponent( const std::string & name, LoggerImpl & logger ) : Superclass( name, logger )
 {
   m_reg_f3d = new reg_f3d< TPixel >( 1, 1 );
+
+  // Set spacing to positive values in mm. The default values are (-5 -5 -5) which NiftyReg interprets as spacing in voxels.
+  m_reg_f3d->SetSpacing(0, 5);
+  m_reg_f3d->SetSpacing(1, 5);
+  m_reg_f3d->SetSpacing(2, 5);
+
+  m_reg_f3d->SetWarpedPaddingValue(0.);
 }
 
 

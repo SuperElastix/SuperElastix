@@ -1,4 +1,4 @@
-/*=========================================================================
+ /*=========================================================================
  *
  *  Copyright Insight Software Consortium
  *
@@ -481,6 +481,10 @@ ItkToNiftiImage< ItkImageType, NiftiPixelType >::SetNIfTIOrientationFromImageIO(
     = nifti_mat44_inverse( output->sto_xyz );
   output->qto_ijk
     = nifti_mat44_inverse( output->qto_xyz );
+
+  // Since we are not converting to a left-handed coordinate system, we need to
+  // change qfac as well
+  output->qfac = output->qfac;
 
   output->pixdim[ 0 ] = output->qfac;
   //  output->sform_code = 0;

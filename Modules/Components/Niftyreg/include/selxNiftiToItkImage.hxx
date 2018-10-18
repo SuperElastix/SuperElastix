@@ -86,13 +86,12 @@ NiftiToItkImage< ItkImageType, NiftiPixelType >
   importImageFilter->SetOrigin( origin );
   importImageFilter->SetSpacing( spacing );
   importImageFilter->SetDirection( direction );
-  //importImageFilter->UpdateOutputInformation();
   importImageFilter->SetImportPointer( dataFromNifti.buffer, dataFromNifti.numberOfElements, true );
-
   importImageFilter->UpdateOutputInformation();
 
   auto resultImage = importImageFilter->GetOutput();
   resultImage->Update();
+
   return importImageFilter->GetOutput();
 }
 
@@ -953,10 +952,12 @@ NiftiToItkImage< ItkImageType, NiftiPixelType >::GetImageIOOrientationFromNIfTI(
 
   //
   // set origin
-  orientationFromNifti.origin[ 0 ] = -theMat.m[ 0 ][ 3 ];
+  // KM: orientationFromNifti.origin[ 0 ] = -theMat.m[ 0 ][ 3 ];
+  orientationFromNifti.origin[ 0 ] = theMat.m[ 0 ][ 3 ];
   if( dims > 1 )
   {
-    orientationFromNifti.origin[ 1 ] = -theMat.m[ 1 ][ 3 ];
+    // KM: orientationFromNifti.origin[ 1 ] = -theMat.m[ 1 ][ 3 ];
+    orientationFromNifti.origin[ 1 ] = theMat.m[ 1 ][ 3 ];
   }
   if( dims > 2 )
   {
@@ -968,10 +969,11 @@ NiftiToItkImage< ItkImageType, NiftiPixelType >::GetImageIOOrientationFromNIfTI(
   for( int i = 0; i < max_defined_orientation_dims; i++ )
   {
     xDirection[ i ] = theMat.m[ i ][ 0 ];
-    if( i < 2 )
-    {
-      xDirection[ i ] *= -1.0;
-    }
+    // KM: Do not flip axes
+//    if( i < 2 )
+//    {
+//      xDirection[ i ] *= -1.0;
+//    }
   }
   Normalize( xDirection );
   orientationFromNifti.direction[ 0 ] = xDirection;
@@ -982,10 +984,11 @@ NiftiToItkImage< ItkImageType, NiftiPixelType >::GetImageIOOrientationFromNIfTI(
     for( int i = 0; i < max_defined_orientation_dims; i++ )
     {
       yDirection[ i ] = theMat.m[ i ][ 1 ];
-      if( i < 2 )
-      {
-        yDirection[ i ] *= -1.0;
-      }
+//       KM: Do not flip axes
+//      if( i < 2 )
+//      {
+//        yDirection[ i ] *= -1.0;
+//      }
     }
     Normalize( yDirection );
     orientationFromNifti.direction[ 1 ] = yDirection;
@@ -997,10 +1000,11 @@ NiftiToItkImage< ItkImageType, NiftiPixelType >::GetImageIOOrientationFromNIfTI(
     for( int i = 0; i < max_defined_orientation_dims; i++ )
     {
       zDirection[ i ] = theMat.m[ i ][ 2 ];
-      if( i < 2 )
-      {
-        zDirection[ i ] *= -1.0;
-      }
+//       KM: Do not flip axes
+//      if( i < 2 )
+//      {
+//        zDirection[ i ] *= -1.0;
+//      }
     }
     Normalize( zDirection );
     orientationFromNifti.direction[ 2 ] = zDirection;
