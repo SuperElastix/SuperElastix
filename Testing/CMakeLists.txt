@@ -28,17 +28,16 @@ endif()
 include( ExternalData )
 
 list( APPEND ExternalData_URL_TEMPLATES
-  "http://midas3.kitware.com/midas/api/rest?method=midas.bitstream.download&checksum=%(hash)&algorithm=%(algo)"
-  "https://midas3.kitware.com/midas/api/rest?method=midas.bitstream.download&checksum=%(hash)&algorithm=%(algo)"
+  "http://data.kitware.com/api/v1/file/hashsum/%(algo)/%(hash)/download"
 )
 
 # Scan the Data directory for content links on the form "[filename].[ext].md5". 
-# The content links contains md5 hashes that are checked for consistensy  
+# The content links contains sha512 hashes that are checked for consistensy  
 # against files downloaded from servers in ExternalData_URL_TEMPLATES. These 
 # files are placed in a corresponding location in the build directory.
-file( GLOB_RECURSE SuperElastixDataContentLinks "*.md5" )
+file( GLOB_RECURSE SuperElastixDataContentLinks "*.sha512" )
 foreach( SuperElastixDataContentLink ${SuperElastixDataContentLinks} )
-  string( REGEX REPLACE "\\.md5$" "" SuperElastixDataContentLink ${SuperElastixDataContentLink} )
+  string( REGEX REPLACE "\\.sha512$" "" SuperElastixDataContentLink ${SuperElastixDataContentLink} )
   ExternalData_Expand_Arguments( SuperElastixData
     SuperElastixDataFileName
     DATA{${SuperElastixDataContentLink}}
