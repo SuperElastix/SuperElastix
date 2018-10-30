@@ -89,12 +89,12 @@ def run(parameters):
                     if parameters.make_scripts == 'shell':
                         dataset.make_shell_scripts(parameters.superelastix,
                                                    blueprint_file_name, file_names,
-                                                   output_directory)
+                                                   output_directory, '.sh')
 
                     if parameters.make_scripts == 'batch':
-                        dataset.make_batch_scripts(parameters.superelastix,
+                        dataset.make_shell_scripts(parameters.superelastix,
                                                    blueprint_file_name,
-                                                   file_names, output_directory)
+                                                   file_names, output_directory, '.bat')
 
 
 if __name__ == '__main__':
