@@ -9,10 +9,8 @@ parser.add_argument('--submissions-directory', '-sd', required=True,
                     help='Directory with parameter files.')
 parser.add_argument('--output-directory', '-od', required=True,
                     help="Directory where results will be saved.")
-parser.add_argument('--make-shell-scripts', '-mss', type=bool, default=True,
-                    help="Generate shell scripts (default: True).")
-parser.add_argument('--make-batch-scripts', '-mbs', type=bool, default=False,
-                    help="Generate shell scripts (default: False).")
+parser.add_argument('--make-scripts', '-ms', choices=['shell', 'batch'], default='shell',
+                    help="Generate shell scripts or batch scripts (default: shell).")
 parser.add_argument('--brain2d-input-directory', '-b2d')
 parser.add_argument('--lung2d-input-directory', '-l2d')
 parser.add_argument('--cumc12-input-directory', '-cid')
@@ -36,10 +34,6 @@ parser.add_argument('--source-directory', '-srcd', default='.')
 
 
 def run(parameters):
-
-    if not parameters.make_shell_scripts and not parameters.make_batch_scripts:
-        logging.error('Neither --make-shell-scripts or --make-batch-scripts were True. Nothing to do.')
-        quit()
 
     submissions = load_submissions(parameters)
     datasets = load_datasets(parameters)
@@ -77,16 +71,11 @@ def run(parameters):
                     output_directory = os.path.join(parameters.output_directory,
                                                     team_name, blueprint_name)
 
-                    if parameters.make_shell_scripts:
+                    if parameters.make_scripts in ('shell', 'batch'):
+                        ext = '.sh' if parameters.make_scripts == 'shell' else '.bat'
                         dataset.make_shell_scripts(parameters.superelastix,
-                                                   blueprint_file_name, file_names,
-                                                   output_directory)
-
-                    if parameters.make_batch_scripts:
-                        dataset.make_batch_scripts(parameters.superelastix,
                                                    blueprint_file_name,
-                                                   file_names, output_directory)
-
+                                                   file_names, output_directory, ext)
 
 if __name__ == '__main__':
     parameters = parser.parse_args()
