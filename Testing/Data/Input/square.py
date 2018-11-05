@@ -84,3 +84,43 @@ if __name__ == '__main__':
     image.SetOrigin((8, 12, 16))
     sitk.WriteImage(image, './square3dAnisotropicX8Y16Z24OriginX8OriginY12OriginZ16.nii.gz')
 
+    # POPI/bh size and world coordinate system
+    h = d = 512
+    w = 161
+    c = [w // 2, h // 2, d // 2]
+    r = [w // 4, h // 4, d // 4]
+    image = square3d(w, h, d, c, r)
+    sitk.WriteImage(image, './square3dPOPISize.nii.gz')
+    sitk.WriteImage(image, './square3dPOPISize.mhd')
+
+    image.SetOrigin((-300, -300, -615.5))
+    sitk.WriteImage(image, './square3dPOPISizeOrigin.nii.gz')
+    sitk.WriteImage(image, './square3dPOPISizeOrigin.mhd')
+
+    image.SetSpacing((1.172, 1.172, 2))
+    sitk.WriteImage(image, './square3dPOPISizeOriginSpacing.nii.gz')
+    sitk.WriteImage(image, './square3dPOPISizeOriginSpacing.mhd')
+
+    image.SetOrigin((0, 0, 0))
+    sitk.WriteImage(image, './square3dPOPISizeSpacing.nii.gz')
+    sitk.WriteImage(image, './square3dPOPISizeSpacing.mhd')
+
+    # POPI/bh size and world coordinate system + translation
+    c = [w // 2 + 8, h // 2 + 16, d // 2 + 24]
+    image = square3d(w, h, d, c, r)
+    sitk.WriteImage(image, './square3dPOPISizeX8Y16Z24.nii.gz')
+    sitk.WriteImage(image, './square3dPOPISizeX8Y16Z24.mhd')
+
+    image.SetOrigin((-300, -300, -615.5))
+    sitk.WriteImage(image, './square3dPOPISizeOriginX8Y16Z24.nii.gz')
+    sitk.WriteImage(image, './square3dPOPISizeOriginX8Y16Z24.mhd')
+
+    image.SetSpacing((1.172, 1.172, 2))
+    sitk.WriteImage(image, './square3dPOPISizeOriginSpacingX8Y16Z24.nii.gz')
+    sitk.WriteImage(image, './square3dPOPISizeOriginSpacingX8Y16Z24.mhd')
+
+    image.SetOrigin((0, 0, 0))
+    sitk.WriteImage(image, './square3dPOPISizeSpacingX8Y16Z24.nii.gz')
+    sitk.WriteImage(image, './square3dPOPISizeSpacingX8Y16Z24.mhd')
+
+

@@ -62,6 +62,7 @@ ItkToNiftiImage< ItkImageType, NiftiPixelType >::Convert( typename ItkImageType:
     msg
         <<
         "Input ItkImage must be fully loaded in memory. E.g. use m_ItkImage->GetSource()->UpdateLargestPossibleRegion() before calling this function."
+        "Input ItkImage must be fully loaded in memory. E.g. use m_ItkImage->GetSource()->UpdateLargestPossibleRegion() before calling this function."
         << std::endl;
     throw std::runtime_error( msg.str() );
   }
@@ -481,10 +482,6 @@ ItkToNiftiImage< ItkImageType, NiftiPixelType >::SetNIfTIOrientationFromImageIO(
     = nifti_mat44_inverse( output->sto_xyz );
   output->qto_ijk
     = nifti_mat44_inverse( output->qto_xyz );
-
-  // Since we are not converting to a left-handed coordinate system, we need to
-  // change qfac as well
-  output->qfac = output->qfac;
 
   output->pixdim[ 0 ] = output->qfac;
   //  output->sform_code = 0;

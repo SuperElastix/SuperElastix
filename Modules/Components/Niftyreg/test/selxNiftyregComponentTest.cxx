@@ -1074,4 +1074,537 @@ TEST_F(NiftyregComponentTest, BSpline_3d)
   transformixSuperElastixFilter->Update();
 }
 
+TEST_F(NiftyregComponentTest, BSpline_3d_popisize_nii)
+{
+  // TODO: Step through f3d run and see where control point grid or def field image origin is set
+  /** make example blueprint configuration */
+  BlueprintPointer blueprint = Blueprint::New();
+
+  blueprint->SetComponent("RegistrationMethod", { { "NameOfClass", { "Niftyregf3dComponent" } } });
+  blueprint->SetComponent("FixedImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } });
+  blueprint->SetComponent("MovingImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } });
+  blueprint->SetComponent("ResultImage", { { "NameOfClass", { "NiftiToItkImageSinkComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } });
+
+  blueprint->SetConnection("FixedImage", "RegistrationMethod", { { "NameOfInterface", { "NiftyregReferenceImageInterface" } } });
+  blueprint->SetConnection("MovingImage", "RegistrationMethod", { { "NameOfInterface", { "NiftyregFloatingImageInterface" } } });
+  blueprint->SetConnection("FixedImage", "ResultImage", { { "NameOfInterface", { "itkImageDomainFixedInterface" } } });
+  blueprint->SetConnection("RegistrationMethod", "ResultImage", { { "NameOfInterface", { "NiftyregWarpedImageInterface" } } });
+
+  // Write deformation field
+  blueprint->SetComponent("DisplacementField", { { { "NameOfClass"}, {"DisplacementFieldNiftiToItkImageSinkComponent"} },
+                                                 { { "Dimensionality" }, { "3" } } });
+  blueprint->SetComponent( "TransformToDisplacementField", { { "NameOfClass", { "NiftyregSplineToDisplacementFieldComponent" } }, { "PixelType", { "float" } } });
+  blueprint->SetComponent( "DisplacementField", { { "NameOfClass", { "DisplacementFieldNiftiToItkImageSinkComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } });
+
+  blueprint->SetConnection( "RegistrationMethod", "TransformToDisplacementField", { {} });
+  blueprint->SetConnection( "FixedImage", "TransformToDisplacementField", { {} });
+  blueprint->SetConnection( "TransformToDisplacementField", "DisplacementField", { {} });
+  blueprint->SetConnection( "FixedImage", "DisplacementField", { { "NameOfInterface", {"itkImageDomainFixedInterface"} } } );
+
+
+  // Set up the readers and writers
+  typedef itk::Image< float, 3 >              ImageType;
+  typedef itk::ImageFileReader< ImageType > ImageReaderType;
+  typedef itk::ImageFileWriter< ImageType > ImageWriterType;
+
+  ImageReaderType::Pointer fixedImageReader = ImageReaderType::New();
+  fixedImageReader->SetFileName( dataManager->GetInputFile( "square3dPOPISize.nii.gz" ) );
+  fixedImageReader->Update();
+
+  ImageReaderType::Pointer movingImageReader = ImageReaderType::New();
+  movingImageReader->SetFileName( dataManager->GetInputFile( "square3dPOPISizeX8Y16Z24.nii.gz" ) );
+  movingImageReader->Update();
+
+  ImageWriterType::Pointer resultImageWriter = ImageWriterType::New();
+  resultImageWriter->SetFileName( dataManager->GetOutputFile( "NiftyregBSplineSquare3dPOPISize.nii.gz" ) );
+
+  // Connect SuperElastix in an itk pipeline
+  superElastixFilter->SetInput("FixedImage", fixedImageReader->GetOutput());
+  superElastixFilter->SetInput("MovingImage", movingImageReader->GetOutput());
+  resultImageWriter->SetInput(superElastixFilter->GetOutput< ImageType >("ResultImage"));
+
+  EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
+  EXPECT_NO_THROW(superElastixFilter->SetLogger(logger));
+
+  selx::AnyFileWriter::Pointer deformationFieldWriter = superElastixFilter->GetOutputFileWriter( "DisplacementField" );
+  deformationFieldWriter->SetFileName( this->dataManager->GetOutputFile( "NiftyregBSplineSquare3dPOPISizeDeformationField.nii.gz" ) );
+  deformationFieldWriter->SetInput( superElastixFilter->GetOutput( "DisplacementField" ) );
+
+  // Update call on the writers triggers SuperElastix to configure and execute
+  resultImageWriter->Update();
+  deformationFieldWriter->Update();
+
+  // To test that image is warped correctly with transformix, we do it here.
+  // We make a separate blueprint and load displacementfield from disk since we cannot get the ITK deformation field
+  // from the deformation field sink
+  SuperElastixFilterBase::Pointer transformixSuperElastixFilter;
+  transformixSuperElastixFilter = SuperElastixFilterType::New();
+  BlueprintPointer transformixBlueprint = Blueprint::New();
+  transformixBlueprint->SetComponent("DisplacementField", { { "NameOfClass", { "ItkDisplacementFieldSourceComponent" } }, { "PixelType", {"float"} }, { "Dimensionality", { "3" } } });
+  transformixBlueprint->SetComponent("MovingImage", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "PixelType", {"float"} }, { "Dimensionality", { "3" } } });
+  transformixBlueprint->SetComponent("ResultImage", { { "NameOfClass", { "ItkImageSinkComponent" } }, { "PixelType", {"float"} }, { "Dimensionality", { "3" } } });
+  transformixBlueprint->SetComponent("ImageWarper", { { "NameOfClass", { "ItkDisplacementFieldImageWarperComponent" } },
+                                                      { "PixelType", {"float"} }, { "Dimensionality", { "3" } } } );
+  transformixBlueprint->SetConnection("DisplacementField", "ImageWarper", {});
+  transformixBlueprint->SetConnection("MovingImage", "ImageWarper", { { "NameOfInterface", {"itkImageMovingInterface"}}});
+  transformixBlueprint->SetConnection("ImageWarper", "ResultImage", {});
+
+  transformixSuperElastixFilter->SetInput("MovingImage", movingImageReader->GetOutput());
+
+  auto imageFileReader2 = itk::ImageFileReader<itk::Image<itk::Vector< float, 3 >, 3>>::New();
+  imageFileReader2->SetFileName(this->dataManager->GetOutputFile("NiftyregBSplineSquare3dPOPISizeDeformationField.nii.gz"));
+  transformixSuperElastixFilter->SetInput("DisplacementField", imageFileReader2->GetOutput());
+  EXPECT_NO_THROW(transformixSuperElastixFilter->SetBlueprint(transformixBlueprint));
+
+  selx::AnyFileWriter::Pointer transformixWriter = transformixSuperElastixFilter->GetOutputFileWriter( "ResultImage" );
+  transformixWriter->SetFileName( this->dataManager->GetOutputFile( "NiftyregBSplineSquare3dPOPISizeTransformixWarpedImage.nii.gz" ) );
+  transformixWriter->SetInput( transformixSuperElastixFilter->GetOutput( "ResultImage" ) );
+  transformixWriter->Update();
+
+  transformixSuperElastixFilter->Update();
+}
+
+TEST_F(NiftyregComponentTest, BSpline_3d_popisizespacing_nii)
+{
+  // TODO: Step through f3d run and see where control point grid or def field image origin is set
+  /** make example blueprint configuration */
+  BlueprintPointer blueprint = Blueprint::New();
+
+  blueprint->SetComponent("RegistrationMethod", { { "NameOfClass", { "Niftyregf3dComponent" } } });
+  blueprint->SetComponent("FixedImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } });
+  blueprint->SetComponent("MovingImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } });
+  blueprint->SetComponent("ResultImage", { { "NameOfClass", { "NiftiToItkImageSinkComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } });
+
+  blueprint->SetConnection("FixedImage", "RegistrationMethod", { { "NameOfInterface", { "NiftyregReferenceImageInterface" } } });
+  blueprint->SetConnection("MovingImage", "RegistrationMethod", { { "NameOfInterface", { "NiftyregFloatingImageInterface" } } });
+  blueprint->SetConnection("FixedImage", "ResultImage", { { "NameOfInterface", { "itkImageDomainFixedInterface" } } });
+  blueprint->SetConnection("RegistrationMethod", "ResultImage", { { "NameOfInterface", { "NiftyregWarpedImageInterface" } } });
+
+  // Write deformation field
+  blueprint->SetComponent("DisplacementField", { { { "NameOfClass"}, {"DisplacementFieldNiftiToItkImageSinkComponent"} },
+                                                 { { "Dimensionality" }, { "3" } } });
+  blueprint->SetComponent( "TransformToDisplacementField", { { "NameOfClass", { "NiftyregSplineToDisplacementFieldComponent" } }, { "PixelType", { "float" } } });
+  blueprint->SetComponent( "DisplacementField", { { "NameOfClass", { "DisplacementFieldNiftiToItkImageSinkComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } });
+
+  blueprint->SetConnection( "RegistrationMethod", "TransformToDisplacementField", { {} });
+  blueprint->SetConnection( "FixedImage", "TransformToDisplacementField", { {} });
+  blueprint->SetConnection( "TransformToDisplacementField", "DisplacementField", { {} });
+  blueprint->SetConnection( "FixedImage", "DisplacementField", { { "NameOfInterface", {"itkImageDomainFixedInterface"} } } );
+
+
+  // Set up the readers and writers
+  typedef itk::Image< float, 3 >              ImageType;
+  typedef itk::ImageFileReader< ImageType > ImageReaderType;
+  typedef itk::ImageFileWriter< ImageType > ImageWriterType;
+
+  ImageReaderType::Pointer fixedImageReader = ImageReaderType::New();
+  fixedImageReader->SetFileName( dataManager->GetInputFile( "square3dPOPISizeSpacing.nii.gz" ) );
+  fixedImageReader->Update();
+
+  ImageReaderType::Pointer movingImageReader = ImageReaderType::New();
+  movingImageReader->SetFileName( dataManager->GetInputFile( "square3dPOPISizeSpacingX8Y16Z24.nii.gz" ) );
+  movingImageReader->Update();
+
+  ImageWriterType::Pointer resultImageWriter = ImageWriterType::New();
+  resultImageWriter->SetFileName( dataManager->GetOutputFile( "NiftyregBSplineSquare3dPOPISizeSpacing.nii.gz" ) );
+
+  // Connect SuperElastix in an itk pipeline
+  superElastixFilter->SetInput("FixedImage", fixedImageReader->GetOutput());
+  superElastixFilter->SetInput("MovingImage", movingImageReader->GetOutput());
+  resultImageWriter->SetInput(superElastixFilter->GetOutput< ImageType >("ResultImage"));
+
+  EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
+  EXPECT_NO_THROW(superElastixFilter->SetLogger(logger));
+
+  selx::AnyFileWriter::Pointer deformationFieldWriter = superElastixFilter->GetOutputFileWriter( "DisplacementField" );
+  deformationFieldWriter->SetFileName( this->dataManager->GetOutputFile( "NiftyregBSplineSquare3dPOPISizeSpacingDeformationField.nii.gz" ) );
+  deformationFieldWriter->SetInput( superElastixFilter->GetOutput( "DisplacementField" ) );
+
+  // Update call on the writers triggers SuperElastix to configure and execute
+  resultImageWriter->Update();
+  deformationFieldWriter->Update();
+
+  // To test that image is warped correctly with transformix, we do it here.
+  // We make a separate blueprint and load displacementfield from disk since we cannot get the ITK deformation field
+  // from the deformation field sink
+  SuperElastixFilterBase::Pointer transformixSuperElastixFilter;
+  transformixSuperElastixFilter = SuperElastixFilterType::New();
+  BlueprintPointer transformixBlueprint = Blueprint::New();
+  transformixBlueprint->SetComponent("DisplacementField", { { "NameOfClass", { "ItkDisplacementFieldSourceComponent" } }, { "PixelType", {"float"} }, { "Dimensionality", { "3" } } });
+  transformixBlueprint->SetComponent("MovingImage", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "PixelType", {"float"} }, { "Dimensionality", { "3" } } });
+  transformixBlueprint->SetComponent("ResultImage", { { "NameOfClass", { "ItkImageSinkComponent" } }, { "PixelType", {"float"} }, { "Dimensionality", { "3" } } });
+  transformixBlueprint->SetComponent("ImageWarper", { { "NameOfClass", { "ItkDisplacementFieldImageWarperComponent" } },
+                                                      { "PixelType", {"float"} }, { "Dimensionality", { "3" } } } );
+  transformixBlueprint->SetConnection("DisplacementField", "ImageWarper", {});
+  transformixBlueprint->SetConnection("MovingImage", "ImageWarper", { { "NameOfInterface", {"itkImageMovingInterface"}}});
+  transformixBlueprint->SetConnection("ImageWarper", "ResultImage", {});
+
+  transformixSuperElastixFilter->SetInput("MovingImage", movingImageReader->GetOutput());
+
+  auto imageFileReader2 = itk::ImageFileReader<itk::Image<itk::Vector< float, 3 >, 3>>::New();
+  imageFileReader2->SetFileName(this->dataManager->GetOutputFile("NiftyregBSplineSquare3dPOPISizeSpacingDeformationField.nii.gz"));
+  transformixSuperElastixFilter->SetInput("DisplacementField", imageFileReader2->GetOutput());
+  EXPECT_NO_THROW(transformixSuperElastixFilter->SetBlueprint(transformixBlueprint));
+
+  selx::AnyFileWriter::Pointer transformixWriter = transformixSuperElastixFilter->GetOutputFileWriter( "ResultImage" );
+  transformixWriter->SetFileName( this->dataManager->GetOutputFile( "NiftyregBSplineSquare3dPOPISizeSpacingTransformixWarpedImage.nii.gz" ) );
+  transformixWriter->SetInput( transformixSuperElastixFilter->GetOutput( "ResultImage" ) );
+  transformixWriter->Update();
+
+  transformixSuperElastixFilter->Update();
+}
+
+TEST_F(NiftyregComponentTest, BSpline_3d_popisizeoriginspacing_nii)
+{
+  // TODO: Step through f3d run and see where control point grid or def field image origin is set
+  /** make example blueprint configuration */
+  BlueprintPointer blueprint = Blueprint::New();
+
+  blueprint->SetComponent("RegistrationMethod", { { "NameOfClass", { "Niftyregf3dComponent" } } });
+  blueprint->SetComponent("FixedImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } });
+  blueprint->SetComponent("MovingImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } });
+  blueprint->SetComponent("ResultImage", { { "NameOfClass", { "NiftiToItkImageSinkComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } });
+
+  blueprint->SetConnection("FixedImage", "RegistrationMethod", { { "NameOfInterface", { "NiftyregReferenceImageInterface" } } });
+  blueprint->SetConnection("MovingImage", "RegistrationMethod", { { "NameOfInterface", { "NiftyregFloatingImageInterface" } } });
+  blueprint->SetConnection("FixedImage", "ResultImage", { { "NameOfInterface", { "itkImageDomainFixedInterface" } } });
+  blueprint->SetConnection("RegistrationMethod", "ResultImage", { { "NameOfInterface", { "NiftyregWarpedImageInterface" } } });
+
+  // Write deformation field
+  blueprint->SetComponent("DisplacementField", { { { "NameOfClass"}, {"DisplacementFieldNiftiToItkImageSinkComponent"} },
+                                                 { { "Dimensionality" }, { "3" } } });
+  blueprint->SetComponent( "TransformToDisplacementField", { { "NameOfClass", { "NiftyregSplineToDisplacementFieldComponent" } }, { "PixelType", { "float" } } });
+  blueprint->SetComponent( "DisplacementField", { { "NameOfClass", { "DisplacementFieldNiftiToItkImageSinkComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } });
+
+  blueprint->SetConnection( "RegistrationMethod", "TransformToDisplacementField", { {} });
+  blueprint->SetConnection( "FixedImage", "TransformToDisplacementField", { {} });
+  blueprint->SetConnection( "TransformToDisplacementField", "DisplacementField", { {} });
+  blueprint->SetConnection( "FixedImage", "DisplacementField", { { "NameOfInterface", {"itkImageDomainFixedInterface"} } } );
+
+
+  // Set up the readers and writers
+  typedef itk::Image< float, 3 >              ImageType;
+  typedef itk::ImageFileReader< ImageType > ImageReaderType;
+  typedef itk::ImageFileWriter< ImageType > ImageWriterType;
+
+  ImageReaderType::Pointer fixedImageReader = ImageReaderType::New();
+  fixedImageReader->SetFileName( dataManager->GetInputFile( "square3dPOPISizeOriginSpacing.nii.gz" ) );
+
+  ImageReaderType::Pointer movingImageReader = ImageReaderType::New();
+  movingImageReader->SetFileName( dataManager->GetInputFile( "square3dPOPISizeOriginSpacingX8Y16Z24.nii.gz" ) );
+
+  ImageWriterType::Pointer resultImageWriter = ImageWriterType::New();
+  resultImageWriter->SetFileName( dataManager->GetOutputFile( "NiftyregBSplineSquare3dPOPISizeOriginSpacing.nii.gz" ) );
+
+  // Connect SuperElastix in an itk pipeline
+  superElastixFilter->SetInput("FixedImage", fixedImageReader->GetOutput());
+  superElastixFilter->SetInput("MovingImage", movingImageReader->GetOutput());
+  resultImageWriter->SetInput(superElastixFilter->GetOutput< ImageType >("ResultImage"));
+
+  EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
+  EXPECT_NO_THROW(superElastixFilter->SetLogger(logger));
+
+  selx::AnyFileWriter::Pointer deformationFieldWriter = superElastixFilter->GetOutputFileWriter( "DisplacementField" );
+  deformationFieldWriter->SetFileName( this->dataManager->GetOutputFile( "NiftyregBSplineSquare3dPOPISizeOriginSpacingDeformationField.nii.gz" ) );
+  deformationFieldWriter->SetInput( superElastixFilter->GetOutput( "DisplacementField" ) );
+
+  // Update call on the writers triggers SuperElastix to configure and execute
+  resultImageWriter->Update();
+  deformationFieldWriter->Update();
+
+  // To test that image is warped correctly with transformix, we do it here.
+  // We make a separate blueprint and load displacementfield from disk since we cannot get the ITK deformation field
+  // from the deformation field sink
+  SuperElastixFilterBase::Pointer transformixSuperElastixFilter;
+  transformixSuperElastixFilter = SuperElastixFilterType::New();
+  BlueprintPointer transformixBlueprint = Blueprint::New();
+  transformixBlueprint->SetComponent("DisplacementField", { { "NameOfClass", { "ItkDisplacementFieldSourceComponent" } }, { "PixelType", {"float"} }, { "Dimensionality", { "3" } } });
+  transformixBlueprint->SetComponent("MovingImage", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "PixelType", {"float"} }, { "Dimensionality", { "3" } } });
+  transformixBlueprint->SetComponent("ResultImage", { { "NameOfClass", { "ItkImageSinkComponent" } }, { "PixelType", {"float"} }, { "Dimensionality", { "3" } } });
+  transformixBlueprint->SetComponent("ImageWarper", { { "NameOfClass", { "ItkDisplacementFieldImageWarperComponent" } },
+                                                      { "PixelType", {"float"} }, { "Dimensionality", { "3" } } } );
+  transformixBlueprint->SetConnection("DisplacementField", "ImageWarper", {});
+  transformixBlueprint->SetConnection("MovingImage", "ImageWarper", { { "NameOfInterface", {"itkImageMovingInterface"}}});
+  transformixBlueprint->SetConnection("ImageWarper", "ResultImage", {});
+
+  transformixSuperElastixFilter->SetInput("MovingImage", movingImageReader->GetOutput());
+
+  auto imageFileReader2 = itk::ImageFileReader<itk::Image<itk::Vector< float, 3 >, 3>>::New();
+  imageFileReader2->SetFileName(this->dataManager->GetOutputFile("NiftyregBSplineSquare3dPOPISizeOriginSpacingDeformationField.nii.gz"));
+  transformixSuperElastixFilter->SetInput("DisplacementField", imageFileReader2->GetOutput());
+  EXPECT_NO_THROW(transformixSuperElastixFilter->SetBlueprint(transformixBlueprint));
+
+  selx::AnyFileWriter::Pointer transformixWriter = transformixSuperElastixFilter->GetOutputFileWriter( "ResultImage" );
+  transformixWriter->SetFileName( this->dataManager->GetOutputFile( "NiftyregBSplineSquare3dPOPISizeOriginSpacingTransformixWarpedImage.nii.gz" ) );
+  transformixWriter->SetInput( transformixSuperElastixFilter->GetOutput( "ResultImage" ) );
+  transformixWriter->Update();
+
+  transformixSuperElastixFilter->Update();
+}
+
+TEST_F(NiftyregComponentTest, BSpline_3d_popisizeorigin_nii)
+{
+  // TODO: Step through f3d run and see where control point grid or def field image origin is set
+  /** make example blueprint configuration */
+  BlueprintPointer blueprint = Blueprint::New();
+
+  blueprint->SetComponent("RegistrationMethod", { { "NameOfClass", { "Niftyregf3dComponent" } } });
+  blueprint->SetComponent("FixedImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } });
+  blueprint->SetComponent("MovingImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } });
+  blueprint->SetComponent("ResultImage", { { "NameOfClass", { "NiftiToItkImageSinkComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } });
+
+  blueprint->SetConnection("FixedImage", "RegistrationMethod", { { "NameOfInterface", { "NiftyregReferenceImageInterface" } } });
+  blueprint->SetConnection("MovingImage", "RegistrationMethod", { { "NameOfInterface", { "NiftyregFloatingImageInterface" } } });
+  blueprint->SetConnection("FixedImage", "ResultImage", { { "NameOfInterface", { "itkImageDomainFixedInterface" } } });
+  blueprint->SetConnection("RegistrationMethod", "ResultImage", { { "NameOfInterface", { "NiftyregWarpedImageInterface" } } });
+
+  // Write deformation field
+  blueprint->SetComponent("DisplacementField", { { { "NameOfClass"}, {"DisplacementFieldNiftiToItkImageSinkComponent"} },
+                                                 { { "Dimensionality" }, { "3" } } });
+  blueprint->SetComponent( "TransformToDisplacementField", { { "NameOfClass", { "NiftyregSplineToDisplacementFieldComponent" } }, { "PixelType", { "float" } } });
+  blueprint->SetComponent( "DisplacementField", { { "NameOfClass", { "DisplacementFieldNiftiToItkImageSinkComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } });
+
+  blueprint->SetConnection( "RegistrationMethod", "TransformToDisplacementField", { {} });
+  blueprint->SetConnection( "FixedImage", "TransformToDisplacementField", { {} });
+  blueprint->SetConnection( "TransformToDisplacementField", "DisplacementField", { {} });
+  blueprint->SetConnection( "FixedImage", "DisplacementField", { { "NameOfInterface", {"itkImageDomainFixedInterface"} } } );
+
+
+  // Set up the readers and writers
+  typedef itk::Image< float, 3 >              ImageType;
+  typedef itk::ImageFileReader< ImageType > ImageReaderType;
+  typedef itk::ImageFileWriter< ImageType > ImageWriterType;
+
+  ImageReaderType::Pointer fixedImageReader = ImageReaderType::New();
+  fixedImageReader->SetFileName( dataManager->GetInputFile( "square3dPOPISizeOrigin.nii.gz" ) );
+
+  ImageReaderType::Pointer movingImageReader = ImageReaderType::New();
+  movingImageReader->SetFileName( dataManager->GetInputFile( "square3dPOPISizeOriginX8Y16Z24.nii.gz" ) );
+
+  ImageWriterType::Pointer resultImageWriter = ImageWriterType::New();
+  resultImageWriter->SetFileName( dataManager->GetOutputFile( "NiftyregBSplineSquare3dPOPISizeOrigin.nii.gz" ) );
+
+  // Connect SuperElastix in an itk pipeline
+  superElastixFilter->SetInput("FixedImage", fixedImageReader->GetOutput());
+  superElastixFilter->SetInput("MovingImage", movingImageReader->GetOutput());
+  resultImageWriter->SetInput(superElastixFilter->GetOutput< ImageType >("ResultImage"));
+
+  EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
+  EXPECT_NO_THROW(superElastixFilter->SetLogger(logger));
+
+  selx::AnyFileWriter::Pointer deformationFieldWriter = superElastixFilter->GetOutputFileWriter( "DisplacementField" );
+  deformationFieldWriter->SetFileName( this->dataManager->GetOutputFile( "NiftyregBSplineSquare3dPOPISizeOriginDeformationField.nii.gz" ) );
+  deformationFieldWriter->SetInput( superElastixFilter->GetOutput( "DisplacementField" ) );
+
+  // Update call on the writers triggers SuperElastix to configure and execute
+  resultImageWriter->Update();
+  deformationFieldWriter->Update();
+
+  // To test that image is warped correctly with transformix, we do it here.
+  // We make a separate blueprint and load displacementfield from disk since we cannot get the ITK deformation field
+  // from the deformation field sink
+  SuperElastixFilterBase::Pointer transformixSuperElastixFilter;
+  transformixSuperElastixFilter = SuperElastixFilterType::New();
+  BlueprintPointer transformixBlueprint = Blueprint::New();
+  transformixBlueprint->SetComponent("DisplacementField", { { "NameOfClass", { "ItkDisplacementFieldSourceComponent" } }, { "PixelType", {"float"} }, { "Dimensionality", { "3" } } });
+  transformixBlueprint->SetComponent("MovingImage", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "PixelType", {"float"} }, { "Dimensionality", { "3" } } });
+  transformixBlueprint->SetComponent("ResultImage", { { "NameOfClass", { "ItkImageSinkComponent" } }, { "PixelType", {"float"} }, { "Dimensionality", { "3" } } });
+  transformixBlueprint->SetComponent("ImageWarper", { { "NameOfClass", { "ItkDisplacementFieldImageWarperComponent" } },
+                                                      { "PixelType", {"float"} }, { "Dimensionality", { "3" } } } );
+  transformixBlueprint->SetConnection("DisplacementField", "ImageWarper", {});
+  transformixBlueprint->SetConnection("MovingImage", "ImageWarper", { { "NameOfInterface", {"itkImageMovingInterface"}}});
+  transformixBlueprint->SetConnection("ImageWarper", "ResultImage", {});
+
+  transformixSuperElastixFilter->SetInput("MovingImage", movingImageReader->GetOutput());
+
+  auto imageFileReader2 = itk::ImageFileReader<itk::Image<itk::Vector< float, 3 >, 3>>::New();
+  imageFileReader2->SetFileName(this->dataManager->GetOutputFile("NiftyregBSplineSquare3dPOPISizeOriginDeformationField.nii.gz"));
+  transformixSuperElastixFilter->SetInput("DisplacementField", imageFileReader2->GetOutput());
+  EXPECT_NO_THROW(transformixSuperElastixFilter->SetBlueprint(transformixBlueprint));
+
+  selx::AnyFileWriter::Pointer transformixWriter = transformixSuperElastixFilter->GetOutputFileWriter( "ResultImage" );
+  transformixWriter->SetFileName( this->dataManager->GetOutputFile( "NiftyregBSplineSquare3dPOPISizeOriginTransformixWarpedImage.nii.gz" ) );
+  transformixWriter->SetInput( transformixSuperElastixFilter->GetOutput( "ResultImage" ) );
+  transformixWriter->Update();
+
+  transformixSuperElastixFilter->Update();
+}
+
+TEST_F(NiftyregComponentTest, BSpline_3d_popisizespacingbothtrans_nii)
+{
+  // TODO: Step through f3d run and see where control point grid or def field image origin is set
+  /** make example blueprint configuration */
+  BlueprintPointer blueprint = Blueprint::New();
+
+  blueprint->SetComponent("RegistrationMethod", { { "NameOfClass", { "Niftyregf3dComponent" } } });
+  blueprint->SetComponent("FixedImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } });
+  blueprint->SetComponent("MovingImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } });
+  blueprint->SetComponent("ResultImage", { { "NameOfClass", { "NiftiToItkImageSinkComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } });
+
+  blueprint->SetConnection("FixedImage", "RegistrationMethod", { { "NameOfInterface", { "NiftyregReferenceImageInterface" } } });
+  blueprint->SetConnection("MovingImage", "RegistrationMethod", { { "NameOfInterface", { "NiftyregFloatingImageInterface" } } });
+  blueprint->SetConnection("FixedImage", "ResultImage", { { "NameOfInterface", { "itkImageDomainFixedInterface" } } });
+  blueprint->SetConnection("RegistrationMethod", "ResultImage", { { "NameOfInterface", { "NiftyregWarpedImageInterface" } } });
+
+  // Write deformation field
+  blueprint->SetComponent("DisplacementField", { { { "NameOfClass"}, {"DisplacementFieldNiftiToItkImageSinkComponent"} },
+                                                 { { "Dimensionality" }, { "3" } } });
+  blueprint->SetComponent( "TransformToDisplacementField", { { "NameOfClass", { "NiftyregSplineToDisplacementFieldComponent" } }, { "PixelType", { "float" } } });
+  blueprint->SetComponent( "DisplacementField", { { "NameOfClass", { "DisplacementFieldNiftiToItkImageSinkComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } });
+
+  blueprint->SetConnection( "RegistrationMethod", "TransformToDisplacementField", { {} });
+  blueprint->SetConnection( "FixedImage", "TransformToDisplacementField", { {} });
+  blueprint->SetConnection( "TransformToDisplacementField", "DisplacementField", { {} });
+  blueprint->SetConnection( "FixedImage", "DisplacementField", { { "NameOfInterface", {"itkImageDomainFixedInterface"} } } );
+
+
+  // Set up the readers and writers
+  typedef itk::Image< float, 3 >              ImageType;
+  typedef itk::ImageFileReader< ImageType > ImageReaderType;
+  typedef itk::ImageFileWriter< ImageType > ImageWriterType;
+
+  ImageReaderType::Pointer fixedImageReader = ImageReaderType::New();
+  fixedImageReader->SetFileName( dataManager->GetInputFile( "square3dPOPISizeSpacing.nii.gz" ) );
+
+  ImageReaderType::Pointer movingImageReader = ImageReaderType::New();
+  movingImageReader->SetFileName( dataManager->GetInputFile( "square3dPOPISizeSpacingX8Y16Z24.nii.gz" ) );
+
+  ImageWriterType::Pointer resultImageWriter = ImageWriterType::New();
+  resultImageWriter->SetFileName( dataManager->GetOutputFile( "NiftyregBSplineSquare3dPOPISizeSpacingBothX8Y16Z24.nii.gz" ) );
+
+  // Connect SuperElastix in an itk pipeline
+  superElastixFilter->SetInput("FixedImage", fixedImageReader->GetOutput());
+  superElastixFilter->SetInput("MovingImage", movingImageReader->GetOutput());
+  resultImageWriter->SetInput(superElastixFilter->GetOutput< ImageType >("ResultImage"));
+
+  EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
+  EXPECT_NO_THROW(superElastixFilter->SetLogger(logger));
+
+  selx::AnyFileWriter::Pointer deformationFieldWriter = superElastixFilter->GetOutputFileWriter( "DisplacementField" );
+  deformationFieldWriter->SetFileName( this->dataManager->GetOutputFile( "NiftyregBSplineSquare3dPOPISizeSpacingBothX8Y16Z24DeformationField.nii.gz" ) );
+  deformationFieldWriter->SetInput( superElastixFilter->GetOutput( "DisplacementField" ) );
+
+  // Update call on the writers triggers SuperElastix to configure and execute
+  resultImageWriter->Update();
+  deformationFieldWriter->Update();
+
+  // To test that image is warped correctly with transformix, we do it here.
+  // We make a separate blueprint and load displacementfield from disk since we cannot get the ITK deformation field
+  // from the deformation field sink
+  SuperElastixFilterBase::Pointer transformixSuperElastixFilter;
+  transformixSuperElastixFilter = SuperElastixFilterType::New();
+  BlueprintPointer transformixBlueprint = Blueprint::New();
+  transformixBlueprint->SetComponent("DisplacementField", { { "NameOfClass", { "ItkDisplacementFieldSourceComponent" } }, { "PixelType", {"float"} }, { "Dimensionality", { "3" } } });
+  transformixBlueprint->SetComponent("MovingImage", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "PixelType", {"float"} }, { "Dimensionality", { "3" } } });
+  transformixBlueprint->SetComponent("ResultImage", { { "NameOfClass", { "ItkImageSinkComponent" } }, { "PixelType", {"float"} }, { "Dimensionality", { "3" } } });
+  transformixBlueprint->SetComponent("ImageWarper", { { "NameOfClass", { "ItkDisplacementFieldImageWarperComponent" } },
+                                                      { "PixelType", {"float"} }, { "Dimensionality", { "3" } } } );
+  transformixBlueprint->SetConnection("DisplacementField", "ImageWarper", {});
+  transformixBlueprint->SetConnection("MovingImage", "ImageWarper", { { "NameOfInterface", {"itkImageMovingInterface"}}});
+  transformixBlueprint->SetConnection("ImageWarper", "ResultImage", {});
+
+  transformixSuperElastixFilter->SetInput("MovingImage", movingImageReader->GetOutput());
+
+  auto imageFileReader2 = itk::ImageFileReader<itk::Image<itk::Vector< float, 3 >, 3>>::New();
+  imageFileReader2->SetFileName(this->dataManager->GetOutputFile("NiftyregBSplineSquare3dPOPISizeSpacingBothX8Y16Z24DeformationField.nii.gz"));
+  transformixSuperElastixFilter->SetInput("DisplacementField", imageFileReader2->GetOutput());
+  EXPECT_NO_THROW(transformixSuperElastixFilter->SetBlueprint(transformixBlueprint));
+
+  selx::AnyFileWriter::Pointer transformixWriter = transformixSuperElastixFilter->GetOutputFileWriter( "ResultImage" );
+  transformixWriter->SetFileName( this->dataManager->GetOutputFile( "NiftyregBSplineSquare3dPOPISizeSpacingBothX8Y16Z24TransformixWarpedImage.nii.gz" ) );
+  transformixWriter->SetInput( transformixSuperElastixFilter->GetOutput( "ResultImage" ) );
+  transformixWriter->Update();
+
+  transformixSuperElastixFilter->Update();
+}
+
+TEST_F(NiftyregComponentTest, BSpline_3d_popisizeoriginspacingtrans_nii)
+{
+  // TODO: Step through f3d run and see where control point grid or def field image origin is set
+  /** make example blueprint configuration */
+  BlueprintPointer blueprint = Blueprint::New();
+
+  blueprint->SetComponent("RegistrationMethod", { { "NameOfClass", { "Niftyregf3dComponent" } } });
+  blueprint->SetComponent("FixedImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } });
+  blueprint->SetComponent("MovingImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } });
+  blueprint->SetComponent("ResultImage", { { "NameOfClass", { "NiftiToItkImageSinkComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } });
+
+  blueprint->SetConnection("FixedImage", "RegistrationMethod", { { "NameOfInterface", { "NiftyregReferenceImageInterface" } } });
+  blueprint->SetConnection("MovingImage", "RegistrationMethod", { { "NameOfInterface", { "NiftyregFloatingImageInterface" } } });
+  blueprint->SetConnection("FixedImage", "ResultImage", { { "NameOfInterface", { "itkImageDomainFixedInterface" } } });
+  blueprint->SetConnection("RegistrationMethod", "ResultImage", { { "NameOfInterface", { "NiftyregWarpedImageInterface" } } });
+
+  // Write deformation field
+  blueprint->SetComponent("DisplacementField", { { { "NameOfClass"}, {"DisplacementFieldNiftiToItkImageSinkComponent"} },
+                                                 { { "Dimensionality" }, { "3" } } });
+  blueprint->SetComponent( "TransformToDisplacementField", { { "NameOfClass", { "NiftyregSplineToDisplacementFieldComponent" } }, { "PixelType", { "float" } } });
+  blueprint->SetComponent( "DisplacementField", { { "NameOfClass", { "DisplacementFieldNiftiToItkImageSinkComponent" } }, { "Dimensionality", { "3" } }, { "PixelType", { "float" } } });
+
+  blueprint->SetConnection( "RegistrationMethod", "TransformToDisplacementField", { {} });
+  blueprint->SetConnection( "FixedImage", "TransformToDisplacementField", { {} });
+  blueprint->SetConnection( "TransformToDisplacementField", "DisplacementField", { {} });
+  blueprint->SetConnection( "FixedImage", "DisplacementField", { { "NameOfInterface", {"itkImageDomainFixedInterface"} } } );
+
+
+  // Set up the readers and writers
+  typedef itk::Image< float, 3 >              ImageType;
+  typedef itk::ImageFileReader< ImageType > ImageReaderType;
+  typedef itk::ImageFileWriter< ImageType > ImageWriterType;
+
+  ImageReaderType::Pointer fixedImageReader = ImageReaderType::New();
+  fixedImageReader->SetFileName( dataManager->GetInputFile( "square3dPOPISizeOriginSpacing.nii.gz" ) );
+
+  ImageReaderType::Pointer movingImageReader = ImageReaderType::New();
+  movingImageReader->SetFileName( dataManager->GetInputFile( "square3dPOPISizeOriginSpacingX8Y16Z24.nii.gz" ) );
+
+  ImageWriterType::Pointer resultImageWriter = ImageWriterType::New();
+  resultImageWriter->SetFileName( dataManager->GetOutputFile( "NiftyregBSplineSquare3dPOPISizeOriginSpacingX8Y16Z24.nii.gz" ) );
+
+  // Connect SuperElastix in an itk pipeline
+  superElastixFilter->SetInput("FixedImage", fixedImageReader->GetOutput());
+  superElastixFilter->SetInput("MovingImage", movingImageReader->GetOutput());
+  resultImageWriter->SetInput(superElastixFilter->GetOutput< ImageType >("ResultImage"));
+
+  EXPECT_NO_THROW(superElastixFilter->SetBlueprint(blueprint));
+  EXPECT_NO_THROW(superElastixFilter->SetLogger(logger));
+
+  selx::AnyFileWriter::Pointer deformationFieldWriter = superElastixFilter->GetOutputFileWriter( "DisplacementField" );
+  deformationFieldWriter->SetFileName( this->dataManager->GetOutputFile( "NiftyregBSplineSquare3dPOPISizeOriginSpacingX8Y16Z24DeformationField.nii.gz" ) );
+  deformationFieldWriter->SetInput( superElastixFilter->GetOutput( "DisplacementField" ) );
+
+  // Update call on the writers triggers SuperElastix to configure and execute
+  resultImageWriter->Update();
+  deformationFieldWriter->Update();
+
+  // To test that image is warped correctly with transformix, we do it here.
+  // We make a separate blueprint and load displacementfield from disk since we cannot get the ITK deformation field
+  // from the deformation field sink
+  SuperElastixFilterBase::Pointer transformixSuperElastixFilter;
+  transformixSuperElastixFilter = SuperElastixFilterType::New();
+  BlueprintPointer transformixBlueprint = Blueprint::New();
+  transformixBlueprint->SetComponent("DisplacementField", { { "NameOfClass", { "ItkDisplacementFieldSourceComponent" } }, { "PixelType", {"float"} }, { "Dimensionality", { "3" } } });
+  transformixBlueprint->SetComponent("MovingImage", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "PixelType", {"float"} }, { "Dimensionality", { "3" } } });
+  transformixBlueprint->SetComponent("ResultImage", { { "NameOfClass", { "ItkImageSinkComponent" } }, { "PixelType", {"float"} }, { "Dimensionality", { "3" } } });
+  transformixBlueprint->SetComponent("ImageWarper", { { "NameOfClass", { "ItkDisplacementFieldImageWarperComponent" } },
+                                                      { "PixelType", {"float"} }, { "Dimensionality", { "3" } } } );
+  transformixBlueprint->SetConnection("DisplacementField", "ImageWarper", {});
+  transformixBlueprint->SetConnection("MovingImage", "ImageWarper", { { "NameOfInterface", {"itkImageMovingInterface"}}});
+  transformixBlueprint->SetConnection("ImageWarper", "ResultImage", {});
+
+  transformixSuperElastixFilter->SetInput("MovingImage", movingImageReader->GetOutput());
+
+  auto imageFileReader2 = itk::ImageFileReader<itk::Image<itk::Vector< float, 3 >, 3>>::New();
+  imageFileReader2->SetFileName(this->dataManager->GetOutputFile("NiftyregBSplineSquare3dPOPISizeOriginSpacingX8Y16Z24DeformationField.nii.gz"));
+  transformixSuperElastixFilter->SetInput("DisplacementField", imageFileReader2->GetOutput());
+  EXPECT_NO_THROW(transformixSuperElastixFilter->SetBlueprint(transformixBlueprint));
+
+  selx::AnyFileWriter::Pointer transformixWriter = transformixSuperElastixFilter->GetOutputFileWriter( "ResultImage" );
+  transformixWriter->SetFileName( this->dataManager->GetOutputFile( "NiftyregBSplineSquare3dPOPISizeOriginSpacingX8Y16Z24TransformixWarpedImage.nii.gz" ) );
+  transformixWriter->SetInput( transformixSuperElastixFilter->GetOutput( "ResultImage" ) );
+  transformixWriter->Update();
+
+  transformixSuperElastixFilter->Update();
+}
+
+
 }
