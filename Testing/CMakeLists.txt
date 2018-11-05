@@ -55,8 +55,6 @@ endif()
 
 set(TEST_LIBRARIES gtest_main gtest)
 
-include(GoogleTest)
-
 # ---------------------------------------------------------------------
 # Download test data
 
