@@ -18,6 +18,44 @@
 #=========================================================================
 
 # ---------------------------------------------------------------------
+# Build GoogeTest
+
+# Download and unpack googletest at configure time
+configure_file(googletest.cmake.in ${CMAKE_BINARY_DIR}/Testing/googletest-download/CMakeLists.txt)
+execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
+  RESULT_VARIABLE result
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/Testing/googletest-download )
+if(result)
+  message(FATAL_ERROR "CMake step for googletest failed: ${result}")
+endif()
+execute_process(COMMAND ${CMAKE_COMMAND} --build .
+  RESULT_VARIABLE result
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/Testing/googletest-download )
+if(result)
+  message(FATAL_ERROR "Build step for googletest failed: ${result}")
+endif()
+
+# Prevent overriding the parent project's compiler/linker
+# settings on Windows
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+
+# Add googletest directly to our build. This defines
+# the gtest and gtest_main targets.
+add_subdirectory(${CMAKE_BINARY_DIR}/Testing/googletest-src
+                 ${CMAKE_BINARY_DIR}/Testing/googletest-build
+                 EXCLUDE_FROM_ALL)
+
+# The gtest/gtest_main targets carry header search path
+# dependencies automatically when using CMake 2.8.11 or
+# later. Otherwise we have to add them here ourselves.
+if(CMAKE_VERSION VERSION_LESS 2.8.11)
+  include_directories("${gtest_SOURCE_DIR}/include")
+  include_directories("${gmock_SOURCE_DIR}/include")
+endif()
+
+set(TEST_LIBRARIES gtest_main gtest)
+
+# ---------------------------------------------------------------------
 # Download test data
 
 # ExternalData module requires CMake version 2.8.11
@@ -31,7 +69,7 @@ list( APPEND ExternalData_URL_TEMPLATES
   "http://data.kitware.com/api/v1/file/hashsum/%(algo)/%(hash)/download"
 )
 
-# Scan the Data directory for content links on the form "[filename].[ext].md5". 
+# Scan the Data directory for content links on the form "[filename].[ext].sha512". 
 # The content links contains sha512 hashes that are checked for consistensy  
 # against files downloaded from servers in ExternalData_URL_TEMPLATES. These 
 # files are placed in a corresponding location in the build directory.
@@ -46,14 +84,6 @@ endforeach()
 
 # Test data is downloaded when this target is built
 ExternalData_Add_Target( SuperElastixData )
-
-# ---------------------------------------------------------------------
-# Find GoogleTest library
-
-find_package( GTest REQUIRED )
-include_directories( ${GTEST_INCLUDE_DIRS} )
-
-set( TEST_LIBRARIES ${GTEST_BOTH_LIBRARIES} )
 
 # ---------------------------------------------------------------------
 # Build data manager

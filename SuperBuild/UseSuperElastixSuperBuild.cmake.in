@@ -1,6 +1,5 @@
 set( ITK_DIR @ITK_DIR@ )
 set( BOOST_ROOT @BOOST_ROOT@ )
-set( GTEST_ROOT @GTEST_ROOT@ )
 set( Elastix_DIR @Elastix_DIR@ )
 set( NIFTYREG_DIR @NIFTYREG_DIR@ )
 set( ATEN_DIR @ATEN_DIR@ )
