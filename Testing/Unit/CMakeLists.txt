@@ -40,11 +40,11 @@ foreach( ModuleTestSourceFileNames ${SUPERELASTIX_TEST_SOURCE_FILES} )
 
   # Build module test driver
   add_executable( ${ModuleName}TestDriver ${${ModuleTestSourceFileNames}} )
-  target_include_directories( ${ModuleName}TestDriver PUBLIC {SUPERELASTIX_INCLUDE_DIRS} )
+  target_include_directories( ${ModuleName}TestDriver PUBLIC ${SUPERELASTIX_INCLUDE_DIRS} )
   target_link_libraries( ${ModuleName}TestDriver ${SUPERELASTIX_LIBRARIES} ${ITK_LIBRARIES} ${TEST_LIBRARIES} )
 
   # Add GoogleTest to CTest
-  GTEST_ADD_TESTS( ${ModuleName}TestDriver "--gtest_output=xml:${CMAKE_BINARY_DIR}/Testing/Unit/${ModuleName}.xml" AUTO )
+  add_test(NAME ${ModuleName}Test COMMAND ${ModuleName}TestDriver "--gtest_output=xml:${CMAKE_BINARY_DIR}/Testing/Unit/${ModuleName}.xml")
   message( STATUS "${ModuleName} test enabled." )
 endforeach()
 message( STATUS "Enabling tests ... Done" )

@@ -88,7 +88,7 @@ NetworkBuilder< ComponentList >::Configure()
   // TODO: Print the available criteria
   if( nonUniqueComponentNames.size() > 0 )
   {
-    this->m_Logger.Log( LogLevel::CRT, ( this->m_Logger << nonUniqueComponentNames ) + " need more criteria." );
+    this->m_Logger.Log( LogLevel::CRT, this->m_Logger.ToString(nonUniqueComponentNames) + " need more criteria." );
     return false;
   }
 
@@ -155,7 +155,7 @@ NetworkBuilder< ComponentList >::ApplyComponentConfiguration()
                           componentName,
                           currentComponentSelector->NumberOfComponents(),
                           criterion.first,
-                          this->m_Logger << criterion.second);
+                          this->m_Logger.ToString(criterion.second));
     }
 
     if( currentComponentSelector->NumberOfComponents() == 0 )
@@ -208,14 +208,14 @@ NetworkBuilder< ComponentList >::ApplyConnectionConfiguration()
           "Finding component for '{0}': {1} component(s) satisfies 'ProvidingInterface' {2} and previous criteria.",
           providingComponentName,
           this->m_ComponentSelectorContainer[providingComponentName]->NumberOfComponents(),
-          this->m_Logger << interfaceCriteria );
+          this->m_Logger.ToString(interfaceCriteria) );
 
         this->m_ComponentSelectorContainer[ acceptingComponentName ]->AddAcceptingInterfaceCriteria( interfaceCriteria );
         this->m_Logger.Log(LogLevel::DBG,
           "Finding component for '{0}': {1} component(s) satisfies 'AcceptingInterface' {2} and previous criteria.",
           acceptingComponentName,
           this->m_ComponentSelectorContainer[acceptingComponentName]->NumberOfComponents(),
-          this->m_Logger << interfaceCriteria );
+          this->m_Logger.ToString(interfaceCriteria) );
 
         if( this->m_ComponentSelectorContainer[ acceptingComponentName ]->NumberOfComponents() == 0 )
         {

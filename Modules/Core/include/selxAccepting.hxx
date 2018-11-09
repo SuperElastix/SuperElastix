@@ -131,7 +131,7 @@ Accepting< FirstInterface, RestInterfaces ... >::AreAllAccepted()
   if (!this->InterfaceAcceptor< FirstInterface >::GetAccepted())
   {
     // TODO: Log component names as well
-    this->m_Logger.Log( LogLevel::ERR, "No connection satisfy criteria {0}.", this->m_Logger << Properties< FirstInterface >::Get());
+    this->m_Logger.Log( LogLevel::ERR, "No connection satisfy criteria {0}.", this->m_Logger.ToString(Properties< FirstInterface >::Get()));
     return false;
   }
 
