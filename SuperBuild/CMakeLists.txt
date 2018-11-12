@@ -180,18 +180,6 @@ else()
 endif()
 
 # ---------------------------------------------------------------------
-# Build GoogleTest
-
-mark_as_advanced( USE_SYSTEM_GTEST )
-option( USE_SYSTEM_GTEST "Use a pre-compiled version of GoogleTest. " OFF )
-
-if ( USE_SYSTEM_GTEST )
-  find_package( GTest REQUIRED ) 
-else() 
-  include( ExternalGoogleTest ) 
-endif()
-
-# ---------------------------------------------------------------------
 # Build ATen
 
 mark_as_advanced( SUPERELASTIX_USE_ATEN )
