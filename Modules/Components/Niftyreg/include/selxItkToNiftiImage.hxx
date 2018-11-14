@@ -478,6 +478,10 @@ ItkToNiftiImage< ItkImageType, NiftiPixelType >::SetNIfTIOrientationFromImageIO(
         * output->sto_xyz.m[ ii ][ jj ];
     }
   }
+
+  // KM: Force q matrix to have spacing
+  output->qto_xyz = output->sto_xyz;
+
   output->sto_ijk
     = nifti_mat44_inverse( output->sto_xyz );
   output->qto_ijk

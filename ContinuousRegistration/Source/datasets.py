@@ -485,14 +485,14 @@ class ISBR18(Dataset):
         self.input_directory = input_directory
         file_names = []
 
-        image_file_names = [os.path.join(input_directory, 'Heads', image)
+        image_file_names = sorted([os.path.join(input_directory, 'Heads', image)
                        for image in os.listdir(os.path.join(input_directory, 'Heads'))
-                       if image.endswith('.hdr') and not 'c1.hdr' in image] # TODO: Fix world info for c1
+                       if image.endswith('.hdr') and not 'c1.hdr' in image]) # TODO: Fix world info for c1
         image_file_names = [pair for pair in combinations(image_file_names, 2)]
 
-        label_file_names = [os.path.join(input_directory, 'Atlases', atlas)
+        label_file_names = sorted([os.path.join(input_directory, 'Atlases', atlas)
                        for atlas in os.listdir(os.path.join(input_directory, 'Atlases'))
-                       if atlas.endswith('.hdr') and not 'c1.hdr' in atlas]
+                       if atlas.endswith('.hdr') and not 'c1.hdr' in atlas])
         label_file_names = [pair for pair in combinations(label_file_names, 2)]
 
         disp_field_file_names = [create_disp_field_names(image_file_name_pair, self.name)

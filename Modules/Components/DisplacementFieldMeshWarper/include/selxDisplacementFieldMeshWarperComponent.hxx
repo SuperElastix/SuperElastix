@@ -40,6 +40,7 @@ ItkDisplacementFieldMeshWarperComponent< Dimensionality, TPixel, CoordRepType >
 ::Accept( ItkDisplacementFieldInterfacePointer itkDisplacementFieldInterface )
 {
   auto displacementField = itkDisplacementFieldInterface->GetItkDisplacementField();
+  displacementField->Update(); // Needed to load world info before transform is run
   displacementField->SetBufferedRegion(displacementField->GetRequestedRegion());
   this->m_DisplacementFieldTransform->SetDisplacementField( displacementField );
 

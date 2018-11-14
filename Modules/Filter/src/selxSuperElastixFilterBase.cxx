@@ -100,6 +100,9 @@ SuperElastixFilterBase
       itkExceptionMacro( << "SuperElastixFilter requires the input " "" << nameAndInterface.first << "" " for the Source Component with that name" )
     }
 
+    // We have to update the image to know the world info before SuperElastix is run
+    this->GetInput( nameAndInterface.first );
+
     nameAndInterface.second->SetMiniPipelineInput( this->GetInput( nameAndInterface.first ) );
     inputNames.erase( inputName );
   }
@@ -181,12 +184,14 @@ SuperElastixFilterBase
 ::GenerateData( void )
 {
   this->m_Logger->Log( LogLevel::INF, "Executing network ..." );
+
   // Print citing information
   this->m_NetworkBuilder->Cite();
 
   auto fullyConfiguredNetwork = this->m_NetworkBuilder->GetRealizedNetwork();
+
   // delete the networkbuilder
-  // this->m_NetworkBuilder = nullptr;
+  this->m_NetworkBuilder = nullptr;
 
   // This calls controller components that take over the control flow if the itk pipeline is broken.
   fullyConfiguredNetwork.Execute();
