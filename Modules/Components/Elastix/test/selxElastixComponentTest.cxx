@@ -479,6 +479,7 @@ TEST_F( ElastixComponentTest, Affine_spacing_moving ) {
   // Update call on the writers triggers SuperElastix to configure and execute
   EXPECT_NO_THROW( resultImageWriter->Update() );
   EXPECT_NO_THROW( resultDisplacementWriter->Update() );
+
 }
 
 
@@ -550,44 +551,5 @@ TEST_F( ElastixComponentTest, Affine_anisotropic_translation_origin ) {
   EXPECT_NO_THROW( resultImageWriter->Update() );
   EXPECT_NO_THROW( resultDisplacementWriter->Update() );
 }
-
-
-//TEST_F( NiftyregComponentTest, Affine ) {
-//  // Make an affine elastix registration and compare transform parameters
-//  /** make example blueprint configuration */
-//  BlueprintPointer blueprint = Blueprint::New();
-//
-//  blueprint->SetComponent( "Elastix", { { "NameOfClass", { "MonolithicElastixComponent" } },
-//                                        { "ParameterMap0FixedImagePyramid", { "FixedSmoothingImagePyramid" } },
-//                                        { "ParameterMap0MovingImagePyramid", { "MovingSmoothingImagePyramid" } },
-//                                        { "ParameterMap0Transform", { "AffineTransform" } },
-//                                        { "ParameterMap0ImageSampler", { "RandomCoordinate" } },
-//                                        { "ParameterMap0NumberOfResolutions", { "8" } },
-//                                        { "ParameterMap0NumberOfIterations", { "512" } },
-//                                        { "ParameterMap0Registration", { "MultiResolutionRegistration" } },
-//                                        { "ParameterMap0Metric", { "AdvancedMattesMutualInformation" } },
-//                                        { "ParameterMap0Optimizer", { "AdaptiveStochasticGradientDescent" } } } );
-//
-//  blueprint->SetComponent( "FixedImage", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "Dimensionality", { "2" } } } );
-//  blueprint->SetComponent( "MovingImage", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "Dimensionality", { "2" } } } );
-//  blueprint->SetComponent( "ResultImage", { { "NameOfClass", { "ItkImageSinkComponent" } }, { "Dimensionality", { "2" } } } );
-//  blueprint->SetConnection( "FixedImage", "Elastix", { { "NameOfInterface", { "itkImageFixedInterface" } } } );
-//  blueprint->SetConnection( "MovingImage", "Elastix", { { "NameOfInterface", { "itkImageMovingInterface" } } } );
-//  blueprint->SetConnection( "Elastix", "ResultImage", { { } } );
-//
-//  auto imageFileReader0 = itk::ImageFileReader<itk::Image<float, 2>>::New();
-//  imageFileReader0->SetFileName(this->dataManager->GetInputFile("sphere2dIsotropic.nii.gz"));
-//  auto imageFileReader1 = itk::ImageFileReader<itk::Image<float, 2>>::New();
-//  imageFileReader1->SetFileName(this->dataManager->GetInputFile("sphere2dAnisotropic.nii.gz"));
-//  superElastixFilter->SetBlueprint( blueprint );
-//  superElastixFilter->SetInput( "FixedImage", imageFileReader0->GetOutput() );
-//  superElastixFilter->SetInput( "MovingImage", imageFileReader1->GetOutput() );
-//
-//  selx::AnyFileWriter::Pointer writer = superElastixFilter->GetOutputFileWriter( "ResultImage" );
-//  writer->SetFileName( this->dataManager->GetOutputFile( "Register2d_aladin_elastix_anisotropic_sphere_to_isotropic_sphere.nii.gz" ) );
-//  writer->SetInput( superElastixFilter->GetOutput<itk::Image<float, 2>>( "ResultImage" ) );
-//  writer->Update();
-//
-//}
 
 } // namespace selx
