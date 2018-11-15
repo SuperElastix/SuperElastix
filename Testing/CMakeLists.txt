@@ -66,7 +66,7 @@ endif()
 include( ExternalData )
 
 list( APPEND ExternalData_URL_TEMPLATES
-  "https://data.kitware.com/api/v1/file/%(hash)/download"
+  "https://data.kitware.com/api/v1/file/hashsum/sha512/%(hash)/download"
 )
 
 # Scan the Data directory for content links on the form "[filename].[ext].sha512". 
