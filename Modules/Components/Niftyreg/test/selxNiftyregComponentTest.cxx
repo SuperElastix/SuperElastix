@@ -125,7 +125,7 @@ TEST_F( NiftyregComponentTest, Register2d_nifti )
   EXPECT_NO_THROW( superElastixFilter->Update() );
 }
 
-TEST_F( NiftyregComponentTest, Register2d_aladin_anisotropic) {
+TEST_F( NiftyregComponentTest, DISABLED_Register2d_aladin_anisotropic) {
   BlueprintPointer blueprint = Blueprint::New();
   blueprint->SetComponent("FixedImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "PixelType", {"float"} }, { "Dimensionality", { "2" } } });
   blueprint->SetComponent("MovingImage", { { "NameOfClass",    { "ItkToNiftiImageSourceComponent" }}, {"PixelType", {"float" } }, { "Dimensionality", { "2" } } });
@@ -172,7 +172,7 @@ TEST_F( NiftyregComponentTest, Register2d_aladin_anisotropic) {
   superElastixFilter->Update();
 }
 
-TEST_F( NiftyregComponentTest, Register2d_aladin_anisotropic_origin) {
+TEST_F( NiftyregComponentTest, DISABLED_Register2d_aladin_anisotropic_origin) {
   BlueprintPointer blueprint = Blueprint::New();
   blueprint->SetComponent("FixedImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "PixelType", {"float"} }, { "Dimensionality", { "2" } } });
   blueprint->SetComponent("MovingImage", { { "NameOfClass",    { "ItkToNiftiImageSourceComponent" }}, {"PixelType", {"float" } }, { "Dimensionality", { "2" } } });
@@ -219,7 +219,7 @@ TEST_F( NiftyregComponentTest, Register2d_aladin_anisotropic_origin) {
   superElastixFilter->Update();
 }
 
-TEST_F( NiftyregComponentTest, Register2d_aladin_anisotropoic_translation_origin) {
+TEST_F( NiftyregComponentTest, DISABLED_Register2d_aladin_anisotropoic_translation_origin) {
   BlueprintPointer blueprint = Blueprint::New();
   blueprint->SetComponent("FixedImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "PixelType", {"float"} }, { "Dimensionality", { "2" } } });
   blueprint->SetComponent("MovingImage", { { "NameOfClass",    { "ItkToNiftiImageSourceComponent" }}, {"PixelType", {"float" } }, { "Dimensionality", { "2" } } });
@@ -266,7 +266,7 @@ TEST_F( NiftyregComponentTest, Register2d_aladin_anisotropoic_translation_origin
   superElastixFilter->Update();
 }
 
-TEST_F( NiftyregComponentTest, Register3d_aladin_origin) {
+TEST_F( NiftyregComponentTest, DISABLED_Register3d_aladin_origin) {
   BlueprintPointer blueprint = Blueprint::New();
   blueprint->SetComponent("FixedImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "PixelType", {"float"} }, { "Dimensionality", { "3" } } });
   blueprint->SetComponent("MovingImage", { { "NameOfClass",    { "ItkToNiftiImageSourceComponent" }}, {"PixelType", {"float" } }, { "Dimensionality", { "3" } } });
@@ -345,7 +345,7 @@ TEST_F( NiftyregComponentTest, Register3d_aladin_origin) {
 
 }
 
-TEST_F( NiftyregComponentTest, Register3d_aladin_spacing_both) {
+TEST_F( NiftyregComponentTest, DISABLED_Register3d_aladin_spacing_both) {
   BlueprintPointer blueprint = Blueprint::New();
   blueprint->SetComponent("FixedImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "PixelType", {"float"} }, { "Dimensionality", { "3" } } });
   blueprint->SetComponent("MovingImage", { { "NameOfClass",    { "ItkToNiftiImageSourceComponent" }}, {"PixelType", {"float" } }, { "Dimensionality", { "3" } } });
@@ -395,7 +395,7 @@ TEST_F( NiftyregComponentTest, Register3d_aladin_spacing_both) {
   superElastixFilter->Update();
 }
 
-TEST_F( NiftyregComponentTest, Register3d_aladin_spacing_moving) {
+TEST_F( NiftyregComponentTest, DISABLED_Register3d_aladin_spacing_moving) {
   BlueprintPointer blueprint = Blueprint::New();
   blueprint->SetComponent("FixedImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "PixelType", {"float"} }, { "Dimensionality", { "3" } } });
   blueprint->SetComponent("MovingImage", { { "NameOfClass",    { "ItkToNiftiImageSourceComponent" }}, {"PixelType", {"float" } }, { "Dimensionality", { "3" } } });
@@ -474,7 +474,7 @@ TEST_F( NiftyregComponentTest, Register3d_aladin_spacing_moving) {
   transformixSuperElastixFilter->Update();
 }
 
-TEST_F( NiftyregComponentTest, Register3d_aladin_anisotropic) {
+TEST_F( NiftyregComponentTest, DISABLED_Register3d_aladin_anisotropic) {
   BlueprintPointer blueprint = Blueprint::New();
   blueprint->SetComponent("FixedImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "PixelType", {"float"} }, { "Dimensionality", { "3" } } });
   blueprint->SetComponent("MovingImage", { { "NameOfClass",    { "ItkToNiftiImageSourceComponent" }}, {"PixelType", {"float" } }, { "Dimensionality", { "3" } } });
@@ -521,7 +521,7 @@ TEST_F( NiftyregComponentTest, Register3d_aladin_anisotropic) {
   superElastixFilter->Update();
 }
 
-TEST_F( NiftyregComponentTest, Register3d_aladin_anisotropic_origin) {
+TEST_F( NiftyregComponentTest, DISABLED_Register3d_aladin_anisotropic_origin) {
   BlueprintPointer blueprint = Blueprint::New();
   blueprint->SetComponent("FixedImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "PixelType", {"float"} }, { "Dimensionality", { "3" } } });
   blueprint->SetComponent("MovingImage", { { "NameOfClass",    { "ItkToNiftiImageSourceComponent" }}, {"PixelType", {"float" } }, { "Dimensionality", { "3" } } });
@@ -597,7 +597,7 @@ TEST_F( NiftyregComponentTest, Register3d_aladin_anisotropic_origin) {
   transformixSuperElastixFilter->Update();
 }
 
-TEST_F( NiftyregComponentTest, Register3d_aladin_anisotropoic_translation_origin) {
+TEST_F( NiftyregComponentTest, DISABLED_Register3d_aladin_anisotropoic_translation_origin) {
   BlueprintPointer blueprint = Blueprint::New();
   blueprint->SetComponent("FixedImage", { { "NameOfClass", { "ItkToNiftiImageSourceComponent" } }, { "PixelType", {"float"} }, { "Dimensionality", { "3" } } });
   blueprint->SetComponent("MovingImage", { { "NameOfClass",    { "ItkToNiftiImageSourceComponent" }}, {"PixelType", {"float" } }, { "Dimensionality", { "3" } } });
@@ -986,7 +986,7 @@ TEST_F(NiftyregComponentTest, AffineAndBSpline_2d)
   EXPECT_NO_THROW(resultImageWriter->Update());
 }
 
-TEST_F(NiftyregComponentTest, BSpline_3d)
+TEST_F(NiftyregComponentTest, DISABLED_BSpline_3d)
 {
   BlueprintPointer blueprint = Blueprint::New();
 
@@ -1072,7 +1072,7 @@ TEST_F(NiftyregComponentTest, BSpline_3d)
   transformixSuperElastixFilter->Update();
 }
 
-TEST_F(NiftyregComponentTest, BSpline_3d_popisize_nii)
+TEST_F(NiftyregComponentTest, DISABLED_BSpline_3d_popisize_nii)
 {
   BlueprintPointer blueprint = Blueprint::New();
 
@@ -1160,7 +1160,7 @@ TEST_F(NiftyregComponentTest, BSpline_3d_popisize_nii)
   transformixSuperElastixFilter->Update();
 }
 
-TEST_F(NiftyregComponentTest, BSpline_3d_popisizespacing_nii)
+TEST_F(NiftyregComponentTest, DISABLED_BSpline_3d_popisizespacing_nii)
 {
   BlueprintPointer blueprint = Blueprint::New();
 
@@ -1249,7 +1249,7 @@ TEST_F(NiftyregComponentTest, BSpline_3d_popisizespacing_nii)
   transformixSuperElastixFilter->Update();
 }
 
-TEST_F(NiftyregComponentTest, BSpline_3d_popisizeoriginspacing_nii)
+TEST_F(NiftyregComponentTest, DISABLED_BSpline_3d_popisizeoriginspacing_nii)
 {
   BlueprintPointer blueprint = Blueprint::New();
 
@@ -1336,7 +1336,7 @@ TEST_F(NiftyregComponentTest, BSpline_3d_popisizeoriginspacing_nii)
   transformixSuperElastixFilter->Update();
 }
 
-TEST_F(NiftyregComponentTest, BSpline_3d_popisizeorigin_nii)
+TEST_F(NiftyregComponentTest, DISABLED_BSpline_3d_popisizeorigin_nii)
 {
   BlueprintPointer blueprint = Blueprint::New();
 
@@ -1427,7 +1427,7 @@ TEST_F(NiftyregComponentTest, BSpline_3d_popisizeorigin_nii)
   transformixSuperElastixFilter->Update();
 }
 
-TEST_F(NiftyregComponentTest, BSpline_3d_popisizespacingbothtrans_nii)
+TEST_F(NiftyregComponentTest, DISABLED_BSpline_3d_popisizespacingbothtrans_nii)
 {
   BlueprintPointer blueprint = Blueprint::New();
 
@@ -1513,7 +1513,7 @@ TEST_F(NiftyregComponentTest, BSpline_3d_popisizespacingbothtrans_nii)
   transformixSuperElastixFilter->Update();
 }
 
-TEST_F(NiftyregComponentTest, BSpline_3d_popisizeoriginspacingtrans_nii)
+TEST_F(NiftyregComponentTest, DISABLED_BSpline_3d_popisizeoriginspacingtrans_nii)
 {
   BlueprintPointer blueprint = Blueprint::New();
 
@@ -1599,7 +1599,7 @@ TEST_F(NiftyregComponentTest, BSpline_3d_popisizeoriginspacingtrans_nii)
   transformixSuperElastixFilter->Update();
 }
 
-TEST_F(NiftyregComponentTest, BSpline_3d_popisizeoriginspacingtransdifferentspacings_nii)
+TEST_F(NiftyregComponentTest, DISABLED_BSpline_3d_popisizeoriginspacingtransdifferentspacings_nii)
 {
   BlueprintPointer blueprint = Blueprint::New();
 
@@ -1694,7 +1694,7 @@ TEST_F(NiftyregComponentTest, BSpline_3d_popisizeoriginspacingtransdifferentspac
 }
 
 
-TEST_F(NiftyregComponentTest, BSpline_3d_popi)
+TEST_F(NiftyregComponentTest, DISABLED_BSpline_3d_popi)
 {
   BlueprintPointer blueprint = Blueprint::New();
 
