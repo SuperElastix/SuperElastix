@@ -47,18 +47,19 @@ def load_results_from_json(filename):
                         metric_names.add(tuple(disp_field_results.keys()))
                         metric_results.append(list(disp_field_results.values()))
 
+                    # Sort metric names so they are displayed in the HTML table in the right order
+                    metric_names_list = list(metric_names.pop())
+                    indices = np.argsort(metric_names_list)
+                    metric_names = [metric_names_list[index] for index in indices]
+                    metric_results = [[metric_result[index] for index in indices] for metric_result in metric_results]
+
                 # No results for this dataset
                 if len(metric_names) == 0:
                     results[team_name][blueprint_name][dataset_name] = {}
                     continue
 
-                # Conflicting results
-                if len(metric_names) > 1:
-                    raise Exception('Error in evaluation: Different set of metrics found for dataset %s.' % dataset_name)
-
                 # Save metric_names names separately for constructing html table headers
-                if not dataset_name in metric_names:
-                    result_names[dataset_name] = metric_names.pop()
+                result_names[dataset_name] = metric_names
 
                 results[team_name][blueprint_name][dataset_name] = { 'name': disp_field_file_names, 'result': metric_results }
 
