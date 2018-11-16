@@ -102,7 +102,7 @@ def copy_information_from_images_to_labels(image_file_names, label_file_names,
         new_label_file_names = []
         for image_file_name, label_file_name, disp_field_file_name \
                 in zip(image_file_names, label_file_names, disp_field_file_names):
-            label_file_name_we, label_file_name_ext = os.path.splitext(label_file_name)
+            label_file_name_we, label_file_name_ext = splitext(label_file_name)
             dataset_output_directory = os.path.join(output_directory, 'tmp', 'labels_with_world_info',
                                                     os.path.dirname(disp_field_file_name))
             output_file_name = os.path.join(dataset_output_directory,
@@ -136,7 +136,7 @@ def create_mask_by_thresholding(label_file_names, disp_field_file_names,
     mask_file_names = []
     for label_file_name, disp_field_file_name \
             in zip(label_file_names, disp_field_file_names):
-        label_file_name_we, label_file_name_ext = os.path.splitext(label_file_name)
+        label_file_name_we, label_file_name_ext = splitext(label_file_name)
         dataset_output_directory = os.path.join(output_directory, 'tmp', 'masks',
                                                 os.path.dirname(disp_field_file_name))
         output_file_name = os.path.join(dataset_output_directory, os.path.basename(
@@ -165,7 +165,7 @@ def create_mask_by_size(image_file_name, mask_file_name):
     mask_directory = os.path.dirname(mask_file_name)
 
     if not mask_file_name.endswith(mask_ext):
-        mask_file_name = os.path.splitext(mask_file_name)[0] + mask_ext
+        mask_file_name = splitext(mask_file_name)[0] + mask_ext
 
     if mask_directory is not None:
         os.makedirs(mask_directory, exist_ok=True)
@@ -211,15 +211,8 @@ def create_disp_field_names(image_file_names, dataset_name):
     name_0, name_1 = image_file_names
     name_0 = os.path.basename(name_0)
     name_1 = os.path.basename(name_1)
-    name_we_0, image_extension_we_0 = os.path.splitext(name_0)
-    name_we_1, image_extension_we_1 = os.path.splitext(name_1)
-
-    # Handle .nii.gz
-    if name_we_0.endswith('.nii'):
-        name_we_0, image_extension_we_0 = os.path.splitext(name_we_0)
-
-    if name_we_1.endswith('.nii'):
-        name_we_1, image_extension_we_1 = os.path.splitext(name_we_1)
+    name_we_0, image_extension_we_0 = splitext(name_0)
+    name_we_1, image_extension_we_1 = splitext(name_1)
 
     name_pair_0 = "moving" + name_we_1 + "_to_fixed" + name_we_0 + ".mha"
     name_pair_1 = "moving" + name_we_0 + "_to_fixed" + name_we_1 + ".mha"
@@ -338,3 +331,14 @@ def index2point(image, index_set):
     point_set = np.dot(direction, (index_set - origin)) * spacing
 
     return point_set.transpose()
+
+def splitext(filename):
+    name, ext = os.path.splitext(filename)
+
+    # Handle .nii.gz
+    if name.endswith('.nii'):
+        name, gz = os.path.splitext(name)
+        return name, ext + gz
+    else :
+        return name, ext
+
