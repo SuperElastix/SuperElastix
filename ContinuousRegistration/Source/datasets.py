@@ -24,7 +24,7 @@ class Dataset:
         COMMAND_TEMPLATE = '%s --conf \'%s\' --in %s %s --out DisplacementField=\'%s\' --loglevel trace --logfile \'%s\''
 
         # Fixed=image0, Moving=image1, Output: image1_to_image0
-        root = os.path.splitext(file_names['disp_field_file_names'][0])[0]
+        root = splitext(file_names['disp_field_file_names'][0])[0]
         shell_script_file_name_0 = os.path.join(output_directory, 'sh',
                                               root.replace('/', '_').replace('\\', '_').replace('.', '_') + '.sh')
 
@@ -40,7 +40,7 @@ class Dataset:
         logging.info('Wrote %s' % shell_script_file_name_0)
 
         # Fixed=image1, Moving=image0, Output: image0_to_image1
-        root = os.path.splitext(file_names['disp_field_file_names'][1])[0]
+        root = splitext(file_names['disp_field_file_names'][1])[0]
         shell_script_file_name_1 = os.path.join(output_directory, 'sh',
                                               root.replace('/', '_').replace('\\', '_').replace('.', '_') + '.sh')
 
@@ -143,9 +143,9 @@ class Dataset:
         image_1_to_0 = sitk.ReadImage(warp_image(superelastix, file_names['image_file_names'][1], disp_field_0_file_name, 'result_image'))
         image_0_to_1 = sitk.ReadImage(warp_image(superelastix, file_names['image_file_names'][0], disp_field_1_file_name, 'result_image'))
 
-        difference_image_1_to_0_base_name, difference_image_1_to_0_file_name_ext = os.path.splitext(disp_field_0_file_name)
+        difference_image_1_to_0_base_name, difference_image_1_to_0_file_name_ext = splitext(disp_field_0_file_name)
         difference_image_1_to_0_file_name = difference_image_1_to_0_base_name + '_difference_image' + difference_image_1_to_0_file_name_ext
-        difference_image_0_to_1_base_name, difference_image_0_to_1_file_name_ext = os.path.splitext(disp_field_0_file_name)
+        difference_image_0_to_1_base_name, difference_image_0_to_1_file_name_ext = splitext(disp_field_0_file_name)
         difference_image_0_to_1_file_name = difference_image_0_to_1_base_name + '_difference_image' + difference_image_0_to_1_file_name_ext
 
         image_0 = sitk.ReadImage(file_names['image_file_names'][0])
@@ -162,8 +162,8 @@ class Dataset:
         disp_field_0_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][0])
         disp_field_1_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][1])
 
-        disp_field_0_path, disp_field_0_ext = os.path.splitext(disp_field_0_file_name)
-        disp_field_1_path, disp_field_1_ext = os.path.splitext(disp_field_1_file_name)
+        disp_field_0_path, disp_field_0_ext = splitext(disp_field_0_file_name)
+        disp_field_1_path, disp_field_1_ext = splitext(disp_field_1_file_name)
 
         checkerboard_0_file_name = disp_field_0_path + '_checkerboard' + disp_field_0_ext
         checkerboard_1_file_name = disp_field_1_path + '_checkerboard' + disp_field_1_ext
@@ -184,8 +184,8 @@ class Dataset:
         disp_field_0_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][0])
         disp_field_1_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][1])
 
-        disp_field_0_path, disp_field_0_ext = os.path.splitext(disp_field_0_file_name)
-        disp_field_1_path, disp_field_1_ext = os.path.splitext(disp_field_1_file_name)
+        disp_field_0_path, disp_field_0_ext = splitext(disp_field_0_file_name)
+        disp_field_1_path, disp_field_1_ext = splitext(disp_field_1_file_name)
 
         image_checkerboard_0_file_name = disp_field_0_path + '_image_checkerboard' + disp_field_0_ext
         image_checkerboard_1_file_name = disp_field_1_path + '_image_checkerboard' + disp_field_1_ext
@@ -208,8 +208,8 @@ class Dataset:
         disp_field_0_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][0])
         disp_field_1_file_name = os.path.join(output_directory, file_names['disp_field_file_names'][1])
 
-        disp_field_0_path, disp_field_0_ext = os.path.splitext(disp_field_0_file_name)
-        disp_field_1_path, disp_field_1_ext = os.path.splitext(disp_field_1_file_name)
+        disp_field_0_path, disp_field_0_ext = splitext(disp_field_0_file_name)
+        disp_field_1_path, disp_field_1_ext = splitext(disp_field_1_file_name)
 
         image_checkerboard_0_file_name = disp_field_0_path + '_label_checkerboard' + disp_field_0_ext
         image_checkerboard_1_file_name = disp_field_1_path + '_label_checkerboard' + disp_field_1_ext
