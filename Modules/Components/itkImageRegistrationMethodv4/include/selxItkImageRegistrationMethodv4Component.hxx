@@ -84,16 +84,29 @@ public:
       std::cout << "   FG Final metric gradient (sample of values): ";
       if( gradient.GetSize() < 16 )
       {
-        std::cout << gradient;
+        std::cout << std::setprecision(6) << gradient;
       }
       else
       {
         for( itk::SizeValueType i = 0; i < gradient.GetSize(); i += ( gradient.GetSize() / 16 ) )
         {
-          std::cout << gradient[ i ] << " ";
+          std::cout << std::setprecision(6) << gradient[ i ] << " ";
         }
       }
       std::cout << std::endl;
+    }
+    else if( typeid( event ) == typeid( itk::IterationEvent ) )
+    {
+      typedef itk::GradientDescentOptimizerv4 GradientDescentOptimizerv4Type;
+      auto * optimizerBase = filter->GetOptimizer();
+      typename GradientDescentOptimizerv4Type::ConstPointer optimizer = dynamic_cast< const GradientDescentOptimizerv4Type * >( optimizerBase );
+      if( !optimizer )
+      {
+        itkGenericExceptionMacro( "Error dynamic_cast failed" );
+      }
+      std::cout << "   Iteration #:    " << optimizer->GetCurrentIteration() << std::endl;
+      std::cout << "   LR Final learning rate:    " << optimizer->GetLearningRate() << std::endl;
+      std::cout << "   FM Final metric value:     " << optimizer->GetCurrentMetricValue() << std::endl;
     }
     else if( !( itk::IterationEvent().CheckEvent( &event ) ) )
     {
@@ -208,9 +221,6 @@ template< int Dimensionality, class TPixel, class InternalComputationValueType >
 void
 ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >::Update( void )
 {
-  typename FixedImageType::ConstPointer fixedImage   = this->m_theItkFilter->GetFixedImage();
-  typename MovingImageType::ConstPointer movingImage = this->m_theItkFilter->GetMovingImage();
-
   // Scale estimator is not used in current implementation yet
   typename ScalesEstimatorType::Pointer scalesEstimator = ScalesEstimatorType::New();
 
@@ -236,7 +246,7 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
   scalesEstimator->SetSmallParameterVariation( 1.0 );
 
   //optimizer->SetScalesEstimator( ITK_NULLPTR );
-  //optimizer->SetScalesEstimator(scalesEstimator);
+  optimizer->SetScalesEstimator(scalesEstimator);
   //optimizer->SetDoEstimateLearningRateOnce( false ); //true by default
   //optimizer->SetDoEstimateLearningRateAtEachIteration( false );
 
@@ -245,8 +255,7 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
   if( this->m_TransformAdaptorsContainerInterface != nullptr )
   {
     auto adaptors = this->m_TransformAdaptorsContainerInterface->GetItkTransformParametersAdaptorsContainer();
-    this->m_theItkFilter->SetTransformParametersAdaptorsPerLevel( adaptors
-      );
+    this->m_theItkFilter->SetTransformParametersAdaptorsPerLevel(adaptors);
   }
 
   typedef CommandIterationUpdate< TheItkFilterType > RegistrationCommandType;

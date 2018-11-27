@@ -31,6 +31,9 @@ ItkGradientDescentOptimizerv4Component< InternalComputationValueType >::ItkGradi
   m_Optimizer = GradientDescentOptimizerv4Type::New();
   m_Optimizer->SetNumberOfIterations( 100 );
   m_Optimizer->SetLearningRate( 1.0 );
+  m_Optimizer->SetDoEstimateLearningRateAtEachIteration(false);
+  m_Optimizer->SetDoEstimateLearningRateOnce(true);
+  m_Optimizer->SetMaximumStepSizeInPhysicalUnits( 1.0 );
 
   //TODO: instantiating the filter in the constructor might be heavy for the use in component selector factory, since all components of the database are created during the selection process.
   // we could choose to keep the component light weighted (for checking criteria such as names and connections) until the settings are passed to the filter, but this requires an additional initialization step.
@@ -95,7 +98,6 @@ ItkGradientDescentOptimizerv4Component< InternalComputationValueType >
     if( criterion.second.size() != 1 )
     {
       meetsCriteria = false;
-      //itkExceptionMacro("The criterion Sigma may have only 1 value");
     }
     else
     {
@@ -103,12 +105,37 @@ ItkGradientDescentOptimizerv4Component< InternalComputationValueType >
       try
       {
         this->m_Optimizer->SetLearningRate( boost::lexical_cast< InternalComputationValueType >( criterionValue ) );
-        //this->m_Optimizer->SetLearningRate(std::stod(criterionValue));
         meetsCriteria = true;
       }
       catch( itk::ExceptionObject & itkNotUsed(err) ) // TODO: should catch(const bad_lexical_cast &) too
       {
         //TODO log the error message?
+        meetsCriteria = false;
+      }
+    }
+  }
+  else if( criterion.first == "EstimateScales" ) //Supports this?
+  {
+    if( criterion.second.size() != 1 )
+    {
+      meetsCriteria = false;
+    }
+    else
+    {
+      auto const & criterionValue = *criterion.second.begin();
+      if( criterionValue == "Once" )
+      {
+        this->m_Optimizer->SetDoEstimateLearningRateOnce(true);
+        this->m_Optimizer->SetDoEstimateLearningRateAtEachIteration(false);
+        meetsCriteria = true;
+      }
+      else if( criterionValue == "EveryIteration" )
+      {
+        this->m_Optimizer->SetDoEstimateLearningRateOnce(false);
+        this->m_Optimizer->SetDoEstimateLearningRateAtEachIteration(true);
+        meetsCriteria = true;
+      }
+      else {
         meetsCriteria = false;
       }
     }
