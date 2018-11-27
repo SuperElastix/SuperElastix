@@ -44,6 +44,7 @@ int
 ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< Dimensionality, TPixel >::Accept(typename itkImageFixedMaskInterface< Dimensionality, unsigned char >::Pointer component)
 {
   auto fixedMaskImage = component->GetItkImageFixedMask();
+  fixedMaskImage->Update();
   // connect the itk pipeline
   auto fixedMaskSpatialObject = itk::ImageMaskSpatialObject< Dimensionality >::New();
   fixedMaskSpatialObject->SetImage( fixedMaskImage );
@@ -57,6 +58,7 @@ int
 ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< Dimensionality, TPixel >::Accept(typename itkImageMovingMaskInterface< Dimensionality, unsigned char >::Pointer component)
 {
   auto movingMaskImage = component->GetItkImageMovingMask();
+  movingMaskImage->Update();
   // connect the itk pipeline
   auto movingMaskSpatialObject = itk::ImageMaskSpatialObject< Dimensionality >::New();
   movingMaskSpatialObject->SetImage(movingMaskImage);

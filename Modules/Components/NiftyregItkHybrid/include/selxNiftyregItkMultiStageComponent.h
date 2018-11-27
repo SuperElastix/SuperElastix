@@ -40,7 +40,7 @@ class NiftyregItkMultiStageComponent :
     >,
     Providing<
       itkTransformInterface< InternalComputationValueType, Dimensionality >,
-      UpdateInterface 
+      UpdateInterface
     >
   >
 {
@@ -57,7 +57,7 @@ public:
       >,
       Providing<
         itkTransformInterface< InternalComputationValueType, Dimensionality >,
-        UpdateInterface 
+        UpdateInterface
 	  >
     >                                       Superclass;
   typedef std::shared_ptr< Self >       Pointer;
