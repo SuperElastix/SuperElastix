@@ -33,7 +33,7 @@ def load_results_from_json(filename):
         for blueprint_name, blueprint_results in team_results.items():
             for dataset_name, dataset_results in blueprint_results.items():
 
-                metric_names = set()
+                metric_names = []
                 disp_field_file_names = []
                 metric_results = []
 
@@ -44,13 +44,18 @@ def load_results_from_json(filename):
 
                     for disp_field_file_name, disp_field_results in dataset_result.items():
                         disp_field_file_names.append(disp_field_file_name)
-                        metric_names.add(tuple(disp_field_results.keys()))
+                        metric_names.append(list(disp_field_results.keys()))
                         metric_results.append(list(disp_field_results.values()))
 
                     # Sort metric names so they are displayed in the HTML table in the right order
-                    metric_names_list = list(metric_names.pop())
-                    indices = np.argsort(metric_names_list)
-                    metric_names = [metric_names_list[index] for index in indices]
+                    metric_names = [list(i) for i in set(tuple(i) for i in metric_names)] # make unique
+
+                    print(metric_names)
+                    if(len(metric_names) > 1):
+                        raise Exception('Metric names not unique')
+
+                    indices = np.argsort(metric_names[0])
+                    metric_names = [metric_names[0][index] for index in indices]
                     metric_results = [[metric_result[index] for index in indices] for metric_result in metric_results]
 
                 # No results for this dataset
