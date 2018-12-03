@@ -242,14 +242,14 @@ class CUMC12(Dataset):
         self.input_directory = input_directory
         file_names = []
 
-        image_file_names = [os.path.join(input_directory, 'Heads', image)
+        image_file_names = sorted([os.path.join(input_directory, 'Heads', image)
                        for image in os.listdir(os.path.join(input_directory, 'Heads'))
-                       if image.endswith('.hdr')]
+                       if image.endswith('.hdr')])
         image_file_names = [pair for pair in combinations(image_file_names, 2)]
 
-        label_file_names = [os.path.join(input_directory, 'Atlases', atlas)
+        label_file_names = sorted([os.path.join(input_directory, 'Atlases', atlas)
                        for atlas in os.listdir(os.path.join(input_directory, 'Atlases'))
-                       if atlas.endswith('.hdr')]
+                       if atlas.endswith('.hdr')])
         label_file_names = [pair for pair in combinations(label_file_names, 2)]
 
         disp_field_file_names = [create_disp_field_names(image_file_name_pair, self.name)
@@ -443,17 +443,19 @@ class HAMMERS(Dataset):
         self.category = 'Brain'
 
         self.input_directory = input_directory
-        file_names = []
+        self.file_names = []
 
         image_file_names = sorted([os.path.join(input_directory, image)
                        for image in os.listdir(input_directory)
                        if image.endswith('.nii.gz') and not 'seg' in image])
         image_file_names = [pair for pair in combinations(image_file_names, 2)]
+        image_file_names = take(image_file_names, max_number_of_registrations // 2)
 
         label_file_names = sorted([os.path.join(input_directory, image)
                        for image in os.listdir(input_directory)
                        if image.endswith('seg.nii.gz')])
         label_file_names = [pair for pair in combinations(label_file_names, 2)]
+        label_file_names = take(label_file_names, max_number_of_registrations // 2)
 
         disp_field_file_names = [create_disp_field_names(image_file_name_pair, self.name)
                                  for image_file_name_pair in image_file_names]
@@ -463,15 +465,13 @@ class HAMMERS(Dataset):
 
         for image_file_name, mask_file_name, label_file_name, disp_field_file_name \
                 in zip(image_file_names, mask_file_names, label_file_names, disp_field_file_names):
-            file_names.append({
+            self.file_names.append({
                 'image_file_names': image_file_name,
                 'mask_file_names': mask_file_name,
                 'ground_truth_file_names': label_file_name,
                 'disp_field_file_names': disp_field_file_name
             })
 
-        self.file_names = take(sort_file_names(file_names),
-                               max_number_of_registrations // 2)
 
     def evaluate(self, superelastix, file_names, output_directory):
         return self.evaluate_label(superelastix, file_names, output_directory)
@@ -554,6 +554,9 @@ class LPBA40(Dataset):
 
                     label_file_names.append(output_label_file_name)
 
+        image_file_names = sorted(image_file_names)
+        label_file_names = sorted(label_file_names)
+
         image_file_names = [create_identity_world_information(pair, self.name, input_directory, output_directory) for pair in combinations(image_file_names, 2)]
         label_file_names = [pair for pair in combinations(label_file_names, 2)]
 
@@ -587,14 +590,14 @@ class MGH10(Dataset):
         self.input_directory = input_directory
         file_names = []
 
-        image_file_names = [os.path.join(input_directory, 'Heads', image)
+        image_file_names = sorted([os.path.join(input_directory, 'Heads', image)
                        for image in os.listdir(os.path.join(input_directory, 'Heads'))
-                       if image.endswith('.hdr')]
+                       if image.endswith('.hdr')])
         image_file_names = [pair for pair in combinations(image_file_names, 2)]
 
-        label_file_names = [os.path.join(input_directory, 'Atlases', atlas)
+        label_file_names = sorted([os.path.join(input_directory, 'Atlases', atlas)
                        for atlas in os.listdir(os.path.join(input_directory, 'Atlases'))
-                       if atlas.endswith('.hdr')]
+                       if atlas.endswith('.hdr')])
         label_file_names = [pair for pair in combinations(label_file_names, 2)]
 
         disp_field_file_names = [create_disp_field_names(image_file_name_pair, self.name)

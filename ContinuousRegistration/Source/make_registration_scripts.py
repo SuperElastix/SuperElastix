@@ -69,9 +69,6 @@ def run(parameters):
 
             for dataset_name in blueprint['Datasets']:
                 if not dataset_name in datasets:
-                    logging.info('Blueprint "%s" can also be used for dataset "%s". '
-                                 'Supply "%s" input directory to also register "%s" with this blueprint.',
-                                  blueprint_file_name, dataset_name, dataset_name, dataset_name)
                     continue
 
                 dataset = datasets[dataset_name]
@@ -79,8 +76,8 @@ def run(parameters):
                 logging.info('Generating registration scripts for the %s blueprint and %s dataset.',
                              blueprint_name, dataset_name)
                 for file_names in dataset.generator():
-                    logging.info('Generating registration script for image pair %s.',
-                                 file_names['image_file_names'])
+                    logging.info('Generating registration scripts for blueprint "%s" and images %s.',
+                                 blueprint_name, file_names['image_file_names'])
                     dir_name = os.path.dirname(file_names['disp_field_file_names'][0])
                     blueprint_output_directory = os.path.join(parameters.output_directory,
                                                               team_name, blueprint_name,

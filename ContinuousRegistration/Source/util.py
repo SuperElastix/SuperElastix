@@ -50,7 +50,6 @@ def load_results_from_json(filename):
                     # Sort metric names so they are displayed in the HTML table in the right order
                     metric_names = [list(i) for i in set(tuple(i) for i in metric_names)] # make unique
 
-                    print(metric_names)
                     if(len(metric_names) > 1):
                         raise Exception('Metric names not unique')
 

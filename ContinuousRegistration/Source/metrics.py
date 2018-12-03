@@ -9,11 +9,22 @@ def tre(superelastix, point_sets, deformation_field_file_names):
         point_set_fixed1_to_moving0 = warp_point_set(superelastix, point_sets[1], deformation_field_file_names[1])
     except Exception as e:
         logging.error('Failed to compute tre for image pair (%s, %s).' % deformation_field_file_names)
-        return ({ '1. TRE': np.NaN }, { '1. TRE': np.NaN })
+        return (
+            {
+                '1. TRE': np.NaN
+            },
+            {
+                '1. TRE': np.NaN
+            }
+        )
 
     return (
-        {'1. TRE': np.nanmean(np.sqrt(np.nansum((point_set_fixed0_to_moving1 - point_sets[1]) ** 2, -1)))},
-        {'1. TRE': np.nanmean(np.sqrt(np.nansum((point_set_fixed1_to_moving0 - point_sets[0]) ** 2, -1)))}
+        {
+            '1. TRE': np.nanmean(np.sqrt(np.nansum((point_set_fixed0_to_moving1 - point_sets[1]) ** 2, -1)))
+         },
+        {
+            '1. TRE': np.nanmean(np.sqrt(np.nansum((point_set_fixed1_to_moving0 - point_sets[0]) ** 2, -1)))
+         }
     )
 
 def hausdorff(superelastix, point_sets, deformation_field_file_names):
@@ -25,8 +36,12 @@ def hausdorff(superelastix, point_sets, deformation_field_file_names):
         return ({ '2. Hausdorff': np.NaN }, { '2. Hausdorff': np.NaN })
 
     return (
-        {'2. Hausdorff': np.nanmax(np.sqrt(np.nansum((point_set_fixed0_to_moving1 - point_sets[1]) ** 2, -1)))},
-        {'2. Hausdorff': np.nanmax(np.sqrt(np.nansum((point_set_fixed1_to_moving0 - point_sets[0]) ** 2, -1)))}
+        {
+            '2. Hausdorff': np.nanmax(np.sqrt(np.nansum((point_set_fixed0_to_moving1 - point_sets[1]) ** 2, -1)))
+        },
+        {
+            '2. Hausdorff': np.nanmax(np.sqrt(np.nansum((point_set_fixed1_to_moving0 - point_sets[0]) ** 2, -1)))
+        }
     )
 
 def inverse_consistency_points(superelastix, point_sets, deformation_field_file_names):
@@ -40,8 +55,12 @@ def inverse_consistency_points(superelastix, point_sets, deformation_field_file_
         return ({'3. InverseConsistencyTRE': np.NaN }, { '3. InverseConsistencyTRE': np.NaN })
 
     return (
-        {'3. InverseConsistencyTRE': np.nanmean(np.sqrt(np.nansum((point_set_fixed0_to_moving1_to_fixed0 - point_sets[0]) ** 2, -1)))},
-        {'3. InverseConsistencyTRE': np.nanmean(np.sqrt(np.nansum((point_set_fixed1_to_moving0_to_fixed1 - point_sets[1]) ** 2, -1)))}
+        {
+            '3. InverseConsistencyTRE': np.nanmean(np.sqrt(np.nansum((point_set_fixed0_to_moving1_to_fixed0 - point_sets[0]) ** 2, -1)))
+        },
+        {
+            '3. InverseConsistencyTRE': np.nanmean(np.sqrt(np.nansum((point_set_fixed1_to_moving0_to_fixed1 - point_sets[1]) ** 2, -1)))
+        }
     )
 
 
@@ -60,7 +79,7 @@ def inverse_consistency_labels(superelastix, label_file_names, deformation_field
         dsc_0 = labelOverlapMeasurer.GetDiceCoefficient()
     except Exception as e:
         logging.error('Failed to compute inverse consistency DSC for %s' % label_file_names[0])
-        return ({'2. InverseConsistencyDSC': np.NaN }, {'2. InverseConsistencyDSC': np.NaN })
+        dsc_0 = np.NaN
 
     try:
         label_image_1 = sitk.ReadImage(label_file_names[1])
@@ -68,9 +87,16 @@ def inverse_consistency_labels(superelastix, label_file_names, deformation_field
         dsc_1 = labelOverlapMeasurer.GetDiceCoefficient()
     except Exception as e:
         logging.error('Failed to compute inverse consistency DSC for %s' % label_file_names[1])
-        return ({'2. InverseConsistencyDSC': np.NaN}, {'2. InverseConsistencyDSC': np.NaN})
+        dsc_1 = np.NaN
 
-    return ({'2. InverseConsistencyDSC': dsc_0}, {'2. InverseConsistencyDSC': dsc_1})
+    return (
+        {
+            '2. InverseConsistencyDSC': dsc_0
+        },
+        {
+            '2. InverseConsistencyDSC': dsc_1
+         }
+    )
 
 
 def label_overlap(superelastix, label_file_names, deformation_field_file_names):
@@ -91,10 +117,7 @@ def label_overlap(superelastix, label_file_names, deformation_field_file_names):
         vol_0 = labelOverlapMeasurer.GetVolumeSimilarity()
     except Exception as e:
         logging.error('Failed to compute DSC for %s: %s' % (label_file_names[0], e))
-        return (
-            {'1. Dice Similarity Coefficient': np.NaN, '3. Jaccard Coefficient': np.NaN, '4. Union Coefficient': np.NaN, '5. VolumeSimilarity': np.NaN, '6. FalseNegativeError': np.NaN, '7. FalsePositiveError': np.NaN },
-            {'1. Dice Similarity Coefficient': np.NaN, '3. Jaccard Coefficient': np.NaN, '4. Union Coefficient': np.NaN, '5. VolumeSimilarity': np.NaN, '6. FalseNegativeError': np.NaN, '7. FalsePositiveError': np.NaN }
-        )
+        dsc_0 = fne_0 = fpe_0 = jaccard_0 = union_0 = vol_0 = np.NaN
 
     label_image_1_to_0_file_name = warp_image(superelastix, label_file_names[1], deformation_field_file_names[0], 'dsc_label_1_to_0')
 
@@ -110,11 +133,23 @@ def label_overlap(superelastix, label_file_names, deformation_field_file_names):
         vol_1 = labelOverlapMeasurer.GetVolumeSimilarity()
     except Exception as e:
         logging.error('Failed to compute DSC for %s' % label_file_names[1])
-        return (
-            {'Dice Similarity Coefficient': np.NaN, 'FalseNegativeError': np.NaN, 'FalsePositiveError': np.NaN, 'Jaccard Coefficient': np.NaN, 'Union Coefficient': np.NaN, 'VolumeSimilarity': np.NaN,},
-            {'Dice Similarity Coefficient': np.NaN, 'FalseNegativeError': np.NaN, 'FalsePositiveError': np.NaN, 'Jaccard Coefficient': np.NaN, 'Union Coefficient': np.NaN, 'VolumeSimilarity': np.NaN,}
-        )
+        dsc_1 = fne_1 = fpe_1 = jaccard_1 = union_1 = vol_1 = np.NaN
 
     return (
-        {'Dice Similarity Coefficient': dsc_0, 'FalseNegativeError': fne_0, 'FalsePositiveError': fpe_0, 'Jaccard Coefficient': jaccard_0, 'Union Coefficient': union_0, 'VolumeSimilarity': vol_0,},
-        {'Dice Similarity Coefficient': dsc_1, 'FalseNegativeError': fne_1, 'FalsePositiveError': fpe_1, 'Jaccard Coefficient': jaccard_1, 'Union Coefficient': union_1, 'VolumeSimilarity': vol_1,})
+        {
+            '1. Dice Similarity Coefficient': dsc_0,
+            '3. Jaccard Coefficient': jaccard_0,
+            '4. Union Coefficient': union_0,
+            '5. VolumeSimilarity': vol_0,
+            '6. FalseNegativeError': fne_0,
+            '7. FalsePositiveError': fpe_0
+        },
+        {
+            '1. Dice Similarity Coefficient': dsc_1,
+            '3. Jaccard Coefficient': jaccard_1,
+            '4. Union Coefficient': union_1,
+            '5. VolumeSimilarity': vol_1,
+            '6. FalseNegativeError': fne_1,
+            '7. FalsePositiveError': fpe_1
+        }
+    )
