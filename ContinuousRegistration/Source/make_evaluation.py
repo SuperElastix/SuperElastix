@@ -33,21 +33,17 @@ def run(parameters):
             blueprint = json.load(open(blueprint_file_name))
             for dataset_name in blueprint['Datasets']:
                 if not dataset_name in datasets:
-                    logging.info('Blueprint "%s" can also be used for dataset "%s". '
-                                 'Supply data directory to evaluate blueprint on this dataset '
-                                 '(registrations must be run first).',
-                                  blueprint_file_name, dataset_name)
                     continue
 
                 dataset = datasets[dataset_name]
                 results[team_name][blueprint_name][dataset_name] = []
 
-                logging.info('Evaluating registration scripts for %s blueprint and %s dataset.' % (
+                logging.info('Evaluating registrations for %s blueprint and %s dataset.' % (
                 blueprint_name, dataset_name))
                 for file_names in dataset.generator():
                     output_directory = os.path.join(parameters.output_directory, team_name, blueprint_name)
 
-                    logging.info('Evaluating image pair %s.', file_names['image_file_names'])
+                    logging.info('Evaluating registration for %s.', file_names['image_file_names'])
                     try:
                         results[team_name][blueprint_name][dataset.name].append(dataset.evaluate(
                             parameters.superelastix, file_names, output_directory))
