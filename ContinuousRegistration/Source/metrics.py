@@ -33,7 +33,14 @@ def hausdorff(superelastix, point_sets, deformation_field_file_names):
         point_set_fixed1_to_moving0 = warp_point_set(superelastix, point_sets[1], deformation_field_file_names[1])
     except Exception as e:
         logging.error('Failed to compute hausdorff for image pair (%s, %s).' % deformation_field_file_names)
-        return ({ '2. Hausdorff': np.NaN }, { '2. Hausdorff': np.NaN })
+        return (
+            {
+                '2. Hausdorff': np.NaN
+            },
+            {
+                '2. Hausdorff': np.NaN
+            }
+        )
 
     return (
         {

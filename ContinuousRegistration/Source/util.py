@@ -51,12 +51,12 @@ def load_results_from_json(filename):
                     metric_names = [list(b) for b in set(tuple(sorted(a)) for a in metric_names)]
 
                     if(len(metric_names) > 1):
-                        raise Exception('Metric names not unique')
+                        raise Exception('Metric names not unique: %s' % metric_names)
 
-                    # Sort metric names so they are displayed in the HTML table in the right order
-                    indices = np.argsort(metric_names[0])
-                    metric_names = [metric_names[0][index] for index in indices]
-                    metric_results = [[metric_result[index] for index in indices] for metric_result in metric_results]
+                # Sort metric names so they are displayed in the HTML table in the right order
+                indices = np.argsort(metric_names[0])
+                metric_names = [metric_names[0][index] for index in indices]
+                metric_results = [[metric_result[index] for index in indices] for metric_result in metric_results]
 
                 # No results for this dataset
                 if len(metric_names) == 0:
