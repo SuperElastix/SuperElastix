@@ -41,7 +41,7 @@ def run(parameters):
                 for file_names in dataset.generator():
                     output_directory = os.path.join(parameters.output_directory, team_name, blueprint_name)
 
-                    logging.info('Evaluating %s registration for %s.', blueprint_name, file_names['image_file_names'])
+                    logging.info('Evaluating registration for blueprint %s and images %s.', blueprint_name, file_names['image_file_names'])
                     try:
                         results[team_name][blueprint_name][dataset.name].append(dataset.evaluate(
                             parameters.superelastix, file_names, output_directory))
