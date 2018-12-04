@@ -47,12 +47,13 @@ def load_results_from_json(filename):
                         metric_names.append(list(disp_field_results.keys()))
                         metric_results.append(list(disp_field_results.values()))
 
-                    # Sort metric names so they are displayed in the HTML table in the right order
-                    metric_names = [list(i) for i in set(tuple(i) for i in metric_names)] # make unique
+                    # Check that the same metrics have been computed for all registrations with this dataset
+                    metric_names = [list(b) for b in set(tuple(sorted(a)) for a in metric_names)]
 
                     if(len(metric_names) > 1):
                         raise Exception('Metric names not unique')
 
+                    # Sort metric names so they are displayed in the HTML table in the right order
                     indices = np.argsort(metric_names[0])
                     metric_names = [metric_names[0][index] for index in indices]
                     metric_results = [[metric_result[index] for index in indices] for metric_result in metric_results]

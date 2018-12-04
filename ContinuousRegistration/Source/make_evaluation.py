@@ -38,12 +38,10 @@ def run(parameters):
                 dataset = datasets[dataset_name]
                 results[team_name][blueprint_name][dataset_name] = []
 
-                logging.info('Evaluating registrations for %s blueprint and %s dataset.' % (
-                blueprint_name, dataset_name))
                 for file_names in dataset.generator():
                     output_directory = os.path.join(parameters.output_directory, team_name, blueprint_name)
 
-                    logging.info('Evaluating registration for %s.', file_names['image_file_names'])
+                    logging.info('Evaluating %s registration for %s.', blueprint_name, file_names['image_file_names'])
                     try:
                         results[team_name][blueprint_name][dataset.name].append(dataset.evaluate(
                             parameters.superelastix, file_names, output_directory))
@@ -68,7 +66,6 @@ def run(parameters):
                     except Exception as e:
                         logging.error('Error during evaluation of %s\'s blueprint %s and dataset %s: %s'
                                       % (team_name, blueprint_name, dataset.name, str(e)))
-
 
     write_json(os.path.join(parameters.output_directory,
                             'results.json'), results)
