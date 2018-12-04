@@ -54,7 +54,7 @@ def run(parameters):
 
             if not parameters.blueprint_file_name is None:
                 # User requested to have scripts generated for specific blueprints
-                if not blueprint_name in parameters.blueprint_file_name:
+                if not os.path.basename(blueprint_file_name) in parameters.blueprint_file_name:
                     continue
 
             logging.info('Loading blueprint %s/%s.' % (team_name, os.path.basename(blueprint_name)))
