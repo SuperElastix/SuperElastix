@@ -30,8 +30,7 @@
     "PixelType": "float",
     "NumberOfLevels": "3",
     "ShrinkFactorsPerLevel": ["8", "4", "2"],
-    "SmoothingSigmasPerLevel": ["4", "2", "1"],
-    "NumberOfIterations": "50"
+    "SmoothingSigmasPerLevel": ["4", "2", "1"]
   },
   "Component": {
     "Name": "TransformResolutionAdaptor",
@@ -76,7 +75,8 @@
   "Component": {
     "Name": "Optimizer2",
     "NameOfClass": "ItkGradientDescentOptimizerv4Component",
-    "InternalComputationValueType": "double"
+    "InternalComputationValueType": "double",
+    "NumberOfIterations": "50"
   },
   "Component": {
     "Name": "DisplacementField",
