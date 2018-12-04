@@ -240,17 +240,19 @@ class CUMC12(Dataset):
         self.category = 'Brain'
 
         self.input_directory = input_directory
-        file_names = []
+        self.file_names = []
 
         image_file_names = sorted([os.path.join(input_directory, 'Heads', image)
                        for image in os.listdir(os.path.join(input_directory, 'Heads'))
                        if image.endswith('.hdr')])
         image_file_names = [pair for pair in combinations(image_file_names, 2)]
+        image_file_names = take(image_file_names, max_number_of_registrations // 2)
 
         label_file_names = sorted([os.path.join(input_directory, 'Atlases', atlas)
                        for atlas in os.listdir(os.path.join(input_directory, 'Atlases'))
                        if atlas.endswith('.hdr')])
         label_file_names = [pair for pair in combinations(label_file_names, 2)]
+        label_file_names = take(label_file_names, max_number_of_registrations // 2)
 
         disp_field_file_names = [create_disp_field_names(image_file_name_pair, self.name)
                                  for image_file_name_pair in image_file_names]
@@ -260,15 +262,12 @@ class CUMC12(Dataset):
 
         for image_file_name, mask_file_name, label_file_name, disp_field_file_name \
                 in zip(image_file_names, mask_file_names, label_file_names, disp_field_file_names):
-            file_names.append({
+            self.file_names.append({
                 'image_file_names': image_file_name,
                 'mask_file_names': mask_file_name,
                 'ground_truth_file_names': label_file_name,
                 'disp_field_file_names': disp_field_file_name
             })
-
-        self.file_names = take(sort_file_names(file_names),
-                               max_number_of_registrations // 2)
 
     def evaluate(self, superelastix, file_names, output_directory):
         return self.evaluate_label(superelastix, file_names, output_directory)
@@ -483,17 +482,19 @@ class ISBR18(Dataset):
         self.category = 'Brain'
 
         self.input_directory = input_directory
-        file_names = []
+        self.file_names = []
 
         image_file_names = sorted([os.path.join(input_directory, 'Heads', image)
                        for image in os.listdir(os.path.join(input_directory, 'Heads'))
                        if image.endswith('.hdr') and not 'c1.hdr' in image]) # TODO: Fix world info for c1
         image_file_names = [pair for pair in combinations(image_file_names, 2)]
+        image_file_names = take(image_file_names, max_number_of_registrations // 2)
 
         label_file_names = sorted([os.path.join(input_directory, 'Atlases', atlas)
                        for atlas in os.listdir(os.path.join(input_directory, 'Atlases'))
                        if atlas.endswith('.hdr') and not 'c1.hdr' in atlas])
         label_file_names = [pair for pair in combinations(label_file_names, 2)]
+        label_file_names = take(label_file_names, max_number_of_registrations // 2)
 
         disp_field_file_names = [create_disp_field_names(image_file_name_pair, self.name)
                                  for image_file_name_pair in image_file_names]
@@ -509,15 +510,12 @@ class ISBR18(Dataset):
 
         for image_file_name, mask_file_name, label_file_name, disp_field_file_name \
                 in zip(image_file_names, mask_file_names, label_file_names, disp_field_file_names):
-            file_names.append({
+            self.file_names.append({
                 'image_file_names': image_file_name,
                 'mask_file_names': mask_file_name,
                 'ground_truth_file_names': label_file_name,
                 'disp_field_file_names': disp_field_file_name
             })
-
-        self.file_names = take(sort_file_names(file_names),
-                               max_number_of_registrations // 2)
 
     def evaluate(self, superelastix, file_names, output_directory):
         return self.evaluate_label(superelastix, file_names, output_directory)
@@ -529,7 +527,7 @@ class LPBA40(Dataset):
         self.category = 'Brain'
 
         self.input_directory = input_directory
-        file_names = []
+        self.file_names = []
 
         image_file_names = []
         for sub_directory in os.listdir(os.path.join(input_directory, 'delineation_space')):
@@ -554,11 +552,14 @@ class LPBA40(Dataset):
 
                     label_file_names.append(output_label_file_name)
 
-        image_file_names = sorted(image_file_names)
-        label_file_names = sorted(label_file_names)
-
-        image_file_names = [create_identity_world_information(pair, self.name, input_directory, output_directory) for pair in combinations(image_file_names, 2)]
+        image_file_names = [pair for pair in combinations(image_file_names, 2)]
         label_file_names = [pair for pair in combinations(label_file_names, 2)]
+
+        image_file_names = take(sorted(image_file_names), max_number_of_registrations // 2)
+        label_file_names = take(sorted(label_file_names), max_number_of_registrations // 2)
+
+        image_file_names = [create_identity_world_information(pair, self.name, input_directory, output_directory)
+                            for pair in image_file_names]
 
         disp_field_file_names = [create_disp_field_names(image_file_name_pair, self.name)
                                  for image_file_name_pair in image_file_names]
@@ -568,15 +569,12 @@ class LPBA40(Dataset):
 
         for image_file_name, mask_file_name, label_file_name, disp_field_file_name \
                 in zip(image_file_names, mask_file_names, label_file_names, disp_field_file_names):
-            file_names.append({
+            self.file_names.append({
                 'image_file_names': image_file_name,
                 'mask_file_names': mask_file_name,
                 'ground_truth_file_names': label_file_name,
                 'disp_field_file_names': disp_field_file_name
             })
-
-        self.file_names = take(sort_file_names(file_names),
-                               max_number_of_registrations // 2)
 
     def evaluate(self, superelastix, file_names, output_directory):
         return self.evaluate_label(superelastix, file_names, output_directory)
@@ -588,17 +586,19 @@ class MGH10(Dataset):
         self.category = 'Brain'
 
         self.input_directory = input_directory
-        file_names = []
+        self.file_names = []
 
         image_file_names = sorted([os.path.join(input_directory, 'Heads', image)
                        for image in os.listdir(os.path.join(input_directory, 'Heads'))
                        if image.endswith('.hdr')])
         image_file_names = [pair for pair in combinations(image_file_names, 2)]
+        image_file_names = take(image_file_names, max_number_of_registrations // 2)
 
         label_file_names = sorted([os.path.join(input_directory, 'Atlases', atlas)
                        for atlas in os.listdir(os.path.join(input_directory, 'Atlases'))
                        if atlas.endswith('.hdr')])
         label_file_names = [pair for pair in combinations(label_file_names, 2)]
+        label_file_names = take(label_file_names, max_number_of_registrations // 2)
 
         disp_field_file_names = [create_disp_field_names(image_file_name_pair, self.name)
                                  for image_file_name_pair in image_file_names]
@@ -617,15 +617,12 @@ class MGH10(Dataset):
 
         for image_file_name, mask_file_name, label_file_name, disp_field_file_name \
                 in zip(image_file_names, mask_file_names, label_file_names, disp_field_file_names):
-            file_names.append({
+            self.file_names.append({
                 'image_file_names': image_file_name,
                 'mask_file_names': mask_file_name,
                 'ground_truth_file_names': label_file_name,
                 'disp_field_file_names': disp_field_file_name
             })
-
-        self.file_names = take(sort_file_names(file_names),
-                               max_number_of_registrations // 2)
 
     def evaluate(self, superelastix, file_names, output_directory):
         return self.evaluate_label(superelastix, file_names, output_directory)
@@ -823,7 +820,7 @@ def load_datasets(parameters):
                         parameters.output_directory,
                         parameters.max_number_of_registrations_per_dataset)
         datasets[cumc12.name] = cumc12
-        logging.debug('Found the following files:\n{0}'.format(json.dumps(cumc12.file_names, indent=2)))
+        logging.debug('Using files:\n{0}'.format(json.dumps(cumc12.file_names, indent=2)))
 
 
     if parameters.dirlab_input_directory is not None:
@@ -833,14 +830,14 @@ def load_datasets(parameters):
                         parameters.output_directory,
                         parameters.max_number_of_registrations_per_dataset)
         datasets[dirlab.name] = dirlab
-        logging.debug('Found the following files:\n{0}'.format(json.dumps(dirlab.file_names, indent=2)))
+        logging.debug('Using files:\n{0}'.format(json.dumps(dirlab.file_names, indent=2)))
 
     if parameters.empire_input_directory is not None:
         logging.info('Loading dataset EMPIRE.')
         empire = EMPIRE(parameters.empire_input_directory,
                         parameters.max_number_of_registrations_per_dataset)
         datasets[empire.name] = empire
-        logging.debug('Found the following files:\n{0}'.format(json.dumps(empire.file_names, indent=2)))
+        logging.debug('Using files:\n{0}'.format(json.dumps(empire.file_names, indent=2)))
 
     if parameters.hammers_input_directory is not None:
         logging.info('Loading dataset HAMMERS.')
@@ -848,7 +845,7 @@ def load_datasets(parameters):
                         parameters.output_directory,
                         parameters.max_number_of_registrations_per_dataset)
         datasets[hammers.name] = hammers
-        logging.debug('Found the following files:\n{0}'.format(json.dumps(hammers.file_names, indent=2)))
+        logging.debug('Using files:\n{0}'.format(json.dumps(hammers.file_names, indent=2)))
 
     if parameters.isbr18_input_directory is not None:
         logging.info('Loading dataset ISBR18.')
@@ -856,7 +853,7 @@ def load_datasets(parameters):
                         parameters.output_directory,
                         parameters.max_number_of_registrations_per_dataset)
         datasets[isbr18.name] = isbr18
-        logging.debug('Found the following files:\n{0}'.format(json.dumps(isbr18.file_names, indent=2)))
+        logging.debug('Using files:\n{0}'.format(json.dumps(isbr18.file_names, indent=2)))
 
     if parameters.lpba40_input_directory is not None:
         logging.info('Loading dataset LPBA40.')
@@ -864,7 +861,7 @@ def load_datasets(parameters):
                         parameters.output_directory,
                         parameters.max_number_of_registrations_per_dataset)
         datasets[lpba40.name] = lpba40
-        logging.debug('Found the following files:\n{0}'.format(json.dumps(lpba40.file_names, indent=2)))
+        logging.debug('Using files:\n{0}'.format(json.dumps(lpba40.file_names, indent=2)))
 
     if parameters.mgh10_input_directory is not None:
         logging.info('Loading dataset MGH10.')
@@ -872,7 +869,7 @@ def load_datasets(parameters):
                       parameters.output_directory,
                       parameters.max_number_of_registrations_per_dataset)
         datasets[mgh10.name] = mgh10
-        logging.debug('Found the following files:\n{0}'.format(json.dumps(mgh10.file_names, indent=2)))
+        logging.debug('Using files:\n{0}'.format(json.dumps(mgh10.file_names, indent=2)))
 
     if parameters.popi_input_directory is not None:
         logging.info('Loading dataset POPI.')
@@ -881,7 +878,7 @@ def load_datasets(parameters):
                     parameters.output_directory,
                     parameters.max_number_of_registrations_per_dataset)
         datasets[popi.name] = popi
-        logging.debug('Found the following files:\n{0}'.format(json.dumps(popi.file_names, indent=2)))
+        logging.debug('Using files:\n{0}'.format(json.dumps(popi.file_names, indent=2)))
 
     if parameters.spread_input_directory is not None:
         logging.info('Loading dataset SPREAD.')
@@ -889,7 +886,7 @@ def load_datasets(parameters):
                         parameters.output_directory,
                         parameters.max_number_of_registrations_per_dataset)
         datasets[spread.name] = spread
-        logging.debug('Found the following files:\n{0}'.format(json.dumps(spread.file_names, indent=2)))
+        logging.debug('Using files:\n{0}'.format(json.dumps(spread.file_names, indent=2)))
 
     if parameters.hbia_input_directory is not None:
         logging.info('Loading dataset HistoBIA.')
@@ -898,6 +895,6 @@ def load_datasets(parameters):
                     parameters.max_number_of_registrations_per_dataset,
                     scale=10)
         datasets[hbia.name] = hbia
-        logging.debug('Found the following files:\n{0}'.format(json.dumps(hbia.file_names, indent=2)))
+        logging.debug('Using files:\n{0}'.format(json.dumps(hbia.file_names, indent=2)))
 
     return datasets
