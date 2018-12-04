@@ -53,15 +53,15 @@ def load_results_from_json(filename):
                     if(len(metric_names) > 1):
                         raise Exception('Metric names not unique: %s' % metric_names)
 
-                # Sort metric names so they are displayed in the HTML table in the right order
-                indices = np.argsort(metric_names[0])
-                metric_names = [metric_names[0][index] for index in indices]
-                metric_results = [[metric_result[index] for index in indices] for metric_result in metric_results]
-
                 # No results for this dataset
                 if len(metric_names) == 0:
                     results[team_name][blueprint_name][dataset_name] = {}
                     continue
+
+                # Sort metric names so they are displayed in the HTML table in the right order
+                indices = np.argsort(metric_names[0])
+                metric_names = [metric_names[0][index] for index in indices]
+                metric_results = [[metric_result[index] for index in indices] for metric_result in metric_results]
 
                 # Save metric_names names separately for constructing html table headers
                 result_names[dataset_name] = metric_names
