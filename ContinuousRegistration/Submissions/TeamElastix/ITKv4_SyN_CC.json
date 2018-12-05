@@ -19,6 +19,7 @@
         "ShrinkFactorsPerLevel": [ "16", "12", "8"],
         "SmoothingSigmasPerLevel": [ "4", "4", "4"],
         "LearningRate": "1.0",
+        "GaussianSmoothingVarianceForTheUpdateField": "3",
         "PixelType": "float"
     },
     "Component": {
