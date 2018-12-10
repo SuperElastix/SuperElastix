@@ -83,6 +83,12 @@ if( ${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC )
   # Avoid many warnings, originating mainly from GoogleTest
   add_definitions(-D_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
   
+
+  if( ${CMAKE_CONFIGURATION_TYPES} STREQUAL "Debug" )
+    # For a Visual C++ Debug build, use 64-bit toolset, to avoid link errors.
+    set(CMAKE_GENERATOR_TOOLSET "host=x64" CACHE STRING "SuperElastix Visual C++ Debug uses 64-bit toolset" FORCE)
+  endif()
+
   # Explicitly add INCREMENTAL linking option to command lines.
   # http://www.cmake.org/pipermail/cmake/2010-February/035174.html
   # set( MSVC_INCREMENTAL_DEFAULT ON )
