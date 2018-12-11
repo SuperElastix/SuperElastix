@@ -73,8 +73,6 @@ def run(parameters):
 
                 dataset = datasets[dataset_name]
 
-                logging.info('Generating registration scripts for the %s blueprint and %s dataset.',
-                             blueprint_name, dataset_name)
                 for file_names in dataset.generator():
                     logging.info('Generating registration scripts for blueprint "%s" and images %s.',
                                  blueprint_name, file_names['image_file_names'])

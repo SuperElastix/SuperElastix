@@ -48,8 +48,7 @@ def load_results_from_json(filename):
                         metric_results.append(list(disp_field_results.values()))
 
                     # Check that the same metrics have been computed for all registrations with this dataset
-                    metric_names = [list(b) for b in set(tuple(sorted(a)) for a in metric_names)]
-
+                    metric_names = [list(b) for b in set(tuple(a) for a in metric_names)]
                     if(len(metric_names) > 1):
                         raise Exception('Metric names not unique: %s' % metric_names)
 

@@ -38,6 +38,7 @@ def make_dataset_results(dataset_name, result_names, results):
     table += '<script src="https://rawgit.com/tristen/tablesort/gh-pages/dist/tablesort.min.js"></script>'
     table += '<style>'
     table += 'table { width: 100%; } th, td { padding: 5px; text-align: left; }'
+    table += 'font-size: small'
     table += '</style>'
     table += '</head>'
 
