@@ -20,6 +20,7 @@
         "SmoothingSigmasPerLevel": [ "4", "4", "4"],
         "LearningRate": "1.0",
         "GaussianSmoothingVarianceForTheUpdateField": "3",
+		"GaussianSmoothingVarianceForTheTotalField": "0.5", 
         "PixelType": "float"
     },
     "Component": {

@@ -314,6 +314,9 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
 	} else if( criterion.first == "GaussianSmoothingVarianceForTheUpdateField" ) {
 		meetsCriteria = true;
 		this->m_theItkFilter->SetGaussianSmoothingVarianceForTheUpdateField(std::stod(criterion.second[0]));
+	} else if( criterion.first == "GaussianSmoothingVarianceForTheTotalField" ) {
+		meetsCriteria = true;
+		this->m_theItkFilter->SetGaussianSmoothingVarianceForTheTotalField(std::stod(criterion.second[0]));
 	} else if( criterion.first == "NumberOfIterations" ) {
 		meetsCriteria = true;
 
