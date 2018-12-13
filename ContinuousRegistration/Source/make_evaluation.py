@@ -1,15 +1,7 @@
 import os, json, datetime
 from ContinuousRegistration.Source.make_registration_scripts import parser
-from ContinuousRegistration.Source.util import logging, load_submissions
+from ContinuousRegistration.Source.util import logging, load_submissions, write_json
 from ContinuousRegistration.Source.datasets import load_datasets
-
-def write_json(output_file_name, results):
-    output_directory = os.path.dirname(output_file_name)
-    if not os.path.exists(output_directory):
-        os.mkdir(output_directory)
-
-    with open(output_file_name, "w") as f:
-        f.write(json.dumps(results, indent=4))
 
 def run(parameters):
     submissions = load_submissions(parameters)
@@ -69,6 +61,9 @@ def run(parameters):
 
     write_json(os.path.join(parameters.output_directory,
                             'results.json'), results)
+
+    return results
+
 
 if __name__ == '__main__':
     parser.add_argument('--make-images', '-mi', type=bool, default=False, help="Warp moving images.")
