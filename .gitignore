@@ -53,3 +53,8 @@ registration_driver.log
 
 # Dropbox sync
 .dropbox.attr
+
+# Images
+*.nii.gz
+*.mhd
+*.raw
