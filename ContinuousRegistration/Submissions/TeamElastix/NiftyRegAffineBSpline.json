@@ -1,12 +1,24 @@
 {
-    "Datasets": ["POPI", "DIRLAB", "EMPIRE", "LPBA40", "ISBR18", "CUMC12", "MGH10", "SPREAD", "HAMMERS"],
+    "Datasets": [
+        "POPI",
+        "DIRLAB",
+        "EMPIRE",
+        "LPBA40",
+        "ISBR18",
+        "CUMC12",
+        "MGH10",
+        "SPREAD",
+        "HAMMERS"
+    ],
     "Component": {
         "Name": "NiftyRegAffine",
         "NameOfClass": "NiftyregAladinComponent"
     },
     "Component": {
-        "Name": "NiftyRegSpline",
-        "NameOfClass": "Niftyregf3dComponent"
+        "Name": "NiftyRegBSpline",
+        "NameOfClass": "Niftyregf3dComponent",
+        "NumberOfResolutions": "4",
+        "SmoothingSigma": "2.0"
     },
     "Component": {
         "Name": "FixedImage",
@@ -56,7 +68,7 @@
         "In": "NiftyRegSpline",
         "NameOfInterface": "NiftyregAffineMatrixInterface"
     },
-      "Connection": {
+    "Connection": {
         "Out": "FixedImage",
         "In": "NiftyRegSpline",
         "NameOfInterface": "NiftyregReferenceImageInterface"

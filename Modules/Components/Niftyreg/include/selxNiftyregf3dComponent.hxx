@@ -328,6 +328,17 @@ Niftyregf3dComponent<  TPixel >
     }
     meetsCriteria = true;
   }
+  else if( criterion.first == "SmoothingSigma" )
+  {
+    meetsCriteria = true;
+    if( criterion.second.size() > 1 )
+    {
+      this->Error("NiftyReg does not support multiple smoothing sigmas. Only the first image is smoothed.");
+      meetsCriteria = false;
+    }
+    this->m_reg_f3d->SetReferenceSmoothingSigma( std::stof( criterion.second[ 0 ] ) );
+    this->m_reg_f3d->SetFloatingSmoothingSigma( std::stof( criterion.second[ 0 ] ) );
+  }
   return meetsCriteria;
 }
 } //end namespace selx

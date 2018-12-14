@@ -50,13 +50,12 @@ def run(parameters):
                 continue
 
         for blueprint_file_name in blueprint_file_names:
-            blueprint_name, blueprint_ext = os.path.splitext(os.path.basename(blueprint_file_name))
-
             if not parameters.blueprint_file_name is None:
                 # User requested to have scripts generated for specific blueprints
                 if not os.path.basename(blueprint_file_name) in parameters.blueprint_file_name:
                     continue
 
+            blueprint_name, blueprint_ext = os.path.splitext(os.path.basename(blueprint_file_name))
             logging.info('Loading blueprint %s/%s.' % (team_name, os.path.basename(blueprint_name)))
             blueprint = json.load(open(blueprint_file_name))
 

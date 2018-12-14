@@ -346,3 +346,11 @@ def splitext(filename):
     else :
         return name, ext
 
+
+def write_json(output_file_name, results):
+    output_directory = os.path.dirname(output_file_name)
+    if not os.path.exists(output_directory):
+        os.mkdir(output_directory)
+
+    with open(output_file_name, "w") as f:
+        f.write(json.dumps(results, indent=4))
