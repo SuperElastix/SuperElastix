@@ -85,16 +85,17 @@ template< int Dimensionality, class TPixel, class InternalComputationValueType >
 void
 ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputationValueType >::Update( void )
 {
-  typename FixedImageType::ConstPointer fixedImage   = this->m_theItkFilter->GetFixedImage();
-  typename MovingImageType::ConstPointer movingImage = this->m_theItkFilter->GetMovingImage();
+  auto& theItkFilter = *m_theItkFilter;
+  typename FixedImageType::ConstPointer fixedImage   = theItkFilter.GetFixedImage();
+  typename MovingImageType::ConstPointer movingImage = theItkFilter.GetMovingImage();
 
   // Scale estimator is not used in current implementation yet
   typename ScalesEstimatorType::Pointer scalesEstimator = ScalesEstimatorType::New();
 
-  ImageMetricType * theMetric = dynamic_cast< ImageMetricType * >( this->m_theItkFilter->GetModifiableMetric() );
+  ImageMetricType * theMetric = dynamic_cast< ImageMetricType * >( theItkFilter.GetModifiableMetric() );
 
-  auto optimizer = dynamic_cast< itk::GradientDescentOptimizerv4 * >( this->m_theItkFilter->GetModifiableOptimizer() );
-  //auto optimizer = dynamic_cast<itk::ObjectToObjectOptimizerBaseTemplate< InternalComputationValueType > *>(this->m_theItkFilter->GetModifiableOptimizer());
+  auto optimizer = dynamic_cast< itk::GradientDescentOptimizerv4 * >( theItkFilter.GetModifiableOptimizer() );
+  //auto optimizer = dynamic_cast<itk::ObjectToObjectOptimizerBaseTemplate< InternalComputationValueType > *>(theItkFilter.GetModifiableOptimizer());
 
   typedef itk::Vector< InternalComputationValueType, Dimensionality > VectorType;
   VectorType zeroVector( 0.0 );
@@ -117,10 +118,10 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
   outputTransform->SetDisplacementField( displacementField );
   outputTransform->SetInverseDisplacementField( inverseDisplacementField );
 
-  this->m_theItkFilter->SetInitialTransform( outputTransform );
-  this->m_theItkFilter->InPlaceOn();
+  theItkFilter.SetInitialTransform( outputTransform );
+  theItkFilter.InPlaceOn();
 
-  auto transform = this->m_theItkFilter->GetModifiableTransform();
+  auto transform = theItkFilter.GetModifiableTransform();
 
   if( theMetric )
   {
@@ -143,7 +144,7 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
 
   typename TheItkFilterType::TransformParametersAdaptorsContainerType adaptors;
 
-  auto numberOfResolutionLevels = this->m_theItkFilter->GetNumberOfLevels();
+  auto numberOfResolutionLevels = theItkFilter.GetNumberOfLevels();
   
   for( unsigned int level = 0; level < numberOfResolutionLevels; level++ )
   {
@@ -153,7 +154,7 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
 
     typedef itk::ShrinkImageFilter< FixedImageType, FixedImageType > ShrinkFilterType;
     typename ShrinkFilterType::Pointer shrinkFilter = ShrinkFilterType::New();
-    shrinkFilter->SetShrinkFactors( this->m_theItkFilter->GetShrinkFactorsPerDimension( level ) );
+    shrinkFilter->SetShrinkFactors( theItkFilter.GetShrinkFactorsPerDimension( level ) );
     shrinkFilter->SetInput( fixedImage );
     shrinkFilter->Update();
 
@@ -166,14 +167,14 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
     adaptors.push_back( fieldTransformAdaptor.GetPointer() );
   }
 
-  this->m_theItkFilter->SetTransformParametersAdaptorsPerLevel( adaptors );
+  theItkFilter.SetTransformParametersAdaptorsPerLevel( adaptors );
 
   typedef CommandIterationUpdate< TheItkFilterType > RegistrationCommandType;
   typename RegistrationCommandType::Pointer registrationObserver = RegistrationCommandType::New();
-  this->m_theItkFilter->AddObserver( itk::IterationEvent(), registrationObserver );
+  theItkFilter.AddObserver( itk::IterationEvent(), registrationObserver );
 
   // perform the actual registration
-  this->m_theItkFilter->Update();
+  theItkFilter.Update();
 }
 
 
@@ -191,6 +192,7 @@ bool
 ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputationValueType >
 ::MeetsCriterion( const ComponentBase::CriterionType & criterion )
 {
+  auto& theItkFilter = *m_theItkFilter;
 	bool hasUndefinedCriteria(false);
 	bool meetsCriteria(false);
 
@@ -214,12 +216,12 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
 			if (this->m_NumberOfLevelsLastSetBy == "") // check if some other settings set the NumberOfLevels
 			{
 				// try catch?
-				this->m_theItkFilter->SetNumberOfLevels(std::stoi(criterion.second[0]));
+				theItkFilter.SetNumberOfLevels(std::stoi(criterion.second[0]));
 				this->m_NumberOfLevelsLastSetBy = criterion.first;
 			}
 			else
 			{
-				if (this->m_theItkFilter->GetNumberOfLevels() != std::stoi(criterion.second[0]))
+				if (theItkFilter.GetNumberOfLevels() != std::stoi(criterion.second[0]))
 				{
 					// TODO log error?
 					std::cout << "A conflicting NumberOfLevels was set by " << this->m_NumberOfLevelsLastSetBy << std::endl;
@@ -245,12 +247,12 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
 		if (this->m_NumberOfLevelsLastSetBy == "") // check if some other settings set the NumberOfLevels
 		{
 			// try catch?
-			this->m_theItkFilter->SetNumberOfLevels(impliedNumberOfResolutions);
+			theItkFilter.SetNumberOfLevels(impliedNumberOfResolutions);
 			this->m_NumberOfLevelsLastSetBy = criterion.first;
 		}
 		else
 		{
-			if (this->m_theItkFilter->GetNumberOfLevels() != impliedNumberOfResolutions)
+			if (theItkFilter.GetNumberOfLevels() != impliedNumberOfResolutions)
 			{
 				// TODO log error?
 				std::cout << "A conflicting NumberOfLevels was set by " << this->m_NumberOfLevelsLastSetBy << std::endl;
@@ -269,7 +271,7 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
 			++resolutionIndex;
 		}
 		// try catch?
-		this->m_theItkFilter->SetShrinkFactorsPerLevel(shrinkFactorsPerLevel);
+		theItkFilter.SetShrinkFactorsPerLevel(shrinkFactorsPerLevel);
 	}
 	else if (criterion.first == "SmoothingSigmasPerLevel") //Supports this?
 	{
@@ -280,12 +282,12 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
 		if (this->m_NumberOfLevelsLastSetBy == "") // check if some other settings set the NumberOfLevels
 		{
 			// try catch?
-			this->m_theItkFilter->SetNumberOfLevels(impliedNumberOfResolutions);
+			theItkFilter.SetNumberOfLevels(impliedNumberOfResolutions);
 			this->m_NumberOfLevelsLastSetBy = criterion.first;
 		}
 		else
 		{
-			if (this->m_theItkFilter->GetNumberOfLevels() != impliedNumberOfResolutions)
+			if (theItkFilter.GetNumberOfLevels() != impliedNumberOfResolutions)
 			{
 				// TODO log error?
 				std::cout << "A conflicting NumberOfLevels was set by " << this->m_NumberOfLevelsLastSetBy << std::endl;
@@ -307,25 +309,25 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
 		// try catch?
 		// Smooth by specified gaussian sigmas for each level.  These values are specified in
 		// physical units.
-		this->m_theItkFilter->SetSmoothingSigmasPerLevel(smoothingSigmasPerLevel);
+		theItkFilter.SetSmoothingSigmasPerLevel(smoothingSigmasPerLevel);
 	} else if( criterion.first == "LearningRate" ) {
 		meetsCriteria = true;
-		this->m_theItkFilter->SetLearningRate(std::stof(criterion.second[0]));
+		theItkFilter.SetLearningRate(std::stof(criterion.second[0]));
 	} else if( criterion.first == "ConvergenceThreshold" ) {
 		meetsCriteria = true;
-		this->m_theItkFilter->SetConvergenceThreshold(std::stod(criterion.second[0]));
+		theItkFilter.SetConvergenceThreshold(std::stod(criterion.second[0]));
 	}
 	else if (criterion.first == "GaussianSmoothingVarianceForTheUpdateField") {
 		meetsCriteria = true;
-		this->m_theItkFilter->SetGaussianSmoothingVarianceForTheUpdateField(std::stod(criterion.second[0]));
+		theItkFilter.SetGaussianSmoothingVarianceForTheUpdateField(std::stod(criterion.second[0]));
 	} else if( criterion.first == "GaussianSmoothingVarianceForTheTotalField" ) {
 		meetsCriteria = true;
-		this->m_theItkFilter->SetGaussianSmoothingVarianceForTheTotalField(std::stod(criterion.second[0]));
+		theItkFilter.SetGaussianSmoothingVarianceForTheTotalField(std::stod(criterion.second[0]));
 	} else if( criterion.first == "NumberOfIterations" ) {
 		meetsCriteria = true;
 
       if(this->m_NumberOfLevelsLastSetBy != "" &&
-         this->m_theItkFilter->GetNumberOfLevels() != criterion.second.size()) {
+         theItkFilter.GetNumberOfLevels() != criterion.second.size()) {
          std::cout << "A conflicting NumberOfLevels was set by " << this->m_NumberOfLevelsLastSetBy << std::endl;
          return false;
       }
@@ -335,7 +337,7 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
         numberOfIterations[i] = stoull(criterion.second[i]);
         std::cout << "numberOfIterations[" << i << "]:" << numberOfIterations[i] << std::endl;
       }
-      this->m_theItkFilter->SetNumberOfIterationsPerLevel(numberOfIterations);
+      theItkFilter.SetNumberOfIterationsPerLevel(numberOfIterations);
 	}
 
 	return meetsCriteria;
