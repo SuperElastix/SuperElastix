@@ -19,8 +19,9 @@
         "ShrinkFactorsPerLevel": [ "16", "12", "8"],
         "SmoothingSigmasPerLevel": [ "4", "4", "4"],
         "LearningRate": "1.0",
+        "ConvergenceThreshold": "1.0e-6",
         "GaussianSmoothingVarianceForTheUpdateField": "3",
-		"GaussianSmoothingVarianceForTheTotalField": "0.5", 
+        "GaussianSmoothingVarianceForTheTotalField": "0.5", 
         "PixelType": "float"
     },
     "Component": {
