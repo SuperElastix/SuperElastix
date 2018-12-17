@@ -316,6 +316,9 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
 	} else if( criterion.first == "ConvergenceThreshold" ) {
 		meetsCriteria = true;
 		theItkFilter.SetConvergenceThreshold(std::stod(criterion.second[0]));
+	} else if( criterion.first == "ConvergenceWindowSize" ) {
+		meetsCriteria = true;
+		theItkFilter.SetConvergenceWindowSize(std::stoul(criterion.second[0]));
 	}
 	else if (criterion.first == "GaussianSmoothingVarianceForTheUpdateField") {
 		meetsCriteria = true;
