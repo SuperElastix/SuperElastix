@@ -213,7 +213,7 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
 		meetsCriteria = true;
 		if (criterion.second.size() == 1)
 		{
-			if (this->m_NumberOfLevelsLastSetBy == "") // check if some other settings set the NumberOfLevels
+			if (this->m_NumberOfLevelsLastSetBy.empty()) // check if some other settings set the NumberOfLevels
 			{
 				// try catch?
 				theItkFilter.SetNumberOfLevels(std::stoi(criterion.second[0]));
@@ -244,7 +244,7 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
 
 		const int impliedNumberOfResolutions = criterion.second.size();
 
-		if (this->m_NumberOfLevelsLastSetBy == "") // check if some other settings set the NumberOfLevels
+		if (this->m_NumberOfLevelsLastSetBy.empty()) // check if some other settings set the NumberOfLevels
 		{
 			// try catch?
 			theItkFilter.SetNumberOfLevels(impliedNumberOfResolutions);
@@ -265,7 +265,7 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
 		shrinkFactorsPerLevel.SetSize(impliedNumberOfResolutions);
 
 		unsigned int resolutionIndex = 0;
-		for (auto const & criterionValue : criterion.second) // auto&& preferred?
+		for (auto const & criterionValue : criterion.second)
 		{
 			shrinkFactorsPerLevel[resolutionIndex] = std::stoi(criterionValue);
 			++resolutionIndex;
@@ -279,7 +279,7 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
 
 		const int impliedNumberOfResolutions = criterion.second.size();
 
-		if (this->m_NumberOfLevelsLastSetBy == "") // check if some other settings set the NumberOfLevels
+		if (this->m_NumberOfLevelsLastSetBy.empty()) // check if some other settings set the NumberOfLevels
 		{
 			// try catch?
 			theItkFilter.SetNumberOfLevels(impliedNumberOfResolutions);
@@ -301,7 +301,7 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
 		smoothingSigmasPerLevel.SetSize(impliedNumberOfResolutions);
 
 		unsigned int resolutionIndex = 0;
-		for (auto const & criterionValue : criterion.second) // auto&& preferred?
+		for (auto const & criterionValue : criterion.second)
 		{
 			smoothingSigmasPerLevel[resolutionIndex] = std::stoi(criterionValue);
 			++resolutionIndex;
@@ -326,7 +326,7 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
 	} else if( criterion.first == "NumberOfIterations" ) {
 		meetsCriteria = true;
 
-      if(this->m_NumberOfLevelsLastSetBy != "" &&
+      if( (! this->m_NumberOfLevelsLastSetBy.empty()) &&
          theItkFilter.GetNumberOfLevels() != criterion.second.size()) {
          std::cout << "A conflicting NumberOfLevels was set by " << this->m_NumberOfLevelsLastSetBy << std::endl;
          return false;
