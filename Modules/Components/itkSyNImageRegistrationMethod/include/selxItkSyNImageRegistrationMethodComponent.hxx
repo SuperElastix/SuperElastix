@@ -193,11 +193,10 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
 ::MeetsCriterion( const ComponentBase::CriterionType & criterion )
 {
   auto& theItkFilter = *m_theItkFilter;
-	bool hasUndefinedCriteria(false);
 	bool meetsCriteria(false);
 
 	// First check if user-provided properties are template properties and if this component was instantiated with those template properties.
-	auto status = CheckTemplateProperties(this->TemplateProperties(), criterion);
+	const auto status = CheckTemplateProperties(this->TemplateProperties(), criterion);
 	if (status == CriterionStatus::Satisfied)
 	{
 		return true;
