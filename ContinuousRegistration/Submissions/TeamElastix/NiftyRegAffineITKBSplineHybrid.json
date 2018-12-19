@@ -20,7 +20,7 @@
   "Component": {
     "Name": "RegistrationMethod1",
     "NameOfClass": "NiftyregAladinComponent",
-    "NumberOfIterations": "50"
+    "NumberOfIterations": "10"
   },
   "Component": {
     "Name": "RegistrationMethod2",
@@ -76,7 +76,9 @@
     "Name": "Optimizer2",
     "NameOfClass": "ItkGradientDescentOptimizerv4Component",
     "InternalComputationValueType": "double",
-    "NumberOfIterations": "50"
+    "NumberOfIterations": "30",
+    "EstimateScales": "False",
+    "EstimateLearningRate": "Once"
   },
   "Component": {
     "Name": "DisplacementField",

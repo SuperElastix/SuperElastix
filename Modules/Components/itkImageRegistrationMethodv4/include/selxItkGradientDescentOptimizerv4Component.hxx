@@ -114,7 +114,7 @@ ItkGradientDescentOptimizerv4Component< InternalComputationValueType >
       }
     }
   }
-  else if( criterion.first == "EstimateScales" ) //Supports this?
+  else if( criterion.first == "EstimateLearningRate" ) //Supports this?
   {
     if( criterion.second.size() != 1 )
     {
@@ -133,6 +133,35 @@ ItkGradientDescentOptimizerv4Component< InternalComputationValueType >
       {
         this->m_Optimizer->SetDoEstimateLearningRateOnce(false);
         this->m_Optimizer->SetDoEstimateLearningRateAtEachIteration(true);
+        meetsCriteria = true;
+      }
+      else if( criterionValue == "Off" ) {
+        this->m_Optimizer->SetDoEstimateLearningRateOnce(false);
+        this->m_Optimizer->SetDoEstimateLearningRateAtEachIteration(false);
+        meetsCriteria = true;
+      }
+      else {
+        meetsCriteria = false;
+      }
+    }
+  }
+  else if( criterion.first == "EstimateScales" ) //Supports this?
+  {
+    if( criterion.second.size() != 1 )
+    {
+      meetsCriteria = false;
+    }
+    else
+    {
+      auto const & criterionValue = *criterion.second.begin();
+      if( criterionValue == "True" )
+      {
+        this->m_Optimizer->SetDoEstimateScales(true);
+        meetsCriteria = true;
+      }
+      else if( criterionValue == "False" )
+      {
+        this->m_Optimizer->SetDoEstimateScales(false);
         meetsCriteria = true;
       }
       else {
