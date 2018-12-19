@@ -33,7 +33,7 @@ namespace selx
 template< class TPixel >
 class Niftyregf3dComponent :
   public SuperElastixComponent<
-  Accepting< NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >, NiftyregAffineMatrixInterface >,
+  Accepting< NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >, NiftyregAffineMatrixInterface, NiftyregControlPointPositionImageInterface< TPixel > >,
   Providing< NiftyregWarpedImageInterface< TPixel >, NiftyregControlPointPositionImageInterface< TPixel >, UpdateInterface >
   >
 {
@@ -42,7 +42,7 @@ public:
   /** Standard ITK typedefs. */
   typedef Niftyregf3dComponent< TPixel > Self;
   typedef SuperElastixComponent<
-    Accepting< NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >, NiftyregAffineMatrixInterface >,
+    Accepting< NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >, NiftyregAffineMatrixInterface, NiftyregControlPointPositionImageInterface< TPixel > >,
     Providing< NiftyregWarpedImageInterface< TPixel >, NiftyregControlPointPositionImageInterface< TPixel >, UpdateInterface >
     >                                      Superclass;
   typedef std::shared_ptr< Self >       Pointer;
@@ -59,6 +59,9 @@ public:
 
   // Accepting NiftyregAffineMatrixInterface
   virtual int Accept( typename NiftyregAffineMatrixInterface::Pointer ) override;
+
+  // Accepting NiftyregControlPointPositionImageInterface
+  virtual int Accept( typename NiftyregControlPointPositionImageInterface< TPixel >::Pointer ) override;
 
   // Providing NiftyregWarpedImageInterface
   virtual std::shared_ptr< nifti_image > GetWarpedNiftiImage() override;
@@ -93,6 +96,7 @@ protected:
     return { { keys::NameOfClass, "Niftyregf3dComponent" }, { keys::PixelType, PodString< TPixel >::Get() } };
   }
 };
+
 } //end namespace selx
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "selxNiftyregf3dComponent.hxx"
