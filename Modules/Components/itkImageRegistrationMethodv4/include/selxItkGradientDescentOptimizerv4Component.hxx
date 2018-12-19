@@ -135,7 +135,7 @@ ItkGradientDescentOptimizerv4Component< InternalComputationValueType >
         this->m_Optimizer->SetDoEstimateLearningRateAtEachIteration(true);
         meetsCriteria = true;
       }
-      else if( criterionValue == "Off" ) {
+      else if( criterionValue == "False" ) {
         this->m_Optimizer->SetDoEstimateLearningRateOnce(false);
         this->m_Optimizer->SetDoEstimateLearningRateAtEachIteration(false);
         meetsCriteria = true;
