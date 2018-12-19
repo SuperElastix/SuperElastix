@@ -15,10 +15,17 @@
         "NameOfClass": "NiftyregAladinComponent"
     },
     "Component": {
-        "Name": "NiftyRegSpline",
+        "Name": "NiftyRegSpline1",
         "NameOfClass": "Niftyregf3dComponent",
         "NumberOfResolutions": "4",
-        "SmoothingSigma": "4.0"
+        "SmoothingSigma": "5.0",
+        "NumberOfIterations": "30"
+    },
+    "Component": {
+        "Name": "NiftyRegSpline2",
+        "NameOfClass": "Niftyregf3dComponent",
+        "NumberOfResolutions": "2",
+        "NumberOfIterations": "30"
     },
     "Component": {
         "Name": "FixedImage",
@@ -65,21 +72,31 @@
     },
     "Connection": {
         "Out": "NiftyRegAffine",
-        "In": "NiftyRegSpline",
+        "In": "NiftyRegSpline1",
         "NameOfInterface": "NiftyregAffineMatrixInterface"
     },
     "Connection": {
         "Out": "FixedImage",
-        "In": "NiftyRegSpline",
+        "In": "NiftyRegSpline1",
         "NameOfInterface": "NiftyregReferenceImageInterface"
     },
     "Connection": {
         "Out": "MovingImage",
-        "In": "NiftyRegSpline",
+        "In": "NiftyRegSpline1",
         "NameOfInterface": "NiftyregFloatingImageInterface"
     },
     "Connection": {
-        "Out": "NiftyRegSpline",
+        "Out": "FixedImage",
+        "In": "NiftyRegSpline2",
+        "NameOfInterface": "NiftyregReferenceImageInterface"
+    },
+    "Connection": {
+        "Out": "MovingImage",
+        "In": "NiftyRegSpline2",
+        "NameOfInterface": "NiftyregFloatingImageInterface"
+    },
+    "Connection": {
+        "Out": "NiftyRegSpline2",
         "In": "SplineToDisplacementField",
         "NameOfInterface": "NiftyregControlPointPositionImageInterface"
     },
@@ -97,5 +114,10 @@
         "Out": "FixedImage",
         "In": "DisplacementField",
         "NameOfInterface": "itkImageDomainFixedInterface"
+    },
+    "Connection": {
+        "Out": "NiftyRegSpline1",
+        "In": "NiftyRegSpline2",
+        "NameOfInterface": "NiftyregControlPointPositionImageInterface"
     }
 }
