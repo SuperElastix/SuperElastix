@@ -20,7 +20,7 @@
   "Component": {
     "Name": "RegistrationMethod1",
     "NameOfClass": "NiftyregAladinComponent",
-    "NumberOfIterations": "50"
+    "NumberOfIterations": "10"
   },
   "Component": {
     "Name": "RegistrationMethod2",
@@ -30,8 +30,7 @@
     "PixelType": "float",
     "NumberOfLevels": "3",
     "ShrinkFactorsPerLevel": ["8", "4", "2"],
-    "SmoothingSigmasPerLevel": ["4", "2", "1"],
-    "NumberOfIterations": "50"
+    "SmoothingSigmasPerLevel": ["4", "2", "1"]
   },
   "Component": {
     "Name": "TransformResolutionAdaptor",
@@ -76,7 +75,10 @@
   "Component": {
     "Name": "Optimizer2",
     "NameOfClass": "ItkGradientDescentOptimizerv4Component",
-    "InternalComputationValueType": "double"
+    "InternalComputationValueType": "double",
+    "NumberOfIterations": "30",
+    "EstimateScales": "False",
+    "EstimateLearningRate": "Once"
   },
   "Component": {
     "Name": "DisplacementField",
