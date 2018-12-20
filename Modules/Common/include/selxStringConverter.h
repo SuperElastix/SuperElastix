@@ -20,15 +20,117 @@
 *
 *=========================================================================*/
 
+#include <exception>
 #include <string>
-#include <stringstream>
 
 namespace selx
 {
   class StringConverter
   {
-    // TODO Under construction.
+    class Exception: public std::exception
+    {
+      friend class StringConverter;
+      
+      const char* m_What;
+      
+      explicit Exception(const char* const arg)
+      :
+      m_What{arg}
+      {
+      }
+      
+    public:
+      const char* what() const noexcept override
+      {
+        return m_What;
+      }
+    };
+
+  private:
+  
+    std::string m_String;
+    
+  public:
+
+    explicit StringConverter(std::string arg)
+    :
+    m_String{std::move(arg)}
+    {
+    }
+  
+    operator bool() const
+    {
+      // TODO Consider supporting the strings from https://docs.python.org/3/distutils/apiref.html?highlight=distutils.util#distutils.util.strtobool
+
+      if( m_String == "True" )
+      {
+        return true;
+      }
+      
+      if( m_String == "False" )
+      {
+        return false;
+      }
+      throw Exception{ __FUNCTION__ " failed!" };
+    }
+    
+
+    operator double() const
+    {
+      std::size_t index = 0;
+      const auto value = std::stod(m_String, &index);
+
+      if (index != m_String.size())
+      {
+        throw Exception{ __FUNCTION__ " failed!" };
+      }
+      return value;
+    }      
+
+    operator float() const
+    {
+      std::size_t index = 0;
+      const auto value = std::stof(m_String, &index);
+
+      if (index != m_String.size())
+      {
+        throw Exception{ __FUNCTION__ " failed!" };
+      }
+      return value;
+    }
+
+    operator int() const
+    {
+      std::size_t index = 0;
+      const auto value = std::stoi(m_String, &index);
+
+      if (index != m_String.size())
+      {
+        throw Exception{ __FUNCTION__ " failed!" };
+      }
+      return value;
+    }
+
+    operator unsigned long() const
+    {
+      std::size_t index = 0;
+      const auto value = std::stoul(m_String, &index);
+
+      if (index != m_String.size())
+      {
+        throw Exception{ __FUNCTION__ " failed!" };
+      }
+      return value;
+    }
+
+
+    template <typename T>
+    T To()
+    {
+      return { *this };
+    }
   };
+
 }
 
 #endif
