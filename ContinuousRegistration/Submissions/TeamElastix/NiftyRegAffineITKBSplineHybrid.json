@@ -29,13 +29,13 @@
     "Dimensionality": "3",
     "PixelType": "float",
     "NumberOfLevels": "3",
-    "ShrinkFactorsPerLevel": ["8", "4", "2"],
+    "ShrinkFactorsPerLevel": ["12", "8", "4"],
     "SmoothingSigmasPerLevel": ["4", "2", "1"]
   },
   "Component": {
     "Name": "TransformResolutionAdaptor",
     "NameOfClass": "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent",
-    "ShrinkFactorsPerLevel": ["8", "4", "2"],
+    "ShrinkFactorsPerLevel": ["12", "8", "4"],
     "Dimensionality": "3"
   },
   "Component": {
@@ -70,7 +70,9 @@
   },
   "Component": {
     "Name": "Transform2",
-    "NameOfClass": "ItkGaussianExponentialDiffeomorphicTransformComponent"
+    "NameOfClass": "ItkGaussianExponentialDiffeomorphicTransformComponent",
+    "GaussianSmoothingVarianceForTheConstantVelocityField": "1.0",
+    "GaussianSmoothingVarianceForTheUpdateField": "1.0"
   },
   "Component": {
     "Name": "Optimizer2",
@@ -78,7 +80,8 @@
     "InternalComputationValueType": "double",
     "NumberOfIterations": "30",
     "EstimateScales": "False",
-    "EstimateLearningRate": "Once"
+    "EstimateLearningRate": "False",
+    "LearningRate": "1.0"
   },
   "Component": {
     "Name": "DisplacementField",
