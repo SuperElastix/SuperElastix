@@ -13,6 +13,8 @@ parser.add_argument('--make-shell-scripts', '-mss', type=bool, default=True,
                     help="Generate shell scripts (default: True).")
 parser.add_argument('--make-batch-scripts', '-mbs', type=bool, default=False,
                     help="Generate shell scripts (default: False).")
+parser.add_argument('--brain2d-input-directory', '-b2d')
+parser.add_argument('--lung2d-input-directory', '-l2d')
 parser.add_argument('--cumc12-input-directory', '-cid')
 parser.add_argument('--dirlab-input-directory', '-did')
 parser.add_argument('--dirlab-mask-directory', '-dmd', default=None)

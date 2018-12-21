@@ -234,6 +234,69 @@ class Dataset:
         return read_pts(file_name)
 
 
+
+class BRAIN2D(Dataset):
+    """
+    Convenience data set for quickly testing registrations of brains in 2d.
+    Useful when tuning very slow methods like ANTs. Simply wraps some
+    of our testing data and exposes it as a test dataset.
+    """
+    def __init__(self, input_directory, output_directory):
+        self.name = 'BRAIN2D'
+        self.category = 'Brain'
+
+        self.file_names = [{
+            'image_file_names': (
+                os.path.join(input_directory, 'r16slice.nii.gz'),
+                os.path.join(input_directory, 'r64slice.nii.gz')
+            ),
+            'ground_truth_file_names': (
+                os.path.join(input_directory, 'r16slice_mask.nii.gz'),
+                os.path.join(input_directory, 'r64slice_mask.nii.gz'),
+            ),
+            'mask_file_names': (
+                os.path.join(input_directory, 'r16slice_mask.nii.gz'),
+                os.path.join(input_directory, 'r64slice_mask.nii.gz'),
+            )
+        }]
+
+        self.file_names[0]['disp_field_file_names'] = create_disp_field_names(self.file_names[0]['image_file_names'], self.name)
+
+    def evaluate(self, superelastix, file_names, output_directory):
+        return self.evaluate_label(superelastix, file_names, output_directory)
+
+
+class LUNG2D(Dataset):
+    """
+    Convenience data set for quickly testing registrations of lungs in 2d.
+    Useful when tuning very slow methods like ANTs. Simply wraps some
+    of our testing data and exposes it as a test dataset.
+    """
+    def __init__(self, input_directory, output_directory):
+        self.name = 'LUNG2D'
+        self.category = 'Lung'
+
+        self.file_names = [{
+            'image_file_names': (
+                os.path.join(input_directory, 'Lung2dFixedImage.nii.gz'),
+                os.path.join(input_directory, 'Lung2dMovingImage.nii.gz')
+            ),
+            'ground_truth_file_names': (
+                os.path.join(input_directory, 'Lung2dFixedMask.nii.gz'),
+                os.path.join(input_directory, 'Lung2dMovingMask.nii.gz'),
+            ),
+            'mask_file_names': (
+                os.path.join(input_directory, 'Lung2dFixedMask.nii.gz'),
+                os.path.join(input_directory, 'Lung2dMovingMask.nii.gz'),
+            )
+        }]
+
+        self.file_names[0]['disp_field_file_names'] = create_disp_field_names(self.file_names[0]['image_file_names'], self.name)
+
+    def evaluate(self, superelastix, file_names, output_directory):
+        return self.evaluate_label(superelastix, file_names, output_directory)
+
+
 class CUMC12(Dataset):
     def __init__(self, input_directory, output_directory, max_number_of_registrations):
         self.name = 'CUMC12'
@@ -813,6 +876,20 @@ class HBIA(Dataset):
 
 def load_datasets(parameters):
     datasets = dict()
+
+    if parameters.brain2d_input_directory is not None:
+        logging.info('Loading dataset Brain2d.')
+        brain2d = BRAIN2D(parameters.brain2d_input_directory,
+                          parameters.output_directory)
+        datasets[brain2d.name] = brain2d
+        logging.debug('Using files:\n{0}'.format(json.dumps(brain2d.file_names, indent=2)))
+
+    if parameters.lung2d_input_directory is not None:
+        logging.info('Loading dataset Lung2d.')
+        lung2d = LUNG2D(parameters.lung2d_input_directory,
+                        parameters.output_directory)
+        datasets[lung2d.name] = lung2d
+        logging.debug('Using files:\n{0}'.format(json.dumps(lung2d.file_names, indent=2)))
 
     if parameters.cumc12_input_directory is not None:
         logging.info('Loading dataset CUMC12.')

@@ -1,68 +1,71 @@
 {
-    "Datasets": ["POPI", "DIRLAB", "EMPIRE", "LPBA40", "ISBR18", "CUMC12", "MGH10", "SPREAD", "HAMMERS"],
+    "Datasets": ["BRAIN2D", "LUNG2D"],
     "Component": {
         "Name": "RegistrationMethod",
         "NameOfClass": "ItkImageRegistrationMethodv4Component",
-		"NumberOfLevels":  "5" ,
-		"ShrinkFactorsPerLevel": [ "16", "8", "6", "4", "2" ],
-        "SmoothingSigmasPerLevel": [ "4", "4", "2", "1", "1" ],
-        "Dimensionality": "3"
+		"NumberOfLevels":  "3" ,
+		"ShrinkFactorsPerLevel": [ "8", "4", "2"  ],
+        "SmoothingSigmasPerLevel": [ "4", "2", "1"  ],
+        "Dimensionality": "2"
     },
     "Component": {
         "Name": "FixedImage",
         "NameOfClass": "ItkImageSourceComponent",
-        "Dimensionality": "3"
+        "Dimensionality": "2"
     },
     "Component": {
         "Name": "MovingImage",
         "NameOfClass": "ItkImageSourceComponent",
-        "Dimensionality": "3"
+        "Dimensionality": "2"
     },
     "Component": {
         "Name": "FixedMask",
         "NameOfClass": "ItkImageSourceComponent",
-        "Dimensionality": "3",
+        "Dimensionality": "2",
         "PixelType": "float"
     },
     "Component": {
         "Name": "MovingMask",
         "NameOfClass": "ItkImageSourceComponent",
-        "Dimensionality": "3",
+        "Dimensionality": "2",
         "PixelType": "float"
     },
     "Component": {
         "Name": "DisplacementField",
         "NameOfClass": "ItkDisplacementFieldSinkComponent",
-        "Dimensionality": "3"
+        "Dimensionality": "2"
     },
     "Component": {
         "Name": "Metric",
         "NameOfClass": "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component",
-        "Dimensionality": "3"
+        "Dimensionality": "2"
     },
     "Component": {
         "Name": "Optimizer",
         "NameOfClass": "ItkGradientDescentOptimizerv4Component",
         "NumberOfIterations": "32",
-		"LearningRate": "0.25",
-        "EstimateScales": "Once"
+		"LearningRate": "1.0",
+        "EstimateScales": "False",
+        "EstimateLearningRate": "False"
     },
     "Component": {
         "Name": "Transform",
         "NameOfClass": "ItkGaussianExponentialDiffeomorphicTransformComponent",
   		"InternalComputationValueType": "double",
-        "Dimensionality": "3"
+        "Dimensionality": "2",
+        "GaussianSmoothingVarianceForTheConstantVelocityField": "1.0",
+        "GaussianSmoothingVarianceForTheUpdateField": "1.0"
     },
 	"Component": {
         "Name": "TransformResolutionAdaptor",
         "NameOfClass": "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent",
-  		"ShrinkFactorsPerLevel": [ "16", "8", "6", "4", "2" ],
-        "Dimensionality": "3"
+  		"ShrinkFactorsPerLevel": [ "8", "4", "2" ],
+        "Dimensionality": "2"
     },
     "Component": {
         "Name": "TransformDisplacementFilter",
         "NameOfClass": "ItkTransformDisplacementFilterComponent",
-        "Dimensionality": "3"
+        "Dimensionality": "2"
     },
     "Connection": {
         "Out": "FixedImage",
