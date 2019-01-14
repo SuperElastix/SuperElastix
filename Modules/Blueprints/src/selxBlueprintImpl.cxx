@@ -653,7 +653,7 @@ BlueprintImpl::FromPropertyTree(const PropertyTreeType & pt)
 void
 BlueprintImpl::MergeProperties(const PropertyTreeType & pt)
 {
-  BOOST_FOREACH(const PropertyTreeType::value_type & v, pt.equal_range("Component"))
+  BOOST_FOREACH(const PropertyTreeType::value_type & v, pt.get_child("Components"))
   {
     std::string      componentName;
     ParameterMapType newProperties;
@@ -723,7 +723,7 @@ BlueprintImpl::MergeProperties(const PropertyTreeType & pt)
     }
   }
 
-  BOOST_FOREACH(const PropertyTreeType::value_type & v, pt.equal_range("Connection"))
+  BOOST_FOREACH(const PropertyTreeType::value_type & v, pt.get_child("Connections"))
   {
     std::string connectionName = v.second.data();
 

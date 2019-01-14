@@ -10,92 +10,96 @@
         "SPREAD",
         "HAMMERS"
     ],
-    "Component": {
-        "Name": "NiftyRegAffine",
-        "NameOfClass": "NiftyregAladinComponent"
-    },
-    "Component": {
-        "Name": "NiftyRegSpline",
-        "NameOfClass": "Niftyregf3dComponent",
-        "NumberOfResolutions": "4",
-        "SmoothingSigma": "4.0"
-    },
-    "Component": {
-        "Name": "FixedImage",
-        "NameOfClass": "ItkToNiftiImageSourceComponent",
-        "PixelType": "float",
-        "Dimensionality": "3"
-    },
-    "Component": {
-        "Name": "FixedMask",
-        "NameOfClass": "ItkImageSourceComponent",
-        "PixelType": "unsigned char",
-        "Dimensionality": "3"
-    },
-    "Component": {
-        "Name": "MovingImage",
-        "NameOfClass": "ItkToNiftiImageSourceComponent",
-        "PixelType": "float",
-        "Dimensionality": "3"
-    },
-    "Component": {
-        "Name": "MovingMask",
-        "NameOfClass": "ItkImageSourceComponent",
-        "PixelType": "unsigned char",
-        "Dimensionality": "3"
-    },
-    "Component": {
-        "Name": "SplineToDisplacementField",
-        "NameOfClass": "NiftyregSplineToDisplacementFieldComponent"
-    },
-    "Component": {
-        "Name": "DisplacementField",
-        "NameOfClass": "DisplacementFieldNiftiToItkImageSinkComponent",
-        "Dimensionality": "3"
-    },
-    "Connection": {
-        "Out": "FixedImage",
-        "In": "NiftyRegAffine",
-        "NameOfInterface": "NiftyregReferenceImageInterface"
-    },
-    "Connection": {
-        "Out": "MovingImage",
-        "In": "NiftyRegAffine",
-        "NameOfInterface": "NiftyregFloatingImageInterface"
-    },
-    "Connection": {
-        "Out": "NiftyRegAffine",
-        "In": "NiftyRegSpline",
-        "NameOfInterface": "NiftyregAffineMatrixInterface"
-    },
-    "Connection": {
-        "Out": "FixedImage",
-        "In": "NiftyRegSpline",
-        "NameOfInterface": "NiftyregReferenceImageInterface"
-    },
-    "Connection": {
-        "Out": "MovingImage",
-        "In": "NiftyRegSpline",
-        "NameOfInterface": "NiftyregFloatingImageInterface"
-    },
-    "Connection": {
-        "Out": "NiftyRegSpline",
-        "In": "SplineToDisplacementField",
-        "NameOfInterface": "NiftyregControlPointPositionImageInterface"
-    },
-    "Connection": {
-        "Out": "FixedImage",
-        "In": "SplineToDisplacementField",
-        "NameOfInterface": "NiftyregReferenceImageInterface"
-    },
-    "Connection": {
-        "Out": "SplineToDisplacementField",
-        "In": "DisplacementField",
-        "NameOfInterface": "NiftyregDisplacementFieldImageInterface"
-    },
-    "Connection": {
-        "Out": "FixedImage",
-        "In": "DisplacementField",
-        "NameOfInterface": "itkImageDomainFixedInterface"
-    }
+    "Components": [
+        {
+            "Name": "NiftyRegAffine",
+            "NameOfClass": "NiftyregAladinComponent"
+        },
+        {
+            "Name": "NiftyRegSpline",
+            "NameOfClass": "Niftyregf3dComponent",
+            "NumberOfResolutions": "4",
+            "SmoothingSigma": "4.0"
+        },
+        {
+            "Name": "FixedImage",
+            "NameOfClass": "ItkToNiftiImageSourceComponent",
+            "PixelType": "float",
+            "Dimensionality": "3"
+        },
+        {
+            "Name": "FixedMask",
+            "NameOfClass": "ItkImageSourceComponent",
+            "PixelType": "unsigned char",
+            "Dimensionality": "3"
+        },
+        {
+            "Name": "MovingImage",
+            "NameOfClass": "ItkToNiftiImageSourceComponent",
+            "PixelType": "float",
+            "Dimensionality": "3"
+        },
+        {
+            "Name": "MovingMask",
+            "NameOfClass": "ItkImageSourceComponent",
+            "PixelType": "unsigned char",
+            "Dimensionality": "3"
+        },
+        {
+            "Name": "SplineToDisplacementField",
+            "NameOfClass": "NiftyregSplineToDisplacementFieldComponent"
+        },
+        {
+            "Name": "DisplacementField",
+            "NameOfClass": "DisplacementFieldNiftiToItkImageSinkComponent",
+            "Dimensionality": "3"
+        }
+    ],
+    "Connections": [
+        {
+            "Out": "FixedImage",
+            "In": "NiftyRegAffine",
+            "NameOfInterface": "NiftyregReferenceImageInterface"
+        },
+        {
+            "Out": "MovingImage",
+            "In": "NiftyRegAffine",
+            "NameOfInterface": "NiftyregFloatingImageInterface"
+        },
+        {
+            "Out": "NiftyRegAffine",
+            "In": "NiftyRegSpline",
+            "NameOfInterface": "NiftyregAffineMatrixInterface"
+        },
+        {
+            "Out": "FixedImage",
+            "In": "NiftyRegSpline",
+            "NameOfInterface": "NiftyregReferenceImageInterface"
+        },
+        {
+            "Out": "MovingImage",
+            "In": "NiftyRegSpline",
+            "NameOfInterface": "NiftyregFloatingImageInterface"
+        },
+        {
+            "Out": "NiftyRegSpline",
+            "In": "SplineToDisplacementField",
+            "NameOfInterface": "NiftyregControlPointPositionImageInterface"
+        },
+        {
+            "Out": "FixedImage",
+            "In": "SplineToDisplacementField",
+            "NameOfInterface": "NiftyregReferenceImageInterface"
+        },
+        {
+            "Out": "SplineToDisplacementField",
+            "In": "DisplacementField",
+            "NameOfInterface": "NiftyregDisplacementFieldImageInterface"
+        },
+        {
+            "Out": "FixedImage",
+            "In": "DisplacementField",
+            "NameOfInterface": "itkImageDomainFixedInterface"
+        }
+    ]
 }

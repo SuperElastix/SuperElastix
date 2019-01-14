@@ -1,52 +1,56 @@
 {
     "Datasets": ["DIRLAB"],
-    "Component": {
-        "Name": "Strategy",
-        "NameOfClass": "PreliminaryAffineStrategyRegistrationComponent",
-        "UserMode": "1",
-        "Strategy": "DIRLAB"
-    },
-    "Component": {
-        "Name": "FixedImage",
-        "NameOfClass": "ItkImageSourceComponent",
-        "PixelType": "float",
-        "Dimensionality": "3"
-    },
-    "Component": {
-        "Name": "FixedMask",
-        "NameOfClass": "ItkImageSourceComponent",
-        "PixelType": "unsigned char",
-        "Dimensionality": "3"
-    },
-    "Component": {
-        "Name": "MovingMask",
-        "NameOfClass": "ItkImageSourceComponent",
-        "PixelType": "unsigned char",
-        "Dimensionality": "3"
-    },
-      "Component": {
-        "Name": "MovingImage",
-        "NameOfClass": "ItkImageSourceComponent",
-        "PixelType": "float",
-        "Dimensionality": "3"
-    },
-    "Component": {
-        "Name": "DisplacementField",
-        "NameOfClass": "ItkDisplacementFieldSinkComponent",
-        "Dimensionality": "3"
-    },
-    "Connection": {
-        "Out": "FixedImage",
-        "In": "Strategy",
-        "Role": "Fixed"
-    },
-    "Connection": {
-        "Out": "MovingImage",
-        "In": "Strategy",
-        "Role": "Moving"
-    },
-    "Connection": {
-        "Out": "Strategy",
-        "In": "DisplacementField"
-    }
+    "Components": [
+        {
+            "Name": "Strategy",
+            "NameOfClass": "PreliminaryAffineStrategyRegistrationComponent",
+            "UserMode": "1",
+            "Strategy": "DIRLAB"
+        },
+        {
+            "Name": "FixedImage",
+            "NameOfClass": "ItkImageSourceComponent",
+            "PixelType": "float",
+            "Dimensionality": "3"
+        },
+        {
+            "Name": "FixedMask",
+            "NameOfClass": "ItkImageSourceComponent",
+            "PixelType": "unsigned char",
+            "Dimensionality": "3"
+        },
+        {
+            "Name": "MovingMask",
+            "NameOfClass": "ItkImageSourceComponent",
+            "PixelType": "unsigned char",
+            "Dimensionality": "3"
+        },
+          {
+            "Name": "MovingImage",
+            "NameOfClass": "ItkImageSourceComponent",
+            "PixelType": "float",
+            "Dimensionality": "3"
+        },
+        {
+            "Name": "DisplacementField",
+            "NameOfClass": "ItkDisplacementFieldSinkComponent",
+            "Dimensionality": "3"
+        }
+    ],
+    "Connections": [
+        {
+            "Out": "FixedImage",
+            "In": "Strategy",
+            "Role": "Fixed"
+        },
+        {
+            "Out": "MovingImage",
+            "In": "Strategy",
+            "Role": "Moving"
+        },
+        {
+            "Out": "Strategy",
+            "In": "DisplacementField"
+        }
+    ]
 }

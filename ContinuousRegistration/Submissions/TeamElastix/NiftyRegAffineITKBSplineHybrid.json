@@ -1,167 +1,171 @@
 {
-  "Datasets": [
-    "POPI",
-    "DIRLAB",
-    "EMPIRE",
-    "LPBA40",
-    "ISBR18",
-    "CUMC12",
-    "MGH10",
-    "SPREAD",
-    "HAMMERS"
-  ],
-  "Component": {
-    "Name": "MultiStageTransformController",
-    "NameOfClass": "NiftyregItkMultiStageComponent",
-    "ExecutionOrder": [ "RegistrationMethod1", "RegistrationMethod2" ],
-    "Dimensionality": "3",
-    "PixelType": "double"
-  },
-  "Component": {
-    "Name": "RegistrationMethod1",
-    "NameOfClass": "NiftyregAladinComponent",
-    "NumberOfIterations": "10"
-  },
-  "Component": {
-    "Name": "RegistrationMethod2",
-    "NameOfClass": "ItkImageRegistrationMethodv4Component",
-    "InternalComputationValueType": "double",
-    "Dimensionality": "3",
-    "PixelType": "float",
-    "NumberOfLevels": "3",
-    "ShrinkFactorsPerLevel": ["12", "8", "4"],
-    "SmoothingSigmasPerLevel": ["4", "2", "1"]
-  },
-  "Component": {
-    "Name": "TransformResolutionAdaptor",
-    "NameOfClass": "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent",
-    "ShrinkFactorsPerLevel": ["12", "8", "4"],
-    "Dimensionality": "3"
-  },
-  "Component": {
-    "Name": "FixedImage",
-    "NameOfClass": "ItkToNiftiImageHybridSourceComponent",
-    "Dimensionality": "3",
-    "PixelType": "float"
-  },
-  "Component": {
-    "Name": "MovingImage",
-    "NameOfClass": "ItkToNiftiImageHybridSourceComponent",
-    "Dimensionality": "3",
-    "PixelType": "float"
-  },
-  "Component": {
-    "Name": "FixedMask",
-    "NameOfClass": "ItkImageSourceComponent",
-    "PixelType": "unsigned char",
-    "Dimensionality": "3"
-  },
-  "Component": {
-    "Name": "MovingMask",
-    "NameOfClass": "ItkImageSourceComponent",
-    "PixelType": "unsigned char",
-    "Dimensionality": "3"
-  },
-  "Component": {
-    "Name": "Metric2",
-    "NameOfClass": "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component",
-    "Dimensionality": "3",
-    "PixelType": "float"
-  },
-  "Component": {
-    "Name": "Transform2",
-    "NameOfClass": "ItkGaussianExponentialDiffeomorphicTransformComponent",
-    "GaussianSmoothingVarianceForTheConstantVelocityField": "1.0",
-    "GaussianSmoothingVarianceForTheUpdateField": "1.0"
-  },
-  "Component": {
-    "Name": "Optimizer2",
-    "NameOfClass": "ItkGradientDescentOptimizerv4Component",
-    "InternalComputationValueType": "double",
-    "NumberOfIterations": "30",
-    "EstimateScales": "False",
-    "EstimateLearningRate": "False",
-    "LearningRate": "1.0"
-  },
-  "Component": {
-    "Name": "DisplacementField",
-    "NameOfClass": "ItkDisplacementFieldSinkComponent",
-    "Dimensionality": "3",
-    "PixelType": "float"
-  },
-  "Component": {
-    "Name": "TransformToDisplacementField",
-    "NameOfClass": "ItkTransformDisplacementFilterComponent",
-    "Dimensionality": "3",
-    "PixelType": "float"
-  },
-  "Connection": {
-    "Out": "TransformResolutionAdaptor",
-    "In": "RegistrationMethod2"
-  },
-  "Connection": {
-    "Out": "FixedImage",
-    "In": "TransformResolutionAdaptor"
-  },
-  "Connection": {
-    "Out": "FixedImage",
-    "In": "RegistrationMethod1"
-  },
-  "Connection": {
-    "Out": "MovingImage",
-    "In": "RegistrationMethod1"
-  },
-  "Connection": {
-    "Out": "FixedImage",
-    "In": "RegistrationMethod2"
-  },
-  "Connection": {
-    "Out": "MovingImage",
-    "In": "RegistrationMethod2"
-  },
-  "Connection": {
-    "Out": "Metric2",
-    "In": "RegistrationMethod2"
-  },
-  "Connection": {
-    "Out": "Transform2",
-    "In": "RegistrationMethod2"
-  },
-  "Connection": {
-    "Out": "Optimizer2",
-    "In": "RegistrationMethod2"
-  },
-  "Connection": {
-    "Out": "FixedImage",
-    "In": "Transform2"
-  },
-  "Connection": {
-    "Out": "RegistrationMethod1",
-    "In": "MultiStageTransformController"
-  },
-  "Connection": {
-    "Out": "RegistrationMethod2",
-    "In": "MultiStageTransformController"
-  },
-  "Connection": {
-    "Out": "RegistrationMethod2",
-    "In": "TransformToDisplacementField"
-  },
-  "Connection": {
-    "Out": "FixedImage",
-    "In": "TransformToDisplacementField",
-    "NameOfInterface": "itkImageDomainFixedInterface"
-  },
-  "Connection": {
-    "Out": "TransformToDisplacementField",
-    "In": "DisplacementField"
-  },
-  "Connection": {
-    "Out": "FixedMask",
-    "In": "Metric2"
-  },
-  "Connection": {
-    "Out": "MovingMask",
-    "In": "Metric2"
-  }
+    "Datasets": [
+        "POPI",
+        "DIRLAB",
+        "EMPIRE",
+        "LPBA40",
+        "ISBR18",
+        "CUMC12",
+        "MGH10",
+        "SPREAD",
+        "HAMMERS"
+    ],
+    "Components": [
+        {
+            "Name": "MultiStageTransformController",
+            "NameOfClass": "NiftyregItkMultiStageComponent",
+            "ExecutionOrder": [ "RegistrationMethod1", "RegistrationMethod2" ],
+            "Dimensionality": "3",
+            "PixelType": "double"
+        },
+        {
+            "Name": "RegistrationMethod1",
+            "NameOfClass": "NiftyregAladinComponent",
+            "NumberOfIterations": "10"
+        },
+        {
+            "Name": "RegistrationMethod2",
+            "NameOfClass": "ItkImageRegistrationMethodv4Component",
+            "InternalComputationValueType": "double",
+            "Dimensionality": "3",
+            "PixelType": "float",
+            "NumberOfLevels": "3",
+            "ShrinkFactorsPerLevel": ["12", "8", "4"],
+            "SmoothingSigmasPerLevel": ["4", "2", "1"]
+        },
+        {
+            "Name": "TransformResolutionAdaptor",
+            "NameOfClass": "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent",
+            "ShrinkFactorsPerLevel": ["12", "8", "4"],
+            "Dimensionality": "3"
+        },
+        {
+            "Name": "FixedImage",
+            "NameOfClass": "ItkToNiftiImageHybridSourceComponent",
+            "Dimensionality": "3",
+            "PixelType": "float"
+        },
+        {
+            "Name": "MovingImage",
+            "NameOfClass": "ItkToNiftiImageHybridSourceComponent",
+            "Dimensionality": "3",
+            "PixelType": "float"
+        },
+        {
+            "Name": "FixedMask",
+            "NameOfClass": "ItkImageSourceComponent",
+            "PixelType": "unsigned char",
+            "Dimensionality": "3"
+        },
+        {
+            "Name": "MovingMask",
+            "NameOfClass": "ItkImageSourceComponent",
+            "PixelType": "unsigned char",
+            "Dimensionality": "3"
+        },
+        {
+            "Name": "Metric2",
+            "NameOfClass": "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component",
+            "Dimensionality": "3",
+            "PixelType": "float"
+        },
+        {
+            "Name": "Transform2",
+            "NameOfClass": "ItkGaussianExponentialDiffeomorphicTransformComponent",
+            "GaussianSmoothingVarianceForTheConstantVelocityField": "1.0",
+            "GaussianSmoothingVarianceForTheUpdateField": "1.0"
+        },
+        {
+            "Name": "Optimizer2",
+            "NameOfClass": "ItkGradientDescentOptimizerv4Component",
+            "InternalComputationValueType": "double",
+            "NumberOfIterations": "30",
+            "EstimateScales": "False",
+            "EstimateLearningRate": "False",
+            "LearningRate": "1.0"
+        },
+        {
+            "Name": "DisplacementField",
+            "NameOfClass": "ItkDisplacementFieldSinkComponent",
+            "Dimensionality": "3",
+            "PixelType": "float"
+        },
+        {
+            "Name": "TransformToDisplacementField",
+            "NameOfClass": "ItkTransformDisplacementFilterComponent",
+            "Dimensionality": "3",
+            "PixelType": "float"
+        }
+    ],
+    "Connections": [
+        {
+            "Out": "TransformResolutionAdaptor",
+            "In": "RegistrationMethod2"
+        },
+        {
+            "Out": "FixedImage",
+            "In": "TransformResolutionAdaptor"
+        },
+        {
+            "Out": "FixedImage",
+            "In": "RegistrationMethod1"
+        },
+        {
+            "Out": "MovingImage",
+            "In": "RegistrationMethod1"
+        },
+        {
+            "Out": "FixedImage",
+            "In": "RegistrationMethod2"
+        },
+        {
+            "Out": "MovingImage",
+            "In": "RegistrationMethod2"
+        },
+        {
+            "Out": "Metric2",
+            "In": "RegistrationMethod2"
+        },
+        {
+            "Out": "Transform2",
+            "In": "RegistrationMethod2"
+        },
+        {
+            "Out": "Optimizer2",
+            "In": "RegistrationMethod2"
+        },
+        {
+            "Out": "FixedImage",
+            "In": "Transform2"
+        },
+        {
+            "Out": "RegistrationMethod1",
+            "In": "MultiStageTransformController"
+        },
+        {
+            "Out": "RegistrationMethod2",
+            "In": "MultiStageTransformController"
+        },
+        {
+            "Out": "RegistrationMethod2",
+            "In": "TransformToDisplacementField"
+        },
+        {
+            "Out": "FixedImage",
+            "In": "TransformToDisplacementField",
+            "NameOfInterface": "itkImageDomainFixedInterface"
+        },
+        {
+            "Out": "TransformToDisplacementField",
+            "In": "DisplacementField"
+        },
+        {
+            "Out": "FixedMask",
+            "In": "Metric2"
+        },
+        {
+            "Out": "MovingMask",
+            "In": "Metric2"
+        }
+    ]
 }
