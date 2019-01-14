@@ -63,7 +63,7 @@
         "Dimensionality": "3"
     },
     "Component": {
-        "Name": "TransformDisplacementFilter",
+        "Name": "TransformToDisplacementFilter",
         "NameOfClass": "ItkTransformDisplacementFilterComponent",
         "Dimensionality": "3"
     },
@@ -79,11 +79,11 @@
     },
     "Connection": {
         "Out": "RegistrationMethod",
-        "In": "TransformDisplacementFilter",
+        "In": "TransformToDisplacementFilter",
         "NameOfInterface": "itkTransformInterface"
     },
     "Connection": {
-        "Out": "TransformDisplacementFilter",
+        "Out": "TransformToDisplacementFilter",
         "In": "DisplacementField",
         "NameOfInterface": "itkDisplacementFieldInterface"
     },
@@ -118,7 +118,7 @@
     },
 	"Connection": {
         "Out": "FixedImage",
-        "In": "TransformDisplacementFilter",
+        "In": "TransformToDisplacementFilter",
         "NameOfInterface": "itkImageDomainFixedInterface"
     }
 }
