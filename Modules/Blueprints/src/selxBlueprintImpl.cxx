@@ -586,7 +586,7 @@ BlueprintImpl::FromPropertyTree(const PropertyTreeType & pt)
 {
   Blueprint::Pointer blueprint = Blueprint::New();
 
-  BOOST_FOREACH(const PropertyTreeType::value_type & v, pt.equal_range("Component"))
+  BOOST_FOREACH(const PropertyTreeType::value_type & v, pt.get_child("Components"))
   {
     std::string      componentName;
     ParameterMapType componentPropertyMap;
@@ -607,45 +607,48 @@ BlueprintImpl::FromPropertyTree(const PropertyTreeType & pt)
     blueprint->SetComponent(componentName, componentPropertyMap);
   }
 
-  BOOST_FOREACH(const PropertyTreeType::value_type & v, pt.equal_range("Connection"))
-  {
-    std::string connectionName = v.second.data();
-    if (connectionName != "")
+  boost::optional< const PropertyTreeType& > connections_exist = pt.get_child_optional( "Connections" );
+  if(connections_exist) {
+    BOOST_FOREACH(const PropertyTreeType::value_type & v, pt.get_child("Connections"))
     {
-      this->m_LoggerImpl->Log(LogLevel::TRC, "Found {0}, but connection names are ignored.", connectionName);
+      std::string connectionName = v.second.data();
+      if (connectionName != "")
+      {
+        this->m_LoggerImpl->Log(LogLevel::TRC, "Found {0}, but connection names are ignored.", connectionName);
+      }
+      std::string      outName;
+      std::string      inName;
+      ParameterMapType componentPropertyMap;
+
+      for (auto const & elm : v.second)
+      {
+        const std::string & connectionKey = elm.first;
+
+        if (connectionKey == "Out")
+        {
+          outName = elm.second.data();
+          continue;
+        }
+        else if (connectionKey == "In")
+        {
+          inName = elm.second.data();
+          continue;
+        }
+        else if (connectionKey == "Name")
+        {
+          this->m_LoggerImpl->Log(LogLevel::WRN, "Connections with key 'Name' are ignored.");
+          continue;
+        }
+        else
+        {
+          ParameterValueType propertyMultiValue = VectorizeValues(elm.second);
+          std::string        propertyKey = elm.first;
+          componentPropertyMap[propertyKey] = propertyMultiValue;
+        }
+      }
+
+      blueprint->SetConnection(outName, inName, componentPropertyMap);
     }
-    std::string      outName;
-    std::string      inName;
-    ParameterMapType componentPropertyMap;
-
-    for (auto const & elm : v.second)
-    {
-      const std::string & connectionKey = elm.first;
-
-      if (connectionKey == "Out")
-      {
-        outName = elm.second.data();
-        continue;
-      }
-      else if (connectionKey == "In")
-      {
-        inName = elm.second.data();
-        continue;
-      }
-      else if (connectionKey == "Name")
-      {
-        this->m_LoggerImpl->Log(LogLevel::WRN, "Connections with key 'Name' are ignored.");
-        continue;
-      }
-      else
-      {
-        ParameterValueType propertyMultiValue = VectorizeValues(elm.second);
-        std::string        propertyKey = elm.first;
-        componentPropertyMap[propertyKey] = propertyMultiValue;
-      }
-    }
-
-    blueprint->SetConnection(outName, inName, componentPropertyMap);
   }
   return blueprint;
 }
@@ -723,93 +726,81 @@ BlueprintImpl::MergeProperties(const PropertyTreeType & pt)
     }
   }
 
-  BOOST_FOREACH(const PropertyTreeType::value_type & v, pt.get_child("Connections"))
-  {
-    std::string connectionName = v.second.data();
-
-    std::string      outName;
-    std::string      inName;
-    ParameterMapType newProperties;
-
-    for (auto const & elm : v.second)
+  boost::optional< const PropertyTreeType& > connections_exist = pt.get_child_optional( "Connections" );
+  if(connections_exist) {
+    BOOST_FOREACH(
+    const PropertyTreeType::value_type &v, pt.get_child("Connections"))
     {
-      const std::string & connectionKey = elm.first;
+      std::string connectionName = v.second.data();
 
-      if (connectionKey == "Out")
-      {
-        outName = elm.second.data();
-        continue;
-      }
-      else if (connectionKey == "In")
-      {
-        inName = elm.second.data();
-        continue;
-      }
-      else if (connectionKey == "Name")
-      {
-        if (connectionName != "")
-        {
-          this->m_LoggerImpl->Log(LogLevel::WRN, "Connection Name '{}' is overridden by '{}'", connectionName, elm.second.data());
-        }
-        connectionName = elm.second.data();
-        continue;
-      }
-      else
-      {
-        ParameterValueType propertyMultiValue = VectorizeValues(elm.second);
-        std::string        propertyKey = elm.first;
-        newProperties[propertyKey] = propertyMultiValue;
-      }
-    }
+      std::string outName;
+      std::string inName;
+      ParameterMapType newProperties;
 
-    // Does the blueprint have a connection that already exists?
-    if (this->ConnectionExists(outName, inName, connectionName))
-    {
-      // Connection exists, check if properties can be merged
-      auto ownProperties = this->GetConnection(outName, inName, connectionName);
+      for (auto const &elm : v.second) {
+        const std::string &connectionKey = elm.first;
 
-      for (auto const & othersEntry : newProperties)
-      {
-        // Does newProperties use a key that already exists in this component?
-        if (ownProperties.count(othersEntry.first))
-        {
-          auto && ownValues = ownProperties[othersEntry.first];
-          auto && otherValues = othersEntry.second;
-          // Are the property values equal?
-          if (ownValues.size() != otherValues.size())
-          {
-            // No, based on the number of values we see that it is different. Blueprints cannot be Composed
-            this->m_LoggerImpl->Log(LogLevel::ERR, "Merging blueprints failed: Connection property {0} redefined.", othersEntry.first);
-            throw std::invalid_argument("Merging blueprints failed: Connection properties cannot be redefined.");
+        if (connectionKey == "Out") {
+          outName = elm.second.data();
+          continue;
+        } else if (connectionKey == "In") {
+          inName = elm.second.data();
+          continue;
+        } else if (connectionKey == "Name") {
+          if (connectionName != "") {
+            this->m_LoggerImpl->Log(LogLevel::WRN, "Connection Name '{}' is overridden by '{}'", connectionName,
+                                    elm.second.data());
           }
-          else
-          {
-            ParameterValueType::const_iterator ownValue;
-            ParameterValueType::const_iterator otherValue;
-            for (ownValue = ownValues.begin(), otherValue = otherValues.begin(); ownValue != ownValues.end(); ++ownValue, ++otherValue)
-            {
-              if (*otherValue != *ownValue)
-              {
-                // No, at least one value is different. Blueprints cannot be Composed
-                this->m_LoggerImpl->Log(LogLevel::ERR, "Merging blueprints failed: Connection property {0} redefined.", othersEntry.first);
-                throw std::invalid_argument("Merging blueprints failed: Connection properties cannot be redefined.");
+          connectionName = elm.second.data();
+          continue;
+        } else {
+          ParameterValueType propertyMultiValue = VectorizeValues(elm.second);
+          std::string propertyKey = elm.first;
+          newProperties[propertyKey] = propertyMultiValue;
+        }
+      }
+
+      // Does the blueprint have a connection that already exists?
+      if (this->ConnectionExists(outName, inName, connectionName)) {
+        // Connection exists, check if properties can be merged
+        auto ownProperties = this->GetConnection(outName, inName, connectionName);
+
+        for (auto const &othersEntry : newProperties) {
+          // Does newProperties use a key that already exists in this component?
+          if (ownProperties.count(othersEntry.first)) {
+            auto &&ownValues = ownProperties[othersEntry.first];
+            auto &&otherValues = othersEntry.second;
+            // Are the property values equal?
+            if (ownValues.size() != otherValues.size()) {
+              // No, based on the number of values we see that it is different. Blueprints cannot be Composed
+              this->m_LoggerImpl->Log(LogLevel::ERR, "Merging blueprints failed: Connection property {0} redefined.",
+                                      othersEntry.first);
+              throw std::invalid_argument("Merging blueprints failed: Connection properties cannot be redefined.");
+            } else {
+              ParameterValueType::const_iterator ownValue;
+              ParameterValueType::const_iterator otherValue;
+              for (ownValue = ownValues.begin(), otherValue = otherValues.begin();
+                   ownValue != ownValues.end(); ++ownValue, ++otherValue) {
+                if (*otherValue != *ownValue) {
+                  // No, at least one value is different. Blueprints cannot be Composed
+                  this->m_LoggerImpl->Log(LogLevel::ERR,
+                                          "Merging blueprints failed: Connection property {0} redefined.",
+                                          othersEntry.first);
+                  throw std::invalid_argument("Merging blueprints failed: Connection properties cannot be redefined.");
+                }
               }
             }
+          } else {
+            // Property key doesn't exist yet, add entry to this component
+            //auto ownProperties = this->GetConnection(incomingName, componentName);
+            ownProperties[othersEntry.first] = othersEntry.second;
+            this->SetConnection(outName, inName, ownProperties, connectionName);
           }
         }
-        else
-        {
-          // Property key doesn't exist yet, add entry to this component
-          //auto ownProperties = this->GetConnection(incomingName, componentName);
-          ownProperties[othersEntry.first] = othersEntry.second;
-          this->SetConnection(outName, inName, ownProperties, connectionName);
-        }
+      } else {
+        // Create Component copying properties of other
+        this->SetConnection(outName, inName, newProperties, connectionName);
       }
-    }
-    else
-    {
-      // Create Component copying properties of other
-      this->SetConnection(outName, inName, newProperties, connectionName);
     }
   }
 }

@@ -1,10 +1,15 @@
 {
-    "Component": {
+    "Components":
+    [
+        {
         "Name": "ResultTransform",
         "NameOfClass": "ItkTransformSinkComponent"
-    },
-    "Connection": {
-        "Out": "RegistrationMethod",
-        "In": "ResultTransform"
-    }
+        }
+    ],
+    "Connections": [
+        {
+            "Out": "RegistrationMethod",
+            "In": "ResultTransform"
+        }
+    ]
 }

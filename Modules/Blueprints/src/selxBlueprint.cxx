@@ -28,11 +28,6 @@ Blueprint
   m_Logger( Logger::New() ), // Create default logger which redirects to std::cout
   m_BlueprintImpl( new BlueprintImpl( this->m_Logger->GetLoggerImpl() ) ) 
 {
-  //TODO: cannot have independent loggers redirecting to cout. 
-  //this->m_Logger->AddStream("cout", std::cout);
-  //TODO: this seems to affect other instantiated loggers too.
-  //this->m_Logger->SetLogLevel(selx::LogLevel::INF);
-
 }
 
 // This class uses the pimpl idiom and therefore needs to implement the destructor explicitly: Effective Modern C++, Scott Meyers, item 22

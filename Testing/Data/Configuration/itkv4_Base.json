@@ -1,104 +1,108 @@
 {
-    "Component": {
-        "Name": "RegistrationMethod",
-        "NameOfClass": "ItkImageRegistrationMethodv4Component"
-    },
-    "Component": {
-        "Name": "FixedImage",
-        "NameOfClass": "ItkImageSourceComponent"
-    },
-    "Component": {
-        "Name": "MovingImage",
-        "NameOfClass": "ItkImageSourceComponent"
-    },
-    "Component": {
-        "Name": "ResultImage",
-        "NameOfClass": "ItkImageSinkComponent"
-    },
-    "Component": {
-        "Name": "ResultDisplacementField",
-        "NameOfClass": "ItkDisplacementFieldSinkComponent"
-    },
-    "Component": {
-        "Name": "Metric"
-    },
-    "Component": {
-        "Name": "Optimizer"
-    },
-    "Component": {
-        "Name": "Transform",
-        "InternalComputationValueType": "double"
-    },
-    "Component": {
-        "Name": "ResampleFilter",
-        "NameOfClass": "ItkResampleFilterComponent"
-    },
-    "Component": {
-        "Name": "TransformDisplacementFilter",
-        "NameOfClass": "ItkTransformDisplacementFilterComponent"
-    },
-    "Connection": {
-        "Out": "FixedImage",
-        "In": "RegistrationMethod",
-        "Role": "Fixed"
-    },
-    "Connection": {
-        "Out": "MovingImage",
-        "In": "RegistrationMethod",
-        "Role": "Moving"
-    },
-    "Connection": {
-        "Out": "RegistrationMethod",
-        "In": "ResampleFilter",
-        "NameOfInterface": "itkTransformInterface"
-    },
-    "Connection": {
-        "Out": "RegistrationMethod",
-        "In": "TransformDisplacementFilter",
-        "NameOfInterface": "itkTransformInterface"
-    },
-    "Connection": {
-        "Out": "ResampleFilter",
-        "In": "ResultImage",
-        "NameOfInterface": "itkImageInterface"
-    },
-    "Connection": {
-        "Out": "TransformDisplacementFilter",
-        "In": "ResultDisplacementField"
-    },
-    "Connection": {
-        "Out": "Metric",
-        "In": "RegistrationMethod",
-        "NameOfInterface": "itkMetricv4Interface"
-    },
-    "Connection": {
-        "Out": "Transform",
-        "In": "RegistrationMethod",
-        "NameOfInterface": "itkTransformInterface"
-    },
-    "Connection": {
-        "Out": "FixedImage",
-        "In": "TransformResolutionAdaptor",
-        "NameOfInterface": "itkImageDomainFixedInterface"
-    },
-    "Connection": {
-        "Out": "Optimizer",
-        "In": "RegistrationMethod",
-        "NameOfInterface": "itkOptimizerv4Interface"
-    },
-    "Connection": {
-        "Out": "FixedImage",
-        "In": "TransformDisplacementFilter",
-        "NameOfInterface": "itkImageDomainFixedInterface"
-    },
-    "Connection": {
-        "Out": "FixedImage",
-        "In": "ResampleFilter",
-        "NameOfInterface": "itkImageDomainFixedInterface"
-    },
-    "Connection": {
-        "Out": "MovingImage",
-        "In": "ResampleFilter",
-        "NameOfInterface": "itkImageMovingInterface"
-    }
+    "Components": [
+        {
+            "Name": "RegistrationMethod",
+            "NameOfClass": "ItkImageRegistrationMethodv4Component"
+        },
+        {
+            "Name": "FixedImage",
+            "NameOfClass": "ItkImageSourceComponent"
+        },
+        {
+            "Name": "MovingImage",
+            "NameOfClass": "ItkImageSourceComponent"
+        },
+        {
+            "Name": "ResultImage",
+            "NameOfClass": "ItkImageSinkComponent"
+        },
+        {
+            "Name": "ResultDisplacementField",
+            "NameOfClass": "ItkDisplacementFieldSinkComponent"
+        },
+        {
+            "Name": "Metric"
+        },
+        {
+            "Name": "Optimizer"
+        },
+        {
+            "Name": "Transform",
+            "InternalComputationValueType": "double"
+        },
+        {
+            "Name": "ResampleFilter",
+            "NameOfClass": "ItkResampleFilterComponent"
+        },
+        {
+            "Name": "TransformDisplacementFilter",
+            "NameOfClass": "ItkTransformDisplacementFilterComponent"
+        }
+    ],
+    "Connections": [
+        {
+            "Out": "FixedImage",
+            "In": "RegistrationMethod",
+            "Role": "Fixed"
+        },
+        {
+            "Out": "MovingImage",
+            "In": "RegistrationMethod",
+            "Role": "Moving"
+        },
+        {
+            "Out": "RegistrationMethod",
+            "In": "ResampleFilter",
+            "NameOfInterface": "itkTransformInterface"
+        },
+        {
+            "Out": "RegistrationMethod",
+            "In": "TransformDisplacementFilter",
+            "NameOfInterface": "itkTransformInterface"
+        },
+        {
+            "Out": "ResampleFilter",
+            "In": "ResultImage",
+            "NameOfInterface": "itkImageInterface"
+        },
+        {
+            "Out": "TransformDisplacementFilter",
+            "In": "ResultDisplacementField"
+        },
+        {
+            "Out": "Metric",
+            "In": "RegistrationMethod",
+            "NameOfInterface": "itkMetricv4Interface"
+        },
+        {
+            "Out": "Transform",
+            "In": "RegistrationMethod",
+            "NameOfInterface": "itkTransformInterface"
+        },
+        {
+            "Out": "FixedImage",
+            "In": "TransformResolutionAdaptor",
+            "NameOfInterface": "itkImageDomainFixedInterface"
+        },
+        {
+            "Out": "Optimizer",
+            "In": "RegistrationMethod",
+            "NameOfInterface": "itkOptimizerv4Interface"
+        },
+        {
+            "Out": "FixedImage",
+            "In": "TransformDisplacementFilter",
+            "NameOfInterface": "itkImageDomainFixedInterface"
+        },
+        {
+            "Out": "FixedImage",
+            "In": "ResampleFilter",
+            "NameOfInterface": "itkImageDomainFixedInterface"
+        },
+        {
+            "Out": "MovingImage",
+            "In": "ResampleFilter",
+            "NameOfInterface": "itkImageMovingInterface"
+        }
+    ]
 }

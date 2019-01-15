@@ -1,34 +1,38 @@
 {
-    "Component": {
-        "Name": "WarpInputImage",
-        "NameOfClass": "ItkImageSourceComponent"
-    },
-    "Component": {
-        "Name": "ImageTransformer",
-        "NameOfClass": "MonolithicTransformixComponent"
-    },
-    "Component": {
-        "Name": "WarpOutputImage",
-        "NameOfClass": "ItkImageSinkComponent"
-    },
-    "Connection": {
-        "Out": "WarpInputImage",
-        "In": "ImageTransformer",
-        "NameOfInterface": "itkImageMovingInterface"
-    },
-    "Connection": {
-        "Out": "FixedImage",
-        "In": "ImageTransformer",
-        "NameOfInterface": "itkImageDomainFixedInterface"
-    },
-    "Connection": {
-        "Out": "RegistrationMethod",
-        "In": "ImageTransformer",
-        "NameOfInterface": "elastixTransformParameterObjectInterface"
-    },
-	"Connection": {
-        "Out": "ImageTransformer",
-        "In": "WarpOutputImage",
-        "NameOfInterface": "itkImageInterface"
-    }
+    "Components": [
+        {
+            "Name": "WarpInputImage",
+            "NameOfClass": "ItkImageSourceComponent"
+        },
+        {
+            "Name": "ImageTransformer",
+            "NameOfClass": "MonolithicTransformixComponent"
+        },
+        {
+            "Name": "WarpOutputImage",
+            "NameOfClass": "ItkImageSinkComponent"
+        }
+    ],
+    "Connections": [
+        {
+            "Out": "WarpInputImage",
+            "In": "ImageTransformer",
+            "NameOfInterface": "itkImageMovingInterface"
+        },
+        {
+            "Out": "FixedImage",
+            "In": "ImageTransformer",
+            "NameOfInterface": "itkImageDomainFixedInterface"
+        },
+        {
+            "Out": "RegistrationMethod",
+            "In": "ImageTransformer",
+            "NameOfInterface": "elastixTransformParameterObjectInterface"
+        },
+        {
+            "Out": "ImageTransformer",
+            "In": "WarpOutputImage",
+            "NameOfInterface": "itkImageInterface"
+        }
+    ]
 }
