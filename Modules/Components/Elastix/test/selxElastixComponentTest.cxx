@@ -124,20 +124,22 @@ TEST_F( ElastixComponentTest, MonolithicElastixTransformix )
                                                    { "ParameterMap1FixedImagePyramid", { "FixedSmoothingImagePyramid" } },
                                                    { "ParameterMap1MovingImagePyramid", { "MovingSmoothingImagePyramid" } },
                                                    { "ParameterMap1Transform", { "AffineTransform" } },
-                                                   { "ParameterMap1NumberOfResolutions", { "3" } },
+                                                   { "ParameterMap1NumberOfResolutions", { "2" } },
                                                    { "ParameterMap1ImageSampler", { "RandomSparseMask" } },
                                                    { "ParameterMap1Registration", { "MultiResolutionRegistration" } },
                                                    { "ParameterMap1Metric", { "AdvancedMattesMutualInformation" } },
                                                    { "ParameterMap1Optimizer", { "AdaptiveStochasticGradientDescent" } },
+                                                   { "ParameterMap1MaximumNumberOfIterations", { "1" } },
                                                    { "ParameterMap2ResultImagePixelType", { "float" } },
                                                    { "ParameterMap2FixedImagePyramid", { "FixedSmoothingImagePyramid" } },
                                                    { "ParameterMap2MovingImagePyramid", { "MovingSmoothingImagePyramid" } },
                                                    { "ParameterMap2Transform", { "BSplineTransform" } },
-                                                   { "ParameterMap2NumberOfResolutions", { "3" } },
+                                                   { "ParameterMap2NumberOfResolutions", { "2" } },
                                                    { "ParameterMap2ImageSampler", { "RandomSparseMask" } },
                                                    { "ParameterMap2Registration", { "MultiResolutionRegistration" } },
                                                    { "ParameterMap2Metric", { "AdvancedMattesMutualInformation" } },
-                                                   { "ParameterMap2Optimizer", { "AdaptiveStochasticGradientDescent" } }} );
+                                                   { "ParameterMap2Optimizer", { "AdaptiveStochasticGradientDescent" } },
+                                                   { "ParameterMap2MaximumNumberOfIterations", { "1" } } } );
   blueprint->SetComponent( "TransformDisplacementField", { { "NameOfClass", { "MonolithicTransformixComponent" } } } );
 
   blueprint->SetComponent( "FixedImageSource", { { "NameOfClass", { "ItkImageSourceComponent" } }, { "Dimensionality", { "2" } } } );
@@ -217,11 +219,10 @@ TEST_F( ElastixComponentTest, Affine_anisotropic ) {
                                                    { "ParameterMap0MovingImagePyramid", { "MovingSmoothingImagePyramid" } },
                                                    { "ParameterMap0Transform", { "AffineTransform" } },
                                                    { "ParameterMap0ImageSampler", { "RandomCoordinate" } },
-                                                   { "ParameterMap0NumberOfResolutions", { "8" } },
-                                                   { "ParameterMap0NumberOfIterations", { "512" } },
+                                                   { "ParameterMap0NumberOfResolutions", { "2" } },
+                                                   { "ParameterMap0MaximumNumberOfIterations", { "1" } },
                                                    { "ParameterMap0Registration", { "MultiResolutionRegistration" } },
                                                    { "ParameterMap0Metric", { "AdvancedMattesMutualInformation" } },
-                                                   { "ParameterMap0NumberOfIterations", { "32" } },
                                                    { "ParameterMap0Optimizer", { "AdaptiveStochasticGradientDescent" } } } );
 
   blueprint->SetComponent( "TransformDisplacementField", { { "NameOfClass", { "MonolithicTransformixComponent" } }, { "Dimensionality", { "3" } } } );
@@ -286,10 +287,10 @@ TEST_F( ElastixComponentTest, Translation_origin ) {
                                                    { "ParameterMap0MovingImagePyramid", { "MovingSmoothingImagePyramid" } },
                                                    { "ParameterMap0Transform", { "TranslationTransform" } },
                                                    { "ParameterMap0ImageSampler", { "RandomCoordinate" } },
-                                                   { "ParameterMap0NumberOfResolutions", { "8" } },
+                                                   { "ParameterMap0NumberOfResolutions", { "2" } },
                                                    { "ParameterMap0Registration", { "MultiResolutionRegistration" } },
                                                    { "ParameterMap0Metric", { "AdvancedMattesMutualInformation" } },
-                                                   { "ParameterMap0NumberOfIterations", { "128" } },
+                                                   { "ParameterMap0MaximumNumberOfIterations", { "1" } },
                                                    { "ParameterMap0Optimizer", { "AdaptiveStochasticGradientDescent" } } } );
 
   blueprint->SetComponent( "TransformDisplacementField", { { "NameOfClass", { "MonolithicTransformixComponent" } }, { "Dimensionality", { "3" } } } );
@@ -354,11 +355,10 @@ TEST_F( ElastixComponentTest, Affine_anisotropic_origin ) {
                                                    { "ParameterMap0MovingImagePyramid", { "MovingSmoothingImagePyramid" } },
                                                    { "ParameterMap0Transform", { "AffineTransform" } },
                                                    { "ParameterMap0ImageSampler", { "RandomCoordinate" } },
-                                                   { "ParameterMap0NumberOfResolutions", { "8" } },
-                                                   { "ParameterMap0NumberOfIterations", { "512" } },
+                                                   { "ParameterMap0NumberOfResolutions", { "2" } },
                                                    { "ParameterMap0Registration", { "MultiResolutionRegistration" } },
                                                    { "ParameterMap0Metric", { "AdvancedMattesMutualInformation" } },
-                                                   { "ParameterMap0NumberOfIterations", { "32" } },
+                                                   { "ParameterMap0MaximumNumberOfIterations", { "1" } },
                                                    { "ParameterMap0Optimizer", { "AdaptiveStochasticGradientDescent" } } } );
 
   blueprint->SetComponent( "TransformDisplacementField", { { "NameOfClass", { "MonolithicTransformixComponent" } }, { "Dimensionality", { "3" } } } );
@@ -423,11 +423,10 @@ TEST_F( ElastixComponentTest, Affine_spacing_moving ) {
                                                    { "ParameterMap0MovingImagePyramid", { "MovingSmoothingImagePyramid" } },
                                                    { "ParameterMap0Transform", { "AffineTransform" } },
                                                    { "ParameterMap0ImageSampler", { "RandomCoordinate" } },
-                                                   { "ParameterMap0NumberOfResolutions", { "8" } },
-                                                   { "ParameterMap0NumberOfIterations", { "512" } },
+                                                   { "ParameterMap0NumberOfResolutions", { "2" } },
+                                                   { "ParameterMap0MaximumNumberOfIterations", { "1" } },
                                                    { "ParameterMap0Registration", { "MultiResolutionRegistration" } },
                                                    { "ParameterMap0Metric", { "AdvancedMattesMutualInformation" } },
-                                                   { "ParameterMap0NumberOfIterations", { "32" } },
                                                    { "ParameterMap0Optimizer", { "AdaptiveStochasticGradientDescent" } } } );
 
   blueprint->SetComponent( "TransformDisplacementField", { { "NameOfClass", { "MonolithicTransformixComponent" } }, { "Dimensionality", { "3" } } } );
@@ -494,11 +493,10 @@ TEST_F( ElastixComponentTest, Affine_anisotropic_translation_origin ) {
                                                    { "ParameterMap0MovingImagePyramid", { "MovingSmoothingImagePyramid" } },
                                                    { "ParameterMap0Transform", { "AffineTransform" } },
                                                    { "ParameterMap0ImageSampler", { "RandomCoordinate" } },
-                                                   { "ParameterMap0NumberOfResolutions", { "8" } },
-                                                   { "ParameterMap0NumberOfIterations", { "512" } },
+                                                   { "ParameterMap0NumberOfResolutions", { "2" } },
+                                                   { "ParameterMap0MaximumNumberOfIterations", { "1" } },
                                                    { "ParameterMap0Registration", { "MultiResolutionRegistration" } },
                                                    { "ParameterMap0Metric", { "AdvancedMattesMutualInformation" } },
-                                                   { "ParameterMap0NumberOfIterations", { "32" } },
                                                    { "ParameterMap0Optimizer", { "AdaptiveStochasticGradientDescent" } } } );
 
   blueprint->SetComponent( "TransformDisplacementField", { { "NameOfClass", { "MonolithicTransformixComponent" } }, { "Dimensionality", { "3" } } } );
