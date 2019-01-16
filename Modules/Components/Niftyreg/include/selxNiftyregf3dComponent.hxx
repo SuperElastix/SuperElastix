@@ -338,6 +338,14 @@ Niftyregf3dComponent<  TPixel >
     }
     meetsCriteria = true;
   }
+  else if( criterion.first == "GridSpacingInPhysicalUnits" ) //Supports this?
+  {
+    for( unsigned int d = 0; d < criterion.second.size(); ++d )
+    {
+      this->m_reg_f3d->SetSpacing( d, -std::stof( criterion.second[ d ] ) );
+    }
+    meetsCriteria = true;
+  }
   else if( criterion.first == "SmoothingSigma" )
   {
     meetsCriteria = true;
