@@ -10,85 +10,89 @@
         "SPREAD",
         "HAMMERS"
     ],
-    "Component": {
-        "Name": "RegistrationMethod",
-        "NameOfClass": "ItkSyNImageRegistrationMethodComponent",
-        "Dimensionality": "3",
-        "NumberOfLevels":  "3",
-        "NumberOfIterations": ["50", "50", "50"],
-        "ShrinkFactorsPerLevel": [ "8", "4", "2"],
-        "SmoothingSigmasPerLevel": [ "4", "4", "4"],
-        "LearningRate": "0.5",
-        "PixelType": "float"
-    },
-    "Component": {
-        "Name": "Metric",
-        "NameOfClass": "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component",
-        "Dimensionality": "3",
-        "PixelType": "float"
-    },
-    "Component": {
-        "Name": "FixedImage",
-        "NameOfClass": "ItkImageSourceComponent",
-        "Dimensionality": "3",
-        "PixelType": "float"
-    },
-    "Component": {
-      "Name": "FixedMask",
-      "NameOfClass": "ItkImageSourceComponent",
-      "PixelType": "unsigned char",
-      "Dimensionality": "3"
-    },
-    "Component": {
-        "Name": "MovingImage",
-        "NameOfClass": "ItkImageSourceComponent",
-        "Dimensionality": "3",
-        "PixelType": "float"
-    },
-    "Component": {
-      "Name": "MovingMask",
-      "NameOfClass": "ItkImageSourceComponent",
-      "PixelType": "unsigned char",
-      "Dimensionality": "3"
-    },
-    "Component": {
-        "Name": "DisplacementField",
-        "NameOfClass": "ItkDisplacementFieldSinkComponent",
-        "Dimensionality": "3",
-        "PixelType": "float"
-    },
-    "Component": {
-        "Name": "TransformToDisplacementField",
-        "NameOfClass": "ItkTransformDisplacementFilterComponent",
-        "Dimensionality": "3",
-        "PixelType": "float"
-    },
-    "Connection": {
-        "Out": "FixedImage",
-        "In": "RegistrationMethod",
-        "NameOfInterface": "itkImageFixedInterface"
-    },
-    "Connection": {
-        "Out": "MovingImage",
-        "In": "RegistrationMethod",
-        "NameOfInterface": "itkImageMovingInterface"
-    },
-    "Connection": {
-      "Out": "Metric",
-      "In": "RegistrationMethod",
-      "NameOfInterface": "itkMetricv4Interface"
-    },
-    "Connection": {
-      "Out": "RegistrationMethod",
-      "In": "TransformToDisplacementField"
-    },
-    "Connection": {
-      "Out": "FixedImage",
-      "In": "TransformToDisplacementField",
-      "NameOfInterface": "itkImageDomainFixedInterface"
-    },
-    "Connection": {
-      "Out": "TransformToDisplacementField",
-      "In": "DisplacementField"
-    }
+    "Components": [
+        {
+            "Name": "RegistrationMethod",
+            "NameOfClass": "ItkSyNImageRegistrationMethodComponent",
+            "Dimensionality": "3",
+            "NumberOfLevels":  "3",
+            "NumberOfIterations": ["50", "50", "50"],
+            "ShrinkFactorsPerLevel": [ "8", "4", "2"],
+            "SmoothingSigmasPerLevel": [ "4", "4", "4"],
+            "LearningRate": "0.5",
+            "PixelType": "float"
+        },
+        {
+            "Name": "Metric",
+            "NameOfClass": "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component",
+            "Dimensionality": "3",
+            "PixelType": "float"
+        },
+        {
+            "Name": "FixedImage",
+            "NameOfClass": "ItkImageSourceComponent",
+            "Dimensionality": "3",
+            "PixelType": "float"
+        },
+        {
+          "Name": "FixedMask",
+          "NameOfClass": "ItkImageSourceComponent",
+          "PixelType": "unsigned char",
+          "Dimensionality": "3"
+        },
+        {
+            "Name": "MovingImage",
+            "NameOfClass": "ItkImageSourceComponent",
+            "Dimensionality": "3",
+            "PixelType": "float"
+        },
+        {
+          "Name": "MovingMask",
+          "NameOfClass": "ItkImageSourceComponent",
+          "PixelType": "unsigned char",
+          "Dimensionality": "3"
+        },
+        {
+            "Name": "DisplacementField",
+            "NameOfClass": "ItkDisplacementFieldSinkComponent",
+            "Dimensionality": "3",
+            "PixelType": "float"
+        },
+        {
+            "Name": "TransformToDisplacementField",
+            "NameOfClass": "ItkTransformDisplacementFilterComponent",
+            "Dimensionality": "3",
+            "PixelType": "float"
+        }
+    ],
+    "Connections": [
+        {
+            "Out": "FixedImage",
+            "In": "RegistrationMethod",
+            "NameOfInterface": "itkImageFixedInterface"
+        },
+        {
+            "Out": "MovingImage",
+            "In": "RegistrationMethod",
+            "NameOfInterface": "itkImageMovingInterface"
+        },
+        {
+          "Out": "Metric",
+          "In": "RegistrationMethod",
+          "NameOfInterface": "itkMetricv4Interface"
+        },
+        {
+          "Out": "RegistrationMethod",
+          "In": "TransformToDisplacementField"
+        },
+        {
+          "Out": "FixedImage",
+          "In": "TransformToDisplacementField",
+          "NameOfInterface": "itkImageDomainFixedInterface"
+        },
+        {
+          "Out": "TransformToDisplacementField",
+          "In": "DisplacementField"
+        }
+    ]
 }

@@ -19,8 +19,6 @@
 
 #include "selxSuperElastixFilterCustomComponents.h"
 
-#include "selxTransformComponent1.h"
-#include "selxMetricComponent1.h"
 #include "selxGDOptimizer3rdPartyComponent.h"
 #include "selxGDOptimizer4thPartyComponent.h"
 #include "selxSSDMetric3rdPartyComponent.h"
@@ -65,8 +63,7 @@ class RegistrationItkv4Test : public ::testing::Test
 public:
 
   /** register all example components */
-  typedef TypeList< TransformComponent1,
-    MetricComponent1,
+  typedef TypeList<
     GDOptimizer3rdPartyComponent,
     GDOptimizer4thPartyComponent,
     SSDMetric3rdPartyComponent,

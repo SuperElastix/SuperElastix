@@ -1,124 +1,128 @@
 {
     "Datasets": ["BRAIN2D", "LUNG2D"],
-    "Component": {
-        "Name": "RegistrationMethod",
-        "NameOfClass": "ItkImageRegistrationMethodv4Component",
-		"NumberOfLevels":  "3" ,
-		"ShrinkFactorsPerLevel": [ "8", "4", "2"  ],
-        "SmoothingSigmasPerLevel": [ "4", "2", "1"  ],
-        "Dimensionality": "2"
-    },
-    "Component": {
-        "Name": "FixedImage",
-        "NameOfClass": "ItkImageSourceComponent",
-        "Dimensionality": "2"
-    },
-    "Component": {
-        "Name": "MovingImage",
-        "NameOfClass": "ItkImageSourceComponent",
-        "Dimensionality": "2"
-    },
-    "Component": {
-        "Name": "FixedMask",
-        "NameOfClass": "ItkImageSourceComponent",
-        "Dimensionality": "2",
-        "PixelType": "float"
-    },
-    "Component": {
-        "Name": "MovingMask",
-        "NameOfClass": "ItkImageSourceComponent",
-        "Dimensionality": "2",
-        "PixelType": "float"
-    },
-    "Component": {
-        "Name": "DisplacementField",
-        "NameOfClass": "ItkDisplacementFieldSinkComponent",
-        "Dimensionality": "2"
-    },
-    "Component": {
-        "Name": "Metric",
-        "NameOfClass": "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component",
-        "Dimensionality": "2"
-    },
-    "Component": {
-        "Name": "Optimizer",
-        "NameOfClass": "ItkGradientDescentOptimizerv4Component",
-        "NumberOfIterations": "32",
-		"LearningRate": "1.0",
-        "EstimateScales": "False",
-        "EstimateLearningRate": "False"
-    },
-    "Component": {
-        "Name": "Transform",
-        "NameOfClass": "ItkGaussianExponentialDiffeomorphicTransformComponent",
-  		"InternalComputationValueType": "double",
-        "Dimensionality": "2",
-        "GaussianSmoothingVarianceForTheConstantVelocityField": "1.0",
-        "GaussianSmoothingVarianceForTheUpdateField": "1.0"
-    },
-	"Component": {
-        "Name": "TransformResolutionAdaptor",
-        "NameOfClass": "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent",
-  		"ShrinkFactorsPerLevel": [ "8", "4", "2" ],
-        "Dimensionality": "2"
-    },
-    "Component": {
-        "Name": "TransformDisplacementFilter",
-        "NameOfClass": "ItkTransformDisplacementFilterComponent",
-        "Dimensionality": "2"
-    },
-    "Connection": {
-        "Out": "FixedImage",
-        "In": "RegistrationMethod",
-        "NameOfInterface": "itkImageFixedInterface"
-    },
-    "Connection": {
-        "Out": "MovingImage",
-        "In": "RegistrationMethod",
-        "NameOfInterface": "itkImageMovingInterface"
-    },
-    "Connection": {
-        "Out": "RegistrationMethod",
-        "In": "TransformDisplacementFilter",
-        "NameOfInterface": "itkTransformInterface"
-    },
-    "Connection": {
-        "Out": "TransformDisplacementFilter",
-        "In": "DisplacementField",
-        "NameOfInterface": "itkDisplacementFieldInterface"
-    },
-    "Connection": {
-        "Out": "Metric",
-        "In": "RegistrationMethod",
-        "NameOfInterface": "itkMetricv4Interface"
-    },
-    "Connection": {
-        "Out": "FixedImage",
-        "In": "Transform",
-        "NameOfInterface": "itkImageDomainFixedInterface"
-    },
-    "Connection": {
-        "Out": "Transform",
-        "In": "RegistrationMethod",
-        "NameOfInterface": "itkTransformInterface"
-    },
-	"Connection": {
-        "Out": "FixedImage",
-        "In": "TransformResolutionAdaptor",
-        "NameOfInterface": "itkImageDomainFixedInterface"
-    },
-	"Connection": {
-        "Out": "TransformResolutionAdaptor",
-        "In": "RegistrationMethod"
-    },
-    "Connection": {
-        "Out": "Optimizer",
-        "In": "RegistrationMethod",
-        "NameOfInterface": "itkOptimizerv4Interface"
-    },
-	"Connection": {
-        "Out": "FixedImage",
-        "In": "TransformDisplacementFilter",
-        "NameOfInterface": "itkImageDomainFixedInterface"
-    }
+    "Components": [
+        {
+            "Name": "RegistrationMethod",
+            "NameOfClass": "ItkImageRegistrationMethodv4Component",
+            "NumberOfLevels":  "3" ,
+            "ShrinkFactorsPerLevel": [ "8", "4", "2"  ],
+            "SmoothingSigmasPerLevel": [ "4", "2", "1"  ],
+            "Dimensionality": "2"
+        },
+        {
+            "Name": "FixedImage",
+            "NameOfClass": "ItkImageSourceComponent",
+            "Dimensionality": "2"
+        },
+        {
+            "Name": "MovingImage",
+            "NameOfClass": "ItkImageSourceComponent",
+            "Dimensionality": "2"
+        },
+        {
+            "Name": "FixedMask",
+            "NameOfClass": "ItkImageSourceComponent",
+            "Dimensionality": "2",
+            "PixelType": "float"
+        },
+        {
+            "Name": "MovingMask",
+            "NameOfClass": "ItkImageSourceComponent",
+            "Dimensionality": "2",
+            "PixelType": "float"
+        },
+        {
+            "Name": "DisplacementField",
+            "NameOfClass": "ItkDisplacementFieldSinkComponent",
+            "Dimensionality": "2"
+        },
+        {
+            "Name": "Metric",
+            "NameOfClass": "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component",
+            "Dimensionality": "2"
+        },
+        {
+            "Name": "Optimizer",
+            "NameOfClass": "ItkGradientDescentOptimizerv4Component",
+            "NumberOfIterations": "32",
+            "LearningRate": "1.0",
+            "EstimateScales": "False",
+            "EstimateLearningRate": "False"
+        },
+        {
+            "Name": "Transform",
+            "NameOfClass": "ItkGaussianExponentialDiffeomorphicTransformComponent",
+            "InternalComputationValueType": "double",
+            "Dimensionality": "2",
+            "GaussianSmoothingVarianceForTheConstantVelocityField": "1.0",
+            "GaussianSmoothingVarianceForTheUpdateField": "1.0"
+        },
+        {
+            "Name": "TransformResolutionAdaptor",
+            "NameOfClass": "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent",
+            "ShrinkFactorsPerLevel": [ "8", "4", "2" ],
+            "Dimensionality": "2"
+        },
+        {
+            "Name": "TransformDisplacementFilter",
+            "NameOfClass": "ItkTransformDisplacementFilterComponent",
+            "Dimensionality": "2"
+        }
+    ],
+    "Connections": [
+        {
+            "Out": "FixedImage",
+            "In": "RegistrationMethod",
+            "NameOfInterface": "itkImageFixedInterface"
+        },
+        {
+            "Out": "MovingImage",
+            "In": "RegistrationMethod",
+            "NameOfInterface": "itkImageMovingInterface"
+        },
+        {
+            "Out": "RegistrationMethod",
+            "In": "TransformDisplacementFilter",
+            "NameOfInterface": "itkTransformInterface"
+        },
+        {
+            "Out": "TransformDisplacementFilter",
+            "In": "DisplacementField",
+            "NameOfInterface": "itkDisplacementFieldInterface"
+        },
+        {
+            "Out": "Metric",
+            "In": "RegistrationMethod",
+            "NameOfInterface": "itkMetricv4Interface"
+        },
+        {
+            "Out": "FixedImage",
+            "In": "Transform",
+            "NameOfInterface": "itkImageDomainFixedInterface"
+        },
+        {
+            "Out": "Transform",
+            "In": "RegistrationMethod",
+            "NameOfInterface": "itkTransformInterface"
+        },
+        {
+            "Out": "FixedImage",
+            "In": "TransformResolutionAdaptor",
+            "NameOfInterface": "itkImageDomainFixedInterface"
+        },
+        {
+            "Out": "TransformResolutionAdaptor",
+            "In": "RegistrationMethod"
+        },
+        {
+            "Out": "Optimizer",
+            "In": "RegistrationMethod",
+            "NameOfInterface": "itkOptimizerv4Interface"
+        },
+        {
+            "Out": "FixedImage",
+            "In": "TransformDisplacementFilter",
+            "NameOfInterface": "itkImageDomainFixedInterface"
+        }
+    ]
 }

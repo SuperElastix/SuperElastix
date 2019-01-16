@@ -1,21 +1,13 @@
 {
     "Datasets": [
-        "POPI",
-        "DIRLAB",
-        "EMPIRE",
-        "LPBA40",
-        "ISBR18",
-        "CUMC12",
-        "MGH10",
-        "SPREAD",
-        "HAMMERS"
+        "LUNG2D"
     ],
     "Components": [
         {
             "Name": "MultiStageTransformController",
             "NameOfClass": "NiftyregItkMultiStageComponent",
             "ExecutionOrder": [ "RegistrationMethod1", "RegistrationMethod2" ],
-            "Dimensionality": "3",
+            "Dimensionality": "2",
             "PixelType": "double"
         },
         {
@@ -27,7 +19,7 @@
             "Name": "RegistrationMethod2",
             "NameOfClass": "ItkImageRegistrationMethodv4Component",
             "InternalComputationValueType": "double",
-            "Dimensionality": "3",
+            "Dimensionality": "2",
             "PixelType": "float",
             "NumberOfLevels": "3",
             "ShrinkFactorsPerLevel": ["12", "8", "4"],
@@ -37,36 +29,36 @@
             "Name": "TransformResolutionAdaptor",
             "NameOfClass": "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent",
             "ShrinkFactorsPerLevel": ["12", "8", "4"],
-            "Dimensionality": "3"
+            "Dimensionality": "2"
         },
         {
             "Name": "FixedImage",
             "NameOfClass": "ItkToNiftiImageHybridSourceComponent",
-            "Dimensionality": "3",
+            "Dimensionality": "2",
             "PixelType": "float"
         },
         {
             "Name": "MovingImage",
             "NameOfClass": "ItkToNiftiImageHybridSourceComponent",
-            "Dimensionality": "3",
+            "Dimensionality": "2",
             "PixelType": "float"
         },
         {
             "Name": "FixedMask",
             "NameOfClass": "ItkImageSourceComponent",
             "PixelType": "unsigned char",
-            "Dimensionality": "3"
+            "Dimensionality": "2"
         },
         {
             "Name": "MovingMask",
             "NameOfClass": "ItkImageSourceComponent",
             "PixelType": "unsigned char",
-            "Dimensionality": "3"
+            "Dimensionality": "2"
         },
         {
             "Name": "Metric2",
             "NameOfClass": "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component",
-            "Dimensionality": "3",
+            "Dimensionality": "2",
             "PixelType": "float"
         },
         {
@@ -79,7 +71,7 @@
             "Name": "Optimizer2",
             "NameOfClass": "ItkGradientDescentOptimizerv4Component",
             "InternalComputationValueType": "double",
-            "NumberOfIterations": "30",
+            "NumberOfIterations": "160",
             "EstimateScales": "False",
             "EstimateLearningRate": "False",
             "LearningRate": "1.0"
@@ -87,85 +79,85 @@
         {
             "Name": "DisplacementField",
             "NameOfClass": "ItkDisplacementFieldSinkComponent",
-            "Dimensionality": "3",
+            "Dimensionality": "2",
             "PixelType": "float"
         },
         {
             "Name": "TransformToDisplacementField",
             "NameOfClass": "ItkTransformDisplacementFilterComponent",
-            "Dimensionality": "3",
+            "Dimensionality": "2",
             "PixelType": "float"
         }
     ],
     "Connections": [
-        {
-            "Out": "TransformResolutionAdaptor",
-            "In": "RegistrationMethod2"
-        },
-        {
-            "Out": "FixedImage",
-            "In": "TransformResolutionAdaptor"
-        },
-        {
-            "Out": "FixedImage",
-            "In": "RegistrationMethod1"
-        },
-        {
-            "Out": "MovingImage",
-            "In": "RegistrationMethod1"
-        },
-        {
-            "Out": "FixedImage",
-            "In": "RegistrationMethod2"
-        },
-        {
-            "Out": "MovingImage",
-            "In": "RegistrationMethod2"
-        },
-        {
-            "Out": "Metric2",
-            "In": "RegistrationMethod2"
-        },
-        {
-            "Out": "Transform2",
-            "In": "RegistrationMethod2"
-        },
-        {
-            "Out": "Optimizer2",
-            "In": "RegistrationMethod2"
-        },
-        {
-            "Out": "FixedImage",
-            "In": "Transform2"
-        },
-        {
-            "Out": "RegistrationMethod1",
-            "In": "MultiStageTransformController"
-        },
-        {
-            "Out": "RegistrationMethod2",
-            "In": "MultiStageTransformController"
-        },
-        {
-            "Out": "RegistrationMethod2",
-            "In": "TransformToDisplacementField"
-        },
-        {
-            "Out": "FixedImage",
-            "In": "TransformToDisplacementField",
-            "NameOfInterface": "itkImageDomainFixedInterface"
-        },
-        {
-            "Out": "TransformToDisplacementField",
-            "In": "DisplacementField"
-        },
-        {
-            "Out": "FixedMask",
-            "In": "Metric2"
-        },
-        {
-            "Out": "MovingMask",
-            "In": "Metric2"
-        }
+          {
+              "Out": "TransformResolutionAdaptor",
+              "In": "RegistrationMethod2"
+          },
+          {
+              "Out": "FixedImage",
+              "In": "TransformResolutionAdaptor"
+          },
+          {
+              "Out": "FixedImage",
+              "In": "RegistrationMethod1"
+          },
+          {
+              "Out": "MovingImage",
+              "In": "RegistrationMethod1"
+          },
+          {
+              "Out": "FixedImage",
+              "In": "RegistrationMethod2"
+          },
+          {
+              "Out": "MovingImage",
+              "In": "RegistrationMethod2"
+          },
+          {
+              "Out": "Metric2",
+              "In": "RegistrationMethod2"
+          },
+          {
+              "Out": "Transform2",
+              "In": "RegistrationMethod2"
+          },
+          {
+              "Out": "Optimizer2",
+              "In": "RegistrationMethod2"
+          },
+          {
+              "Out": "FixedImage",
+              "In": "Transform2"
+          },
+          {
+              "Out": "RegistrationMethod1",
+              "In": "MultiStageTransformController"
+          },
+          {
+              "Out": "RegistrationMethod2",
+              "In": "MultiStageTransformController"
+          },
+          {
+              "Out": "RegistrationMethod2",
+              "In": "TransformToDisplacementField"
+          },
+          {
+              "Out": "FixedImage",
+              "In": "TransformToDisplacementField",
+              "NameOfInterface": "itkImageDomainFixedInterface"
+          },
+          {
+              "Out": "TransformToDisplacementField",
+              "In": "DisplacementField"
+          },
+          {
+              "Out": "FixedMask",
+              "In": "Metric2"
+          },
+          {
+              "Out": "MovingMask",
+              "In": "Metric2"
+          }
     ]
 }

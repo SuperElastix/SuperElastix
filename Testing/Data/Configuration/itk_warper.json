@@ -1,37 +1,41 @@
 {
-    "Component": {
-        "Name": "ResampleFilter",
-        "NameOfClass": "ItkResampleFilterComponent"
-    },
-    "Component": {
-        "Name": "TransformSource",
-        "NameOfClass": "ItkTransformSourceComponent",
-		"Dimensionality": "2",
-		"InternalComputationValueType": "double"
-    },
-    "Component": {
-        "Name": "FixedAndMovingImageSource",
-        "NameOfClass": "ItkImageSourceComponent",
-		"Dimensionality": "2",
-		"PixelType": "float"
-    },
-    "Component": {
-        "Name": "ResultImageSink",
-        "NameOfClass": "ItkImageSinkComponent",
-		"Dimensionality": "2",
-		"PixelType": "float"
-    },
-	"Connection": {
-        "Out": "FixedAndMovingImageSource",
-        "In": "ResampleFilter"
-    },	
-	"Connection": {
-        "Out": "TransformSource",
-        "In": "ResampleFilter"
-    },	
-	"Connection": {
-        "Out": "ResampleFilter",
-        "In": "ResultImageSink",
-        "NameOfInterface": "itkImageInterface"
-    }
+    "Components": [
+        {
+            "Name": "ResampleFilter",
+            "NameOfClass": "ItkResampleFilterComponent"
+        },
+        {
+            "Name": "TransformSource",
+            "NameOfClass": "ItkTransformSourceComponent",
+            "Dimensionality": "2",
+            "InternalComputationValueType": "double"
+        },
+        {
+            "Name": "FixedAndMovingImageSource",
+            "NameOfClass": "ItkImageSourceComponent",
+            "Dimensionality": "2",
+            "PixelType": "float"
+        },
+        {
+            "Name": "ResultImageSink",
+            "NameOfClass": "ItkImageSinkComponent",
+            "Dimensionality": "2",
+            "PixelType": "float"
+        }
+    ],
+	"Connections": [
+        {
+            "Out": "FixedAndMovingImageSource",
+            "In": "ResampleFilter"
+        },
+        {
+            "Out": "TransformSource",
+            "In": "ResampleFilter"
+        },
+        {
+            "Out": "ResampleFilter",
+            "In": "ResultImageSink",
+            "NameOfInterface": "itkImageInterface"
+        }
+    ]
 }

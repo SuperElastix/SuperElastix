@@ -1,20 +1,24 @@
 {
-    "Component": {
-        "Name": "ComponentA"
-    },
-    "Component": {
-        "Name": "ComponentB"
-    },
-    "Connection": {
-        "Name": "FirstConnection",
-        "Out": "ComponentA",
-        "In": "ComponentB",
-        "NameOfInterface": "FirstInterface"
-    },
-    "Connection": {
-        "Name": "SecondConnection",
-        "Out": "ComponentA",
-        "In": "ComponentB",
-        "NameOfInterface": "SecondInterface"
-    }
+    "Components": [
+        {
+            "Name": "ComponentA"
+        },
+        {
+            "Name": "ComponentB"
+        }
+    ],
+    "Connections": [
+        {
+            "Name": "FirstConnection",
+            "Out": "ComponentA",
+            "In": "ComponentB",
+            "NameOfInterface": "FirstInterface"
+        },
+        {
+            "Name": "SecondConnection",
+            "Out": "ComponentA",
+            "In": "ComponentB",
+            "NameOfInterface": "SecondInterface"
+        }
+    ]
 }

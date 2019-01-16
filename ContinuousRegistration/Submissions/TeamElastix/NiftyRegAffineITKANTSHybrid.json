@@ -21,7 +21,7 @@
         {
             "Name": "RegistrationMethod1",
             "NameOfClass": "NiftyregAladinComponent",
-            "NumberOfIterations": "10"
+            "NumberOfIterations": "50"
         },
         {
             "Name": "RegistrationMethod2",
@@ -30,13 +30,14 @@
             "Dimensionality": "3",
             "PixelType": "float",
             "NumberOfLevels": "3",
-            "ShrinkFactorsPerLevel": ["12", "8", "4"],
-            "SmoothingSigmasPerLevel": ["4", "2", "1"]
+            "ShrinkFactorsPerLevel": ["8", "4", "2"],
+            "SmoothingSigmasPerLevel": ["4", "2", "1"],
+            "NumberOfIterations": "50"
         },
         {
             "Name": "TransformResolutionAdaptor",
             "NameOfClass": "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent",
-            "ShrinkFactorsPerLevel": ["12", "8", "4"],
+            "ShrinkFactorsPerLevel": ["8", "4", "2"],
             "Dimensionality": "3"
         },
         {
@@ -71,18 +72,12 @@
         },
         {
             "Name": "Transform2",
-            "NameOfClass": "ItkGaussianExponentialDiffeomorphicTransformComponent",
-            "GaussianSmoothingVarianceForTheConstantVelocityField": "1.0",
-            "GaussianSmoothingVarianceForTheUpdateField": "1.0"
+            "NameOfClass": "ItkGaussianExponentialDiffeomorphicTransformComponent"
         },
         {
             "Name": "Optimizer2",
             "NameOfClass": "ItkGradientDescentOptimizerv4Component",
-            "InternalComputationValueType": "double",
-            "NumberOfIterations": "30",
-            "EstimateScales": "False",
-            "EstimateLearningRate": "False",
-            "LearningRate": "1.0"
+            "InternalComputationValueType": "double"
         },
         {
             "Name": "DisplacementField",

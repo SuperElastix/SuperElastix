@@ -89,7 +89,21 @@ ItkGaussianExponentialDiffeomorphicTransformComponent< InternalComputationValueT
   else if( status == CriterionStatus::Failed )
   {
     return false;
-  } // else: CriterionStatus::Unknown
+  }
+  else if( criterion.first == "GaussianSmoothingVarianceForTheConstantVelocityField" ) //Supports this?
+  {
+    if( criterion.second.size() != 1 ) return false;
+
+    this->m_Transform->SetGaussianSmoothingVarianceForTheConstantVelocityField( std::stof(criterion.second[0]) );
+    meetsCriteria = true;
+  }
+  else if( criterion.first == "GaussianSmoothingVarianceForTheUpdateField" ) //Supports this?
+  {
+    if( criterion.second.size() != 1 ) return false;
+
+    this->m_Transform->SetGaussianSmoothingVarianceForTheUpdateField( std::stof(criterion.second[0]) );
+    meetsCriteria = true;
+  }
 
   return meetsCriteria;
 }
