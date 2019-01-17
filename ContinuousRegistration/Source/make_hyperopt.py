@@ -1,14 +1,13 @@
+import sys, os, time, glob, copy, shutil, numpy as np
+from subprocess import Popen
+
 from ContinuousRegistration.Source.make_registration_scripts import parser, run as make_registration_scripts
 from ContinuousRegistration.Source.make_evaluation import run as make_evaluation
 from ContinuousRegistration.Source.util import write_json
+from ContinuousRegistration.Source.datasets import load_datasets
 
 from hyperopt import fmin, tpe, hp
-from ContinuousRegistration.Source.datasets import load_datasets
-import shutil, numpy as np
 
-import sys, os, time
-from subprocess import Popen, check_output
-import glob, copy
 
 def exec_commands(parameters, cmds):
     ''' Exec commands in parallel in multiple process
@@ -52,39 +51,37 @@ class objective():
     def __call__(self, hyperopts):
         # Write new blueprint to disk
         blueprint = copy.deepcopy(parameters.blueprint)
+        blueprint["Components"] += list(hyperopts.values())
 
-        for key, value in hyperopts.items():
-            blueprint["Components"].append(value)
-
-        write_json(os.path.join(parameters.submissions_directory, parameters.team_name, self.parameters.blueprint_file_name[0]), blueprint)
+        write_json(os.path.join(parameters.submissions_directory,
+                                parameters.team_name,
+                                self.parameters.blueprint_file_name[0]), blueprint)
 
         # Make shell scripts for running registrations. Scripts from previous iterations will be overridden
         make_registration_scripts(self.parameters)
 
         # Run registrations
-        if sys.platform == 'win32':
-            try:
+        try:
+            if sys.platform == 'win32':
                 exec_commands(parameters,
                               glob.glob(os.path.join(parameters.output_directory, '*', '*', 'bat', '*.bat')))
-            except Exception as e:
-                print(e)
-        else:
-            try:
+            else:
                 exec_commands(parameters,
                               glob.glob(os.path.join(parameters.output_directory, '*', '*', 'sh', '*.sh')))
-            except Exception as e:
-                print(e)
+        except Exception as e:
+            print(e)
 
         # Evaluate and report target metric
         results = make_evaluation(parameters)
         result = []
-        for team_results in results:
-            for blueprint_results in team_results:
-                for dataset_results in blueprint_results:
-                    for registration_results in dataset_results:
-                        result.append(registration_results[parameters.metric])
+        for team_name, team_results in results.items():
+            for blueprint_name, blueprint_results in team_results.items():
+                for dataset_name, dataset_results in blueprint_results.items():
+                    for dataset_result in dataset_results:
+                        for registration_name, registration_result in dataset_result.items():
+                            result.append(registration_result[parameters.metric])
 
-        return np.nanmean(result)
+        return np.nanmean(results)
 
     def __del__(self):
         for file in os.listdir(self.parameters.output_directory):
@@ -103,7 +100,7 @@ def run(parameters, space):
     best = fmin(fn=fn,
                 space=space,
                 algo=tpe.suggest,
-                max_evals=parameters.max_blueprint_evaluations)
+                max_evals=parameters.maximum_number_of_blueprint_evaluations)
 
     print(best)
 
@@ -204,13 +201,15 @@ if __name__ == '__main__':
             "NiftyRegAffineHyperOptComponent": {
                 "Name": "NiftyRegAffine",
                 "NameOfClass": "NiftyregAladinComponent",
-                "NumberOfResolutions": hp.quniform('NiftyRegAffine_NumberOfResolutions', 2, 5, 1)
+                "NumberOfResolutions": hp.quniform('NiftyRegAffine_NumberOfResolutions', 2, 5, 1),
+                "NumberOfIterations": "30"
             },
             "NiftyRegBSplineHyperOptComponent": {
                 "Name": "NiftyRegSpline",
                 "NameOfClass": "Niftyregf3dComponent",
                 "SmoothingSigma": hp.quniform('NiftyRegSpline_SmoothingSigma', 1, 8, 1),
-                "NumberOfResolutions": hp.quniform('NiftyRegSpline_NumberOfResolutions', 2, 5, 1)
+                "NumberOfResolutions": hp.quniform('NiftyRegSpline_NumberOfResolutions', 2, 5, 1),
+                "NumberOfIterations": "30"
             }
         }
     ])

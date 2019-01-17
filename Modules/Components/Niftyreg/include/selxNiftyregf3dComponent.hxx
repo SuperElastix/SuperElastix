@@ -274,7 +274,7 @@ Niftyregf3dComponent<  TPixel >
       return false;
     }
   }
-  else if( criterion.first == "NumberOfIterations" || criterion.first == "MaximalIterationNumber" ) //Supports this?
+  else if( criterion.first == "NumberOfIterations" || criterion.first == "MaximumNumberOfIterations" || criterion.first == "MaximalIterationNumber" ) //Supports this?
   {
     meetsCriteria = true;
     if( criterion.second.size() == 1 )
