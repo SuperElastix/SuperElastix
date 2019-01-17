@@ -38,22 +38,22 @@ def run(parameters):
                         results[team_name][blueprint_name][dataset.name].append(dataset.evaluate(
                             parameters.superelastix, file_names, output_directory))
 
-                        if parameters.make_images:
+                        if hasattr(parameters, 'make_images') and parameters.make_images:
                             dataset.make_images(parameters.superelastix, file_names, output_directory)
 
-                        if parameters.make_labels:
+                        if hasattr(parameters, 'make_labels') and parameters.make_labels:
                             dataset.make_labels(parameters.superelastix, file_names, output_directory)
 
-                        if parameters.make_difference_images:
+                        if hasattr(parameters, 'make_difference_images') and parameters.make_difference_images:
                             dataset.make_difference_images(parameters.superelastix, file_names, output_directory)
 
-                        if parameters.make_checkerboards:
+                        if hasattr(parameters, 'make_checkerboards') and parameters.make_checkerboards:
                             dataset.make_checkerboards(parameters.superelastix, file_names, output_directory)
 
-                        if parameters.make_image_checkerboards:
+                        if hasattr(parameters, 'make_image_checkerboards') and parameters.make_image_checkerboards:
                             dataset.make_image_checkerboards(parameters.superelastix, file_names, output_directory)
 
-                        if parameters.make_label_checkerboards and dataset.name in ["CUMC12", "ISBR18", "LPBA40", "MGH10"]:
+                        if hasattr(parameters, 'make_label_checkerboards') and parameters.make_label_checkerboards and dataset.name in ["CUMC12", "ISBR18", "LPBA40", "MGH10"]:
                             dataset.make_label_checkerboards(parameters.superelastix, file_names, output_directory)
                     except Exception as e:
                         logging.error('Error during evaluation of %s\'s blueprint %s and dataset %s: %s'

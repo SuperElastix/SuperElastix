@@ -1,35 +1,39 @@
 {
-    "Component": {
-        "Name": "DisplacementFieldMeshWarper",
-        "NameOfClass": "ItkDisplacementFieldMeshWarperComponent",
-		"Dimensionality": "3"
-    },
-    "Component": {
-        "Name": "DisplacementField",
-        "NameOfClass": "ItkDisplacementFieldSourceComponent",
-        "Dimensionality": "3"
-    },
+    "Components": [
+        {
+            "Name": "DisplacementFieldMeshWarper",
+            "NameOfClass": "ItkDisplacementFieldMeshWarperComponent",
+            "Dimensionality": "3"
+        },
+        {
+            "Name": "DisplacementField",
+            "NameOfClass": "ItkDisplacementFieldSourceComponent",
+            "Dimensionality": "3"
+        },
 
-    "Component": {
-        "Name": "InputPointSet",
-        "NameOfClass": "ItkMeshSourceComponent",
-		"Dimensionality": "3"
-    },
-    "Component": {
-        "Name": "OutputPointSet",
-        "NameOfClass": "ItkMeshSinkComponent",
-		"Dimensionality": "3"
-    },
-	"Connection": {
-        "Out": "DisplacementField",
-        "In": "DisplacementFieldMeshWarper"
-    },
-	"Connection": {
-        "Out": "InputPointSet",
-        "In": "DisplacementFieldMeshWarper"
-    },
-	"Connection": {
-        "Out": "DisplacementFieldMeshWarper",
-        "In": "OutputPointSet"
-    }
+        {
+            "Name": "InputPointSet",
+            "NameOfClass": "ItkMeshSourceComponent",
+            "Dimensionality": "3"
+        },
+        {
+            "Name": "OutputPointSet",
+            "NameOfClass": "ItkMeshSinkComponent",
+            "Dimensionality": "3"
+        }
+    ],
+	"Connections": [
+        {
+            "Out": "DisplacementField",
+            "In": "DisplacementFieldMeshWarper"
+        },
+        {
+            "Out": "InputPointSet",
+            "In": "DisplacementFieldMeshWarper"
+        },
+        {
+            "Out": "DisplacementFieldMeshWarper",
+            "In": "OutputPointSet"
+        }
+    ]
 }

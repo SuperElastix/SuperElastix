@@ -274,7 +274,7 @@ Niftyregf3dComponent<  TPixel >
       return false;
     }
   }
-  else if( criterion.first == "NumberOfIterations" || criterion.first == "MaximalIterationNumber" ) //Supports this?
+  else if( criterion.first == "NumberOfIterations" || criterion.first == "MaximumNumberOfIterations" || criterion.first == "MaximalIterationNumber" ) //Supports this?
   {
     meetsCriteria = true;
     if( criterion.second.size() == 1 )
@@ -335,6 +335,14 @@ Niftyregf3dComponent<  TPixel >
     for( unsigned int d = 0; d < criterion.second.size(); ++d )
     {
       this->m_reg_f3d->SetSpacing( d, std::stof( criterion.second[ d ] ) );
+    }
+    meetsCriteria = true;
+  }
+  else if( criterion.first == "GridSpacingInPhysicalUnits" ) //Supports this?
+  {
+    for( unsigned int d = 0; d < criterion.second.size(); ++d )
+    {
+      this->m_reg_f3d->SetSpacing( d, -std::stof( criterion.second[ d ] ) );
     }
     meetsCriteria = true;
   }

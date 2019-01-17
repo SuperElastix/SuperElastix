@@ -21,7 +21,7 @@ class Dataset:
     def make_shell_scripts(superelastix, blueprint_file_name, file_names, output_directory):
         if not os.path.exists(os.path.join(output_directory, 'sh')):
             os.mkdir(os.path.join(output_directory, 'sh'))
-        COMMAND_TEMPLATE = '%s --conf \'%s\' --in %s %s --out DisplacementField=\'%s\' --loglevel trace --logfile \'%s\''
+        COMMAND_TEMPLATE = '#!/bin/sh\n%s --conf \'%s\' --in %s %s --out DisplacementField=\'%s\' --loglevel trace --logfile \'%s\''
 
         # Fixed=image0, Moving=image1, Output: image1_to_image0
         root = splitext(file_names['disp_field_file_names'][0])[0]
@@ -37,6 +37,7 @@ class Dataset:
                 os.path.join(output_directory, file_names['disp_field_file_names'][0]),
                 os.path.splitext(shell_script_file_name_0)[0] + '.log'))
 
+        os.chmod(shell_script_file_name_0, 0o777)
         logging.info('Wrote %s' % shell_script_file_name_0)
 
         # Fixed=image1, Moving=image0, Output: image0_to_image1
@@ -53,6 +54,7 @@ class Dataset:
                 os.path.join(output_directory, file_names['disp_field_file_names'][1]),
                 os.path.splitext(shell_script_file_name_1)[0] + '.log'))
 
+        os.chmod(shell_script_file_name_1, 0o777)
         logging.info('Wrote %s' % shell_script_file_name_1)
 
     def make_batch_scripts(self):
@@ -239,7 +241,7 @@ class BRAIN2D(Dataset):
     """
     Convenience data set for quickly testing registrations of brains in 2d.
     Useful when tuning very slow methods like ANTs. Simply wraps some
-    of our testing data and exposes it as a test dataset.
+    of our testing data and exposes it as a dataset.
     """
     def __init__(self, input_directory, output_directory):
         self.name = 'BRAIN2D'
