@@ -1,0 +1,112 @@
+/*=========================================================================
+ *
+ *  Copyright Leiden University Medical Center, Erasmus University Medical
+ *  Center and contributors
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *=========================================================================*/
+
+#ifndef selxCropperComponent_h
+#define selxCropperComponent_h
+
+#include "itkConnectedComponentImageFilter.h"
+#include "itkLabelGeometryImageFilter.h"
+#include "itkLabelImageToShapeLabelMapFilter.h"
+#include "itkExtractImageFilter.h"
+
+#include "selxSuperElastixComponent.h"
+#include "selxItkObjectInterfaces.h"
+
+namespace selx {
+template< int Dimensionality, class TPixel >
+class CropperComponent :
+  public SuperElastixComponent<
+    Accepting<
+      itkImageInterface< Dimensionality, TPixel >,
+      itkImageMaskInterface< Dimensionality, unsigned char >
+    >,
+    Providing<
+      itkImageInterface< Dimensionality, TPixel >,
+      UpdateInterface
+    >
+  >
+{
+public:
+  using Self = CropperComponent< Dimensionality, TPixel >;
+  using Pointer = std::shared_ptr< Self >;
+  using ConstPointer = std::shared_ptr< const Self >;
+
+  using Superclass = SuperElastixComponent<
+    Accepting<
+      itkImageInterface< Dimensionality, TPixel >,
+      itkImageMaskInterface< Dimensionality, unsigned char > >,
+    Providing<
+      itkImageInterface< Dimensionality, TPixel >,
+      UpdateInterface
+    >
+  >;
+
+  CropperComponent( const std::string & name, LoggerImpl & logger );
+
+  using ItkImageType = itk::Image< TPixel, Dimensionality >;
+  using ItkImagePointer = typename ItkImageType::Pointer;
+  using ItkImageMaskType = itk::Image< unsigned char, Dimensionality >;
+  using ItkImageMaskPointer = typename ItkImageMaskType::Pointer;
+  using ConnectedComponentImageFilterType = itk::ConnectedComponentImageFilter< ItkImageMaskType, ItkImageMaskType >;
+  using ConnectedComponentImageFilterPointer = typename ConnectedComponentImageFilterType::Pointer;
+  using LabelGeometryImageFilterType = itk::LabelGeometryImageFilter< ItkImageMaskType >;
+  using LabelGeometryImageFilterPointer = typename LabelGeometryImageFilterType::Pointer;
+  using ExtractImageFilterType = itk::ExtractImageFilter< ItkImageType, ItkImageType >;
+  using ExtractImageFilterPointer = typename ExtractImageFilterType::Pointer;
+
+  using CriterionType = ComponentBase::CriterionType;
+
+  // Accepting
+  int Accept( typename itkImageInterface< Dimensionality, TPixel >::Pointer ) override;
+  int Accept( typename itkImageMaskInterface< Dimensionality, unsigned char >::Pointer ) override;
+
+  // Providing
+  ItkImagePointer GetItkImage() override;
+
+  // Base methods
+  void Update() override;
+  bool MeetsCriterion( const CriterionType & criterion ) override;
+  static const char* GetDescription() { return "ItkCropper Component"; }
+
+private:
+
+  ConnectedComponentImageFilterPointer m_ConnectedComponentImageFilter;
+  LabelGeometryImageFilterPointer m_LabelGeometryImageFilter;
+  ExtractImageFilterPointer m_ExtractImageFilter;
+
+  int m_Pad;
+  ItkImagePointer m_Image;
+
+protected:
+
+  static inline const std::map< std::string, std::string > TemplateProperties()
+  {
+    return { { keys::NameOfClass, "ItkCropperComponent" }, { keys::PixelType, PodString< TPixel >::Get() }, { keys::Dimensionality, std::to_string( Dimensionality ) } };
+  }
+
+};
+
+
+} // namespace selx
+
+#ifndef ITK_MANUAL_INSTANTIATION
+#include "selxCropperComponent.hxx"
+#endif
+
+#endif // #define selxCropperComponent_h

@@ -22,7 +22,6 @@
 
 #include "selxSuperElastixComponent.h"
 #include "selxElastixInterfaces.h"
-#include "selxSinksAndSourcesInterfaces.h"
 #include "selxItkObjectInterfaces.h"
 
 #include "itkImageSource.h"
@@ -52,9 +51,7 @@ class MonolithicElastixComponent :
 public:
 
   /** Standard ITK typedefs. */
-  typedef MonolithicElastixComponent<
-    Dimensionality, TPixel
-    >                                     Self;
+  typedef MonolithicElastixComponent<Dimensionality, TPixel> Self;
   typedef SuperElastixComponent<
     Accepting<
     itkImageFixedInterface< Dimensionality, TPixel >,
