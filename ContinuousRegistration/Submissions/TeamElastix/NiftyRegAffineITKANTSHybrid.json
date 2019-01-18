@@ -21,7 +21,7 @@
         {
             "Name": "RegistrationMethod1",
             "NameOfClass": "NiftyregAladinComponent",
-            "NumberOfIterations": "50"
+            "MaximumNumberOfIterations": "1"
         },
         {
             "Name": "RegistrationMethod2",
@@ -31,8 +31,7 @@
             "PixelType": "float",
             "NumberOfLevels": "3",
             "ShrinkFactorsPerLevel": ["8", "4", "2"],
-            "SmoothingSigmasPerLevel": ["4", "2", "1"],
-            "NumberOfIterations": "50"
+            "SmoothingSigmasPerLevel": ["4", "2", "1"]
         },
         {
             "Name": "TransformResolutionAdaptor",
@@ -72,12 +71,19 @@
         },
         {
             "Name": "Transform2",
-            "NameOfClass": "ItkGaussianExponentialDiffeomorphicTransformComponent"
+            "NameOfClass": "ItkGaussianExponentialDiffeomorphicTransformComponent",
+            "GaussianSmoothingVarianceForTheUpdateField": "1.0",
+            "GaussianSmoothingVarianceForTheConstantVelocityField": "-1.0"
         },
         {
             "Name": "Optimizer2",
             "NameOfClass": "ItkGradientDescentOptimizerv4Component",
-            "InternalComputationValueType": "double"
+            "InternalComputationValueType": "double",
+            "MaximumNumberOfIterations": "1",
+            "EstimateLearningRate": "False",
+            "EstimateScales": "False",
+            "MaximumStepSizeInPhysicalUnits": "1.0",
+            "LearningRate": "1.0"
         },
         {
             "Name": "DisplacementField",

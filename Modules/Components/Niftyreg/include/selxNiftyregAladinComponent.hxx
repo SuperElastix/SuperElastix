@@ -113,7 +113,7 @@ NiftyregAladinComponent<  TPixel >
     return false;
   } // else: CriterionStatus::Unknown
 
-  else if (criterion.first == "NumberOfIterations" || criterion.first == "maxit" || criterion.first == "MaxIterations") //Supports this?
+  else if (criterion.first == "NumberOfIterations" || criterion.first == "maxit" || criterion.first == "MaximumNumberOfIterations") //Supports this?
   {
     meetsCriteria = true;
     if( criterion.second.size() == 1 )
