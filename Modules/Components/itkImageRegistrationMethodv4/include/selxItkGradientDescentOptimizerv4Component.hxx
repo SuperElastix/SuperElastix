@@ -71,7 +71,7 @@ ItkGradientDescentOptimizerv4Component< InternalComputationValueType >
     return false;
   } // else: CriterionStatus::Unknown
 
-  if( criterion.first == "NumberOfIterations" ) //Supports this?
+  if( criterion.first == "NumberOfIterations" || criterion.first == "MaximumNumberOfIterations" ) //Supports this?
   {
     if( criterion.second.size() != 1 )
     {
@@ -167,6 +167,17 @@ ItkGradientDescentOptimizerv4Component< InternalComputationValueType >
       else {
         meetsCriteria = false;
       }
+    }
+  }
+  else if( criterion.first == "MaximumStepSizeInPhysicalUnits" ) {
+    if( criterion.second.size() != 1 )
+    {
+      meetsCriteria = false;
+    }
+    else
+    {
+      this->m_Optimizer->SetMaximumStepSizeInPhysicalUnits( std::stof( criterion.second[0] ) );
+      meetsCriteria = true;
     }
   }
   return meetsCriteria;

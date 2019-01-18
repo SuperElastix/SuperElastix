@@ -20,13 +20,16 @@
             "NameOfClass": "Niftyregf3dComponent",
             "NumberOfResolutions": "4",
             "SmoothingSigma": "5.0",
-            "NumberOfIterations": "30"
+            "NumberOfIterations": "1",
+            "GridSpacingInPhysicalUnits": ["8", "8", "8"]
         },
         {
             "Name": "NiftyRegSpline2",
             "NameOfClass": "Niftyregf3dComponent",
-            "NumberOfResolutions": "2",
-            "NumberOfIterations": "30"
+            "NumberOfResolutions": "3",
+            "SmoothingSigma": "1.0",
+            "NumberOfIterations": "1",
+            "GridSpacingInPhysicalUnits": ["4", "4", "4"]
         },
         {
             "Name": "FixedImage",
