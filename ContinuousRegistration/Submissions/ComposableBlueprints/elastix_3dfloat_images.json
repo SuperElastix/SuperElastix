@@ -1,0 +1,28 @@
+{
+    "Components": [
+        {
+            "Name": "FixedMask",
+            "NameOfClass": "ItkImageSourceComponent",
+            "PixelType": "unsigned char",
+            "Dimensionality": "3"
+        },
+        {
+            "Name": "MovingMask",
+            "NameOfClass": "ItkImageSourceComponent",
+            "PixelType": "unsigned char",
+            "Dimensionality": "3"
+        }
+    ],
+    "Connections": [
+        {
+            "Out": "FixedMask",
+            "In": "Elastix",
+            "NameOfInterface": "itkImageFixedMaskInterface"
+        },
+        {
+            "Out": "MovingMask",
+            "In": "Elastix",
+            "NameOfInterface": "itkImageMovingMaskInterface"
+        }
+    ]
+}
