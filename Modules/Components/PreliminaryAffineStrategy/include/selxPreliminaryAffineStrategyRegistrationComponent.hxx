@@ -121,10 +121,11 @@ PreliminaryAffineStrategyRegistrationComponent< Dimensionality, TPixel >
   {
     return false; // The key is recognized, but the value is incorrect
   } // else: CriterionStatus::Unknown
+
   std::ostringstream oss;
-  oss << "Criterion function: got key: " << criterion.first << " and values:";
-  for (auto c : criterion.second) {oss << " " << c;}
-  this->m_Logger.Log(LogLevel::TRC, oss.str());
+  for (auto c : criterion.second) oss << " " << c;
+
+  // this->m_Logger.Log(LogLevel::TRC, "Got criterion \"{0}\": \"{1}\" ", criterion.first, oss.str());
   if (criterion.first == "UserMode")
   {
      m_userMode=std::stoi(criterion.second[0]);
@@ -132,10 +133,6 @@ PreliminaryAffineStrategyRegistrationComponent< Dimensionality, TPixel >
   {
     m_strategy=criterion.second[0];
   }
-     
-  //this->m_Logger.Log(LogLevel::TRC, std::string("Criterion function: got key: ") + criterion.first + "and value: " + criterion.second);
-  
-  // More check may follow.
   
   return true;
 }
