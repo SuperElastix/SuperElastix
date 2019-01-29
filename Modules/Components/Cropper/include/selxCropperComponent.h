@@ -38,6 +38,9 @@ class CropperComponent :
     >,
     Providing<
       itkImageInterface< Dimensionality, TPixel >,
+      itkImageFixedInterface< Dimensionality, TPixel >,
+      itkImageDomainFixedInterface< Dimensionality >,
+      itkImageMovingInterface< Dimensionality, TPixel >,
       UpdateInterface
     >
   >
@@ -53,6 +56,9 @@ public:
       itkImageMaskInterface< Dimensionality, unsigned char > >,
     Providing<
       itkImageInterface< Dimensionality, TPixel >,
+      itkImageFixedInterface< Dimensionality, TPixel >,
+      itkImageDomainFixedInterface< Dimensionality >,
+      itkImageMovingInterface< Dimensionality, TPixel >,
       UpdateInterface
     >
   >;
@@ -60,11 +66,11 @@ public:
   CropperComponent( const std::string & name, LoggerImpl & logger );
 
   using ItkImageType = itk::Image< TPixel, Dimensionality >;
+  using ItkImageDomainType = typename itkImageDomainFixedInterface< Dimensionality >::ItkImageDomainType;
+  using ItkImageDomainPointer = typename ItkImageDomainType::Pointer;
   using ItkImagePointer = typename ItkImageType::Pointer;
   using ItkImageMaskType = itk::Image< unsigned char, Dimensionality >;
   using ItkImageMaskPointer = typename ItkImageMaskType::Pointer;
-  using ConnectedComponentImageFilterType = itk::ConnectedComponentImageFilter< ItkImageMaskType, ItkImageMaskType >;
-  using ConnectedComponentImageFilterPointer = typename ConnectedComponentImageFilterType::Pointer;
   using LabelGeometryImageFilterType = itk::LabelGeometryImageFilter< ItkImageMaskType >;
   using LabelGeometryImageFilterPointer = typename LabelGeometryImageFilterType::Pointer;
   using ExtractImageFilterType = itk::ExtractImageFilter< ItkImageType, ItkImageType >;
@@ -78,6 +84,9 @@ public:
 
   // Providing
   ItkImagePointer GetItkImage() override;
+  ItkImagePointer GetItkImageFixed() override;
+  ItkImagePointer GetItkImageMoving() override;
+  ItkImageDomainPointer GetItkImageDomainFixed() override;
 
   // Base methods
   void Update() override;
@@ -86,12 +95,12 @@ public:
 
 private:
 
-  ConnectedComponentImageFilterPointer m_ConnectedComponentImageFilter;
   LabelGeometryImageFilterPointer m_LabelGeometryImageFilter;
   ExtractImageFilterPointer m_ExtractImageFilter;
 
   int m_Pad;
   ItkImagePointer m_Image;
+  ItkImageMaskPointer m_Mask;
 
 protected:
 
