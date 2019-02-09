@@ -34,12 +34,14 @@ template< int Dimensionality, class TPixel >
 class ItkImageSourceComponent :
   public SuperElastixComponent<
   Accepting< >,
-  Providing< SourceInterface, itkImageInterface< Dimensionality, TPixel >,
-  itkImageFixedInterface< Dimensionality, TPixel >,
-  itkImageMovingInterface< Dimensionality, TPixel >,
-  itkImageDomainFixedInterface< Dimensionality >,
-  itkImageMovingMaskInterface< Dimensionality, TPixel >,
-  itkImageFixedMaskInterface< Dimensionality, TPixel >>
+  Providing< SourceInterface,
+    itkImageInterface< Dimensionality, TPixel >,
+    itkImageMaskInterface< Dimensionality, TPixel >,
+    itkImageFixedInterface< Dimensionality, TPixel >,
+    itkImageMovingInterface< Dimensionality, TPixel >,
+    itkImageDomainFixedInterface< Dimensionality >,
+    itkImageMovingMaskInterface< Dimensionality, TPixel >,
+    itkImageFixedMaskInterface< Dimensionality, TPixel >>
   >
 {
 public:
@@ -50,12 +52,14 @@ public:
     >                                       Self;
   typedef SuperElastixComponent<
     Accepting< >,
-    Providing< SourceInterface, itkImageInterface< Dimensionality, TPixel >,
-    itkImageFixedInterface< Dimensionality, TPixel >,
-    itkImageMovingInterface< Dimensionality, TPixel >,
-    itkImageDomainFixedInterface< Dimensionality >,
-    itkImageMovingMaskInterface< Dimensionality, TPixel >,
-    itkImageFixedMaskInterface< Dimensionality, TPixel >>
+    Providing< SourceInterface,
+      itkImageInterface< Dimensionality, TPixel >,
+      itkImageMaskInterface< Dimensionality, TPixel >,
+      itkImageFixedInterface< Dimensionality, TPixel >,
+      itkImageMovingInterface< Dimensionality, TPixel >,
+      itkImageDomainFixedInterface< Dimensionality >,
+      itkImageMovingMaskInterface< Dimensionality, TPixel >,
+      itkImageFixedMaskInterface< Dimensionality, TPixel >>
     >                                       Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
@@ -77,6 +81,8 @@ public:
   virtual typename ItkImageType::Pointer GetItkImageMoving() override;
 
   virtual typename ItkImageDomainType::Pointer GetItkImageDomainFixed() override;
+
+  virtual typename ItkImageType::Pointer GetItkImageMask() override;
 
   virtual typename ItkImageType::Pointer GetItkImageFixedMask() override;
 
