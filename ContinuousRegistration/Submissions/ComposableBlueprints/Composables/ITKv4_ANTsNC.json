@@ -1,0 +1,8 @@
+{
+    "Components": [
+        {
+            "Name": "Metric",
+            "NameOfClass": "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component"
+        }
+    ]
+}

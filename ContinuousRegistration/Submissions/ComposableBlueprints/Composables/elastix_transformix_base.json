@@ -14,13 +14,11 @@
         },
         {
             "Name": "Transformix",
-            "NameOfClass": "MonolithicTransformixComponent",
-            "Dimensionality": "3"
+            "NameOfClass": "MonolithicTransformixComponent"
         },
         {
             "Name": "DisplacementField",
-            "NameOfClass": "ItkDisplacementFieldSinkComponent",
-            "Dimensionality": "3"
+            "NameOfClass": "ItkDisplacementFieldSinkComponent"
         }
     ],
     "Connections": [

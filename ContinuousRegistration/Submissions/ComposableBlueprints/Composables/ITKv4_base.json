@@ -1,0 +1,71 @@
+{
+    "Components": [
+        {
+            "Name": "RegistrationMethod"
+        },
+        {
+            "Name": "Metric"
+        },
+        {
+            "Name": "FixedImage",
+            "NameOfClass": "ItkImageSourceComponent"
+        },
+        {
+            "Name": "MovingImage",
+            "NameOfClass": "ItkImageSourceComponent"
+        },
+        {
+            "Name": "FixedMask",
+            "NameOfClass": "ItkImageSourceComponent"
+        },
+        {
+            "Name": "MovingMask",
+            "NameOfClass": "ItkImageSourceComponent"
+        },
+        {
+            "Name": "DisplacementField",
+            "NameOfClass": "ItkDisplacementFieldSinkComponent"
+        },
+        {
+            "Name": "TransformToDisplacementFilter",
+            "NameOfClass": "ItkTransformDisplacementFilterComponent"
+        }
+    ],
+    "Connections": [
+        {
+            "Out": "FixedImage",
+            "In": "RegistrationMethod",
+            "NameOfInterface": "itkImageFixedInterface"
+        },
+        {
+            "Out": "MovingImage",
+            "In": "RegistrationMethod",
+            "NameOfInterface": "itkImageMovingInterface"
+        },
+        {
+            "Out": "RegistrationMethod",
+            "In": "TransformToDisplacementFilter",
+            "NameOfInterface": "itkTransformInterface"
+        },
+        {
+            "Out": "TransformToDisplacementFilter",
+            "In": "DisplacementField",
+            "NameOfInterface": "itkDisplacementFieldInterface"
+        },
+        {
+            "Out": "Metric",
+            "In": "RegistrationMethod",
+            "NameOfInterface": "itkMetricv4Interface"
+        },
+        {
+            "Out": "FixedImage",
+            "In": "Transform",
+            "NameOfInterface": "itkImageDomainFixedInterface"
+        },
+        {
+            "Out": "FixedImage",
+            "In": "TransformToDisplacementFilter",
+            "NameOfInterface": "itkImageDomainFixedInterface"
+        }
+    ]
+}

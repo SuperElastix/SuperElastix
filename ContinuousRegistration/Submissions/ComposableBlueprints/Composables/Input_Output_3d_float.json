@@ -1,0 +1,28 @@
+{
+    "Components": [
+        {
+            "Name": "FixedImage",
+            "Dimensionality": "3",
+            "PixelType": "float"
+        },
+        {
+            "Name": "MovingImage",
+            "Dimensionality": "3",
+            "PixelType": "float"
+        },
+        {
+            "Name": "FixedMask",
+            "PixelType": "unsigned char",
+            "Dimensionality": "3"
+        },
+        {
+            "Name": "MovingMask",
+            "PixelType": "unsigned char",
+            "Dimensionality": "3"
+        },
+        {
+            "Name": "DisplacementField",
+            "Dimensionality": "3"
+        }
+    ]
+}

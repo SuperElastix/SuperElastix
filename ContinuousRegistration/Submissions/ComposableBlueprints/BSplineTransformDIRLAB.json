@@ -2,8 +2,8 @@
     "Datasets": ["DIRLAB", "EMPIRE", "SPREAD"],
     "Include": 
         [
-             "./ContinuousRegistration/Submissions/ComposableBlueprints/elastix_transformix_base.json",
-             "./ContinuousRegistration/Submissions/ComposableBlueprints/elastix_3dfloat_images.json"
+             "./ContinuousRegistration/Submissions/ComposableBlueprints/Composables/elastix_transformix_base.json",
+             "./ContinuousRegistration/Submissions/ComposableBlueprints/Composables/Input_Output_3d_float.json"
         ],
     "Components": [
         {

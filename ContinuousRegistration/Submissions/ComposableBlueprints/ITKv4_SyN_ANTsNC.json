@@ -1,0 +1,31 @@
+{
+    "Datasets": [
+        "POPI",
+        "DIRLAB",
+        "EMPIRE",
+        "LPBA40",
+        "ISBR18",
+        "CUMC12",
+        "MGH10",
+        "SPREAD",
+        "HAMMERS"
+    ],
+    "Include": 
+    [
+        "./ContinuousRegistration/Submissions/ComposableBlueprints/Composables/ITKv4_base.json",
+        "./ContinuousRegistration/Submissions/ComposableBlueprints/Composables/Input_Output_3d_float.json",
+        "./ContinuousRegistration/Submissions/ComposableBlueprints/Composables/ITKv4_ANTsNC.json"
+    ],
+    "Components": [
+        {
+            "Name": "RegistrationMethod",
+            "NameOfClass": "ItkSyNImageRegistrationMethodComponent",
+            "NumberOfLevels":  "3",
+            "NumberOfIterations": ["50", "50", "50"],
+            "ShrinkFactorsPerLevel": [ "8", "4", "2"],
+            "SmoothingSigmasPerLevel": [ "4", "4", "4"],
+            "LearningRate": "0.5",
+            "PixelType": "float"
+        }
+    ]
+}
