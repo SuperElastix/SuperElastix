@@ -1,0 +1,56 @@
+{
+    "Components": [
+        {
+            "Name": "Elastix",
+            "NameOfClass": "MonolithicElastixComponent"
+        },
+        {
+            "Name": "FixedImage",
+            "NameOfClass": "ItkImageSourceComponent"
+        },
+        {
+            "Name": "MovingImage",
+            "NameOfClass": "ItkImageSourceComponent"
+        },
+        {
+            "Name": "Transformix",
+            "NameOfClass": "MonolithicTransformixComponent"
+        },
+        {
+            "Name": "DisplacementField",
+            "NameOfClass": "ItkDisplacementFieldSinkComponent"
+        }
+    ],
+    "Connections": [
+        {
+            "Out": "FixedImage",
+            "In": "Elastix",
+            "NameOfInterface": "itkImageFixedInterface"
+        },
+        {
+            "Out": "MovingImage",
+            "In": "Elastix",
+            "NameOfInterface": "itkImageMovingInterface"
+        },
+        {
+            "Out": "FixedImage",
+            "In": "Transformix",
+            "NameOfInterface": "itkImageDomainFixedInterface"
+        },
+        {
+            "Out": "MovingImage",
+            "In": "Transformix",
+            "NameOfInterface": "itkImageMovingInterface"
+        },
+        {
+            "Out": "Elastix",
+            "In": "Transformix",
+            "NameOfInterface": "elastixTransformParameterObjectInterface"
+        },
+        {
+            "Out": "Transformix",
+            "In": "DisplacementField",
+            "NameOfInterface": "itkDisplacementFieldInterface"
+        }
+    ]
+}

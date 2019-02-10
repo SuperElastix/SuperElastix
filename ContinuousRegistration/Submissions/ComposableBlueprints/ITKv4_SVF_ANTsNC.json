@@ -1,0 +1,27 @@
+{
+    "Datasets": ["POPI", "DIRLAB", "EMPIRE", "LPBA40", "ISBR18", "CUMC12", "MGH10", "SPREAD", "HAMMERS"],
+    "Include": 
+        [
+             "./ContinuousRegistration/Submissions/ComposableBlueprints/Composables/ITKv4_base.json",
+             "./ContinuousRegistration/Submissions/ComposableBlueprints/Composables/ITKv4_Reg.json",
+             "./ContinuousRegistration/Submissions/ComposableBlueprints/Composables/Input_Output_3d_float.json",
+             "./ContinuousRegistration/Submissions/ComposableBlueprints/Composables/ITKv4_SVF.json",
+             "./ContinuousRegistration/Submissions/ComposableBlueprints/Composables/ITKv4_ANTsNC.json"
+        ],
+    "Components": [
+        {
+            "Name": "RegistrationMethod",
+            "NumberOfLevels":  "3" ,
+            "ShrinkFactorsPerLevel": [ "8", "4", "2"  ],
+            "SmoothingSigmasPerLevel": [ "4", "2", "1"  ]
+        },
+        {
+            "Name": "Optimizer",
+            "NameOfClass": "ItkGradientDescentOptimizerv4Component",
+            "NumberOfIterations": "32",
+            "LearningRate": "1.0",
+            "EstimateScales": "False",
+            "EstimateLearningRate": "False"
+        }
+    ]
+}
