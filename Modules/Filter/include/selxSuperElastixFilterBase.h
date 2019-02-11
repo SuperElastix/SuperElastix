@@ -36,6 +36,7 @@ namespace selx
 // Forward declaration, hiding implementation details and speeding up compilation time (PIMPL idiom)
 class NetworkBuilderBase;
 class NetworkBuilderFactoryBase;
+class NetworkContainer;
 
 class SuperElastixFilterBase : public itk::ProcessObject
 {
@@ -124,6 +125,7 @@ protected:
 
   std::unique_ptr< NetworkBuilderFactoryBase > m_NetworkBuilderFactory;
   std::unique_ptr< NetworkBuilderBase >        m_NetworkBuilder;
+  std::unique_ptr< NetworkContainer >          m_NetworkContainer;
   LoggerPointer m_Logger;
 
 private:

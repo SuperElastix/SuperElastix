@@ -20,6 +20,7 @@
 #include "selxSuperElastixFilterBase.h"
 #include "selxNetworkBuilder.h"
 #include "selxNetworkBuilderFactory.h"
+#include "selxNetworkContainer.h"
 
 namespace selx
 {
@@ -165,6 +166,18 @@ SuperElastixFilterBase
     itkExceptionMacro( << "One or more components has unsatisfied connections" )
   }
 
+  // Print citing information
+  this->m_NetworkBuilder->Cite();
+
+  this->m_NetworkContainer = std::make_unique<NetworkContainer>(this->m_NetworkBuilder->GetRealizedNetwork());
+
+  // delete the networkbuilder
+  this->m_NetworkBuilder = nullptr;
+
+  // Allow components to setup internal state AFTER all accepters/providers
+  // have been set BEFORE UpdateOutputInformation is called
+  this->m_NetworkContainer->BeforeUpdate();
+
   for( const auto & nameAndInterface : sinks )
   {
     // Update information: ask the mini pipeline what the size of the data will be
@@ -185,19 +198,11 @@ SuperElastixFilterBase
 {
   this->m_Logger->Log( LogLevel::INF, "Executing network ..." );
 
-  // Print citing information
-  this->m_NetworkBuilder->Cite();
-
-  auto fullyConfiguredNetwork = this->m_NetworkBuilder->GetRealizedNetwork();
-
-  // delete the networkbuilder
-  this->m_NetworkBuilder = nullptr;
-
   // This calls controller components that take over the control flow if the itk pipeline is broken.
-  fullyConfiguredNetwork.Execute();
+  this->m_NetworkContainer->Update();
 
   // Connect the itk pipeline.
-  auto outputObjectsMap = fullyConfiguredNetwork.GetOutputObjectsMap();
+  auto outputObjectsMap = this->m_NetworkContainer->GetOutputObjectsMap();
   for( const auto & nameAndObject : outputObjectsMap )
   {
     // Here we force all output to be updated.
@@ -205,6 +210,9 @@ SuperElastixFilterBase
     nameAndObject.second->Update();
     this->GetOutput( nameAndObject.first )->Graft( nameAndObject.second );
   }
+
+  // Deallocate network
+  this->m_NetworkContainer = nullptr;
 
   this->m_Logger->Log( LogLevel::INF, "Executing network ... Done" );
 }

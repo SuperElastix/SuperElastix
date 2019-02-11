@@ -30,12 +30,23 @@ NetworkContainer::NetworkContainer( ComponentContainerType components, UpdateOrd
 {
 }
 
+void
+NetworkContainer::BeforeUpdate()
+{
+  // For components that need to setup internal state before executing the network.
+  // The interface is executed in the right pipeline order.
+  for( const auto& updateInterface : this->m_UpdateOrder )
+  {
+    updateInterface->BeforeUpdate();
+  }
+}
 
 void
-NetworkContainer::Execute()
+NetworkContainer::Update()
 {
-  /** For those components that have an update interface the update is executed in the right pipeline order. **/
-  for( auto updateInterface : this->m_UpdateOrder )
+  // For components that need to do active work when the network is executed.
+  // // The interface is executed in the right pipeline order.
+  for( const auto& updateInterface : this->m_UpdateOrder )
   {
     updateInterface->Update();
   }
