@@ -33,8 +33,8 @@ template< class InternalComputationValueType, int Dimensionality >
 class ItkGaussianExponentialDiffeomorphicTransformComponent :
   public SuperElastixComponent<
   Accepting< itkImageDomainFixedInterface< Dimensionality >>,
-  Providing< itkTransformInterface< InternalComputationValueType, Dimensionality >>
-  >
+  Providing< itkTransformInterface< InternalComputationValueType, Dimensionality >,
+             UpdateInterface>>
 {
 public:
 
@@ -44,8 +44,8 @@ public:
     >                                       Self;
   typedef SuperElastixComponent<
     Accepting< itkImageDomainFixedInterface< Dimensionality >>,
-    Providing< itkTransformInterface< InternalComputationValueType, Dimensionality >>
-    >                                       Superclass;
+    Providing< itkTransformInterface< InternalComputationValueType, Dimensionality >,
+               UpdateInterface>> Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
 
@@ -71,6 +71,9 @@ public:
 
   //static const char * GetName() { return "ItkGaussianExponentialDiffeomorphicTransform"; } ;
   static const char * GetDescription() { return "ItkGaussianExponentialDiffeomorphicTransform Component"; }
+
+  // Get deformation field output region after all accepters and getters have been called
+  void BeforeUpdate() override;
 
 private:
 

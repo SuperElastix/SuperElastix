@@ -47,13 +47,19 @@ ItkGaussianExponentialDiffeomorphicTransformComponent< InternalComputationValueT
 ::Accept( typename itkImageDomainFixedInterface< Dimensionality >::Pointer component )
 {
   this->m_FixedImageDomain = component->GetItkImageDomainFixed();
+  return 0;
+}
 
+template< class InternalComputationValueType, int Dimensionality >
+void
+ItkGaussianExponentialDiffeomorphicTransformComponent< InternalComputationValueType, Dimensionality >
+::BeforeUpdate() {
   auto displacementField = GaussianExponentialDiffeomorphicTransformType::DisplacementFieldType::New();
-  //auto zeroVector = itk::NumericTraits<GaussianExponentialDiffeomorphicTransformType::DisplacementFieldType::PixelType>::Zero();
   auto zeroVector = typename GaussianExponentialDiffeomorphicTransformType::DisplacementFieldType::PixelType( 0.0 );
 
+  this->m_FixedImageDomain->UpdateOutputInformation();
   displacementField->CopyInformation( this->m_FixedImageDomain );
-  displacementField->SetRegions( this->m_FixedImageDomain->GetBufferedRegion() );
+  displacementField->SetRegions( this->m_FixedImageDomain->GetLargestPossibleRegion() );
   displacementField->Allocate();
   displacementField->FillBuffer( zeroVector );
 
@@ -62,16 +68,14 @@ ItkGaussianExponentialDiffeomorphicTransformComponent< InternalComputationValueT
   m_Transform->SetConstantVelocityField( displacementField );
   m_Transform->SetCalculateNumberOfIntegrationStepsAutomatically( true );
   m_Transform->IntegrateVelocityField();
-
-  return 0;
-}
+};
 
 
 template< class InternalComputationValueType, int Dimensionality >
 typename ItkGaussianExponentialDiffeomorphicTransformComponent< InternalComputationValueType, Dimensionality >::TransformPointer
 ItkGaussianExponentialDiffeomorphicTransformComponent< InternalComputationValueType, Dimensionality >::GetItkTransform()
 {
-  return (TransformPointer)this->m_Transform;
+  return (TransformPointer) this->m_Transform;
 }
 
 template< class InternalComputationValueType, int Dimensionality >
