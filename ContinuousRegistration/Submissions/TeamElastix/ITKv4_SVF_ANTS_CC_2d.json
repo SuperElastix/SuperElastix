@@ -7,7 +7,21 @@
             "NumberOfLevels":  "3" ,
             "ShrinkFactorsPerLevel": [ "8", "4", "2"  ],
             "SmoothingSigmasPerLevel": [ "4", "2", "1"  ],
-            "Dimensionality": "2"
+            "Dimensionality": "3"
+        },
+        {
+            "Name": "FixedImageCropper",
+            "NameOfClass": "ItkCropperComponent",
+            "Dimensionality": "2",
+            "PixelType": "float",
+            "Pad": 8
+        },
+        {
+            "Name": "MovingImageCropper",
+            "NameOfClass": "ItkCropperComponent",
+            "Dimensionality": "2",
+            "PixelType": "float",
+            "Pad": 8
         },
         {
             "Name": "FixedImage",
@@ -23,13 +37,13 @@
             "Name": "FixedMask",
             "NameOfClass": "ItkImageSourceComponent",
             "Dimensionality": "2",
-            "PixelType": "float"
+            "PixelType": "unsigned char"
         },
         {
             "Name": "MovingMask",
             "NameOfClass": "ItkImageSourceComponent",
             "Dimensionality": "2",
-            "PixelType": "float"
+            "PixelType": "unsigned char"
         },
         {
             "Name": "DisplacementField",
@@ -64,7 +78,7 @@
             "Dimensionality": "2"
         },
         {
-            "Name": "TransformDisplacementFilter",
+            "Name": "TransformToDisplacementFilter",
             "NameOfClass": "ItkTransformDisplacementFilterComponent",
             "Dimensionality": "2"
         }
@@ -72,21 +86,41 @@
     "Connections": [
         {
             "Out": "FixedImage",
+            "In": "FixedImageCropper",
+            "NameOfInterface": "itkImageInterface"
+        },
+        {
+            "Out": "FixedMask",
+            "In": "FixedImageCropper",
+            "NameOfInterface": "itkImageMaskInterface"
+        },
+        {
+            "Out": "FixedImageCropper",
             "In": "RegistrationMethod",
             "NameOfInterface": "itkImageFixedInterface"
         },
         {
             "Out": "MovingImage",
+            "In": "MovingImageCropper",
+            "NameOfInterface": "itkImageInterface"
+        },
+        {
+            "Out": "MovingMask",
+            "In": "MovingImageCropper",
+            "NameOfInterface": "itkImageMaskInterface"
+        },
+        {
+            "Out": "MovingImageCropper",
             "In": "RegistrationMethod",
             "NameOfInterface": "itkImageMovingInterface"
         },
         {
             "Out": "RegistrationMethod",
-            "In": "TransformDisplacementFilter",
+            "In": "TransformToDisplacementFilter",
             "NameOfInterface": "itkTransformInterface"
         },
         {
-            "Out": "TransformDisplacementFilter",
+            "Out": "TransformToDisplacementFilter",
             "In": "DisplacementField",
             "NameOfInterface": "itkDisplacementFieldInterface"
         },
@@ -96,7 +130,7 @@
             "NameOfInterface": "itkMetricv4Interface"
         },
         {
-            "Out": "FixedImage",
+            "Out": "FixedImageCropper",
             "In": "Transform",
             "NameOfInterface": "itkImageDomainFixedInterface"
         },
@@ -106,7 +140,7 @@
             "NameOfInterface": "itkTransformInterface"
         },
         {
-            "Out": "FixedImage",
+            "Out": "FixedImageCropper",
             "In": "TransformResolutionAdaptor",
             "NameOfInterface": "itkImageDomainFixedInterface"
         },
@@ -120,8 +154,8 @@
             "NameOfInterface": "itkOptimizerv4Interface"
         },
         {
-            "Out": "FixedImage",
-            "In": "TransformDisplacementFilter",
+            "Out": "FixedImageCropper",
+            "In": "TransformToDisplacementFilter",
             "NameOfInterface": "itkImageDomainFixedInterface"
         }
     ]
