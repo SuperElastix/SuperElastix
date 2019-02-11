@@ -29,12 +29,11 @@ template< int Dimensionality, class TPixel >
 CropperComponent< Dimensionality, TPixel >::CropperComponent( const std::string & name,
                                                               LoggerImpl & logger ) : Superclass( name, logger ) {
   this->m_LabelGeometryImageFilter
-    = LabelGeometryImageFilterType::New();;
+    = LabelGeometryImageFilterType::New();
   this->m_LabelGeometryImageFilter->CalculateOrientedBoundingBoxOn();
 
-  this->m_ExtractImageFilter
-    = ExtractImageFilterType::New();
-  this->m_ExtractImageFilter->SetDirectionCollapseToIdentity();
+  this->m_RegionOfInterestImageFilter
+    = RegionOfInterestImageFilterType::New();
 
   this->m_Pad = 0;
 }
@@ -44,11 +43,7 @@ int
 CropperComponent< Dimensionality, TPixel >::Accept( typename itkImageInterface< Dimensionality, TPixel >::Pointer component )
 {
   this->m_Image = component->GetItkImage();
-  this->m_Image->Update();
-  this->m_ExtractImageFilter->SetInput(this->m_Image);
-  this->m_Logger.Log(LogLevel::INF, "{0}: Got image with slice size [{1}, {2}]", this->m_Name,
-                     this->m_Image->GetLargestPossibleRegion().GetSize(0),
-                     this->m_Image->GetLargestPossibleRegion().GetSize(1));
+  this->m_RegionOfInterestImageFilter->SetInput(this->m_Image);
   return 0;
 }
 
@@ -57,30 +52,6 @@ int
 CropperComponent< Dimensionality, TPixel >::Accept( typename itkImageMaskInterface< Dimensionality, unsigned char >::Pointer component )
 {
   this->m_Mask = component->GetItkImageMask();
-  this->m_Mask->Update();
-
-  this->m_LabelGeometryImageFilter->SetInput(this->m_Mask);
-  this->m_LabelGeometryImageFilter->Update();
-  auto boundingBox = this->m_LabelGeometryImageFilter->GetBoundingBox(1);
-
-  typename itk::Index< Dimensionality > start;
-  start[0] = std::max(boundingBox.GetElement(0) - this->m_Pad, long(0));
-  start[1] = std::max(boundingBox.GetElement(2) - this->m_Pad, long(0));
-  if( Dimensionality > 2 ) start[2] = std::max(boundingBox.GetElement(4) - this->m_Pad, long(0));
-  if( Dimensionality > 3 ) start[3] = std::max(boundingBox.GetElement(6) - this->m_Pad, long(0));
-
-  typename itk::Size< Dimensionality > size;
-  auto imageSize = this->m_Image->GetBufferedRegion().GetSize();
-  size[0] = std::min(boundingBox.GetElement(1) - start[0] + 1 + this->m_Pad, long(this->m_Image->GetBufferedRegion().GetSize(0)));
-  size[1] = std::min(boundingBox.GetElement(3) - start[1] + 1 + this->m_Pad, long(this->m_Image->GetBufferedRegion().GetSize(1)));
-  if( Dimensionality > 2 ) size[2] = std::min(boundingBox.GetElement(5) - start[2] + 1 + this->m_Pad, long(this->m_Image->GetBufferedRegion().GetSize(2)));
-  if( Dimensionality > 3 ) size[3] = std::min(boundingBox.GetElement(7) - start[3] + 1 + this->m_Pad, long(this->m_Image->GetBufferedRegion().GetSize(3)));
-
-  this->m_Logger.Log(LogLevel::INF, "{0}: Cropping image to slice size [{1}, {2}]", this->m_Name, size[0], size[0]);
-
-  typename ItkImageType::RegionType region(start, size);
-  this->m_ExtractImageFilter->SetExtractionRegion(region);
-
   return 0;
 }
 
@@ -88,7 +59,7 @@ template< int Dimensionality, class TPixel >
 typename CropperComponent< Dimensionality, TPixel >::ItkImagePointer
 CropperComponent< Dimensionality, TPixel >::GetItkImage()
 {
-  return this->m_ExtractImageFilter->GetOutput();
+  return this->m_RegionOfInterestImageFilter->GetOutput();
 }
 
 template< int Dimensionality, class TPixel >
@@ -110,15 +81,56 @@ typename CropperComponent< Dimensionality, TPixel >::ItkImageDomainPointer
 CropperComponent< Dimensionality, TPixel >
 ::GetItkImageDomainFixed()
 {
-  return this->m_ExtractImageFilter->GetOutput();
+  // Implicitly casted to domain (itk::ImageBase)
+  return this->m_RegionOfInterestImageFilter->GetOutput();
+}
+
+template< int Dimensionality, class TPixel >
+void
+CropperComponent< Dimensionality, TPixel >::BeforeUpdate()
+{
+
+  this->m_Image->UpdateOutputInformation();
+  this->m_Mask->UpdateOutputInformation();
+
+  // Output information must be generated before downstream components are run
+  this->m_LabelGeometryImageFilter->SetInput(this->m_Mask);
+  this->m_LabelGeometryImageFilter->Update();
+  auto boundingBox = this->m_LabelGeometryImageFilter->GetBoundingBox(1);
+
+  typename itk::Index< Dimensionality > start;
+  start[0] = std::max(boundingBox.GetElement(0) - this->m_Pad, long(this->m_Image->GetLargestPossibleRegion().GetIndex(0)));
+  start[1] = std::max(boundingBox.GetElement(2) - this->m_Pad, long(this->m_Image->GetLargestPossibleRegion().GetIndex(1)));
+  if( Dimensionality > 2 ) start[2] = std::max(boundingBox.GetElement(4) - this->m_Pad, long(this->m_Image->GetLargestPossibleRegion().GetIndex(2)));
+  if( Dimensionality > 3 ) start[3] = std::max(boundingBox.GetElement(6) - this->m_Pad, long(this->m_Image->GetLargestPossibleRegion().GetIndex(3)));
+
+  {
+    std::stringstream ss;
+    ss << this->m_Image->GetLargestPossibleRegion();
+    this->m_Logger.Log(LogLevel::INF, "{0}: Got image with {1}", this->m_Name, ss.str());
+  }
+
+  typename itk::Size< Dimensionality > size;
+  size[0] = std::min(boundingBox.GetElement(1) - start[0] + 1 + this->m_Pad, long(this->m_Image->GetLargestPossibleRegion().GetSize(0)));
+  size[1] = std::min(boundingBox.GetElement(3) - start[1] + 1 + this->m_Pad, long(this->m_Image->GetLargestPossibleRegion().GetSize(1)));
+  if( Dimensionality > 2 ) size[2] = std::min(boundingBox.GetElement(5) - start[2] + 1 + this->m_Pad, long(this->m_Image->GetLargestPossibleRegion().GetSize(2)));
+  if( Dimensionality > 3 ) size[3] = std::min(boundingBox.GetElement(7) - start[3] + 1 + this->m_Pad, long(this->m_Image->GetLargestPossibleRegion().GetSize(3)));
+  typename ItkImageType::RegionType region(start, size);
+
+  {
+    std::stringstream ss;
+    ss << region;
+    this->m_Logger.Log(LogLevel::INF, "{0}: Cropping image to {1}", this->m_Name, ss.str());
+  }
+
+  this->m_RegionOfInterestImageFilter->SetRegionOfInterest(region);
 }
 
 template< int Dimensionality, class TPixel >
 void
 CropperComponent< Dimensionality, TPixel >::Update()
 {
-  this->m_ExtractImageFilter->Update();
-  std::cout << this->m_ExtractImageFilter << std::endl;
+
 }
 
 template< int Dimensionality, class TPixel >

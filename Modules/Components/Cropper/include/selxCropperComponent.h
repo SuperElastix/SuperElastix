@@ -23,7 +23,7 @@
 #include "itkConnectedComponentImageFilter.h"
 #include "itkLabelGeometryImageFilter.h"
 #include "itkLabelImageToShapeLabelMapFilter.h"
-#include "itkExtractImageFilter.h"
+#include "itkRegionOfInterestImageFilter.h"
 
 #include "selxSuperElastixComponent.h"
 #include "selxItkObjectInterfaces.h"
@@ -73,8 +73,8 @@ public:
   using ItkImageMaskPointer = typename ItkImageMaskType::Pointer;
   using LabelGeometryImageFilterType = itk::LabelGeometryImageFilter< ItkImageMaskType >;
   using LabelGeometryImageFilterPointer = typename LabelGeometryImageFilterType::Pointer;
-  using ExtractImageFilterType = itk::ExtractImageFilter< ItkImageType, ItkImageType >;
-  using ExtractImageFilterPointer = typename ExtractImageFilterType::Pointer;
+  using RegionOfInterestImageFilterType = itk::RegionOfInterestImageFilter< ItkImageType, ItkImageType >;
+  using RegionOfInterestImageFilterPointer = typename RegionOfInterestImageFilterType::Pointer;
 
   using CriterionType = ComponentBase::CriterionType;
 
@@ -89,6 +89,7 @@ public:
   ItkImageDomainPointer GetItkImageDomainFixed() override;
 
   // Base methods
+  void BeforeUpdate() override;
   void Update() override;
   bool MeetsCriterion( const CriterionType & criterion ) override;
   static const char* GetDescription() { return "ItkCropper Component"; }
@@ -96,7 +97,7 @@ public:
 private:
 
   LabelGeometryImageFilterPointer m_LabelGeometryImageFilter;
-  ExtractImageFilterPointer m_ExtractImageFilter;
+  RegionOfInterestImageFilterPointer m_RegionOfInterestImageFilter;
 
   int m_Pad;
   ItkImagePointer m_Image;
