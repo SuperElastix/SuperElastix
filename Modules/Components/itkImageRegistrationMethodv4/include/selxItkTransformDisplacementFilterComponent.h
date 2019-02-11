@@ -82,7 +82,7 @@ public:
   //Providing Interfaces:
   virtual typename DisplacementFieldType::Pointer GetItkDisplacementField() override;
 
-  virtual void Update() override;
+  virtual void BeforeUpdate() override;
 
   //BaseClass methods
   virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
@@ -93,6 +93,7 @@ public:
 private:
 
   typename DisplacementFieldFilterType::Pointer m_DisplacementFieldFilter;
+  typename itk::ImageBase<Dimensionality>::Pointer m_ImageDomainFixed;
   typename itkTransformInterface< TInternalComputationValue, Dimensionality >::Pointer m_TransformComponent;
 
 protected:
