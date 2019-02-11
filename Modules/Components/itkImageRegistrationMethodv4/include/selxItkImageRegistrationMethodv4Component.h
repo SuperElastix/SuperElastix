@@ -80,51 +80,51 @@ public:
   // Get the type definitions from the interfaces
 
   using FixedImageType   = typename itkImageFixedInterface< Dimensionality, PixelType >::ItkImageType;
+  using FixedImagePointer = typename FixedImageType::Pointer;
   using MovingImageType  = typename itkImageMovingInterface< Dimensionality, PixelType >::ItkImageType;
+  using MovingImagePointer = typename MovingImageType::Pointer;
   using TransformType    = typename itkTransformInterface< InternalComputationValueType, Dimensionality >::TransformType;
   using TransformPointer = typename itkTransformInterface< InternalComputationValueType, Dimensionality >::TransformPointer;
 
   using CompositeTransformType = typename MultiStageTransformInterface< InternalComputationValueType, Dimensionality >::CompositeTransformType;
   using TransformParametersAdaptorsContainerInterfaceType
-      = itkTransformParametersAdaptorsContainerInterface< InternalComputationValueType, Dimensionality >;
+          = itkTransformParametersAdaptorsContainerInterface< InternalComputationValueType, Dimensionality >;
 
-  typedef itk::ImageRegistrationMethodv4< FixedImageType, MovingImageType, TransformType > TheItkFilterType;
-  typedef typename TheItkFilterType::ImageMetricType                                       ImageMetricType;
-  typedef itk::RegistrationParameterScalesFromPhysicalShift< ImageMetricType >             ScalesEstimatorType;
+  using ImageRegistrationMethodv4Type
+          = itk::ImageRegistrationMethodv4< FixedImageType, MovingImageType, TransformType >;
+  using ImageMetricType = typename ImageRegistrationMethodv4Type::ImageMetricType;
+  using ImageRegistrationMethodv4Pointer = typename ImageRegistrationMethodv4Type::Pointer;
+  using ScalesEstimatorType = itk::RegistrationParameterScalesFromPhysicalShift< ImageMetricType >;
 
-  //Accepting Interfaces:
-  virtual int Accept( typename itkImageFixedInterface< Dimensionality, PixelType >::Pointer ) override;
+  // Accepting Interfaces:
+  int Accept( typename itkImageFixedInterface< Dimensionality, PixelType >::Pointer ) override;
+  int Accept( typename itkImageMovingInterface< Dimensionality, PixelType >::Pointer ) override;
+  int Accept( typename itkTransformInterface< InternalComputationValueType, Dimensionality >::Pointer ) override;
+  int Accept( typename TransformParametersAdaptorsContainerInterfaceType::Pointer ) override;
+  int Accept( typename itkMetricv4Interface< Dimensionality, PixelType, InternalComputationValueType >::Pointer ) override;
+  int Accept( typename itkOptimizerv4Interface< InternalComputationValueType >::Pointer ) override;
 
-  virtual int Accept( typename itkImageMovingInterface< Dimensionality, PixelType >::Pointer ) override;
-
-  virtual int Accept( typename itkTransformInterface< InternalComputationValueType, Dimensionality >::Pointer ) override;
-
-  virtual int Accept( typename TransformParametersAdaptorsContainerInterfaceType::Pointer ) override;
-
-  virtual int Accept( typename itkMetricv4Interface< Dimensionality, PixelType, InternalComputationValueType >::Pointer ) override;
-
-  virtual int Accept( typename itkOptimizerv4Interface< InternalComputationValueType >::Pointer ) override;
-
-  //Providing Interfaces:
-  virtual TransformPointer GetItkTransform() override;
-
-  virtual void Update() override;
-
-  virtual void SetFixedInitialTransform( typename CompositeTransformType::Pointer fixedInitialTransform ) override;
-
-  virtual void SetMovingInitialTransform( typename CompositeTransformType::Pointer movingInitialTransform ) override;
+  // Providing Interfaces:
+  TransformPointer GetItkTransform() override;
+  void Update() override;
+  void BeforeUpdate() override;
+  void SetFixedInitialTransform( typename CompositeTransformType::Pointer fixedInitialTransform ) override;
+  void SetMovingInitialTransform( typename CompositeTransformType::Pointer movingInitialTransform ) override;
 
   //BaseClass methods
-  virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
+  bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
 
-  virtual bool ConnectionsSatisfied() override;
+  bool ConnectionsSatisfied() override;
 
   //static const char * GetName() { return "ItkImageRegistrationMethodv4"; } ;
   static const char * GetDescription() { return "ItkImageRegistrationMethodv4 Component"; }
 
 private:
 
-  typename TheItkFilterType::Pointer m_theItkFilter;
+  FixedImagePointer m_FixedImage;
+  MovingImagePointer m_MovingImage;
+  ImageRegistrationMethodv4Pointer m_ImageRegistrationMethodv4Filter;
+  TransformPointer m_Transform;
 
   // The settings SmoothingSigmas and ShrinkFactors imply NumberOfLevels, if the user
   // provides inconsistent numbers we should detect that and report about it.
