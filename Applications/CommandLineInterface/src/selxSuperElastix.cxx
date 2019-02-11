@@ -221,8 +221,6 @@ main( int ac, char * av[] )
       logger->Log( selx::LogLevel::INF, "No output data specified.");
     }
 
-    superElastixFilter->Update();
-
     /* Execute SuperElastix by updating the writers */
     logger->Log( selx::LogLevel::INF, "Executing ...");
     for( auto & writer : fileWriters )
