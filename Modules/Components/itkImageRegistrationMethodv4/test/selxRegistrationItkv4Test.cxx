@@ -515,6 +515,9 @@ TEST_F( RegistrationItkv4Test, FullyConfigured3dAffine )
   ParameterMapType component7Parameters;
   component7Parameters[ "NameOfClass" ]        = { "ItkGradientDescentOptimizerv4Component" };
   component7Parameters[ "NumberOfIterations" ] = { "10" };
+  component7Parameters[ "EstimateScales"]      = { "True" };
+  component7Parameters[ "LearningRate" ]       = { "1.0" };
+  component7Parameters[ "EstimateLearningRate"] = { "False" };
   blueprint->SetComponent( "Optimizer", component7Parameters );
 
   blueprint->SetComponent( "ResampleFilter", { { "NameOfClass", { "ItkResampleFilterComponent" } },
@@ -543,7 +546,6 @@ TEST_F( RegistrationItkv4Test, FullyConfigured3dAffine )
   connection5Parameters[ "NameOfInterface" ] = { "itkMetricv4Interface" };
   blueprint->SetConnection( "Metric", "RegistrationMethod", connection5Parameters );
 
-  //blueprint->AddConnection( "FixedImageSource", "Transform", { {} } );
   blueprint->SetConnection( "Transform", "RegistrationMethod", { {} } );
 
   blueprint->SetConnection( "Optimizer", "RegistrationMethod", { {} } );
@@ -606,8 +608,8 @@ TEST_F( RegistrationItkv4Test, CompositeTransform )
                                                     { "Dimensionality", { "2" } },
                                                     { "InternalComputationValueType", { "double" } },
                                                     { "PixelType", { "float" } } } );
-  blueprint->SetConnection( "FixedImageSource", "RegistrationMethod1", { { "Role", { "Fixed" } } } );
-  blueprint->SetConnection( "MovingImageSource", "RegistrationMethod1", { { "Role", { "Moving" } } } );
+  blueprint->SetConnection( "FixedImageSource", "RegistrationMethod1", { } );
+  blueprint->SetConnection( "MovingImageSource", "RegistrationMethod1", { } );
 
   blueprint->SetComponent( "Metric1", { { "NameOfClass", { "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component" } } } );
   blueprint->SetConnection( "Metric1", "RegistrationMethod1", {} );
