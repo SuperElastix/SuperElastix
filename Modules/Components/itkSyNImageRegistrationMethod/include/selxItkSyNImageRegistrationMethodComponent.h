@@ -72,15 +72,19 @@ public:
 
   // Get the type definitions from the interfaces
 
-  using FixedImageType   = typename itkImageFixedInterface< Dimensionality, PixelType >::ItkImageType;
-  using MovingImageType  = typename itkImageMovingInterface< Dimensionality, PixelType >::ItkImageType;
-  using TransformType    = typename itkTransformInterface< InternalComputationValueType, Dimensionality >::TransformType;
+  using FixedImageType = typename itkImageFixedInterface< Dimensionality, PixelType >::ItkImageType;
+  using FixedImagePointer = typename FixedImageType::Pointer;
+  using MovingImageType = typename itkImageMovingInterface< Dimensionality, PixelType >::ItkImageType;
+  using MovingImagePointer = typename MovingImageType::Pointer;
+  using TransformType = typename itkTransformInterface< InternalComputationValueType, Dimensionality >::TransformType;
   using TransformPointer = typename itkTransformInterface< InternalComputationValueType, Dimensionality >::TransformPointer;
 
-
-  typedef itk::SyNImageRegistrationMethod< FixedImageType, MovingImageType >   TheItkFilterType;
-  typedef typename TheItkFilterType::ImageMetricType                           ImageMetricType;
-  typedef itk::RegistrationParameterScalesFromPhysicalShift< ImageMetricType > ScalesEstimatorType;
+  using SyNImageRegistrationMethodType = itk::SyNImageRegistrationMethod< FixedImageType, MovingImageType >;
+  using SyNImageRegistrationMethodPointer = typename SyNImageRegistrationMethodType::Pointer;
+  using ImageMetricType = typename SyNImageRegistrationMethodType::ImageMetricType;
+  using ImageMetricPointer = typename ImageMetricType::Pointer;
+  using ScalesEstimatorType = itk::RegistrationParameterScalesFromPhysicalShift< ImageMetricType >;
+  using ScalesEstimatorPointer = typename ScalesEstimatorType::Pointer;
 
   //Accepting Interfaces:
   virtual int Accept( typename itkImageFixedInterface< Dimensionality, PixelType >::Pointer ) override;
@@ -92,6 +96,7 @@ public:
   //Providing Interfaces:
   virtual TransformPointer GetItkTransform() override;
 
+  virtual void BeforeUpdate() override;
   virtual void Update() override;
 
   //BaseClass methods
@@ -102,7 +107,9 @@ public:
 
 private:
 
-  typename TheItkFilterType::Pointer m_theItkFilter;
+  SyNImageRegistrationMethodPointer m_SyNImageRegistrationMethod;
+  FixedImagePointer m_FixedImage;
+  MovingImagePointer m_MovingImage;
 
   // The settings SmoothingSigmas and ShrinkFactors imply NumberOfLevels, if the user
   // provides inconsistent numbers we should detect that and report about it.
