@@ -53,14 +53,7 @@ int
 ItkTransformDisplacementFilterComponent< Dimensionality, TPixel, TInternalComputationValue >
 ::Accept( typename itkTransformInterface< TInternalComputationValue, Dimensionality >::Pointer component )
 {
-  //Store interface for later use
   this->m_TransformComponent = component;
-
-  auto transform = component->GetItkTransform();
-
-  // connect the itk pipeline
-  this->m_DisplacementFieldFilter->SetTransform( transform );
-
   return 0;
 }
 
@@ -79,17 +72,22 @@ void
 ItkTransformDisplacementFilterComponent< Dimensionality, TPixel, TInternalComputationValue >
 ::BeforeUpdate()
 {
+  // Required to satisfy input requirements when UpdateOutputInormation is run
+  this->m_DisplacementFieldFilter->SetTransform( this->m_TransformComponent->GetItkTransform() );
+
   this->m_DisplacementFieldFilter->SetSize( this->m_ImageDomainFixed->GetLargestPossibleRegion().GetSize() );
   this->m_DisplacementFieldFilter->SetOutputOrigin( this->m_ImageDomainFixed->GetOrigin() );
   this->m_DisplacementFieldFilter->SetOutputSpacing( this->m_ImageDomainFixed->GetSpacing() );
   this->m_DisplacementFieldFilter->SetOutputDirection( this->m_ImageDomainFixed->GetDirection() );
-  this->m_DisplacementFieldFilter->UpdateOutputInformation();
-
-  auto transform = this->m_TransformComponent->GetItkTransform();
-
-  // reconnect the tranform, since it does not comply with the itk pipeline
-  this->m_DisplacementFieldFilter->SetTransform( transform );
 }
+
+template< int Dimensionality, class TPixel, class TInternalComputationValue >
+void
+ItkTransformDisplacementFilterComponent< Dimensionality, TPixel, TInternalComputationValue >
+::Update() {
+  // Required to retrieve final transform
+  this->m_DisplacementFieldFilter->SetTransform( this->m_TransformComponent->GetItkTransform() );
+};
 
 
 template< int Dimensionality, class TPixel, class TInternalComputationValue >
