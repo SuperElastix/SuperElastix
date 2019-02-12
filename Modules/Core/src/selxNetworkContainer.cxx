@@ -23,8 +23,9 @@
 
 namespace selx
 {
-NetworkContainer::NetworkContainer( ComponentContainerType components, UpdateOrderType updateOrder, OutputObjectsMapType outputObjectsMap ) :
+NetworkContainer::NetworkContainer( ComponentContainerType components, UpdateOrderType beforeUpdateOrder, UpdateOrderType updateOrder, OutputObjectsMapType outputObjectsMap ) :
   m_ComponentContainer( components ),
+  m_BeforeUpdateOrder( beforeUpdateOrder ),
   m_UpdateOrder( updateOrder),
   m_OutputObjectsMap( outputObjectsMap )
 {
@@ -35,7 +36,7 @@ NetworkContainer::BeforeUpdate()
 {
   // For components that need to setup internal state before executing the network.
   // The interface is executed in the right pipeline order.
-  for( const auto& updateInterface : this->m_UpdateOrder )
+  for( const auto& updateInterface : this->m_BeforeUpdateOrder )
   {
     updateInterface->BeforeUpdate();
   }
