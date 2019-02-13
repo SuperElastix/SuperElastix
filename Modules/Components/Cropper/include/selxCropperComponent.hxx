@@ -111,10 +111,10 @@ CropperComponent< Dimensionality, TPixel >::BeforeUpdate()
   }
 
   typename itk::Size< Dimensionality > size;
-  size[0] = std::min(boundingBox.GetElement(1) - start[0] + 1 + this->m_Pad, long(this->m_Image->GetLargestPossibleRegion().GetSize(0)));
-  size[1] = std::min(boundingBox.GetElement(3) - start[1] + 1 + this->m_Pad, long(this->m_Image->GetLargestPossibleRegion().GetSize(1)));
-  if( Dimensionality > 2 ) size[2] = std::min(boundingBox.GetElement(5) - start[2] + 1 + this->m_Pad, long(this->m_Image->GetLargestPossibleRegion().GetSize(2)));
-  if( Dimensionality > 3 ) size[3] = std::min(boundingBox.GetElement(7) - start[3] + 1 + this->m_Pad, long(this->m_Image->GetLargestPossibleRegion().GetSize(3)));
+  size[0] = std::min(boundingBox.GetElement(1) - start[0] + 1 + this->m_Pad, long(this->m_Image->GetLargestPossibleRegion().GetSize(0)) - start[0]);
+  size[1] = std::min(boundingBox.GetElement(3) - start[1] + 1 + this->m_Pad, long(this->m_Image->GetLargestPossibleRegion().GetSize(1)) - start[1]);
+  if( Dimensionality > 2 ) size[2] = std::min(boundingBox.GetElement(5) - start[2] + 1 + this->m_Pad, long(this->m_Image->GetLargestPossibleRegion().GetSize(2)) - start[2]);
+  if( Dimensionality > 3 ) size[3] = std::min(boundingBox.GetElement(7) - start[3] + 1 + this->m_Pad, long(this->m_Image->GetLargestPossibleRegion().GetSize(3)) - start[3]);
   typename ItkImageType::RegionType region(start, size);
 
   {
