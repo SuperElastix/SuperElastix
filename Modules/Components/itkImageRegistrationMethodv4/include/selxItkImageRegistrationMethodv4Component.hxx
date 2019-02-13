@@ -200,10 +200,7 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
 template< int Dimensionality, class TPixel, class InternalComputationValueType >
 void
 ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >::BeforeUpdate( void ) {
-  this->m_FixedImage->Update();
   this->m_ImageRegistrationMethodv4Filter->SetFixedImage(this->m_FixedImage);
-
-  this->m_MovingImage->Update();
   this->m_ImageRegistrationMethodv4Filter->SetMovingImage(this->m_MovingImage);
 }
 
