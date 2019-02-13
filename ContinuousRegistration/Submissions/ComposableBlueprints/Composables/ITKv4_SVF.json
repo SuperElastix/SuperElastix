@@ -1,0 +1,32 @@
+{
+    "Components": [
+        {
+            "Name": "Transform",
+            "NameOfClass": "ItkGaussianExponentialDiffeomorphicTransformComponent",
+            "InternalComputationValueType": "double",
+            "GaussianSmoothingVarianceForTheConstantVelocityField": "1.0",
+            "GaussianSmoothingVarianceForTheUpdateField": "1.0"
+        },
+        {
+            "Name": "TransformResolutionAdaptor",
+            "NameOfClass": "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent",
+            "ShrinkFactorsPerLevel": [ "8", "4", "2" ]
+        }
+    ],
+    "Connections": [
+        {
+            "Out": "FixedImage",
+            "In": "TransformResolutionAdaptor",
+            "NameOfInterface": "itkImageDomainFixedInterface"
+        },
+        {
+            "Out": "TransformResolutionAdaptor",
+            "In": "RegistrationMethod"
+        },
+        {
+            "Out": "FixedImage",
+            "In": "Transform",
+            "NameOfInterface": "itkImageDomainFixedInterface"
+        }
+    ]
+}

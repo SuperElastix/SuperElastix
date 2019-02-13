@@ -1,0 +1,27 @@
+{    
+    "Components": [
+        {
+            "Name": "RegistrationMethod",
+            "NameOfClass": "ItkImageRegistrationMethodv4Component"
+        },
+        {
+            "Name": "Optimizer"
+        },
+        {
+            "Name": "Transform"
+        }
+        
+    ],
+    "Connections": [
+        {
+            "Out": "Optimizer",
+            "In": "RegistrationMethod",
+            "NameOfInterface": "itkOptimizerv4Interface"
+        },
+        {
+            "Out": "Transform",
+            "In": "RegistrationMethod",
+            "NameOfInterface": "itkTransformInterface"
+        }
+    ]
+}
