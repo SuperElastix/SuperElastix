@@ -64,6 +64,20 @@
             "Dimensionality": "3"
         },
         {
+            "Name": "FixedImageCropper",
+            "NameOfClass": "ItkCropperComponent",
+            "Dimensionality": "3",
+            "PixelType": "float",
+            "Pad": 8
+        },
+        {
+            "Name": "MovingImageCropper",
+            "NameOfClass": "ItkCropperComponent",
+            "Dimensionality": "3",
+            "PixelType": "float",
+            "Pad": 8
+        },
+        {
             "Name": "Metric2",
             "NameOfClass": "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component",
             "Dimensionality": "3",
@@ -105,6 +119,30 @@
         },
         {
             "Out": "FixedImage",
+            "In": "FixedImageCropper",
+            "NameOfInterface": "itkImageInterface"
+        },
+        {
+            "Out": "FixedMask",
+            "In": "FixedImageCropper",
+            "NameOfInterface": "itkImageMaskInterface"
+        },
+        {
+            "Out": "FixedImageCropper",
+            "In": "RegistrationMethod",
+            "NameOfInterface": "itkImageFixedInterface"
+        },
+        {
+            "Out": "MovingImage",
+            "In": "MovingImageCropper",
+            "NameOfInterface": "itkImageInterface"
+        },{
+            "Out": "MovingMask",
+            "In": "MovingImageCropper",
+            "NameOfInterface": "itkImageMaskInterface"
+        },
+        {
+            "Out": "FixedImageCropper",
             "In": "TransformResolutionAdaptor"
         },
         {
@@ -116,11 +154,11 @@
             "In": "RegistrationMethod1"
         },
         {
-            "Out": "FixedImage",
+            "Out": "FixedImageCropper",
             "In": "RegistrationMethod2"
         },
         {
-            "Out": "MovingImage",
+            "Out": "MovingImageCropper",
             "In": "RegistrationMethod2"
         },
         {
@@ -136,7 +174,7 @@
             "In": "RegistrationMethod2"
         },
         {
-            "Out": "FixedImage",
+            "Out": "FixedImageCropper",
             "In": "Transform2"
         },
         {
@@ -152,7 +190,7 @@
             "In": "TransformToDisplacementField"
         },
         {
-            "Out": "FixedImage",
+            "Out": "FixedImageCropper",
             "In": "TransformToDisplacementField",
             "NameOfInterface": "itkImageDomainFixedInterface"
         },

@@ -63,8 +63,6 @@ ItkGaussianExponentialDiffeomorphicTransformComponent< InternalComputationValueT
   displacementField->Allocate();
   displacementField->FillBuffer( zeroVector );
 
-  m_Transform->SetGaussianSmoothingVarianceForTheUpdateField( 3.0 );
-  m_Transform->SetGaussianSmoothingVarianceForTheConstantVelocityField( 6.0 );
   m_Transform->SetConstantVelocityField( displacementField );
   m_Transform->SetCalculateNumberOfIntegrationStepsAutomatically( true );
   m_Transform->IntegrateVelocityField();

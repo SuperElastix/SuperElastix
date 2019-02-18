@@ -25,9 +25,9 @@ namespace selx
 {
 template< int Dimensionality, class TPixel >
 ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< Dimensionality, TPixel >::ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component(
-  const std::string & name, LoggerImpl & logger ) : Superclass( name, logger )
+  const std::string & name, LoggerImpl & logger ) : Superclass( name, logger ), m_FixedMask(nullptr), m_MovingMask(nullptr)
 {
-  m_theItkFilter = TheItkFilterType::New();
+  m_ANTSNeighborhoodCorrelationImageToImageMetricv4 = ANTSNeighborhoodCorrelationImageToImageMetricv4Type::New();
 
   //TODO: instantiating the filter in the constructor might be heavy for the use in component selector factory, since all components of the database are created during the selection process.
   // we could choose to keep the component light weighted (for checking criteria such as names and connections) until the settings are passed to the filter, but this requires an additional initialization step.
@@ -43,13 +43,7 @@ template< int Dimensionality, class TPixel >
 int
 ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< Dimensionality, TPixel >::Accept(typename itkImageFixedMaskInterface< Dimensionality, unsigned char >::Pointer component)
 {
-  auto fixedMaskImage = component->GetItkImageFixedMask();
-
-  // connect the itk pipeline
-  auto fixedMaskSpatialObject = itk::ImageMaskSpatialObject< Dimensionality >::New();
-  fixedMaskSpatialObject->SetImage( fixedMaskImage );
-
-  this->m_theItkFilter->SetFixedImageMask(fixedMaskSpatialObject);
+  this->m_FixedMask = component->GetItkImageFixedMask();
   return 0;
 }
 
@@ -57,20 +51,42 @@ template< int Dimensionality, class TPixel >
 int
 ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< Dimensionality, TPixel >::Accept(typename itkImageMovingMaskInterface< Dimensionality, unsigned char >::Pointer component)
 {
-  auto movingMaskImage = component->GetItkImageMovingMask();
-
-  // connect the itk pipeline
-  auto movingMaskSpatialObject = itk::ImageMaskSpatialObject< Dimensionality >::New();
-  movingMaskSpatialObject->SetImage(movingMaskImage);
-  this->m_theItkFilter->SetMovingImageMask(movingMaskSpatialObject);
+  this->m_MovingMask = component->GetItkImageMovingMask();
   return 0;
 }
+
+template< int Dimensionality, class TPixel >
+void
+ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< Dimensionality, TPixel >::BeforeUpdate()
+{
+  if(this->m_FixedMask) {
+    // The fixedMaskSpatialObject requires the mask to buffered when set
+    this->m_FixedMask->Update();
+
+    // connect the itk pipeline
+    auto fixedMaskSpatialObject = itk::ImageMaskSpatialObject< Dimensionality >::New();
+    fixedMaskSpatialObject->SetImage(this->m_FixedMask);
+
+    this->m_ANTSNeighborhoodCorrelationImageToImageMetricv4->SetFixedImageMask(fixedMaskSpatialObject);
+  }
+
+  if(this->m_MovingMask) {
+    // The fixedMaskSpatialObject requires the mask to buffered when set
+    this->m_MovingMask->Update();
+
+    // connect the itk pipeline
+    auto movingMaskSpatialObject = itk::ImageMaskSpatialObject< Dimensionality >::New();
+    movingMaskSpatialObject->SetImage(this->m_MovingMask);
+
+    this->m_ANTSNeighborhoodCorrelationImageToImageMetricv4->SetMovingImageMask(movingMaskSpatialObject);
+  }
+};
 
 template< int Dimensionality, class TPixel >
 typename ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< Dimensionality, TPixel >::ItkMetricv4Pointer
 ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< Dimensionality, TPixel >::GetItkMetricv4()
 {
-  return (ItkMetricv4Pointer)this->m_theItkFilter;
+  return (ItkMetricv4Pointer)this->m_ANTSNeighborhoodCorrelationImageToImageMetricv4;
 }
 
 
@@ -101,10 +117,10 @@ ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component< Dimensionality, TPi
       try
       {
         //TODO radius should be a vector in criteria
-        typename TheItkFilterType::RadiusType radius;
+        typename ANTSNeighborhoodCorrelationImageToImageMetricv4Type::RadiusType radius;
         radius.Fill( std::stod( criterionValue ) );
 
-        this->m_theItkFilter->SetRadius( radius );
+        this->m_ANTSNeighborhoodCorrelationImageToImageMetricv4->SetRadius( radius );
         return true;
       }
       catch( itk::ExceptionObject & itkNotUsed(err) )

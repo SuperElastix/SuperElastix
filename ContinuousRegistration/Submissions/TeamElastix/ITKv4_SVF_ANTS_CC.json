@@ -5,8 +5,8 @@
             "Name": "RegistrationMethod",
             "NameOfClass": "ItkImageRegistrationMethodv4Component",
             "NumberOfLevels":  "3" ,
-            "ShrinkFactorsPerLevel": [ "8", "4", "2"  ],
-            "SmoothingSigmasPerLevel": [ "4", "2", "1"  ],
+            "ShrinkFactorsPerLevel": [ "16", "8", "4" ],
+            "SmoothingSigmasPerLevel": [ "16", "8", "4" ],
             "Dimensionality": "3"
         },
         {
@@ -60,7 +60,7 @@
             "NameOfClass": "ItkGradientDescentOptimizerv4Component",
             "NumberOfIterations": "32",
             "LearningRate": "1.0",
-            "EstimateScales": "False",
+            "EstimateScales": "True",
             "EstimateLearningRate": "False"
         },
         {
@@ -68,13 +68,13 @@
             "NameOfClass": "ItkGaussianExponentialDiffeomorphicTransformComponent",
             "InternalComputationValueType": "double",
             "Dimensionality": "3",
-            "GaussianSmoothingVarianceForTheConstantVelocityField": "1.0",
-            "GaussianSmoothingVarianceForTheUpdateField": "1.0"
+            "GaussianSmoothingVarianceForTheConstantVelocityField": "3.0",
+            "GaussianSmoothingVarianceForTheUpdateField": "3.0"
         },
         {
             "Name": "TransformResolutionAdaptor",
             "NameOfClass": "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent",
-            "ShrinkFactorsPerLevel": [ "8", "4", "2" ],
+            "ShrinkFactorsPerLevel": [ "16", "8", "4" ],
             "Dimensionality": "3"
         },
         {
@@ -157,6 +157,14 @@
             "Out": "FixedImageCropper",
             "In": "TransformToDisplacementFilter",
             "NameOfInterface": "itkImageDomainFixedInterface"
+        },
+        {
+            "Out": "FixedMask",
+            "In": "Metric"
+        },
+        {
+            "Out": "MovingMask",
+            "In": "Metric"
         }
     ]
 }
