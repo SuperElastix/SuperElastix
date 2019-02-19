@@ -64,6 +64,32 @@ NiftyregAladinComponent< TPixel >
 
 
 template< class TPixel >
+int
+NiftyregAladinComponent< TPixel >
+::Accept(typename NiftyregInputMaskInterface< TPixel >::Pointer component)
+{
+  // store the shared_ptr to the data, otherwise it gets freed
+  this->m_input_mask = component->GetInputMask();
+  // connect the itk pipeline
+  this->m_reg_aladin->SetInputMask( this->m_input_mask.get() );
+  return 0;
+}
+
+
+template< class TPixel >
+int
+NiftyregAladinComponent< TPixel >
+::Accept(typename NiftyregInputFloatingMaskInterface< TPixel >::Pointer component)
+{
+  // store the shared_ptr to the data, otherwise it gets freed
+  this->m_floating_image = component->GetInputFloatingMask();
+  // connect the itk pipeline
+  this->m_reg_aladin->SetInputFloatingMask(this->m_input_floating_mask.get());
+  return 0;
+}
+
+
+template< class TPixel >
 std::shared_ptr< nifti_image >
 NiftyregAladinComponent< TPixel >
 ::GetWarpedNiftiImage()
@@ -145,4 +171,23 @@ NiftyregAladinComponent<  TPixel >
   }
   return meetsCriteria;
 }
+
+template< class TPixel >
+bool
+NiftyregAladinComponent<  TPixel >
+::ConnectionsSatisfied()
+{
+  // This function overrides the default behavior, in which all accepting interfaces must be set, by allowing the itkTransformParametersAdaptorsContainerInterface not being set.
+  // TODO: see I we can reduce the amount of code with helper (meta-)functions
+  if( !this->InterfaceAcceptor< NiftyregReferenceImageInterface< TPixel >>::GetAccepted())
+  {
+    return false;
+  }
+  if( !this->InterfaceAcceptor< NiftyregFloatingImageInterface< TPixel >>::GetAccepted() )
+  {
+    return false;
+  }
+  return true;
+}
+
 } //end namespace selx
