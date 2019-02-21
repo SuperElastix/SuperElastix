@@ -15,11 +15,11 @@
             "Name": "RegistrationMethod",
             "NameOfClass": "ItkSyNImageRegistrationMethodComponent",
             "Dimensionality": "3",
-            "NumberOfLevels":  "3",
-            "NumberOfIterations": ["50", "50", "50"],
-            "ShrinkFactorsPerLevel": [ "8", "4", "2"],
-            "SmoothingSigmasPerLevel": [ "4", "4", "4"],
-            "LearningRate": "0.5",
+            "NumberOfLevels":  "4",
+            "NumberOfIterations": "32",
+            "ShrinkFactorsPerLevel": [ "16", "8", "4", "2"],
+            "SmoothingSigmasPerLevel": [ "8", "8", "4", "1"],
+            "LearningRate": "0.25",
             "PixelType": "float"
         },
         {
@@ -35,10 +35,10 @@
             "PixelType": "float"
         },
         {
-          "Name": "FixedMask",
-          "NameOfClass": "ItkImageSourceComponent",
-          "PixelType": "unsigned char",
-          "Dimensionality": "3"
+            "Name": "FixedMask",
+            "NameOfClass": "ItkImageSourceComponent",
+            "PixelType": "unsigned char",
+            "Dimensionality": "3"
         },
         {
             "Name": "MovingImage",
@@ -47,10 +47,24 @@
             "PixelType": "float"
         },
         {
-          "Name": "MovingMask",
-          "NameOfClass": "ItkImageSourceComponent",
-          "PixelType": "unsigned char",
-          "Dimensionality": "3"
+            "Name": "MovingMask",
+            "NameOfClass": "ItkImageSourceComponent",
+            "PixelType": "unsigned char",
+            "Dimensionality": "3"
+        },
+        {
+            "Name": "FixedImageCropper",
+            "NameOfClass": "ItkCropperComponent",
+            "Dimensionality": "3",
+            "PixelType": "float",
+            "Pad": 8
+        },
+        {
+            "Name": "MovingImageCropper",
+            "NameOfClass": "ItkCropperComponent",
+            "Dimensionality": "3",
+            "PixelType": "float",
+            "Pad": 8
         },
         {
             "Name": "DisplacementField",
@@ -68,31 +82,60 @@
     "Connections": [
         {
             "Out": "FixedImage",
+            "In": "FixedImageCropper",
+            "NameOfInterface": "itkImageInterface"
+        },
+        {
+            "Out": "MovingImage",
+            "In": "MovingImageCropper",
+            "NameOfInterface": "itkImageInterface"
+        },{
+            "Out": "FixedMask",
+            "In": "FixedImageCropper",
+            "NameOfInterface": "itkImageMaskInterface"
+        },
+        {
+            "Out": "MovingMask",
+            "In": "MovingImageCropper",
+            "NameOfInterface": "itkImageMaskInterface"
+        },
+        {
+            "Out": "FixedImageCropper",
             "In": "RegistrationMethod",
             "NameOfInterface": "itkImageFixedInterface"
         },
         {
-            "Out": "MovingImage",
+            "Out": "MovingImageCropper",
             "In": "RegistrationMethod",
             "NameOfInterface": "itkImageMovingInterface"
         },
         {
-          "Out": "Metric",
-          "In": "RegistrationMethod",
-          "NameOfInterface": "itkMetricv4Interface"
+            "Out": "Metric",
+            "In": "RegistrationMethod",
+            "NameOfInterface": "itkMetricv4Interface"
         },
         {
-          "Out": "RegistrationMethod",
-          "In": "TransformToDisplacementField"
+            "Out": "RegistrationMethod",
+            "In": "TransformToDisplacementField"
         },
         {
-          "Out": "FixedImage",
-          "In": "TransformToDisplacementField",
-          "NameOfInterface": "itkImageDomainFixedInterface"
+            "Out": "FixedImage",
+            "In": "TransformToDisplacementField",
+            "NameOfInterface": "itkImageDomainFixedInterface"
         },
         {
-          "Out": "TransformToDisplacementField",
-          "In": "DisplacementField"
+            "Out": "TransformToDisplacementField",
+            "In": "DisplacementField"
+        },
+        {
+            "Out": "FixedMask",
+            "In": "Metric",
+            "NameOfInterface": "itkImageFixedMaskInterface"
+        },
+        {
+            "Out": "MovingMask",
+            "In": "Metric",
+            "NameOfInterface": "itkImageMovingMaskInterface"
         }
     ]
 }
