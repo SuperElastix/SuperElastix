@@ -99,6 +99,48 @@ ItkToNiftiImageSourceComponent< Dimensionality, TPixel >::GetWarpedNiftiImage()
 
 
 template< int Dimensionality, class TPixel >
+std::shared_ptr< nifti_image >
+ItkToNiftiImageSourceComponent< Dimensionality, TPixel >::GetInputMask()
+{
+  if( this->m_Image == nullptr )
+  {
+    throw std::runtime_error( "SourceComponent needs to be initialized by SetMiniPipelineInput()" );
+  }
+
+  this->m_Image->GetSource()->UpdateLargestPossibleRegion();
+
+  // TODO memory management issue: the Convert function passes the ownership
+  // of the data buffer from the itk image to the nifti image. This means that
+  // as soon as the shared_ptr<nifti_image> goes out of scope the buffer is freed
+  // and the itk image is invalidated. However, subsequently destructing the itk
+  // image should be without memory leaks.
+
+  return ItkToNiftiImage< ItkImageType, unsigned char >::Convert( this->m_Image );
+}
+
+
+template< int Dimensionality, class TPixel >
+std::shared_ptr< nifti_image >
+ItkToNiftiImageSourceComponent< Dimensionality, TPixel >::GetInputFloatingMask()
+{
+  if( this->m_Image == nullptr )
+  {
+    throw std::runtime_error( "SourceComponent needs to be initialized by SetMiniPipelineInput()" );
+  }
+
+  this->m_Image->GetSource()->UpdateLargestPossibleRegion();
+
+  // TODO memory management issue: the Convert function passes the ownership
+  // of the data buffer from the itk image to the nifti image. This means that
+  // as soon as the shared_ptr<nifti_image> goes out of scope the buffer is freed
+  // and the itk image is invalidated. However, subsequently destructing the itk
+  // image should be without memory leaks.
+
+  return ItkToNiftiImage< ItkImageType, unsigned char >::Convert( this->m_Image );
+}
+
+
+template< int Dimensionality, class TPixel >
 void
 ItkToNiftiImageSourceComponent< Dimensionality, TPixel >
 ::SetMiniPipelineInput( itk::DataObject::Pointer object )

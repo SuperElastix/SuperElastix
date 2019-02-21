@@ -41,7 +41,8 @@ class ItkToNiftiImageSourceComponent :
   public SuperElastixComponent<
   Accepting<  >,
   Providing< SourceInterface, NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >,
-  NiftyregWarpedImageInterface< TPixel >, itkImageDomainFixedInterface< Dimensionality >>
+    NiftyregWarpedImageInterface< TPixel >, itkImageDomainFixedInterface< Dimensionality >,
+    NiftyregInputMaskInterface< unsigned char >, NiftyregInputFloatingMaskInterface< unsigned char >>
   >
 {
 public:
@@ -51,7 +52,8 @@ public:
   typedef SuperElastixComponent<
     Accepting<  >,
     Providing< SourceInterface, NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >,
-    NiftyregWarpedImageInterface< TPixel >, itkImageDomainFixedInterface< Dimensionality >>
+      NiftyregWarpedImageInterface< TPixel >, itkImageDomainFixedInterface< Dimensionality >,
+      NiftyregInputMaskInterface< unsigned char >, NiftyregInputFloatingMaskInterface< unsigned char >>
     >                                            Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
@@ -64,23 +66,21 @@ public:
   using ItkImageDomainType = typename itkImageDomainFixedInterface< Dimensionality >::ItkImageDomainType;
 
   ItkToNiftiImageSourceComponent( const std::string & name, LoggerImpl & logger );
-  virtual ~ItkToNiftiImageSourceComponent();
+  ~ItkToNiftiImageSourceComponent();
 
   // providing interfaces
-  //virtual std::shared_ptr<nifti_image> GetFloatingNiftiImage() override;
+  std::shared_ptr< nifti_image > GetReferenceNiftiImage() override;
+  std::shared_ptr< nifti_image > GetFloatingNiftiImage() override;
+  std::shared_ptr< nifti_image > GetWarpedNiftiImage() override;
+  std::shared_ptr< nifti_image > GetInputMask() override;
+  std::shared_ptr< nifti_image > GetInputFloatingMask() override;
 
-  virtual std::shared_ptr< nifti_image > GetReferenceNiftiImage() override;
+  typename ItkImageDomainType::Pointer GetItkImageDomainFixed() override;
 
-  virtual std::shared_ptr< nifti_image > GetFloatingNiftiImage() override;
+  void SetMiniPipelineInput( itk::DataObject::Pointer ) override;
+  AnyFileReader::Pointer GetInputFileReader( void ) override;
 
-  virtual std::shared_ptr< nifti_image > GetWarpedNiftiImage() override;
-
-  virtual typename ItkImageDomainType::Pointer GetItkImageDomainFixed() override;
-
-  virtual void SetMiniPipelineInput( itk::DataObject::Pointer ) override;
-  virtual AnyFileReader::Pointer GetInputFileReader( void ) override;
-
-  virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
+  bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
 
   static const char * GetDescription() { return "ItkToNiftiImageSource Component"; }
 
