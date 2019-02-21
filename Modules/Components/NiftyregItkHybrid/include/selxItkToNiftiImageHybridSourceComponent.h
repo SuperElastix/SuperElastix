@@ -44,7 +44,9 @@ class ItkToNiftiImageHybridSourceComponent :
     SourceInterface, 
     NiftyregReferenceImageInterface< TPixel >, 
     NiftyregFloatingImageInterface< TPixel >,
-    NiftyregWarpedImageInterface< TPixel >, 
+    NiftyregWarpedImageInterface< TPixel >,
+    NiftyregInputMaskInterface< unsigned char >,
+    NiftyregInputFloatingMaskInterface<  unsigned char  >,
     itkImageDomainFixedInterface< Dimensionality >,
     itkImageInterface< Dimensionality, TPixel >, 
     itkImageFixedInterface< Dimensionality, TPixel >, 
@@ -63,7 +65,9 @@ public:
       SourceInterface, 
       NiftyregReferenceImageInterface< TPixel >, 
       NiftyregFloatingImageInterface< TPixel >,
-      NiftyregWarpedImageInterface< TPixel >, 
+      NiftyregWarpedImageInterface< TPixel >,
+      NiftyregInputMaskInterface<  unsigned char  >,
+      NiftyregInputFloatingMaskInterface<  unsigned char  >,
       itkImageDomainFixedInterface< Dimensionality >,
       itkImageInterface< Dimensionality, TPixel >,
       itkImageFixedInterface< Dimensionality, TPixel >, 
@@ -82,28 +86,23 @@ public:
   using ItkImageDomainType = typename itkImageDomainFixedInterface< Dimensionality >::ItkImageDomainType;
 
   ItkToNiftiImageHybridSourceComponent( const std::string & name, LoggerImpl & logger );
-  virtual ~ItkToNiftiImageHybridSourceComponent();
+   ~ItkToNiftiImageHybridSourceComponent();
 
   // providing interfaces
   //virtual std::shared_ptr<nifti_image> GetFloatingNiftiImage() override;
 
-  virtual std::shared_ptr< nifti_image > GetReferenceNiftiImage() override;
+  std::shared_ptr< nifti_image > GetReferenceNiftiImage() override;
+  std::shared_ptr< nifti_image > GetFloatingNiftiImage() override;
+  std::shared_ptr< nifti_image > GetWarpedNiftiImage() override;
+  std::shared_ptr< nifti_image > GetInputMask() override;
+  std::shared_ptr< nifti_image > GetInputFloatingMask() override;
+  typename ItkImageDomainType::Pointer GetItkImageDomainFixed() override;
+  typename ItkImageType::Pointer GetItkImage() override;
+  typename ItkImageType::Pointer GetItkImageFixed() override {return GetItkImage();}
+  typename ItkImageType::Pointer GetItkImageMoving() override {return GetItkImage();}
+  typename ItkImageType::Pointer GetItkImageFixedMask() override {return GetItkImage();}
+  typename ItkImageType::Pointer GetItkImageMovingMask() override {return GetItkImage();}
 
-  virtual std::shared_ptr< nifti_image > GetFloatingNiftiImage() override;
-
-  virtual std::shared_ptr< nifti_image > GetWarpedNiftiImage() override;
-
-  virtual typename ItkImageDomainType::Pointer GetItkImageDomainFixed() override;
-
-  virtual typename ItkImageType::Pointer GetItkImage() override;
-
-  virtual typename ItkImageType::Pointer GetItkImageFixed() override {return GetItkImage();}
-
-  virtual typename ItkImageType::Pointer GetItkImageMoving() override {return GetItkImage();}
-
-  virtual typename ItkImageType::Pointer GetItkImageFixedMask() override {return GetItkImage();}
-
-  virtual typename ItkImageType::Pointer GetItkImageMovingMask() override {return GetItkImage();}
 
 
   virtual void SetMiniPipelineInput( itk::DataObject::Pointer ) override;
