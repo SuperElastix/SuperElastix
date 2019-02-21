@@ -66,25 +66,12 @@ NiftyregAladinComponent< TPixel >
 template< class TPixel >
 int
 NiftyregAladinComponent< TPixel >
-::Accept(typename NiftyregInputMaskInterface< TPixel >::Pointer component)
+::Accept(typename NiftyregInputMaskInterface<  unsigned char  >::Pointer component)
 {
   // store the shared_ptr to the data, otherwise it gets freed
   this->m_input_mask = component->GetInputMask();
   // connect the itk pipeline
   this->m_reg_aladin->SetInputMask( this->m_input_mask.get() );
-  return 0;
-}
-
-
-template< class TPixel >
-int
-NiftyregAladinComponent< TPixel >
-::Accept(typename NiftyregInputFloatingMaskInterface< TPixel >::Pointer component)
-{
-  // store the shared_ptr to the data, otherwise it gets freed
-  this->m_floating_image = component->GetInputFloatingMask();
-  // connect the itk pipeline
-  this->m_reg_aladin->SetInputFloatingMask(this->m_input_floating_mask.get());
   return 0;
 }
 

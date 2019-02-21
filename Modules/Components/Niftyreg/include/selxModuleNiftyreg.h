@@ -26,6 +26,7 @@
 #include "selxNiftyregSplineToDisplacementFieldComponent.h"
 #include "selxDisplacementFieldNiftiToItkImageSinkComponent.h"
 #include "selxNiftyregAladinComponent.h"
+#include "selxItkToNiftiImageComponent.h"
 
 
 namespace selx
@@ -34,6 +35,12 @@ using ModuleNiftyregComponents = selx::TypeList<
   Niftyregf3dComponent< float>,
   ItkToNiftiImageSourceComponent< 2, float >,
   ItkToNiftiImageSourceComponent< 3, float >,
+  ItkToNiftiImageSourceComponent< 2, unsigned char >,
+  ItkToNiftiImageSourceComponent< 3, unsigned char >,
+  ItkToNiftiImageComponent< 2, float >,
+  ItkToNiftiImageComponent< 3, float >,
+  ItkToNiftiImageComponent< 2, unsigned char >,
+  ItkToNiftiImageComponent< 3, unsigned char >,
   NiftiToItkImageSinkComponent< 2, float >,
   NiftiToItkImageSinkComponent< 3, float >,
   NiftyregSplineToDisplacementFieldComponent< float>,
