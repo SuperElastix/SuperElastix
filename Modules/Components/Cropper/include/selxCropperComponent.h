@@ -34,7 +34,9 @@ class CropperComponent :
   public SuperElastixComponent<
     Accepting<
       itkImageInterface< Dimensionality, TPixel >,
-      itkImageMaskInterface< Dimensionality, unsigned char >
+      itkImageMaskInterface< Dimensionality, unsigned char >,
+      itkImageFixedMaskInterface< Dimensionality, unsigned char >,
+      itkImageMovingMaskInterface< Dimensionality, unsigned char >
     >,
     Providing<
       itkImageInterface< Dimensionality, TPixel >,
@@ -53,7 +55,10 @@ public:
   using Superclass = SuperElastixComponent<
     Accepting<
       itkImageInterface< Dimensionality, TPixel >,
-      itkImageMaskInterface< Dimensionality, unsigned char > >,
+      itkImageMaskInterface< Dimensionality, unsigned char >,
+      itkImageFixedMaskInterface< Dimensionality, unsigned char >,
+      itkImageMovingMaskInterface< Dimensionality, unsigned char >
+    >,
     Providing<
       itkImageInterface< Dimensionality, TPixel >,
       itkImageFixedInterface< Dimensionality, TPixel >,
@@ -81,6 +86,8 @@ public:
   // Accepting
   int Accept( typename itkImageInterface< Dimensionality, TPixel >::Pointer ) override;
   int Accept( typename itkImageMaskInterface< Dimensionality, unsigned char >::Pointer ) override;
+  int Accept( typename itkImageFixedMaskInterface< Dimensionality, unsigned char >::Pointer ) override;
+  int Accept( typename itkImageMovingMaskInterface< Dimensionality, unsigned char >::Pointer ) override;
 
   // Providing
   ItkImagePointer GetItkImage() override;
@@ -92,6 +99,7 @@ public:
   void BeforeUpdate() override;
   void Update() override;
   bool MeetsCriterion( const CriterionType & criterion ) override;
+  bool ConnectionsSatisfied() override;
   static const char* GetDescription() { return "ItkCropper Component"; }
 
 private:

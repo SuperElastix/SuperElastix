@@ -56,6 +56,22 @@ CropperComponent< Dimensionality, TPixel >::Accept( typename itkImageMaskInterfa
 }
 
 template< int Dimensionality, class TPixel >
+int
+CropperComponent< Dimensionality, TPixel >::Accept( typename itkImageFixedMaskInterface< Dimensionality, unsigned char >::Pointer component )
+{
+  this->m_Mask = component->GetItkImageFixedMask();
+  return 0;
+}
+
+template< int Dimensionality, class TPixel >
+int
+CropperComponent< Dimensionality, TPixel >::Accept( typename itkImageMovingMaskInterface< Dimensionality, unsigned char >::Pointer component )
+{
+  this->m_Mask = component->GetItkImageMovingMask();
+  return 0;
+}
+
+template< int Dimensionality, class TPixel >
 typename CropperComponent< Dimensionality, TPixel >::ItkImagePointer
 CropperComponent< Dimensionality, TPixel >::GetItkImage()
 {
@@ -155,5 +171,22 @@ CropperComponent< Dimensionality, TPixel >
 
   return false;
 };
+
+template< int Dimensionality, class TPixel  >
+bool
+CropperComponent< Dimensionality, TPixel >
+::ConnectionsSatisfied() {
+  if (!this->InterfaceAcceptor<itkImageInterface<Dimensionality, TPixel >>::GetAccepted()) {
+    return false;
+  }
+
+  if (!this->InterfaceAcceptor<itkImageMaskInterface<Dimensionality, unsigned char >>::GetAccepted() &&
+      !this->InterfaceAcceptor<itkImageFixedMaskInterface<Dimensionality, unsigned char >>::GetAccepted() &&
+      !this->InterfaceAcceptor<itkImageMovingMaskInterface<Dimensionality, unsigned char >>::GetAccepted()) {
+    return false;
+  }
+
+  return true;
+}
 
 }
