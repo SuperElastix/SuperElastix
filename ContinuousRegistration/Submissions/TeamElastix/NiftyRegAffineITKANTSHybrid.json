@@ -21,7 +21,7 @@
         {
             "Name": "RegistrationMethod1",
             "NameOfClass": "NiftyregAladinComponent",
-            "MaximumNumberOfIterations": "1"
+            "MaximumNumberOfIterations": "16"
         },
         {
             "Name": "RegistrationMethod2",
@@ -29,14 +29,14 @@
             "InternalComputationValueType": "double",
             "Dimensionality": "3",
             "PixelType": "float",
-            "NumberOfLevels": "3",
-            "ShrinkFactorsPerLevel": ["8", "4", "2"],
-            "SmoothingSigmasPerLevel": ["4", "2", "1"]
+            "NumberOfLevels": "4",
+            "ShrinkFactorsPerLevel": [ "16", "8", "4", "2" ],
+            "SmoothingSigmasPerLevel": [ "8", "4", "2", "1" ]
         },
         {
             "Name": "TransformResolutionAdaptor",
             "NameOfClass": "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent",
-            "ShrinkFactorsPerLevel": ["8", "4", "2"],
+            "ShrinkFactorsPerLevel": [ "16", "8", "4", "2" ],
             "Dimensionality": "3"
         },
         {
@@ -53,13 +53,13 @@
         },
         {
             "Name": "FixedMask",
-            "NameOfClass": "ItkImageSourceComponent",
+            "NameOfClass": "ItkToNiftiImageHybridSourceComponent",
             "PixelType": "unsigned char",
             "Dimensionality": "3"
         },
         {
             "Name": "MovingMask",
-            "NameOfClass": "ItkImageSourceComponent",
+            "NameOfClass": "ItkToNiftiImageHybridSourceComponent",
             "PixelType": "unsigned char",
             "Dimensionality": "3"
         },
@@ -93,11 +93,11 @@
             "Name": "Optimizer2",
             "NameOfClass": "ItkGradientDescentOptimizerv4Component",
             "InternalComputationValueType": "double",
-            "MaximumNumberOfIterations": "1",
-            "EstimateLearningRate": "False",
-            "EstimateScales": "False",
+            "MaximumNumberOfIterations": "16",
             "MaximumStepSizeInPhysicalUnits": "1.0",
-            "LearningRate": "1.0"
+            "LearningRate": "0.25",
+            "EstimateScales": "True",
+            "EstimateLearningRate": "False"
         },
         {
             "Name": "DisplacementField",
@@ -125,7 +125,7 @@
         {
             "Out": "FixedMask",
             "In": "FixedImageCropper",
-            "NameOfInterface": "itkImageMaskInterface"
+            "NameOfInterface": "itkImageFixedMaskInterface"
         },
         {
             "Out": "FixedImageCropper",
@@ -139,7 +139,7 @@
         },{
             "Out": "MovingMask",
             "In": "MovingImageCropper",
-            "NameOfInterface": "itkImageMaskInterface"
+            "NameOfInterface": "itkImageMovingMaskInterface"
         },
         {
             "Out": "FixedImageCropper",
@@ -148,11 +148,13 @@
         },
         {
             "Out": "FixedImage",
-            "In": "RegistrationMethod1"
+            "In": "RegistrationMethod1",
+            "NameOfInterface": "NiftyregReferenceImageInterface"
         },
         {
             "Out": "MovingImage",
-            "In": "RegistrationMethod1"
+            "In": "RegistrationMethod1",
+            "NameOfInterface": "NiftyregFloatingImageInterface"
         },
         {
             "Out": "FixedImageCropper",
@@ -208,6 +210,11 @@
         {
             "Out": "MovingMask",
             "In": "Metric2"
+        },
+        {
+            "Out": "FixedMask",
+            "In": "RegistrationMethod1",
+            "NameOfInterface": "NiftyregInputMaskInterface"
         }
     ]
 }
