@@ -19,29 +19,29 @@
             "Name": "NiftyRegSpline",
             "NameOfClass": "Niftyregf3dComponent",
             "NumberOfResolutions": "4",
-            "SmoothingSigma": "4.0"
+            "SmoothingSigma": "2.0"
         },
         {
             "Name": "FixedImage",
-            "NameOfClass": "ItkToNiftiImageSourceComponent",
-            "PixelType": "float",
-            "Dimensionality": "3"
+            "NameOfClass": "ItkToNiftiImageHybridSourceComponent",
+            "Dimensionality": "3",
+            "PixelType": "float"
+        },
+        {
+            "Name": "MovingImage",
+            "NameOfClass": "ItkToNiftiImageHybridSourceComponent",
+            "Dimensionality": "3",
+            "PixelType": "float"
         },
         {
             "Name": "FixedMask",
-            "NameOfClass": "ItkImageSourceComponent",
+            "NameOfClass": "ItkToNiftiImageHybridSourceComponent",
             "PixelType": "unsigned char",
             "Dimensionality": "3"
         },
         {
-            "Name": "MovingImage",
-            "NameOfClass": "ItkToNiftiImageSourceComponent",
-            "PixelType": "float",
-            "Dimensionality": "3"
-        },
-        {
             "Name": "MovingMask",
-            "NameOfClass": "ItkImageSourceComponent",
+            "NameOfClass": "ItkToNiftiImageHybridSourceComponent",
             "PixelType": "unsigned char",
             "Dimensionality": "3"
         },
@@ -100,6 +100,16 @@
             "Out": "FixedImage",
             "In": "DisplacementField",
             "NameOfInterface": "itkImageDomainFixedInterface"
+        },
+        {
+            "Out": "FixedMask",
+            "In": "NiftyRegAffine",
+            "NameOfInterface": "NiftyregInputMaskInterface"
+        },
+        {
+            "Out": "FixedMask",
+            "In": "NiftyRegBSpline",
+            "NameOfInterface": "NiftyregInputMaskInterface"
         }
     ]
 }
