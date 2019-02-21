@@ -31,7 +31,7 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
   ::ItkSyNImageRegistrationMethodComponent( const std::string & name, LoggerImpl & logger ) 
   : Superclass( name, logger )
 {
-  m_SyNImageRegistrationMethod = SyNImageRegistrationMethodType::New();
+  this->m_SyNImageRegistrationMethod = SyNImageRegistrationMethodType::New();
 
   //TODO: instantiating the filter in the constructor might be heavy for the use in component selector factory, since all components of the database are created during the selection process.
   // we could choose to keep the component light weighted (for checking criteria such as names and connections) until the settings are passed to the filter, but this requires an additional initialization step.
@@ -327,6 +327,32 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
         std::cout << "numberOfIterations[" << i << "]:" << numberOfIterations[i] << std::endl;
       }
       this->m_SyNImageRegistrationMethod->SetNumberOfIterationsPerLevel(numberOfIterations);
+	}
+	else if( criterion.first == "EstimateScales" ) //Supports this?
+	{
+		if( criterion.second.size() != 1 )
+		{
+			meetsCriteria = false;
+		}
+		else
+		{
+			auto const & criterionValue = *criterion.second.begin();
+			if( criterionValue == "True" )
+			{
+				auto optimizer = this->m_SyNImageRegistrationMethod->GetModifiableOptimizer();
+				optimizer->SetDoEstimateScales(true);
+				meetsCriteria = true;
+			}
+			else if( criterionValue == "False" )
+			{
+				auto optimizer = this->m_SyNImageRegistrationMethod->GetModifiableOptimizer();
+				optimizer->SetDoEstimateScales(false);
+				meetsCriteria = true;
+			}
+			else {
+				meetsCriteria = false;
+			}
+		}
 	}
 
 	return meetsCriteria;
