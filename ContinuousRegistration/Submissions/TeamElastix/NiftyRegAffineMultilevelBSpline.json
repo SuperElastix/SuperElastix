@@ -20,38 +20,38 @@
             "NameOfClass": "Niftyregf3dComponent",
             "NumberOfResolutions": "4",
             "SmoothingSigma": "5.0",
-            "NumberOfIterations": "1",
-            "GridSpacingInPhysicalUnits": ["8", "8", "8"]
+            "NumberOfIterations": "32",
+            "GridSpacingInPhysicalUnits": ["16", "16", "16"]
         },
         {
             "Name": "NiftyRegSpline2",
             "NameOfClass": "Niftyregf3dComponent",
             "NumberOfResolutions": "3",
             "SmoothingSigma": "1.0",
-            "NumberOfIterations": "1",
-            "GridSpacingInPhysicalUnits": ["4", "4", "4"]
+            "NumberOfIterations": "32",
+            "GridSpacingInPhysicalUnits": ["5", "5", "5"]
         },
         {
             "Name": "FixedImage",
             "NameOfClass": "ItkToNiftiImageSourceComponent",
-            "PixelType": "float",
-            "Dimensionality": "3"
-        },
-        {
-            "Name": "FixedMask",
-            "NameOfClass": "ItkImageSourceComponent",
-            "PixelType": "unsigned char",
-            "Dimensionality": "3"
+            "Dimensionality": "3",
+            "PixelType": "float"
         },
         {
             "Name": "MovingImage",
             "NameOfClass": "ItkToNiftiImageSourceComponent",
-            "PixelType": "float",
+            "Dimensionality": "3",
+            "PixelType": "float"
+        },
+        {
+            "Name": "FixedMask",
+            "NameOfClass": "ItkToNiftiImageSourceComponent",
+            "PixelType": "unsigned char",
             "Dimensionality": "3"
         },
         {
             "Name": "MovingMask",
-            "NameOfClass": "ItkImageSourceComponent",
+            "NameOfClass": "ItkToNiftiImageSourceComponent",
             "PixelType": "unsigned char",
             "Dimensionality": "3"
         },
@@ -125,6 +125,21 @@
             "Out": "NiftyRegSpline1",
             "In": "NiftyRegSpline2",
             "NameOfInterface": "NiftyregControlPointPositionImageInterface"
+        },
+        {
+            "Out": "FixedMask",
+            "In": "NiftyRegAffine",
+            "NameOfInterface": "NiftyregInputMaskInterface"
+        },
+        {
+            "Out": "FixedMask",
+            "In": "NiftyRegSpline1",
+            "NameOfInterface": "NiftyregInputMaskInterface"
+        },
+        {
+            "Out": "FixedMask",
+            "In": "NiftyRegSpline2",
+            "NameOfInterface": "NiftyregInputMaskInterface"
         }
     ]
 }
