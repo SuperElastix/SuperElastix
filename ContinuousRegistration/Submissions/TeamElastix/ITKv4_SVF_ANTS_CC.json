@@ -4,9 +4,9 @@
         {
             "Name": "RegistrationMethod",
             "NameOfClass": "ItkImageRegistrationMethodv4Component",
-            "NumberOfLevels":  "3" ,
-            "ShrinkFactorsPerLevel": [ "16", "8", "4" ],
-            "SmoothingSigmasPerLevel": [ "16", "8", "4" ],
+            "NumberOfLevels":  "4" ,
+            "ShrinkFactorsPerLevel": [ "16", "8", "4", "2" ],
+            "SmoothingSigmasPerLevel": [ "8", "4", "2", "1" ],
             "Dimensionality": "3"
         },
         {
@@ -58,8 +58,8 @@
         {
             "Name": "Optimizer",
             "NameOfClass": "ItkGradientDescentOptimizerv4Component",
-            "NumberOfIterations": "32",
-            "LearningRate": "1.0",
+            "NumberOfIterations": "48",
+            "LearningRate": "0.25",
             "EstimateScales": "True",
             "EstimateLearningRate": "False"
         },
@@ -68,13 +68,13 @@
             "NameOfClass": "ItkGaussianExponentialDiffeomorphicTransformComponent",
             "InternalComputationValueType": "double",
             "Dimensionality": "3",
-            "GaussianSmoothingVarianceForTheConstantVelocityField": "3.0",
-            "GaussianSmoothingVarianceForTheUpdateField": "3.0"
+            "GaussianSmoothingVarianceForTheConstantVelocityField": "1.0",
+            "GaussianSmoothingVarianceForTheUpdateField": "2.0"
         },
         {
             "Name": "TransformResolutionAdaptor",
             "NameOfClass": "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent",
-            "ShrinkFactorsPerLevel": [ "16", "8", "4" ],
+            "ShrinkFactorsPerLevel": [ "16", "8", "4", "2" ],
             "Dimensionality": "3"
         },
         {
