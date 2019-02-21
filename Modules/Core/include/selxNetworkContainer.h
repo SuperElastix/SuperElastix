@@ -41,11 +41,14 @@ public:
   using UpdateOrderType = std::vector<std::shared_ptr< UpdateInterface >>;
   using OutputObjectsMapType   = std::map< std::string, itk::DataObject::Pointer >;
 
-  NetworkContainer( ComponentContainerType components, UpdateOrderType updateOrder, OutputObjectsMapType outputObjectsMap );
+  NetworkContainer( ComponentContainerType components, UpdateOrderType beforeUpdateOrder, UpdateOrderType updateOrder, OutputObjectsMapType outputObjectsMap );
   ~NetworkContainer() {}
 
+  /** Allow components to setup internal state before network is updated */
+  void BeforeUpdate();
+
   /** Run the (registration) algorithm */
-  void Execute();
+  void Update();
 
   /** Get the Sinking output objects */
   OutputObjectsMapType GetOutputObjectsMap();
@@ -53,6 +56,7 @@ public:
 private:
 
   const ComponentContainerType m_ComponentContainer;
+  const UpdateOrderType m_BeforeUpdateOrder;
   const UpdateOrderType m_UpdateOrder;
   const OutputObjectsMapType   m_OutputObjectsMap;
 };

@@ -18,7 +18,7 @@
         },
         {
             "Name": "FixedMask",
-            "NameOfClass": "ItkImageSourceComponent",
+            "NameOfClass": "ItkToNiftiImageSourceComponent",
             "PixelType": "unsigned char",
             "Dimensionality": "3"
         },
@@ -30,7 +30,7 @@
         },
         {
             "Name": "MovingMask",
-            "NameOfClass": "ItkImageSourceComponent",
+            "NameOfClass": "ItkToNiftiImageSourceComponent",
             "PixelType": "unsigned char",
             "Dimensionality": "3"
         },
@@ -89,6 +89,11 @@
             "Out": "FixedImage",
             "In": "DisplacementField",
             "NameOfInterface": "itkImageDomainFixedInterface"
+        },
+        {
+            "Out": "FixedMask",
+            "In": "NiftyRegAffine",
+            "NameOfInterface": "NiftyregInputMaskInterface"
         }
     ]
 }

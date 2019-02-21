@@ -42,9 +42,18 @@ int
 ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent< Dimensionality, TransformInternalComputationValueType >
 ::Accept( typename itkImageDomainFixedInterface< Dimensionality >::Pointer component )
 {
-  auto fixedImageDomain = component->GetItkImageDomainFixed();
+  this->m_FixedDomain = component->GetItkImageDomainFixed();
 
-  for( unsigned int level = 0; level < m_shrinkFactorsPerLevel.Size(); level++ )
+  return 0;
+}
+
+template< int Dimensionality, class TransformInternalComputationValueType >
+void
+ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent< Dimensionality, TransformInternalComputationValueType >
+::BeforeUpdate() {
+  this->m_FixedDomain->UpdateOutputInformation();
+
+  for( unsigned int level = 0; level < m_ShrinkFactorsPerLevel.Size(); level++ )
   {
     // We use the shrink image filter to calculate the fixed parameters of the virtual
     // domain at each level.  To speed up calculation and avoid unnecessary memory
@@ -53,12 +62,12 @@ ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent
     typedef itk::Image< TransformInternalComputationValueType, Dimensionality > FixedImageType;
 
     typename FixedImageType::Pointer fixedImage = FixedImageType::New();
-    fixedImage->CopyInformation( fixedImageDomain );
+    fixedImage->CopyInformation( this->m_FixedDomain );
     //fixedImage->Allocate();
 
     typedef itk::ShrinkImageFilter< FixedImageType, FixedImageType > ShrinkFilterType;
     typename ShrinkFilterType::Pointer shrinkFilter = ShrinkFilterType::New();
-    shrinkFilter->SetShrinkFactors( m_shrinkFactorsPerLevel[ level ] );
+    shrinkFilter->SetShrinkFactors( m_ShrinkFactorsPerLevel[ level ] );
     shrinkFilter->SetInput( fixedImage );
     shrinkFilter->UpdateOutputInformation();
 
@@ -68,12 +77,9 @@ ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent
     transformAdaptor->SetRequiredDirection( shrinkFilter->GetOutput()->GetDirection() );
     transformAdaptor->SetRequiredOrigin( shrinkFilter->GetOutput()->GetOrigin() );
 
-    m_adaptors.push_back( transformAdaptor.GetPointer() ); // Implicit cast back to TransformParametersAdaptorBase<itk::Transform<...>>
+    this->m_Adaptors.push_back( transformAdaptor.GetPointer() ); // Implicit cast back to TransformParametersAdaptorBase<itk::Transform<...>>
   }
-
-  return 0;
-}
-
+};
 
 template< int Dimensionality, class TransformInternalComputationValueType >
 typename ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent< Dimensionality,
@@ -81,7 +87,7 @@ TransformInternalComputationValueType >::TransformParametersAdaptorsContainerTyp
 ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent< Dimensionality, TransformInternalComputationValueType >
 ::GetItkTransformParametersAdaptorsContainer()
 {
-  return this->m_adaptors;
+  return this->m_Adaptors;
 }
 
 
@@ -106,12 +112,12 @@ ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent
     meetsCriteria = true;
 
     const int NumberOfResolutions = criterion.second.size(); // maybe check with criterion "NumberOfResolutions"?
-    m_shrinkFactorsPerLevel.SetSize( NumberOfResolutions );
+    m_ShrinkFactorsPerLevel.SetSize( NumberOfResolutions );
 
     unsigned int resolutionIndex = 0;
     for( auto const & criterionValue : criterion.second ) // auto&& preferred?
     {
-      m_shrinkFactorsPerLevel[ resolutionIndex ] = std::stoi( criterionValue );
+      m_ShrinkFactorsPerLevel[ resolutionIndex ] = std::stoi( criterionValue );
       ++resolutionIndex;
     }
   }

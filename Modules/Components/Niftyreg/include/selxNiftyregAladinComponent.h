@@ -33,7 +33,8 @@ namespace selx
 template< class TPixel >
 class NiftyregAladinComponent :
   public SuperElastixComponent<
-  Accepting< NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >>,
+  Accepting< NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >,
+             NiftyregInputMaskInterface<  unsigned char  > >,
   Providing< NiftyregWarpedImageInterface< TPixel >, NiftyregAffineMatrixInterface , UpdateInterface >
   >
 {
@@ -42,35 +43,37 @@ public:
   /** Standard ITK typedefs. */
   typedef NiftyregAladinComponent< TPixel > Self;
   typedef SuperElastixComponent<
-    Accepting< NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >>,
+    Accepting< NiftyregReferenceImageInterface< TPixel >, NiftyregFloatingImageInterface< TPixel >,
+               NiftyregInputMaskInterface< unsigned char > >,
     Providing< NiftyregWarpedImageInterface< TPixel >, NiftyregAffineMatrixInterface, UpdateInterface >
     >                                      Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
 
   NiftyregAladinComponent( const std::string & name, LoggerImpl & logger );
-  virtual ~NiftyregAladinComponent();
+  ~NiftyregAladinComponent();
 
-  virtual int Accept( typename NiftyregReferenceImageInterface< TPixel >::Pointer ) override;
+  int Accept( typename NiftyregReferenceImageInterface< TPixel >::Pointer ) override;
+  int Accept(typename NiftyregFloatingImageInterface< TPixel >::Pointer) override;
+  int Accept( typename NiftyregInputMaskInterface< unsigned char >::Pointer ) override;
 
-  virtual int Accept(typename NiftyregFloatingImageInterface< TPixel >::Pointer) override;
+  std::shared_ptr< nifti_image > GetWarpedNiftiImage() override;
 
-  virtual std::shared_ptr< nifti_image > GetWarpedNiftiImage() override;
+  mat44 * GetAffineNiftiMatrix() override;
 
-  virtual mat44 * GetAffineNiftiMatrix() override;
-
-  virtual void Update() override;
-
-  virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
-
+  void Update() override;
+  bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
   static const char * GetDescription() { return "NiftyregAladin Component"; }
+
+  bool ConnectionsSatisfied() override;
 
 private:
 
-  reg_aladin< TPixel > *            m_reg_aladin;
+  reg_aladin< TPixel > *         m_reg_aladin;
   std::shared_ptr< nifti_image > m_reference_image;
   std::shared_ptr< nifti_image > m_floating_image;
   std::shared_ptr< nifti_image > m_warped_image;
+  std::shared_ptr< nifti_image > m_input_mask;
 
 protected:
 

@@ -58,7 +58,7 @@
             "ParameterMap1AutomaticTransformInitialization": "false",
             "ParameterMap1Transform": "RecursiveBSplineTransform",
             "ParameterMap1BSplineTransformSplineOrder": "3",
-            "ParameterMap1FinalGridSpacingInPhysicalUnits": "4.0",
+            "ParameterMap1FinalGridSpacingInPhysicalUnits": "8.0",
             "ParameterMap1GridSpacingSchedule": ["4.24", "2.82", "2.0", "1.41", "1.0"],
             "ParameterMap1RequiredRatioOfValidSamples": "0.01"
         },

@@ -542,6 +542,7 @@ NetworkBuilder< ComponentList >::GetRealizedNetwork()
 {
   // vector that stores all components
   NetworkContainer::ComponentContainerType components;
+  NetworkContainer::UpdateOrderType beforeUpdateOrder;
   NetworkContainer::UpdateOrderType updateOrder;
   NetworkContainer::OutputObjectsMapType outputObjectsMap;
 
@@ -585,10 +586,13 @@ NetworkBuilder< ComponentList >::GetRealizedNetwork()
           updateOrder.push_back(provingUpdateInterface);
           connectionInfoUpdateInterface->SetProvidedTo("NetworkBuilder");
         }
+
+        // Before update should always be called
+        beforeUpdateOrder.push_back(provingUpdateInterface);
       }
     }
 
-    return NetworkContainer( components, updateOrder, outputObjectsMap );
+    return NetworkContainer( components, beforeUpdateOrder, updateOrder, outputObjectsMap );
   }
   else
   {
@@ -596,7 +600,6 @@ NetworkBuilder< ComponentList >::GetRealizedNetwork()
     msg << "Network is not realized yet";
     this->m_Logger.Log(LogLevel::ERR, "{}", msg.str() );
     throw std::runtime_error( msg.str() );
-    return NetworkContainer( components, updateOrder, outputObjectsMap );
   }
 
 

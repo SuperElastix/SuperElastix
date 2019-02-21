@@ -40,7 +40,7 @@ template< int Dimensionality, class TransformInternalComputationValueType >
 class ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent :
   public SuperElastixComponent<
   Accepting< itkImageDomainFixedInterface< Dimensionality >>,
-  Providing< itkTransformParametersAdaptorsContainerInterface< TransformInternalComputationValueType, Dimensionality >
+  Providing< itkTransformParametersAdaptorsContainerInterface< TransformInternalComputationValueType, Dimensionality >, UpdateInterface
   >
   >
 {
@@ -52,7 +52,7 @@ public:
     >                                       Self;
   typedef SuperElastixComponent<
     Accepting< itkImageDomainFixedInterface< Dimensionality >>,
-    Providing< itkTransformParametersAdaptorsContainerInterface< TransformInternalComputationValueType, Dimensionality >
+    Providing< itkTransformParametersAdaptorsContainerInterface< TransformInternalComputationValueType, Dimensionality >, UpdateInterface
     >
     >                                       Superclass;
   typedef std::shared_ptr< Self >       Pointer;
@@ -68,6 +68,8 @@ public:
       = itkTransformParametersAdaptorsContainerInterface< TransformInternalComputationValueType, Dimensionality >;
   using TransformParametersAdaptorsContainerType
       = typename itkTransformParametersAdaptorsContainerInterfaceType::TransformParametersAdaptorsContainerType;
+  using ItkImageDomainType = typename itkImageDomainFixedInterface< Dimensionality >::ItkImageDomainType;
+  using ItkImageDomainPointer = typename ItkImageDomainType::Pointer;
 
   // Since the itkTransformParametersAdaptorsContainerInterface is only defined by BaseType Adaptors and Transforms, we cannot use the ItkTransformParametersAdaptorsContainerInterfaceType::TransformParametersAdaptorBaseType;
   // Specific to this componenent is the full definition of TransformParametersAdaptorType being GaussianExponentialDiffeomorphic
@@ -75,31 +77,35 @@ public:
       = itk::GaussianExponentialDiffeomorphicTransformParametersAdaptor< itk::GaussianExponentialDiffeomorphicTransform<
     TransformInternalComputationValueType, Dimensionality >>;
 
-  typedef itk::Array< itk::SizeValueType >                    ShrinkFactorsArrayType;
-  typedef itk::Array< TransformInternalComputationValueType > SmoothingSigmasArrayType;
+  using ShrinkFactorsArrayType = itk::Array< itk::SizeValueType >;
+  using SmoothingSigmasArrayType = itk::Array< TransformInternalComputationValueType >;
 
   //Accepting Interfaces:
-  virtual int Accept( typename itkImageDomainFixedInterface< Dimensionality >::Pointer ) override;
+  int Accept( typename itkImageDomainFixedInterface< Dimensionality >::Pointer ) override;
 
   //Providing Interfaces:
-  virtual TransformParametersAdaptorsContainerType GetItkTransformParametersAdaptorsContainer() override;
+  TransformParametersAdaptorsContainerType GetItkTransformParametersAdaptorsContainer() override;
+
+  void BeforeUpdate() override;
 
   //BaseClass methods
-  virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
+  bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
 
   static const char * GetDescription() { return "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainer Component"; }
 
 private:
 
-  TransformParametersAdaptorsContainerType m_adaptors;
+  TransformParametersAdaptorsContainerType m_Adaptors;
 
   // Shrink the virtual domain by specified factors for each level.  See documentation
   // for the itkShrinkImageFilter for more detailed behavior.
-
-  ShrinkFactorsArrayType m_shrinkFactorsPerLevel;
+  ShrinkFactorsArrayType m_ShrinkFactorsPerLevel;
   // Smooth by specified gaussian sigmas for each level.  These values are specified in
   // physical units.
-  SmoothingSigmasArrayType m_smoothingSigmasPerLevel;
+
+  SmoothingSigmasArrayType m_SmoothingSigmasPerLevel;
+
+  ItkImageDomainPointer m_FixedDomain;
 
 protected:
 

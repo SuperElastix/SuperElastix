@@ -90,6 +90,11 @@ ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >::
 	  return updateIterator->GetComponentName();
   });
 
+  // Execute BeforeUpdate step (see TODO below)
+  for(auto updateIterator : this->m_UpdateInterfaces) {
+    updateIterator->BeforeUpdate();
+  }
+
   sort( sortedExecutionNames.begin(), sortedExecutionNames.end() );
   sort( sortedStageNames.begin(), sortedStageNames.end() );
   sort( sortedUpdateNames.begin(), sortedUpdateNames.end() );
@@ -133,7 +138,7 @@ ItkCompositeTransformComponent< InternalComputationValueType, Dimensionality >::
         return thisStage->GetComponentName() == stageName;
       } );
     ( *stageIterator )->SetMovingInitialTransform( this->m_CompositeTransform );
-	// TODO: Here we call Update() via the MultiStageTransformInterface, but this should be done via the proper UpdateInterdafe. And Update() should be removed from the MultiStageTransformInterface entirely.
+	  // TODO: Here we call Update() via the MultiStageTransformInterface, but this should be done via the proper UpdateInterdafe. And Update() should be removed from the MultiStageTransformInterface entirely.
     ( *stageIterator )->Update();
 
     this->m_CompositeTransform->AppendTransform( ( *stageIterator )->GetItkTransform() );

@@ -67,16 +67,22 @@ public:
 
 class UpdateInterface
 {
-  // A special interface: the NetworkBuilder checks components for this type of interface.
-  // This interface is to control the execution of the network
 
 public:
 
   using Pointer = std::shared_ptr< UpdateInterface >;
-  virtual void Update() = 0;
+
+  // This interface is used to execute of the network. The components
+  // are executed in topologically sorted order from input to output.
+  virtual void Update() {};
+
+  // This interface is run on all components prior to updating the network.
+  // Components can use this interface do setup internal state after all
+  // connections in the network has been set.
+  virtual void BeforeUpdate() {};
 
   // GetComponentName is implemented in the SuperElastixComponent class and does not need to be implemented by each component individually.
-  virtual std::string GetComponentName() const = 0; 
+  virtual std::string GetComponentName() const = 0;
 };
 
 } // end namespace selx

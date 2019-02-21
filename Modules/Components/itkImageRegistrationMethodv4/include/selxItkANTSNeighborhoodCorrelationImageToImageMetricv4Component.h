@@ -34,7 +34,7 @@ class ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component :
   public SuperElastixComponent<
   Accepting< itkImageFixedMaskInterface< Dimensionality, unsigned char >,
              itkImageMovingMaskInterface< Dimensionality, unsigned char > >,
-  Providing< itkMetricv4Interface< Dimensionality, TPixel, double >>
+  Providing< itkMetricv4Interface< Dimensionality, TPixel, double >, UpdateInterface >
   >
 {
 public:
@@ -46,7 +46,7 @@ public:
   typedef SuperElastixComponent<
     Accepting< itkImageFixedMaskInterface< Dimensionality, unsigned char >,
                itkImageMovingMaskInterface< Dimensionality, unsigned char > >,
-    Providing< itkMetricv4Interface< Dimensionality, TPixel, double >>
+    Providing< itkMetricv4Interface< Dimensionality, TPixel, double >, UpdateInterface >
     >                                      Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
@@ -64,27 +64,31 @@ public:
 
   typedef typename ImageToImageMetricv4Type::Pointer ItkMetricv4Pointer;
 
-  typedef typename itk::ANTSNeighborhoodCorrelationImageToImageMetricv4< FixedImageType, MovingImageType > TheItkFilterType;
+  typedef typename itk::ANTSNeighborhoodCorrelationImageToImageMetricv4< FixedImageType, MovingImageType > ANTSNeighborhoodCorrelationImageToImageMetricv4Type;
 
   // accepting Interfaces:
-  virtual int Accept(typename itkImageFixedMaskInterface< Dimensionality, unsigned char >::Pointer) override;
+  int Accept(typename itkImageFixedMaskInterface< Dimensionality, unsigned char >::Pointer ) override;
 
-  virtual int Accept(typename itkImageMovingMaskInterface< Dimensionality, unsigned char >::Pointer) override;
+  int Accept(typename itkImageMovingMaskInterface< Dimensionality, unsigned char >::Pointer) override;
 
 
   // providing Interfaces:
-  virtual ItkMetricv4Pointer GetItkMetricv4() override;
+  ItkMetricv4Pointer GetItkMetricv4() override;
 
   // Base class methods:
-  virtual bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
+  bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
 
-  virtual bool ConnectionsSatisfied() override {return true;} // all of the accepting interfaces are optional
+  bool ConnectionsSatisfied() override {return true;} // all of the accepting interfaces are optional
 
   static const char * GetDescription() { return "ItkANTSNeighborhoodCorrelationImageToImageMetricv4 Component"; }
 
+  void BeforeUpdate() override;
+
 private:
 
-  typename TheItkFilterType::Pointer m_theItkFilter;
+  typename ANTSNeighborhoodCorrelationImageToImageMetricv4Type::Pointer m_ANTSNeighborhoodCorrelationImageToImageMetricv4;
+  typename itkImageFixedMaskInterface< Dimensionality, unsigned char >::ItkImageType::Pointer m_FixedMask;
+  typename itkImageMovingMaskInterface< Dimensionality, unsigned char >::ItkImageType::Pointer m_MovingMask;
 
 protected:
 

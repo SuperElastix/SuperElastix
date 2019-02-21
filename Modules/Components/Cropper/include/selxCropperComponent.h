@@ -23,7 +23,7 @@
 #include "itkConnectedComponentImageFilter.h"
 #include "itkLabelGeometryImageFilter.h"
 #include "itkLabelImageToShapeLabelMapFilter.h"
-#include "itkExtractImageFilter.h"
+#include "itkRegionOfInterestImageFilter.h"
 
 #include "selxSuperElastixComponent.h"
 #include "selxItkObjectInterfaces.h"
@@ -34,10 +34,15 @@ class CropperComponent :
   public SuperElastixComponent<
     Accepting<
       itkImageInterface< Dimensionality, TPixel >,
-      itkImageMaskInterface< Dimensionality, unsigned char >
+      itkImageMaskInterface< Dimensionality, unsigned char >,
+      itkImageFixedMaskInterface< Dimensionality, unsigned char >,
+      itkImageMovingMaskInterface< Dimensionality, unsigned char >
     >,
     Providing<
       itkImageInterface< Dimensionality, TPixel >,
+      itkImageFixedInterface< Dimensionality, TPixel >,
+      itkImageDomainFixedInterface< Dimensionality >,
+      itkImageMovingInterface< Dimensionality, TPixel >,
       UpdateInterface
     >
   >
@@ -50,9 +55,15 @@ public:
   using Superclass = SuperElastixComponent<
     Accepting<
       itkImageInterface< Dimensionality, TPixel >,
-      itkImageMaskInterface< Dimensionality, unsigned char > >,
+      itkImageMaskInterface< Dimensionality, unsigned char >,
+      itkImageFixedMaskInterface< Dimensionality, unsigned char >,
+      itkImageMovingMaskInterface< Dimensionality, unsigned char >
+    >,
     Providing<
       itkImageInterface< Dimensionality, TPixel >,
+      itkImageFixedInterface< Dimensionality, TPixel >,
+      itkImageDomainFixedInterface< Dimensionality >,
+      itkImageMovingInterface< Dimensionality, TPixel >,
       UpdateInterface
     >
   >;
@@ -60,38 +71,45 @@ public:
   CropperComponent( const std::string & name, LoggerImpl & logger );
 
   using ItkImageType = itk::Image< TPixel, Dimensionality >;
+  using ItkImageDomainType = typename itkImageDomainFixedInterface< Dimensionality >::ItkImageDomainType;
+  using ItkImageDomainPointer = typename ItkImageDomainType::Pointer;
   using ItkImagePointer = typename ItkImageType::Pointer;
   using ItkImageMaskType = itk::Image< unsigned char, Dimensionality >;
   using ItkImageMaskPointer = typename ItkImageMaskType::Pointer;
-  using ConnectedComponentImageFilterType = itk::ConnectedComponentImageFilter< ItkImageMaskType, ItkImageMaskType >;
-  using ConnectedComponentImageFilterPointer = typename ConnectedComponentImageFilterType::Pointer;
   using LabelGeometryImageFilterType = itk::LabelGeometryImageFilter< ItkImageMaskType >;
   using LabelGeometryImageFilterPointer = typename LabelGeometryImageFilterType::Pointer;
-  using ExtractImageFilterType = itk::ExtractImageFilter< ItkImageType, ItkImageType >;
-  using ExtractImageFilterPointer = typename ExtractImageFilterType::Pointer;
+  using RegionOfInterestImageFilterType = itk::RegionOfInterestImageFilter< ItkImageType, ItkImageType >;
+  using RegionOfInterestImageFilterPointer = typename RegionOfInterestImageFilterType::Pointer;
 
   using CriterionType = ComponentBase::CriterionType;
 
   // Accepting
   int Accept( typename itkImageInterface< Dimensionality, TPixel >::Pointer ) override;
   int Accept( typename itkImageMaskInterface< Dimensionality, unsigned char >::Pointer ) override;
+  int Accept( typename itkImageFixedMaskInterface< Dimensionality, unsigned char >::Pointer ) override;
+  int Accept( typename itkImageMovingMaskInterface< Dimensionality, unsigned char >::Pointer ) override;
 
   // Providing
   ItkImagePointer GetItkImage() override;
+  ItkImagePointer GetItkImageFixed() override;
+  ItkImagePointer GetItkImageMoving() override;
+  ItkImageDomainPointer GetItkImageDomainFixed() override;
 
   // Base methods
+  void BeforeUpdate() override;
   void Update() override;
   bool MeetsCriterion( const CriterionType & criterion ) override;
+  bool ConnectionsSatisfied() override;
   static const char* GetDescription() { return "ItkCropper Component"; }
 
 private:
 
-  ConnectedComponentImageFilterPointer m_ConnectedComponentImageFilter;
   LabelGeometryImageFilterPointer m_LabelGeometryImageFilter;
-  ExtractImageFilterPointer m_ExtractImageFilter;
+  RegionOfInterestImageFilterPointer m_RegionOfInterestImageFilter;
 
   int m_Pad;
   ItkImagePointer m_Image;
+  ItkImageMaskPointer m_Mask;
 
 protected:
 

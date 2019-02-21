@@ -30,6 +30,8 @@ using ModuleNiftyregItkHybridComponents = selx::TypeList<
     ItkToNiftiImageHybridSourceComponent<2, double>,
     ItkToNiftiImageHybridSourceComponent<3, float>,
     ItkToNiftiImageHybridSourceComponent<3, double>,
+		ItkToNiftiImageHybridSourceComponent<2, unsigned char>,
+	  ItkToNiftiImageHybridSourceComponent<3, unsigned char>,
     NiftyregItkMultiStageComponent<float, 2>,
 	  NiftyregItkMultiStageComponent<double, 2>,
 	  NiftyregItkMultiStageComponent<double, 3>,

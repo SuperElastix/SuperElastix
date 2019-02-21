@@ -17,34 +17,51 @@
  *
  *=========================================================================*/
 
-#include "selxItkToNiftiImageSourceComponent.h"
+#include "selxItkToNiftiImageComponent.h"
 #include "selxCheckTemplateProperties.h"
 
 namespace selx
 {
 template< int Dimensionality, class TPixel >
-ItkToNiftiImageSourceComponent< Dimensionality, TPixel >
-::ItkToNiftiImageSourceComponent(const std::string & name, LoggerImpl & logger) : Superclass( name, logger ), m_Image( nullptr )
+ItkToNiftiImageComponent< Dimensionality, TPixel >
+::ItkToNiftiImageComponent(const std::string & name, LoggerImpl & logger) : Superclass( name, logger ), m_Image( nullptr )
 {
 }
 
 
 template< int Dimensionality, class TPixel >
-ItkToNiftiImageSourceComponent< Dimensionality, TPixel >::~ItkToNiftiImageSourceComponent()
+ItkToNiftiImageComponent< Dimensionality, TPixel >::~ItkToNiftiImageComponent()
 {
+}
+
+template< int Dimensionality, class TPixel >
+int
+ItkToNiftiImageComponent< Dimensionality, TPixel >::Accept( typename itkImageInterface< Dimensionality, TPixel >::Pointer component)
+{
+  this->m_Image = component->GetItkImage();
+  return 0;
+}
+
+
+template< int Dimensionality, class TPixel >
+int
+ItkToNiftiImageComponent< Dimensionality, TPixel >::Accept( typename itkImageMaskInterface< Dimensionality, TPixel >::Pointer component)
+{
+  this->m_Image = component->GetItkImageMask();
+  return 0;
 }
 
 
 template< int Dimensionality, class TPixel >
 std::shared_ptr< nifti_image >
-ItkToNiftiImageSourceComponent< Dimensionality, TPixel >::GetReferenceNiftiImage()
+ItkToNiftiImageComponent< Dimensionality, TPixel >::GetReferenceNiftiImage()
 {
   if( this->m_Image == nullptr )
   {
-    throw std::runtime_error( "SourceComponent needs to be initialized by SetMiniPipelineInput()" );
+    throw std::runtime_error( "Image not set." );
   }
 
-  this->m_Image->GetSource()->UpdateLargestPossibleRegion();
+  this->m_Image->Update();
 
   // TODO memory management issue: the Convert function passes the ownership
   // of the data buffer from the itk image to the nifti image. This means that
@@ -58,14 +75,14 @@ ItkToNiftiImageSourceComponent< Dimensionality, TPixel >::GetReferenceNiftiImage
 
 template< int Dimensionality, class TPixel >
 std::shared_ptr< nifti_image >
-ItkToNiftiImageSourceComponent< Dimensionality, TPixel >::GetFloatingNiftiImage()
+ItkToNiftiImageComponent< Dimensionality, TPixel >::GetFloatingNiftiImage()
 {
   if( this->m_Image == nullptr )
   {
-    throw std::runtime_error( "SourceComponent needs to be initialized by SetMiniPipelineInput()" );
+    throw std::runtime_error( "Image not set." );
   }
 
-  this->m_Image->GetSource()->UpdateLargestPossibleRegion();
+  this->m_Image->Update();
 
   // TODO memory management issue: the Convert function passes the ownership
   // of the data buffer from the itk image to the nifti image. This means that
@@ -79,14 +96,14 @@ ItkToNiftiImageSourceComponent< Dimensionality, TPixel >::GetFloatingNiftiImage(
 
 template< int Dimensionality, class TPixel >
 std::shared_ptr< nifti_image >
-ItkToNiftiImageSourceComponent< Dimensionality, TPixel >::GetWarpedNiftiImage()
+ItkToNiftiImageComponent< Dimensionality, TPixel >::GetWarpedNiftiImage()
 {
   if( this->m_Image == nullptr )
   {
-    throw std::runtime_error( "SourceComponent needs to be initialized by SetMiniPipelineInput()" );
+    throw std::runtime_error( "Image not set." );
   }
 
-  this->m_Image->GetSource()->UpdateLargestPossibleRegion();
+  this->m_Image->Update();
 
   // TODO memory management issue: the Convert function passes the ownership
   // of the data buffer from the itk image to the nifti image. This means that
@@ -100,14 +117,14 @@ ItkToNiftiImageSourceComponent< Dimensionality, TPixel >::GetWarpedNiftiImage()
 
 template< int Dimensionality, class TPixel >
 std::shared_ptr< nifti_image >
-ItkToNiftiImageSourceComponent< Dimensionality, TPixel >::GetInputMask()
+ItkToNiftiImageComponent< Dimensionality, TPixel >::GetInputMask()
 {
   if( this->m_Image == nullptr )
   {
-    throw std::runtime_error( "SourceComponent needs to be initialized by SetMiniPipelineInput()" );
+    throw std::runtime_error( "Image not set." );
   }
 
-  this->m_Image->GetSource()->UpdateLargestPossibleRegion();
+  this->m_Image->Update();
 
   // TODO memory management issue: the Convert function passes the ownership
   // of the data buffer from the itk image to the nifti image. This means that
@@ -115,20 +132,19 @@ ItkToNiftiImageSourceComponent< Dimensionality, TPixel >::GetInputMask()
   // and the itk image is invalidated. However, subsequently destructing the itk
   // image should be without memory leaks.
 
-  return ItkToNiftiImage< ItkImageType, unsigned char >::Convert( this->m_Image );
+  return ItkToNiftiImage< ItkImageType, TPixel >::Convert( this->m_Image );
 }
-
 
 template< int Dimensionality, class TPixel >
 std::shared_ptr< nifti_image >
-ItkToNiftiImageSourceComponent< Dimensionality, TPixel >::GetInputFloatingMask()
+ItkToNiftiImageComponent< Dimensionality, TPixel >::GetInputFloatingMask()
 {
   if( this->m_Image == nullptr )
   {
-    throw std::runtime_error( "SourceComponent needs to be initialized by SetMiniPipelineInput()" );
+    throw std::runtime_error( "Image not set." );
   }
 
-  this->m_Image->GetSource()->UpdateLargestPossibleRegion();
+  this->m_Image->Update();
 
   // TODO memory management issue: the Convert function passes the ownership
   // of the data buffer from the itk image to the nifti image. This means that
@@ -136,49 +152,14 @@ ItkToNiftiImageSourceComponent< Dimensionality, TPixel >::GetInputFloatingMask()
   // and the itk image is invalidated. However, subsequently destructing the itk
   // image should be without memory leaks.
 
-  return ItkToNiftiImage< ItkImageType, unsigned char >::Convert( this->m_Image );
+  return ItkToNiftiImage< ItkImageType, TPixel >::Convert( this->m_Image );
 }
 
-
-template< int Dimensionality, class TPixel >
-void
-ItkToNiftiImageSourceComponent< Dimensionality, TPixel >
-::SetMiniPipelineInput( itk::DataObject::Pointer object )
-{
-  this->m_Image = dynamic_cast< ItkImageType * >( object.GetPointer() );
-  if( this->m_Image == nullptr )
-  {
-    throw std::runtime_error( "DataObject passed by the NetworkBuilder is not of the right ImageType or not at all an ImageType" );
-  }
-  return;
-}
-
-
-template< int Dimensionality, class TPixel >
-typename AnyFileReader::Pointer
-ItkToNiftiImageSourceComponent< Dimensionality, TPixel >::GetInputFileReader()
-{
-  // Instanstiate an image file reader, decorated such that it can be implicitly cast to an AnyFileReaderType
-  return DecoratedReaderType::New().GetPointer();
-}
-
-
-template< int Dimensionality, class TPixel >
-typename ItkToNiftiImageSourceComponent< Dimensionality, TPixel >::ItkImageDomainType::Pointer
-ItkToNiftiImageSourceComponent< Dimensionality, TPixel >
-::GetItkImageDomainFixed()
-{
-  if( this->m_Image == nullptr )
-  {
-    throw std::runtime_error( "SourceComponent needs to be initialized by SetMiniPipelineInput()" );
-  }
-  return this->m_Image.GetPointer();
-}
 
 
 template< int Dimensionality, class TPixel >
 bool
-ItkToNiftiImageSourceComponent< Dimensionality, TPixel >::MeetsCriterion( const ComponentBase::CriterionType & criterion )
+ItkToNiftiImageComponent< Dimensionality, TPixel >::MeetsCriterion( const ComponentBase::CriterionType & criterion )
 {
   bool hasUndefinedCriteria( false );
   bool meetsCriteria( false );
@@ -194,4 +175,17 @@ ItkToNiftiImageSourceComponent< Dimensionality, TPixel >::MeetsCriterion( const 
 
   return meetsCriteria;
 }
+
+template< int Dimensionality, class TPixel  >
+bool
+ItkToNiftiImageComponent< Dimensionality, TPixel >
+::ConnectionsSatisfied() {
+  if (this->InterfaceAcceptor<itkImageInterface<Dimensionality, TPixel >>::GetAccepted() ||
+      this->InterfaceAcceptor<itkImageMaskInterface<Dimensionality, TPixel >>::GetAccepted()) {
+    return true;
+  }
+
+  return false;
+}
+
 } //end namespace selx

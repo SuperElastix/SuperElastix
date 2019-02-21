@@ -57,6 +57,32 @@ public:
 };
 
 template< class TPixel >
+class NiftyregInputMaskInterface
+{
+public:
+
+  using Type    = NiftyregInputMaskInterface< TPixel >;
+  using Pointer = std::shared_ptr< Type >;
+  virtual std::shared_ptr< nifti_image > GetInputMask() = 0;
+
+  // GetComponentName is implemented in the SuperElastixComponent class and does not need to be implemented by each component individually.
+  virtual std::string GetComponentName() const = 0;
+};
+
+template< class TPixel >
+class NiftyregInputFloatingMaskInterface
+{
+public:
+
+  using Type    = NiftyregInputFloatingMaskInterface< TPixel >;
+  using Pointer = std::shared_ptr< Type >;
+  virtual std::shared_ptr< nifti_image > GetInputFloatingMask() = 0;
+
+  // GetComponentName is implemented in the SuperElastixComponent class and does not need to be implemented by each component individually.
+  virtual std::string GetComponentName() const = 0;
+};
+
+template< class TPixel >
 class NiftyregWarpedImageInterface
 {
 public:
@@ -122,6 +148,24 @@ struct Properties< NiftyregFloatingImageInterface< TPixel >>
   static const std::map< std::string, std::string > Get()
   {
     return { { keys::NameOfInterface, "NiftyregFloatingImageInterface" }, { keys::PixelType, PodString< TPixel >::Get() }  };
+  }
+};
+
+template< class TPixel >
+struct Properties< NiftyregInputMaskInterface< TPixel >>
+{
+  static const std::map< std::string, std::string > Get()
+  {
+    return { { keys::NameOfInterface, "NiftyregInputMaskInterface" }, { keys::PixelType, PodString< TPixel >::Get() }  };
+  }
+};
+
+template< class TPixel >
+struct Properties< NiftyregInputFloatingMaskInterface< TPixel >>
+{
+  static const std::map< std::string, std::string > Get()
+  {
+    return { { keys::NameOfInterface, "NiftyregInputFloatingMaskInterface" }, { keys::PixelType, PodString< TPixel >::Get() }  };
   }
 };
 

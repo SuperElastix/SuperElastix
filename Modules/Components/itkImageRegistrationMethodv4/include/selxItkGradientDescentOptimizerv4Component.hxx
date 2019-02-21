@@ -71,7 +71,7 @@ ItkGradientDescentOptimizerv4Component< InternalComputationValueType >
     return false;
   } // else: CriterionStatus::Unknown
 
-  if( criterion.first == "NumberOfIterations" || criterion.first == "MaximumNumberOfIterations" ) //Supports this?
+  if( criterion.first == "NumberOfIterations" || criterion.first == "MaximumNumberOfIterations" )
   {
     if( criterion.second.size() != 1 )
     {

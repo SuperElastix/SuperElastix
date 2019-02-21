@@ -85,6 +85,20 @@ Niftyregf3dComponent< TPixel >
   return 0;
 }
 
+
+template< class TPixel >
+int
+Niftyregf3dComponent< TPixel >
+::Accept(typename NiftyregInputMaskInterface<  unsigned char  >::Pointer component)
+{
+  // store the shared_ptr to the data, otherwise it gets freed
+  this->m_input_mask = component->GetInputMask();
+  // connect the itk pipeline
+  this->m_reg_f3d->SetReferenceMask( this->m_input_mask.get() );
+  return 0;
+}
+
+
 template< class TPixel >
 std::shared_ptr< nifti_image >
 Niftyregf3dComponent< TPixel >
