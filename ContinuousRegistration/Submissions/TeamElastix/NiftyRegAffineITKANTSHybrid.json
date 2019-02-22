@@ -195,7 +195,7 @@
             "In": "TransformToDisplacementField"
         },
         {
-            "Out": "FixedImageCropper",
+            "Out": "FixedImage",
             "In": "TransformToDisplacementField",
             "NameOfInterface": "itkImageDomainFixedInterface"
         },
