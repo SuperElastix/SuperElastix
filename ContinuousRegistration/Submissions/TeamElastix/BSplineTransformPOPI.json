@@ -110,6 +110,16 @@
             "NameOfInterface": "itkImageMovingInterface"
         },
         {
+            "Out": "FixedMask",
+            "In": "Elastix",
+            "NameOfInterface": "itkImageFixedMaskInterface"
+        },
+        {
+            "Out": "MovingMask",
+            "In": "Elastix",
+            "NameOfInterface": "itkImageMovingMaskInterface"
+        },
+        {
             "Out": "FixedImage",
             "In": "Transformix",
             "NameOfInterface": "itkImageDomainFixedInterface"
