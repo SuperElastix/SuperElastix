@@ -112,34 +112,35 @@ CropperComponent< Dimensionality, TPixel >::BeforeUpdate()
   // Output information must be generated before downstream components are run
   this->m_LabelGeometryImageFilter->SetInput(this->m_Mask);
   this->m_LabelGeometryImageFilter->Update();
-  auto boundingBox = this->m_LabelGeometryImageFilter->GetBoundingBox(1);
-
-  typename itk::Index< Dimensionality > start;
-  start[0] = std::max(boundingBox.GetElement(0) - this->m_Pad, long(this->m_Image->GetLargestPossibleRegion().GetIndex(0)));
-  start[1] = std::max(boundingBox.GetElement(2) - this->m_Pad, long(this->m_Image->GetLargestPossibleRegion().GetIndex(1)));
-  if( Dimensionality > 2 ) start[2] = std::max(boundingBox.GetElement(4) - this->m_Pad, long(this->m_Image->GetLargestPossibleRegion().GetIndex(2)));
-  if( Dimensionality > 3 ) start[3] = std::max(boundingBox.GetElement(6) - this->m_Pad, long(this->m_Image->GetLargestPossibleRegion().GetIndex(3)));
+  const auto boundingBox = this->m_LabelGeometryImageFilter->GetBoundingBox(1);
+  const auto& largestPossibleRegion = this->m_Image->GetLargestPossibleRegion();
 
   {
     std::stringstream ss;
-    ss << this->m_Image->GetLargestPossibleRegion();
+    ss << largestPossibleRegion;
     this->m_Logger.Log(LogLevel::INF, "{0}: Got image with {1}", this->m_Name, ss.str());
   }
 
-  typename itk::Size< Dimensionality > size;
-  size[0] = std::min(boundingBox.GetElement(1) - start[0] + 1 + this->m_Pad, long(this->m_Image->GetLargestPossibleRegion().GetSize(0)) - start[0]);
-  size[1] = std::min(boundingBox.GetElement(3) - start[1] + 1 + this->m_Pad, long(this->m_Image->GetLargestPossibleRegion().GetSize(1)) - start[1]);
-  if( Dimensionality > 2 ) size[2] = std::min(boundingBox.GetElement(5) - start[2] + 1 + this->m_Pad, long(this->m_Image->GetLargestPossibleRegion().GetSize(2)) - start[2]);
-  if( Dimensionality > 3 ) size[3] = std::min(boundingBox.GetElement(7) - start[3] + 1 + this->m_Pad, long(this->m_Image->GetLargestPossibleRegion().GetSize(3)) - start[3]);
-  typename ItkImageType::RegionType region(start, size);
+  itk::Index< Dimensionality > start;
+  itk::Size< Dimensionality > size;
+
+  for (unsigned i{ 0 }; i < Dimensionality; ++i)
+  {
+    start[i] = std::max<itk::IndexValueType>(
+      boundingBox.GetElement(2 * i) - this->m_Pad, largestPossibleRegion.GetIndex(i));
+    size[i] = std::min<itk::IndexValueType>(
+      boundingBox.GetElement(2 * i + 1) - start[i] + 1 + this->m_Pad, largestPossibleRegion.GetSize(i) - start[i]);
+  }
+
+  const typename ItkImageType::RegionType croppedRegion(start, size);
 
   {
     std::stringstream ss;
-    ss << region;
+    ss << croppedRegion;
     this->m_Logger.Log(LogLevel::INF, "{0}: Cropping image to {1}", this->m_Name, ss.str());
   }
 
-  this->m_RegionOfInterestImageFilter->SetRegionOfInterest(region);
+  this->m_RegionOfInterestImageFilter->SetRegionOfInterest(croppedRegion);
 }
 
 template< int Dimensionality, class TPixel >
