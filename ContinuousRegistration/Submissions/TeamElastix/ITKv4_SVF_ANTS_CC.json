@@ -154,7 +154,7 @@
             "NameOfInterface": "itkOptimizerv4Interface"
         },
         {
-            "Out": "FixedImageCropper",
+            "Out": "FixedImage",
             "In": "TransformToDisplacementFilter",
             "NameOfInterface": "itkImageDomainFixedInterface"
         },
