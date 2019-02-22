@@ -609,7 +609,7 @@ class LPBA40(Dataset):
                 for label_file_name in glob.glob(os.path.join(input_directory, 'delineation_space', sub_directory, 'S*delineation.structure.label.hdr')):
 
                     input_label_file_name = os.path.join(input_directory, 'delineation_space', sub_directory, label_file_name)
-                    output_label_file_name = os.path.join(output_directory, 'tmp', 'removed_labels', label_file_name)
+                    output_label_file_name = os.path.join(output_directory, 'tmp', 'removed_labels', os.path.basename(label_file_name))
 
                     # Remove labels outside skullstripped image
                     if not os.path.exists(output_label_file_name):
@@ -619,11 +619,11 @@ class LPBA40(Dataset):
 
                     label_file_names.append(output_label_file_name)
 
-        image_file_names = [pair for pair in combinations(image_file_names, 2)]
-        label_file_names = [pair for pair in combinations(label_file_names, 2)]
+        image_file_names = [pair for pair in combinations(sorted(image_file_names), 2)]
+        label_file_names = [pair for pair in combinations(sorted(label_file_names), 2)]
 
-        image_file_names = take(sorted(image_file_names), max_number_of_registrations // 2)
-        label_file_names = take(sorted(label_file_names), max_number_of_registrations // 2)
+        image_file_names = take(image_file_names, max_number_of_registrations // 2)
+        label_file_names = take(label_file_names, max_number_of_registrations // 2)
 
         image_file_names = [create_identity_world_information(pair, self.name, input_directory, output_directory)
                             for pair in image_file_names]
