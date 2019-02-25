@@ -585,7 +585,7 @@ BlueprintImpl::FromPropertyTree(const PropertyTreeType & pt)
 {
   Blueprint::Pointer blueprint = Blueprint::New();
 
-  BOOST_FOREACH(const PropertyTreeType::value_type & v, pt.get_child("Components"))
+  for(const PropertyTreeType::value_type & v: pt.get_child("Components"))
   {
     std::string      componentName;
     ParameterMapType componentPropertyMap;
@@ -608,7 +608,7 @@ BlueprintImpl::FromPropertyTree(const PropertyTreeType & pt)
 
   const boost::optional< const PropertyTreeType& > connections_exist = pt.get_child_optional( "Connections" );
   if(connections_exist) {
-    BOOST_FOREACH(const PropertyTreeType::value_type & v, pt.get_child("Connections"))
+    for(const PropertyTreeType::value_type & v: pt.get_child("Connections"))
     {
       std::string connectionName = v.second.data();
       if (!connectionName.empty())
@@ -655,7 +655,7 @@ BlueprintImpl::FromPropertyTree(const PropertyTreeType & pt)
 void
 BlueprintImpl::MergeProperties(const PropertyTreeType & pt)
 {
-  BOOST_FOREACH(const PropertyTreeType::value_type & v, pt.get_child("Components"))
+  for(const PropertyTreeType::value_type & v: pt.get_child("Components"))
   {
     std::string      componentName;
     ParameterMapType newProperties;
@@ -727,8 +727,7 @@ BlueprintImpl::MergeProperties(const PropertyTreeType & pt)
 
   const boost::optional< const PropertyTreeType& > connections_exist = pt.get_child_optional( "Connections" );
   if(connections_exist) {
-    BOOST_FOREACH(
-    const PropertyTreeType::value_type &v, pt.get_child("Connections"))
+    for(const PropertyTreeType::value_type & v: pt.get_child("Connections"))
     {
       std::string connectionName = v.second.data();
 
