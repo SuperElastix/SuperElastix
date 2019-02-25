@@ -148,7 +148,7 @@ BlueprintImpl
 
 BlueprintImpl::ComponentNamesType
 BlueprintImpl
-::GetComponentNames( void ) const
+::GetComponentNames() const
 {
   ComponentNamesType container;
   for( auto it = boost::vertices( this->m_Graph.graph() ).first; it != boost::vertices( this->m_Graph.graph() ).second; ++it )
@@ -528,7 +528,6 @@ BlueprintImpl::MergeFromFile(const std::string & fileNameString)
   }
   this->m_LoggerImpl->Log(LogLevel::INF, "Checking {0} for include files ... done", fileName);
   this->MergeProperties(propertyTree);
-  return;
 }
 
 void
