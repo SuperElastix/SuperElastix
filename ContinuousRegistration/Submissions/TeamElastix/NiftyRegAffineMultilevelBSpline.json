@@ -82,6 +82,11 @@
             "NameOfInterface": "NiftyregAffineMatrixInterface"
         },
         {
+            "Out": "NiftyRegAffine",
+            "In": "NiftyRegSpline2",
+            "NameOfInterface": "NiftyregAffineMatrixInterface"
+        },
+        {
             "Out": "FixedImage",
             "In": "NiftyRegSpline1",
             "NameOfInterface": "NiftyregReferenceImageInterface"
