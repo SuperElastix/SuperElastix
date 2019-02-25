@@ -606,7 +606,7 @@ BlueprintImpl::FromPropertyTree(const PropertyTreeType & pt)
     blueprint->SetComponent(componentName, componentPropertyMap);
   }
 
-  boost::optional< const PropertyTreeType& > connections_exist = pt.get_child_optional( "Connections" );
+  const boost::optional< const PropertyTreeType& > connections_exist = pt.get_child_optional( "Connections" );
   if(connections_exist) {
     BOOST_FOREACH(const PropertyTreeType::value_type & v, pt.get_child("Connections"))
     {
@@ -725,7 +725,7 @@ BlueprintImpl::MergeProperties(const PropertyTreeType & pt)
     }
   }
 
-  boost::optional< const PropertyTreeType& > connections_exist = pt.get_child_optional( "Connections" );
+  const boost::optional< const PropertyTreeType& > connections_exist = pt.get_child_optional( "Connections" );
   if(connections_exist) {
     BOOST_FOREACH(
     const PropertyTreeType::value_type &v, pt.get_child("Connections"))
