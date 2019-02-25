@@ -492,9 +492,9 @@ BlueprintImpl::VectorizeValues(ComponentOrConnectionTreeType & componentOrConnec
   {
     propertyMultiValue.push_back(value.second.data());
   }
-  if (propertyMultiValue.size() > 0)
+  if (!propertyMultiValue.empty())
   {
-    if (propertySingleValue != "")
+    if (!propertySingleValue.empty())
     {
       throw std::invalid_argument("XML tree should have either 1 unnamed element or multiple named properties");
     }
@@ -518,7 +518,7 @@ BlueprintImpl::MergeFromFile(const std::string & fileNameString)
   this->m_LoggerImpl->Log(LogLevel::INF, "Checking {0} for include files ... ", fileName);
   auto includesList = FindIncludes(propertyTree);
 
-  if (includesList.size() > 0)
+  if (!includesList.empty())
   {
     for (auto const & includePath : includesList)
     {
@@ -612,7 +612,7 @@ BlueprintImpl::FromPropertyTree(const PropertyTreeType & pt)
     BOOST_FOREACH(const PropertyTreeType::value_type & v, pt.get_child("Connections"))
     {
       std::string connectionName = v.second.data();
-      if (connectionName != "")
+      if (!connectionName.empty())
       {
         this->m_LoggerImpl->Log(LogLevel::TRC, "Found {0}, but connection names are ignored.", connectionName);
       }
@@ -747,7 +747,7 @@ BlueprintImpl::MergeProperties(const PropertyTreeType & pt)
           inName = elm.second.data();
           continue;
         } else if (connectionKey == "Name") {
-          if (connectionName != "") {
+          if (!connectionName.empty()) {
             this->m_LoggerImpl->Log(LogLevel::WRN, "Connection Name '{}' is overridden by '{}'", connectionName,
                                     elm.second.data());
           }
