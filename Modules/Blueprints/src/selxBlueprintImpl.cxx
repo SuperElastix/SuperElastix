@@ -523,6 +523,7 @@ void
 BlueprintImpl::MergeFromFile(const std::string & fileNameString)
 {
   const PathType fileName(fileNameString);
+  const auto parentPath = fileName.parent_path();
 
   this->m_LoggerImpl->Log(LogLevel::INF, "Loading {0} ... ", fileName);
   const auto propertyTree = ReadPropertyTree(fileName);
@@ -533,7 +534,16 @@ BlueprintImpl::MergeFromFile(const std::string & fileNameString)
   for (auto const & includePath : FindIncludes(propertyTree))
   {
     this->m_LoggerImpl->Log(LogLevel::INF, "Including file {0} ... ", includePath);
-    this->MergeFromFile(includePath.string());
+
+    if (includePath.is_relative() && ! parentPath.empty())
+    {
+      const auto absoluteIncludePath = parentPath / includePath;
+      this->MergeFromFile(absoluteIncludePath.string());
+    }
+    else
+    {
+      this->MergeFromFile(includePath.string());
+    }
   }
   this->m_LoggerImpl->Log(LogLevel::INF, "Checking {0} for include files ... done", fileName);
   this->MergeProperties(propertyTree);

@@ -2,8 +2,8 @@
     "Datasets": ["POPI", "DIRLAB", "EMPIRE", "LPBA40", "ISBR18", "CUMC12", "MGH10", "SPREAD", "HAMMERS"],
     "Include": 
         [
-             "./ContinuousRegistration/Submissions/ComposableBlueprints/Composables/elastix_transformix_base.json",
-             "./ContinuousRegistration/Submissions/ComposableBlueprints/Composables/Input_Output_3d_float.json"
+             "Composables/elastix_transformix_base.json",
+             "Composables/Input_Output_3d_float.json"
         ],
     "Components": [
         {
