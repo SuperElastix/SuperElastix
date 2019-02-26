@@ -107,7 +107,7 @@ public:
   typedef boost::graph_traits< GraphType >::out_edge_iterator OutputIteratorType;
   typedef std::pair< OutputIteratorType, OutputIteratorType > OutputIteratorPairType;
 
-  BlueprintImpl( LoggerImpl & loggerImpl);
+  explicit BlueprintImpl( LoggerImpl & loggerImpl);
 
 
   bool SetComponent( ComponentNameType, ParameterMapType parameterMap );
@@ -158,10 +158,10 @@ private:
   using PathType = boost::filesystem::path;
   using PathsType = std::list<PathType>;
 
-  PropertyTreeType ReadPropertyTree(const PathType & filename);
+  static PropertyTreeType ReadPropertyTree(const PathType & filename);
 
-  PathsType FindIncludes(const PropertyTreeType &);
-  ParameterValueType VectorizeValues(ComponentOrConnectionTreeType componentOrConnectionTree);
+  static PathsType FindIncludes(const PropertyTreeType &);
+  static ParameterValueType VectorizeValues(ComponentOrConnectionTreeType componentOrConnectionTree);
 
   Blueprint::Pointer FromPropertyTree(const PropertyTreeType &);
   void MergeProperties(const PropertyTreeType &);
