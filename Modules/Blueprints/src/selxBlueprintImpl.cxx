@@ -17,11 +17,24 @@
  *
  *=========================================================================*/
 
+
+#ifdef _MSC_VER
+#  if _MSC_VER == 1916 // Visual Studio 2017 version 15.9
+#    ifdef _PREFAST_ // Defined as 1 when the /analyze compiler option is set.
+// Warning C26489 often appears as a false positive:
+// https://developercommunity.visualstudio.com/content/problem/469978/c-code-analysis-false-positives-c26489-on-stdmap.html
+#pragma warning(disable: 26489) // Don't dereference a pointer that may be invalid: '...' may have been invalidated at line ... (lifetime.1).
+#    endif
+#  endif
+#endif
+
+
 #include "selxBlueprintImpl.h"
 #include "selxLoggerImpl.h"
 #include <ostream>
 
 #include <stdexcept>
+
 
 namespace selx
 {
