@@ -148,7 +148,7 @@ BlueprintImpl
 
 BlueprintImpl::ComponentNamesType
 BlueprintImpl
-::GetComponentNames( void ) const
+::GetComponentNames() const
 {
   ComponentNamesType container;
   for( auto it = boost::vertices( this->m_Graph.graph() ).first; it != boost::vertices( this->m_Graph.graph() ).second; ++it )
@@ -343,9 +343,9 @@ BlueprintImpl
   // Copy-in all connections (Edges)
   for( auto const & componentName : other.GetComponentNames() )
   {
-    for( auto incomingName : other.GetInputNames( componentName ) )
+    for( const auto& incomingName : other.GetInputNames( componentName ) )
     {
-      for (auto connectionName : other.GetConnectionNames(incomingName, componentName ) )
+      for (const auto& connectionName : other.GetConnectionNames(incomingName, componentName ) )
       {
         // Does other blueprint have a connection that already exists?
         if (this->ConnectionExists(incomingName, componentName, connectionName ))
@@ -445,7 +445,7 @@ BlueprintImpl
   
   boost::topological_sort(this->m_Graph, std::back_inserter(indexContainer));
 
-  for (std::vector< ComponentIndexType >::reverse_iterator ii = indexContainer.rbegin(); ii != indexContainer.rend(); ++ii)
+  for (auto ii = indexContainer.rbegin(); ii != indexContainer.rend(); ++ii)
   {
     container.push_back(boost::get(boost::vertex_all, this->m_Graph, *ii).name);
   }
@@ -492,9 +492,9 @@ BlueprintImpl::VectorizeValues(ComponentOrConnectionTreeType & componentOrConnec
   {
     propertyMultiValue.push_back(value.second.data());
   }
-  if (propertyMultiValue.size() > 0)
+  if (!propertyMultiValue.empty())
   {
-    if (propertySingleValue != "")
+    if (!propertySingleValue.empty())
     {
       throw std::invalid_argument("XML tree should have either 1 unnamed element or multiple named properties");
     }
@@ -518,7 +518,7 @@ BlueprintImpl::MergeFromFile(const std::string & fileNameString)
   this->m_LoggerImpl->Log(LogLevel::INF, "Checking {0} for include files ... ", fileName);
   auto includesList = FindIncludes(propertyTree);
 
-  if (includesList.size() > 0)
+  if (!includesList.empty())
   {
     for (auto const & includePath : includesList)
     {
@@ -528,7 +528,6 @@ BlueprintImpl::MergeFromFile(const std::string & fileNameString)
   }
   this->m_LoggerImpl->Log(LogLevel::INF, "Checking {0} for include files ... done", fileName);
   this->MergeProperties(propertyTree);
-  return;
 }
 
 void
@@ -586,7 +585,7 @@ BlueprintImpl::FromPropertyTree(const PropertyTreeType & pt)
 {
   Blueprint::Pointer blueprint = Blueprint::New();
 
-  BOOST_FOREACH(const PropertyTreeType::value_type & v, pt.get_child("Components"))
+  for(const PropertyTreeType::value_type & v: pt.get_child("Components"))
   {
     std::string      componentName;
     ParameterMapType componentPropertyMap;
@@ -607,12 +606,12 @@ BlueprintImpl::FromPropertyTree(const PropertyTreeType & pt)
     blueprint->SetComponent(componentName, componentPropertyMap);
   }
 
-  boost::optional< const PropertyTreeType& > connections_exist = pt.get_child_optional( "Connections" );
+  const boost::optional< const PropertyTreeType& > connections_exist = pt.get_child_optional( "Connections" );
   if(connections_exist) {
-    BOOST_FOREACH(const PropertyTreeType::value_type & v, pt.get_child("Connections"))
+    for(const PropertyTreeType::value_type & v: pt.get_child("Connections"))
     {
       std::string connectionName = v.second.data();
-      if (connectionName != "")
+      if (!connectionName.empty())
       {
         this->m_LoggerImpl->Log(LogLevel::TRC, "Found {0}, but connection names are ignored.", connectionName);
       }
@@ -656,7 +655,7 @@ BlueprintImpl::FromPropertyTree(const PropertyTreeType & pt)
 void
 BlueprintImpl::MergeProperties(const PropertyTreeType & pt)
 {
-  BOOST_FOREACH(const PropertyTreeType::value_type & v, pt.get_child("Components"))
+  for(const PropertyTreeType::value_type & v: pt.get_child("Components"))
   {
     std::string      componentName;
     ParameterMapType newProperties;
@@ -726,10 +725,9 @@ BlueprintImpl::MergeProperties(const PropertyTreeType & pt)
     }
   }
 
-  boost::optional< const PropertyTreeType& > connections_exist = pt.get_child_optional( "Connections" );
+  const boost::optional< const PropertyTreeType& > connections_exist = pt.get_child_optional( "Connections" );
   if(connections_exist) {
-    BOOST_FOREACH(
-    const PropertyTreeType::value_type &v, pt.get_child("Connections"))
+    for(const PropertyTreeType::value_type & v: pt.get_child("Connections"))
     {
       std::string connectionName = v.second.data();
 
@@ -747,7 +745,7 @@ BlueprintImpl::MergeProperties(const PropertyTreeType & pt)
           inName = elm.second.data();
           continue;
         } else if (connectionKey == "Name") {
-          if (connectionName != "") {
+          if (!connectionName.empty()) {
             this->m_LoggerImpl->Log(LogLevel::WRN, "Connection Name '{}' is overridden by '{}'", connectionName,
                                     elm.second.data());
           }
