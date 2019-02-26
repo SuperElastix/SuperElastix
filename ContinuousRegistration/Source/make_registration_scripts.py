@@ -27,8 +27,8 @@ parser.add_argument('--popi-input-directory', '-pid')
 parser.add_argument('--popi-mask-directory', '-pmd', default=None)
 parser.add_argument('--mgh10-input-directory', '-mid')
 parser.add_argument('--hbia-input-directory', '-hbiaid')
-parser.add_argument('--team-name', '-tn',
-                    help="If specified, only generated shell scripts for this team.")
+parser.add_argument('--team-name', '-tn', action='append',
+                    help="If specified, only generated shell scripts for these teams.")
 parser.add_argument('--blueprint-file-name', '-bfn', action='append',
                     help="If specified, only generated shell scripts for this blueprint.")
 parser.add_argument('--max-number-of-registrations-per-dataset', '-mnorpd', type=int, default=8)
@@ -45,20 +45,8 @@ def run(parameters):
     datasets = load_datasets(parameters)
 
     for team_name, blueprint_file_names in submissions.items():
-
-        if hasattr(parameters, 'team') and not parameters.team is None:
-            # User requested to have scripts generated only for this team
-            if not parameters.team == team_name:
-                continue
-
         for blueprint_file_name in blueprint_file_names:
-            if not parameters.blueprint_file_name is None:
-                # User requested to have scripts generated for specific blueprints
-                if not os.path.basename(blueprint_file_name) in parameters.blueprint_file_name:
-                    continue
-
-            blueprint_name, blueprint_ext = os.path.splitext(os.path.basename(blueprint_file_name))
-            logging.info('Loading blueprint %s/%s.' % (team_name, os.path.basename(blueprint_name)))
+            logging.info('Loading blueprint %s.' % blueprint_file_name)
             blueprint = json.load(open(blueprint_file_name))
 
             if not 'Datasets' in blueprint:
@@ -74,6 +62,7 @@ def run(parameters):
 
                 dataset = datasets[dataset_name]
 
+                blueprint_name, blueprint_ext = os.path.splitext(os.path.basename(blueprint_file_name))
                 for file_names in dataset.generator():
                     logging.info('Generating registration scripts for blueprint "%s" and images %s.',
                                  blueprint_name, file_names['image_file_names'])
