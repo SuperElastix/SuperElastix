@@ -522,22 +522,18 @@ BlueprintImpl::VectorizeValues(const PropertyTreeType& componentOrConnectionTree
 void
 BlueprintImpl::MergeFromFile(const std::string & fileNameString)
 {
-  PathType fileName(fileNameString);
+  const PathType fileName(fileNameString);
 
   this->m_LoggerImpl->Log(LogLevel::INF, "Loading {0} ... ", fileName);
-  auto propertyTree = ReadPropertyTree(fileName);
+  const auto propertyTree = ReadPropertyTree(fileName);
   this->m_LoggerImpl->Log(LogLevel::INF, "Loading {0} ... Done", fileName);
 
   this->m_LoggerImpl->Log(LogLevel::INF, "Checking {0} for include files ... ", fileName);
-  auto includesList = FindIncludes(propertyTree);
 
-  if (!includesList.empty())
+  for (auto const & includePath : FindIncludes(propertyTree))
   {
-    for (auto const & includePath : includesList)
-    {
-      this->m_LoggerImpl->Log(LogLevel::INF, "Including file {0} ... ", includePath);
-      this->MergeFromFile(includePath.string());
-    }
+    this->m_LoggerImpl->Log(LogLevel::INF, "Including file {0} ... ", includePath);
+    this->MergeFromFile(includePath.string());
   }
   this->m_LoggerImpl->Log(LogLevel::INF, "Checking {0} for include files ... done", fileName);
   this->MergeProperties(propertyTree);
