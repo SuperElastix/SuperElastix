@@ -574,20 +574,18 @@ BlueprintImpl::PathsType
 BlueprintImpl::FindIncludes(const PropertyTreeType & propertyTree)
 {
   PathsType paths;
-  bool FoundIncludes = false;
-  BOOST_FOREACH(const PropertyTreeType::value_type & v, propertyTree.equal_range("Include"))
+  const auto iteratorPair = propertyTree.equal_range("Include");
+
+  if (iteratorPair.first != iteratorPair.second)
   {
-    if (FoundIncludes)
+    if (std::next(iteratorPair.first) != iteratorPair.second)
     {
       throw std::runtime_error("Only 1 listing of Includes is allowed per Blueprint file");
     }
-
+    const PropertyTreeType::value_type & v = *iteratorPair.first;
     auto const pathsStrings = VectorizeValues(v.second);
     // convert vector of strings to list of boost::path-s
-    paths.resize(pathsStrings.size());
-    std::transform(pathsStrings.begin(), pathsStrings.end(), paths.begin(),
-      [](std::string p) { return PathType(p); });
-    FoundIncludes = true;
+    paths = PathsType(pathsStrings.cbegin(), pathsStrings.cend());
   }
   return paths;
 }
