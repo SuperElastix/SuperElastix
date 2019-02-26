@@ -153,7 +153,6 @@ public:
 private:
 
   typedef boost::property_tree::ptree         PropertyTreeType;
-  typedef const boost::property_tree::ptree & ComponentOrConnectionTreeType;
 
   using PathType = boost::filesystem::path;
   using PathsType = std::list<PathType>;
@@ -161,7 +160,7 @@ private:
   static PropertyTreeType ReadPropertyTree(const PathType & filename);
 
   static PathsType FindIncludes(const PropertyTreeType &);
-  static ParameterValueType VectorizeValues(ComponentOrConnectionTreeType componentOrConnectionTree);
+  static ParameterValueType VectorizeValues(const PropertyTreeType& componentOrConnectionTree);
 
   Blueprint::Pointer FromPropertyTree(const PropertyTreeType &);
   void MergeProperties(const PropertyTreeType &);

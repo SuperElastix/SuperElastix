@@ -497,7 +497,7 @@ BlueprintImpl
 }
 
 BlueprintImpl::ParameterValueType
-BlueprintImpl::VectorizeValues(ComponentOrConnectionTreeType & componentOrConnectionTree)
+BlueprintImpl::VectorizeValues(const PropertyTreeType& componentOrConnectionTree)
 {
   std::string        propertySingleValue = componentOrConnectionTree.data();
   ParameterValueType propertyMultiValue;
