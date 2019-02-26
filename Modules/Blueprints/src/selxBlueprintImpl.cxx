@@ -579,7 +579,7 @@ BlueprintImpl::FindIncludes(const PropertyTreeType & propertyTree)
   {
     if (FoundIncludes)
     {
-      std::runtime_error("Only 1 listing of Includes is allowed per Blueprint file");
+      throw std::runtime_error("Only 1 listing of Includes is allowed per Blueprint file");
     }
 
     auto const pathsStrings = VectorizeValues(v.second);
