@@ -10,12 +10,6 @@ def run(parameters):
     results = {}
     for team_name, blueprint_file_names in submissions.items():
         for blueprint_file_name in blueprint_file_names:
-            if parameters.blueprint_file_name is not None and \
-                   os.path.basename(blueprint_file_name) not in parameters.blueprint_file_name:
-                    continue
-
-            if not team_name in results:
-                results[team_name] = {}
 
             blueprint_name, blueprint_ext = os.path.splitext(os.path.basename(blueprint_file_name))
             if not blueprint_name in results[team_name]:
@@ -53,7 +47,7 @@ def run(parameters):
                         if hasattr(parameters, 'make_image_checkerboards') and parameters.make_image_checkerboards:
                             dataset.make_image_checkerboards(parameters.superelastix, file_names, output_directory)
 
-                        if hasattr(parameters, 'make_label_checkerboards') and parameters.make_label_checkerboards and dataset.name in ["CUMC12", "ISBR18", "LPBA40", "MGH10"]:
+                        if hasattr(parameters, 'make_label_checkerboards') and parameters.make_label_checkerboards and dataset.name in ["CUMC12", "IBSR18", "LPBA40", "MGH10"]:
                             dataset.make_label_checkerboards(parameters.superelastix, file_names, output_directory)
                     except Exception as e:
                         logging.error('Error during evaluation of %s\'s blueprint %s and dataset %s: %s'
