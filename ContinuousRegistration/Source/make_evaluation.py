@@ -10,6 +10,8 @@ def run(parameters):
     results = {}
     for team_name, blueprint_file_names in submissions.items():
         for blueprint_file_name in blueprint_file_names:
+            if not team_name in results:
+                continue
 
             blueprint_name, blueprint_ext = os.path.splitext(os.path.basename(blueprint_file_name))
             if not blueprint_name in results[team_name]:
