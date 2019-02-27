@@ -31,6 +31,8 @@
 #include "itkImageSource.h"
 #include "itkTransformToDisplacementFieldFilter.h"
 #include "itkComposeDisplacementFieldsImageFilter.h"
+#include "itkRescaleIntensityImageFilter.h"
+#include "itkInvertIntensityImageFilter.h"
 
 namespace selx
 {
@@ -96,6 +98,19 @@ public:
   using ImageRegistrationMethodv4Pointer = typename ImageRegistrationMethodv4Type::Pointer;
   using ScalesEstimatorType = itk::RegistrationParameterScalesFromPhysicalShift< ImageMetricType >;
 
+  using FixedRescaleImageFilterType = itk::RescaleIntensityImageFilter<FixedImageType, FixedImageType>;
+  using FixedRescaleImageFilterPointer = typename FixedRescaleImageFilterType::Pointer;
+  using MovingRescaleImageFilterType = itk::RescaleIntensityImageFilter<MovingImageType, MovingImageType>;
+  using MovingRescaleImageFilterPointer = typename MovingRescaleImageFilterType::Pointer;
+  using FixedInvertIntensityImageFilterType = itk::InvertIntensityImageFilter<FixedImageType, FixedImageType>;
+  using FixedInvertIntensityImageFilterPointer = typename FixedInvertIntensityImageFilterType::Pointer;
+  using MovingInvertIntensityImageFilterType = itk::InvertIntensityImageFilter<MovingImageType, MovingImageType>;
+  using MovingInvertIntensityImageFilterPointer = typename MovingInvertIntensityImageFilterType::Pointer;
+  using FixedImageCalculatorFilterType = itk::MinimumMaximumImageCalculator<FixedImageType>;
+  using FixedImageCalculatorFilterPointer = typename FixedImageCalculatorFilterType::Pointer;
+  using MovingImageCalculatorFilterType = itk::MinimumMaximumImageCalculator<MovingImageType>;
+  using MovingImageCalculatorFilterPointer = typename MovingImageCalculatorFilterType::Pointer;
+
   // Accepting Interfaces:
   int Accept( typename itkImageFixedInterface< Dimensionality, PixelType >::Pointer ) override;
   int Accept( typename itkImageMovingInterface< Dimensionality, PixelType >::Pointer ) override;
@@ -130,6 +145,10 @@ private:
   // provides inconsistent numbers we should detect that and report about it.
   std::string m_NumberOfLevelsLastSetBy;
   typename TransformParametersAdaptorsContainerInterfaceType::Pointer m_TransformAdaptorsContainerInterface;
+
+  ComponentBase::ParameterValueType m_RescaleIntensity;
+  bool m_InvertIntensity;
+  float m_MetricSamplingPercentage;
 
 protected:
 

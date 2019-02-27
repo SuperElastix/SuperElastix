@@ -32,6 +32,8 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
   : Superclass( name, logger )
 {
   this->m_SyNImageRegistrationMethod = SyNImageRegistrationMethodType::New();
+	this->m_InvertIntensity = false;
+	this->m_MetricSamplingPercentage = 1.0;
 
   //TODO: instantiating the filter in the constructor might be heavy for the use in component selector factory, since all components of the database are created during the selection process.
   // we could choose to keep the component light weighted (for checking criteria such as names and connections) until the settings are passed to the filter, but this requires an additional initialization step.
@@ -78,18 +80,63 @@ template< int Dimensionality, class TPixel, class InternalComputationValueType >
 void
 ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputationValueType >::BeforeUpdate( void )
 {
+	FixedImagePointer fixedImage = this->m_FixedImage;
+	MovingImagePointer movingImage = this->m_MovingImage;
 
+	if (this->m_RescaleIntensity.size() == 2) {
+		this->m_Logger.Log(LogLevel::INF, "Rescaling images to [{0}, {1}].", this->m_RescaleIntensity[0], this->m_RescaleIntensity[1]);
+
+		FixedRescaleImageFilterPointer fixedIntensityRescaler = FixedRescaleImageFilterType::New();
+		fixedIntensityRescaler->SetInput(fixedImage);
+		fixedIntensityRescaler->SetOutputMinimum(std::stof(this->m_RescaleIntensity[0]));
+		fixedIntensityRescaler->SetOutputMaximum(std::stof(this->m_RescaleIntensity[1]));
+		fixedIntensityRescaler->UpdateOutputInformation();
+		fixedImage = fixedIntensityRescaler->GetOutput();
+
+		MovingRescaleImageFilterPointer movingIntensityRescaler = MovingRescaleImageFilterType::New();
+		movingIntensityRescaler->SetInput(movingImage);
+		movingIntensityRescaler->SetOutputMinimum(std::stof(this->m_RescaleIntensity[0]));
+		movingIntensityRescaler->SetOutputMaximum(std::stof(this->m_RescaleIntensity[1]));
+		movingIntensityRescaler->UpdateOutputInformation();
+		movingImage = movingIntensityRescaler->GetOutput();
+	}
+
+	if (this->m_InvertIntensity) {
+		this->m_Logger.Log(LogLevel::INF, "Inverting image scales.");
+
+		FixedImageCalculatorFilterPointer fixedIntensityMaximumCalculator = FixedImageCalculatorFilterType::New();
+		fixedIntensityMaximumCalculator->SetImage(fixedImage);
+		fixedIntensityMaximumCalculator->ComputeMaximum();
+
+		FixedInvertIntensityImageFilterPointer fixedIntensityInverter = FixedInvertIntensityImageFilterType::New();
+		fixedIntensityInverter->SetInput(this->m_FixedImage);
+		fixedIntensityInverter->SetMaximum(fixedIntensityMaximumCalculator->GetMaximum());
+		fixedIntensityInverter->UpdateOutputInformation();
+		fixedImage = fixedIntensityInverter->GetOutput();
+
+		MovingImageCalculatorFilterPointer movingIntensityMaximumCalculator = MovingImageCalculatorFilterType::New();
+		movingIntensityMaximumCalculator->SetImage(movingImage);
+		movingIntensityMaximumCalculator->ComputeMaximum();
+
+		MovingInvertIntensityImageFilterPointer movingIntensityInverter = MovingInvertIntensityImageFilterType::New();
+		movingIntensityInverter->SetInput(this->m_FixedImage);
+		movingIntensityInverter->SetMaximum(movingIntensityMaximumCalculator->GetMaximum());
+		movingIntensityInverter->UpdateOutputInformation();
+		movingImage = movingIntensityInverter->GetOutput();
+	}
+
+	this->m_SyNImageRegistrationMethod->SetFixedImage(fixedImage);
+	this->m_SyNImageRegistrationMethod->SetMovingImage(movingImage);
+
+	if(this->m_MetricSamplingPercentage < 1.0) {
+		this->m_SyNImageRegistrationMethod->SetMetricSamplingPercentage(this->m_MetricSamplingPercentage);
+	}
 };
 
 template< int Dimensionality, class TPixel, class InternalComputationValueType >
 void
 ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputationValueType >::Update( void )
 {
-	this->m_FixedImage->Update();
-	this->m_SyNImageRegistrationMethod->SetFixedImage(this->m_FixedImage);
-
-	this->m_FixedImage->Update();
-	this->m_SyNImageRegistrationMethod->SetMovingImage(this->m_MovingImage);
 
 	typedef itk::Vector< InternalComputationValueType, Dimensionality > VectorType;
 	VectorType zeroVector( 0.0 );
@@ -350,6 +397,55 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
 				meetsCriteria = true;
 			}
 			else {
+				meetsCriteria = false;
+			}
+		}
+	} else if( criterion.first == "RescaleIntensity" ) {
+		if( criterion.second.size() != 2 ) {
+			this->m_Logger.Log(LogLevel::ERR, "Expected two values for RescaleIntensity (min, max), got {0}.", criterion.second.size());
+			meetsCriteria = false;
+		}
+		else {
+			this->m_RescaleIntensity = criterion.second;
+			meetsCriteria = true;
+		}
+	} else if( criterion.first == "InvertIntensity" ) {
+		if( criterion.second.size() != 1 ) {
+			this->m_Logger.Log(LogLevel::ERR, "Expected one value for InvertIntensity (True or False), got {0}.", criterion.second.size());
+			meetsCriteria = false;
+		} else {
+			if( criterion.second[0] == "True" ) {
+				this->m_InvertIntensity = true;
+				meetsCriteria = true;
+			} else if( criterion.second[0] == "False" ) {
+				this->m_InvertIntensity = false;
+				meetsCriteria = true;
+			} else {
+				this->m_Logger.Log(LogLevel::ERR, "Expected InvertIntensity to be True or False, got {0}.", criterion.second[0]);
+				meetsCriteria = false;
+			}
+		}
+	} else if( criterion.first == "MetricSamplingPercentage" ) {
+		if( criterion.second.size() != 1 ) {
+			this->m_Logger.Log(LogLevel::ERR, "Expected one value for MetricSamplingPercetage, got {0}.", criterion.second.size());
+			meetsCriteria = false;
+		} else {
+			this->m_MetricSamplingPercentage = std::stof(criterion.second[0]);
+			meetsCriteria = true;
+		}
+	} else if( criterion.first == "MetricSamplingStrategy" ) {
+		if( criterion.second.size() != 1 ) {
+			this->m_Logger.Log(LogLevel::ERR, "Expected one value for MetricSamplingStrategy (Regular or Random), got {0}.", criterion.second.size());
+			meetsCriteria = false;
+		} else {
+			if( criterion.second[0] == "Regular" ) {
+				this->m_SyNImageRegistrationMethod->SetMetricSamplingStrategy(SyNImageRegistrationMethodType::MetricSamplingStrategyType::REGULAR);
+				meetsCriteria = true;
+			} else if( criterion.second[0] == "Random" ) {
+				this->m_SyNImageRegistrationMethod->SetMetricSamplingStrategy(SyNImageRegistrationMethodType::MetricSamplingStrategyType::RANDOM);
+				meetsCriteria = true;
+			} else {
+				this->m_Logger.Log(LogLevel::ERR, "Expected MetricSamplingStrategy to be Regular or Random, got {0}.", criterion.second[0]);
 				meetsCriteria = false;
 			}
 		}

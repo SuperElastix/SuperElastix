@@ -33,6 +33,8 @@
 #include "itkComposeDisplacementFieldsImageFilter.h"
 #include "itkGaussianExponentialDiffeomorphicTransform.h"
 #include "itkGaussianExponentialDiffeomorphicTransformParametersAdaptor.h"
+#include "itkRescaleIntensityImageFilter.h"
+#include "itkInvertIntensityImageFilter.h"
 
 namespace selx
 {
@@ -86,6 +88,19 @@ public:
   using ScalesEstimatorType = itk::RegistrationParameterScalesFromPhysicalShift< ImageMetricType >;
   using ScalesEstimatorPointer = typename ScalesEstimatorType::Pointer;
 
+  using FixedRescaleImageFilterType = itk::RescaleIntensityImageFilter<FixedImageType, FixedImageType >;
+  using FixedRescaleImageFilterPointer = typename FixedRescaleImageFilterType::Pointer;
+  using MovingRescaleImageFilterType = itk::RescaleIntensityImageFilter<MovingImageType, MovingImageType >;
+  using MovingRescaleImageFilterPointer = typename MovingRescaleImageFilterType::Pointer;
+  using FixedInvertIntensityImageFilterType = itk::InvertIntensityImageFilter<FixedImageType, FixedImageType>;
+  using FixedInvertIntensityImageFilterPointer = typename FixedInvertIntensityImageFilterType::Pointer;
+  using MovingInvertIntensityImageFilterType = itk::InvertIntensityImageFilter<MovingImageType, MovingImageType>;
+  using MovingInvertIntensityImageFilterPointer = typename MovingInvertIntensityImageFilterType::Pointer;
+  using FixedImageCalculatorFilterType = itk::MinimumMaximumImageCalculator<FixedImageType>;
+  using FixedImageCalculatorFilterPointer = typename FixedImageCalculatorFilterType::Pointer;
+  using MovingImageCalculatorFilterType = itk::MinimumMaximumImageCalculator<MovingImageType>;
+  using MovingImageCalculatorFilterPointer = typename MovingImageCalculatorFilterType::Pointer;
+
   //Accepting Interfaces:
   virtual int Accept( typename itkImageFixedInterface< Dimensionality, PixelType >::Pointer ) override;
 
@@ -114,6 +129,9 @@ private:
   // The settings SmoothingSigmas and ShrinkFactors imply NumberOfLevels, if the user
   // provides inconsistent numbers we should detect that and report about it.
   std::string m_NumberOfLevelsLastSetBy;
+  ComponentBase::ParameterValueType m_RescaleIntensity;
+  bool m_InvertIntensity;
+  float m_MetricSamplingPercentage;
 
 protected:
 
