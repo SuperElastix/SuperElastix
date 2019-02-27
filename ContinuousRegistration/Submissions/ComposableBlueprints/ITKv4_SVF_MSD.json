@@ -2,11 +2,11 @@
     "Datasets": ["POPI", "DIRLAB", "EMPIRE", "LPBA40", "ISBR18", "CUMC12", "MGH10", "SPREAD", "HAMMERS"],
     "Include": 
         [
-             "./ContinuousRegistration/Submissions/ComposableBlueprints/Composables/ITKv4_base.json",
-             "./ContinuousRegistration/Submissions/ComposableBlueprints/Composables/ITKv4_Reg.json",
-             "./ContinuousRegistration/Submissions/ComposableBlueprints/Composables/Input_Output_3d_float.json",
-             "./ContinuousRegistration/Submissions/ComposableBlueprints/Composables/ITKv4_SVF.json",
-             "./ContinuousRegistration/Submissions/ComposableBlueprints/Composables/ITKv4_MSD.json"
+             "Composables/ITKv4_base.json",
+             "Composables/ITKv4_Reg.json",
+             "Composables/Input_Output_3d_float.json",
+             "Composables/ITKv4_SVF.json",
+             "Composables/ITKv4_MSD.json"
         ],
     "Components": [
         {

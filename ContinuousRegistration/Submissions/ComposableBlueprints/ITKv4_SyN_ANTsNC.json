@@ -12,9 +12,9 @@
     ],
     "Include": 
     [
-        "./ContinuousRegistration/Submissions/ComposableBlueprints/Composables/ITKv4_base.json",
-        "./ContinuousRegistration/Submissions/ComposableBlueprints/Composables/Input_Output_3d_float.json",
-        "./ContinuousRegistration/Submissions/ComposableBlueprints/Composables/ITKv4_ANTsNC.json"
+        "Composables/ITKv4_base.json",
+        "Composables/Input_Output_3d_float.json",
+        "Composables/ITKv4_ANTsNC.json"
     ],
     "Components": [
         {

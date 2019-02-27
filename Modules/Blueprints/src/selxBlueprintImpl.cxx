@@ -17,11 +17,24 @@
  *
  *=========================================================================*/
 
+
+#ifdef _MSC_VER
+#  if _MSC_VER == 1916 // Visual Studio 2017 version 15.9
+#    ifdef _PREFAST_ // Defined as 1 when the /analyze compiler option is set.
+// Warning C26489 often appears as a false positive:
+// https://developercommunity.visualstudio.com/content/problem/469978/c-code-analysis-false-positives-c26489-on-stdmap.html
+#pragma warning(disable: 26489) // Don't dereference a pointer that may be invalid: '...' may have been invalidated at line ... (lifetime.1).
+#    endif
+#  endif
+#endif
+
+
 #include "selxBlueprintImpl.h"
 #include "selxLoggerImpl.h"
 #include <ostream>
 
 #include <stdexcept>
+
 
 namespace selx
 {
@@ -484,7 +497,7 @@ BlueprintImpl
 }
 
 BlueprintImpl::ParameterValueType
-BlueprintImpl::VectorizeValues(ComponentOrConnectionTreeType & componentOrConnectionTree)
+BlueprintImpl::VectorizeValues(const PropertyTreeType& componentOrConnectionTree)
 {
   std::string        propertySingleValue = componentOrConnectionTree.data();
   ParameterValueType propertyMultiValue;
@@ -509,20 +522,26 @@ BlueprintImpl::VectorizeValues(ComponentOrConnectionTreeType & componentOrConnec
 void
 BlueprintImpl::MergeFromFile(const std::string & fileNameString)
 {
-  PathType fileName(fileNameString);
+  const PathType fileName(fileNameString);
+  const auto parentPath = fileName.parent_path();
 
   this->m_LoggerImpl->Log(LogLevel::INF, "Loading {0} ... ", fileName);
-  auto propertyTree = ReadPropertyTree(fileName);
+  const auto propertyTree = ReadPropertyTree(fileName);
   this->m_LoggerImpl->Log(LogLevel::INF, "Loading {0} ... Done", fileName);
 
   this->m_LoggerImpl->Log(LogLevel::INF, "Checking {0} for include files ... ", fileName);
-  auto includesList = FindIncludes(propertyTree);
 
-  if (!includesList.empty())
+  for (auto const & includePath : FindIncludes(propertyTree))
   {
-    for (auto const & includePath : includesList)
+    this->m_LoggerImpl->Log(LogLevel::INF, "Including file {0} ... ", includePath);
+
+    if (includePath.is_relative() && ! parentPath.empty())
     {
-      this->m_LoggerImpl->Log(LogLevel::INF, "Including file {0} ... ", includePath);
+      const auto absoluteIncludePath = parentPath / includePath;
+      this->MergeFromFile(absoluteIncludePath.string());
+    }
+    else
+    {
       this->MergeFromFile(includePath.string());
     }
   }
@@ -561,20 +580,18 @@ BlueprintImpl::PathsType
 BlueprintImpl::FindIncludes(const PropertyTreeType & propertyTree)
 {
   PathsType paths;
-  bool FoundIncludes = false;
-  BOOST_FOREACH(const PropertyTreeType::value_type & v, propertyTree.equal_range("Include"))
-  {
-    if (FoundIncludes)
-    {
-      std::runtime_error("Only 1 listing of Includes is allowed per Blueprint file");
-    }
+  const auto iteratorPair = propertyTree.equal_range("Include");
 
+  if (iteratorPair.first != iteratorPair.second)
+  {
+    if (std::next(iteratorPair.first) != iteratorPair.second)
+    {
+      throw std::runtime_error("Only 1 listing of Includes is allowed per Blueprint file");
+    }
+    const PropertyTreeType::value_type & v = *iteratorPair.first;
     auto const pathsStrings = VectorizeValues(v.second);
     // convert vector of strings to list of boost::path-s
-    paths.resize(pathsStrings.size());
-    std::transform(pathsStrings.begin(), pathsStrings.end(), paths.begin(),
-      [](std::string p) { return PathType(p); });
-    FoundIncludes = true;
+    paths = PathsType(pathsStrings.cbegin(), pathsStrings.cend());
   }
   return paths;
 }

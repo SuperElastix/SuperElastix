@@ -2,8 +2,8 @@
     "Datasets": ["POPI", "EMPIRE", "SPREAD"],
     "Include": 
         [
-             "./ContinuousRegistration/Submissions/ComposableBlueprints/Composables/elastix_transformix_base.json",
-             "./ContinuousRegistration/Submissions/ComposableBlueprints/Composables/Input_Output_3d_float.json"
+             "Composables/elastix_transformix_base.json",
+             "Composables/Input_Output_3d_float.json"
         ],
     "Components": [
         {
