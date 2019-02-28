@@ -15,7 +15,7 @@ python make_registration_scripts.py \
       --dirlab-input-directory /path/to/DIRLAB \
       --empire-input-directory /path/to/EMPIRE \
       --lpba40-input-directory /path/to/LPBA40 \
-      --isbr18-input-directory /path/to/ISBR18 \
+      --ibsr18-input-directory /path/to/IBSR18 \
       --cumc12-input-directory /path/to/CUMC12 \
       --hbia-input-directory /path/to/HistoBIA
 ```
