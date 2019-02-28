@@ -31,9 +31,11 @@
 
 #include "selxBlueprintImpl.h"
 #include "selxLoggerImpl.h"
-#include <ostream>
 
+// Standard C++ Library headers:
+#include <ostream>
 #include <stdexcept>
+#include <tuple>  // For std::tie.
 
 
 namespace selx
@@ -186,7 +188,7 @@ BlueprintImpl
     
   boost::graph_traits<GraphType>::out_edge_iterator ei, ei_end;
   // too bad edge_range_by_label doesn't exist
-  boost::tie(ei, ei_end) = boost::edge_range(this->m_Graph.vertex(upstream), this->m_Graph.vertex(downstream), this->m_Graph.graph());
+  std::tie(ei, ei_end) = boost::edge_range(this->m_Graph.vertex(upstream), this->m_Graph.vertex(downstream), this->m_Graph.graph());
 
   for (; ei != ei_end; ++ei) 
   {
@@ -212,7 +214,7 @@ BlueprintImpl
 
   boost::graph_traits<GraphType>::out_edge_iterator ei, ei_end;
   // too bad edge_range_by_label doesn't exist
-  boost::tie(ei, ei_end) = boost::edge_range(this->m_Graph.vertex(upstream), this->m_Graph.vertex(downstream), this->m_Graph.graph());
+  std::tie(ei, ei_end) = boost::edge_range(this->m_Graph.vertex(upstream), this->m_Graph.vertex(downstream), this->m_Graph.graph());
 
   for (; ei != ei_end; ++ei)
   {
@@ -236,7 +238,7 @@ BlueprintImpl
   {
     boost::graph_traits<GraphType>::out_edge_iterator ei, ei_end;
     // too bad edge_range_by_label doesn't exist
-    boost::tie(ei, ei_end) = boost::edge_range(this->m_Graph.vertex(upstream), this->m_Graph.vertex(downstream), this->m_Graph.graph());
+    std::tie(ei, ei_end) = boost::edge_range(this->m_Graph.vertex(upstream), this->m_Graph.vertex(downstream), this->m_Graph.graph());
     for (; ei != ei_end; ++ei) {
       auto existingName = boost::get(&ConnectionPropertyType::name, this->m_Graph.graph(), *ei);
       if (name == existingName)
@@ -276,7 +278,7 @@ BlueprintImpl
   {
     boost::graph_traits<GraphType>::out_edge_iterator ei, ei_end;
     // too bad edge_range_by_label doesn't exist
-    boost::tie(ei, ei_end) = boost::edge_range(this->m_Graph.vertex(upstream), this->m_Graph.vertex(downstream), this->m_Graph.graph());
+    std::tie(ei, ei_end) = boost::edge_range(this->m_Graph.vertex(upstream), this->m_Graph.vertex(downstream), this->m_Graph.graph());
 
     for (; ei != ei_end; ++ei)
     {
@@ -474,7 +476,7 @@ BlueprintImpl
 
   boost::graph_traits<GraphType>::out_edge_iterator ei, ei_end;
   // too bad edge_range_by_label doesn't exist
-  boost::tie(ei, ei_end) = boost::edge_range(this->m_Graph.vertex(upstream), this->m_Graph.vertex(downstream), this->m_Graph.graph());
+  std::tie(ei, ei_end) = boost::edge_range(this->m_Graph.vertex(upstream), this->m_Graph.vertex(downstream), this->m_Graph.graph());
 
   for (; ei != ei_end; ++ei)
   {
