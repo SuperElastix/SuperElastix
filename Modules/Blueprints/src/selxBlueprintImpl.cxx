@@ -226,8 +226,6 @@ BlueprintImpl
   } // no existing connections named "name" were found.
   
   throw std::runtime_error( "BlueprintImpl does not contain connection from component " + upstream + " to " + downstream + " by name " + name );
-  // assert(false);
-  return ParameterMapType();
 } 
 
 bool
