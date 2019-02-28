@@ -313,11 +313,13 @@ BlueprintImpl
 
       for( auto const & othersEntry : othersProperties )
       {
+        const ParameterMapType::const_iterator foundProperty = ownProperties.find(othersEntry.first);
+
         // Does other use a property key that already exists in this component?
-        if( ownProperties.count( othersEntry.first ) )
+        if (foundProperty != ownProperties.cend())
         {
-          auto && ownValues   = ownProperties[ othersEntry.first ];
-          auto && otherValues = othersEntry.second;
+          const auto& ownValues   = foundProperty->second;
+          const auto& otherValues = othersEntry.second;
           // Are the property values equal?
           if( ownValues.size() != otherValues.size() )
           {
@@ -343,7 +345,6 @@ BlueprintImpl
         else
         {
           // Property key doesn't exist yet, add entry to this component
-          auto ownProperties = this->GetComponent( componentName );
           ownProperties[ othersEntry.first ] = othersEntry.second;
           this->SetComponent( componentName, ownProperties );
         }
@@ -371,11 +372,13 @@ BlueprintImpl
 
           for( auto const & othersEntry : othersProperties )
           {
+            const ParameterMapType::const_iterator foundProperty = ownProperties.find(othersEntry.first);
+
             // Does other use a property key that already exists in this component?
-            if( ownProperties.count( othersEntry.first ) )
+            if (foundProperty != ownProperties.cend())
             {
-              auto && ownValues   = ownProperties[ othersEntry.first ];
-              auto && otherValues = othersEntry.second;
+              const auto& ownValues   = foundProperty->second;
+              const auto& otherValues = othersEntry.second;
               // Are the property values equal?
               if( ownValues.size() != otherValues.size() )
               {
@@ -401,7 +404,6 @@ BlueprintImpl
             else
             {
               // Property key doesn't exist yet, add entry to this component
-              auto ownProperties = this->GetConnection( incomingName, componentName, connectionName );
               ownProperties[ othersEntry.first ] = othersEntry.second;
               this->SetConnection( incomingName, componentName, ownProperties, connectionName );
             }
@@ -697,15 +699,17 @@ BlueprintImpl::MergeProperties(const PropertyTreeType & pt)
     if (this->ComponentExists(componentName))
     {
       // Component exists, check if properties can be merged
-      auto currentProperties = this->GetComponent(componentName);
+      auto ownProperties = this->GetComponent(componentName);
 
       for (auto const & othersEntry : newProperties)
       {
+        const ParameterMapType::const_iterator foundProperty = ownProperties.find(othersEntry.first);
+
         // Does other use a property key that already exists in this component?
-        if (currentProperties.count(othersEntry.first))
+        if (foundProperty != ownProperties.cend())
         {
-          auto && ownValues = currentProperties[othersEntry.first];
-          auto && otherValues = othersEntry.second;
+          const auto& ownValues = foundProperty->second;
+          const auto& otherValues = othersEntry.second;
           // Are the property values equal?
           if (ownValues.size() != otherValues.size())
           {
@@ -731,7 +735,6 @@ BlueprintImpl::MergeProperties(const PropertyTreeType & pt)
         else
         {
           // Property key doesn't exist yet, add entry to this component
-          auto ownProperties = this->GetComponent(componentName);
           ownProperties[othersEntry.first] = othersEntry.second;
           this->SetComponent(componentName, ownProperties);
         }
@@ -782,11 +785,15 @@ BlueprintImpl::MergeProperties(const PropertyTreeType & pt)
         // Connection exists, check if properties can be merged
         auto ownProperties = this->GetConnection(outName, inName, connectionName);
 
-        for (auto const &othersEntry : newProperties) {
+        for (auto const &othersEntry : newProperties)
+        {
+          const ParameterMapType::const_iterator foundProperty = ownProperties.find(othersEntry.first);
+
           // Does newProperties use a key that already exists in this component?
-          if (ownProperties.count(othersEntry.first)) {
-            auto &&ownValues = ownProperties[othersEntry.first];
-            auto &&otherValues = othersEntry.second;
+          if (foundProperty != ownProperties.cend())
+          {
+            const auto& ownValues = foundProperty->second;
+            const auto& otherValues = othersEntry.second;
             // Are the property values equal?
             if (ownValues.size() != otherValues.size()) {
               // No, based on the number of values we see that it is different. Blueprints cannot be Composed
@@ -809,7 +816,6 @@ BlueprintImpl::MergeProperties(const PropertyTreeType & pt)
             }
           } else {
             // Property key doesn't exist yet, add entry to this component
-            //auto ownProperties = this->GetConnection(incomingName, componentName);
             ownProperties[othersEntry.first] = othersEntry.second;
             this->SetConnection(outName, inName, ownProperties, connectionName);
           }
