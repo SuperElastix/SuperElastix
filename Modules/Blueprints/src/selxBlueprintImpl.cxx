@@ -316,28 +316,12 @@ BlueprintImpl
         // Does other use a property key that already exists in this component?
         if (foundProperty != ownProperties.cend())
         {
-          const auto& ownValues   = foundProperty->second;
-          const auto& otherValues = othersEntry.second;
           // Are the property values equal?
-          if( ownValues.size() != otherValues.size() )
+          if (foundProperty->second != othersEntry.second)
           {
-            // No, based on the number of values we see that it is different. Blueprints cannot be Composed
+            // No, Blueprints cannot be Composed
             this->m_Graph = graph_backup;
             return false;
-          }
-          else
-          {
-            ParameterValueType::const_iterator ownValue;
-            ParameterValueType::const_iterator otherValue;
-            for( ownValue = ownValues.begin(), otherValue = otherValues.begin(); ownValue != ownValues.end(); ++ownValue, ++otherValue )
-            {
-              if( *otherValue != *ownValue )
-              {
-                // No, at least one value is different. Blueprints cannot be Composed
-                this->m_Graph = graph_backup;
-                return false;
-              }
-            }
           }
         }
         else
@@ -375,28 +359,12 @@ BlueprintImpl
             // Does other use a property key that already exists in this component?
             if (foundProperty != ownProperties.cend())
             {
-              const auto& ownValues   = foundProperty->second;
-              const auto& otherValues = othersEntry.second;
               // Are the property values equal?
-              if( ownValues.size() != otherValues.size() )
+              if (foundProperty->second != othersEntry.second)
               {
-                // No, based on the number of values we see that it is different. Blueprints cannot be Composed
+                // No, Blueprints cannot be Composed
                 this->m_Graph = graph_backup;
                 return false;
-              }
-              else
-              {
-                ParameterValueType::const_iterator ownValue;
-                ParameterValueType::const_iterator otherValue;
-                for( ownValue = ownValues.begin(), otherValue = otherValues.begin(); ownValue != ownValues.end(); ++ownValue, ++otherValue )
-                {
-                  if( *otherValue != *ownValue )
-                  {
-                    // No, at least one value is different. Blueprints cannot be Composed
-                    this->m_Graph = graph_backup;
-                    return false;
-                  }
-                }
               }
             }
             else
@@ -706,28 +674,12 @@ BlueprintImpl::MergeProperties(const PropertyTreeType & pt)
         // Does other use a property key that already exists in this component?
         if (foundProperty != ownProperties.cend())
         {
-          const auto& ownValues = foundProperty->second;
-          const auto& otherValues = othersEntry.second;
           // Are the property values equal?
-          if (ownValues.size() != otherValues.size())
+          if (foundProperty->second != othersEntry.second)
           {
-            // No, based on the number of values we see that it is different. Blueprints cannot be Composed
+            // No, Blueprints cannot be Composed
             this->m_LoggerImpl->Log(LogLevel::ERR, "Merging blueprints failed : Component properties cannot be redefined");
             throw std::invalid_argument("Merging blueprints failed : Component properties cannot be redefined");
-          }
-          else
-          {
-            ParameterValueType::const_iterator ownValue;
-            ParameterValueType::const_iterator otherValue;
-            for (ownValue = ownValues.begin(), otherValue = otherValues.begin(); ownValue != ownValues.end(); ++ownValue, ++otherValue)
-            {
-              if (*otherValue != *ownValue)
-              {
-                // No, at least one value is different. Blueprints cannot be Composed
-                this->m_LoggerImpl->Log(LogLevel::ERR, "Merging blueprints failed : Component properties cannot be redefined");
-                throw std::invalid_argument("Merging blueprints failed: Component properties cannot be redefined");
-              }
-            }
           }
         }
         else
@@ -790,27 +742,13 @@ BlueprintImpl::MergeProperties(const PropertyTreeType & pt)
           // Does newProperties use a key that already exists in this component?
           if (foundProperty != ownProperties.cend())
           {
-            const auto& ownValues = foundProperty->second;
-            const auto& otherValues = othersEntry.second;
             // Are the property values equal?
-            if (ownValues.size() != otherValues.size()) {
-              // No, based on the number of values we see that it is different. Blueprints cannot be Composed
+            if (foundProperty->second != othersEntry.second)
+            {
+              // No, Blueprints cannot be Composed
               this->m_LoggerImpl->Log(LogLevel::ERR, "Merging blueprints failed: Connection property {0} redefined.",
                                       othersEntry.first);
               throw std::invalid_argument("Merging blueprints failed: Connection properties cannot be redefined.");
-            } else {
-              ParameterValueType::const_iterator ownValue;
-              ParameterValueType::const_iterator otherValue;
-              for (ownValue = ownValues.begin(), otherValue = otherValues.begin();
-                   ownValue != ownValues.end(); ++ownValue, ++otherValue) {
-                if (*otherValue != *ownValue) {
-                  // No, at least one value is different. Blueprints cannot be Composed
-                  this->m_LoggerImpl->Log(LogLevel::ERR,
-                                          "Merging blueprints failed: Connection property {0} redefined.",
-                                          othersEntry.first);
-                  throw std::invalid_argument("Merging blueprints failed: Connection properties cannot be redefined.");
-                }
-              }
             }
           } else {
             // Property key doesn't exist yet, add entry to this component
