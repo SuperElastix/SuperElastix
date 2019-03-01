@@ -31,9 +31,11 @@
 
 #include "selxBlueprintImpl.h"
 #include "selxLoggerImpl.h"
-#include <ostream>
 
+// Standard C++ Library headers:
+#include <ostream>
 #include <stdexcept>
+#include <tuple>  // For std::tie.
 
 
 namespace selx
@@ -186,7 +188,7 @@ BlueprintImpl
     
   boost::graph_traits<GraphType>::out_edge_iterator ei, ei_end;
   // too bad edge_range_by_label doesn't exist
-  boost::tie(ei, ei_end) = boost::edge_range(this->m_Graph.vertex(upstream), this->m_Graph.vertex(downstream), this->m_Graph.graph());
+  std::tie(ei, ei_end) = boost::edge_range(this->m_Graph.vertex(upstream), this->m_Graph.vertex(downstream), this->m_Graph.graph());
 
   for (; ei != ei_end; ++ei) 
   {
@@ -212,7 +214,7 @@ BlueprintImpl
 
   boost::graph_traits<GraphType>::out_edge_iterator ei, ei_end;
   // too bad edge_range_by_label doesn't exist
-  boost::tie(ei, ei_end) = boost::edge_range(this->m_Graph.vertex(upstream), this->m_Graph.vertex(downstream), this->m_Graph.graph());
+  std::tie(ei, ei_end) = boost::edge_range(this->m_Graph.vertex(upstream), this->m_Graph.vertex(downstream), this->m_Graph.graph());
 
   for (; ei != ei_end; ++ei)
   {
@@ -224,8 +226,6 @@ BlueprintImpl
   } // no existing connections named "name" were found.
   
   throw std::runtime_error( "BlueprintImpl does not contain connection from component " + upstream + " to " + downstream + " by name " + name );
-  // assert(false);
-  return ParameterMapType();
 } 
 
 bool
@@ -236,7 +236,7 @@ BlueprintImpl
   {
     boost::graph_traits<GraphType>::out_edge_iterator ei, ei_end;
     // too bad edge_range_by_label doesn't exist
-    boost::tie(ei, ei_end) = boost::edge_range(this->m_Graph.vertex(upstream), this->m_Graph.vertex(downstream), this->m_Graph.graph());
+    std::tie(ei, ei_end) = boost::edge_range(this->m_Graph.vertex(upstream), this->m_Graph.vertex(downstream), this->m_Graph.graph());
     for (; ei != ei_end; ++ei) {
       auto existingName = boost::get(&ConnectionPropertyType::name, this->m_Graph.graph(), *ei);
       if (name == existingName)
@@ -276,7 +276,7 @@ BlueprintImpl
   {
     boost::graph_traits<GraphType>::out_edge_iterator ei, ei_end;
     // too bad edge_range_by_label doesn't exist
-    boost::tie(ei, ei_end) = boost::edge_range(this->m_Graph.vertex(upstream), this->m_Graph.vertex(downstream), this->m_Graph.graph());
+    std::tie(ei, ei_end) = boost::edge_range(this->m_Graph.vertex(upstream), this->m_Graph.vertex(downstream), this->m_Graph.graph());
 
     for (; ei != ei_end; ++ei)
     {
@@ -311,11 +311,13 @@ BlueprintImpl
 
       for( auto const & othersEntry : othersProperties )
       {
+        const ParameterMapType::const_iterator foundProperty = ownProperties.find(othersEntry.first);
+
         // Does other use a property key that already exists in this component?
-        if( ownProperties.count( othersEntry.first ) )
+        if (foundProperty != ownProperties.cend())
         {
-          auto && ownValues   = ownProperties[ othersEntry.first ];
-          auto && otherValues = othersEntry.second;
+          const auto& ownValues   = foundProperty->second;
+          const auto& otherValues = othersEntry.second;
           // Are the property values equal?
           if( ownValues.size() != otherValues.size() )
           {
@@ -341,7 +343,6 @@ BlueprintImpl
         else
         {
           // Property key doesn't exist yet, add entry to this component
-          auto ownProperties = this->GetComponent( componentName );
           ownProperties[ othersEntry.first ] = othersEntry.second;
           this->SetComponent( componentName, ownProperties );
         }
@@ -369,11 +370,13 @@ BlueprintImpl
 
           for( auto const & othersEntry : othersProperties )
           {
+            const ParameterMapType::const_iterator foundProperty = ownProperties.find(othersEntry.first);
+
             // Does other use a property key that already exists in this component?
-            if( ownProperties.count( othersEntry.first ) )
+            if (foundProperty != ownProperties.cend())
             {
-              auto && ownValues   = ownProperties[ othersEntry.first ];
-              auto && otherValues = othersEntry.second;
+              const auto& ownValues   = foundProperty->second;
+              const auto& otherValues = othersEntry.second;
               // Are the property values equal?
               if( ownValues.size() != otherValues.size() )
               {
@@ -399,7 +402,6 @@ BlueprintImpl
             else
             {
               // Property key doesn't exist yet, add entry to this component
-              auto ownProperties = this->GetConnection( incomingName, componentName, connectionName );
               ownProperties[ othersEntry.first ] = othersEntry.second;
               this->SetConnection( incomingName, componentName, ownProperties, connectionName );
             }
@@ -474,7 +476,7 @@ BlueprintImpl
 
   boost::graph_traits<GraphType>::out_edge_iterator ei, ei_end;
   // too bad edge_range_by_label doesn't exist
-  boost::tie(ei, ei_end) = boost::edge_range(this->m_Graph.vertex(upstream), this->m_Graph.vertex(downstream), this->m_Graph.graph());
+  std::tie(ei, ei_end) = boost::edge_range(this->m_Graph.vertex(upstream), this->m_Graph.vertex(downstream), this->m_Graph.graph());
 
   for (; ei != ei_end; ++ei)
   {
@@ -695,15 +697,17 @@ BlueprintImpl::MergeProperties(const PropertyTreeType & pt)
     if (this->ComponentExists(componentName))
     {
       // Component exists, check if properties can be merged
-      auto currentProperties = this->GetComponent(componentName);
+      auto ownProperties = this->GetComponent(componentName);
 
       for (auto const & othersEntry : newProperties)
       {
+        const ParameterMapType::const_iterator foundProperty = ownProperties.find(othersEntry.first);
+
         // Does other use a property key that already exists in this component?
-        if (currentProperties.count(othersEntry.first))
+        if (foundProperty != ownProperties.cend())
         {
-          auto && ownValues = currentProperties[othersEntry.first];
-          auto && otherValues = othersEntry.second;
+          const auto& ownValues = foundProperty->second;
+          const auto& otherValues = othersEntry.second;
           // Are the property values equal?
           if (ownValues.size() != otherValues.size())
           {
@@ -729,7 +733,6 @@ BlueprintImpl::MergeProperties(const PropertyTreeType & pt)
         else
         {
           // Property key doesn't exist yet, add entry to this component
-          auto ownProperties = this->GetComponent(componentName);
           ownProperties[othersEntry.first] = othersEntry.second;
           this->SetComponent(componentName, ownProperties);
         }
@@ -780,11 +783,15 @@ BlueprintImpl::MergeProperties(const PropertyTreeType & pt)
         // Connection exists, check if properties can be merged
         auto ownProperties = this->GetConnection(outName, inName, connectionName);
 
-        for (auto const &othersEntry : newProperties) {
+        for (auto const &othersEntry : newProperties)
+        {
+          const ParameterMapType::const_iterator foundProperty = ownProperties.find(othersEntry.first);
+
           // Does newProperties use a key that already exists in this component?
-          if (ownProperties.count(othersEntry.first)) {
-            auto &&ownValues = ownProperties[othersEntry.first];
-            auto &&otherValues = othersEntry.second;
+          if (foundProperty != ownProperties.cend())
+          {
+            const auto& ownValues = foundProperty->second;
+            const auto& otherValues = othersEntry.second;
             // Are the property values equal?
             if (ownValues.size() != otherValues.size()) {
               // No, based on the number of values we see that it is different. Blueprints cannot be Composed
@@ -807,7 +814,6 @@ BlueprintImpl::MergeProperties(const PropertyTreeType & pt)
             }
           } else {
             // Property key doesn't exist yet, add entry to this component
-            //auto ownProperties = this->GetConnection(incomingName, componentName);
             ownProperties[othersEntry.first] = othersEntry.second;
             this->SetConnection(outName, inName, ownProperties, connectionName);
           }

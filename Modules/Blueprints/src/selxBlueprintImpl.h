@@ -20,32 +20,29 @@
 #ifndef selxBlueprintImpl_h
 #define selxBlueprintImpl_h
 
-#include "boost/graph/graphviz.hpp"
-#include "boost/graph/graph_traits.hpp"
-#include "boost/graph/directed_graph.hpp"
-#include "boost/graph/labeled_graph.hpp"
+#include "selxBlueprint.h"
+#include "selxLoggerImpl.h"
+
+#include <boost/graph/graphviz.hpp>
+#include <boost/graph/graph_traits.hpp>
+#include <boost/graph/directed_graph.hpp>
+#include <boost/graph/labeled_graph.hpp>
 
 // for UpdateOrder
 #include <boost/graph/topological_sort.hpp>
 
 // for ComposeWith
-#include "boost/graph/copy.hpp"
+#include <boost/graph/copy.hpp>
 
 // for FromFile and MergeFromFile
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/info_parser.hpp>
-#include <boost/foreach.hpp>
 #include <boost/filesystem.hpp>
 
 #include <string>
-#include <iostream>
 #include <boost/algorithm/string.hpp>
-
-
-#include "selxBlueprint.h"
-#include "selxLoggerImpl.h"
 
 namespace selx
 {
