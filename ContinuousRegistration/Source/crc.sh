@@ -11,7 +11,7 @@ CRC_INPUT_DIR=/Users/kasper/Development/SuperBenchData
 CRC_OUTPUT_DIR=/Users/kasper/Data/SuperBench
 CRC_MASK_DIR=/Users/kasper/Development/SuperBenchMask
 CRC_MAX_NUM_REG_PER_DATASET=8
-CRC_DATASETS="--hammers-input-directory $CRC_INPUT_DIR/HAMMERS --popi-input-directory $CRC_INPUT_DIR/POPI/MedPhys11 --popi-mask-directory $CRC_MASK_DIR/POPI --dirlab-input-directory $CRC_INPUT_DIR/DIRLAB --dirlab-mask-directory $CRC_MASK_DIR/DIRLAB --spread-input-directory $CRC_INPUT_DIR/SPREAD  --mgh10-input-directory $CRC_INPUT_DIR/MGH10 --cumc12-input-directory $CRC_INPUT_DIR/CUMC12 --isbr18-input-directory $CRC_INPUT_DIR/ISBR18 --lpba40-input-directory $CRC_INPUT_DIR/LPBA40"
+CRC_DATASETS="--hammers-input-directory $CRC_INPUT_DIR/HAMMERS --popi-input-directory $CRC_INPUT_DIR/POPI/MedPhys11 --popi-mask-directory $CRC_MASK_DIR/POPI --dirlab-input-directory $CRC_INPUT_DIR/DIRLAB --dirlab-mask-directory $CRC_MASK_DIR/DIRLAB --spread-input-directory $CRC_INPUT_DIR/SPREAD  --mgh10-input-directory $CRC_INPUT_DIR/MGH10 --cumc12-input-directory $CRC_INPUT_DIR/CUMC12 --ibsr18-input-directory $CRC_INPUT_DIR/IBSR18 --lpba40-input-directory $CRC_INPUT_DIR/LPBA40"
 CRC_BLUEPRINT_FILE_NAME="--blueprint-file-name NiftyRegAffineBSpline.json" # Leave empty to run registrations for all blueprints
 
 # Generate shell scripts
