@@ -83,8 +83,11 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
 	FixedImagePointer fixedImage = this->m_FixedImage;
 	MovingImagePointer movingImage = this->m_MovingImage;
 
+  fixedImage->Update();
+  movingImage->Update();
+
 	if (this->m_RescaleIntensity.size() == 2) {
-		this->m_Logger.Log(LogLevel::INF, "Rescaling images to [{0}, {1}].", this->m_RescaleIntensity[0], this->m_RescaleIntensity[1]);
+		this->m_Logger.Log(LogLevel::INF, "{0}: Rescaling images to [{1}, {2}].", this->m_Name, this->m_RescaleIntensity[0], this->m_RescaleIntensity[1]);
 
 		FixedRescaleImageFilterPointer fixedIntensityRescaler = FixedRescaleImageFilterType::New();
 		fixedIntensityRescaler->SetInput(fixedImage);
@@ -92,6 +95,7 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
 		fixedIntensityRescaler->SetOutputMaximum(std::stof(this->m_RescaleIntensity[1]));
 		fixedIntensityRescaler->UpdateOutputInformation();
 		fixedImage = fixedIntensityRescaler->GetOutput();
+		fixedImage->Update();
 
 		MovingRescaleImageFilterPointer movingIntensityRescaler = MovingRescaleImageFilterType::New();
 		movingIntensityRescaler->SetInput(movingImage);
@@ -99,30 +103,33 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
 		movingIntensityRescaler->SetOutputMaximum(std::stof(this->m_RescaleIntensity[1]));
 		movingIntensityRescaler->UpdateOutputInformation();
 		movingImage = movingIntensityRescaler->GetOutput();
+		movingImage->Update();
 	}
 
 	if (this->m_InvertIntensity) {
-		this->m_Logger.Log(LogLevel::INF, "Inverting image scales.");
+		this->m_Logger.Log(LogLevel::INF, "{0}: Inverting image scales", this->m_Name);
 
 		FixedImageCalculatorFilterPointer fixedIntensityMaximumCalculator = FixedImageCalculatorFilterType::New();
 		fixedIntensityMaximumCalculator->SetImage(fixedImage);
 		fixedIntensityMaximumCalculator->ComputeMaximum();
 
 		FixedInvertIntensityImageFilterPointer fixedIntensityInverter = FixedInvertIntensityImageFilterType::New();
-		fixedIntensityInverter->SetInput(this->m_FixedImage);
+		fixedIntensityInverter->SetInput(fixedImage);
 		fixedIntensityInverter->SetMaximum(fixedIntensityMaximumCalculator->GetMaximum());
 		fixedIntensityInverter->UpdateOutputInformation();
 		fixedImage = fixedIntensityInverter->GetOutput();
+		fixedImage->Update();
 
 		MovingImageCalculatorFilterPointer movingIntensityMaximumCalculator = MovingImageCalculatorFilterType::New();
 		movingIntensityMaximumCalculator->SetImage(movingImage);
 		movingIntensityMaximumCalculator->ComputeMaximum();
 
 		MovingInvertIntensityImageFilterPointer movingIntensityInverter = MovingInvertIntensityImageFilterType::New();
-		movingIntensityInverter->SetInput(this->m_FixedImage);
+		movingIntensityInverter->SetInput(movingImage);
 		movingIntensityInverter->SetMaximum(movingIntensityMaximumCalculator->GetMaximum());
 		movingIntensityInverter->UpdateOutputInformation();
 		movingImage = movingIntensityInverter->GetOutput();
+		movingImage->Update();
 	}
 
 	this->m_SyNImageRegistrationMethod->SetFixedImage(fixedImage);
@@ -371,7 +378,6 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
       typename SyNImageRegistrationMethodType::NumberOfIterationsArrayType numberOfIterations(criterion.second.size());
       for(int i = 0; i < criterion.second.size(); i++) {
         numberOfIterations[i] = stoull(criterion.second[i]);
-        std::cout << "numberOfIterations[" << i << "]:" << numberOfIterations[i] << std::endl;
       }
       this->m_SyNImageRegistrationMethod->SetNumberOfIterationsPerLevel(numberOfIterations);
 	}

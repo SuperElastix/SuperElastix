@@ -206,7 +206,7 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
   MovingImagePointer movingImage = this->m_MovingImage;
 
   if (this->m_RescaleIntensity.size() == 2) {
-    this->m_Logger.Log(LogLevel::INF, "Rescaling images to [{0}, {1}].", this->m_RescaleIntensity[0], this->m_RescaleIntensity[1]);
+    this->m_Logger.Log(LogLevel::INF, "{0}: Rescaling images to [{1}, {2}]", this->m_Name, this->m_RescaleIntensity[0], this->m_RescaleIntensity[1]);
 
     FixedRescaleImageFilterPointer fixedIntensityRescaler = FixedRescaleImageFilterType::New();
     fixedIntensityRescaler->SetInput(fixedImage);
@@ -224,14 +224,14 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
   }
 
   if (this->m_InvertIntensity) {
-    this->m_Logger.Log(LogLevel::INF, "Inverting image scales.");
+    this->m_Logger.Log(LogLevel::INF, "{0}, Inverting image scales", this->m_Name);
 
     FixedImageCalculatorFilterPointer fixedIntensityMaximumCalculator = FixedImageCalculatorFilterType::New();
     fixedIntensityMaximumCalculator->SetImage(fixedImage);
     fixedIntensityMaximumCalculator->ComputeMaximum();
 
     FixedInvertIntensityImageFilterPointer fixedIntensityInverter = FixedInvertIntensityImageFilterType::New();
-    fixedIntensityInverter->SetInput(this->m_FixedImage);
+    fixedIntensityInverter->SetInput(fixedImage);
     fixedIntensityInverter->SetMaximum(fixedIntensityMaximumCalculator->GetMaximum());
     fixedIntensityInverter->UpdateOutputInformation();
     fixedImage = fixedIntensityInverter->GetOutput();
@@ -241,7 +241,7 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
     movingIntensityMaximumCalculator->ComputeMaximum();
 
     MovingInvertIntensityImageFilterPointer movingIntensityInverter = MovingInvertIntensityImageFilterType::New();
-    movingIntensityInverter->SetInput(this->m_FixedImage);
+    movingIntensityInverter->SetInput(movingImage);
     movingIntensityInverter->SetMaximum(movingIntensityMaximumCalculator->GetMaximum());
     movingIntensityInverter->UpdateOutputInformation();
     movingImage = movingIntensityInverter->GetOutput();
