@@ -122,6 +122,7 @@ InternalComputationValueType >::ItkImageRegistrationMethodv4Component( const std
 {
   this->m_ImageRegistrationMethodv4Filter = ImageRegistrationMethodv4Type::New();
   this->m_InvertIntensity = false;
+  this->m_MetricSamplingPercentage = 1.0;
 }
 
 
