@@ -21,7 +21,9 @@ def load_submissions(parameters):
 
     for team_name in team_names:
         if parameters.blueprint_file_name is not None:
-            blueprint_file_names = parameters.blueprint_file_name
+                blueprint_file_names = [blueprint_file_name
+                                        for blueprint_file_name in parameters.blueprint_file_name
+                                        if os.path.isfile(os.path.join(parameters.submissions_directory, team_name,  blueprint_file_name))]
         else:
             blueprint_file_names = [blueprint_file_name
                                     for blueprint_file_name in os.listdir(os.path.join(parameters.submissions_directory, team_name))

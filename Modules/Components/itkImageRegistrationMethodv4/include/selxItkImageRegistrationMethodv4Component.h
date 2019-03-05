@@ -148,7 +148,7 @@ private:
 
   ComponentBase::ParameterValueType m_RescaleIntensity;
   bool m_InvertIntensity;
-  float m_MetricSamplingPercentage;
+  double m_MetricSamplingPercentage;
 
 protected:
 

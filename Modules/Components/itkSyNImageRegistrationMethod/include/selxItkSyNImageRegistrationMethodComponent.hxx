@@ -29,11 +29,9 @@ namespace selx
 template< int Dimensionality, class TPixel , class InternalComputationValueType >
 ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputationValueType >
   ::ItkSyNImageRegistrationMethodComponent( const std::string & name, LoggerImpl & logger ) 
-  : Superclass( name, logger )
+  : Superclass( name, logger ), m_InvertIntensity(false), m_MetricSamplingPercentage(1.0)
 {
   this->m_SyNImageRegistrationMethod = SyNImageRegistrationMethodType::New();
-	this->m_InvertIntensity = false;
-	this->m_MetricSamplingPercentage = 1.0;
 
   //TODO: instantiating the filter in the constructor might be heavy for the use in component selector factory, since all components of the database are created during the selection process.
   // we could choose to keep the component light weighted (for checking criteria such as names and connections) until the settings are passed to the filter, but this requires an additional initialization step.

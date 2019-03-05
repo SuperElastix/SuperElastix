@@ -118,11 +118,9 @@ public:
 template< int Dimensionality, class TPixel, class InternalComputationValueType >
 ItkImageRegistrationMethodv4Component< Dimensionality, TPixel,
 InternalComputationValueType >::ItkImageRegistrationMethodv4Component( const std::string & name, LoggerImpl & logger )
-  : Superclass( name, logger ), m_TransformAdaptorsContainerInterface( nullptr )
+  : Superclass( name, logger ), m_TransformAdaptorsContainerInterface( nullptr ), m_InvertIntensity(false), m_MetricSamplingPercentage(1.0)
 {
   this->m_ImageRegistrationMethodv4Filter = ImageRegistrationMethodv4Type::New();
-  this->m_InvertIntensity = false;
-  this->m_MetricSamplingPercentage = 1.0;
 }
 
 
