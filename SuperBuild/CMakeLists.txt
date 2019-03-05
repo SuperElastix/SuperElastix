@@ -41,17 +41,17 @@ if(CMAKE_CONFIGURATION_TYPES)
   set_property(CACHE CMAKE_CONFIGURATION_TYPES PROPERTY STRINGS Debug Release MinSizeRel RelWithDebInfo)
   
   message(STATUS "Selected configuration type (CMAKE_CONFIGURATION_TYPES): " ${CMAKE_CONFIGURATION_TYPES})
+
+  if( ${CMAKE_CONFIGURATION_TYPES} STREQUAL "Debug" )
+    # For a Visual C++ Debug build, use 64-bit toolset, to avoid link errors.
+    set(CMAKE_GENERATOR_TOOLSET "host=x64" CACHE STRING "SuperElastix SuperBuild Visual C++ Debug uses 64-bit toolset" FORCE)
+  endif()
 endif()
 
 set( SUPERELASTIXSUPERBUILD_MAJOR_VERSION 1)
 set( SUPERELASTIXSUPERBUILD_MINOR_VERSION 0)
 set( SUPERELASTIXSUPERBUILD_PATCH_VERSION 0)
 set( SUPERELASTIXSUPERBUILD_VERSION ${SUPERELASTIXSUPERBUILD_MAJOR_VERSION}.${SUPERELASTIXSUPERBUILD_MINOR_VERSION}.${SUPERELASTIXSUPERBUILD_PATCH_VERSION})
-
-  if( ${CMAKE_CONFIGURATION_TYPES} STREQUAL "Debug" )
-    # For a Visual C++ Debug build, use 64-bit toolset, to avoid link errors.
-    set(CMAKE_GENERATOR_TOOLSET "host=x64" CACHE STRING "SuperElastix Visual C++ Debug uses 64-bit toolset" FORCE)
-  endif()
 
 include (CTest)
 
