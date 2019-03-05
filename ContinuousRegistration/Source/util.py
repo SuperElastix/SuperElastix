@@ -339,6 +339,27 @@ def warp_image(superelastix, input_image_file_name, disp_field_file_name, type_n
 
     return output_image_file_name
 
+
+def compose_displacement_fields(superelastix, disp_field_file_name_0, disp_field_file_name_1):
+    output_image_base_name, output_image_ext = disp_field_file_name_0.split(os.extsep, 1)
+    output_image_file_name = output_image_base_name + '_inverse_consistency' + "." + output_image_ext
+
+    try:
+        stdout = subprocess.check_output([superelastix,
+                                          '--conf', os.path.join(os.path.dirname(os.path.realpath(__file__)), 'compose_displacement_fields.json'),
+                                          '--in', 'WarpingDisplacementField=%s' % disp_field_file_name_0,
+                                          'DisplacementField=%s' % disp_field_file_name_1,
+                                          '--out', 'DisplacementFieldSink=%s' % output_image_file_name,
+                                          '--loglevel', 'trace',
+                                          '--logfile', os.path.splitext(output_image_file_name)[0] + '.log'])
+    except Exception as e:
+        logging.error('Failed to compose blueprints %s and %s' % (disp_field_file_name_0, disp_field_file_name_1))
+        raise e
+
+
+    return output_image_file_name
+
+
 def index2point(image, index_set):
     dim = image.GetDimension()
     direction = np.array(image.GetDirection()).reshape((dim, dim))

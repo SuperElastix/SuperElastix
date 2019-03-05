@@ -2,8 +2,8 @@ import glob, csv, re, stat
 from abc import ABCMeta
 from itertools import combinations
 
-from ContinuousRegistration.Source.metrics import tre, hausdorff, inverse_consistency_labels, \
-    inverse_consistency_points, label_overlap
+from ContinuousRegistration.Source.metrics import tre, hausdorff, inverse_consistency, \
+    inverse_consistency, label_overlap
 from ContinuousRegistration.Source.util import *
 
 class Dataset:
@@ -87,14 +87,14 @@ class Dataset:
 
         tre_0, tre_1 = tre(superelastix, point_sets, disp_field_paths)
         hausdorff_0, hausdorff_1 = hausdorff(superelastix, point_sets, disp_field_paths)
-        inverse_consistency_points_0, inverse_consistency_points_1 = inverse_consistency_points(
-            superelastix, point_sets, disp_field_paths)
+        inverse_consistency_0, inverse_consistency_1 = inverse_consistency(
+            superelastix, disp_field_paths, file_names['mask_file_names'])
 
         return {
             file_names['disp_field_file_names'][0]:
-                merge_dicts(tre_0, hausdorff_0, inverse_consistency_points_0),
+                merge_dicts(tre_0, hausdorff_0, inverse_consistency_0),
             file_names['disp_field_file_names'][1]:
-                merge_dicts(tre_1, hausdorff_1, inverse_consistency_points_1)
+                merge_dicts(tre_1, hausdorff_1, inverse_consistency_1)
         }
 
     @staticmethod
@@ -111,16 +111,16 @@ class Dataset:
             os.path.join(output_directory, file_names['disp_field_file_names'][1]),
         )
 
-        inverse_consistency_atlas_0, inverse_consistency_atlas_1 = inverse_consistency_labels(
-            superelastix, file_names['ground_truth_file_names'], disp_field_paths)
+        inverse_consistency_0, inverse_consistency_1 = inverse_consistency(
+            superelastix, disp_field_paths, file_names['mask_file_names'])
 
         dice_0, dice_1 = label_overlap(superelastix, file_names['ground_truth_file_names'], disp_field_paths)
 
         return {
             file_names['disp_field_file_names'][0]:
-                merge_dicts(inverse_consistency_atlas_0, dice_0),
+                merge_dicts(inverse_consistency_0, dice_0),
             file_names['disp_field_file_names'][1]:
-                merge_dicts(inverse_consistency_atlas_1, dice_1)
+                merge_dicts(inverse_consistency_1, dice_1)
         }
 
     @staticmethod
@@ -903,7 +903,6 @@ def load_datasets(parameters):
                         parameters.max_number_of_registrations_per_dataset)
         datasets[cumc12.name] = cumc12
         logging.debug('Using files:\n{0}'.format(json.dumps(cumc12.file_names, indent=2)))
-
 
     if parameters.dirlab_input_directory is not None:
         logging.info('Loading dataset DIRLAB.')

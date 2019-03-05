@@ -1,108 +1,61 @@
 import numpy as np
 import SimpleITK as sitk
-from ContinuousRegistration.Source.util import warp_image, warp_point_set
+from ContinuousRegistration.Source.util import warp_image, warp_point_set, compose_displacement_fields
 from ContinuousRegistration.Source.util import logging
 
 def tre(superelastix, point_sets, deformation_field_file_names):
     try:
         point_set_fixed0_to_moving1 = warp_point_set(superelastix, point_sets[0], deformation_field_file_names[0])
         point_set_fixed1_to_moving0 = warp_point_set(superelastix, point_sets[1], deformation_field_file_names[1])
-    except Exception as e:
+    except Exception:
         logging.error('Failed to compute tre for image pair (%s, %s).' % deformation_field_file_names)
         return (
-            {
-                '1. TRE': np.NaN
-            },
-            {
-                '1. TRE': np.NaN
-            }
+            {'1. TRE': np.NaN},
+            {'1. TRE': np.NaN}
         )
 
     return (
-        {
-            '1. TRE': np.nanmean(np.sqrt(np.nansum((point_set_fixed0_to_moving1 - point_sets[1]) ** 2, -1)))
-         },
-        {
-            '1. TRE': np.nanmean(np.sqrt(np.nansum((point_set_fixed1_to_moving0 - point_sets[0]) ** 2, -1)))
-         }
+        {'1. TRE': np.nanmean(np.sqrt(np.nansum((point_set_fixed0_to_moving1 - point_sets[1]) ** 2, -1)))},
+        {'1. TRE': np.nanmean(np.sqrt(np.nansum((point_set_fixed1_to_moving0 - point_sets[0]) ** 2, -1)))}
     )
+
 
 def hausdorff(superelastix, point_sets, deformation_field_file_names):
     try:
         point_set_fixed0_to_moving1 = warp_point_set(superelastix, point_sets[0], deformation_field_file_names[0])
         point_set_fixed1_to_moving0 = warp_point_set(superelastix, point_sets[1], deformation_field_file_names[1])
-    except Exception as e:
+    except Exception:
         logging.error('Failed to compute hausdorff for image pair (%s, %s).' % deformation_field_file_names)
         return (
-            {
-                '2. Hausdorff': np.NaN
-            },
-            {
-                '2. Hausdorff': np.NaN
-            }
+            {'2. Hausdorff': np.NaN},
+            {'2. Hausdorff': np.NaN}
         )
 
     return (
-        {
-            '2. Hausdorff': np.nanmax(np.sqrt(np.nansum((point_set_fixed0_to_moving1 - point_sets[1]) ** 2, -1)))
-        },
-        {
-            '2. Hausdorff': np.nanmax(np.sqrt(np.nansum((point_set_fixed1_to_moving0 - point_sets[0]) ** 2, -1)))
-        }
-    )
-
-def inverse_consistency_points(superelastix, point_sets, deformation_field_file_names):
-    try:
-        point_set_fixed0_to_moving1 = warp_point_set(superelastix, point_sets[0], deformation_field_file_names[0])
-        point_set_fixed0_to_moving1_to_fixed0 = warp_point_set(superelastix, point_set_fixed0_to_moving1, deformation_field_file_names[1])
-        point_set_fixed1_to_moving0 = warp_point_set(superelastix, point_sets[1], deformation_field_file_names[1])
-        point_set_fixed1_to_moving0_to_fixed1 = warp_point_set(superelastix, point_set_fixed1_to_moving0, deformation_field_file_names[0])
-    except Exception as e:
-        logging.error('Failed to compute inverse consistency points for image pair (%s, %s).' % deformation_field_file_names)
-        return ({'3. InverseConsistencyTRE': np.NaN }, { '3. InverseConsistencyTRE': np.NaN })
-
-    return (
-        {
-            '3. InverseConsistencyTRE': np.nanmean(np.sqrt(np.nansum((point_set_fixed0_to_moving1_to_fixed0 - point_sets[0]) ** 2, -1)))
-        },
-        {
-            '3. InverseConsistencyTRE': np.nanmean(np.sqrt(np.nansum((point_set_fixed1_to_moving0_to_fixed1 - point_sets[1]) ** 2, -1)))
-        }
+        {'2. Hausdorff': np.nanmax(np.sqrt(np.nansum((point_set_fixed0_to_moving1 - point_sets[1]) ** 2, -1)))},
+        {'2. Hausdorff': np.nanmax(np.sqrt(np.nansum((point_set_fixed1_to_moving0 - point_sets[0]) ** 2, -1)))}
     )
 
 
-def inverse_consistency_labels(superelastix, label_file_names, deformation_field_file_names):
-    labelOverlapMeasurer = sitk.LabelOverlapMeasuresImageFilter()
-    labelOverlapMeasurer.SetGlobalDefaultCoordinateTolerance(1.0)
-
-    label_image_moving0_to_fixed1_file_name = warp_image(superelastix, label_file_names[0], deformation_field_file_names[1], 'inverse_consistency_label_0_to_1')
-    label_image_moving0_to_fixed1_to_moving0_file_name = warp_image(superelastix, label_image_moving0_to_fixed1_file_name, deformation_field_file_names[0], 'inverse_consistency_label_0_to_1_to_0')
-    label_image_moving1_to_fixed0_file_name = warp_image(superelastix, label_file_names[1], deformation_field_file_names[0], 'inverse_consistency_label_1_to_0')
-    label_image_moving1_to_fixed0_to_moving1_file_name = warp_image(superelastix, label_image_moving1_to_fixed0_file_name, deformation_field_file_names[1], 'inverse_consistency_label_1_to_0_to_1')
-
+def inverse_consistency(superelastix, displacement_field_file_names, mask_file_names):
     try:
-        label_image_0 = sitk.ReadImage(label_file_names[0])
-        labelOverlapMeasurer.Execute(label_image_0, sitk.Cast(sitk.ReadImage(label_image_moving0_to_fixed1_to_moving0_file_name), label_image_0.GetPixelID()))
-        dsc_0 = labelOverlapMeasurer.GetDiceCoefficient()
-    except Exception as e:
-        logging.error('Failed to compute inverse consistency DSC for %s' % label_file_names[0])
-        dsc_0 = np.NaN
+        composed_0 = sitk.GetArrayFromImage(sitk.ReadImage(compose_displacement_fields(superelastix, displacement_field_file_names[0], displacement_field_file_names[1])))
+        composed_1 = sitk.GetArrayFromImage(sitk.ReadImage(compose_displacement_fields(superelastix, displacement_field_file_names[1], displacement_field_file_names[0])))
+    except Exception:
+        return (
+            { '3. InverseConsistency': np.NaN },
+            { '3. InverseConsistency': np.NaN }
+        )
 
-    try:
-        label_image_1 = sitk.ReadImage(label_file_names[1])
-        labelOverlapMeasurer.Execute(label_image_1, sitk.Cast(sitk.ReadImage(label_image_moving1_to_fixed0_to_moving1_file_name), label_image_1.GetPixelID()))
-        dsc_1 = labelOverlapMeasurer.GetDiceCoefficient()
-    except Exception as e:
-        logging.error('Failed to compute inverse consistency DSC for %s' % label_file_names[1])
-        dsc_1 = np.NaN
+    mask_0 = sitk.GetArrayFromImage(sitk.ReadImage(mask_file_names[0])) > 0
+    mask_0 = np.tile(mask_0, [composed_0.shape[-1]] + [1] * mask_0.ndim)
+
+    mask_1 = sitk.GetArrayFromImage(sitk.ReadImage(mask_file_names[1])) > 0
+    mask_1 = np.tile(mask_1, [composed_1.shape[-1] + [1] * mask_1.ndim])
 
     return (
-        {
-            '2. InverseConsistencyDSC': dsc_0
-        },
-        {
-            '2. InverseConsistencyDSC': dsc_1
-         }
+        {'3. InverseConsistency': np.mean(np.linalg.norm(composed_0[mask_0], axis=-1))},
+        {'3. InverseConsistency': np.mean(np.linalg.norm(composed_1[mask_1], axis=-1))}
     )
 
 
@@ -118,11 +71,9 @@ def label_overlap(superelastix, label_file_names, deformation_field_file_names):
         labelOverlapMeasurer.Execute(label_image_1, label_image_0_to_1)
         dsc_0 = labelOverlapMeasurer.GetDiceCoefficient()
         jaccard_0 = labelOverlapMeasurer.GetJaccardCoefficient()
-        union_0 = labelOverlapMeasurer.GetUnionOverlap()
-        vol_0 = labelOverlapMeasurer.GetVolumeSimilarity()
     except Exception as e:
         logging.error('Failed to compute DSC for %s: %s' % (label_file_names[0], e))
-        dsc_0 = jaccard_0 = union_0 = vol_0 = np.NaN
+        dsc_0 = jaccard_0 = np.NaN
 
     label_image_1_to_0_file_name = warp_image(superelastix, label_file_names[1], deformation_field_file_names[0], 'dsc_label_1_to_0')
 
@@ -132,23 +83,11 @@ def label_overlap(superelastix, label_file_names, deformation_field_file_names):
         labelOverlapMeasurer.Execute(label_image_0, label_image_1_to_0)
         dsc_1 = labelOverlapMeasurer.GetDiceCoefficient()
         jaccard_1 = labelOverlapMeasurer.GetJaccardCoefficient()
-        union_1 = labelOverlapMeasurer.GetUnionOverlap()
-        vol_1 = labelOverlapMeasurer.GetVolumeSimilarity()
     except Exception as e:
         logging.error('Failed to compute DSC for %s' % label_file_names[1])
-        dsc_1 = jaccard_1 = union_1 = vol_1 = np.NaN
+        dsc_1 = jaccard_1 = np.NaN
 
     return (
-        {
-            '1. Dice Similarity Coefficient': dsc_0,
-            '3. Jaccard Coefficient': jaccard_0,
-            '4. Union Coefficient': union_0,
-            '5. VolumeSimilarity': vol_0
-        },
-        {
-            '1. Dice Similarity Coefficient': dsc_1,
-            '3. Jaccard Coefficient': jaccard_1,
-            '4. Union Coefficient': union_1,
-            '5. VolumeSimilarity': vol_1
-        }
+        {'1. Dice Similarity Coefficient': dsc_0, '2. Jaccard Coefficient': jaccard_0},
+        {'1. Dice Similarity Coefficient': dsc_1, '2. Jaccard Coefficient': jaccard_1}
     )

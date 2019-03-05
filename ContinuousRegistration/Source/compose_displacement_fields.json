@@ -1,0 +1,41 @@
+{
+    "Components": [
+        {
+            "Name": "DisplacementField",
+            "NameOfClass": "ItkDisplacementFieldSourceComponent",
+            "Dimensionality": "3"
+        },
+
+        {
+            "Name": "WarpingDisplacementField",
+            "NameOfClass": "ItkDisplacementFieldSourceComponent",
+            "Dimensionality": "3"
+        },
+        {
+            "Name": "DisplacementFieldComposer",
+            "NameOfClass": "ItkDisplacementFieldComposerComponent",
+            "Dimensionality": "3"
+        },
+        {
+            "Name": "DisplacementFieldSink",
+            "NameOfClass": "ItkDisplacementFieldSinkComponent",
+            "Dimensionality": "3"
+        }
+    ],
+	"Connections": [
+        {
+            "Out": "DisplacementField",
+            "In": "DisplacementFieldComposer",
+            "NameOfInterface": "itkDisplacementFieldInterface"
+        },
+        {
+            "Out": "WarpingDisplacementField",
+            "In": "DisplacementFieldComposer",
+            "NameOfInterface": "itkWarpingDisplacementFieldInterface"
+        },
+        {
+            "Out": "DisplacementFieldComposer",
+            "In": "DisplacementFieldSink"
+        }
+    ]
+}

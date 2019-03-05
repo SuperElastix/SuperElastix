@@ -37,6 +37,7 @@ class ItkDisplacementFieldSourceComponent :
     Accepting< >,
     Providing< SourceInterface,
       itkDisplacementFieldInterface< Dimensionality, TPixel >,
+      itkWarpingDisplacementFieldInterface< Dimensionality, TPixel >,
       itkImageDomainFixedInterface< Dimensionality > > >
 {
 public:
@@ -47,6 +48,7 @@ public:
     Providing<
       SourceInterface,
       itkDisplacementFieldInterface< Dimensionality, TPixel >,
+      itkWarpingDisplacementFieldInterface< Dimensionality, TPixel >,
       itkImageDomainFixedInterface< Dimensionality > > > Superclass;
   typedef std::shared_ptr< Self >       Pointer;
   typedef std::shared_ptr< const Self > ConstPointer;
@@ -56,6 +58,9 @@ public:
 
   using ItkDisplacementFieldType = typename itkDisplacementFieldInterface< Dimensionality, TPixel >::ItkDisplacementFieldType;
   using ItkDisplacementFieldPointer = typename ItkDisplacementFieldType::Pointer;
+
+  using ItkWarpingDisplacementFieldType = typename itkWarpingDisplacementFieldInterface< Dimensionality, TPixel >::ItkDisplacementFieldType;
+  using ItkWarpingDisplacementFieldPointer = typename ItkWarpingDisplacementFieldType::Pointer;
 
   using ItkImageDomainType = typename itkImageDomainFixedInterface< Dimensionality >::ItkImageDomainType;
   using ItkImageDomainPointer = typename ItkImageDomainType::Pointer;
