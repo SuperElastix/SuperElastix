@@ -117,14 +117,12 @@ def label_overlap(superelastix, label_file_names, deformation_field_file_names):
         label_image_0_to_1 = sitk.Cast(sitk.ReadImage(label_image_0_to_1_file_name), label_image_1.GetPixelID())
         labelOverlapMeasurer.Execute(label_image_1, label_image_0_to_1)
         dsc_0 = labelOverlapMeasurer.GetDiceCoefficient()
-        fne_0 = labelOverlapMeasurer.GetFalseNegativeError()
-        fpe_0 = labelOverlapMeasurer.GetFalsePositiveError()
         jaccard_0 = labelOverlapMeasurer.GetJaccardCoefficient()
         union_0 = labelOverlapMeasurer.GetUnionOverlap()
         vol_0 = labelOverlapMeasurer.GetVolumeSimilarity()
     except Exception as e:
         logging.error('Failed to compute DSC for %s: %s' % (label_file_names[0], e))
-        dsc_0 = fne_0 = fpe_0 = jaccard_0 = union_0 = vol_0 = np.NaN
+        dsc_0 = jaccard_0 = union_0 = vol_0 = np.NaN
 
     label_image_1_to_0_file_name = warp_image(superelastix, label_file_names[1], deformation_field_file_names[0], 'dsc_label_1_to_0')
 
@@ -133,30 +131,24 @@ def label_overlap(superelastix, label_file_names, deformation_field_file_names):
         label_image_1_to_0 = sitk.Cast(sitk.ReadImage(label_image_1_to_0_file_name), label_image_0.GetPixelID())
         labelOverlapMeasurer.Execute(label_image_0, label_image_1_to_0)
         dsc_1 = labelOverlapMeasurer.GetDiceCoefficient()
-        fne_1 = labelOverlapMeasurer.GetFalseNegativeError()
-        fpe_1 = labelOverlapMeasurer.GetFalsePositiveError()
         jaccard_1 = labelOverlapMeasurer.GetJaccardCoefficient()
         union_1 = labelOverlapMeasurer.GetUnionOverlap()
         vol_1 = labelOverlapMeasurer.GetVolumeSimilarity()
     except Exception as e:
         logging.error('Failed to compute DSC for %s' % label_file_names[1])
-        dsc_1 = fne_1 = fpe_1 = jaccard_1 = union_1 = vol_1 = np.NaN
+        dsc_1 = jaccard_1 = union_1 = vol_1 = np.NaN
 
     return (
         {
             '1. Dice Similarity Coefficient': dsc_0,
             '3. Jaccard Coefficient': jaccard_0,
             '4. Union Coefficient': union_0,
-            '5. VolumeSimilarity': vol_0,
-            '6. FalseNegativeError': fne_0,
-            '7. FalsePositiveError': fpe_0
+            '5. VolumeSimilarity': vol_0
         },
         {
             '1. Dice Similarity Coefficient': dsc_1,
             '3. Jaccard Coefficient': jaccard_1,
             '4. Union Coefficient': union_1,
-            '5. VolumeSimilarity': vol_1,
-            '6. FalseNegativeError': fne_1,
-            '7. FalsePositiveError': fpe_1
+            '5. VolumeSimilarity': vol_1
         }
     )

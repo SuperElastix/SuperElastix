@@ -1,5 +1,5 @@
 {
-    "Datasets": ["POPI", "DIRLAB", "EMPIRE", "LPBA40", "ISBR18", "CUMC12", "MGH10", "SPREAD", "HAMMERS"],
+    "Datasets": ["POPI", "DIRLAB", "EMPIRE", "LPBA40", "IBSR18", "CUMC12", "MGH10", "SPREAD", "HAMMERS"],
     "Components": [
         {
             "Name": "RegistrationMethod",
@@ -7,7 +7,11 @@
             "NumberOfLevels":  "4" ,
             "ShrinkFactorsPerLevel": [ "16", "8", "4", "2" ],
             "SmoothingSigmasPerLevel": [ "8", "4", "2", "1" ],
-            "Dimensionality": "3"
+            "Dimensionality": "3",
+            "RescaleIntensity": ["0", "1"],
+            "InvertIntensity": "True",
+            "MetricSamplingPercentage": "0.2",
+            "MetricSamplingStrategy": "Random"
         },
         {
             "Name": "FixedImageCropper",

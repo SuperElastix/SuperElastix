@@ -4,7 +4,7 @@
         "DIRLAB",
         "EMPIRE",
         "LPBA40",
-        "ISBR18",
+        "IBSR18",
         "CUMC12",
         "MGH10",
         "SPREAD",
@@ -31,7 +31,11 @@
             "PixelType": "float",
             "NumberOfLevels": "4",
             "ShrinkFactorsPerLevel": [ "16", "8", "4", "2" ],
-            "SmoothingSigmasPerLevel": [ "8", "4", "2", "1" ]
+            "SmoothingSigmasPerLevel": [ "8", "4", "2", "1" ],
+            "RescaleIntensity": ["0", "1"],
+            "InvertIntensity": "True",
+            "MetricSamplingPercentage": "0.2",
+            "MetricSamplingStrategy": "Random"
         },
         {
             "Name": "TransformResolutionAdaptor",

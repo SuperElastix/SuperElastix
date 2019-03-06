@@ -543,37 +543,37 @@ class HAMMERS(Dataset):
         return self.evaluate_label(superelastix, file_names, output_directory)
 
 
-class ISBR18(Dataset):
+class IBSR18(Dataset):
     def __init__(self, input_directory, output_directory, max_number_of_registrations):
-        self.name = 'ISBR18'
+        self.name = 'IBSR18'
         self.category = 'Brain'
 
         self.input_directory = input_directory
         self.file_names = []
 
-        image_file_names = sorted([os.path.join(input_directory, 'Heads', image)
-                       for image in os.listdir(os.path.join(input_directory, 'Heads'))
-                       if image.endswith('.hdr') and not 'c1.hdr' in image]) # TODO: Fix world info for c1
+        image_file_names = sorted([os.path.join(input_directory, subdirectory, image)
+                                   for subdirectory in os.listdir(input_directory) if os.path.isdir(os.path.join(input_directory, subdirectory))
+                                   for image in os.listdir(os.path.join(input_directory, subdirectory))
+                                   if image.endswith('_ana_strip.nii.gz')])
         image_file_names = [pair for pair in combinations(image_file_names, 2)]
         image_file_names = take(image_file_names, max_number_of_registrations // 2)
 
-        label_file_names = sorted([os.path.join(input_directory, 'Atlases', atlas)
-                       for atlas in os.listdir(os.path.join(input_directory, 'Atlases'))
-                       if atlas.endswith('.hdr') and not 'c1.hdr' in atlas])
+        label_file_names = sorted([os.path.join(input_directory, subdirectory, image)
+                                   for subdirectory in os.listdir(input_directory) if os.path.isdir(os.path.join(input_directory, subdirectory))
+                                   for image in os.listdir(os.path.join(input_directory, subdirectory))
+                                   if image.endswith('_seg_ana.nii.gz')])
         label_file_names = [pair for pair in combinations(label_file_names, 2)]
         label_file_names = take(label_file_names, max_number_of_registrations // 2)
 
+        mask_file_names = sorted([os.path.join(input_directory, subdirectory, image)
+                                   for subdirectory in os.listdir(input_directory) if os.path.isdir(os.path.join(input_directory, subdirectory))
+                                   for image in os.listdir(os.path.join(input_directory, subdirectory))
+                                   if image.endswith('_ana_brainmask.nii.gz')])
+        mask_file_names = [pair for pair in combinations(mask_file_names, 2)]
+        mask_file_names = take(mask_file_names, max_number_of_registrations // 2)
+
         disp_field_file_names = [create_disp_field_names(image_file_name_pair, self.name)
                                  for image_file_name_pair in image_file_names]
-
-        # These label images do not have any world coordinate information
-        label_file_names = [copy_information_from_images_to_labels(image_file_name, label_file_name,
-                                    disp_field_file_name, output_directory, 'MET_USHORT')
-                            for image_file_name, label_file_name, disp_field_file_name
-                            in zip(image_file_names, label_file_names, disp_field_file_names)]
-
-        mask_file_names = [create_mask_by_thresholding(label_file_name, disp_field_file_name, output_directory, 0., 32, 16)
-                      for label_file_name, disp_field_file_name in zip(label_file_names, disp_field_file_names)]
 
         for image_file_name, mask_file_name, label_file_name, disp_field_file_name \
                 in zip(image_file_names, mask_file_names, label_file_names, disp_field_file_names):
@@ -586,6 +586,7 @@ class ISBR18(Dataset):
 
     def evaluate(self, superelastix, file_names, output_directory):
         return self.evaluate_label(superelastix, file_names, output_directory)
+
 
 
 class LPBA40(Dataset):
@@ -928,13 +929,13 @@ def load_datasets(parameters):
         datasets[hammers.name] = hammers
         logging.debug('Using files:\n{0}'.format(json.dumps(hammers.file_names, indent=2)))
 
-    if parameters.isbr18_input_directory is not None:
-        logging.info('Loading dataset ISBR18.')
-        isbr18 = ISBR18(parameters.isbr18_input_directory,
+    if parameters.ibsr18_input_directory is not None:
+        logging.info('Loading dataset IBSR18.')
+        ibsr18 = IBSR18(parameters.ibsr18_input_directory,
                         parameters.output_directory,
                         parameters.max_number_of_registrations_per_dataset)
-        datasets[isbr18.name] = isbr18
-        logging.debug('Using files:\n{0}'.format(json.dumps(isbr18.file_names, indent=2)))
+        datasets[ibsr18.name] = ibsr18
+        logging.debug('Using files:\n{0}'.format(json.dumps(ibsr18.file_names, indent=2)))
 
     if parameters.lpba40_input_directory is not None:
         logging.info('Loading dataset LPBA40.')

@@ -12,16 +12,32 @@ def load_submissions(parameters):
     logging.info('Loading blueprints.')
 
     submissions = dict()
-    team_names = [team_name for team_name in os.listdir(parameters.submissions_directory)
-                  if os.path.isdir(os.path.join(parameters.submissions_directory, team_name))]
-    for team_name in team_names:
-        blueprints = []
-        for blueprint_name in os.listdir(os.path.join(parameters.submissions_directory, team_name)):
-            if blueprint_name.endswith('.json') or blueprint_name.endswith('.xml'):
-                logging.info('Found blueprint %s/%s.' % (team_name, os.path.basename(blueprint_name)))
-                blueprints.append(os.path.join(parameters.submissions_directory, team_name, blueprint_name))
+    if parameters.team_name is not None:
+        team_names = parameters.team_name
+        logging.info('Only looking for blueprints by %s' % ' '.join(parameters.team_name))
+    else:
+        team_names = [team_name for team_name in os.listdir(parameters.submissions_directory)
+                      if os.path.isdir(os.path.join(parameters.submissions_directory, team_name))]
 
-        submissions[team_name] = blueprints
+    for team_name in team_names:
+        if parameters.blueprint_file_name is not None:
+                blueprint_file_names = [blueprint_file_name
+                                        for blueprint_file_name in parameters.blueprint_file_name
+                                        if os.path.isfile(os.path.join(parameters.submissions_directory, team_name,  blueprint_file_name))]
+        else:
+            blueprint_file_names = [blueprint_file_name
+                                    for blueprint_file_name in os.listdir(os.path.join(parameters.submissions_directory, team_name))
+                                    if os.path.isfile(os.path.join(parameters.submissions_directory, team_name,  blueprint_file_name))]
+
+        for blueprint_file_name in blueprint_file_names:
+            if not blueprint_file_name.endswith('json') and not blueprint_file_name.endswith('xml'):
+                raise Exception('Blueprints must be either json or xml files.')
+            logging.info('Found blueprint %s/%s.' % (team_name, blueprint_file_name))
+
+        blueprint_file_names = [os.path.join(parameters.submissions_directory, team_name,  blueprint_file_name)
+                                for blueprint_file_name in blueprint_file_names]
+
+        submissions[team_name] = blueprint_file_names
 
     return submissions
 

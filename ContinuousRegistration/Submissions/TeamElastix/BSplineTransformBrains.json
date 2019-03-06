@@ -1,5 +1,5 @@
 {
-    "Datasets": ["ISBR18", "LPBA40", "MGH10", "CUMC12", "HAMMERS"],
+    "Datasets": ["IBSR18", "LPBA40", "MGH10", "CUMC12", "HAMMERS"],
     "Components": [
         {
             "Name": "Elastix",
@@ -122,11 +122,6 @@
             "Out": "FixedMask",
             "In": "Elastix",
             "NameOfInterface": "itkImageFixedMaskInterface"
-        },
-        {
-            "Out": "MovingMask",
-            "In": "Elastix",
-            "NameOfInterface": "itkImageMovingMaskInterface"
         },
         {
             "Out": "Elastix",
