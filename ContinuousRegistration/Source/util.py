@@ -28,7 +28,7 @@ def load_submissions(parameters):
             blueprint_file_names = [blueprint_file_name
                                     for blueprint_file_name in os.listdir(os.path.join(parameters.submissions_directory, team_name))
                                     if (os.path.isfile(os.path.join(parameters.submissions_directory, team_name,  blueprint_file_name)) 
-                                        and os.path.splitext(blueprint_file_name)[1] in ['.json', '.xml'])]
+                                        and os.path.splitext(blueprint_file_name)[1].lower() in ['.json', '.xml'])]
 
         for blueprint_file_name in blueprint_file_names:
             logging.info('Found blueprint %s/%s.' % (team_name, blueprint_file_name))
