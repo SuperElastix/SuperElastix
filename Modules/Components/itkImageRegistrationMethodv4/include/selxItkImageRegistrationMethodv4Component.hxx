@@ -25,6 +25,8 @@
 #include "itkGradientDescentOptimizerv4.h"
 #include "itkImageFileWriter.h"
 #include "selxCheckTemplateProperties.h"
+#include "selxStringConverter.h"
+
 namespace selx
 {
 template< typename TFilter >
@@ -459,15 +461,10 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
       this->m_Logger.Log(LogLevel::ERR, "Expected one value for InvertIntensity (True or False), got {0}.", criterion.second.size());
       meetsCriteria = false;
     } else {
-      if( criterion.second[0] == "True" ) {
-        this->m_InvertIntensity = true;
-        meetsCriteria = true;
-      } else if( criterion.second[0] == "False" ) {
-        this->m_InvertIntensity = false;
-        meetsCriteria = true;
-      } else {
+      meetsCriteria = StringConverter::Convert(criterion.second[0], this->m_InvertIntensity);
+      if (!meetsCriteria)
+      {
         this->m_Logger.Log(LogLevel::ERR, "Expected InvertIntensity to be True or False, got {0}.", criterion.second[0]);
-        meetsCriteria = false;
       }
     }
   } else if( criterion.first == "MetricSamplingPercentage" ) {

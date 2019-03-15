@@ -23,6 +23,7 @@
 #include "itkDisplacementFieldTransformParametersAdaptor.h"
 //TODO: get rid of these
 #include "itkGradientDescentOptimizerv4.h"
+#include "selxStringConverter.h"
 
 namespace selx
 {
@@ -387,21 +388,13 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
 		}
 		else
 		{
-			auto const & criterionValue = *criterion.second.begin();
-			if( criterionValue == "True" )
+			bool criterionValue = false;
+			meetsCriteria = StringConverter::Convert(*criterion.second.begin(), criterionValue);
+
+			if(meetsCriteria)
 			{
 				auto optimizer = this->m_SyNImageRegistrationMethod->GetModifiableOptimizer();
-				optimizer->SetDoEstimateScales(true);
-				meetsCriteria = true;
-			}
-			else if( criterionValue == "False" )
-			{
-				auto optimizer = this->m_SyNImageRegistrationMethod->GetModifiableOptimizer();
-				optimizer->SetDoEstimateScales(false);
-				meetsCriteria = true;
-			}
-			else {
-				meetsCriteria = false;
+				optimizer->SetDoEstimateScales(criterionValue);
 			}
 		}
 	} else if( criterion.first == "RescaleIntensity" ) {
@@ -418,15 +411,11 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
 			this->m_Logger.Log(LogLevel::ERR, "Expected one value for InvertIntensity (True or False), got {0}.", criterion.second.size());
 			meetsCriteria = false;
 		} else {
-			if( criterion.second[0] == "True" ) {
-				this->m_InvertIntensity = true;
-				meetsCriteria = true;
-			} else if( criterion.second[0] == "False" ) {
-				this->m_InvertIntensity = false;
-				meetsCriteria = true;
-			} else {
+			meetsCriteria = StringConverter::Convert(criterion.second[0], this->m_InvertIntensity);
+
+			if (!meetsCriteria)
+			{
 				this->m_Logger.Log(LogLevel::ERR, "Expected InvertIntensity to be True or False, got {0}.", criterion.second[0]);
-				meetsCriteria = false;
 			}
 		}
 	} else if( criterion.first == "MetricSamplingPercentage" ) {
