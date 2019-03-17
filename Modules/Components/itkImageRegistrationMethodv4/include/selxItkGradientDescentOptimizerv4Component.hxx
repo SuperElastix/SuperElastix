@@ -20,6 +20,7 @@
 #include "selxItkGradientDescentOptimizerv4Component.h"
 #include <boost/lexical_cast.hpp>
 #include "selxPodString.h"
+#include "selxStringConverter.h"
 
 namespace selx
 {
@@ -153,19 +154,11 @@ ItkGradientDescentOptimizerv4Component< InternalComputationValueType >
     }
     else
     {
-      auto const & criterionValue = *criterion.second.begin();
-      if( criterionValue == "True" )
+      bool criterionValue = false;
+      meetsCriteria = StringConverter::Convert(*criterion.second.begin(), criterionValue);
+      if(meetsCriteria)
       {
-        this->m_Optimizer->SetDoEstimateScales(true);
-        meetsCriteria = true;
-      }
-      else if( criterionValue == "False" )
-      {
-        this->m_Optimizer->SetDoEstimateScales(false);
-        meetsCriteria = true;
-      }
-      else {
-        meetsCriteria = false;
+        this->m_Optimizer->SetDoEstimateScales(criterionValue);
       }
     }
   }
