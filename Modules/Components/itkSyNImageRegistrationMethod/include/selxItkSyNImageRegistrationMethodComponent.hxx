@@ -90,16 +90,16 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
 
 		FixedRescaleImageFilterPointer fixedIntensityRescaler = FixedRescaleImageFilterType::New();
 		fixedIntensityRescaler->SetInput(fixedImage);
-		fixedIntensityRescaler->SetOutputMinimum(std::stof(this->m_RescaleIntensity[0]));
-		fixedIntensityRescaler->SetOutputMaximum(std::stof(this->m_RescaleIntensity[1]));
+		fixedIntensityRescaler->SetOutputMinimum(StringConverter{ this->m_RescaleIntensity[0] });
+		fixedIntensityRescaler->SetOutputMaximum(StringConverter{ this->m_RescaleIntensity[1] });
 		fixedIntensityRescaler->UpdateOutputInformation();
 		fixedImage = fixedIntensityRescaler->GetOutput();
 		fixedImage->Update();
 
 		MovingRescaleImageFilterPointer movingIntensityRescaler = MovingRescaleImageFilterType::New();
 		movingIntensityRescaler->SetInput(movingImage);
-		movingIntensityRescaler->SetOutputMinimum(std::stof(this->m_RescaleIntensity[0]));
-		movingIntensityRescaler->SetOutputMaximum(std::stof(this->m_RescaleIntensity[1]));
+		movingIntensityRescaler->SetOutputMinimum(StringConverter{ this->m_RescaleIntensity[0] });
+		movingIntensityRescaler->SetOutputMaximum(StringConverter{ this->m_RescaleIntensity[1] });
 		movingIntensityRescaler->UpdateOutputInformation();
 		movingImage = movingIntensityRescaler->GetOutput();
 		movingImage->Update();
@@ -273,12 +273,14 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
       if (this->m_NumberOfLevelsLastSetBy.empty()) // check if some other settings set the NumberOfLevels
       {
         // try catch?
-        this->m_SyNImageRegistrationMethod->SetNumberOfLevels(std::stoi(criterionValues[0]));
+        this->m_SyNImageRegistrationMethod->SetNumberOfLevels(StringConverter{ criterionValues[0] });
         this->m_NumberOfLevelsLastSetBy = criterionKey;
       }
       else
       {
-        if (this->m_SyNImageRegistrationMethod->GetNumberOfLevels() != std::stoi(criterionValues[0]))
+        if (!StringConverter::IsStringConvertibleToValue(
+          criterionValues[0],
+          this->m_SyNImageRegistrationMethod->GetNumberOfLevels()))
         {
           // TODO log error?
           std::cout << "A conflicting NumberOfLevels was set by " << this->m_NumberOfLevelsLastSetBy << std::endl;
@@ -320,7 +322,7 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
     unsigned int resolutionIndex = 0;
     for (auto const & criterionValue : criterionValues)
     {
-      shrinkFactorsPerLevel[resolutionIndex] = std::stoi(criterionValue);
+      shrinkFactorsPerLevel[resolutionIndex] = StringConverter{ criterionValue };
       ++resolutionIndex;
     }
     // try catch?
@@ -354,7 +356,7 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
     unsigned int resolutionIndex = 0;
     for (auto const & criterionValue : criterionValues)
     {
-      smoothingSigmasPerLevel[resolutionIndex] = std::stoi(criterionValue);
+      smoothingSigmasPerLevel[resolutionIndex] = StringConverter{ criterionValue };
       ++resolutionIndex;
     }
     // try catch?
@@ -364,7 +366,7 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
     return true;
   }
   else if (criterionKey == "LearningRate") {
-    this->m_SyNImageRegistrationMethod->SetLearningRate(std::stof(criterionValues[0]));
+    this->m_SyNImageRegistrationMethod->SetLearningRate(StringConverter{ criterionValues[0] });
     return true;
   }
   else if (criterionKey == "NumberOfIterations") {
@@ -376,7 +378,7 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
 
     typename SyNImageRegistrationMethodType::NumberOfIterationsArrayType numberOfIterations(criterionValues.size());
     for (int i = 0; i < criterionValues.size(); i++) {
-      numberOfIterations[i] = stoull(criterionValues[i]);
+      numberOfIterations[i] = StringConverter{ criterionValues[i] };
     }
     this->m_SyNImageRegistrationMethod->SetNumberOfIterationsPerLevel(numberOfIterations);
     return true;
@@ -436,7 +438,7 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
       return false;
     }
     else {
-      this->m_MetricSamplingPercentage = std::stof(criterionValues[0]);
+      this->m_MetricSamplingPercentage = StringConverter{ criterionValues[0] };
       return true;
     }
   }
