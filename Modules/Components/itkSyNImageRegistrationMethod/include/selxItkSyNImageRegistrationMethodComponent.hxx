@@ -246,7 +246,6 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
 ::MeetsCriterion(const ComponentBase::CriterionType & criterion)
 {
   bool hasUndefinedCriteria(false);
-  bool meetsCriteria(false);
 
   const auto& criterionKey = criterion.first;
   const auto& criterionValues = criterion.second;
@@ -265,7 +264,6 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
   // Next else-if blocks check if the name of setting is an existing property for this component, otherwise MeetsCriterion returns CriterionStatus::Failed.
   else if (criterionKey == "NumberOfLevels") //Does the Components have this setting?
   {
-    meetsCriteria = true;
     if (criterionValues.size() == 1)
     {
       if (this->m_NumberOfLevelsLastSetBy.empty()) // check if some other settings set the NumberOfLevels
@@ -280,23 +278,20 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
         {
           // TODO log error?
           std::cout << "A conflicting NumberOfLevels was set by " << this->m_NumberOfLevelsLastSetBy << std::endl;
-          meetsCriteria = false;
-          return meetsCriteria;
+          return false;
         }
       }
+      return true;
     }
     else
     {
       // TODO log error?
       std::cout << "NumberOfLevels accepts one number only" << std::endl;
-      meetsCriteria = false;
-      return meetsCriteria;
+      return false;
     }
   }
   else if (criterionKey == "ShrinkFactorsPerLevel") //Supports this?
   {
-    meetsCriteria = true;
-
     const int impliedNumberOfResolutions = criterionValues.size();
 
     if (this->m_NumberOfLevelsLastSetBy.empty()) // check if some other settings set the NumberOfLevels
@@ -311,8 +306,7 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
       {
         // TODO log error?
         std::cout << "A conflicting NumberOfLevels was set by " << this->m_NumberOfLevelsLastSetBy << std::endl;
-        meetsCriteria = false;
-        return meetsCriteria;
+        return false;
       }
     }
 
@@ -327,11 +321,10 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
     }
     // try catch?
     this->m_SyNImageRegistrationMethod->SetShrinkFactorsPerLevel(shrinkFactorsPerLevel);
+    return true;
   }
   else if (criterionKey == "SmoothingSigmasPerLevel") //Supports this?
   {
-    meetsCriteria = true;
-
     const int impliedNumberOfResolutions = criterionValues.size();
 
     if (this->m_NumberOfLevelsLastSetBy.empty()) // check if some other settings set the NumberOfLevels
@@ -346,8 +339,7 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
       {
         // TODO log error?
         std::cout << "A conflicting NumberOfLevels was set by " << this->m_NumberOfLevelsLastSetBy << std::endl;
-        meetsCriteria = false;
-        return meetsCriteria;
+        return false;
       }
     }
 
@@ -365,14 +357,13 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
     // Smooth by specified gaussian sigmas for each level.  These values are specified in
     // physical units.
     this->m_SyNImageRegistrationMethod->SetSmoothingSigmasPerLevel(smoothingSigmasPerLevel);
+    return true;
   }
   else if (criterionKey == "LearningRate") {
-    meetsCriteria = true;
     this->m_SyNImageRegistrationMethod->SetLearningRate(std::stof(criterionValues[0]));
+    return true;
   }
   else if (criterionKey == "NumberOfIterations") {
-    meetsCriteria = true;
-
     if (this->m_NumberOfLevelsLastSetBy != "" &&
       this->m_SyNImageRegistrationMethod->GetNumberOfLevels() != criterionValues.size()) {
       std::cout << "A conflicting NumberOfLevels was set by " << this->m_NumberOfLevelsLastSetBy << std::endl;
@@ -384,80 +375,90 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
       numberOfIterations[i] = stoull(criterionValues[i]);
     }
     this->m_SyNImageRegistrationMethod->SetNumberOfIterationsPerLevel(numberOfIterations);
+    return true;
   }
   else if (criterionKey == "EstimateScales") //Supports this?
   {
     if (criterionValues.size() != 1)
     {
-      meetsCriteria = false;
+      return false;
     }
     else
     {
       bool criterionValue = false;
-      meetsCriteria = StringConverter::Convert(*criterionValues.begin(), criterionValue);
 
-      if (meetsCriteria)
+      if (StringConverter::Convert(*criterionValues.begin(), criterionValue))
       {
         auto optimizer = this->m_SyNImageRegistrationMethod->GetModifiableOptimizer();
         optimizer->SetDoEstimateScales(criterionValue);
+        return true;
+      }
+      else
+      {
+        return false;
       }
     }
   }
   else if (criterionKey == "RescaleIntensity") {
     if (criterionValues.size() != 2) {
       this->m_Logger.Log(LogLevel::ERR, "Expected two values for RescaleIntensity (min, max), got {0}.", criterionValues.size());
-      meetsCriteria = false;
+      return false;
     }
     else {
       this->m_RescaleIntensity = criterionValues;
-      meetsCriteria = true;
+      return true;
     }
   }
   else if (criterionKey == "InvertIntensity") {
     if (criterionValues.size() != 1) {
       this->m_Logger.Log(LogLevel::ERR, "Expected one value for InvertIntensity (True or False), got {0}.", criterionValues.size());
-      meetsCriteria = false;
+      return false;
     }
     else {
-      meetsCriteria = StringConverter::Convert(criterionValues[0], this->m_InvertIntensity);
-
-      if (!meetsCriteria)
+      if (StringConverter::Convert(criterionValues[0], this->m_InvertIntensity))
+      {
+        return true;
+      }
+      else
       {
         this->m_Logger.Log(LogLevel::ERR, "Expected InvertIntensity to be True or False, got {0}.", criterionValues[0]);
+        return false;
       }
     }
   }
   else if (criterionKey == "MetricSamplingPercentage") {
     if (criterionValues.size() != 1) {
       this->m_Logger.Log(LogLevel::ERR, "Expected one value for MetricSamplingPercetage, got {0}.", criterionValues.size());
-      meetsCriteria = false;
+      return false;
     }
     else {
       this->m_MetricSamplingPercentage = std::stof(criterionValues[0]);
-      meetsCriteria = true;
+      return true;
     }
   }
   else if (criterionKey == "MetricSamplingStrategy") {
     if (criterionValues.size() != 1) {
       this->m_Logger.Log(LogLevel::ERR, "Expected one value for MetricSamplingStrategy (Regular or Random), got {0}.", criterionValues.size());
-      meetsCriteria = false;
+      return false;
     }
     else {
       if (criterionValues[0] == "Regular") {
         this->m_SyNImageRegistrationMethod->SetMetricSamplingStrategy(SyNImageRegistrationMethodType::MetricSamplingStrategyType::REGULAR);
-        meetsCriteria = true;
+        return true;
       }
       else if (criterionValues[0] == "Random") {
         this->m_SyNImageRegistrationMethod->SetMetricSamplingStrategy(SyNImageRegistrationMethodType::MetricSamplingStrategyType::RANDOM);
-        meetsCriteria = true;
+        return true;
       }
       else {
         this->m_Logger.Log(LogLevel::ERR, "Expected MetricSamplingStrategy to be Regular or Random, got {0}.", criterionValues[0]);
-        meetsCriteria = false;
+        return false;
       }
     }
   }
-
-  return meetsCriteria;
+  else
+  {
+    return false;
+  }
 }
 } //end namespace selx
