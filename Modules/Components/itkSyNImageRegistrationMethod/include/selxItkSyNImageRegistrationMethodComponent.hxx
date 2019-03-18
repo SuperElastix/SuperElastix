@@ -243,210 +243,221 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
 template< int Dimensionality, class TPixel, class InternalComputationValueType >
 bool
 ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputationValueType >
-::MeetsCriterion( const ComponentBase::CriterionType & criterion )
+::MeetsCriterion(const ComponentBase::CriterionType & criterion)
 {
-	bool hasUndefinedCriteria(false);
-	bool meetsCriteria(false);
+  bool hasUndefinedCriteria(false);
+  bool meetsCriteria(false);
 
   const auto& criterionKey = criterion.first;
   const auto& criterionValues = criterion.second;
 
-	// First check if user-provided properties are template properties and if this component was instantiated with those template properties.
-	auto status = CheckTemplateProperties(this->TemplateProperties(), criterion);
-	if (status == CriterionStatus::Satisfied)
-	{
-		return true;
-	}
-	else if (status == CriterionStatus::Failed)
-	{
-		return false;
-	} // else: CriterionStatus::Unknown
+  // First check if user-provided properties are template properties and if this component was instantiated with those template properties.
+  auto status = CheckTemplateProperties(this->TemplateProperties(), criterion);
+  if (status == CriterionStatus::Satisfied)
+  {
+    return true;
+  }
+  else if (status == CriterionStatus::Failed)
+  {
+    return false;
+  } // else: CriterionStatus::Unknown
 
-	// Next else-if blocks check if the name of setting is an existing property for this component, otherwise MeetsCriterion returns CriterionStatus::Failed.
-	else if (criterionKey == "NumberOfLevels") //Does the Components have this setting?
-	{
-		meetsCriteria = true;
-		if (criterionValues.size() == 1)
-		{
-			if (this->m_NumberOfLevelsLastSetBy.empty()) // check if some other settings set the NumberOfLevels
-			{
-				// try catch?
-				this->m_SyNImageRegistrationMethod->SetNumberOfLevels(std::stoi(criterionValues[0]));
-				this->m_NumberOfLevelsLastSetBy = criterionKey;
-			}
-			else
-			{
-				if (this->m_SyNImageRegistrationMethod->GetNumberOfLevels() != std::stoi(criterionValues[0]))
-				{
-					// TODO log error?
-					std::cout << "A conflicting NumberOfLevels was set by " << this->m_NumberOfLevelsLastSetBy << std::endl;
-					meetsCriteria = false;
-					return meetsCriteria;
-				}
-			}
-		}
-		else
-		{
-			// TODO log error?
-			std::cout << "NumberOfLevels accepts one number only" << std::endl;
-			meetsCriteria = false;
-			return meetsCriteria;
-		}
-	}
-	else if (criterionKey == "ShrinkFactorsPerLevel") //Supports this?
-	{
-		meetsCriteria = true;
-
-		const int impliedNumberOfResolutions = criterionValues.size();
-
-		if (this->m_NumberOfLevelsLastSetBy.empty()) // check if some other settings set the NumberOfLevels
-		{
-			// try catch?
-			this->m_SyNImageRegistrationMethod->SetNumberOfLevels(impliedNumberOfResolutions);
-			this->m_NumberOfLevelsLastSetBy = criterionKey;
-		}
-		else
-		{
-			if (this->m_SyNImageRegistrationMethod->GetNumberOfLevels() != impliedNumberOfResolutions)
-			{
-				// TODO log error?
-				std::cout << "A conflicting NumberOfLevels was set by " << this->m_NumberOfLevelsLastSetBy << std::endl;
-				meetsCriteria = false;
-				return meetsCriteria;
-			}
-		}
-
-		itk::Array< itk::SizeValueType > shrinkFactorsPerLevel;
-		shrinkFactorsPerLevel.SetSize(impliedNumberOfResolutions);
-
-		unsigned int resolutionIndex = 0;
-		for (auto const & criterionValue : criterionValues)
-		{
-			shrinkFactorsPerLevel[resolutionIndex] = std::stoi(criterionValue);
-			++resolutionIndex;
-		}
-		// try catch?
-		this->m_SyNImageRegistrationMethod->SetShrinkFactorsPerLevel(shrinkFactorsPerLevel);
-	}
-	else if (criterionKey == "SmoothingSigmasPerLevel") //Supports this?
-	{
-		meetsCriteria = true;
-
-		const int impliedNumberOfResolutions = criterionValues.size();
-
-		if (this->m_NumberOfLevelsLastSetBy.empty()) // check if some other settings set the NumberOfLevels
-		{
-			// try catch?
-			this->m_SyNImageRegistrationMethod->SetNumberOfLevels(impliedNumberOfResolutions);
-			this->m_NumberOfLevelsLastSetBy = criterionKey;
-		}
-		else
-		{
-			if (this->m_SyNImageRegistrationMethod->GetNumberOfLevels() != impliedNumberOfResolutions)
-			{
-				// TODO log error?
-				std::cout << "A conflicting NumberOfLevels was set by " << this->m_NumberOfLevelsLastSetBy << std::endl;
-				meetsCriteria = false;
-				return meetsCriteria;
-			}
-		}
-
-		itk::Array< InternalComputationValueType > smoothingSigmasPerLevel;
-
-		smoothingSigmasPerLevel.SetSize(impliedNumberOfResolutions);
-
-		unsigned int resolutionIndex = 0;
-		for (auto const & criterionValue : criterionValues)
-		{
-			smoothingSigmasPerLevel[resolutionIndex] = std::stoi(criterionValue);
-			++resolutionIndex;
-		}
-		// try catch?
-		// Smooth by specified gaussian sigmas for each level.  These values are specified in
-		// physical units.
-		this->m_SyNImageRegistrationMethod->SetSmoothingSigmasPerLevel(smoothingSigmasPerLevel);
-	} else if( criterionKey == "LearningRate" ) {
-		meetsCriteria = true;
-		this->m_SyNImageRegistrationMethod->SetLearningRate(std::stof(criterionValues[0]));
-	} else if( criterionKey == "NumberOfIterations" ) {
-			meetsCriteria = true;
-
-      if(this->m_NumberOfLevelsLastSetBy != "" &&
-         this->m_SyNImageRegistrationMethod->GetNumberOfLevels() != criterionValues.size()) {
-         std::cout << "A conflicting NumberOfLevels was set by " << this->m_NumberOfLevelsLastSetBy << std::endl;
-         return false;
+  // Next else-if blocks check if the name of setting is an existing property for this component, otherwise MeetsCriterion returns CriterionStatus::Failed.
+  else if (criterionKey == "NumberOfLevels") //Does the Components have this setting?
+  {
+    meetsCriteria = true;
+    if (criterionValues.size() == 1)
+    {
+      if (this->m_NumberOfLevelsLastSetBy.empty()) // check if some other settings set the NumberOfLevels
+      {
+        // try catch?
+        this->m_SyNImageRegistrationMethod->SetNumberOfLevels(std::stoi(criterionValues[0]));
+        this->m_NumberOfLevelsLastSetBy = criterionKey;
       }
-
-      typename SyNImageRegistrationMethodType::NumberOfIterationsArrayType numberOfIterations(criterionValues.size());
-      for(int i = 0; i < criterionValues.size(); i++) {
-        numberOfIterations[i] = stoull(criterionValues[i]);
+      else
+      {
+        if (this->m_SyNImageRegistrationMethod->GetNumberOfLevels() != std::stoi(criterionValues[0]))
+        {
+          // TODO log error?
+          std::cout << "A conflicting NumberOfLevels was set by " << this->m_NumberOfLevelsLastSetBy << std::endl;
+          meetsCriteria = false;
+          return meetsCriteria;
+        }
       }
-      this->m_SyNImageRegistrationMethod->SetNumberOfIterationsPerLevel(numberOfIterations);
-	}
-	else if( criterionKey == "EstimateScales" ) //Supports this?
-	{
-		if( criterionValues.size() != 1 )
-		{
-			meetsCriteria = false;
-		}
-		else
-		{
-			bool criterionValue = false;
-			meetsCriteria = StringConverter::Convert(*criterionValues.begin(), criterionValue);
+    }
+    else
+    {
+      // TODO log error?
+      std::cout << "NumberOfLevels accepts one number only" << std::endl;
+      meetsCriteria = false;
+      return meetsCriteria;
+    }
+  }
+  else if (criterionKey == "ShrinkFactorsPerLevel") //Supports this?
+  {
+    meetsCriteria = true;
 
-			if(meetsCriteria)
-			{
-				auto optimizer = this->m_SyNImageRegistrationMethod->GetModifiableOptimizer();
-				optimizer->SetDoEstimateScales(criterionValue);
-			}
-		}
-	} else if( criterionKey == "RescaleIntensity" ) {
-		if( criterionValues.size() != 2 ) {
-			this->m_Logger.Log(LogLevel::ERR, "Expected two values for RescaleIntensity (min, max), got {0}.", criterionValues.size());
-			meetsCriteria = false;
-		}
-		else {
-			this->m_RescaleIntensity = criterionValues;
-			meetsCriteria = true;
-		}
-	} else if( criterionKey == "InvertIntensity" ) {
-		if( criterionValues.size() != 1 ) {
-			this->m_Logger.Log(LogLevel::ERR, "Expected one value for InvertIntensity (True or False), got {0}.", criterionValues.size());
-			meetsCriteria = false;
-		} else {
-			meetsCriteria = StringConverter::Convert(criterionValues[0], this->m_InvertIntensity);
+    const int impliedNumberOfResolutions = criterionValues.size();
 
-			if (!meetsCriteria)
-			{
-				this->m_Logger.Log(LogLevel::ERR, "Expected InvertIntensity to be True or False, got {0}.", criterionValues[0]);
-			}
-		}
-	} else if( criterionKey == "MetricSamplingPercentage" ) {
-		if( criterionValues.size() != 1 ) {
-			this->m_Logger.Log(LogLevel::ERR, "Expected one value for MetricSamplingPercetage, got {0}.", criterionValues.size());
-			meetsCriteria = false;
-		} else {
-			this->m_MetricSamplingPercentage = std::stof(criterionValues[0]);
-			meetsCriteria = true;
-		}
-	} else if( criterionKey == "MetricSamplingStrategy" ) {
-		if( criterionValues.size() != 1 ) {
-			this->m_Logger.Log(LogLevel::ERR, "Expected one value for MetricSamplingStrategy (Regular or Random), got {0}.", criterionValues.size());
-			meetsCriteria = false;
-		} else {
-			if( criterionValues[0] == "Regular" ) {
-				this->m_SyNImageRegistrationMethod->SetMetricSamplingStrategy(SyNImageRegistrationMethodType::MetricSamplingStrategyType::REGULAR);
-				meetsCriteria = true;
-			} else if( criterionValues[0] == "Random" ) {
-				this->m_SyNImageRegistrationMethod->SetMetricSamplingStrategy(SyNImageRegistrationMethodType::MetricSamplingStrategyType::RANDOM);
-				meetsCriteria = true;
-			} else {
-				this->m_Logger.Log(LogLevel::ERR, "Expected MetricSamplingStrategy to be Regular or Random, got {0}.", criterionValues[0]);
-				meetsCriteria = false;
-			}
-		}
-	}
+    if (this->m_NumberOfLevelsLastSetBy.empty()) // check if some other settings set the NumberOfLevels
+    {
+      // try catch?
+      this->m_SyNImageRegistrationMethod->SetNumberOfLevels(impliedNumberOfResolutions);
+      this->m_NumberOfLevelsLastSetBy = criterionKey;
+    }
+    else
+    {
+      if (this->m_SyNImageRegistrationMethod->GetNumberOfLevels() != impliedNumberOfResolutions)
+      {
+        // TODO log error?
+        std::cout << "A conflicting NumberOfLevels was set by " << this->m_NumberOfLevelsLastSetBy << std::endl;
+        meetsCriteria = false;
+        return meetsCriteria;
+      }
+    }
 
-	return meetsCriteria;
+    itk::Array< itk::SizeValueType > shrinkFactorsPerLevel;
+    shrinkFactorsPerLevel.SetSize(impliedNumberOfResolutions);
+
+    unsigned int resolutionIndex = 0;
+    for (auto const & criterionValue : criterionValues)
+    {
+      shrinkFactorsPerLevel[resolutionIndex] = std::stoi(criterionValue);
+      ++resolutionIndex;
+    }
+    // try catch?
+    this->m_SyNImageRegistrationMethod->SetShrinkFactorsPerLevel(shrinkFactorsPerLevel);
+  }
+  else if (criterionKey == "SmoothingSigmasPerLevel") //Supports this?
+  {
+    meetsCriteria = true;
+
+    const int impliedNumberOfResolutions = criterionValues.size();
+
+    if (this->m_NumberOfLevelsLastSetBy.empty()) // check if some other settings set the NumberOfLevels
+    {
+      // try catch?
+      this->m_SyNImageRegistrationMethod->SetNumberOfLevels(impliedNumberOfResolutions);
+      this->m_NumberOfLevelsLastSetBy = criterionKey;
+    }
+    else
+    {
+      if (this->m_SyNImageRegistrationMethod->GetNumberOfLevels() != impliedNumberOfResolutions)
+      {
+        // TODO log error?
+        std::cout << "A conflicting NumberOfLevels was set by " << this->m_NumberOfLevelsLastSetBy << std::endl;
+        meetsCriteria = false;
+        return meetsCriteria;
+      }
+    }
+
+    itk::Array< InternalComputationValueType > smoothingSigmasPerLevel;
+
+    smoothingSigmasPerLevel.SetSize(impliedNumberOfResolutions);
+
+    unsigned int resolutionIndex = 0;
+    for (auto const & criterionValue : criterionValues)
+    {
+      smoothingSigmasPerLevel[resolutionIndex] = std::stoi(criterionValue);
+      ++resolutionIndex;
+    }
+    // try catch?
+    // Smooth by specified gaussian sigmas for each level.  These values are specified in
+    // physical units.
+    this->m_SyNImageRegistrationMethod->SetSmoothingSigmasPerLevel(smoothingSigmasPerLevel);
+  }
+  else if (criterionKey == "LearningRate") {
+    meetsCriteria = true;
+    this->m_SyNImageRegistrationMethod->SetLearningRate(std::stof(criterionValues[0]));
+  }
+  else if (criterionKey == "NumberOfIterations") {
+    meetsCriteria = true;
+
+    if (this->m_NumberOfLevelsLastSetBy != "" &&
+      this->m_SyNImageRegistrationMethod->GetNumberOfLevels() != criterionValues.size()) {
+      std::cout << "A conflicting NumberOfLevels was set by " << this->m_NumberOfLevelsLastSetBy << std::endl;
+      return false;
+    }
+
+    typename SyNImageRegistrationMethodType::NumberOfIterationsArrayType numberOfIterations(criterionValues.size());
+    for (int i = 0; i < criterionValues.size(); i++) {
+      numberOfIterations[i] = stoull(criterionValues[i]);
+    }
+    this->m_SyNImageRegistrationMethod->SetNumberOfIterationsPerLevel(numberOfIterations);
+  }
+  else if (criterionKey == "EstimateScales") //Supports this?
+  {
+    if (criterionValues.size() != 1)
+    {
+      meetsCriteria = false;
+    }
+    else
+    {
+      bool criterionValue = false;
+      meetsCriteria = StringConverter::Convert(*criterionValues.begin(), criterionValue);
+
+      if (meetsCriteria)
+      {
+        auto optimizer = this->m_SyNImageRegistrationMethod->GetModifiableOptimizer();
+        optimizer->SetDoEstimateScales(criterionValue);
+      }
+    }
+  }
+  else if (criterionKey == "RescaleIntensity") {
+    if (criterionValues.size() != 2) {
+      this->m_Logger.Log(LogLevel::ERR, "Expected two values for RescaleIntensity (min, max), got {0}.", criterionValues.size());
+      meetsCriteria = false;
+    }
+    else {
+      this->m_RescaleIntensity = criterionValues;
+      meetsCriteria = true;
+    }
+  }
+  else if (criterionKey == "InvertIntensity") {
+    if (criterionValues.size() != 1) {
+      this->m_Logger.Log(LogLevel::ERR, "Expected one value for InvertIntensity (True or False), got {0}.", criterionValues.size());
+      meetsCriteria = false;
+    }
+    else {
+      meetsCriteria = StringConverter::Convert(criterionValues[0], this->m_InvertIntensity);
+
+      if (!meetsCriteria)
+      {
+        this->m_Logger.Log(LogLevel::ERR, "Expected InvertIntensity to be True or False, got {0}.", criterionValues[0]);
+      }
+    }
+  }
+  else if (criterionKey == "MetricSamplingPercentage") {
+    if (criterionValues.size() != 1) {
+      this->m_Logger.Log(LogLevel::ERR, "Expected one value for MetricSamplingPercetage, got {0}.", criterionValues.size());
+      meetsCriteria = false;
+    }
+    else {
+      this->m_MetricSamplingPercentage = std::stof(criterionValues[0]);
+      meetsCriteria = true;
+    }
+  }
+  else if (criterionKey == "MetricSamplingStrategy") {
+    if (criterionValues.size() != 1) {
+      this->m_Logger.Log(LogLevel::ERR, "Expected one value for MetricSamplingStrategy (Regular or Random), got {0}.", criterionValues.size());
+      meetsCriteria = false;
+    }
+    else {
+      if (criterionValues[0] == "Regular") {
+        this->m_SyNImageRegistrationMethod->SetMetricSamplingStrategy(SyNImageRegistrationMethodType::MetricSamplingStrategyType::REGULAR);
+        meetsCriteria = true;
+      }
+      else if (criterionValues[0] == "Random") {
+        this->m_SyNImageRegistrationMethod->SetMetricSamplingStrategy(SyNImageRegistrationMethodType::MetricSamplingStrategyType::RANDOM);
+        meetsCriteria = true;
+      }
+      else {
+        this->m_Logger.Log(LogLevel::ERR, "Expected MetricSamplingStrategy to be Regular or Random, got {0}.", criterionValues[0]);
+        meetsCriteria = false;
+      }
+    }
+  }
+
+  return meetsCriteria;
 }
 } //end namespace selx
