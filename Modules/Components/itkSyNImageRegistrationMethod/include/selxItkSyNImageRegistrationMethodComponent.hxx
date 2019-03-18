@@ -268,7 +268,7 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
 		meetsCriteria = true;
 		if (criterionValues.size() == 1)
 		{
-			if (this->m_NumberOfLevelsLastSetBy == "") // check if some other settings set the NumberOfLevels
+			if (this->m_NumberOfLevelsLastSetBy.empty()) // check if some other settings set the NumberOfLevels
 			{
 				// try catch?
 				this->m_SyNImageRegistrationMethod->SetNumberOfLevels(std::stoi(criterionValues[0]));
@@ -299,7 +299,7 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
 
 		const int impliedNumberOfResolutions = criterionValues.size();
 
-		if (this->m_NumberOfLevelsLastSetBy == "") // check if some other settings set the NumberOfLevels
+		if (this->m_NumberOfLevelsLastSetBy.empty()) // check if some other settings set the NumberOfLevels
 		{
 			// try catch?
 			this->m_SyNImageRegistrationMethod->SetNumberOfLevels(impliedNumberOfResolutions);
@@ -320,7 +320,7 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
 		shrinkFactorsPerLevel.SetSize(impliedNumberOfResolutions);
 
 		unsigned int resolutionIndex = 0;
-		for (auto const & criterionValue : criterionValues) // auto&& preferred?
+		for (auto const & criterionValue : criterionValues)
 		{
 			shrinkFactorsPerLevel[resolutionIndex] = std::stoi(criterionValue);
 			++resolutionIndex;
@@ -334,7 +334,7 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
 
 		const int impliedNumberOfResolutions = criterionValues.size();
 
-		if (this->m_NumberOfLevelsLastSetBy == "") // check if some other settings set the NumberOfLevels
+		if (this->m_NumberOfLevelsLastSetBy.empty()) // check if some other settings set the NumberOfLevels
 		{
 			// try catch?
 			this->m_SyNImageRegistrationMethod->SetNumberOfLevels(impliedNumberOfResolutions);
@@ -356,7 +356,7 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
 		smoothingSigmasPerLevel.SetSize(impliedNumberOfResolutions);
 
 		unsigned int resolutionIndex = 0;
-		for (auto const & criterionValue : criterionValues) // auto&& preferred?
+		for (auto const & criterionValue : criterionValues)
 		{
 			smoothingSigmasPerLevel[resolutionIndex] = std::stoi(criterionValue);
 			++resolutionIndex;
