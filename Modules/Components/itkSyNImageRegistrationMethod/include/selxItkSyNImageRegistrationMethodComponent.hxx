@@ -245,24 +245,28 @@ bool
 ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputationValueType >
 ::MeetsCriterion(const ComponentBase::CriterionType & criterion)
 {
-  bool hasUndefinedCriteria(false);
-
   const auto& criterionKey = criterion.first;
   const auto& criterionValues = criterion.second;
 
   // First check if user-provided properties are template properties and if this component was instantiated with those template properties.
-  auto status = CheckTemplateProperties(this->TemplateProperties(), criterion);
-  if (status == CriterionStatus::Satisfied)
+  switch (CheckTemplateProperties(this->TemplateProperties(), criterion))
   {
-    return true;
+    case CriterionStatus::Satisfied:
+    {
+      return true;
+    }
+    case CriterionStatus::Failed:
+    {
+      return false;
+    }
+    case CriterionStatus::Unknown:
+    {
+      // Just continue.
+    }
   }
-  else if (status == CriterionStatus::Failed)
-  {
-    return false;
-  } // else: CriterionStatus::Unknown
 
   // Next else-if blocks check if the name of setting is an existing property for this component, otherwise MeetsCriterion returns CriterionStatus::Failed.
-  else if (criterionKey == "NumberOfLevels") //Does the Components have this setting?
+  if (criterionKey == "NumberOfLevels") //Does the Components have this setting?
   {
     if (criterionValues.size() == 1)
     {
