@@ -20,3 +20,7 @@
 set( ${MODULE}_INCLUDE_DIRS
   ${${MODULE}_SOURCE_DIR}/include
 )
+
+set( ${MODULE}_TEST_SOURCE_FILES 
+  ${${MODULE}_SOURCE_DIR}/test/selxStringConverterTest.cxx
+)
