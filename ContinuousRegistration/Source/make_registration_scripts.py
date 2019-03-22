@@ -1,4 +1,4 @@
-import os, json, argparse
+import os, json, argparse, platform
 from ContinuousRegistration.Source.datasets import logging, load_datasets
 from ContinuousRegistration.Source.util import load_submissions
 
@@ -9,8 +9,8 @@ parser.add_argument('--submissions-directory', '-sd', required=True,
                     help='Directory with parameter files.')
 parser.add_argument('--output-directory', '-od', required=True,
                     help="Directory where results will be saved.")
-parser.add_argument('--make-scripts', '-ms', choices=['shell', 'batch'], default='shell',
-                    help="Generate shell scripts or batch scripts (default: shell).")
+parser.add_argument('--make-shell-scripts', '-mss', type=bool, default=True,
+                    help="Generate shell scripts (default: True).")
 parser.add_argument('--brain2d-input-directory', '-b2d')
 parser.add_argument('--lung2d-input-directory', '-l2d')
 parser.add_argument('--cumc12-input-directory', '-cid')
@@ -34,6 +34,10 @@ parser.add_argument('--source-directory', '-srcd', default='.')
 
 
 def run(parameters):
+
+    if not parameters.make_shell_scripts:
+        logging.error('--make-shell-scripts was False. Nothing to do.')
+        quit()
 
     submissions = load_submissions(parameters)
     datasets = load_datasets(parameters)
@@ -71,8 +75,8 @@ def run(parameters):
                     output_directory = os.path.join(parameters.output_directory,
                                                     team_name, blueprint_name)
 
-                    if parameters.make_scripts in ('shell', 'batch'):
-                        ext = '.sh' if parameters.make_scripts == 'shell' else '.bat'
+                    if parameters.make_shell_scripts:
+                        ext = '.bat' if platform.system() == 'Windows' else '.sh'
                         dataset.make_shell_scripts(parameters.superelastix,
                                                    blueprint_file_name,
                                                    file_names, output_directory, ext)
