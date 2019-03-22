@@ -18,7 +18,7 @@ class Dataset:
             yield file_name
 
     @staticmethod
-    def make_shell_scripts(superelastix, blueprint_file_name, file_names, output_directory):
+    def make_shell_scripts(superelastix, blueprint_file_name, file_names, output_directory, script_file_extension):
         if not os.path.exists(os.path.join(output_directory, 'sh')):
             os.mkdir(os.path.join(output_directory, 'sh'))
         COMMAND_TEMPLATE = '#!/bin/sh\n%s --conf "%s" --in %s %s --out DisplacementField="%s" --loglevel trace --logfile "%s"'
@@ -26,7 +26,7 @@ class Dataset:
         # Fixed=image0, Moving=image1, Output: image1_to_image0
         root = splitext(file_names['disp_field_file_names'][0])[0]
         shell_script_file_name_0 = os.path.join(output_directory, 'sh',
-                                              root.replace('/', '_').replace('\\', '_').replace('.', '_') + '.sh')
+                                              root.replace('/', '_').replace('\\', '_').replace('.', '_') + script_file_extension)
 
         if 'mask_file_names' not in file_names:
             file_names['mask_file_names'] = ('', '')
@@ -44,7 +44,7 @@ class Dataset:
         # Fixed=image1, Moving=image0, Output: image0_to_image1
         root = splitext(file_names['disp_field_file_names'][1])[0]
         shell_script_file_name_1 = os.path.join(output_directory, 'sh',
-                                              root.replace('/', '_').replace('\\', '_').replace('.', '_') + '.sh')
+                                              root.replace('/', '_').replace('\\', '_').replace('.', '_') + script_file_extension)
 
         if 'mask_file_names' not in file_names:
             file_names['mask_file_names'] = ('', '')
@@ -58,9 +58,6 @@ class Dataset:
         os.chmod(shell_script_file_name_1,
                  os.stat(shell_script_file_name_0).st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
         logging.info('Wrote %s' % shell_script_file_name_1)
-
-    def make_batch_scripts(self):
-        pass
 
     @staticmethod
     def evaluate():
