@@ -16,6 +16,10 @@
       "SmoothingSigmasPerLevel": [ "8", "8", "4", "1"],
       "LearningRate": "0.25",
       "PixelType": "float",
+      "ConvergenceThreshold": "1.0e-6",
+      "ConvergenceWindowSize": "10",
+      "GaussianSmoothingVarianceForTheUpdateField": "3",
+      "GaussianSmoothingVarianceForTheTotalField": "0.5",
       "RescaleIntensity": ["0", "1"],
       "InvertIntensity": ["True"]
     },

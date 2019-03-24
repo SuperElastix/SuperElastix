@@ -247,6 +247,7 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
 {
   const auto& criterionKey = criterion.first;
   const auto& criterionValues = criterion.second;
+  const bool hasOneCriterionValue = criterionValues.size() == 1;
 
   // First check if user-provided properties are template properties and if this component was instantiated with those template properties.
   switch (CheckTemplateProperties(this->TemplateProperties(), criterion))
@@ -367,6 +368,26 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
   }
   else if (criterionKey == "LearningRate") {
     this->m_SyNImageRegistrationMethod->SetLearningRate(StringConverter{ criterionValues[0] });
+    return true;
+  }
+  else if (hasOneCriterionValue && (criterionKey == "ConvergenceThreshold"))
+  {
+    this->m_SyNImageRegistrationMethod->SetConvergenceThreshold(StringConverter{ criterionValues[0] });
+    return true;
+  }
+  else if (hasOneCriterionValue && (criterionKey == "ConvergenceWindowSize"))
+  {
+    this->m_SyNImageRegistrationMethod->SetConvergenceWindowSize(StringConverter{ criterionValues[0] });
+    return true;
+  }
+  else if (hasOneCriterionValue && (criterionKey == "GaussianSmoothingVarianceForTheUpdateField"))
+  {
+    this->m_SyNImageRegistrationMethod->SetGaussianSmoothingVarianceForTheUpdateField(StringConverter{ criterionValues[0] });
+    return true;
+  }
+  else if (hasOneCriterionValue && (criterionKey == "GaussianSmoothingVarianceForTheTotalField"))
+  {
+    this->m_SyNImageRegistrationMethod->SetGaussianSmoothingVarianceForTheTotalField(StringConverter{ criterionValues[0] });
     return true;
   }
   else if (criterionKey == "NumberOfIterations") {
