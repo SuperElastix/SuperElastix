@@ -2,8 +2,7 @@ import glob, csv, re, stat
 from abc import ABCMeta
 from itertools import combinations
 
-from ContinuousRegistration.Source.metrics import tre, hausdorff, inverse_consistency, \
-    inverse_consistency, label_overlap
+from ContinuousRegistration.Source.metrics import tre, hausdorff, inverse_consistency, label_overlap
 from ContinuousRegistration.Source.util import *
 
 class Dataset:
