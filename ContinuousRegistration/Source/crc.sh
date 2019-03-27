@@ -23,7 +23,7 @@ python -m ContinuousRegistration.Source.make_registration_scripts --superelastix
 # find $CRC_OUTPUT_DIR -type f -name "*.sh" -exec "{}" \;
 
 # Register images in parallel
-# find $CRC_OUTPUT_DIR -type f -name "*.sh" | parallel -j4 bash
+find $CRC_OUTPUT_DIR -type f -name "*.sh" | parallel -j6 bash
 
 # Evaluate registrations, generate visualizations, and generate leaderboard
 python -m ContinuousRegistration.Source.make_evaluation --superelastix $SUPERELASTIX_BUILD_DIR/SuperElastix-build/bin/SuperElastix --submissions-directory $SUPERELASTIX_SOURCE_DIR/ContinuousRegistration/Submissions --output-directory $CRC_OUTPUT_DIR $CRC_DATASETS $CRC_BLUEPRINT_FILE_NAME --max-number-of-registrations-per-dataset $CRC_MAX_NUM_REG_PER_DATASET --make-image-checkerboards True --make-label-checkerboards True --make-difference-images True

@@ -82,6 +82,19 @@ public:
 };
 
 template< int Dimensionality, class TPixel >
+class itkWarpingDisplacementFieldInterface
+{
+  // An interface that provides the pointer of an output vector image
+
+public:
+
+  using Type    = itkWarpingDisplacementFieldInterface< Dimensionality, TPixel >;
+  using Pointer = std::shared_ptr< Type >;
+  typedef itk::Image<itk::Vector< TPixel, Dimensionality >, Dimensionality> ItkDisplacementFieldType;
+  virtual typename ItkDisplacementFieldType::Pointer GetItkDisplacementField() = 0;
+};
+
+template< int Dimensionality, class TPixel >
 class itkImageFixedInterface
 {
   // An interface that provides the smart pointer to an itk image
@@ -189,6 +202,15 @@ static const std::map< std::string, std::string > Get()
 {
   return { { keys::NameOfInterface, "itkDisplacementFieldInterface" }, { keys::Dimensionality, std::to_string( D ) }, { keys::PixelType, PodString< TPixel >::Get() } };
 }
+};
+
+template< int D, class TPixel >
+struct Properties< itkWarpingDisplacementFieldInterface< D, TPixel >>
+{
+  static const std::map< std::string, std::string > Get()
+  {
+    return { { keys::NameOfInterface, "itkWarpingDisplacementFieldInterface" }, { keys::Dimensionality, std::to_string( D ) }, { keys::PixelType, PodString< TPixel >::Get() } };
+  }
 };
 
 template< int D, class TPixel >

@@ -114,83 +114,160 @@ if __name__ == '__main__':
         "Datasets": ["POPI"],
         "Components": [
             {
-                "Name": "FixedImage",
-                "NameOfClass": "ItkToNiftiImageSourceComponent",
+                "Name": "RegistrationMethod",
+                "NameOfClass": "ItkImageRegistrationMethodv4Component",
+                "NumberOfLevels":  "3" ,
+                "ShrinkFactorsPerLevel": [ "16", "8", "4", "2", "1" ],
+                "SmoothingSigmasPerLevel": [ "16", "8", "4", "2", "1" ],
+                "Dimensionality": "3"
+            },
+            {
+                "Name": "FixedImageCropper",
+                "NameOfClass": "ItkCropperComponent",
+                "Dimensionality": "3",
                 "PixelType": "float",
+                "Pad": 16
+            },
+            {
+                "Name": "MovingImageCropper",
+                "NameOfClass": "ItkCropperComponent",
+                "Dimensionality": "3",
+                "PixelType": "float",
+                "Pad": 16
+            },
+            {
+                "Name": "FixedImage",
+                "NameOfClass": "ItkImageSourceComponent",
+                "Dimensionality": "3"
+            },
+            {
+                "Name": "MovingImage",
+                "NameOfClass": "ItkImageSourceComponent",
                 "Dimensionality": "3"
             },
             {
                 "Name": "FixedMask",
                 "NameOfClass": "ItkImageSourceComponent",
-                "PixelType": "unsigned char",
-                "Dimensionality": "3"
-            },
-            {
-                "Name": "MovingImage",
-                "NameOfClass": "ItkToNiftiImageSourceComponent",
-                "PixelType": "float",
-                "Dimensionality": "3"
+                "Dimensionality": "3",
+                "PixelType": "unsigned char"
             },
             {
                 "Name": "MovingMask",
                 "NameOfClass": "ItkImageSourceComponent",
-                "PixelType": "unsigned char",
-                "Dimensionality": "3"
-            },
-            {
-                "Name": "SplineToDisplacementField",
-                "NameOfClass": "NiftyregSplineToDisplacementFieldComponent"
+                "Dimensionality": "3",
+                "PixelType": "unsigned char"
             },
             {
                 "Name": "DisplacementField",
-                "NameOfClass": "DisplacementFieldNiftiToItkImageSinkComponent",
+                "NameOfClass": "ItkDisplacementFieldSinkComponent",
                 "Dimensionality": "3"
-            }
+            },
+            {
+                "Name": "Metric",
+                "NameOfClass": "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component",
+                "Dimensionality": "3"
+            },
+            {
+                "Name": "Optimizer",
+                "NameOfClass": "ItkGradientDescentOptimizerv4Component",
+                "NumberOfIterations": "32",
+                "LearningRate": "1.0",
+                "EstimateScales": "False",
+                "EstimateLearningRate": "False"
+            },
+            {
+                "Name": "Transform",
+                "NameOfClass": "ItkGaussianExponentialDiffeomorphicTransformComponent",
+                "InternalComputationValueType": "double",
+                "Dimensionality": "3",
+                "GaussianSmoothingVarianceForTheConstantVelocityField": "1.0",
+                "GaussianSmoothingVarianceForTheUpdateField": "1.0"
+            },
+            {
+                "Name": "TransformToDisplacementFilter",
+                "NameOfClass": "ItkTransformDisplacementFilterComponent",
+                "Dimensionality": "3"
+            },
+            {
+                "Name": "TransformResolutionAdaptor",
+                "NameOfClass": "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent",
+                "ShrinkFactorsPerLevel": [ "16", "8", "4", "2", "1" ],
+                "Dimensionality": "3"
+            },
         ],
         "Connections": [
             {
                 "Out": "FixedImage",
-                "In": "NiftyRegAffine",
-                "NameOfInterface": "NiftyregReferenceImageInterface"
+                "In": "FixedImageCropper",
+                "NameOfInterface": "itkImageInterface"
+            },
+            {
+                "Out": "FixedMask",
+                "In": "FixedImageCropper",
+                "NameOfInterface": "itkImageMaskInterface"
+            },
+            {
+                "Out": "FixedImageCropper",
+                "In": "RegistrationMethod",
+                "NameOfInterface": "itkImageFixedInterface"
             },
             {
                 "Out": "MovingImage",
-                "In": "NiftyRegAffine",
-                "NameOfInterface": "NiftyregFloatingImageInterface"
+                "In": "MovingImageCropper",
+                "NameOfInterface": "itkImageInterface"
             },
             {
-                "Out": "NiftyRegAffine",
-                "In": "NiftyRegSpline",
-                "NameOfInterface": "NiftyregAffineMatrixInterface"
+                "Out": "MovingMask",
+                "In": "MovingImageCropper",
+                "NameOfInterface": "itkImageMaskInterface"
             },
             {
-                "Out": "FixedImage",
-                "In": "NiftyRegSpline",
-                "NameOfInterface": "NiftyregReferenceImageInterface"
+                "Out": "MovingImageCropper",
+                "In": "RegistrationMethod",
+                "NameOfInterface": "itkImageMovingInterface"
             },
             {
-                "Out": "MovingImage",
-                "In": "NiftyRegSpline",
-                "NameOfInterface": "NiftyregFloatingImageInterface"
+                "Out": "RegistrationMethod",
+                "In": "TransformToDisplacementFilter",
+                "NameOfInterface": "itkTransformInterface"
             },
             {
-                "Out": "NiftyRegSpline",
-                "In": "SplineToDisplacementField",
-                "NameOfInterface": "NiftyregControlPointPositionImageInterface"
-            },
-            {
-                "Out": "FixedImage",
-                "In": "SplineToDisplacementField",
-                "NameOfInterface": "NiftyregReferenceImageInterface"
-            },
-            {
-                "Out": "SplineToDisplacementField",
+                "Out": "TransformToDisplacementFilter",
                 "In": "DisplacementField",
-                "NameOfInterface": "NiftyregDisplacementFieldImageInterface"
+                "NameOfInterface": "itkDisplacementFieldInterface"
             },
             {
-                "Out": "FixedImage",
-                "In": "DisplacementField",
+                "Out": "Metric",
+                "In": "RegistrationMethod",
+                "NameOfInterface": "itkMetricv4Interface"
+            },
+            {
+                "Out": "FixedImageCropper",
+                "In": "Transform",
+                "NameOfInterface": "itkImageDomainFixedInterface"
+            },
+            {
+                "Out": "Transform",
+                "In": "RegistrationMethod",
+                "NameOfInterface": "itkTransformInterface"
+            },
+            {
+                "Out": "FixedImageCropper",
+                "In": "TransformResolutionAdaptor",
+                "NameOfInterface": "itkImageDomainFixedInterface"
+            },
+            {
+                "Out": "TransformResolutionAdaptor",
+                "In": "RegistrationMethod"
+            },
+            {
+                "Out": "Optimizer",
+                "In": "RegistrationMethod",
+                "NameOfInterface": "itkOptimizerv4Interface"
+            },
+            {
+                "Out": "FixedImageCropper",
+                "In": "TransformToDisplacementFilter",
                 "NameOfInterface": "itkImageDomainFixedInterface"
             }
         ]
@@ -199,10 +276,10 @@ if __name__ == '__main__':
     space = hp.choice('HyperOpt', [
         {
             "NiftyRegAffineHyperOptComponent": {
-                "Name": "NiftyRegAffine",
-                "NameOfClass": "NiftyregAladinComponent",
-                "NumberOfResolutions": hp.quniform('NiftyRegAffine_NumberOfResolutions', 2, 5, 1),
-                "NumberOfIterations": "30"
+                "Name": "TransformResolutionAdaptor",
+                "NameOfClass": "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent",
+                "ShrinkFactorsPerLevel": [ "16", "8", "4", "2" ],
+                "Dimensionality": "3"
             },
             "NiftyRegBSplineHyperOptComponent": {
                 "Name": "NiftyRegSpline",
