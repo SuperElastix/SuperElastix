@@ -39,8 +39,14 @@ def hausdorff(superelastix, point_sets, deformation_field_file_names):
 
 def inverse_consistency(superelastix, displacement_field_file_names, mask_file_names):
     try:
-        composed_0 = sitk.GetArrayFromImage(sitk.ReadImage(compose_displacement_fields(superelastix, displacement_field_file_names[0], displacement_field_file_names[1])))
-        composed_1 = sitk.GetArrayFromImage(sitk.ReadImage(compose_displacement_fields(superelastix, displacement_field_file_names[1], displacement_field_file_names[0])))
+        composed_0 = sitk.GetArrayFromImage(
+            sitk.ReadImage(
+                compose_displacement_fields(
+                    superelastix, displacement_field_file_names[0], displacement_field_file_names[1])))
+        composed_1 = sitk.GetArrayFromImage(
+            sitk.ReadImage(
+                compose_displacement_fields(
+                    superelastix, displacement_field_file_names[1], displacement_field_file_names[0])))
     except Exception:
         return (
             {'3. InverseConsistency': np.NaN},
@@ -48,18 +54,14 @@ def inverse_consistency(superelastix, displacement_field_file_names, mask_file_n
         )
 
     mask_0 = sitk.GetArrayFromImage(sitk.ReadImage(mask_file_names[0])) > 0
-    norm_0 = np.linalg.norm(composed_0, axis=-1)
-    norm_0 = norm_0[mask_0]
-    norm_0 = np.ma.array(norm_0, mask=np.isnan(norm_0))
+    norm_0 = np.linalg.norm(composed_0[mask_0], axis=-1).flatten()
 
     mask_1 = sitk.GetArrayFromImage(sitk.ReadImage(mask_file_names[1])) > 0
-    norm_1 = np.linalg.norm(composed_1, axis=-1)
-    norm_1 = norm_1[mask_1]
-    norm_1 = np.ma.array(norm_1, mask=np.isnan(norm_1))
+    norm_1 = np.linalg.norm(composed_1[mask_1], axis=-1).flatten()
 
     return (
-        {'3. InverseConsistency': np.mean(norm_0)},
-        {'3. InverseConsistency': np.mean(norm_1)}
+        {'3. InverseConsistency': float(np.nanmean(norm_0))},
+        {'3. InverseConsistency': float(np.nanmean(norm_1))}
     )
 
 

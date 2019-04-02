@@ -72,7 +72,7 @@ void
 ItkTransformDisplacementFilterComponent< Dimensionality, TPixel, TInternalComputationValue >
 ::BeforeUpdate()
 {
-  // Required to satisfy input requirements when UpdateOutputInormation is run
+  // Required to satisfy input requirements when UpdateOutputInformation is run
   this->m_DisplacementFieldFilter->SetTransform( this->m_TransformComponent->GetItkTransform() );
 
   this->m_DisplacementFieldFilter->SetSize( this->m_ImageDomainFixed->GetLargestPossibleRegion().GetSize() );

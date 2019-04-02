@@ -269,7 +269,7 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
   // Next else-if blocks check if the name of setting is an existing property for this component, otherwise MeetsCriterion returns CriterionStatus::Failed.
   if (criterionKey == "NumberOfLevels") //Does the Components have this setting?
   {
-    if (criterionValues.size() == 1)
+    if (hasOneCriterionValue)
     {
       if (this->m_NumberOfLevelsLastSetBy.empty()) // check if some other settings set the NumberOfLevels
       {
@@ -454,7 +454,7 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
     }
   }
   else if (criterionKey == "MetricSamplingPercentage") {
-    if (criterionValues.size() != 1) {
+    if (!hasOneCriterionValue) {
       this->m_Logger.Log(LogLevel::ERR, "Expected one value for MetricSamplingPercetage, got {0}.", criterionValues.size());
       return false;
     }
@@ -464,7 +464,7 @@ ItkSyNImageRegistrationMethodComponent< Dimensionality, TPixel, InternalComputat
     }
   }
   else if (criterionKey == "MetricSamplingStrategy") {
-    if (criterionValues.size() != 1) {
+    if (!hasOneCriterionValue) {
       this->m_Logger.Log(LogLevel::ERR, "Expected one value for MetricSamplingStrategy (Regular or Random), got {0}.", criterionValues.size());
       return false;
     }

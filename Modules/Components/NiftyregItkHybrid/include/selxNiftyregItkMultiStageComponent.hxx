@@ -117,7 +117,6 @@ NiftyregItkMultiStageComponent< InternalComputationValueType, Dimensionality >::
       this->m_CompositeTransform->AppendTransform( m_RegistrationStages[stageName]->GetItkTransform() );
     }
   }
-  return;
 }
 
 
