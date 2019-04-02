@@ -3,12 +3,7 @@
         "POPI",
         "DIRLAB",
         "EMPIRE",
-        "LPBA40",
-        "IBSR18",
-        "CUMC12",
-        "MGH10",
-        "SPREAD",
-        "HAMMERS"
+        "SPREAD"
     ],
     "Components": [
         {
@@ -21,7 +16,7 @@
         {
             "Name": "RegistrationMethod1",
             "NameOfClass": "NiftyregAladinComponent",
-            "MaximumNumberOfIterations": "16"
+            "MaximumNumberOfIterations": "1"
         },
         {
             "Name": "RegistrationMethod2",
@@ -29,18 +24,16 @@
             "InternalComputationValueType": "double",
             "Dimensionality": "3",
             "PixelType": "float",
-            "NumberOfLevels": "4",
-            "ShrinkFactorsPerLevel": [ "16", "8", "4", "2" ],
-            "SmoothingSigmasPerLevel": [ "8", "4", "2", "1" ],
+            "NumberOfLevels": "3",
+            "ShrinkFactorsPerLevel": [ "8", "4", "2" ],
+            "SmoothingSigmasPerLevel": [ "4", "2", "1" ],
             "RescaleIntensity": ["0", "1"],
-            "InvertIntensity": "True",
-            "MetricSamplingPercentage": "0.2",
-            "MetricSamplingStrategy": "Random"
+            "InvertIntensity": "True"
         },
         {
             "Name": "TransformResolutionAdaptor",
             "NameOfClass": "ItkGaussianExponentialDiffeomorphicTransformParametersAdaptorsContainerComponent",
-            "ShrinkFactorsPerLevel": [ "16", "8", "4", "2" ],
+            "ShrinkFactorsPerLevel": [ "8", "4", "2" ],
             "Dimensionality": "3"
         },
         {
@@ -68,20 +61,6 @@
             "Dimensionality": "3"
         },
         {
-            "Name": "FixedImageCropper",
-            "NameOfClass": "ItkCropperComponent",
-            "Dimensionality": "3",
-            "PixelType": "float",
-            "Pad": 8
-        },
-        {
-            "Name": "MovingImageCropper",
-            "NameOfClass": "ItkCropperComponent",
-            "Dimensionality": "3",
-            "PixelType": "float",
-            "Pad": 8
-        },
-        {
             "Name": "Metric2",
             "NameOfClass": "ItkANTSNeighborhoodCorrelationImageToImageMetricv4Component",
             "Dimensionality": "3",
@@ -97,7 +76,7 @@
             "Name": "Optimizer2",
             "NameOfClass": "ItkGradientDescentOptimizerv4Component",
             "InternalComputationValueType": "double",
-            "MaximumNumberOfIterations": "16",
+            "MaximumNumberOfIterations": "8",
             "MaximumStepSizeInPhysicalUnits": "1.0",
             "LearningRate": "0.25",
             "EstimateScales": "True",
@@ -123,30 +102,6 @@
         },
         {
             "Out": "FixedImage",
-            "In": "FixedImageCropper",
-            "NameOfInterface": "itkImageInterface"
-        },
-        {
-            "Out": "FixedMask",
-            "In": "FixedImageCropper",
-            "NameOfInterface": "itkImageFixedMaskInterface"
-        },
-        {
-            "Out": "FixedImageCropper",
-            "In": "RegistrationMethod",
-            "NameOfInterface": "itkImageFixedInterface"
-        },
-        {
-            "Out": "MovingImage",
-            "In": "MovingImageCropper",
-            "NameOfInterface": "itkImageInterface"
-        },{
-            "Out": "MovingMask",
-            "In": "MovingImageCropper",
-            "NameOfInterface": "itkImageMovingMaskInterface"
-        },
-        {
-            "Out": "FixedImageCropper",
             "In": "TransformResolutionAdaptor",
             "NameOfInterface": "itkImageDomainFixedInterface"
         },
@@ -161,12 +116,17 @@
             "NameOfInterface": "NiftyregFloatingImageInterface"
         },
         {
-            "Out": "FixedImageCropper",
+            "Out": "FixedMask",
+            "In": "RegistrationMethod1",
+            "NameOfInterface": "NiftyregInputMaskInterface"
+        },
+        {
+            "Out": "FixedImage",
             "In": "RegistrationMethod2",
             "NameOfInterface": "itkImageFixedInterface"
         },
         {
-            "Out": "MovingImageCropper",
+            "Out": "MovingImage",
             "In": "RegistrationMethod2",
             "NameOfInterface": "itkImageMovingInterface"
         },
@@ -183,7 +143,7 @@
             "In": "RegistrationMethod2"
         },
         {
-            "Out": "FixedImageCropper",
+            "Out": "FixedImage",
             "In": "Transform2"
         },
         {
@@ -209,10 +169,6 @@
         },
         {
             "Out": "FixedMask",
-            "In": "Metric2"
-        },
-        {
-            "Out": "MovingMask",
             "In": "Metric2"
         },
         {

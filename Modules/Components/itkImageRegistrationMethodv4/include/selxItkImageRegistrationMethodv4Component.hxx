@@ -137,7 +137,7 @@ int
 ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >
 ::Accept( typename itkImageFixedInterface< Dimensionality, TPixel >::Pointer component )
 {
-  m_FixedImage = component->GetItkImageFixed();
+  this->m_FixedImage = component->GetItkImageFixed();
   return 0;
 }
 
@@ -147,7 +147,7 @@ int
 ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >
 ::Accept( typename itkImageMovingInterface< Dimensionality, TPixel >::Pointer component )
 {
-  m_MovingImage = component->GetItkImageMoving();
+  this->m_MovingImage = component->GetItkImageMoving();
   return 0;
 }
 
@@ -205,6 +205,9 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
   FixedImagePointer fixedImage = this->m_FixedImage;
   MovingImagePointer movingImage = this->m_MovingImage;
 
+  fixedImage->Update();
+  movingImage->Update();
+
   if (this->m_RescaleIntensity.size() == 2) {
     this->m_Logger.Log(LogLevel::INF, "{0}: Rescaling images to [{1}, {2}]", this->m_Name, this->m_RescaleIntensity[0], this->m_RescaleIntensity[1]);
 
@@ -214,6 +217,7 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
     fixedIntensityRescaler->SetOutputMaximum(std::stof(this->m_RescaleIntensity[1]));
     fixedIntensityRescaler->UpdateOutputInformation();
     fixedImage = fixedIntensityRescaler->GetOutput();
+    fixedImage->Update();
 
     MovingRescaleImageFilterPointer movingIntensityRescaler = MovingRescaleImageFilterType::New();
     movingIntensityRescaler->SetInput(movingImage);
@@ -221,6 +225,7 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
     movingIntensityRescaler->SetOutputMaximum(std::stof(this->m_RescaleIntensity[1]));
     movingIntensityRescaler->UpdateOutputInformation();
     movingImage = movingIntensityRescaler->GetOutput();
+    movingImage->Update();
   }
 
   if (this->m_InvertIntensity) {
@@ -235,6 +240,7 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
     fixedIntensityInverter->SetMaximum(fixedIntensityMaximumCalculator->GetMaximum());
     fixedIntensityInverter->UpdateOutputInformation();
     fixedImage = fixedIntensityInverter->GetOutput();
+    fixedImage->Update();
 
     MovingImageCalculatorFilterPointer movingIntensityMaximumCalculator = MovingImageCalculatorFilterType::New();
     movingIntensityMaximumCalculator->SetImage(movingImage);
@@ -245,6 +251,7 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
     movingIntensityInverter->SetMaximum(movingIntensityMaximumCalculator->GetMaximum());
     movingIntensityInverter->UpdateOutputInformation();
     movingImage = movingIntensityInverter->GetOutput();
+    movingImage->Update();
   }
 
   this->m_ImageRegistrationMethodv4Filter->SetFixedImage(fixedImage);
@@ -261,8 +268,8 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
 {
   // Set transform
   typedef itk::CompositeTransform<InternalComputationValueType, Dimensionality >  MovingCompositeTransformType;
-  const typename itk::GaussianExponentialDiffeomorphicTransform< InternalComputationValueType, Dimensionality >* transform = static_cast<itk::GaussianExponentialDiffeomorphicTransform< InternalComputationValueType, Dimensionality >*>(this->m_Transform.GetPointer());
-  this->m_ImageRegistrationMethodv4Filter->SetInitialTransform(transform);
+
+  this->m_ImageRegistrationMethodv4Filter->SetInitialTransform(this->m_Transform);
 
   // Configure scales estimator
   typename ScalesEstimatorType::Pointer scalesEstimator = ScalesEstimatorType::New();
@@ -303,7 +310,7 @@ typename ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, Internal
 ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >
 ::GetItkTransform()
 {
-  return this->m_ImageRegistrationMethodv4Filter->GetModifiableTransform();
+  return this->m_Transform;
 }
 
 
@@ -330,31 +337,37 @@ bool
 ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputationValueType >
 ::MeetsCriterion( const ComponentBase::CriterionType & criterion )
 {
-  bool hasUndefinedCriteria( false );
-  bool meetsCriteria( false );
+  const auto& criterionKey = criterion.first;
+  const auto& criterionValues = criterion.second;
+  const bool hasOneCriterionValue = criterionValues.size() == 1;
 
   // First check if user-provided properties are template properties and if this component was instantiated with those template properties.
-  auto status = CheckTemplateProperties( this->TemplateProperties(), criterion );
-  if( status == CriterionStatus::Satisfied )
+  switch (CheckTemplateProperties(this->TemplateProperties(), criterion))
   {
-    return true;
+    case CriterionStatus::Satisfied:
+    {
+      return true;
+    }
+    case CriterionStatus::Failed:
+    {
+      return false;
+    }
+    case CriterionStatus::Unknown:
+    {
+      // Just continue.
+    }
   }
-  else if( status == CriterionStatus::Failed )
-  {
-    return false;
-  } // else: CriterionStatus::Unknown
 
   // Next else-if blocks check if the name of setting is an existing property for this component, otherwise MeetsCriterion returns CriterionStatus::Failed.
-  else if( criterion.first == "NumberOfLevels" ) //Supports this?
+  if( criterion.first == "NumberOfLevels" ) //Supports this?
   {
-    meetsCriteria = true;
-    if( criterion.second.size() == 1 )
+    if( hasOneCriterionValue )
     {
       if( this->m_NumberOfLevelsLastSetBy == "" ) // check if some other settings set the NumberOfLevels
       {
-        // try catch?
         this->m_ImageRegistrationMethodv4Filter->SetNumberOfLevels( std::stoi( criterion.second[ 0 ] ) );
         this->m_NumberOfLevelsLastSetBy = criterion.first;
+        return true;
       }
       else
       {
@@ -362,30 +375,24 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
         {
           // TODO log error?
           std::cout << "A conflicting NumberOfLevels was set by " << this->m_NumberOfLevelsLastSetBy << std::endl;
-          meetsCriteria = false;
-          return meetsCriteria;
+          return false;
         }
       }
     }
     else
     {
-      // TODO log error?
-      std::cout << "NumberOfLevels accepts one number only" << std::endl;
-      meetsCriteria = false;
-      return meetsCriteria;
+      return false;
     }
   }
   else if( criterion.first == "ShrinkFactorsPerLevel" ) //Supports this?
   {
-    meetsCriteria = true;
-
     const int impliedNumberOfResolutions = criterion.second.size();
 
     if( this->m_NumberOfLevelsLastSetBy == "" ) // check if some other settings set the NumberOfLevels
     {
-      // try catch?
       this->m_ImageRegistrationMethodv4Filter->SetNumberOfLevels( impliedNumberOfResolutions );
       this->m_NumberOfLevelsLastSetBy = criterion.first;
+      return true;
     }
     else
     {
@@ -393,8 +400,7 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
       {
         // TODO log error?
         std::cout << "A conflicting NumberOfLevels was set by " << this->m_NumberOfLevelsLastSetBy << std::endl;
-        meetsCriteria = false;
-        return meetsCriteria;
+        return false;
       }
     }
 
@@ -409,27 +415,24 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
     }
     // try catch?
     this->m_ImageRegistrationMethodv4Filter->SetShrinkFactorsPerLevel( shrinkFactorsPerLevel );
+    return true;
   }
   else if( criterion.first == "SmoothingSigmasPerLevel" ) //Supports this?
   {
-    meetsCriteria = true;
-
     const int impliedNumberOfResolutions = criterion.second.size();
 
     if( this->m_NumberOfLevelsLastSetBy == "" ) // check if some other settings set the NumberOfLevels
     {
-      // try catch?
       this->m_ImageRegistrationMethodv4Filter->SetNumberOfLevels( impliedNumberOfResolutions );
       this->m_NumberOfLevelsLastSetBy = criterion.first;
+      return true;
     }
     else
     {
       if( this->m_ImageRegistrationMethodv4Filter->GetNumberOfLevels() != impliedNumberOfResolutions )
       {
-        // TODO log error?
-        std::cout << "A conflicting NumberOfLevels was set by " << this->m_NumberOfLevelsLastSetBy << std::endl;
-        meetsCriteria = false;
-        return meetsCriteria;
+        this->m_Logger.Log(LogLevel::ERR, "A conflicting NumberOfLevels was set by {0}.", this->m_NumberOfLevelsLastSetBy);
+        return false;
       }
     }
 
@@ -438,62 +441,57 @@ ItkImageRegistrationMethodv4Component< Dimensionality, TPixel, InternalComputati
     smoothingSigmasPerLevel.SetSize( impliedNumberOfResolutions );
 
     unsigned int resolutionIndex = 0;
-    for( auto const & criterionValue : criterion.second ) // auto&& preferred?
+    for( const auto& criterionValue : criterion.second )
     {
       smoothingSigmasPerLevel[ resolutionIndex ] = std::stoi( criterionValue );
       ++resolutionIndex;
     }
-    // try catch?
-    // Smooth by specified gaussian sigmas for each level.  These values are specified in
-    // physical units.
     this->m_ImageRegistrationMethodv4Filter->SetSmoothingSigmasPerLevel( smoothingSigmasPerLevel );
+    return true;
   } else if( criterion.first == "RescaleIntensity" ) {
-    if( criterion.second.size() != 2 ) {
-      this->m_Logger.Log(LogLevel::ERR, "Expected two values for RescaleIntensity (min, max), got {0}.", criterion.second.size());
-      meetsCriteria = false;
+    if( criterion.second.size() == 2 ) {
+      this->m_RescaleIntensity = criterion.second;
+      return true;
     }
     else {
-      this->m_RescaleIntensity = criterion.second;
-      meetsCriteria = true;
+      this->m_Logger.Log(LogLevel::ERR, "Expected two values for RescaleIntensity (min, max), got {0}.", criterion.second.size());
+      return false;
     }
   } else if( criterion.first == "InvertIntensity" ) {
-    if( criterion.second.size() != 1 ) {
-      this->m_Logger.Log(LogLevel::ERR, "Expected one value for InvertIntensity (True or False), got {0}.", criterion.second.size());
-      meetsCriteria = false;
-    } else {
-      meetsCriteria = StringConverter::Convert(criterion.second[0], this->m_InvertIntensity);
-      if (!meetsCriteria)
-      {
+    if( hasOneCriterionValue ) {
+      bool ok = StringConverter::Convert(criterion.second[0], this->m_InvertIntensity);
+      if (ok) {
+        return true;
+      } else {
         this->m_Logger.Log(LogLevel::ERR, "Expected InvertIntensity to be True or False, got {0}.", criterion.second[0]);
       }
+    } else {
+      this->m_Logger.Log(LogLevel::ERR, "Expected one value for InvertIntensity (True or False), got {0}.", criterion.second.size());
     }
   } else if( criterion.first == "MetricSamplingPercentage" ) {
-    if( criterion.second.size() != 1 ) {
-      this->m_Logger.Log(LogLevel::ERR, "Expected one value for MetricSamplingPercetage, got {0}.", criterion.second.size());
-      meetsCriteria = false;
-    } else {
+    if( hasOneCriterionValue ) {
       this->m_MetricSamplingPercentage = std::stof(criterion.second[0]);
-      meetsCriteria = true;
+      return true;
+    } else {
+      this->m_Logger.Log(LogLevel::ERR, "Expected one value for MetricSamplingPercetage, got {0}.", criterion.second.size());
     }
   } else if( criterion.first == "MetricSamplingStrategy" ) {
-    if( criterion.second.size() != 1 ) {
-      this->m_Logger.Log(LogLevel::ERR, "Expected one value for MetricSamplingStrategy (Regular or Random), got {0}.", criterion.second.size());
-      meetsCriteria = false;
-    } else {
+    if( hasOneCriterionValue ) {
       if( criterion.second[0] == "Regular" ) {
         this->m_ImageRegistrationMethodv4Filter->SetMetricSamplingStrategy(ImageRegistrationMethodv4Type::MetricSamplingStrategyType::REGULAR);
-        meetsCriteria = true;
+        return true;
       } else if( criterion.second[0] == "Random" ) {
         this->m_ImageRegistrationMethodv4Filter->SetMetricSamplingStrategy(ImageRegistrationMethodv4Type::MetricSamplingStrategyType::RANDOM);
-        meetsCriteria = true;
+        return true;
       } else {
         this->m_Logger.Log(LogLevel::ERR, "Expected MetricSamplingStrategy to be Regular or Random, got {0}.", criterion.second[0]);
-        meetsCriteria = false;
       }
+    } else {
+      this->m_Logger.Log(LogLevel::ERR, "Expected one value for MetricSamplingStrategy (Regular or Random), got {0}.", criterion.second.size());
     }
   }
 
-  return meetsCriteria;
+  return false;
 }
 
 

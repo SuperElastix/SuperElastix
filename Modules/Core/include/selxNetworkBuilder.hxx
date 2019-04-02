@@ -151,7 +151,7 @@ NetworkBuilder< ComponentList >::ApplyComponentConfiguration()
       currentComponentSelector->AddCriterion( criterion );
       
       this->m_Logger.Log( LogLevel::DBG,
-                          "Finding component for '{0}': {1} component(s) satisfies '{2}' : '{3}'  and previous criteria.",
+                          "Finding component for {0}: {1} component(s) satisfies {2} : {3}  and previous criteria.",
                           componentName,
                           currentComponentSelector->NumberOfComponents(),
                           criterion.first,
@@ -205,14 +205,14 @@ NetworkBuilder< ComponentList >::ApplyConnectionConfiguration()
         // TODO: connectionName in log message
         this->m_ComponentSelectorContainer[ providingComponentName ]->AddProvidingInterfaceCriteria( interfaceCriteria );
         this->m_Logger.Log(LogLevel::DBG,
-          "Finding component for '{0}': {1} component(s) satisfies 'ProvidingInterface' {2} and previous criteria.",
+          "Finding component for {0}: {1} component(s) satisfies ProvidingInterface {2} and previous criteria.",
           providingComponentName,
           this->m_ComponentSelectorContainer[providingComponentName]->NumberOfComponents(),
           this->m_Logger.ToString(interfaceCriteria) );
 
         this->m_ComponentSelectorContainer[ acceptingComponentName ]->AddAcceptingInterfaceCriteria( interfaceCriteria );
         this->m_Logger.Log(LogLevel::DBG,
-          "Finding component for '{0}': {1} component(s) satisfies 'AcceptingInterface' {2} and previous criteria.",
+          "Finding component for {0}: {1} component(s) satisfies AcceptingInterface {2} and previous criteria.",
           acceptingComponentName,
           this->m_ComponentSelectorContainer[acceptingComponentName]->NumberOfComponents(),
           this->m_Logger.ToString(interfaceCriteria) );

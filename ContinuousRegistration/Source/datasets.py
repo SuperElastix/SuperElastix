@@ -427,6 +427,7 @@ class DIRLAB(Dataset):
                 )
             else:
                 # If no mask was provided, just generate mask filled with ones
+                logging.warning('Masks not found for DIRLAB. Creating mask with elements set to one.')
                 mask_file_names = [
                     create_mask_by_size(image_file_names[i],
                                         os.path.join(output_directory, 'tmp', 'masks',
@@ -717,6 +718,7 @@ class POPI(Dataset):
                                    os.path.join(mask_directory, sub_directory, 'mhd', '50.mhd'))
             else:
                 # If no mask was provided, just generate mask filled with ones
+                logging.warning('Masks not found for POPI. Creating mask with elements set to one.')
                 mask_file_names = [
                     create_mask_by_size(image_file_names[i],
                                         os.path.join(output_directory, 'tmp', 'masks',
