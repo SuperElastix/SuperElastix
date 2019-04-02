@@ -66,7 +66,7 @@ public:
   DisplacementFieldPointer GetItkDisplacementField() override;
 
   // Base methods
-  void BeforeUpdate();
+  void BeforeUpdate() override;
   bool MeetsCriterion( const ComponentBase::CriterionType & criterion ) override;
   static const char * GetDescription() { return "Warp a point set based on a deformation field"; };
 
