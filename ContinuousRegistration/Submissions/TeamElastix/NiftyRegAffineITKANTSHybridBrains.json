@@ -76,7 +76,7 @@
       "Name": "Optimizer2",
       "NameOfClass": "ItkGradientDescentOptimizerv4Component",
       "InternalComputationValueType": "double",
-      "MaximumNumberOfIterations": "8",
+      "MaximumNumberOfIterations": "32",
       "MaximumStepSizeInPhysicalUnits": "1.0",
       "LearningRate": "0.25",
       "EstimateScales": "True",

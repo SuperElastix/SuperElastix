@@ -60,7 +60,7 @@
         {
             "Name": "Optimizer",
             "NameOfClass": "ItkGradientDescentOptimizerv4Component",
-            "NumberOfIterations": "8",
+            "NumberOfIterations": "32",
             "LearningRate": "0.25",
             "EstimateScales": "True",
             "EstimateLearningRate": "False"
