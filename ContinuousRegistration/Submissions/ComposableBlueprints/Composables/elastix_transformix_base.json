@@ -13,6 +13,14 @@
             "NameOfClass": "ItkImageSourceComponent"
         },
         {
+            "Name": "FixedMask",
+            "NameOfClass": "ItkImageSourceComponent"
+        },
+        {
+            "Name": "MovingMask",
+            "NameOfClass": "ItkImageSourceComponent"
+        },
+        {
             "Name": "Transformix",
             "NameOfClass": "MonolithicTransformixComponent"
         },
@@ -31,6 +39,16 @@
             "Out": "MovingImage",
             "In": "Elastix",
             "NameOfInterface": "itkImageMovingInterface"
+        },
+        {
+            "Out": "FixedMask",
+            "In": "Elastix",
+            "NameOfInterface": "itkImageFixedMaskInterface"
+        },
+        {
+            "Out": "MovingMask",
+            "In": "Elastix",
+            "NameOfInterface": "itkImageMovingMaskInterface"
         },
         {
             "Out": "FixedImage",
