@@ -23,7 +23,7 @@
 #include "selxSuperElastixComponent.h"
 #include "selxItkObjectInterfaces.h"
 
-#include "itkComposeDisplacementFieldsImageFilter.h"
+#include "selxComposeDisplacementFieldsImageFilter.h"
 
 namespace selx {
 
@@ -55,7 +55,7 @@ public:
   using WarpingDisplacementFieldType = typename WarpingDisplacementFieldInterfaceType::ItkDisplacementFieldType;
   using WarpingDisplacementFieldPointer = typename WarpingDisplacementFieldType::Pointer;
 
-  using ComposeDisplacementFieldsImageFilterType = typename itk::ComposeDisplacementFieldsImageFilter< DisplacementFieldType, DisplacementFieldType >;
+  using ComposeDisplacementFieldsImageFilterType = ComposeDisplacementFieldsImageFilter< DisplacementFieldType, DisplacementFieldType >;
   using ComposeDisplacementFieldsImageFilterPointer = typename ComposeDisplacementFieldsImageFilterType::Pointer;
 
   // Accept interfaces

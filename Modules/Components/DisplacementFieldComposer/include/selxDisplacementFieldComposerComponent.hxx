@@ -55,9 +55,14 @@ void
 ItkDisplacementFieldComposerComponent< Dimensionality, TPixel, CoordRepType >
 ::BeforeUpdate()
 {
-  this->m_DisplacementField->UpdateOutputInformation();
+
+  this->m_DisplacementField->Update();
+  this->m_WarpingDisplacementField->Update();
+
+  // TODO: By default, the output region is copied to all inputs. Find out where it happens,
+  // and disable this behaviour
+
   this->m_ComposeDisplacementFieldsImageFilter->SetDisplacementField( this->m_DisplacementField );
-  this->m_WarpingDisplacementField->UpdateOutputInformation();
   this->m_ComposeDisplacementFieldsImageFilter->SetWarpingField( this->m_WarpingDisplacementField );
 }
 
