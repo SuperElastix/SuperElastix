@@ -344,13 +344,16 @@ def compose_displacement_fields(superelastix, disp_field_file_name_0, disp_field
     output_image_file_name = output_image_base_name + '_inverse_consistency' + "." + output_image_ext
 
     try:
-        stdout = subprocess.check_output([superelastix,
-                                          '--conf', os.path.join(os.path.dirname(os.path.realpath(__file__)), 'compose_displacement_fields.json'),
-                                          '--in', 'WarpingDisplacementField=%s' % disp_field_file_name_0,
-                                          'DisplacementField=%s' % disp_field_file_name_1,
-                                          '--out', 'DisplacementFieldSink=%s' % output_image_file_name,
-                                          '--loglevel', 'trace',
-                                          '--logfile', os.path.splitext(output_image_file_name)[0] + '.log'])
+        cmd = [superelastix,
+               '--conf', os.path.join(os.path.dirname(os.path.realpath(__file__)), 'compose_displacement_fields.json'),
+               '--in', 'WarpingDisplacementField=%s' % disp_field_file_name_0,
+               'DisplacementField=%s' % disp_field_file_name_1,
+               '--out', 'DisplacementFieldSink=%s' % output_image_file_name,
+               '--loglevel', 'trace',
+               '--logfile', os.path.splitext(output_image_file_name)[0] + '.log']
+
+        logging.debug(' '.join(cmd))
+        stdout = subprocess.check_output(cmd)
     except Exception as e:
         logging.error('Failed to compose blueprints %s and %s' % (disp_field_file_name_0, disp_field_file_name_1))
         raise e
